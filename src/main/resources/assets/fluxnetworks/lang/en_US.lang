@@ -1,0 +1,74 @@
+itemGroup.Flux Networks=Flux Networks
+
+//machine upgrades
+upgrade.maximum=Maximum Installed
+upgrade.incompatible=Incompatible Upgrade
+upgrade.accepted=Accepted Upgrades
+
+tile.FluxPlug.name=Flux Plug
+tile.FluxPoint.name=Flux Point
+tile.FluxStorage.name=Basic Flux Storage
+tile.HerculeanFluxStorage.name=Herculean Flux Storage
+tile.GargantuanFluxStorage.name=Gargantuan Flux Storage
+tile.FluxController.name=Flux Controller
+tile.FluxBlock.name=Flux Block
+item.Flux.name=Flux
+item.FluxCore.name=Flux Core
+
+network.nav.home=Home
+network.nav.config=Network Connections
+network.nav.networks=Network Selection
+network.nav.statistics=Network Statistics
+network.add=Add
+network.create=Create New Network
+network.edit=Edit Network
+network.rename=Rename
+network.delete=Delete
+network.back=Back
+network.notConnected=Not Connected
+network.protection=Protection
+network.restricted=Restricted
+network.private=Private
+network.public=Public
+network.sendMode=Send Mode
+network.receiveMode=Receive Mode
+network.transferMode=Transfer Mode
+network.transmitterMode=Transmitter Mode
+network.on=On
+network.off=Off
+network.hotbar=Hotbar Only
+network.held=Held Item Only
+network.default=Default
+network.notransfer=No Transfer
+network.transfer.even=Even Distribution
+network.transfer.surge=Surge
+network.transfer.hyper=Hyper-Surge
+network.transfer.god=God-Mode
+network.largest=Largest First
+network.smallest=Smallest First
+network.nextColour=Next Colour
+network.name=Name
+network.colour=Colour
+network.accessSetting=Access Setting
+network.changeSetting=Change Setting
+network.change=Change
+network.owner=Owner
+flux.type=Flux Type
+flux.coords=Flux Coords
+point.priority=Priority
+point.max=Max
+plug.sending=Sending
+plug.receiving=Receiving
+plug.plugs=Plugs
+plug.points=Points
+plug.transfer=Transfer
+
+network.energy.transfer=Transfer
+network.energy.maxReceived=Max Receive
+network.energy.maxSent=Max Send
+network.energy.received=Received
+network.energy.sent=Sent
+
+//errors
+network.error.hasController=This Network already has a Controller
+fluxItem.Info=Obtained by burning Redstone

@@ -1,0 +1,79 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"fluxnetworks:FluxCableCentre",
+        "textures": {
+            "0":"fluxnetworks:model/flux_cable",
+            "particle":"fluxnetworks:model/flux_cable"
+        },
+        "transform":"forge:default-block"
+     },
+    "variants": {
+        "inventory": [{            
+                 "submodel": {
+                    "down": { "model":"fluxnetworks:FluxCableConnection"},                    
+                    "up": { "model":"fluxnetworks:FluxCableConnection", "x": 180}
+                  }
+                }],
+         "north":{
+            "true":{
+                 "submodel": {
+                    "north": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 180 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "east":{
+            "true":{
+                 "submodel": {
+                    "east": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 270 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "south":{
+            "true":{
+                 "submodel": {
+                    "south": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 0 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "west":{
+            "true":{
+                 "submodel": {
+                    "west": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 90 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "down":{
+            "true":{
+                 "submodel": {
+                    "down": { "model":"fluxnetworks:FluxCableConnection"}
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "up":{
+            "true":{
+                 "submodel": {
+                    "up": { "model":"fluxnetworks:FluxCableConnection", "x": 180}
+                }
+            },
+            "false":{
+                
+            }
+        }
+    }
+}

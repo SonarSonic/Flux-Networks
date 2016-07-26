@@ -1,0 +1,17 @@
+[
+{
+"modid": "FluxNetworks",
+"name": "Flux Networks",
+"description": "Create Wireless Flux Networks!",
+"version": "1.0.0",
+"mcversion": "1.9.4",
+"updateUrl": "",
+"authors": ["Ollie Lansdell"],
+"credits": "Created by Ollie Lansdell",
+"logoFile": "",
+"screenshots": [],
+"dependencies": ["CoFHLib","CoFHCore","CoFHAPI","WailaAPI","ForgeMultipart"],
+"dependants": ["SonarCore"],
+"useDependencyInformation": true
+}
+]

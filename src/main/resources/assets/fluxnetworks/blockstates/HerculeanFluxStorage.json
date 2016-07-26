@@ -1,0 +1,56 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"fluxnetworks:FluxStorage",
+        "transform":"forge:default-block",
+        "textures": {
+            "1":"fluxnetworks:model/orangeTrim",
+            "particle":"fluxnetworks:model/orangeTrim"
+        }
+     },
+    "variants": {
+        "inventory": [{}],
+         "north":{
+            "true":{
+            },
+            "false":{
+                
+            }
+        },
+        "east":{
+            "true":{
+            },
+            "false":{
+                
+            }
+        },
+        "south":{
+            "true":{                
+            },
+            "false":{
+                
+            }
+        },
+        "west":{
+            "true":{
+            },
+            "false":{
+                
+            }
+        },
+        "down":{
+            "true":{
+            },
+            "false":{
+                
+            }
+        },
+        "up":{
+            "true":{
+            },
+            "false":{
+                
+            }
+        }
+    }
+}

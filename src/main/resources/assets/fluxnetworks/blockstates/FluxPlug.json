@@ -1,0 +1,83 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"fluxnetworks:FluxPlug",
+        "textures": {
+            "0":"fluxnetworks:model/flux_plug_new",
+            "particle":"fluxnetworks:model/flux_plug_new"
+        },
+        "transform":"forge:default-block"
+     },
+    "variants": {
+        "inventory": [{            
+                 "submodel": {
+                    "north": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 180 },
+                    "east": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 270 },
+                    "south": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 0 },
+                    "west": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 90 },
+                    "down": { "model":"fluxnetworks:FluxConnection"},                    
+                    "up": { "model":"fluxnetworks:FluxConnection", "x": 180}
+                  }
+                }],
+         "north":{
+            "true":{
+                 "submodel": {
+                    "north": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 180 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "east":{
+            "true":{
+                 "submodel": {
+                    "east": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 270 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "south":{
+            "true":{
+                 "submodel": {
+                    "south": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 0 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "west":{
+            "true":{
+                 "submodel": {
+                    "west": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 90 }
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "down":{
+            "true":{
+                 "submodel": {
+                    "down": { "model":"fluxnetworks:FluxConnection"}
+                }
+            },
+            "false":{
+                
+            }
+        },
+        "up":{
+            "true":{
+                 "submodel": {
+                    "up": { "model":"fluxnetworks:FluxConnection", "x": 180}
+                }
+            },
+            "false":{
+                
+            }
+        }
+    }
+}
