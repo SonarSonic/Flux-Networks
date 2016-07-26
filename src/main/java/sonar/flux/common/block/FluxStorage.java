@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import sonar.core.helpers.FontHelper;
 import sonar.flux.common.tileentity.TileEntityFlux;
 
 public class FluxStorage extends FluxConnection {
@@ -37,6 +38,14 @@ public class FluxStorage extends FluxConnection {
 
 	@Override
 	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
-		list.add("Stores Energy");
+		//list.add("Stores Energy");
+	}
+
+	@Override
+	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
+		int energy = stack.getTagCompound().getInteger("energy");
+		if (energy != 0) {
+			list.add(FontHelper.translate("energy.stored") + ": " + FontHelper.formatStorage(energy));
+		}
 	}
 }

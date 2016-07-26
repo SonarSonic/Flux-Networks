@@ -91,7 +91,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		long currentTransfer = maxTransfer;
 
 		lastTransfer = currentTransfer;
-		//System.out.print(stats.maxReceived);
 		if (this.hasController() && controller.getTransferMode() != TransferMode.DEFAULT) {
 			TransferMode mode = controller.getTransferMode();
 			int current = mode.repeat;
