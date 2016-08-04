@@ -2,21 +2,19 @@ package sonar.flux.client;
 
 import java.awt.Color;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
-
-import org.lwjgl.opengl.GL11;
-
 import sonar.core.helpers.RenderHelper;
-import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.common.tileentity.TileEntityFlux.Storage;
+import sonar.flux.common.tileentity.TileEntityStorage;
 
-public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityFlux.Storage> {
+public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStorage> {
 
 	@Override
-	public void renderTileEntityAt(Storage te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void renderTileEntityAt(TileEntityStorage te, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (te.storage.getEnergyStored() != 0 && te.storage.getMaxEnergyStored() != 0) {
 			GL11.glPushMatrix();
 			GlStateManager.pushAttrib();

@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class FluxStorage extends FluxConnection {
 
@@ -19,7 +19,7 @@ public class FluxStorage extends FluxConnection {
 
 		@Override
 		public TileEntity createNewTileEntity(World world, int i) {
-			return new TileEntityFlux.Storage.Advanced();
+			return new TileEntityStorage.Advanced();
 		}
 	}
 	
@@ -27,13 +27,13 @@ public class FluxStorage extends FluxConnection {
 
 		@Override
 		public TileEntity createNewTileEntity(World world, int i) {
-			return new TileEntityFlux.Storage.Massive();
+			return new TileEntityStorage.Massive();
 		}
 	}
 	
 	@Override
 	public TileEntity createNewTileEntity(World world, int i) {
-		return new TileEntityFlux.Storage.Basic();
+		return new TileEntityStorage.Basic();
 	}
 
 	@Override

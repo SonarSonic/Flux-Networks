@@ -7,14 +7,14 @@ import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.IFluxCommon;
 import sonar.flux.common.ContainerFlux;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class GuiFluxStorage extends GuiFlux {
 	//public static final ResourceLocation bground = new ResourceLocation("FluxNetworks:textures/gui/fluxPlug.png");
 
-	public TileEntityFlux.Storage entity;
+	public TileEntityStorage entity;
 
-	public GuiFluxStorage(EntityPlayer player, TileEntityFlux.Storage entity) {
+	public GuiFluxStorage(EntityPlayer player, TileEntityStorage entity) {
 		super(new ContainerFlux(player, entity, false), entity, player);
 		this.entity = entity;
 	}

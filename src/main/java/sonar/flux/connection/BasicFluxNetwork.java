@@ -3,10 +3,12 @@ package sonar.flux.connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
+import java.util.UUID;
 
+import com.google.common.collect.Lists;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,11 +16,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.SonarAPI;
 import sonar.core.api.utils.ActionType;
+import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.EnergyStats;
 import sonar.flux.api.FluxAPI;
+import sonar.flux.api.FluxPlayer;
 import sonar.flux.api.IFlux;
 import sonar.flux.api.IFlux.ConnectionType;
 import sonar.flux.api.IFluxController;
@@ -26,14 +30,14 @@ import sonar.flux.api.IFluxController.PriorityMode;
 import sonar.flux.api.IFluxController.TransferMode;
 import sonar.flux.api.IFluxController.TransmitterMode;
 import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.PlayerAccess;
 import sonar.flux.common.tileentity.TileEntityFlux;
-
-import com.google.common.collect.Lists;
+import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
 
 	// settings
-	private final ArrayList<String> players = new ArrayList();
+	//private final ArrayList<String> players = new ArrayList();
 
 	// connections
 	private IFluxController controller = null;
@@ -48,12 +52,12 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	public BasicFluxNetwork(NBTTagCompound tag) {
 		super(tag);
-		players.add(ownerName.getObject());
+		//addPlayerAccess(ownerName.getObject(), PlayerAccess.OWNER);
 	}
 
-	public BasicFluxNetwork(int ID, String owner, String name, CustomColour colour, AccessType type) {
+	public BasicFluxNetwork(int ID, UUID owner, String name, CustomColour colour, AccessType type) {
 		super(ID, owner, name, colour, type);
-		players.add(owner);
+		//addPlayerAccess(ownerName.getObject(), PlayerAccess.OWNER);
 	}
 
 	public void updateNetwork() {
@@ -62,6 +66,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		long maxStored = 0;
 		long energyStored = 0;
+
 		sortFluxNetwork(plugs, hasController() ? controller.getSendMode() : PriorityMode.DEFAULT);
 		sortFluxNetwork(points, hasController() ? controller.getReceiveMode() : PriorityMode.DEFAULT);
 
@@ -69,16 +74,16 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		ArrayList<TileEntity> receivers = new ArrayList();
 
 		EnergyStats stats = new EnergyStats(0, 0, 0);
-		for (IFlux plug : plugs) {
+		for (IFlux plug : (ArrayList<IFlux>) plugs.clone()) {
 			if (plug != null) {
 				stats.maxSent += FluxAPI.getFluxHelper().pullEnergy(plug, plug.getTransferLimit(), ActionType.SIMULATE);
 			}
 		}
-		for (IFlux point : points) {
+		for (IFlux point : (ArrayList<IFlux>) points.clone()) {
 			if (point != null) {
 				stats.maxReceived += FluxAPI.getFluxHelper().pushEnergy(point, point.getTransferLimit(), ActionType.SIMULATE);
-				if (point instanceof TileEntityFlux.Storage) {
-					TileEntityFlux.Storage fluxStorage = (TileEntityFlux.Storage) point;
+				if (point instanceof TileEntityStorage) {
+					TileEntityStorage fluxStorage = (TileEntityStorage) point;
 					maxStored += fluxStorage.storage.getMaxEnergyStored();
 					energyStored += fluxStorage.storage.getEnergyStored();
 				}
@@ -87,32 +92,26 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		this.maxStored.setObject(maxStored);
 		this.energyStored.setObject(energyStored);
 
-		//maxTransfer = Math.min(stats.sent, stats.received);
 		long currentTransfer = maxTransfer;
 
 		lastTransfer = currentTransfer;
-		if (this.hasController() && controller.getTransferMode() != TransferMode.DEFAULT) {
-			TransferMode mode = controller.getTransferMode();
-			int current = mode.repeat;
-			while (current != 0) {
-				for (IFlux plug : plugs) {
-					long limit = FluxAPI.getFluxHelper().pullEnergy(plug, plug.getTransferLimit(), ActionType.SIMULATE);
-					long currentLimit = limit;
-					if (currentLimit == 0) {
-						break;
-					}
-					for (IFlux point : points) {
-						if (mode == TransferMode.EVEN) {
-							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, FluxAPI.getFluxHelper().pushEnergy(point, Math.min((long) Math.ceil(((double) limit / (double) points.size())), 1), ActionType.PERFORM), ActionType.PERFORM);
-						} else {
-							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, FluxAPI.getFluxHelper().pushEnergy(point, limit, ActionType.PERFORM), ActionType.PERFORM);
-						}
-					}
-					networkStats.latestRecords.transfer += limit - currentLimit;
-
+		TransferMode mode = this.hasController() ? controller.getTransferMode() : TransferMode.DEFAULT;
+		int current = mode.repeat;
+		while (current != 0) {
+			for (IFlux plug : (ArrayList<IFlux>) plugs.clone()) {
+				long limit = FluxAPI.getFluxHelper().pullEnergy(plug, plug.getTransferLimit(), ActionType.SIMULATE);
+				long currentLimit = limit;
+				if (currentLimit == 0) {
+					break;
 				}
-				current--;
+				for (IFlux point : (ArrayList<IFlux>) points.clone()) {
+					long toTransfer = mode == TransferMode.EVEN ? Math.min((long) Math.ceil(((double) limit / (double) points.size())), 1) : limit;
+					currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM), ActionType.PERFORM);
+				}
+				networkStats.latestRecords.transfer += limit - currentLimit;
+
 			}
+			current--;
 		}
 
 		networkStats.inputStatistics(stats, plugs.size(), points.size());
@@ -152,23 +151,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	@Override
-	public boolean isPlayerAllowed(String playerName) {
-		if (playerName == null) {
-			return false;
-		}
-		switch (accessType.getObject()) {
-		case PUBLIC:
-			return true;
-		case PRIVATE:
-			return ownerName.getObject().equals(playerName);
-		case RESTRICTED:
-			return players.contains(playerName);
-		default:
-			return false;
-		}
-	}
-
-	@Override
 	public void setNetworkName(String name) {
 		if (name != null && !name.isEmpty())
 			networkName.setObject(name);
@@ -178,6 +160,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public void setAccessType(AccessType type) {
 		if (type != null)
 			accessType.setObject(type);
+		return;
 	}
 
 	@Override
@@ -204,38 +187,47 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	@Override
-	public void removePlayerAccess(String playerName) {
-		if (players.contains(playerName))
-			players.remove(playerName);
+	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
+		ArrayList<FluxPlayer> toDelete = new ArrayList();
 
+		for (FluxPlayer player : players) {
+			if (player.getUUID().equals(playerUUID)) {
+				toDelete.add(player);
+			}
+		}
+		toDelete.forEach(delete -> players.remove(delete));
 	}
 
 	@Override
-	public void addPlayerAccess(String playerName) {
-		if (!players.contains(playerName))
-			players.add(playerName);
-
+	public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {
+		for (FluxPlayer player : players) {
+			if (player.getUUID().equals(playerUUID)) {
+				player.setAccess(access);
+				return;
+			}
+		}
+		FluxPlayer player = new FluxPlayer(playerUUID, access);
+		player.cachedName = SonarHelper.getProfileByUUID(playerUUID).getName();
+		players.add(player);
 	}
 
 	@Override
 	public long receiveEnergy(long maxReceive, ActionType type) {
 		long used = 0;
 
-		for (IFlux flux : points) {
+		for (IFlux flux : (ArrayList<IFlux>) points.clone()) {
 			long toTransfer = Math.min(flux.getTransferLimit(), maxReceive - used);
 			if (flux instanceof IFluxController) {
 				IFluxController controller = (IFluxController) flux;
 				if (controller.getTransmitterMode() == TransmitterMode.OFF) {
 					break;
 				}
-				ArrayList<String> playerNames = (ArrayList<String>) players.clone();
+				ArrayList<FluxPlayer> playerNames = (ArrayList<FluxPlayer>) players.clone();
 				ArrayList<EntityPlayer> players = new ArrayList();
-				for (String player : playerNames) {
-					List<EntityPlayerMP> server = FMLCommonHandler.instance().getMinecraftServerInstance().getServer().getPlayerList().getPlayerList();
-					for (EntityPlayerMP entityPlayer : server) {
-						if (entityPlayer.getName().equals(player)) {
-							players.add(entityPlayer);
-						}
+				for (FluxPlayer player : playerNames) {
+					Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.id);
+					if (entity != null && entity instanceof EntityPlayer) {
+						players.add((EntityPlayer) entity);
 					}
 				}
 
@@ -284,7 +276,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public long extractEnergy(long maxExtract, ActionType type) {
 		long used = 0;
-		for (IFlux flux : plugs) {
+		for (IFlux flux : (ArrayList<IFlux>) plugs.clone()) {
 			long toTransfer = Math.min(flux.getTransferLimit(), maxExtract - used);
 			if (maxExtract - used <= 0) {
 				break;
@@ -335,12 +327,30 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public void buildFluxConnections() {
 		ArrayList<ClientFlux> clientConnections = new ArrayList();
-		for (IFlux flux : points) {
-			clientConnections.add(new ClientFlux(flux));
-		}
-		for (IFlux flux : plugs) {
-			clientConnections.add(new ClientFlux(flux));
-		}
+		points.forEach(point -> clientConnections.add(new ClientFlux(point)));
+		plugs.forEach(plug -> clientConnections.add(new ClientFlux(plug)));
 		this.fluxConnections = clientConnections;
 	}
+
+	@Override
+	public PlayerAccess getPlayerAccess(EntityPlayer player) {
+
+		UUID playerID = player.getGameProfile().getId();
+		if (this.getOwnerUUID().equals(playerID)) {
+			return PlayerAccess.OWNER;
+		}
+		if (accessType.getObject() != AccessType.PRIVATE) {
+			for (FluxPlayer fluxPlayer : players) {
+				if (playerID.equals(fluxPlayer.getUUID())) {
+					return fluxPlayer.getAccess();
+				}
+			}
+			if (accessType.getObject() == AccessType.PUBLIC) {
+				return PlayerAccess.USER;
+			}
+		}
+		return PlayerAccess.BLOCKED;
+
+	}
+
 }

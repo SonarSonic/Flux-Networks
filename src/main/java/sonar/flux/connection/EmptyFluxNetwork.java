@@ -1,15 +1,19 @@
 package sonar.flux.connection;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
+import sonar.flux.api.FluxPlayersList;
 import sonar.flux.api.IFlux;
 import sonar.flux.api.IFluxController;
 import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.PlayerAccess;
 import sonar.flux.network.NetworkStatistics;
 
 public class EmptyFluxNetwork implements IFluxNetwork {
@@ -42,7 +46,12 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public String getOwnerName() {
+	public UUID getOwnerUUID() {
+		return null;
+	}
+
+	@Override
+	public String getCachedPlayerName() {
 		return "";
 	}
 
@@ -54,11 +63,6 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	@Override
 	public IFluxController getController() {
 		return null;
-	}
-
-	@Override
-	public boolean isPlayerAllowed(String playerName) {
-		return false;
 	}
 
 	@Override
@@ -83,11 +87,11 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void removePlayerAccess(String playerName) {
+	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
 	}
 
 	@Override
-	public void addPlayerAccess(String playerName) {
+	public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {
 	}
 
 	@Override
@@ -150,6 +154,16 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	@Override
 	public boolean isFakeNetwork() {
 		return true;
+	}
+
+	@Override
+	public FluxPlayersList getPlayers() {
+		return new FluxPlayersList();
+	}
+
+	@Override
+	public PlayerAccess getPlayerAccess(EntityPlayer player) {
+		return PlayerAccess.BLOCKED;
 	}
 
 

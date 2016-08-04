@@ -1,5 +1,8 @@
 package sonar.flux.common.tileentity;
 
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -7,9 +10,6 @@ import sonar.core.api.SonarAPI;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.flux.api.IFlux;
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
 
 //to be fully implemented later
 public class TileEntityCable extends TileEntitySonar implements IEnergyReceiver, IEnergyProvider {

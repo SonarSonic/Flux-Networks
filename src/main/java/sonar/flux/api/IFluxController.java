@@ -1,5 +1,6 @@
 package sonar.flux.api;
 
+/**implemented by the Flux Controller TileEntity*/
 public interface IFluxController extends IFlux {
 
 	public enum PriorityMode{
@@ -51,7 +52,7 @@ public interface IFluxController extends IFlux {
 		}
 	}
 
-
+	/***/
 	public PriorityMode getReceiveMode();
 	
 	public PriorityMode getSendMode();

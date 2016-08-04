@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityPoint;
 
 public class FluxPoint extends FluxConnection {
 
@@ -17,7 +17,7 @@ public class FluxPoint extends FluxConnection {
 
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileEntityFlux.Point();
+		return new TileEntityPoint();
 	}
 
 	public boolean hasSpecialRenderer() {

@@ -1,9 +1,8 @@
 package sonar.flux.network;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fml.common.network.ByteBufUtils;

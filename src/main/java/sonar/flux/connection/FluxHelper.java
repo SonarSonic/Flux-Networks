@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -14,7 +15,7 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxWrapper;
 import sonar.flux.api.IFlux;
 import sonar.flux.api.IFluxCommon;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class FluxHelper extends FluxWrapper {
 
@@ -22,8 +23,8 @@ public class FluxHelper extends FluxWrapper {
 		return FluxNetworks.cache.getAllNetworks();
 	}
 
-	public ArrayList<? extends IFluxCommon> getAvailableNetworks(String playerName, boolean admin) {
-		return FluxNetworks.cache.getAllowedNetworks(playerName, admin);
+	public ArrayList<? extends IFluxCommon> getAvailableNetworks(EntityPlayer player, boolean admin) {
+		return FluxNetworks.cache.getAllowedNetworks(player, admin);
 	}
 
 	public long pullEnergy(IFlux from, long maxTransferRF, ActionType actionType) {
@@ -42,7 +43,7 @@ public class FluxHelper extends FluxWrapper {
 				}
 				break;
 			case STORAGE:
-				extracted += ((TileEntityFlux.Storage) coords.getTileEntity()).storage.extractEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
+				extracted += ((TileEntityStorage) coords.getTileEntity()).storage.extractEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
 				break;
 			default:
 				break;
@@ -68,8 +69,8 @@ public class FluxHelper extends FluxWrapper {
 				break;
 			case STORAGE:
 				TileEntity tile = coords.getTileEntity();
-				if (tile != null && tile instanceof TileEntityFlux.Storage)
-					received += ((TileEntityFlux.Storage) coords.getTileEntity()).storage.receiveEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
+				if (tile != null && tile instanceof TileEntityStorage)
+					received += ((TileEntityStorage) coords.getTileEntity()).storage.receiveEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
 				break;
 			case CONTROLLER:
 				break;

@@ -1,6 +1,7 @@
 package sonar.flux.api;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.utils.CustomColour;
@@ -9,7 +10,16 @@ import sonar.core.utils.CustomColour;
 public interface IFluxCommon extends INBTSyncable {
 
 	public enum AccessType {
-		PUBLIC, PRIVATE, RESTRICTED;				
+		PUBLIC, PRIVATE, RESTRICTED;	
+		
+		public String getName(){
+			switch(this){
+			case PUBLIC: return "network.public";
+			case PRIVATE: return "network.private";
+			case RESTRICTED: return "network.restricted";	
+			}
+			return "";
+		}			
 	}		
 	/**the access settings of this network*/
 	public AccessType getAccessType();
@@ -20,8 +30,10 @@ public interface IFluxCommon extends INBTSyncable {
 	/**the custom set network name of this network*/
 	public String getNetworkName();
 	
-	/**the player name of the owner, this may change to a UUID in the future be warned...*/
-	public String getOwnerName();		
+	/**the player name of the owner, this may change to a UUID in the future be warned...*/	
+	public String getCachedPlayerName();	
+	
+	public UUID getOwnerUUID();
 	
 	/**gets the custom set network colour**/
 	public CustomColour getNetworkColour();	
@@ -40,5 +52,7 @@ public interface IFluxCommon extends INBTSyncable {
 	public ArrayList<ClientFlux> getClientFluxConnection();
 	
 	public boolean isFakeNetwork();
+	
+	public FluxPlayersList getPlayers();
 }
 

@@ -4,16 +4,16 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import sonar.flux.common.ContainerFlux;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityPoint;
 
 public class GuiFluxPoint extends GuiFlux {
 	public static final ResourceLocation bground = new ResourceLocation("FluxNetworks:textures/gui/fluxPoint.png");
 
-	public TileEntityFlux.Point entity;
+	public TileEntityPoint entity;
 
 	private GuiTextField priority, transfer;
 
-	public GuiFluxPoint(EntityPlayer player, TileEntityFlux.Point entity) {
+	public GuiFluxPoint(EntityPlayer player, TileEntityPoint entity) {
 		super(new ContainerFlux(player, entity, false), entity, player);
 		this.entity = entity;
 	}

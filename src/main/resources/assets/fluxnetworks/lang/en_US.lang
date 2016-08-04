@@ -53,6 +53,7 @@ network.accessSetting=Access Setting
 network.changeSetting=Change Setting
 network.change=Change
 network.owner=Owner
+network.players=Allowed Players
 flux.type=Flux Type
 flux.coords=Flux Coords
 point.priority=Priority
@@ -70,5 +71,16 @@ network.energy.received=Received
 network.energy.sent=Sent
 
 //errors
-network.error.hasController=This Network already has a Controller
+network.error.hasController=This network already has a controller
+network.error.notOwner=Only the owner can delete the network
+network.error.accessDenied=Access Denied
+network.error.editNetwork=You are not allowed to edit this network
+network.error.invalidUser=No user with that username could be found
+
+//players
+network.player.user=User
+network.player.owner=Network Owner
+network.player.sharedOwner=Shared Owner
+network.player.blocked=Blocked
+
 fluxItem.Info=Obtained by burning Redstone

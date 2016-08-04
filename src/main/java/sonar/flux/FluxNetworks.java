@@ -2,6 +2,9 @@ package sonar.flux;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,10 +21,6 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import sonar.core.common.block.SonarBlockTip;
 import sonar.flux.api.FluxAPI;
 import sonar.flux.common.block.FluxCable;
@@ -31,7 +30,10 @@ import sonar.flux.common.block.FluxPoint;
 import sonar.flux.common.block.FluxStorage;
 import sonar.flux.common.item.FluxItem;
 import sonar.flux.common.tileentity.TileEntityCable;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityController;
+import sonar.flux.common.tileentity.TileEntityPlug;
+import sonar.flux.common.tileentity.TileEntityPoint;
+import sonar.flux.common.tileentity.TileEntityStorage;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.ServerNetworkCache;
 
@@ -39,7 +41,7 @@ import sonar.flux.network.ServerNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "FluxNetworks";
-	public static final String version = "1.0.0";
+	public static final String version = "1.0.2";
 
 	public static final int saveDimension = 0;
 
@@ -93,26 +95,26 @@ public class FluxNetworks {
 		flux = registerItem("Flux", new FluxItem());		
 		fluxCore = registerItem("FluxCore", new Item());	
 		
-		//fluxCable = registerBlock("FluxCable", new FluxCable().setHardness(0.4F).setResistance(20.0F));
-		//GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");	
+		fluxCable = registerBlock("FluxCable", new FluxCable().setHardness(0.4F).setResistance(20.0F));
+		GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");
 		
 		fluxPlug = registerBlock("FluxPlug", new FluxPlug().setHardness(0.4F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityFlux.Plug.class, "FluxPlug");
+		GameRegistry.registerTileEntity(TileEntityPlug.class, "FluxPlug");
 
 		fluxPoint = registerBlock("FluxPoint", new FluxPoint().setHardness(0.2F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityFlux.Point.class, "FluxPoint");
+		GameRegistry.registerTileEntity(TileEntityPoint.class, "FluxPoint");
 		
 		fluxController = registerBlock("FluxController", new FluxController().setHardness(0.6F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityFlux.Controller.class, "FluxController");
+		GameRegistry.registerTileEntity(TileEntityController.class, "FluxController");
 
 		fluxStorage = registerBlock("FluxStorage", new FluxStorage().setHardness(0.6F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityFlux.Storage.Basic.class, "FluxStorage");
+		GameRegistry.registerTileEntity(TileEntityStorage.Basic.class, "FluxStorage");
 
 		largeFluxStorage = registerBlock("HerculeanFluxStorage", new FluxStorage.Herculean().setHardness(0.6F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityFlux.Storage.Advanced.class, "HerculeanFluxStorage");
+		GameRegistry.registerTileEntity(TileEntityStorage.Advanced.class, "HerculeanFluxStorage");
 
 		massiveFluxStorage = registerBlock("GargantuanFluxStorage", new FluxStorage.Gargantuan().setHardness(0.6F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityFlux.Storage.Massive.class, "GargantuanFluxStorage");		
+		GameRegistry.registerTileEntity(TileEntityStorage.Massive.class, "GargantuanFluxStorage");		
 
 		logger.info("Loaded Blocks/Items");
 		
@@ -150,11 +152,9 @@ public class FluxNetworks {
 
 	@EventHandler
 	public void onServerStopping(FMLServerStoppingEvent event) {
-		logger.info("Removing Viewers");
 		cache.removeAllViewers();
 		logger.info("Removed Viewers");
 
-		logger.info("Removing Networks");
 		cache.clearNetworks();
 		logger.info("Removed Networks");
 		

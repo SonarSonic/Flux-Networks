@@ -1,28 +1,25 @@
-package sonar.flux.common.tileentity;
+package sonar.flux.common.handlers;
 
 import java.util.Arrays;
-import java.util.UUID;
+import java.util.List;
 
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import sonar.core.SonarCore;
 import sonar.core.api.SonarAPI;
-import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.SonarHelper;
+import sonar.core.integration.fmp.handlers.TileHandler;
+import sonar.core.network.sync.ISyncPart;
 import sonar.core.network.sync.SyncTagType;
-import sonar.core.network.sync.SyncTagType.INT;
 import sonar.core.network.sync.SyncTagType.LONG;
 import sonar.core.network.sync.SyncTagType.STRING;
-import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.utils.IByteBufTile;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxError;
@@ -35,15 +32,15 @@ import sonar.flux.network.CommonNetworkCache.ViewingType;
 import sonar.flux.network.PacketFluxError;
 import sonar.flux.network.ServerNetworkCache;
 
-public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, IEnergyHandler, IByteBufTile {
+public class FluxBaseHandler extends TileHandler implements IFlux, IEnergyHandler, IByteBufTile {
+
 	// shared
 	public SyncTagType.INT priority = new SyncTagType.INT(0);
 	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(Long.valueOf(256000));
-	//public SyncTagType.STRING networkName = new SyncTagType.STRING(2);
-	//public SyncTagType.STRING networkOwner = new SyncTagType.STRING(3);
-	public SyncTagType.INT networkID = (INT) new SyncTagType.INT(4).setDefault(-1);
-	//public SyncTagType.STRING playerName = new SyncTagType.STRING(5);
-	public SyncUUID playerUUID = new SyncUUID(5);
+	public SyncTagType.STRING networkName = new SyncTagType.STRING(2);
+	public SyncTagType.STRING networkOwner = new SyncTagType.STRING(3);
+	public SyncTagType.INT networkID = new SyncTagType.INT(4);
+	public SyncTagType.STRING playerName = new SyncTagType.STRING(5);
 	public SyncTagType.STRING customName = (STRING) new SyncTagType.STRING(6).setDefault("Flux Connection");
 	public SyncTagType.INT colour = new SyncTagType.INT(7);
 	public boolean[] connections = new boolean[6];
@@ -56,14 +53,30 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	// client only
 	public FluxError error = FluxError.NONE;
 
-	public TileEntityFlux(ConnectionType type) {
-		super();
+	public FluxBaseHandler(ConnectionType type, boolean isMultipart, TileEntity tile) {
+		super(isMultipart, tile);
 		this.type = type;
-		syncParts.addAll(Arrays.asList(priority, limit, networkID, playerUUID, customName, colour));
 	}
 
-	public void setPlayerUUID(UUID name) {
-		this.playerUUID.setObject(name);
+	@Override
+	public void update(TileEntity te) {
+		if (isServer()) {
+			if (checkTicks >= 20) {
+				updateConnections();
+				checkTicks = 0;
+			} else {
+				checkTicks++;
+			}
+		}
+	}
+
+	public void addSyncParts(List<ISyncPart> parts) {
+		super.addSyncParts(parts);
+		parts.addAll(Arrays.asList(priority, limit, networkName, networkOwner, networkID, playerName, customName, colour));
+	}
+
+	public void setPlayerName(String name) {
+		this.playerName.setObject(name);
 	}
 
 	public void changeNetwork(IFluxNetwork network) {
@@ -75,42 +88,30 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			this.network = network;
 			if (player != null && !network.isFakeNetwork() && this instanceof IFluxController) {
 				if (network.hasController()) {
-					FluxNetworks.network.sendTo(new PacketFluxError(getPos(), FluxError.HAS_CONTROLLER), (EntityPlayerMP) player);
+					FluxNetworks.network.sendTo(new PacketFluxError(pos, FluxError.HAS_CONTROLLER), (EntityPlayerMP) player);
 					changeNetwork(CommonNetworkCache.empty, null);
 					return;
 				}
 			}
 			network.addFluxConnection(this);
+			networkName.setObject(network.getNetworkName());
+			networkOwner.setObject(network.getCachedPlayerName());
 			networkID.setObject(network.getNetworkID());
 			colour.setObject(network.getNetworkColour().getRGB());
-			markDirty();
 			markBlockForUpdate();
 		}
 	}
-
-	public void update() {
-		super.update();
-		if (isServer()) {
-			if (checkTicks >= 20) {
-				updateConnections();
-				checkTicks=0;
-			} else {
-				checkTicks++;
-			}
-		}
-	}
-
+	/*
 	@Override
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
 		super.onDataPacket(net, packet);
-		SonarCore.sendPacketAround(this, 128, 0);
-
+		SonarCore.sendPacketAround(tile, 128, 0);
 	}
-
+	*/
 	public void updateConnections() {
 		for (EnumFacing face : EnumFacing.VALUES) {
 			BlockPos pos = this.pos.offset(face);
-			TileEntity tile = getWorld().getTileEntity(pos);
+			TileEntity tile = world.getTileEntity(pos);
 			if (tile != null && !(tile instanceof IFlux)) {
 				if (tile instanceof IEnergyConnection) {
 					connections[face.getIndex()] = true;
@@ -123,12 +124,12 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 				connections[face.getIndex()] = false;
 			}
 		}
-		SonarCore.sendPacketAround(this, 128, 0);
+		SonarCore.sendPacketAround(tile, 128, 0);
 	}
 
-	public void onFirstTick() {
-		super.onFirstTick();
-		if (playerUUID != null && isServer() && networkID.getObject()!=-1) {			
+	public void validate() {
+		super.validate();
+		if (playerName != null && isServer()) {
 			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				changeNetwork((IFluxNetwork) network, null);
@@ -138,8 +139,8 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	public void invalidate() {
 		super.invalidate();
-		if (playerUUID != null && isServer()) {
-			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());			
+		if (playerName != null && isServer()) {
+			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				((IFluxNetwork) network).removeFluxConnection(this);
 			}
@@ -168,7 +169,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	@Override
 	public World getDimension() {
-		return worldObj;
+		return world;
 	}
 
 	@Override
@@ -230,12 +231,12 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			customName.readFromBuf(buf);
 			break;
 		case 4:
-			EntityPlayer player = SonarHelper.getPlayerFromUUID(playerUUID.getUUID());
+			EntityPlayerMP player = SonarHelper.getPlayerFromName(playerName.getObject());
 			if (player != null)
 				FluxNetworks.cache.addViewer(player, ViewingType.CONNECTIONS, networkID.getObject());
 			break;
 		case 5:
-			player = SonarHelper.getPlayerFromUUID(playerUUID.getUUID());
+			player = SonarHelper.getPlayerFromName(playerName.getObject());
 			if (player != null) {
 				FluxNetworks.cache.removeViewer(player);
 				FluxNetworks.cache.addViewer(player, ViewingType.CLIENT, networkID.getObject());
@@ -243,4 +244,11 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			break;
 		}
 	}
+
+	public void markBlockForUpdate() {
+		//isDirty.setChanged(true);
+		this.world.markBlockRangeForRenderUpdate(pos, pos);
+		SonarCore.sendFullSyncAround(tile, 128);
+	}
+
 }

@@ -8,14 +8,14 @@ import sonar.core.SonarCore;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.api.IFluxController;
 import sonar.flux.common.ContainerFlux;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityController;
 
 public class GuiFluxController extends GuiFlux {
 	//public static final ResourceLocation bground = new ResourceLocation("FluxNetworks:textures/gui/fluxPlug.png");
 
-	public TileEntityFlux.Controller entity;
+	public TileEntityController entity;
 
-	public GuiFluxController(EntityPlayer player, TileEntityFlux.Controller entity) {
+	public GuiFluxController(EntityPlayer player, TileEntityController entity) {
 		super(new ContainerFlux(player, entity, false), entity, player);
 		this.entity = entity;
 	}

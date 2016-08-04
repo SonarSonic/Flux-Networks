@@ -2,16 +2,16 @@
 {
 "modid": "FluxNetworks",
 "name": "Flux Networks",
-"description": "Create Wireless Flux Networks!",
-"version": "1.0.0",
-"mcversion": "1.9.4",
-"updateUrl": "",
+"description": "Create Wireless Energy Networks",
+"version": "${version}",
+"mcversion": "${mcversion}",
+"updateUrl": "http://minecraft.curseforge.com/projects/flux-networks/files/latest",
 "authors": ["Ollie Lansdell"],
 "credits": "Created by Ollie Lansdell",
 "logoFile": "",
 "screenshots": [],
-"dependencies": ["CoFHLib","CoFHCore","CoFHAPI","WailaAPI","ForgeMultipart"],
-"dependants": ["SonarCore"],
+"requiredMods": [ "Forge", "SonarCore" ],
+"dependencies": ["SonarCore"],
 "useDependencyInformation": true
 }
 ]

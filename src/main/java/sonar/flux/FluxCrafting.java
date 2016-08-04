@@ -1,6 +1,5 @@
 package sonar.flux;
 
-import sonar.core.common.block.SonarBlockTip;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -9,7 +8,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import sonar.core.common.block.SonarBlockTip;
 
 public class FluxCrafting extends FluxNetworks {
 
@@ -37,7 +39,6 @@ public class FluxCrafting extends FluxNetworks {
 					energyStored += tag.getInteger("energy");
 				}
 			}
-			//System.out.print(energyStored);
 			ItemStack stack = output.copy();
 			if (output != null) {
 				NBTTagCompound newTag = stack.getTagCompound();
@@ -52,7 +53,7 @@ public class FluxCrafting extends FluxNetworks {
 	}
 
 	public static void addRecipes() {
-
+		RecipeSorter.register("fluxNetworks:storage", FluxCrafting.StorageCrafting.class, Category.SHAPED, "after:forge:shapedore");
 		//addShaped(new ItemStack(burntRedstoneBlock, 1), new Object[] { "AAA", "AAA", "AAA", 'A', burntRedstone });
 		//addShapeless(new ItemStack(burntRedstone, 9), new Object[] { new ItemStack(burntRedstoneBlock, 1) });
 		addShaped(new ItemStack(fluxBlock, 1), new Object[] { "ACA", "CAC", "ACA", 'A', flux, 'C', fluxCore });

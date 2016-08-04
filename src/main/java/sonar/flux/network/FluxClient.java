@@ -4,7 +4,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import sonar.flux.BlockRenderRegister;
 import sonar.flux.ItemRenderRegister;
 import sonar.flux.client.RenderFluxStorage;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class FluxClient extends FluxCommon {
 
@@ -12,7 +12,7 @@ public class FluxClient extends FluxCommon {
 	public void registerRenderThings() {
 		BlockRenderRegister.register();
 		ItemRenderRegister.register();
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityFlux.Storage.class, new RenderFluxStorage());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStorage.class, new RenderFluxStorage());
 	}
 	
 }

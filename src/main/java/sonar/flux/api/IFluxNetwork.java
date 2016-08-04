@@ -1,5 +1,8 @@
 package sonar.flux.api;
 
+import java.util.UUID;
+
+import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.utils.ActionType;
 import sonar.core.utils.CustomColour;
 
@@ -15,9 +18,6 @@ public interface IFluxNetwork extends IFluxCommon{
 	/**obtains the IFluxController currently connected, can be null*/
 	public IFluxController getController();
 
-	/**returns if the given player can access this network and pull/push energy from/to it*/
-	public boolean isPlayerAllowed(String playerName);
-	
 	/**sets the custom name of this network*/
 	public void setNetworkName(String name);
 	
@@ -32,11 +32,14 @@ public interface IFluxNetwork extends IFluxCommon{
 	
 	public void sendChanges();
 	
+	/**checks if the given player as an access type already as*/
+	public PlayerAccess getPlayerAccess(EntityPlayer player);
+	
 	/**removes access to the network from the given player, points/plugs associated with them and on the network will then be blocked*/
-	public void removePlayerAccess(String playerName);
+	public void removePlayerAccess(UUID playerUUID, PlayerAccess access);
 	
 	/**adds access to the network for a given player, the owner is added as default*/
-	public void addPlayerAccess(String playerName);
+	public void addPlayerAccess(UUID playerUUID, PlayerAccess access);
 	
 	/**used for pushing energy into the network it returns the amount received*/
 	public long receiveEnergy(long maxReceive, ActionType type);

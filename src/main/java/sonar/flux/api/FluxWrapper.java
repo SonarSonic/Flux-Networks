@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.network.CommonNetworkCache;
 
 public class FluxWrapper {
 
 	/**on the server these will typically all be {@link IFluxNetwork}s, 
-	 * on the client these will typically all be {@link CommonNetworkCache}s*/
+	 * on the client these will typically all be {@link IFluxCommon}s*/
 	public ArrayList<? extends IFluxCommon> getAllNetworks() {
 		return new ArrayList();
 	}
 
 	/**on the server these will typically all be {@link IFluxNetwork}s, 
-	 * on the client these will typically all be {@link CommonNetworkCache}s,
+	 * on the client these will typically all be {@link IFluxCommon}s,
 	 * admins may view all networks*/
-	public ArrayList<? extends IFluxCommon> getAvailableNetworks(String playerName, boolean admin) {
+	public ArrayList<? extends IFluxCommon> getAvailableNetworks(EntityPlayer player, boolean admin) {
 		return new ArrayList();
 	}
 	

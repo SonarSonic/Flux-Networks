@@ -11,9 +11,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.helpers.FontHelper;
+import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxNetworks;
 import sonar.flux.common.tileentity.TileEntityFlux;
@@ -48,12 +50,12 @@ public abstract class FluxConnection extends ConnectedTile {
 		if (player != null && !world.isRemote) {
 			TileEntity target = world.getTileEntity(pos);
 			if (target != null && target instanceof TileEntityFlux) {
-				TileEntityFlux plug = (TileEntityFlux) target;
-				if (plug.playerName.getObject().equals(player.getName())) {
-					FluxNetworks.cache.addViewer(player, ViewingType.CLIENT, plug.getNetwork().getNetworkID());
+				TileEntityFlux flux = (TileEntityFlux) target;
+				if (flux.playerUUID.getUUID().equals(player.getGameProfile().getId()) || !flux.getNetwork().isFakeNetwork() && flux.getNetwork().getPlayerAccess(player).canEdit()) {
+					FluxNetworks.cache.addViewer(player, ViewingType.CLIENT, flux.getNetwork().getNetworkID());
 					player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
 				} else {
-					FontHelper.sendMessage(plug.playerName.getObject() + " : " + "You don't have permission to access this network", world, player);
+					FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()) + " : " + "You don't have permission to access this network", world, player);
 				}
 			}
 		}
@@ -86,7 +88,7 @@ public abstract class FluxConnection extends ConnectedTile {
 		if (target != null && target instanceof TileEntityFlux) {
 			TileEntityFlux flux = (TileEntityFlux) target;
 			if (player != null && player instanceof EntityPlayer) {
-				flux.setPlayerName(player.getName());
+				flux.setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
 				flux.updateConnections();
 			}
 		}
