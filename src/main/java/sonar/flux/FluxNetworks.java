@@ -37,11 +37,11 @@ import sonar.flux.common.tileentity.TileEntityStorage;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.ServerNetworkCache;
 
-@Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version)
+@Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version, dependencies = "required-after:SonarCore")
 public class FluxNetworks {
 
 	public static final String modid = "FluxNetworks";
-	public static final String version = "1.0.2";
+	public static final String version = "1.0.3";
 
 	public static final int saveDimension = 0;
 

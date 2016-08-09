@@ -6,6 +6,9 @@ import java.util.UUID;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
+import mcmultipart.multipart.IMultipart;
+import mcmultipart.multipart.IMultipartContainer;
+import mcmultipart.multipart.PartSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
@@ -18,6 +21,8 @@ import sonar.core.SonarCore;
 import sonar.core.api.SonarAPI;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.SonarHelper;
+import sonar.core.integration.SonarLoader;
+import sonar.core.integration.multipart.SonarMultipartHelper;
 import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncTagType.INT;
 import sonar.core.network.sync.SyncTagType.LONG;
@@ -39,10 +44,10 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	// shared
 	public SyncTagType.INT priority = new SyncTagType.INT(0);
 	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(Long.valueOf(256000));
-	//public SyncTagType.STRING networkName = new SyncTagType.STRING(2);
-	//public SyncTagType.STRING networkOwner = new SyncTagType.STRING(3);
+	// public SyncTagType.STRING networkName = new SyncTagType.STRING(2);
+	// public SyncTagType.STRING networkOwner = new SyncTagType.STRING(3);
 	public SyncTagType.INT networkID = (INT) new SyncTagType.INT(4).setDefault(-1);
-	//public SyncTagType.STRING playerName = new SyncTagType.STRING(5);
+	// public SyncTagType.STRING playerName = new SyncTagType.STRING(5);
 	public SyncUUID playerUUID = new SyncUUID(5);
 	public SyncTagType.STRING customName = (STRING) new SyncTagType.STRING(6).setDefault("Flux Connection");
 	public SyncTagType.INT colour = new SyncTagType.INT(7);
@@ -93,7 +98,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		if (isServer()) {
 			if (checkTicks >= 20) {
 				updateConnections();
-				checkTicks=0;
+				checkTicks = 0;
 			} else {
 				checkTicks++;
 			}
@@ -108,27 +113,38 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	}
 
 	public void updateConnections() {
+		boolean changed = false;
 		for (EnumFacing face : EnumFacing.VALUES) {
 			BlockPos pos = this.pos.offset(face);
 			TileEntity tile = getWorld().getTileEntity(pos);
 			if (tile != null && !(tile instanceof IFlux)) {
 				if (tile instanceof IEnergyConnection) {
-					connections[face.getIndex()] = true;
+					if (!connections[face.getIndex()]) {
+						changed = true;
+						connections[face.getIndex()] = true;
+					}
 					continue;
 				}
 				if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) {
-					connections[face.getIndex()] = true;
+					if (!connections[face.getIndex()]) {
+						changed = true;
+						connections[face.getIndex()] = true;
+					}
 				}
 			} else {
-				connections[face.getIndex()] = false;
+				if (connections[face.getIndex()]) {
+					changed = true;
+					connections[face.getIndex()] = false;
+				}
 			}
 		}
-		SonarCore.sendPacketAround(this, 128, 0);
+		if (changed)
+			SonarCore.sendPacketAround(this, 128, 0);
 	}
 
 	public void onFirstTick() {
 		super.onFirstTick();
-		if (playerUUID != null && isServer() && networkID.getObject()!=-1) {			
+		if (playerUUID != null && isServer() && networkID.getObject() != -1) {
 			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				changeNetwork((IFluxNetwork) network, null);
@@ -139,7 +155,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public void invalidate() {
 		super.invalidate();
 		if (playerUUID != null && isServer()) {
-			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());			
+			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				((IFluxNetwork) network).removeFluxConnection(this);
 			}

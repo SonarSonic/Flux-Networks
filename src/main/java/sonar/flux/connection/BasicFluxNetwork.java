@@ -158,8 +158,10 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public void setAccessType(AccessType type) {
-		if (type != null)
+		if (type != null){
 			accessType.setObject(type);
+			FluxNetworks.cache.markNetworkDirty(getNetworkID());
+		}
 		return;
 	}
 

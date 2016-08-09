@@ -15,7 +15,7 @@ import sonar.flux.common.ContainerFlux;
 
 @Optional.InterfaceList({ 
 	@Optional.Interface(iface = "cofh.api.energy.IEnergyReceiver", modid = "CoFHAPI"), 
-	@Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "Tesla")  })
+	@Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla")  })
 public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyReceiver, ITeslaConsumer {
 
 	public TileEntityPlug() {

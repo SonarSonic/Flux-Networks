@@ -38,19 +38,19 @@ public abstract class GuiFlux extends GuiFluxBase {
 	public EntityPlayer player;
 	public IFluxCommon common = CommonNetworkCache.empty;
 
-	//INDEX
+	// INDEX
 	private SonarTextField fluxName;
 	private SonarTextField priority;
 	private SonarTextField limit;
 
-	//NETWORK_SELECT
+	// NETWORK_SELECT
 	private float currentScroll;
 	private boolean isScrolling;
 	private boolean wasClicking;
 	private int changed;
 	public int scrollerLeft, scrollerStart, scrollerEnd, scrollerWidth;
 
-	//NETWORK_CREATE
+	// NETWORK_CREATE
 	private SonarTextField name;
 	private SonarTextField r, g, b;
 	private int currentColour = 0;
@@ -60,7 +60,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 	public static int listSize = 10;
 	public boolean disabledState = false;
 
-	//PLAYERS
+	// PLAYERS
 	private PlayerAccess playerAccess = PlayerAccess.USER;
 	private FluxPlayer selectedPlayer = null;
 
@@ -114,7 +114,8 @@ public abstract class GuiFlux extends GuiFluxBase {
 			fluxName = new SonarTextField(1, this.fontRendererObj, 38, 28, 130, 12).setBoxOutlineColour(networkColour);
 			fluxName.setMaxStringLength(24);
 			fluxName.setText(tile.getCustomName());
-			//this.buttonList.add(new GuiButton(5, guiLeft + 5, guiTop + 140, 80, 20, "Configure"));
+			// this.buttonList.add(new GuiButton(5, guiLeft + 5, guiTop + 140,
+			// 80, 20, "Configure"));
 			break;
 
 		case NETWORK_SELECT:
@@ -154,8 +155,8 @@ public abstract class GuiFlux extends GuiFluxBase {
 			name = new SonarTextField(1, this.fontRendererObj, 14, 138, 130, 12).setBoxOutlineColour(networkColour);
 			name.setMaxStringLength(24);
 			name.setText("");
-			if(!common.isFakeNetwork() && common.getAccessType()==AccessType.PRIVATE){
-				disabledState=true;
+			if (!common.isFakeNetwork() && common.getAccessType() == AccessType.PRIVATE) {
+				disabledState = true;
 			}
 			break;
 		default:
@@ -368,7 +369,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 			if (common.isFakeNetwork()) {
 				renderNavigationPrompt("No players can be added", "Network Selection");
 				break;
-			}else if(disabledState){
+			} else if (disabledState) {
 				renderNavigationPrompt("Unavailable in Private Mode", "Edit Network");
 				break;
 			} else {
@@ -385,7 +386,8 @@ public abstract class GuiFlux extends GuiFluxBase {
 							drawRect(xPos, yPos, xPos + 154, yPos + 12, midBlue);
 
 							Minecraft.getMinecraft().getTextureManager().bindTexture(GuiState.NETWORK_SELECT.getBackground());
-							drawTexturedModalRect(xPos, yPos, 0, /* isSelected ? 178 : 166 */166, 154, 12);
+							drawTexturedModalRect(xPos, yPos, 0,
+									/* isSelected ? 178 : 166 */166, 154, 12);
 							FontHelper.text(players.get(i).getCachedName(), xPos + 3, yPos + 2, Color.white.getRGB());
 							mc.getTextureManager().bindTexture(buttons);
 							this.drawTexturedModalRect(xPos + 154 - 12, yPos, 112 / 2, 0, 10 + 1, 10 + 1);
@@ -399,9 +401,9 @@ public abstract class GuiFlux extends GuiFluxBase {
 				selectedPlayer = currentPlayer;
 				if (selectedPlayer != null) {
 					List<String> strings = new ArrayList();
-					if(x > guiLeft + 11 + 142 && x < guiLeft + 11 + 153){
-					strings.add(TextFormatting.RED + "Delete: " + selectedPlayer.getCachedName());
-					}else{						
+					if (x > guiLeft + 11 + 142 && x < guiLeft + 11 + 153) {
+						strings.add(TextFormatting.RED + "Delete: " + selectedPlayer.getCachedName());
+					} else {
 						strings.add(TextFormatting.AQUA + "Config: " + FontHelper.translate(selectedPlayer.access.getName()));
 						strings.add("Right click to change");
 					}
@@ -508,7 +510,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 				this.currentScroll = 0;
 				switchState(GuiState.NETWORK_SELECT);
 				if (!(tile instanceof IFluxController)) {
-					//this.changed = 1;
+					// this.changed = 1;
 				}
 				this.reset();
 				return;
@@ -538,11 +540,11 @@ public abstract class GuiFlux extends GuiFluxBase {
 				break;
 			case 6:
 				if (!name.getText().isEmpty()) {
-					if (state == GuiState.NETWORK_CREATE)
+					if (state == GuiState.NETWORK_CREATE) {
 						FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CREATE_NETWORK, tile.getPos(), name.getText(), new CustomColour(r.getIntegerFromText(), g.getIntegerFromText(), b.getIntegerFromText()), currentAccess));
-					else
+					} else {
 						FluxNetworks.network.sendToServer(new PacketFluxButton(Type.EDIT_NETWORK, tile.getPos(), getNetworkID(), name.getText(), new CustomColour(r.getIntegerFromText(), g.getIntegerFromText(), b.getIntegerFromText()), currentAccess));
-
+					}
 					changed = 0;
 					this.switchState(GuiState.NETWORK_SELECT);
 					resetCreateTab();
@@ -563,7 +565,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 		default:
 			break;
 		}
-		//this.reset();
+		// this.reset();
 	}
 
 	private void resetCreateTab() {
@@ -618,7 +620,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 			FluxPlayer player = selectedPlayer;
 			if (player != null && mouseX - guiLeft > 11 + 142 && mouseX - guiLeft < 11 + 153) {
 				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.REMOVE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access));
-			}else if(mouseButton==1){
+			} else if (mouseButton == 1) {
 				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CHANGE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access.incrementAccess()));
 
 			}

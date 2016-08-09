@@ -17,6 +17,7 @@ import sonar.flux.api.IFluxCommon;
 import sonar.flux.api.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
 import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.connection.FluxNetworkCommon;
 
 /** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
 public class CommonNetworkCache<C extends CommonNetworkCache, T extends IFluxCommon> {
@@ -91,7 +92,7 @@ public class CommonNetworkCache<C extends CommonNetworkCache, T extends IFluxCom
 		tags: for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound c = list.getCompoundTagAt(i);
 			BasicFluxNetwork net = new BasicFluxNetwork(c);
-			net.readData(c, SyncType.DEFAULT_SYNC);
+			net.readData(c, SyncType.SAVE);
 			UUID name = net.getOwnerUUID();
 			if (name != null) {
 				((ConcurrentMap<UUID, ArrayList<T>>) networks).putIfAbsent(name, new ArrayList());
@@ -113,7 +114,7 @@ public class CommonNetworkCache<C extends CommonNetworkCache, T extends IFluxCom
 		for (IFluxCommon network : networks) {
 			if (network.getNetworkID() != -1) {
 				NBTTagCompound netTag = new NBTTagCompound();
-				network.writeData(netTag, SyncType.DEFAULT_SYNC);
+				network.writeData(netTag, SyncType.SAVE);
 				list.appendTag(netTag);
 			}
 		}

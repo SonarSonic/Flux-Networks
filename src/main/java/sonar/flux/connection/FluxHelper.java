@@ -81,13 +81,6 @@ public class FluxHelper extends FluxWrapper {
 		return received;
 	}
 
-	/** returns amount used */
-	/*
-	 * public long pushEnergy(IFlux from, long maxTransferRF, ActionType actionType) { //long transferred = maxTransferRF; long used = 0; long max = maxTransferRF; if (from != null && maxTransferRF != 0) { BlockCoords coords = from.getCoords(); for (EnumFacing face : EnumFacing.VALUES) { BlockCoords translate = BlockCoords.translateCoords(coords, face); TileEntity tile = translate.getTileEntity(); if (tile != null && !(tile instanceof IFlux)) { //long maxReceive = SonarAPI.getEnergyHelper().receiveEnergy(tile, maxTransferRF-used, face, ActionType.SIMULATE); //if (maxReceive != 0) { //System.out.print(arg0); long before = maxTransferRF-used; //System.out.print(before); long transfer=before-SonarAPI.getEnergyHelper().receiveEnergy(tile, maxTransferRF-used, face, actionType); //System.out.print(transfer); used += transfer; //} } } } System.out.print(used);
-	 * 
-	 * return used; }
-	 */
-
 	/** gets all the TileEntities which can send/receive energy adjacent to the given IFlux */
 	public Map<TileEntity, EnumFacing> getConnections(IFlux flux) {
 		Map<TileEntity, EnumFacing> tiles = new HashMap();
