@@ -18,6 +18,7 @@ import sonar.flux.network.NetworkStatistics;
 
 public class EmptyFluxNetwork implements IFluxNetwork {
 
+	public final static IFluxNetwork INSTANCE = new EmptyFluxNetwork();
 	public static final NetworkStatistics stats = new NetworkStatistics();
 	public CustomColour colour = new CustomColour(41, 94, 138);
 
@@ -74,13 +75,13 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void setCustomColour(CustomColour colour) {		
+	public void setCustomColour(CustomColour colour) {
 	}
 
 	@Override
 	public void sendChanges() {
 	}
-	
+
 	@Override
 	public boolean setController(IFluxController controller) {
 		return false;
@@ -129,7 +130,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
 	@Override
 	public void setClientConnections(ArrayList<ClientFlux> flux) {
-		
+
 	}
 
 	@Override
@@ -148,7 +149,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
 	@Override
 	public void buildFluxConnections() {
-		
+
 	}
 
 	@Override
@@ -166,5 +167,9 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 		return PlayerAccess.BLOCKED;
 	}
 
+	@Override
+	public IFluxNetwork updateNetworkFrom(IFluxNetwork network) {
+		return this;
+	}
 
 }

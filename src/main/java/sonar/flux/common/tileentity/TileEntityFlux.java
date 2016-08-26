@@ -6,9 +6,6 @@ import java.util.UUID;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
-import mcmultipart.multipart.IMultipart;
-import mcmultipart.multipart.IMultipartContainer;
-import mcmultipart.multipart.PartSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
@@ -21,8 +18,6 @@ import sonar.core.SonarCore;
 import sonar.core.api.SonarAPI;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.SonarHelper;
-import sonar.core.integration.SonarLoader;
-import sonar.core.integration.multipart.SonarMultipartHelper;
 import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncTagType.INT;
 import sonar.core.network.sync.SyncTagType.LONG;
@@ -35,10 +30,10 @@ import sonar.flux.api.IFlux;
 import sonar.flux.api.IFluxCommon;
 import sonar.flux.api.IFluxController;
 import sonar.flux.api.IFluxNetwork;
-import sonar.flux.network.CommonNetworkCache;
-import sonar.flux.network.CommonNetworkCache.ViewingType;
+import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.network.FluxNetworkCache;
+import sonar.flux.network.FluxNetworkCache.ViewingType;
 import sonar.flux.network.PacketFluxError;
-import sonar.flux.network.ServerNetworkCache;
 
 public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, IEnergyHandler, IByteBufTile {
 	// shared
@@ -55,7 +50,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	private final ConnectionType type;
 
 	// server only
-	private IFluxNetwork network = ServerNetworkCache.empty;
+	private IFluxNetwork network = EmptyFluxNetwork.INSTANCE;
 	private int checkTicks = 0;
 
 	// client only
@@ -81,7 +76,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			if (player != null && !network.isFakeNetwork() && this instanceof IFluxController) {
 				if (network.hasController()) {
 					FluxNetworks.network.sendTo(new PacketFluxError(getPos(), FluxError.HAS_CONTROLLER), (EntityPlayerMP) player);
-					changeNetwork(CommonNetworkCache.empty, null);
+					changeNetwork(EmptyFluxNetwork.INSTANCE, null);
 					return;
 				}
 			}
@@ -145,7 +140,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public void onFirstTick() {
 		super.onFirstTick();
 		if (playerUUID != null && isServer() && networkID.getObject() != -1) {
-			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());
+			IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				changeNetwork((IFluxNetwork) network, null);
 			}
@@ -155,7 +150,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public void invalidate() {
 		super.invalidate();
 		if (playerUUID != null && isServer()) {
-			IFluxCommon network = FluxNetworks.cache.getNetwork(networkID.getObject());
+			IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				((IFluxNetwork) network).removeFluxConnection(this);
 			}
@@ -248,13 +243,13 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		case 4:
 			EntityPlayer player = SonarHelper.getPlayerFromUUID(playerUUID.getUUID());
 			if (player != null)
-				FluxNetworks.cache.addViewer(player, ViewingType.CONNECTIONS, networkID.getObject());
+				FluxNetworks.getServerCache().addViewer(player, ViewingType.CONNECTIONS, networkID.getObject());
 			break;
 		case 5:
 			player = SonarHelper.getPlayerFromUUID(playerUUID.getUUID());
 			if (player != null) {
-				FluxNetworks.cache.removeViewer(player);
-				FluxNetworks.cache.addViewer(player, ViewingType.CLIENT, networkID.getObject());
+				FluxNetworks.getServerCache().removeViewer(player);
+				FluxNetworks.getServerCache().addViewer(player, ViewingType.NETWORK, networkID.getObject());
 			}
 			break;
 		}

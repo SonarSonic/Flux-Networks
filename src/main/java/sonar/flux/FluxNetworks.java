@@ -21,8 +21,11 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.common.block.SonarBlockTip;
 import sonar.flux.api.FluxAPI;
+import sonar.flux.api.IFluxNetworkCache;
 import sonar.flux.common.block.FluxCable;
 import sonar.flux.common.block.FluxController;
 import sonar.flux.common.block.FluxPlug;
@@ -34,14 +37,15 @@ import sonar.flux.common.tileentity.TileEntityController;
 import sonar.flux.common.tileentity.TileEntityPlug;
 import sonar.flux.common.tileentity.TileEntityPoint;
 import sonar.flux.common.tileentity.TileEntityStorage;
+import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
-import sonar.flux.network.ServerNetworkCache;
+import sonar.flux.network.FluxNetworkCache;
 
 @Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version, dependencies = "required-after:SonarCore")
 public class FluxNetworks {
 
 	public static final String modid = "FluxNetworks";
-	public static final String version = "1.0.3";
+	public static final String version = "1.0.6";
 
 	public static final int saveDimension = 0;
 
@@ -50,13 +54,16 @@ public class FluxNetworks {
 
 	@Instance(modid)
 	public static FluxNetworks instance;
+
+	public FluxNetworkCache serverCache = new FluxNetworkCache();	
+	public ClientNetworkCache clientCache = new ClientNetworkCache();
+
 	public static SimpleNetworkWrapper network;
-	public static ServerNetworkCache cache = new ServerNetworkCache();
 	public static Logger logger = (Logger) LogManager.getLogger(modid);
-	
+
 	public static Item flux, fluxCore;
 	public static Block fluxBlock, fluxPlug, fluxPoint, fluxCable, fluxStorage, largeFluxStorage, massiveFluxStorage, fluxController;
-	
+
 	public static ArrayList<Item> registeredItems = new ArrayList();
 	public static ArrayList<Block> registeredBlocks = new ArrayList();
 	public static CreativeTabs tab = new CreativeTabs("Flux Networks") {
@@ -79,7 +86,7 @@ public class FluxNetworks {
 		registeredItems.add(item);
 		return item;
 	}
-	
+
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		logger.info("Initilising API");
@@ -91,19 +98,19 @@ public class FluxNetworks {
 
 		logger.info("Loading Blocks/Items");
 		fluxBlock = registerBlock("FluxBlock", new Block(Material.ROCK));
-		
-		flux = registerItem("Flux", new FluxItem());		
-		fluxCore = registerItem("FluxCore", new Item());	
-		
+
+		flux = registerItem("Flux", new FluxItem());
+		fluxCore = registerItem("FluxCore", new Item());
+
 		fluxCable = registerBlock("FluxCable", new FluxCable().setHardness(0.4F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");
-		
+
 		fluxPlug = registerBlock("FluxPlug", new FluxPlug().setHardness(0.4F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityPlug.class, "FluxPlug");
 
 		fluxPoint = registerBlock("FluxPoint", new FluxPoint().setHardness(0.2F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityPoint.class, "FluxPoint");
-		
+
 		fluxController = registerBlock("FluxController", new FluxController().setHardness(0.6F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityController.class, "FluxController");
 
@@ -114,24 +121,24 @@ public class FluxNetworks {
 		GameRegistry.registerTileEntity(TileEntityStorage.Advanced.class, "HerculeanFluxStorage");
 
 		massiveFluxStorage = registerBlock("GargantuanFluxStorage", new FluxStorage.Gargantuan().setHardness(0.6F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityStorage.Massive.class, "GargantuanFluxStorage");		
+		GameRegistry.registerTileEntity(TileEntityStorage.Massive.class, "GargantuanFluxStorage");
 
 		logger.info("Loaded Blocks/Items");
-		
+
 		logger.info("Loading Recipes");
 		FluxCrafting.addRecipes();
 		logger.info("Loaded Recipes");
-		
+
 		logger.info("Loading Packets");
 		proxy.registerPackets();
 		logger.info("Loaded Packets");
-		
+
 		logger.info("Loading Renderers");
 		proxy.registerRenderThings();
 		logger.info("Loaded Renderers");
 
 		logger.info("Finished Pre-Initialization");
-		
+
 	}
 
 	@EventHandler
@@ -143,20 +150,26 @@ public class FluxNetworks {
 		logger.info("Loading Handlers");
 		MinecraftForge.EVENT_BUS.register(new FluxEvents());
 		logger.info("Loaded Events");
-		
+
 		logger.info("Finished Initialization");
 	}
 
 	@EventHandler
-	public void postInit(FMLPostInitializationEvent event) {}
+	public void postInit(FMLPostInitializationEvent event) {
+	}
 
 	@EventHandler
 	public void onServerStopping(FMLServerStoppingEvent event) {
-		cache.removeAllViewers();
-		logger.info("Removed Viewers");
-
-		cache.clearNetworks();
+		serverCache.clearNetworks();
 		logger.info("Removed Networks");
-		
+
+	}
+
+	public static ClientNetworkCache getClientCache() {
+		return FluxNetworks.instance.clientCache;
+	}
+
+	public static FluxNetworkCache getServerCache() {
+		return FluxNetworks.instance.serverCache;
 	}
 }

@@ -5,8 +5,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.utils.IGuiItem;
 import sonar.core.utils.IGuiTile;
@@ -14,30 +16,32 @@ import sonar.flux.FluxNetworks;
 
 public class FluxCommon implements IGuiHandler {
 
-	public void registerRenderThings() {}
-	
+
+	public void registerRenderThings() {
+	}
+
 	public static void registerPackets() {
 		FluxNetworks.network.registerMessage(PacketFluxButton.Handler.class, PacketFluxButton.class, 0, Side.SERVER);
 		FluxNetworks.network.registerMessage(PacketFluxNetworkList.Handler.class, PacketFluxNetworkList.class, 1, Side.CLIENT);
 		FluxNetworks.network.registerMessage(PacketFluxConnectionsList.Handler.class, PacketFluxConnectionsList.class, 2, Side.CLIENT);
 		FluxNetworks.network.registerMessage(PacketFluxError.Handler.class, PacketFluxError.class, 3, Side.CLIENT);
 	}
-	
+
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		TileEntity entity = world.getTileEntity(new BlockPos(x, y, z));
 		if (entity != null) {
 
-			if(entity instanceof TileEntitySonar){
+			if (entity instanceof TileEntitySonar) {
 				((TileEntitySonar) entity).forceNextSync();
 			}
 			switch (ID) {
 			case IGuiTile.ID:
 				return ((IGuiTile) entity).getGuiContainer(player);
 			case 2:
-				//if ((entity instanceof IFlux)) {
-				//	return new ContainerFlux(player, entity, false);
-				//}
+				// if ((entity instanceof IFlux)) {
+				// return new ContainerFlux(player, entity, false);
+				// }
 				break;
 			}
 		} else {
@@ -74,6 +78,5 @@ public class FluxCommon implements IGuiHandler {
 
 		return null;
 	}
-
 
 }

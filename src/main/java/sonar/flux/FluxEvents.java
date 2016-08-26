@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import sonar.flux.api.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
+import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkData;
 
 public class FluxEvents {
@@ -28,11 +29,12 @@ public class FluxEvents {
 			return;
 		}
 		if (event.phase == Phase.START) {
-			ArrayList<IFluxNetwork> networks = FluxNetworks.cache.getAllNetworks();
+			FluxNetworkCache cache = FluxNetworks.getServerCache();
+			ArrayList<IFluxNetwork> networks = cache.getAllNetworks();
 			for (IFluxNetwork network : networks) {
 				network.updateNetwork();
 			}
-			FluxNetworks.cache.sendAllViewerPackets();
+			cache.sendAllViewerPackets();
 		}
 	}
 
@@ -54,7 +56,7 @@ public class FluxEvents {
 		if (event.getWorld().provider.getDimension() == FluxNetworks.saveDimension) {
 			MapStorage storage = event.getWorld().getPerWorldStorage();
 			NetworkData data = (NetworkData) storage.getOrLoadData(NetworkData.class, NetworkData.tag);
-			if (data == null && !FluxNetworks.cache.getAllNetworks().isEmpty()) {
+			if (data == null && !FluxNetworks.getServerCache().getAllNetworks().isEmpty()) {
 				storage.setData(NetworkData.tag, new NetworkData(NetworkData.tag));
 			}
 		}
@@ -65,7 +67,7 @@ public class FluxEvents {
 		if (event.player.getEntityWorld().isRemote) {
 			return;
 		}
-		FluxNetworks.cache.removeViewer(event.player);
+		FluxNetworks.getServerCache().removeViewer(event.player);
 	}
 
 	@SubscribeEvent

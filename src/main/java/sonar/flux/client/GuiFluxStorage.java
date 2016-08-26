@@ -36,7 +36,7 @@ public class GuiFluxStorage extends GuiFlux {
 		 */
 		if (state == GuiState.INDEX) {
 			renderEnergyBar(14, 90, entity.storage.getEnergyStored(), entity.storage.getMaxEnergyStored(), midBlue, FontHelper.getIntFromColor(41, 94, 220));
-			IFluxCommon common = FluxNetworks.cache.getNetwork(tile.networkID.getObject());
+			IFluxCommon common = FluxNetworks.getClientCache().getNetwork(tile.networkID.getObject());
 			int colour = common.getNetworkColour().getRGB();
 			renderEnergyBar(14, 130, common.getEnergyAvailable(), common.getMaxEnergyStored(), colour, colour);
 			FontHelper.text("Local Buffer: ", 14, 80, Color.DARK_GRAY.getRGB());

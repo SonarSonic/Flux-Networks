@@ -10,19 +10,6 @@ import net.minecraft.util.EnumFacing;
 import sonar.core.api.utils.ActionType;
 
 public class FluxWrapper {
-
-	/**on the server these will typically all be {@link IFluxNetwork}s, 
-	 * on the client these will typically all be {@link IFluxCommon}s*/
-	public ArrayList<? extends IFluxCommon> getAllNetworks() {
-		return new ArrayList();
-	}
-
-	/**on the server these will typically all be {@link IFluxNetwork}s, 
-	 * on the client these will typically all be {@link IFluxCommon}s,
-	 * admins may view all networks*/
-	public ArrayList<? extends IFluxCommon> getAvailableNetworks(EntityPlayer player, boolean admin) {
-		return new ArrayList();
-	}
 	
 	/**
 	 * @param from the Flux Connection to pull energy from

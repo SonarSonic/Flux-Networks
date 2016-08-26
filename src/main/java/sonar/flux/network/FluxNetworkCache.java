@@ -5,35 +5,85 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import sonar.core.helpers.NBTHelper;
+import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.IFluxCommon.AccessType;
+import sonar.flux.api.IFluxCommon;
 import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.IFluxNetworkCache;
+import sonar.flux.api.IFluxCommon.AccessType;
 import sonar.flux.connection.BasicFluxNetwork;
+import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.network.FluxNetworkCache.ViewingType;
 
-public class ServerNetworkCache extends CommonNetworkCache<ServerNetworkCache, IFluxNetwork> {
+/** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
+public class FluxNetworkCache implements IFluxNetworkCache {
 
 	public ArrayList<NetworkViewer> adminViewers = new ArrayList();
 	public ConcurrentHashMap<Integer, ArrayList<NetworkViewer>> singleViewers = new ConcurrentHashMap<Integer, ArrayList<NetworkViewer>>();
-	//the networks which need updating and the types of viewer to update.
 	public ConcurrentHashMap<Integer, ArrayList<ViewingType>> updatedViewers = new ConcurrentHashMap<Integer, ArrayList<ViewingType>>();
+	public ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> networks = new ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>>();
 
-	public static class NetworkViewer {
-		public boolean sentFirstPacket = false;
-		public final EntityPlayer player;
-		public final ViewingType type;
+	public enum ViewingType {
+		ADMIN, NETWORK, CONNECTIONS;
 
-		public NetworkViewer(EntityPlayer player, ViewingType type) {
-			this.player = player;
-			this.type = type;
+		public boolean forceSync() {
+			return this == NETWORK;
 		}
+	}
 
-		public void sentFirstPacket() {
-			this.sentFirstPacket = true;
+	public int uniqueID = 1;
+
+	public void clearNetworks() {
+		networks.clear();
+		singleViewers.clear();
+		adminViewers.clear();
+		updatedViewers.clear();
+	}
+
+	public int createNewUniqueID() {
+		int id = uniqueID++;
+		return id;
+	}
+
+	public ArrayList<IFluxNetwork> getAllNetworks() {
+		ArrayList<IFluxNetwork> available = new ArrayList();
+		for (Entry<UUID, ArrayList<IFluxNetwork>> entry : networks.entrySet()) {
+			available.addAll(entry.getValue());
 		}
+		return available;
+	}
+
+	public void addNetwork(IFluxNetwork common) {
+		if (common.getOwnerUUID() != null) {
+			networks.putIfAbsent(common.getOwnerUUID(), new ArrayList());
+			networks.get(common.getOwnerUUID()).add(common);
+		}
+	}
+
+	public void removeNetwork(IFluxNetwork common) {
+		if (common.getOwnerUUID() != null) {
+			networks.putIfAbsent(common.getOwnerUUID(), new ArrayList());
+			networks.get(common.getOwnerUUID()).remove(common);
+		}
+	}
+
+	public IFluxNetwork getNetwork(int iD) {
+		for (Entry<UUID, ArrayList<IFluxNetwork>> entry : networks.entrySet()) {
+			for (IFluxNetwork common : entry.getValue()) {
+				if (!common.isFakeNetwork() && iD == common.getNetworkID()) {
+					return common;
+				}
+			}
+		}
+		return EmptyFluxNetwork.INSTANCE;
 	}
 
 	public ArrayList<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
@@ -57,9 +107,10 @@ public class ServerNetworkCache extends CommonNetworkCache<ServerNetworkCache, I
 		IFluxNetwork network = new BasicFluxNetwork(iD, playerUUID, name, colour, access);
 		addNetwork(network);
 		FluxNetworks.logger.info("[NEW NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was created by " + network.getCachedPlayerName());
+
 		return network;
 	}
-	
+
 	public void deleteNetwork(UUID playerName, IFluxNetwork toDelete) {
 		if (networks.get(playerName) != null) {
 			removeNetwork(toDelete);
@@ -73,8 +124,7 @@ public class ServerNetworkCache extends CommonNetworkCache<ServerNetworkCache, I
 		case ADMIN:
 			adminViewers.add(viewer);
 			break;
-		case CLIENT:
-		case ONE_NET:
+		case NETWORK:
 		case CONNECTIONS:
 			singleViewers.putIfAbsent(networkID, new ArrayList());
 			singleViewers.get(networkID).add(viewer);
@@ -89,7 +139,7 @@ public class ServerNetworkCache extends CommonNetworkCache<ServerNetworkCache, I
 				adminViewers.remove(viewer);
 			}
 		}
-		for (Entry<Integer, ArrayList<NetworkViewer>> entry : singleViewers.entrySet()) {			
+		for (Entry<Integer, ArrayList<NetworkViewer>> entry : singleViewers.entrySet()) {
 			for (NetworkViewer viewer : (ArrayList<NetworkViewer>) entry.getValue().clone()) {
 				if (viewer.player.equals(player)) {
 					entry.getValue().remove(viewer);
@@ -101,7 +151,7 @@ public class ServerNetworkCache extends CommonNetworkCache<ServerNetworkCache, I
 	public void markNetworkDirty(int id) {
 		ArrayList<NetworkViewer> viewers = singleViewers.get(id);
 		if (viewers != null && !viewers.isEmpty()) {
-			viewers.forEach(viewer -> viewer.sentFirstPacket = false); 
+			viewers.forEach(viewer -> viewer.sentFirstPacket = false);
 		}
 	}
 
@@ -110,21 +160,19 @@ public class ServerNetworkCache extends CommonNetworkCache<ServerNetworkCache, I
 	}
 
 	public void sendAllViewerPackets() {
-		for (NetworkViewer viewer : (ArrayList<NetworkViewer>) adminViewers.clone()) {
-			sendViewerPackets(viewer, -1);
-		}
+		/* for (NetworkViewer viewer : (ArrayList<NetworkViewer>) adminViewers.clone()) { sendViewerPackets(viewer, -1); } */
 		for (Entry<Integer, ArrayList<NetworkViewer>> entry : singleViewers.entrySet()) {
-			entry.getValue().forEach(viewer -> sendViewerPackets(viewer, entry.getKey()));
+			((ArrayList<NetworkViewer>) entry.getValue().clone()).forEach(viewer -> sendViewerPackets(viewer, entry.getKey()));
 		}
+
 	}
 
 	public void sendViewerPackets(NetworkViewer viewer, int id) {
-		if (viewer.player != null && !viewer.player.getEntityWorld().isRemote) {
+		if (viewer.player != null) {
 			if (viewer.type.forceSync() || !viewer.sentFirstPacket || updatedViewers.contains(id)) {
 				viewer.sentFirstPacket();
 				switch (viewer.type) {
-				case CLIENT:
-				case ONE_NET:
+				case NETWORK:
 					ArrayList<IFluxNetwork> toSend = getAllowedNetworks(viewer.player, true);
 					FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend), (EntityPlayerMP) viewer.player);
 					break;
@@ -136,14 +184,8 @@ public class ServerNetworkCache extends CommonNetworkCache<ServerNetworkCache, I
 				default:
 					break;
 				}
-				updatedViewers.remove(viewer);
+				updatedViewers.remove(id);
 			}
 		}
 	}
-
-	public void removeAllViewers() {
-		singleViewers.clear();
-		adminViewers.clear();
-	}
-
 }

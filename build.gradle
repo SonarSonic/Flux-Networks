@@ -7,49 +7,47 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+/*
+// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
+plugins {
+    id "net.minecraftforge.gradle.forge" version "2.0.2"
+}
+*/
 version = "${minecraft_version}-${mod_version}"
 group= "sonar.flux"
-archivesBaseName = "Flux-Networks"
+archivesBaseName = "FluxNetworks"
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 minecraft {
-version = "${forge_version}"
-runDir = "run"
-mappings = "snapshot_20160518"
-}
-repositories {
-    mavenCentral()
-    maven {
-	name = "buildcraft"
-	url = "http://mod-buildcraft.com"
-    }
-    ivy {
-        name "BuildCraft"
-        artifactPattern "http://www.mod-buildcraft.com/releases/BuildCraft/[revision]/[module]-[revision]-[classifier].[ext]"
-    }
+    version = "1.9.4-12.17.0.1968"
+    runDir = "run"
+    mappings = "snapshot_20160518"
+    makeObfSourceJar = false
 }
 
-dependencies {}
+dependencies {
+
+}
 
 processResources
 {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
+
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
+        include 'mcmod.info'                
+
         expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-        
+    }        
+
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 }
-

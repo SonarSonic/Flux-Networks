@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -16,6 +15,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.SonarCore;
 import sonar.core.client.gui.SonarTextField;
+import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
@@ -29,14 +29,14 @@ import sonar.flux.api.INetworkStatistics;
 import sonar.flux.api.PlayerAccess;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.connection.BasicFluxNetwork;
-import sonar.flux.network.CommonNetworkCache;
+import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
 
 public abstract class GuiFlux extends GuiFluxBase {
 
 	public EntityPlayer player;
-	public IFluxCommon common = CommonNetworkCache.empty;
+	public IFluxCommon common = EmptyFluxNetwork.INSTANCE;
 
 	// INDEX
 	private SonarTextField fluxName;
@@ -44,11 +44,10 @@ public abstract class GuiFlux extends GuiFluxBase {
 	private SonarTextField limit;
 
 	// NETWORK_SELECT
-	private float currentScroll;
-	private boolean isScrolling;
-	private boolean wasClicking;
 	private int changed;
-	public int scrollerLeft, scrollerStart, scrollerEnd, scrollerWidth;
+
+	public SonarScroller scroller;
+	/* private float currentScroll; private boolean isScrolling; private boolean wasClicking; public int scrollerLeft, scrollerStart, scrollerEnd, scrollerWidth; */
 
 	// NETWORK_CREATE
 	private SonarTextField name;
@@ -77,7 +76,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 
 	@Override
 	public void initGui() {
-		common = FluxNetworks.cache.getNetwork(getNetworkID());
+		common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
 		selectedPlayer = null;
 		Keyboard.enableRepeatEvents(true);
 		this.xSize = state.x;
@@ -85,10 +84,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 		this.mc.thePlayer.openContainer = this.inventorySlots;
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
-		scrollerLeft = this.guiLeft + 165;
-		scrollerStart = this.guiTop + 8;
-		scrollerEnd = scrollerStart + 123;
-		scrollerWidth = 10;
+		scroller = new SonarScroller(this.guiLeft + 165, this.guiTop + 8, 123, 10);
 		disabledState = false;
 
 		this.buttonList.add(new NavigationButtons(GuiState.INDEX, -6, guiLeft + 2, guiTop - 15, 0, "network.nav.home"));
@@ -222,7 +218,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 		if (networks.isEmpty()) {
 			return -1;
 		}
-		int start = (int) (networks.size() * this.currentScroll);
+		int start = (int) (networks.size() * scroller.getCurrentScroll());
 		int finish = Math.min(start + listSize, networks.size());
 		for (int i = start; i < finish; i++) {
 			if (networks.get(i) != null && isSelectedNetwork(networks.get(i))) {
@@ -244,7 +240,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 				field.drawTextBox();
 			}
 		}
-		common = FluxNetworks.cache.getNetwork(getNetworkID());
+		common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
 		int networkColour = common.getNetworkColour().getRGB();
 
 		switch (state) {
@@ -262,7 +258,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 				renderNavigationPrompt("No available networks", "Create a New Network");
 				break;
 			}
-			int start = (int) (networks.size() * this.currentScroll);
+			int start = (int) (networks.size() * scroller.getCurrentScroll());
 			int finish = Math.min(start + listSize, networks.size());
 			for (int i = start; i < finish; i++) {
 				if (networks.get(i) != null) {
@@ -271,7 +267,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 					renderNetwork(networks.get(i), isSelectedNetwork(networks.get(i)), xPos, yPos);
 				}
 			}
-			Minecraft.getMinecraft().getTextureManager().bindTexture(state.getBackground());
+			Minecraft.getMinecraft().getTextureManager().bindTexture(getBackground());
 			break;
 		case NETWORK_CREATE:
 		case NETWORK_EDIT:
@@ -317,7 +313,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 				break;
 			}
 			ArrayList<ClientFlux> connections = common.getClientFluxConnection();
-			start = (int) (connections.size() * this.currentScroll);
+			start = (int) (connections.size() * scroller.getCurrentScroll());
 			finish = Math.min(start + listSize, connections.size());
 			ClientFlux selected = null;
 			for (int i = start; i < finish; i++) {
@@ -333,7 +329,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 					}
 				}
 			}
-			Minecraft.getMinecraft().getTextureManager().bindTexture(state.getBackground());
+			Minecraft.getMinecraft().getTextureManager().bindTexture(getBackground());
 			if (selected != null) {
 				ArrayList<String> strings = new ArrayList<String>();
 				strings.add(FontHelper.translate("flux.type") + ": " + TextFormatting.AQUA + selected.getConnectionType().toString());
@@ -376,19 +372,19 @@ public abstract class GuiFlux extends GuiFluxBase {
 				ArrayList<FluxPlayer> players = common.getPlayers();
 				FluxPlayer currentPlayer = null;
 				if (!players.isEmpty()) {
-					start = (int) (players.size() * this.currentScroll);
+					start = (int) (players.size() * scroller.getCurrentScroll());
 					finish = Math.min(start + listSize, players.size());
 					for (int i = start; i < finish; i++) {
+						FluxPlayer player = players.get(i);
 						if (players.get(i) != null) {
 							int xPos = 11;
 							int yPos = 8 + (12 * i) - (12 * start);
-
-							drawRect(xPos, yPos, xPos + 154, yPos + 12, midBlue);
-
-							Minecraft.getMinecraft().getTextureManager().bindTexture(GuiState.NETWORK_SELECT.getBackground());
-							drawTexturedModalRect(xPos, yPos, 0,
-									/* isSelected ? 178 : 166 */166, 154, 12);
-							FontHelper.text(players.get(i).getCachedName(), xPos + 3, yPos + 2, Color.white.getRGB());
+							PlayerAccess access = player.getAccess();
+							boolean isOwner = common.getCachedPlayerName().equals(player.getCachedName());
+							drawRect(xPos, yPos, xPos + 154, yPos + 12, (access.canDelete() || isOwner)? Color.lightGray.getRGB() : access.canEdit()?colours[7].getRGB(): !access.canConnect() ?  colours[4].getRGB() : this.lightBlue);
+							Minecraft.getMinecraft().getTextureManager().bindTexture(getBackgroundFromState(GuiState.NETWORK_SELECT));
+							drawTexturedModalRect(xPos, yPos, 0, 166, 154, 12);
+							FontHelper.text(player.getCachedName(), xPos + 3, yPos + 2, Color.white.getRGB());
 							mc.getTextureManager().bindTexture(buttons);
 							this.drawTexturedModalRect(xPos + 154 - 12, yPos, 112 / 2, 0, 10 + 1, 10 + 1);
 
@@ -400,16 +396,17 @@ public abstract class GuiFlux extends GuiFluxBase {
 				}
 				selectedPlayer = currentPlayer;
 				if (selectedPlayer != null) {
+					boolean isOwner = common.getCachedPlayerName().equals(selectedPlayer.getCachedName());
 					List<String> strings = new ArrayList();
 					if (x > guiLeft + 11 + 142 && x < guiLeft + 11 + 153) {
 						strings.add(TextFormatting.RED + "Delete: " + selectedPlayer.getCachedName());
 					} else {
-						strings.add(TextFormatting.AQUA + "Config: " + FontHelper.translate(selectedPlayer.access.getName()));
+						strings.add(TextFormatting.AQUA + "Config: " + FontHelper.translate(isOwner ? PlayerAccess.OWNER.getName() : selectedPlayer.access.getName()));
 						strings.add("Right click to change");
 					}
 					this.drawHoveringText(strings, x - guiLeft, y - guiTop);
 				}
-				Minecraft.getMinecraft().getTextureManager().bindTexture(state.getBackground());
+				Minecraft.getMinecraft().getTextureManager().bindTexture(getBackgroundFromState(state));
 			}
 			break;
 
@@ -422,57 +419,20 @@ public abstract class GuiFlux extends GuiFluxBase {
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 		if (state.hasScrollBar()) {
-			float lastScroll = currentScroll;
-			int i = Mouse.getEventDWheel();
-
-			if (i != 0 && this.needsScrollBars()) {
-				int j = getSelectionSize() + 1;
-				if (i > 0) {
-					i = 1;
-				}
-				if (i < 0) {
-					i = -1;
-				}
-				this.currentScroll = (float) ((double) this.currentScroll - (double) i / (double) j);
-				if (this.currentScroll < 0.0F) {
-					this.currentScroll = 0.0F;
-				}
-				if (this.currentScroll > 1.0F) {
-					this.currentScroll = 1.0F;
-				}
-			}
+			scroller.handleMouse(this.needsScrollBars(), getSelectionSize());
 		}
 	}
 
 	public void drawScreen(int x, int y, float var) {
 		super.drawScreen(x, y, var);
 		if (state.hasScrollBar()) {
-			float lastScroll = currentScroll;
-			boolean flag = Mouse.isButtonDown(0);
-
-			if (!this.wasClicking && flag && x >= scrollerLeft && y >= scrollerStart && x < scrollerLeft + scrollerWidth && y < scrollerEnd) {
-				this.isScrolling = this.needsScrollBars();
-			}
-			if (!flag) {
-				this.isScrolling = false;
-			}
-			this.wasClicking = flag;
-
-			if (this.isScrolling) {
-				this.currentScroll = ((float) (y - scrollerStart) - 7.5F) / ((float) (scrollerEnd - scrollerStart) - 15.0F);
-				if (this.currentScroll < 0.0F) {
-					this.currentScroll = 0.0F;
-				}
-				if (this.currentScroll > 1.0F) {
-					this.currentScroll = 1.0F;
-				}
-			}
+			scroller.drawScreen(x, y, needsScrollBars());
 			if (state == GuiState.NETWORK_SELECT) {
 				for (GuiButton button : this.buttonList) {
 					if (button instanceof NetworkButton) {
 						if (button.isMouseOver()) {
 							List<? extends IFluxCommon> networks = getNetworks();
-							int start = (int) (networks.size() * this.currentScroll);
+							int start = (int) (networks.size() * scroller.getCurrentScroll());
 							int id = button.id - 10 + start;
 							if (id < networks.size()) {
 								IFluxCommon network = networks.get(id);
@@ -507,7 +467,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 		switch (state) {
 		case INDEX:
 			if (button.id == 0) {
-				this.currentScroll = 0;
+				scroller.currentScroll = 0;
 				switchState(GuiState.NETWORK_SELECT);
 				if (!(tile instanceof IFluxController)) {
 					// this.changed = 1;
@@ -524,7 +484,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 		case NETWORK_SELECT:
 			if (button.id >= 10) {
 				if (this.getNetworks() != null) {
-					int start = (int) (this.getNetworks().size() * this.currentScroll);
+					int start = (int) (this.getNetworks().size() * scroller.getCurrentScroll());
 					int network = start + button.id - 10;
 					if (network < this.getNetworks().size()) {
 						setNetwork(this.getNetworks().get(network));
@@ -587,7 +547,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 		switch (state) {
 		case INDEX:
 			if (mouseX - guiLeft > 5 && mouseX - guiLeft < 165 && mouseY - guiTop > 10 && mouseY - guiTop < 20) {
-				this.currentScroll = 0;
+				scroller.currentScroll = 0;
 				switchState(GuiState.NETWORK_SELECT);
 				return;
 			}
@@ -677,7 +637,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
 		super.drawGuiContainerBackgroundLayer(var1, var2, var3);
 		if (state.hasScrollBar()) {
-			drawTexturedModalRect(scrollerLeft, scrollerStart + (int) ((float) (scrollerEnd - scrollerStart - 17) * this.currentScroll), 176, 0, 10, 15);
+			drawTexturedModalRect(scroller.left, scroller.start + (int) ((float) (scroller.end - scroller.start - 17) * scroller.getCurrentScroll()), 176, 0, 10, 15);
 		}
 	}
 

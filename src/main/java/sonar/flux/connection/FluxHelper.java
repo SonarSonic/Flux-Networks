@@ -19,14 +19,6 @@ import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class FluxHelper extends FluxWrapper {
 
-	public ArrayList<? extends IFluxCommon> getAllNetworks() {
-		return FluxNetworks.cache.getAllNetworks();
-	}
-
-	public ArrayList<? extends IFluxCommon> getAvailableNetworks(EntityPlayer player, boolean admin) {
-		return FluxNetworks.cache.getAllowedNetworks(player, admin);
-	}
-
 	public long pullEnergy(IFlux from, long maxTransferRF, ActionType actionType) {
 		long extracted = 0;
 		maxTransferRF = Math.min(maxTransferRF, from.getTransferLimit());

@@ -36,28 +36,20 @@ import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
 
-	// settings
-	//private final ArrayList<String> players = new ArrayList();
-
 	// connections
 	private IFluxController controller = null;
 	private final ArrayList<IFlux> plugs = new ArrayList();
 	private final ArrayList<IFlux> points = new ArrayList();
 
-	//private final ArrayList<ClientFlux> plugs = new ArrayList();
-	//private final ArrayList<ClientFlux> points = new ArrayList();
-
 	// statistics
 	private long maxTransfer = 0, lastTransfer;
 
-	public BasicFluxNetwork(NBTTagCompound tag) {
-		super(tag);
-		//addPlayerAccess(ownerName.getObject(), PlayerAccess.OWNER);
+	public BasicFluxNetwork() {
+		super();
 	}
 
 	public BasicFluxNetwork(int ID, UUID owner, String name, CustomColour colour, AccessType type) {
 		super(ID, owner, name, colour, type);
-		//addPlayerAccess(ownerName.getObject(), PlayerAccess.OWNER);
 	}
 
 	public void updateNetwork() {
@@ -108,13 +100,13 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 					long toTransfer = mode == TransferMode.EVEN ? Math.min((long) Math.ceil(((double) limit / (double) points.size())), 1) : limit;
 					currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM), ActionType.PERFORM);
 				}
-				networkStats.latestRecords.transfer += limit - currentLimit;
+				networkStats.getObject().latestRecords.transfer += limit - currentLimit;
 
 			}
 			current--;
 		}
 
-		networkStats.inputStatistics(stats, plugs.size(), points.size());
+		networkStats.getObject().inputStatistics(stats, plugs.size(), points.size());
 	}
 
 	private void sortFluxNetwork(ArrayList<IFlux> flux, PriorityMode mode) {
@@ -158,16 +150,16 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public void setAccessType(AccessType type) {
-		if (type != null){
+		if (type != null) {
 			accessType.setObject(type);
-			FluxNetworks.cache.markNetworkDirty(getNetworkID());
+			FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
 		}
 		return;
 	}
 
 	@Override
 	public void setCustomColour(CustomColour colour) {
-		this.colour = colour;
+		this.colour.setObject(colour);
 	}
 
 	public boolean setController(IFluxController tile) {
@@ -185,7 +177,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 				}
 			}
 		}
-		FluxNetworks.cache.markNetworkDirty(getNetworkID());
+		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
 	}
 
 	@Override
@@ -270,7 +262,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			}
 		}
 		if (type == ActionType.PERFORM)
-			networkStats.latestRecords.transfer += used;
+			networkStats.getObject().latestRecords.transfer += used;
 
 		return used;
 	}
@@ -286,7 +278,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			used += FluxAPI.getFluxHelper().pullEnergy(flux, toTransfer, type);
 		}
 		if (type == ActionType.PERFORM)
-			networkStats.latestRecords.transfer += used;
+			networkStats.getObject().latestRecords.transfer += used;
 
 		return used;
 	}
@@ -309,7 +301,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			if (!plugs.contains(flux))
 				plugs.add(flux);
 		}
-		FluxNetworks.cache.markNetworkDirty(getNetworkID());
+		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
 	}
 
 	@Override
@@ -323,7 +315,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		if (points.contains(flux))
 			points.remove(flux);
 
-		FluxNetworks.cache.markNetworkDirty(getNetworkID());
+		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
 	}
 
 	@Override
@@ -353,6 +345,15 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		return PlayerAccess.BLOCKED;
 
+	}
+
+	@Override
+	public IFluxNetwork updateNetworkFrom(IFluxNetwork network) {
+		this.setAccessType(network.getAccessType());
+		this.setCustomColour(network.getNetworkColour());
+		this.setNetworkName(network.getNetworkName());
+		this.players=network.getPlayers();
+		return this;
 	}
 
 }

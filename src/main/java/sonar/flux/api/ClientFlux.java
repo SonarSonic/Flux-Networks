@@ -2,7 +2,7 @@ package sonar.flux.api;
 
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
-import sonar.flux.network.ServerNetworkCache;
+import sonar.flux.connection.EmptyFluxNetwork;
 
 public class ClientFlux implements IFlux {
 
@@ -40,7 +40,7 @@ public class ClientFlux implements IFlux {
 
 	@Override
 	public IFluxNetwork getNetwork() {
-		return ServerNetworkCache.empty;
+		return EmptyFluxNetwork.INSTANCE;
 	}
 
 	@Override

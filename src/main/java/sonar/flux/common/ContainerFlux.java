@@ -1,11 +1,12 @@
 package sonar.flux.common;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.inventory.ContainerSync;
 import sonar.flux.FluxNetworks;
 import sonar.flux.client.GuiState;
 import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.network.CommonNetworkCache.ViewingType;
+import sonar.flux.network.FluxNetworkCache.ViewingType;
 
 public class ContainerFlux extends ContainerSync {
 
@@ -16,26 +17,9 @@ public class ContainerFlux extends ContainerSync {
 	}
 
 	public void switchState(EntityPlayer player, TileEntityFlux entity, GuiState state) {
-		FluxNetworks.cache.removeViewer(player);
-		switch (state) {
-		case INDEX:
-			FluxNetworks.cache.addViewer(player, ViewingType.ADMIN, -1);
-			break;
-		case NETWORK_STATS:
-			FluxNetworks.cache.addViewer(player, ViewingType.ONE_NET, entity.getNetwork().getNetworkID());
-			break;
-		case NETWORK_SELECT:
-			FluxNetworks.cache.addViewer(player, ViewingType.CLIENT, entity.getNetwork().getNetworkID());
-			break;
-		case NETWORK_CREATE:
-			break;
-		case NETWORK_EDIT:
-			break;
-		case CONNECTIONS:
-			FluxNetworks.cache.addViewer(player, ViewingType.CONNECTIONS, entity.getNetwork().getNetworkID());
-			break;
-		default:
-			break;
+		if (entity.isServer()) {
+			FluxNetworks.getServerCache().removeViewer(player);
+			FluxNetworks.getServerCache().addViewer(player, state.getViewingType(), entity.getNetwork().getNetworkID());
 		}
 		this.state = state;
 	}
@@ -48,6 +32,6 @@ public class ContainerFlux extends ContainerSync {
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
 		if (!player.getEntityWorld().isRemote)
-			FluxNetworks.cache.removeViewer(player);
+			FluxNetworks.getServerCache().removeViewer(player);
 	}
 }

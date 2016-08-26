@@ -21,7 +21,7 @@ public class FluxPlayer implements INBTSyncable {
 
 	public FluxPlayer(NBTTagCompound tag) {
 		readData(tag, SyncType.SAVE);
-		if(FMLCommonHandler.instance().getEffectiveSide().isServer()){
+		if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
 			this.cachedName = SonarHelper.getProfileByUUID(id).getName();
 		}
 	}
@@ -37,8 +37,8 @@ public class FluxPlayer implements INBTSyncable {
 	public PlayerAccess getAccess() {
 		return access;
 	}
-	
-	public void setAccess(PlayerAccess access){
+
+	public void setAccess(PlayerAccess access) {
 		this.access = access;
 	}
 
@@ -53,7 +53,7 @@ public class FluxPlayer implements INBTSyncable {
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
 		nbt.setUniqueId("playerUUID", id);
 		nbt.setString("cachedName", cachedName);
-		nbt.setByte("playerAccess", (byte)access.ordinal());
+		nbt.setByte("playerAccess", (byte) access.ordinal());
 		return nbt;
 	}
 

@@ -42,6 +42,12 @@ public abstract class GuiFluxBase extends GuiSonar {
 	public static GuiState state = GuiState.INDEX;
 
 	public TileEntityFlux tile;
+
+	public ResourceLocation getBackgroundFromState(GuiState state) {
+		if (state == GuiState.NETWORK_SELECT || state == GuiState.CONNECTIONS || state == GuiState.PLAYERS)
+			return GuiFlux.select;
+		return GuiFlux.bground;
+	}
 	
 	public GuiFluxBase(Container container, TileEntityFlux tile) {
 		super(container, tile);
@@ -73,7 +79,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 		}
 
 		drawRect(x, y, x + 154, y + 12, colour);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(GuiState.NETWORK_SELECT.getBackground());
+		Minecraft.getMinecraft().getTextureManager().bindTexture(getBackgroundFromState(GuiState.NETWORK_SELECT));
 		drawTexturedModalRect(x, y, 0, /* isSelected ? 178 : 166 */166, 154, 12);
 		FontHelper.text(network.getCustomName(), x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 	}
@@ -82,7 +88,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 		int rgb = network.getNetworkColour().getRGB();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		drawRect(x, y, x + 154, y + 12, rgb);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(GuiState.NETWORK_SELECT.getBackground());
+		Minecraft.getMinecraft().getTextureManager().bindTexture(getBackgroundFromState(GuiState.NETWORK_SELECT));
 		drawTexturedModalRect(x, y, 0, /* isSelected ? 178 : 166 */166, 154, 12);
 		FontHelper.text(network.getNetworkName(), x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 	}
@@ -150,7 +156,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 	
 	///NETWORKS
 	public List<? extends IFluxCommon> getNetworks() {
-		return FluxNetworks.cache.getAllNetworks();
+		return FluxNetworks.getClientCache().getAllNetworks();
 	}
 	
 	public void setNetwork(IFluxCommon network) {
@@ -166,7 +172,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 	}
 
 	public ResourceLocation getBackground() {
-		return state.getBackground();
+		return getBackgroundFromState(state);
 	}
 
 	///CUSTOM BUTTONS

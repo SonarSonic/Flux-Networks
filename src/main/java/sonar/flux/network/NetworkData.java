@@ -5,7 +5,6 @@ import java.util.UUID;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.CustomColour;
@@ -24,7 +23,7 @@ public class NetworkData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-		FluxNetworks.cache.uniqueID = nbt.getInteger("uniqueID");
+		FluxNetworks.getServerCache().uniqueID = nbt.getInteger("uniqueID");
 		if (nbt.hasKey("networks")) {
 			NBTTagList list = nbt.getTagList("networks", 10);
 			for (int i = 0; i < list.tagCount(); i++) {
@@ -46,7 +45,7 @@ public class NetworkData extends WorldSavedData {
 				BasicFluxNetwork loaded = new BasicFluxNetwork(tag.getInteger("id"), id, tag.getString("name"), colour, AccessType.valueOf(tag.getString("access")));
 				loaded.cachedOwnerName.setObject(SonarHelper.getProfileByUUID(loaded.getOwnerUUID()).getName());
 				loaded.getPlayers().readData(tag.getCompoundTag("playerList"), SyncType.SAVE);
-				FluxNetworks.cache.addNetwork(loaded);
+				FluxNetworks.getServerCache().addNetwork(loaded);
 				FluxNetworks.logger.info("[LOADED NETWORK] '" + loaded.getNetworkName() + "' with ID '" + loaded.getNetworkID());
 			}
 		}
@@ -54,10 +53,10 @@ public class NetworkData extends WorldSavedData {
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-		nbt.setInteger("uniqueID", FluxNetworks.cache.uniqueID);
+		nbt.setInteger("uniqueID", FluxNetworks.getServerCache().uniqueID);
 		NBTTagList list = new NBTTagList();
-		for (IFluxNetwork network : FluxNetworks.cache.getAllNetworks()) {
-			if (network != null) {
+		for (IFluxNetwork network : FluxNetworks.getServerCache().getAllNetworks()) {
+			if (network != null) {				
 				NBTTagCompound tag = new NBTTagCompound();		
 				tag.setInteger("id", network.getNetworkID());
 				tag.setUniqueId("ownerUUID", network.getOwnerUUID());
@@ -77,6 +76,6 @@ public class NetworkData extends WorldSavedData {
 	}
 
 	public boolean isDirty() {
-		return !FluxNetworks.cache.getAllNetworks().isEmpty();
+		return !FluxNetworks.getServerCache().getAllNetworks().isEmpty();
 	}
 }

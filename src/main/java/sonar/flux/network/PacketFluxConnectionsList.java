@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 import sonar.core.SonarCore;
 import sonar.core.api.utils.BlockCoords;
 import sonar.flux.FluxNetworks;
@@ -61,15 +63,18 @@ public class PacketFluxConnectionsList implements IMessage {
 		}
 		tag.setTag("connects", list);
 		ByteBufUtils.writeTag(buf, tag);
+
 	}
 
 	public static class Handler implements IMessageHandler<PacketFluxConnectionsList, IMessage> {
 		@Override
 		public IMessage onMessage(PacketFluxConnectionsList message, MessageContext ctx) {
-			String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
-			IFluxCommon common = FluxNetworks.cache.getNetwork(message.networkID);
-			if(!common.isFakeNetwork()){
-				common.setClientConnections(message.connections);
+			if (ctx.side == Side.CLIENT) {
+				String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
+				IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
+				if (!common.isFakeNetwork()) {
+					common.setClientConnections(message.connections);
+				}
 			}
 			return null;
 		}

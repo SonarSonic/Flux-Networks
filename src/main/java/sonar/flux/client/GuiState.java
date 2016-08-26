@@ -1,7 +1,6 @@
 package sonar.flux.client;
 
-import net.minecraft.util.ResourceLocation;
-
+import sonar.flux.network.FluxNetworkCache.ViewingType;
 
 public enum GuiState {
 	INDEX(176, 166), NETWORK_SELECT(176, 166), NETWORK_STATS(176, 166), NETWORK_CREATE(176, 166), NETWORK_EDIT(176, 166), CONNECTIONS(176, 166), PLAYERS(176, 166);
@@ -12,13 +11,14 @@ public enum GuiState {
 		this.y = y;
 	}
 
-	public ResourceLocation getBackground() {
-		if (this == NETWORK_SELECT || this == CONNECTIONS || this == PLAYERS)
-			return GuiFlux.select;
-		return GuiFlux.bground;
-	}
-
 	public boolean hasScrollBar() {
 		return (this == NETWORK_SELECT || this == CONNECTIONS || this == PLAYERS);
+	}
+	
+	public ViewingType getViewingType(){
+		if(this==CONNECTIONS){
+			return ViewingType.CONNECTIONS;
+		}		
+		return ViewingType.NETWORK;		
 	}
 }

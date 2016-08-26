@@ -12,7 +12,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
@@ -22,7 +21,7 @@ import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxNetworks;
 import sonar.flux.common.tileentity.TileEntityController;
 import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.network.CommonNetworkCache.ViewingType;
+import sonar.flux.network.FluxNetworkCache.ViewingType;
 
 public class FluxController extends SonarMachineBlock {
 
@@ -76,7 +75,7 @@ public class FluxController extends SonarMachineBlock {
 			if (target != null && target instanceof TileEntityFlux) {
 				TileEntityFlux flux = (TileEntityFlux) target;
 				if (flux.playerUUID.getUUID().equals(player.getGameProfile().getId()) || !flux.getNetwork().isFakeNetwork() && flux.getNetwork().getPlayerAccess(player).canEdit()) {
-					FluxNetworks.cache.addViewer(player, ViewingType.CLIENT, flux.getNetwork().getNetworkID());
+					FluxNetworks.getServerCache().addViewer(player, ViewingType.NETWORK, flux.getNetwork().getNetworkID());
 					player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
 				} else {
 					FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()) + " : " + "You don't have permission to access this network", world, player);

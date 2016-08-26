@@ -54,4 +54,6 @@ public interface IFluxNetwork extends IFluxCommon{
 	public void removeFluxConnection(IFlux flux);
 
 	public void buildFluxConnections();
+	
+	public IFluxNetwork updateNetworkFrom(IFluxNetwork network);
 }
