@@ -24,6 +24,7 @@ import sonar.core.network.sync.SyncTagType.LONG;
 import sonar.core.network.sync.SyncTagType.STRING;
 import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.utils.IByteBufTile;
+import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.IFlux;
@@ -38,8 +39,8 @@ import sonar.flux.network.PacketFluxError;
 public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, IEnergyHandler, IByteBufTile {
 	// shared
 	public SyncTagType.INT priority = new SyncTagType.INT(0);
-	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(Long.valueOf(256000));
-	// public SyncTagType.STRING networkName = new SyncTagType.STRING(2);
+	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(FluxConfig.defaultLimit);
+	public SyncTagType.BOOLEAN disableLimit = new SyncTagType.BOOLEAN(2);
 	// public SyncTagType.STRING networkOwner = new SyncTagType.STRING(3);
 	public SyncTagType.INT networkID = (INT) new SyncTagType.INT(4).setDefault(-1);
 	// public SyncTagType.STRING playerName = new SyncTagType.STRING(5);
@@ -59,7 +60,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public TileEntityFlux(ConnectionType type) {
 		super();
 		this.type = type;
-		syncParts.addAll(Arrays.asList(priority, limit, networkID, playerUUID, customName, colour));
+		syncParts.addAll(Arrays.asList(priority, limit, disableLimit, networkID, playerUUID, customName, colour));
 	}
 
 	public void setPlayerUUID(UUID name) {
@@ -169,7 +170,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	@Override
 	public long getTransferLimit() {
-		return limit.getObject();
+		return disableLimit.getObject() ? Long.MAX_VALUE :limit.getObject();
 	}
 
 	@Override
@@ -205,6 +206,9 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	@Override
 	public void writePacket(ByteBuf buf, int id) {
 		switch (id) {
+		case -1:
+			disableLimit.writeToBuf(buf);
+			break;
 		case 0:
 			for (int i = 0; i < 6; i++) {
 				buf.writeBoolean(connections[i]);
@@ -225,6 +229,9 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	@Override
 	public void readPacket(ByteBuf buf, int id) {
 		switch (id) {
+		case -1:
+			disableLimit.readFromBuf(buf);
+			break;
 		case 0:
 			for (int i = 0; i < 6; i++) {
 				connections[i] = buf.readBoolean();

@@ -35,12 +35,12 @@ public class GuiFluxStorage extends GuiFlux {
 		 * if (entity.networkName.getObject().equals("NETWORK") || entity.networkName.getObject().isEmpty()) { FontHelper.text(TextFormatting.UNDERLINE + FontHelper.translate("network.notConnected"), 26, 9, midBlue); } else { FontHelper.text(TextFormatting.UNDERLINE + entity.networkName.getObject() + ": " + getNetworkType(AccessType.PRIVATE), 26, 9, midBlue); } }
 		 */
 		if (state == GuiState.INDEX) {
-			renderEnergyBar(14, 90, entity.storage.getEnergyStored(), entity.storage.getMaxEnergyStored(), midBlue, FontHelper.getIntFromColor(41, 94, 220));
+			renderEnergyBar(14, 90+4, entity.storage.getEnergyStored(), entity.storage.getMaxEnergyStored(), midBlue, FontHelper.getIntFromColor(41, 94, 220));
 			IFluxCommon common = FluxNetworks.getClientCache().getNetwork(tile.networkID.getObject());
 			int colour = common.getNetworkColour().getRGB();
-			renderEnergyBar(14, 130, common.getEnergyAvailable(), common.getMaxEnergyStored(), colour, colour);
-			FontHelper.text("Local Buffer: ", 14, 80, Color.DARK_GRAY.getRGB());
-			FontHelper.text("Network Buffer: " + (common.getEnergyAvailable() != 0 ? +(entity.storage.getEnergyStored() * 100 / common.getEnergyAvailable()) + " %" : ""), 14, 120, colour);
+			renderEnergyBar(14, 130+4, common.getEnergyAvailable(), common.getMaxEnergyStored(), colour, colour);
+			FontHelper.text("Local Buffer: ", 14, 80+4, Color.DARK_GRAY.getRGB());
+			FontHelper.text("Network Buffer: " + (common.getEnergyAvailable() != 0 ? +(entity.storage.getEnergyStored() * 100 / common.getEnergyAvailable()) + " %" : ""), 14, 120+4, colour);
 			//FontHelper.text(, 14, 110, Color.DARK_GRAY.getRGB());
 		}
 

@@ -8,6 +8,7 @@ import sonar.core.SonarCore;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.SyncEnergyStorage;
 import sonar.core.utils.IGuiTile;
+import sonar.flux.FluxConfig;
 import sonar.flux.client.GuiFluxStorage;
 import sonar.flux.common.ContainerFlux;
 
@@ -18,21 +19,21 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 
 	public static class Basic extends TileEntityStorage {
 		public Basic() {
-			super(128000, 6400);
+			super(FluxConfig.basicCapacity, FluxConfig.basicTransfer);
 			customName.setDefault("Basic Storage");
 		}
 	}
 
 	public static class Advanced extends TileEntityStorage {
 		public Advanced() {
-			super(12800000, 12800);
+			super(FluxConfig.herculeanCapacity, FluxConfig.herculeanTransfer);
 			customName.setDefault("Herculean Storage");
 		}
 	}
 
 	public static class Massive extends TileEntityStorage {
 		public Massive() {
-			super(128000000, 256000);
+			super(FluxConfig.gargantuanCapacity, FluxConfig.gargantuanTransfer);
 			customName.setDefault("Gargantuan Storage");
 		}
 	}
@@ -82,11 +83,6 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 	@Override
 	public int getMaxEnergyStored(EnumFacing from) {
 		return storage.getMaxEnergyStored();
-	}
-
-	@Override
-	public void onFirstTick() {
-		super.onFirstTick();
 	}
 
 	public void readData(NBTTagCompound nbt, SyncType type) {

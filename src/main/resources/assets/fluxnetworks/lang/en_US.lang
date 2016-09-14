@@ -56,6 +56,7 @@ network.owner=Owner
 network.players=Allowed Players
 flux.type=Flux Type
 flux.coords=Flux Coords
+flux.ignorelimit=Ignore Limit
 point.priority=Priority
 point.max=Max
 plug.sending=Sending

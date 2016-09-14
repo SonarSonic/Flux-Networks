@@ -45,7 +45,7 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "FluxNetworks";
-	public static final String version = "1.0.6";
+	public static final String version = "1.0.7";
 
 	public static final int saveDimension = 0;
 
@@ -91,7 +91,10 @@ public class FluxNetworks {
 	public void preInit(FMLPreInitializationEvent event) {
 		logger.info("Initilising API");
 		FluxAPI.init();
-		logger.info("Initilised API");
+		logger.info("Initilised API");		
+
+		logger.info("Loaded Config");
+		FluxConfig.loadMainConfig();
 
 		logger.info("Loading Network");
 		network = NetworkRegistry.INSTANCE.newSimpleChannel("Flux-Networks");
@@ -102,8 +105,8 @@ public class FluxNetworks {
 		flux = registerItem("Flux", new FluxItem());
 		fluxCore = registerItem("FluxCore", new Item());
 
-		fluxCable = registerBlock("FluxCable", new FluxCable().setHardness(0.4F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");
+		//fluxCable = registerBlock("FluxCable", new FluxCable().setHardness(0.4F).setResistance(20.0F));
+		//GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");
 
 		fluxPlug = registerBlock("FluxPlug", new FluxPlug().setHardness(0.4F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityPlug.class, "FluxPlug");

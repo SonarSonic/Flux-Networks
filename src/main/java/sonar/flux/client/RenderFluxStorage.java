@@ -17,10 +17,11 @@ public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStora
 	public void renderTileEntityAt(TileEntityStorage te, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (te.storage.getEnergyStored() != 0 && te.storage.getMaxEnergyStored() != 0) {
 			GL11.glPushMatrix();
-			GlStateManager.pushAttrib();
-			GL11.glTranslated(x, y, z);
-			GL11.glDisable(GL11.GL_LIGHTING);
-			GL11.glEnable(GL11.GL_BLEND);
+			RenderHelper.saveBlendState();
+			GlStateManager.translate(x, y, z);
+			GlStateManager.disableTexture2D();
+			GlStateManager.enableLighting();
+			GlStateManager.enableBlend();
 			OpenGlHelper.glBlendFunc(770, 1, 1, 0);
 			float full =(1 - 0.0625F*3);
 			float bottom = 0 + (0.0625F * 2);
@@ -64,8 +65,8 @@ public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStora
 			RenderHelper.drawRect(0 + (0.0625F), 1 - 0.0625F, 1 - (0.0625F), 0 + (0.0625F), colour);
 			GL11.glPopMatrix();
 
-			GL11.glEnable(GL11.GL_LIGHTING);
-			GlStateManager.popAttrib();
+			GlStateManager.enableTexture2D();
+			RenderHelper.restoreBlendState();
 			GL11.glPopMatrix();
 		}
 	}

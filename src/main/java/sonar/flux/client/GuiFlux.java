@@ -245,11 +245,11 @@ public abstract class GuiFlux extends GuiFluxBase {
 
 		switch (state) {
 		case INDEX:
-			FontHelper.text(FontHelper.translate("network.name") + ": ", 8, 30, networkColour);
-			FontHelper.text(FontHelper.translate("point.priority") + ":", 6, 48, networkColour);
-			FontHelper.text(FontHelper.translate("point.max") + ":", 84, 48, networkColour);
+			FontHelper.text(FontHelper.translate("network.name") + ": ", 7, 30, networkColour);
+			FontHelper.text(FontHelper.translate("point.priority") + ":", 7, 48, networkColour);
+			FontHelper.text(FontHelper.translate("point.max") + ":", 87, 48, networkColour);
+			FontHelper.text(FontHelper.translate("flux.ignorelimit") + ": " + TextFormatting.WHITE + tile.disableLimit.getObject().toString(), 7, 48+18, networkColour);
 			FontHelper.text(FontHelper.translate(tile.getBlockType().getLocalizedName()), 20, 8, 0);
-
 			renderNetwork(common, true, 11, 8);
 			break;
 		case NETWORK_SELECT:
@@ -536,17 +536,21 @@ public abstract class GuiFlux extends GuiFluxBase {
 	}
 
 	@Override
-	public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
+	public void mouseClicked(int x, int y, int mouseButton) throws IOException {
+		super.mouseClicked(x, y, mouseButton);
 		if (this.disabledState) {
 			return;
 		}
 		for (SonarTextField field : getFields()) {
-			field.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
+			field.mouseClicked(x - guiLeft, y - guiTop, mouseButton);
 		}
 		switch (state) {
 		case INDEX:
-			if (mouseX - guiLeft > 5 && mouseX - guiLeft < 165 && mouseY - guiTop > 10 && mouseY - guiTop < 20) {
+			if (x - guiLeft > 5 && x - guiLeft < 165 && y - guiTop > 66 && y - guiTop < 80) {
+				tile.disableLimit.invert();
+				SonarCore.sendPacketToServer(tile, -1);
+			}
+			else if (x - guiLeft > 5 && x - guiLeft < 165 && y - guiTop > 10 && y - guiTop < 20) {
 				scroller.currentScroll = 0;
 				switchState(GuiState.NETWORK_SELECT);
 				return;
@@ -557,7 +561,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 			if (mouseButton == 1) {
 				name.setText("");
 			}
-			if (mouseX - guiLeft > 55 && mouseX - guiLeft < 165 && mouseY - guiTop > 63 + 32 && mouseY - guiTop < 68 + 32 + 4) {
+			if (x - guiLeft > 55 && x - guiLeft < 165 && y - guiTop > 63 + 32 && y - guiTop < 68 + 32 + 4) {
 				currentColour++;
 				if (currentColour >= colours.length) {
 					currentColour = 0;
@@ -567,10 +571,10 @@ public abstract class GuiFlux extends GuiFluxBase {
 				g.setText("" + colour.green);
 				b.setText("" + colour.blue);
 			}
-			if (mouseX - guiLeft > 5 && mouseX - guiLeft < 165 && mouseY - guiTop > 38 && mouseY - guiTop < 52) {
+			if (x - guiLeft > 5 && x - guiLeft < 165 && y - guiTop > 38 && y - guiTop < 52) {
 				currentAccess = AccessType.values()[currentAccess.ordinal() + 1 < AccessType.values().length ? currentAccess.ordinal() + 1 : 0];
 			}
-			if (mouseX - guiLeft > 11 && mouseX - guiLeft < 165 && mouseY - guiTop > 108 && mouseY - guiTop < 134) {
+			if (x - guiLeft > 11 && x - guiLeft < 165 && y - guiTop > 108 && y - guiTop < 134) {
 				this.showFullPreview = !showFullPreview;
 			}
 			break;
@@ -578,7 +582,7 @@ public abstract class GuiFlux extends GuiFluxBase {
 			break;
 		case PLAYERS:
 			FluxPlayer player = selectedPlayer;
-			if (player != null && mouseX - guiLeft > 11 + 142 && mouseX - guiLeft < 11 + 153) {
+			if (player != null && x - guiLeft > 11 + 142 && x - guiLeft < 11 + 153) {
 				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.REMOVE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access));
 			} else if (mouseButton == 1) {
 				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CHANGE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access.incrementAccess()));
