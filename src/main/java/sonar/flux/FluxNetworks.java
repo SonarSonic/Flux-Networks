@@ -41,11 +41,11 @@ import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
 
-@Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version, dependencies = "required-after:SonarCore")
+@Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version, dependencies = "required-after:sonarcore")
 public class FluxNetworks {
 
-	public static final String modid = "FluxNetworks";
-	public static final String version = "1.0.7";
+	public static final String modid = "fluxnetworks";
+	public static final String version = "1.0.8";
 
 	public static final int saveDimension = 0;
 
@@ -93,7 +93,7 @@ public class FluxNetworks {
 		FluxAPI.init();
 		logger.info("Initilised API");		
 
-		logger.info("Loaded Config");
+		logger.info("Loading Config");
 		FluxConfig.loadMainConfig();
 
 		logger.info("Loading Network");

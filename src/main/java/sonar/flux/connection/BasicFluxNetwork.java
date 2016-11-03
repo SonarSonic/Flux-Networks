@@ -3,6 +3,7 @@ package sonar.flux.connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -324,8 +325,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public void buildFluxConnections() {
 		ArrayList<ClientFlux> clientConnections = new ArrayList();
-		points.forEach(point -> clientConnections.add(new ClientFlux(point)));
-		plugs.forEach(plug -> {
+		Iterator<IFlux> iterator = points.iterator();
+		iterator.forEachRemaining(point -> clientConnections.add(new ClientFlux(point)));
+		plugs.iterator().forEachRemaining(plug -> {
 			if (plug.getConnectionType() != ConnectionType.STORAGE) { // storage is added to both
 				clientConnections.add(new ClientFlux(plug));
 			}

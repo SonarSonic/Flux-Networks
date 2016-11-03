@@ -2,6 +2,7 @@ package sonar.flux.common.tileentity;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
@@ -9,7 +10,7 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.SyncEnergyStorage;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxConfig;
-import sonar.flux.client.GuiFluxStorage;
+import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
 public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
@@ -62,7 +63,7 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 
 	@Override
 	public Object getGuiScreen(EntityPlayer player) {
-		return new GuiFluxStorage(player, this);
+		return new GuiFlux((Container) getGuiContainer(player), this, player);
 	}
 
 	@Override

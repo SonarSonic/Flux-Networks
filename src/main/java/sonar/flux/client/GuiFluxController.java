@@ -19,22 +19,7 @@ public class GuiFluxController extends GuiFlux {
 		super(new ContainerFlux(player, entity, false), entity, player);
 		this.entity = entity;
 	}
-
-	@Override
-	public void drawGuiContainerForegroundLayer(int x, int y) {
-		super.drawGuiContainerForegroundLayer(x, y);
-		if (state == GuiState.INDEX) {
-
-			int colour = common.getNetworkColour().getRGB();
-			FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.sendMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(entity.getSendMode().getName()), 8, 66 + 18, colour);
-			FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.receiveMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(entity.getReceiveMode().getName()), 8, 86 + 18, colour);
-			FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.transferMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(entity.getTransferMode().getName()) + (entity.getTransferMode().isBanned() ? TextFormatting.RED + " BANNED" : ""), 8, 106 + 18, colour);
-			FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.transmitterMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(entity.getTransmitterMode().getName()), 8, 126 + 18, colour);
-
-			/* FontHelper.text(FontHelper.translate("network.sendMode") + ": " + TextFormatting.AQUA + FontHelper.translate(entity.getSendMode().getName()), 8, 66, 0); FontHelper.text(FontHelper.translate("network.receiveMode") + ": " + TextFormatting.AQUA + FontHelper.translate(entity.getReceiveMode().getName()), 8, 86, 0); FontHelper.text(FontHelper.translate("network.transferMode") + ": " + TextFormatting.AQUA + FontHelper.translate(entity.getTransferMode().getName()), 8, 106, 0); FontHelper.text(FontHelper.translate("network.transmitterMode") + ": " + TextFormatting.AQUA + FontHelper.translate(entity.getTransmitterMode().getName()), 8, 126, 0); */
-		}
-	}
-
+	
 	@Override
 	public void mouseClicked(int x, int y, int mouseButton) throws IOException {
 		super.mouseClicked(x, y, mouseButton);

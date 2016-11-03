@@ -17,7 +17,7 @@ public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStora
 	public void renderTileEntityAt(TileEntityStorage te, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (te.storage.getEnergyStored() != 0 && te.storage.getMaxEnergyStored() != 0) {
 			GL11.glPushMatrix();
-			RenderHelper.saveBlendState();
+			RenderHelper.saveBlendState();			
 			GlStateManager.translate(x, y, z);
 			GlStateManager.disableTexture2D();
 			GlStateManager.enableLighting();
@@ -64,7 +64,7 @@ public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStora
 			GL11.glTranslated(0, 0, -i);
 			RenderHelper.drawRect(0 + (0.0625F), 1 - 0.0625F, 1 - (0.0625F), 0 + (0.0625F), colour);
 			GL11.glPopMatrix();
-
+			
 			GlStateManager.enableTexture2D();
 			RenderHelper.restoreBlendState();
 			GL11.glPopMatrix();

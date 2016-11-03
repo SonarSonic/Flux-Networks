@@ -5,13 +5,14 @@ import mekanism.api.energy.ICableOutputter;
 import net.darkhax.tesla.api.ITeslaProducer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.SonarLoader;
 import sonar.core.utils.IGuiTile;
-import sonar.flux.client.GuiFluxPoint;
+import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
 @Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"), @Optional.Interface(iface = "mekanism.api.energy.ICableOutputter", modid = "Mekanism") })
@@ -29,7 +30,7 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 
 	@Override
 	public Object getGuiScreen(EntityPlayer player) {
-		return new GuiFluxPoint(player, this);
+		return new GuiFlux((Container) getGuiContainer(player), this, player);
 	}
 
 	@Override

@@ -1,24 +1,28 @@
-package sonar.flux.common.tileentity;
-
+package sonar.flux.common.multiparts;
+/*
 import cofh.api.energy.IEnergyReceiver;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.SonarLoader;
 import sonar.core.utils.IGuiTile;
-import sonar.flux.client.GuiFlux;
+import sonar.flux.FluxNetworks;
+import sonar.flux.client.GuiFluxPlug;
 import sonar.flux.common.ContainerFlux;
 
-@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla") })
-public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyReceiver, ITeslaConsumer {
+@Optional.InterfaceList({ 
+	@Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla")  })
+public class FluxPlugMultipart extends FluxConnectionMultipart implements IGuiTile, IEnergyReceiver, ITeslaConsumer {
 
-	public TileEntityPlug() {
-		super(ConnectionType.PLUG);
+	public FluxPlugMultipart() {}
+	
+	public FluxPlugMultipart(EntityPlayer player) {
+		super(player, ConnectionType.PLUG);
 		customName.setDefault("Flux Plug");
 	}
 
@@ -29,7 +33,7 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 
 	@Override
 	public Object getGuiScreen(EntityPlayer player) {
-		return new GuiFlux((Container) getGuiContainer(player), this, player);
+		return new GuiFluxPlug(player, this);
 	}
 
 	@Override
@@ -51,7 +55,7 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (SonarLoader.teslaLoaded) {
 			if (capability == TeslaCapabilities.CAPABILITY_CONSUMER) {
-				// in this situation this is just easier.
+				//in this situation this is just easier.
 				return (T) this;
 			}
 		}
@@ -62,4 +66,11 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 	public long givePower(long power, boolean simulated) {
 		return this.receiveEnergy(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
 	}
+
+	@Override
+	public ItemStack getItemStack() {
+		return new ItemStack(FluxNetworks.fluxPlug);
+	}
+
 }
+*/
