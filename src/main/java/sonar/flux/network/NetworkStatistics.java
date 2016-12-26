@@ -2,6 +2,7 @@ package sonar.flux.network;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.nbt.INBTSyncable;
@@ -10,7 +11,9 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.ISyncPart;
 import sonar.core.network.sync.SyncTagType;
 import sonar.flux.api.EnergyStats;
+import sonar.flux.api.IFlux;
 import sonar.flux.api.INetworkStatistics;
+import sonar.flux.api.IFlux.ConnectionType;
 
 public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 
@@ -19,6 +22,7 @@ public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 
 	public SyncTagType.INT pointCount = new SyncTagType.INT(0);
 	public SyncTagType.INT plugCount = new SyncTagType.INT(1);
+	public SyncTagType.INT storageCount = new SyncTagType.INT(2);
 	public EnergyStats previousRecords = new EnergyStats(0, 0, 0);
 	public EnergyStats latestRecords = new EnergyStats(0, 0, 0);
 
@@ -28,12 +32,13 @@ public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 
 	public ArrayList<ISyncPart> parts = new ArrayList<ISyncPart>();
 	{
-		parts.addAll(Arrays.asList(pointCount, plugCount));
+		parts.addAll(Arrays.asList(pointCount, plugCount, storageCount));
 	}
 	
-	public void inputStatistics(EnergyStats stats, int plugs, int points) {
-		plugCount.setObject(plugs);
-		pointCount.setObject(points);
+	public void inputStatistics(EnergyStats stats, HashMap<ConnectionType, ArrayList<IFlux>> connections) {
+		plugCount.setObject(connections.getOrDefault(ConnectionType.PLUG, new ArrayList()).size());
+		pointCount.setObject(connections.getOrDefault(ConnectionType.POINT, new ArrayList()).size());
+		storageCount.setObject(connections.getOrDefault(ConnectionType.STORAGE, new ArrayList()).size());
 		if (previousRecords != null && (ticks >= updateEvery || records.isEmpty())) {
 			ticks = 0;
 			records.add(new EnergyStats(previousRecords.transfer, previousRecords.maxSent, previousRecords.maxReceived));
@@ -59,17 +64,6 @@ public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 		previousRecords.writeData(nbt, type);
 		return nbt;
 	}
-
-	@Override
-	public int getPlugCount() {
-		return plugCount.getObject();
-	}
-
-	@Override
-	public int getPointCount() {
-		return pointCount.getObject();
-	}
-
 	@Override
 	public EnergyStats getLatestStats() {
 		return previousRecords;
@@ -78,6 +72,21 @@ public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 	@Override
 	public ArrayList<EnergyStats> getRecordedStats() {
 		return records;
+	}
+
+	@Override
+	public int getConnectionCount(ConnectionType type) {
+		switch(type){
+		case PLUG:
+			return plugCount.getObject();
+		case POINT:
+			return pointCount.getObject();
+		case STORAGE:
+			return storageCount.getObject();
+		default:
+			break;		
+		}
+		return 0;
 	}
 
 }

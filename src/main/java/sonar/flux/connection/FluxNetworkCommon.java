@@ -15,9 +15,11 @@ import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncUUID;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
+import sonar.flux.api.FluxPlayer;
 import sonar.flux.api.FluxPlayersList;
 import sonar.flux.api.IFluxCommon;
 import sonar.flux.api.INetworkStatistics;
+import sonar.flux.api.PlayerAccess;
 import sonar.flux.network.NetworkStatistics;
 
 public abstract class FluxNetworkCommon implements IFluxCommon {
@@ -40,15 +42,17 @@ public abstract class FluxNetworkCommon implements IFluxCommon {
 
 	}
 
-	public FluxNetworkCommon() {}
+	public FluxNetworkCommon() {
+	}
 
-	public FluxNetworkCommon(int ID, UUID owner, String name, CustomColour colour, AccessType type) {
+	public FluxNetworkCommon(int ID, UUID owner, String name, CustomColour networkColour, AccessType type) {
 		ownerUUID.setObject(owner);
 		networkID.setObject(ID);
 		cachedOwnerName.setObject(SonarHelper.getProfileByUUID(owner).getName());
 		networkName.setObject(name);
-		this.colour.setObject(colour);
+		colour.setObject(networkColour);
 		accessType.setObject(type);
+		players.add(new FluxPlayer(owner, PlayerAccess.OWNER));
 	}
 
 	@Override

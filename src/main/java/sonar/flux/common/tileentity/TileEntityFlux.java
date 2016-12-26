@@ -87,6 +87,12 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		}
 	}
 
+	public void disconnectFromNetwork() {
+		network.removeFluxConnection(this);
+		networkID.setObject(-1);
+		network = EmptyFluxNetwork.INSTANCE;
+	}
+
 	public void update() {
 		super.update();
 		if (isServer()) {
@@ -134,7 +140,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	public void onFirstTick() {
 		super.onFirstTick();
-		if (playerUUID != null && isServer() && networkID.getObject() != -1) {
+		if (isServer() && networkID.getObject() != -1) {
 			IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				changeNetwork((IFluxNetwork) network, null);
@@ -144,8 +150,8 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	public void invalidate() {
 		super.invalidate();
-		if (playerUUID != null && isServer()) {
-			IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
+		if (isServer() && networkID.getObject() != -1) {
+			network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				((IFluxNetwork) network).removeFluxConnection(this);
 			}

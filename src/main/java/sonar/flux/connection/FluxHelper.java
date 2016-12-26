@@ -24,6 +24,9 @@ public class FluxHelper extends FluxWrapper {
 		maxTransferRF = Math.min(maxTransferRF, from.getTransferLimit());
 		if (from != null && maxTransferRF != 0) {
 			BlockCoords coords = from.getCoords();
+			if (coords == null) {
+				return extracted;
+			}
 			switch (from.getConnectionType()) {
 			case PLUG:
 				for (EnumFacing face : EnumFacing.VALUES) {
@@ -35,7 +38,9 @@ public class FluxHelper extends FluxWrapper {
 				}
 				break;
 			case STORAGE:
-				extracted += ((TileEntityStorage) coords.getTileEntity()).storage.extractEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
+				TileEntity tile = coords.getTileEntity();
+				if (tile != null)
+					extracted += ((TileEntityStorage) tile).storage.extractEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
 				break;
 			default:
 				break;

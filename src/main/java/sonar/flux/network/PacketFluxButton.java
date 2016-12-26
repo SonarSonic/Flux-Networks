@@ -9,8 +9,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -33,11 +36,12 @@ public class PacketFluxButton extends PacketCoords {
 
 	public Type type;
 	public Object[] objects;
+	public int dimension;
 
 	public enum Type {
 
 		/** when something on the list is clicked, requires the network ID to set and the owners name, if no such network is found a new network will be created */
-		SET_NETWORK(0) {
+		SET_NETWORK(0, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int networkID = (Integer) objs[0];
@@ -56,7 +60,7 @@ public class PacketFluxButton extends PacketCoords {
 			}
 		},
 		/** creates a new network if the id is not already taken, requires the new name **/
-		CREATE_NETWORK(1) {
+		CREATE_NETWORK(1, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				String newName = (String) objs[0];
@@ -70,7 +74,7 @@ public class PacketFluxButton extends PacketCoords {
 			}
 		},
 		/** requires the network ID and the new name */
-		EDIT_NETWORK(2) {
+		EDIT_NETWORK(2, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int networkID = (Integer) objs[0];
@@ -91,7 +95,7 @@ public class PacketFluxButton extends PacketCoords {
 			}
 		},
 		/** requires the network ID to delete */
-		DELETE_NETWORK(3) {
+		DELETE_NETWORK(3, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int networkID = (Integer) objs[0];
@@ -108,7 +112,7 @@ public class PacketFluxButton extends PacketCoords {
 			}
 		},
 		/** requires the priority to set */
-		SET_PRIORITY(4) {
+		SET_PRIORITY(4, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int priority = (Integer) objs[0];
@@ -116,7 +120,7 @@ public class PacketFluxButton extends PacketCoords {
 			}
 		},
 		/** requires the limit to set (should be a long) */
-		SET_LIMIT(5) {
+		SET_LIMIT(5, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				long priority = (Integer) objs[0];
@@ -124,7 +128,7 @@ public class PacketFluxButton extends PacketCoords {
 			}
 		},
 		/** requires the limit to set (should be a long) */
-		CAN_CREATE(6) {
+		CAN_CREATE(6, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				ArrayList<IFluxNetwork> common = FluxNetworks.getServerCache().getAllNetworks();
@@ -137,7 +141,7 @@ public class PacketFluxButton extends PacketCoords {
 				}
 			}
 		},
-		ADD_PLAYER(7) {
+		ADD_PLAYER(7, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int networkID = (Integer) objs[0];
@@ -161,7 +165,7 @@ public class PacketFluxButton extends PacketCoords {
 
 			}
 		},
-		REMOVE_PLAYER(8) {
+		REMOVE_PLAYER(8, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int networkID = (Integer) objs[0];
@@ -179,7 +183,7 @@ public class PacketFluxButton extends PacketCoords {
 				}
 			}
 		},
-		CHANGE_PLAYER(9) {
+		CHANGE_PLAYER(9, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int networkID = (Integer) objs[0];
@@ -194,7 +198,7 @@ public class PacketFluxButton extends PacketCoords {
 								network.addPlayerAccess(newPlayer, access);
 								network.sendChanges();
 							} else {
-								//FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.NOT_OWNER), (EntityPlayerMP) player);
+								// FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.NOT_OWNER), (EntityPlayerMP) player);
 							}
 						} else {
 							FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.EDIT_NETWORK), (EntityPlayerMP) player);
@@ -205,7 +209,18 @@ public class PacketFluxButton extends PacketCoords {
 				}
 			}
 		},
-		STATE_CHANGE(-1) {
+		REMOVE_CONNECTION(10, true) {
+			@Override
+			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
+				IFluxNetwork network = flux.getNetwork();
+				if ((Integer) objs[0] == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && flux.playerUUID.getUUID().equals(player.getGameProfile().getId())) {
+					flux.disconnectFromNetwork();
+					network.sendChanges();
+				}
+			}
+
+		},
+		STATE_CHANGE(-1, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				GuiState state = (GuiState) objs[0];
@@ -215,10 +230,14 @@ public class PacketFluxButton extends PacketCoords {
 				}
 			}
 		};
+		/** the type's identificaton number */
 		public int id;
+		/** if this affects the Flux Connection used to send the command (e.g. editing another connection is not local) */
+		public boolean local;
 
-		Type(int id) {
+		Type(int id, boolean local) {
 			this.id = id;
+			this.local = local;
 		}
 
 		public static Type getTypeFromID(int id) {
@@ -234,6 +253,9 @@ public class PacketFluxButton extends PacketCoords {
 			Object[] objs = null;
 			switch (this) {
 			case SET_NETWORK:
+			case REMOVE_CONNECTION:
+			case DELETE_NETWORK:
+			case SET_PRIORITY:
 				objs = new Object[1];
 				objs[0] = buf.readInt();
 				break;
@@ -249,14 +271,6 @@ public class PacketFluxButton extends PacketCoords {
 				objs[1] = ByteBufUtils.readUTF8String(buf);
 				objs[2] = CustomColour.readFromBuf(buf);
 				objs[3] = AccessType.values()[buf.readInt()];
-				break;
-			case DELETE_NETWORK:
-				objs = new Object[1];
-				objs[0] = buf.readInt();
-				break;
-			case SET_PRIORITY:
-				objs = new Object[1];
-				objs[0] = buf.readInt();
 				break;
 			case SET_LIMIT:
 				objs = new Object[1];
@@ -289,6 +303,9 @@ public class PacketFluxButton extends PacketCoords {
 		public Object[] toBuf(ByteBuf buf, Object[] objs) {
 			switch (this) {
 			case SET_NETWORK:
+			case REMOVE_CONNECTION:
+			case DELETE_NETWORK:
+			case SET_PRIORITY:
 				buf.writeInt((Integer) objs[0]);
 				break;
 			case CREATE_NETWORK:
@@ -301,12 +318,6 @@ public class PacketFluxButton extends PacketCoords {
 				ByteBufUtils.writeUTF8String(buf, (String) objs[1]);
 				CustomColour.writeToBuf((CustomColour) objs[2], buf);
 				buf.writeInt(((AccessType) objs[3]).ordinal());
-				break;
-			case DELETE_NETWORK:
-				buf.writeInt((Integer) objs[0]);
-				break;
-			case SET_PRIORITY:
-				buf.writeInt((Integer) objs[0]);
 				break;
 			case SET_LIMIT:
 				buf.writeLong((Long) objs[0]);
@@ -344,10 +355,20 @@ public class PacketFluxButton extends PacketCoords {
 		this.objects = obj;
 	}
 
+	/** must be used if the TYPE isn't local */
+	public PacketFluxButton(int dimension, Type type, BlockPos pos, Object... obj) {
+		super(pos);
+		this.dimension = dimension;
+		this.type = type;
+		this.objects = obj;
+	}
+
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		super.fromBytes(buf);
 		this.type = Type.getTypeFromID(buf.readInt());
+		if (!type.local)
+			dimension = buf.readInt();
 		this.objects = type.fromBuf(buf);
 	}
 
@@ -355,6 +376,8 @@ public class PacketFluxButton extends PacketCoords {
 	public void toBytes(ByteBuf buf) {
 		super.toBytes(buf);
 		buf.writeInt(type.id);
+		if (!type.local)
+			buf.writeInt(dimension);
 		type.toBuf(buf, objects);
 	}
 
@@ -364,7 +387,12 @@ public class PacketFluxButton extends PacketCoords {
 		public IMessage onMessage(PacketFluxButton message, MessageContext ctx) {
 			EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
 			if (player != null && player.worldObj != null) {
-				TileEntity te = player.worldObj.getTileEntity(message.pos);
+				World world = player.worldObj;
+				if (!message.type.local) {
+					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+					world = server.worldServerForDimension(message.dimension);
+				}
+				TileEntity te = world.getTileEntity(message.pos);
 				if (te instanceof TileEntityFlux && message.objects != null) {
 					TileEntityFlux flux = (TileEntityFlux) te;
 					message.type.process(flux, player, message.objects);

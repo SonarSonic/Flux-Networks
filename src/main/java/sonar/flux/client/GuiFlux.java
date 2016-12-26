@@ -62,6 +62,10 @@ public class GuiFlux extends GuiFluxBase {
 	private PlayerAccess playerAccess = PlayerAccess.USER;
 	private FluxPlayer selectedPlayer = null;
 
+	// CONNECTIONS
+	private ClientFlux selected = null;
+	private boolean toRemove = false;
+
 	public GuiFlux(Container container, TileEntityFlux tile, EntityPlayer player) {
 		super(container, tile);
 		this.player = player;
@@ -103,7 +107,7 @@ public class GuiFlux extends GuiFluxBase {
 
 			limit = new SonarTextField(1, this.fontRendererObj, 110, 46, 58, 12).setBoxOutlineColour(networkColour).setDigitsOnly(true);
 			limit.setMaxStringLength(8);
-			limit.setText(String.valueOf(tile.getTransferLimit()));
+			limit.setText(String.valueOf(tile.limit.getObject()));
 
 			fluxName = new SonarTextField(1, this.fontRendererObj, 38, 28, 130, 12).setBoxOutlineColour(networkColour);
 			fluxName.setMaxStringLength(24);
@@ -134,7 +138,7 @@ public class GuiFlux extends GuiFluxBase {
 			break;
 
 		case CONNECTIONS:
-			for (int i = 0; i < listSize+2; i++) {
+			for (int i = 0; i < listSize + 2; i++) {
 				buttonList.add(new NetworkButton(10 + i, guiLeft + 7, guiTop + 8 + (i * 12)));
 			}
 			scroller = new SonarScroller(this.guiLeft + 165, this.guiTop + 8, 146, 10);
@@ -241,7 +245,7 @@ public class GuiFlux extends GuiFluxBase {
 		FontHelper.text(GUI.IGNORE_LIMIT + ": " + TextFormatting.WHITE + tile.disableLimit.getObject().toString(), 7, 48 + 18, colour);
 		FontHelper.text(FontHelper.translate(tile.getBlockType().getLocalizedName()), 20, 8, 0);
 		renderNetwork(common, true, 11, 8);
-		
+
 		switch (type) {
 		case CONTROLLER:
 			IFluxController controller = (IFluxController) flux;
@@ -311,7 +315,7 @@ public class GuiFlux extends GuiFluxBase {
 				else
 					FontHelper.textCentre(GUI.EDIT_NETWORK.toString(), xSize, 8, Color.GRAY.getRGB());
 				FontHelper.text(GUI.NETWORK_NAME + ": ", 8, 24, 0);
-				FontHelper.text(GUI.NEXT_COLOUR + ": ", 8, 80, 0);
+				FontHelper.text("Colour" + ": ", 8, 80, 0);
 
 				FontHelper.text(TextFormatting.RED + "R:", 46, 80, -1);
 				FontHelper.text(TextFormatting.GREEN + "G:", 86, 80, -1);
@@ -346,28 +350,38 @@ public class GuiFlux extends GuiFluxBase {
 			ArrayList<ClientFlux> connections = common.getClientFluxConnection();
 			start = (int) (connections.size() * scroller.getCurrentScroll());
 			finish = Math.min(start + listSize + 2, connections.size());
-			ClientFlux selected = null;
 			for (int i = start; i < finish; i++) {
 				ClientFlux flux = connections.get(i);
 				if (flux != null) {
 					int posX = 11;
 					int posY = 8 + (12 * i) - (12 * start);
 					if (x > guiLeft + posX && x < guiLeft + posX + 154 && y >= guiTop + posY && y < guiTop + posY + 12) {
+						toRemove = x > guiLeft + posX + 144;
 						selected = flux;
 						renderFlux(flux, true, posX, posY);
 					} else {
 						renderFlux(flux, false, posX, posY);
 					}
+					this.bindTexture(buttons);
+					this.drawTexturedModalRect(154, posY, 56, 0, 12, 12);
 				}
 			}
 			bindTexture(getBackground());
 			if (selected != null) {
+				boolean isCurrent = selected.coords.getBlockPos().equals(tile.getPos());
 				ArrayList<String> strings = new ArrayList<String>();
-				strings.add(FontHelper.translate("flux.type") + ": " + TextFormatting.AQUA + selected.getConnectionType().toString());
-				strings.add(TextFormatting.GRAY + selected.getCoords().toString());
-				strings.add(GUI.MAX + ": " + TextFormatting.AQUA + selected.getTransferLimit());
-				strings.add(GUI.PRIORITY + ": " + TextFormatting.AQUA + selected.getCurrentPriority());
+				if (toRemove) {
+					strings.add(TextFormatting.RED + "REMOVE");
+				} else {
+					if(isCurrent)strings.add(TextFormatting.GREEN + "THIS CONNECTION!");
+					strings.add(FontHelper.translate("flux.type") + ": " + TextFormatting.AQUA + selected.getConnectionType().toString());
+					strings.add(TextFormatting.GRAY + selected.getCoords().toString());
+					strings.add(GUI.MAX + ": " + TextFormatting.AQUA + (selected.getTransferLimit() == Long.MAX_VALUE ? "NO LIMIT" : selected.getTransferLimit()));
+					strings.add(GUI.PRIORITY + ": " + TextFormatting.AQUA + selected.getCurrentPriority());
+				}
 				drawHoveringText(strings, x - guiLeft, y - guiTop);
+			} else {
+				toRemove = false;
 			}
 
 			break;
@@ -379,13 +393,14 @@ public class GuiFlux extends GuiFluxBase {
 				renderNetwork(common, true, 11, 8);
 				int colour = common.getNetworkColour().getRGB();
 				INetworkStatistics stats = common.getStatistics();
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.PLUGS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getPlugCount(), 12, 26, colour);
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.POINTS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getPointCount(), 12, 26 + 12 * 1, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.PLUGS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.PLUG), 12, 26, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.POINTS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.POINT), 12, 26 + 12 * 1, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.STORAGE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.STORAGE), 12, 26 + 12 * 2, colour);
 
 				EnergyStats energyStats = stats.getLatestStats();
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_SENT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxSent), 12, 26 + 12 * 2, colour);
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_RECEIVE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxReceived), 12, 26 + 12 * 3, colour);
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.TRANSFER.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.transfer), 12, 26 + 12 * 4, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_SENT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxSent), 12, 26 + 12 * 3, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_RECEIVE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxReceived), 12, 26 + 12 * 4, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.TRANSFER.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.transfer), 12, 26 + 12 * 5, colour);
 
 				renderEnergyBar(14, 120, common.getEnergyAvailable(), common.getMaxEnergyStored(), colour, colour);
 				FontHelper.text("Network Buffer ", 14, 110, colour);
@@ -523,6 +538,7 @@ public class GuiFlux extends GuiFluxBase {
 			}
 			break;
 		case CONNECTIONS:
+			/*
 			if (button.id >= 10) {
 				ArrayList<ClientFlux> connections = common.getClientFluxConnection();
 				if (connections != null) {
@@ -531,9 +547,11 @@ public class GuiFlux extends GuiFluxBase {
 					if (flux < connections.size()) {
 						clientFlux = connections.get(flux);
 						switchState(GuiState.EDIT_CONNECTION);
+						return;
 					}
 				}
 			}
+			*/
 			break;
 		case NETWORK_CREATE:
 		case NETWORK_EDIT:
@@ -628,6 +646,11 @@ public class GuiFlux extends GuiFluxBase {
 				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.REMOVE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access));
 			} else if (mouseButton == 1) {
 				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CHANGE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access.incrementAccess()));
+			}
+			break;
+		case CONNECTIONS:
+			if (toRemove && selected != null) {
+				FluxNetworks.network.sendToServer(new PacketFluxButton(selected.coords.getDimension(), Type.REMOVE_CONNECTION, selected.coords.getBlockPos(), getNetworkID()));
 			}
 			break;
 		default:

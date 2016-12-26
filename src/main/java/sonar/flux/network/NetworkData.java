@@ -11,6 +11,7 @@ import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.IFluxCommon.AccessType;
 import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.PlayerAccess;
 import sonar.flux.connection.BasicFluxNetwork;
 
 public class NetworkData extends WorldSavedData {
@@ -31,14 +32,14 @@ public class NetworkData extends WorldSavedData {
 				CustomColour colour = new CustomColour(0, 0, 0);
 				colour.readData(tag.getCompoundTag("colour"), SyncType.SAVE);
 				UUID id = null;
-				//legacy support
-				if(tag.hasKey("owner")){
+				// legacy support
+				if (tag.hasKey("owner")) {
 					id = SonarHelper.getGameProfileForUsername(tag.getString("owner")).getId();
 				}
-				if(id==null && tag.hasUniqueId("ownerUUID")){
+				if (id == null && tag.hasUniqueId("ownerUUID")) {
 					id = tag.getUniqueId("ownerUUID");
-				}			
-				if(id==null){
+				}
+				if (id == null) {
 					FluxNetworks.logger.info("[ERROR] CAN'T LOAD NETWORK WITHOUT PLAYER UUID, aborting");
 					continue;
 				}
@@ -46,6 +47,9 @@ public class NetworkData extends WorldSavedData {
 				loaded.cachedOwnerName.setObject(SonarHelper.getProfileByUUID(loaded.getOwnerUUID()).getName());
 				loaded.getPlayers().readData(tag.getCompoundTag("playerList"), SyncType.SAVE);
 				FluxNetworks.getServerCache().addNetwork(loaded);
+				if (!loaded.players.containsUUID(loaded.getOwnerUUID())) {
+					loaded.addPlayerAccess(loaded.getOwnerUUID(), PlayerAccess.OWNER);
+				}
 				FluxNetworks.logger.info("[LOADED NETWORK] '" + loaded.getNetworkName() + "' with ID '" + loaded.getNetworkID());
 			}
 		}
@@ -56,8 +60,8 @@ public class NetworkData extends WorldSavedData {
 		nbt.setInteger("uniqueID", FluxNetworks.getServerCache().uniqueID);
 		NBTTagList list = new NBTTagList();
 		for (IFluxNetwork network : FluxNetworks.getServerCache().getAllNetworks()) {
-			if (network != null) {				
-				NBTTagCompound tag = new NBTTagCompound();		
+			if (network != null) {
+				NBTTagCompound tag = new NBTTagCompound();
 				tag.setInteger("id", network.getNetworkID());
 				tag.setUniqueId("ownerUUID", network.getOwnerUUID());
 				tag.setString("name", network.getNetworkName());

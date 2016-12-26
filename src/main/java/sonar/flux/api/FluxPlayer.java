@@ -11,7 +11,7 @@ import sonar.core.helpers.SonarHelper;
 public class FluxPlayer implements INBTSyncable {
 
 	public UUID id;
-	public String cachedName;
+	public String cachedName = "";
 	public PlayerAccess access;
 
 	public FluxPlayer(UUID id, PlayerAccess access) {

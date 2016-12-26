@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -31,6 +32,7 @@ import sonar.flux.common.block.FluxController;
 import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
 import sonar.flux.common.block.FluxStorage;
+import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.common.item.FluxItem;
 import sonar.flux.common.tileentity.TileEntityCable;
 import sonar.flux.common.tileentity.TileEntityController;
@@ -125,8 +127,10 @@ public class FluxNetworks {
 
 		massiveFluxStorage = registerBlock("GargantuanFluxStorage", new FluxStorage.Gargantuan().setHardness(0.6F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityStorage.Massive.class, "GargantuanFluxStorage");
-
 		logger.info("Loaded Blocks/Items");
+
+		EntityRegistry.registerModEntity(EntityFireItem.class, "Flux", 0, instance, 64, 10, true);
+		logger.info("Loaded Entities");
 
 		logger.info("Loading Recipes");
 		FluxCrafting.addRecipes();

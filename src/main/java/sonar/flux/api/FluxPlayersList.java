@@ -1,6 +1,7 @@
 package sonar.flux.api;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -11,7 +12,17 @@ import sonar.core.network.sync.IDirtyPart;
 public class FluxPlayersList extends ArrayList<FluxPlayer> implements IDirtyPart, INBTSyncable {
 
 	public boolean hasChanged = true;
-
+	
+	public boolean containsUUID(UUID check) {
+		for (int i = 0; i < size(); i++) {
+			FluxPlayer player = this.get(i);
+			if (player != null && player.id.equals(check)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean containsPlayer(FluxPlayer check) {
 		for (int i = 0; i < size(); i++) {
 			FluxPlayer player = this.get(i);
