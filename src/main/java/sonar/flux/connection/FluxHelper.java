@@ -33,14 +33,14 @@ public class FluxHelper extends FluxWrapper {
 					BlockCoords translate = BlockCoords.translateCoords(coords, face);
 					TileEntity tile = translate.getTileEntity();
 					if (tile != null && !(tile instanceof IFlux)) {
-						extracted += SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF, from.getTransferLimit()), face, actionType);
+						extracted += SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getTransferLimit()), face, actionType);
 					}
 				}
 				break;
 			case STORAGE:
 				TileEntity tile = coords.getTileEntity();
 				if (tile != null)
-					extracted += ((TileEntityStorage) tile).storage.extractEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
+					extracted += ((TileEntityStorage) tile).storage.extractEnergy((int) Math.min(maxTransferRF - extracted, Integer.MAX_VALUE), actionType.shouldSimulate());
 				break;
 			default:
 				break;
@@ -60,14 +60,14 @@ public class FluxHelper extends FluxWrapper {
 					BlockCoords translate = BlockCoords.translateCoords(coords, face);
 					TileEntity tile = translate.getTileEntity();
 					if (tile != null && !(tile instanceof IFlux)) {
-						received += SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF, to.getTransferLimit()), face, actionType);
+						received += SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF - received, to.getTransferLimit()), face, actionType);
 					}
 				}
 				break;
 			case STORAGE:
 				TileEntity tile = coords.getTileEntity();
 				if (tile != null && tile instanceof TileEntityStorage)
-					received += ((TileEntityStorage) coords.getTileEntity()).storage.receiveEnergy((int) Math.min(maxTransferRF, Integer.MAX_VALUE), actionType.shouldSimulate());
+					received += ((TileEntityStorage) coords.getTileEntity()).storage.receiveEnergy((int) Math.min(maxTransferRF - received, Integer.MAX_VALUE), actionType.shouldSimulate());
 				break;
 			case CONTROLLER:
 				break;

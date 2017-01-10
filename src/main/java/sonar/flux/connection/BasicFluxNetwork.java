@@ -8,13 +8,10 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.SonarAPI;
@@ -63,7 +60,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		receivers.addAll(connections.getOrDefault(ConnectionType.POINT, new ArrayList()));
 		receivers.addAll(connections.getOrDefault(ConnectionType.STORAGE, new ArrayList()));
 		receivers.addAll(connections.getOrDefault(ConnectionType.CONTROLLER, new ArrayList()));
-		sortFluxNetwork(receivers, hasController() ? controller.getSendMode() : PriorityMode.DEFAULT);
+		sortFluxNetwork(receivers, hasController() ? controller.getReceiveMode() : PriorityMode.DEFAULT);
 		return receivers;
 	}
 
@@ -113,7 +110,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 					long limit = FluxAPI.getFluxHelper().pullEnergy(plug, plug.getTransferLimit(), ActionType.SIMULATE);
 					long currentLimit = limit;
 					for (IFlux point : receivers) {
-						if (currentLimit == 0) {
+						if (currentLimit <= 0) {
 							break;
 						}
 						if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
@@ -138,14 +135,14 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		case LARGEST:
 			Collections.sort(flux, new Comparator<IFlux>() {
 				public int compare(IFlux o1, IFlux o2) {
-					return o1.getCurrentPriority() - o2.getCurrentPriority();
+					return o2.getCurrentPriority() - o1.getCurrentPriority();
 				}
 			});
 			break;
 		case SMALLEST:
 			Collections.sort(flux, new Comparator<IFlux>() {
 				public int compare(IFlux o1, IFlux o2) {
-					return o2.getCurrentPriority() - o1.getCurrentPriority();
+					return o1.getCurrentPriority() - o2.getCurrentPriority();
 				}
 			});
 			break;
