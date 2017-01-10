@@ -8,10 +8,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.flux.common.tileentity.TileEntityPoint;
 
-public class FluxPoint extends FluxConnection {
+public class FluxPoint extends FluxSidedConnection {
 
 	public FluxPoint() {
-		super(-4);
+		super();
 		this.setBlockBounds(0.375F, 0.375F, 0.375F, 0.625F, 0.625F, 0.625F);
 	}
 

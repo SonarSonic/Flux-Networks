@@ -6,47 +6,17 @@
      },
     "variants": {
         "inventory": [{}],
-         "north":{
+         "connected":{
             "true":{
+                 "textures": {                 
+                    "1":"fluxnetworks:model/tier1"
+                  }
             },
             "false":{
-                
+                 "textures": {                 
+                    "1":"fluxnetworks:model/tier1_off"
+                  }                
             }
-        },
-        "east":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        },
-        "south":{
-            "true":{                
-            },
-            "false":{
-                
-            }
-        },
-        "west":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        },
-        "down":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        },
-        "up":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        }
+         }
     }
 }

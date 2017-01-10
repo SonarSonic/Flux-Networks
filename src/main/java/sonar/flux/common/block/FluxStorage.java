@@ -12,7 +12,7 @@ import sonar.flux.common.tileentity.TileEntityStorage;
 public class FluxStorage extends FluxConnection {
 
 	public FluxStorage() {
-		super(-5);
+		super();
 	}
 
 	public static class Herculean extends FluxStorage{
@@ -38,7 +38,7 @@ public class FluxStorage extends FluxConnection {
 
 	@Override
 	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
-		//list.add("Stores Energy");
+		list.add("Stores Energy");
 	}
 
 	@Override

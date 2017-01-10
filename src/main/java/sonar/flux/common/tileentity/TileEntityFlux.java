@@ -6,6 +6,7 @@ import java.util.UUID;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
@@ -31,8 +32,8 @@ import sonar.flux.api.IFlux;
 import sonar.flux.api.IFluxCommon;
 import sonar.flux.api.IFluxController;
 import sonar.flux.api.IFluxNetwork;
+import sonar.flux.common.block.FluxConnection;
 import sonar.flux.connection.EmptyFluxNetwork;
-import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.FluxNetworkCache.ViewingType;
 import sonar.flux.network.PacketFluxError;
 
@@ -82,6 +83,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			network.addFluxConnection(this);
 			networkID.setObject(network.getNetworkID());
 			colour.setObject(network.getNetworkColour().getRGB());
+			worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(FluxConnection.CONNECTED, !network.isFakeNetwork()), 2);
 			markDirty();
 			markBlockForUpdate();
 		}
@@ -91,6 +93,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		network.removeFluxConnection(this);
 		networkID.setObject(-1);
 		network = EmptyFluxNetwork.INSTANCE;
+		worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(FluxConnection.CONNECTED, false), 2);
 	}
 
 	public void update() {
@@ -103,6 +106,10 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 				checkTicks++;
 			}
 		}
+	}
+
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+		return false;
 	}
 
 	@Override

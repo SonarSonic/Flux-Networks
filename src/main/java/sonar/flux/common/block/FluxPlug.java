@@ -8,10 +8,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.flux.common.tileentity.TileEntityPlug;
 
-public class FluxPlug extends FluxConnection {
+public class FluxPlug extends FluxSidedConnection {
 
 	public FluxPlug() {
-		super(-3);
+		super();
 		this.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
 	}
 	

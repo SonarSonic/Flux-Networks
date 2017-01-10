@@ -1,9 +1,9 @@
 {
     "textures": {
         "0": "fluxnetworks:model/gray",
-        "1": "fluxnetworks:model/whiteTrim",
+        "1": "fluxnetworks:model/tier1",
         "2": "fluxnetworks:model/lightBlue",
-        "particle": "fluxnetworks:model/whiteTrim"
+        "particle": "fluxnetworks:model/tier1"
     },
     "elements": [
         {

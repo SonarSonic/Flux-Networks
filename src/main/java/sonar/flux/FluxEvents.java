@@ -87,7 +87,7 @@ public class FluxEvents {
 				newEntity.motionZ = entityItem.motionZ;
 				newEntity.setDefaultPickupDelay();
 				if (newEntity != null) {
-					entityItem.setDead();
+					event.getEntity().setDead();
 					event.setCanceled(true);
 					event.getWorld().spawnEntityInWorld(newEntity);
 				}

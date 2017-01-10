@@ -3,8 +3,8 @@
     "defaults": {
         "model":"fluxnetworks:FluxPoint",
         "textures": {
-            "0":"fluxnetworks:model/flux_point_new",
-            "particle":"fluxnetworks:model/flux_point_new"
+            "0":"fluxnetworks:model/flux_point_on",
+            "particle":"fluxnetworks:model/flux_point_on"
         },
         "transform":"forge:default-block"
      },
@@ -19,6 +19,18 @@
                     "up": { "model":"fluxnetworks:FluxConnection", "x": 180}
                   }
                 }],
+         "connected":{
+            "true":{
+                 "textures": {                 
+                    "0":"fluxnetworks:model/flux_point_on"
+                  }
+            },
+            "false":{
+                 "textures": {                 
+                    "0":"fluxnetworks:model/flux_point_off"
+                  }                
+            }
+         }, 
          "north":{
             "true":{
                  "submodel": {

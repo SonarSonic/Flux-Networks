@@ -5,13 +5,18 @@
         "transform":"forge:default-block"
      },
     "variants": {
-        "inventory": [{}], 
-        "facing":{  
-            "north":{},
-            "south":{},
-            "west":{},
-            "east":{}
-        }
-        
+        "inventory": [{}],
+        "connected":{
+            "true":{
+                 "textures": {                 
+                    "top":"fluxnetworks:model/fluxController_top"
+                  }
+            },
+            "false":{
+                 "textures": {                 
+                    "top":"fluxnetworks:model/fluxController_top_off"
+                  }                
+            }
+         }        
     }
 }

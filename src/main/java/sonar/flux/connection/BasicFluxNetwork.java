@@ -70,6 +70,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public ArrayList<IFlux> getSenders() {
 		ArrayList<IFlux> senders = new ArrayList();
 		senders.addAll(connections.getOrDefault(ConnectionType.PLUG, new ArrayList()));
+		senders.addAll(connections.getOrDefault(ConnectionType.STORAGE, new ArrayList()));
 		sortFluxNetwork(senders, hasController() ? controller.getSendMode() : PriorityMode.DEFAULT);
 		return senders;
 	}
@@ -111,13 +112,14 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 				for (IFlux plug : senders) {
 					long limit = FluxAPI.getFluxHelper().pullEnergy(plug, plug.getTransferLimit(), ActionType.SIMULATE);
 					long currentLimit = limit;
-					if (currentLimit == 0) {
-						continue;
-					}
 					for (IFlux point : receivers) {
+						if (currentLimit == 0) {
+							break;
+						}
 						if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
-							long toTransfer = mode == TransferMode.EVEN ? Math.min((long) Math.ceil(((double) limit / (double) receivers.size())), 1) : limit;
-							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM), ActionType.PERFORM);
+							long toTransfer = mode == TransferMode.EVEN ? Math.min((long) Math.ceil(((double) currentLimit / (double) receivers.size())), 1) : currentLimit;
+							long pointRec = FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM);							
+							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, pointRec, ActionType.PERFORM);
 						}
 					}
 					networkStats.getObject().latestRecords.transfer += limit - currentLimit;

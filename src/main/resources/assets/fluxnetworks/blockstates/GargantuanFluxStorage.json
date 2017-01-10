@@ -4,53 +4,23 @@
         "model":"fluxnetworks:FluxStorage",
         "transform":"forge:default-block",
         "textures": {
-            "1":"fluxnetworks:model/blueTrim",
-            "particle":"fluxnetworks:model/blueTrim"
+            "1":"fluxnetworks:model/tier3",
+            "particle":"fluxnetworks:model/tier3"
         }
      },
     "variants": {
         "inventory": [{}],
-         "north":{
+         "connected":{
             "true":{
+                 "textures": {                 
+                    "1":"fluxnetworks:model/tier3"
+                  }
             },
             "false":{
-                
+                 "textures": {                 
+                    "1":"fluxnetworks:model/tier3_off"
+                  }                
             }
-        },
-        "east":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        },
-        "south":{
-            "true":{                
-            },
-            "false":{
-                
-            }
-        },
-        "west":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        },
-        "down":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        },
-        "up":{
-            "true":{
-            },
-            "false":{
-                
-            }
-        }
+         }
     }
 }
