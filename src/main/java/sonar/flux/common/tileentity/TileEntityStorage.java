@@ -8,6 +8,7 @@ import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
+import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxConfig;
@@ -44,15 +45,16 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 		super(ConnectionType.STORAGE);
 		maxTransfer = transfer;
 		storage = new SyncEnergyStorage(capacity, maxTransfer);
-		syncParts.add(storage);
+		syncList.addPart(storage);
 	}
 
-	public void update() {
-		super.update();
-		if (storage.hasChanged()) {
+	@Override
+	public void markChanged(IDirtyPart part) {
+		super.markChanged(part);
+		if (part == storage) {
 			SonarCore.sendPacketAround(this, 128, 10);
 		}
-		if (colour.hasChanged()) {
+		if (part == colour) {
 			SonarCore.sendPacketAround(this, 128, 11);
 		}
 	}

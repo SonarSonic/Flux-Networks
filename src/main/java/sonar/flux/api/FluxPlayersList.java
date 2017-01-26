@@ -7,7 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper.SyncType;
+import sonar.core.network.sync.DirtyPart;
 import sonar.core.network.sync.IDirtyPart;
+import sonar.core.network.sync.ISyncableListener;
 
 public class FluxPlayersList extends ArrayList<FluxPlayer> implements IDirtyPart, INBTSyncable {
 
@@ -35,25 +37,15 @@ public class FluxPlayersList extends ArrayList<FluxPlayer> implements IDirtyPart
 
 	public boolean add(FluxPlayer player) {
 		if (!containsPlayer(player)) {
-			setChanged(super.add(player));
+			markDirty();
 			return hasChanged;
 		}
 		return false;
 	}
 
 	public boolean remove(FluxPlayer player) {
-		setChanged(super.remove(player));
+		markDirty();
 		return hasChanged;
-	}
-
-	@Override
-	public boolean hasChanged() {
-		return hasChanged;
-	}
-
-	@Override
-	public void setChanged(boolean set) {
-		hasChanged = set;
 	}
 
 	@Override
@@ -75,5 +67,22 @@ public class FluxPlayersList extends ArrayList<FluxPlayer> implements IDirtyPart
 			nbt.setTag("playerList", list);
 		}
 		return nbt;
+	}
+
+	private ISyncableListener listener;
+
+	public FluxPlayersList setListener(ISyncableListener listener) {
+		this.listener = listener;
+		return this;
+	}
+
+	@Override
+	public ISyncableListener getListener() {
+		return listener;
+	}
+
+	public void markDirty() {
+		if (listener != null)
+			listener.markChanged(this);
 	}
 }

@@ -9,10 +9,12 @@ import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.network.sync.ISyncPart;
+import sonar.core.network.sync.ISyncableListener;
 import sonar.core.network.sync.SyncEnum;
 import sonar.core.network.sync.SyncNBTAbstract;
 import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncUUID;
+import sonar.core.network.sync.SyncableList;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.FluxPlayer;
@@ -22,7 +24,7 @@ import sonar.flux.api.INetworkStatistics;
 import sonar.flux.api.PlayerAccess;
 import sonar.flux.network.NetworkStatistics;
 
-public abstract class FluxNetworkCommon implements IFluxCommon {
+public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListener{
 
 	public SyncTagType.STRING cachedOwnerName = new SyncTagType.STRING(0), networkName = new SyncTagType.STRING(1);
 	public SyncTagType.INT networkID = new SyncTagType.INT(2);
@@ -34,9 +36,9 @@ public abstract class FluxNetworkCommon implements IFluxCommon {
 	public SyncNBTAbstract<NetworkStatistics> networkStats = new SyncNBTAbstract(NetworkStatistics.class, 8);
 	public ArrayList<ClientFlux> fluxConnections = new ArrayList();
 	public FluxPlayersList players = new FluxPlayersList();
-	public ArrayList<ISyncPart> parts = new ArrayList<ISyncPart>();
+	public SyncableList parts = new SyncableList(this);
 	{
-		parts.addAll(Arrays.asList(cachedOwnerName, networkName, networkID, accessType, maxStored, energyStored, ownerUUID, colour, networkStats));
+		parts.addParts(cachedOwnerName, networkName, networkID, accessType, maxStored, energyStored, ownerUUID, colour, networkStats);
 		networkStats.setObject(new NetworkStatistics());
 		colour.setObject(new CustomColour(41, 94, 138));
 

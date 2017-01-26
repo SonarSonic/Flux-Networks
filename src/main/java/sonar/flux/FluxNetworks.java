@@ -47,7 +47,7 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.1.1";
+	public static final String version = "1.1.2";
 
 	public static final int saveDimension = 0;
 
@@ -93,7 +93,6 @@ public class FluxNetworks {
 	public void preInit(FMLPreInitializationEvent event) {
 		logger.info("Initilising API");
 		FluxAPI.init();
-		logger.info("Initilised API");		
 
 		logger.info("Loading Config");
 		FluxConfig.loadMainConfig();
@@ -127,22 +126,18 @@ public class FluxNetworks {
 
 		massiveFluxStorage = registerBlock("GargantuanFluxStorage", new FluxStorage.Gargantuan().setHardness(0.6F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityStorage.Massive.class, "GargantuanFluxStorage");
-		logger.info("Loaded Blocks/Items");
 
+		logger.info("Loading Entities");
 		EntityRegistry.registerModEntity(EntityFireItem.class, "Flux", 0, instance, 64, 10, true);
-		logger.info("Loaded Entities");
 
 		logger.info("Loading Recipes");
 		FluxCrafting.addRecipes();
-		logger.info("Loaded Recipes");
 
 		logger.info("Loading Packets");
 		proxy.registerPackets();
-		logger.info("Loaded Packets");
 
 		logger.info("Loading Renderers");
 		proxy.registerRenderThings();
-		logger.info("Loaded Renderers");
 
 		logger.info("Finished Pre-Initialization");
 

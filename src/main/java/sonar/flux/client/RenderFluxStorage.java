@@ -22,6 +22,8 @@ public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStora
 			GlStateManager.disableTexture2D();
 			GlStateManager.enableLighting();
 			GlStateManager.enableBlend();
+			//GlStateManager.blendFunc(770, 1);
+			//GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
 			OpenGlHelper.glBlendFunc(770, 1, 1, 0);
 			float full =(1 - 0.0625F*3);
 			float bottom = 0 + (0.0625F * 2);

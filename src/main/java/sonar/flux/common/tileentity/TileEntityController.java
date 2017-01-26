@@ -1,7 +1,5 @@
 package sonar.flux.common.tileentity;
 
-import java.util.Arrays;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
@@ -20,7 +18,7 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 
 	public TileEntityController() {
 		super(ConnectionType.CONTROLLER);
-		syncParts.addAll(Arrays.asList(sendMode, receiveMode, transmitter, transfer));
+		syncList.addParts(sendMode, receiveMode, transmitter, transfer);
 		customName.setDefault("Flux Controller");
 	}
 

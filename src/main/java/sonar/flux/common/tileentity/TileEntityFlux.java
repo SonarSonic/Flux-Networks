@@ -48,8 +48,10 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public SyncTagType.INT colour = new SyncTagType.INT(7);
 	public boolean[] connections = new boolean[6];
 	private final ConnectionType type;
+	public long currentTransfer;
+
 	{
-		syncParts.addAll(Arrays.asList(priority, limit, disableLimit, networkID, playerUUID, customName, colour));
+		syncList.addParts(priority, limit, disableLimit, networkID, playerUUID, customName, colour);
 	}
 
 	// server only
@@ -99,6 +101,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public void update() {
 		super.update();
 		if (isServer()) {
+			currentTransfer = limit.getObject();
 			if (checkTicks >= 20) {
 				updateConnections();
 				checkTicks = 0;
@@ -109,7 +112,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	}
 
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-		return false;
+		return oldState.getBlock() != newState.getBlock();
 	}
 
 	@Override
@@ -147,6 +150,20 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	public void onFirstTick() {
 		super.onFirstTick();
+		addConnection();
+	}
+
+	public void invalidate() {
+		super.invalidate();
+		removeConnection();
+	}
+
+	public void onChunkUnload() {
+		super.onChunkUnload();
+		removeConnection();
+	}
+
+	public void addConnection() {
 		if (isServer() && networkID.getObject() != -1) {
 			IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
@@ -155,8 +172,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		}
 	}
 
-	public void invalidate() {
-		super.invalidate();
+	public void removeConnection() {
 		if (isServer() && networkID.getObject() != -1) {
 			network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
@@ -180,6 +196,21 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		return disableLimit.getObject() ? Long.MAX_VALUE : limit.getObject();
 	}
 
+	@Override
+	public long getCurrentTransferLimit() {
+		return disableLimit.getObject() ? Long.MAX_VALUE : currentTransfer;
+	}
+
+	@Override
+	public void onEnergyRemoved(long remove) {
+		currentTransfer-=remove;
+	}
+
+	@Override
+	public void onEnergyAdded(long added) {
+		currentTransfer-=added;		
+	}
+	
 	@Override
 	public int getCurrentPriority() {
 		return priority.getObject();

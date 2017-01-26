@@ -29,6 +29,13 @@ public interface IFlux {
 
 	/**the maximum RF/t this Flux connection can receive*/
 	public long getTransferLimit();
+	
+	/**the current RF/t this Flux connection can receive*/
+	public long getCurrentTransferLimit();
+	
+	public void onEnergyRemoved(long remove);
+	
+	public void onEnergyAdded(long added);
 
 	/**the higher the priority the sooner the Flux connection will receive power*/
 	public int getCurrentPriority();

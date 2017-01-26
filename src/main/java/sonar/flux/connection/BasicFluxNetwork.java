@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.SonarAPI;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
+import sonar.core.network.sync.IDirtyPart;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
@@ -84,7 +85,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		EnergyStats stats = new EnergyStats(0, 0, 0);
 		for (IFlux plug : senders) {
 			if (plug != null) {
-				stats.maxSent += FluxAPI.getFluxHelper().pullEnergy(plug, plug.getTransferLimit(), ActionType.SIMULATE);
+				stats.maxSent += FluxAPI.getFluxHelper().pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
 			}
 		}
 		for (IFlux point : receivers) {
@@ -107,7 +108,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			int current = mode.repeat;
 			while (current != 0) {
 				for (IFlux plug : senders) {
-					long limit = FluxAPI.getFluxHelper().pullEnergy(plug, plug.getTransferLimit(), ActionType.SIMULATE);
+					long limit = FluxAPI.getFluxHelper().pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
 					long currentLimit = limit;
 					for (IFlux point : receivers) {
 						if (currentLimit <= 0) {
@@ -115,7 +116,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 						}
 						if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
 							long toTransfer = mode == TransferMode.EVEN ? Math.min((long) Math.ceil(((double) currentLimit / (double) receivers.size())), 1) : currentLimit;
-							long pointRec = FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM);							
+							long pointRec = FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM);
 							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, pointRec, ActionType.PERFORM);
 						}
 					}
@@ -153,7 +154,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public boolean hasController() {
-		return controller != null;
+		return controller != null && controller.getNetwork() == this;
 	}
 
 	@Override
@@ -182,6 +183,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	public boolean setController(IFluxController tile) {
+		if (tile == null) {
+			connections.get(ConnectionType.CONTROLLER).clear();
+		}
 		controller = tile;
 		return false;
 	}
@@ -228,7 +232,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public long receiveEnergy(long maxReceive, ActionType type) {
 		long used = 0;
 		for (IFlux flux : receivers) {
-			long toTransfer = Math.min(flux.getTransferLimit(), maxReceive - used);
+			long toTransfer = Math.min(flux.getCurrentTransferLimit(), maxReceive - used);
 			if (flux instanceof IFluxController) {
 				IFluxController controller = (IFluxController) flux;
 				if (controller.getTransmitterMode() == TransmitterMode.OFF) {
@@ -288,7 +292,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public long extractEnergy(long maxExtract, ActionType type) {
 		long used = 0;
 		for (IFlux flux : senders) {
-			long toTransfer = Math.min(flux.getTransferLimit(), maxExtract - used);
+			long toTransfer = Math.min(flux.getCurrentTransferLimit(), maxExtract - used);
 			if (maxExtract - used <= 0) {
 				break;
 			}
@@ -324,7 +328,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		if (flux instanceof IFluxController && type == ConnectionType.CONTROLLER) {
 			this.setController(null);
 		}
-		connections.getOrDefault(flux.getConnectionType(), new ArrayList()).remove(flux);
+		connections.getOrDefault(flux.getConnectionType(), new ArrayList<IFlux>()).removeIf(connection -> connection.getCoords().equals(flux.getCoords()));
 		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
 	}
 
@@ -371,6 +375,12 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		this.maxStored.setObject(network.getMaxEnergyStored());
 		this.networkStats.setObject((NetworkStatistics) network.getStatistics());
 		return this;
+	}
+
+	@Override
+	public void markChanged(IDirtyPart part) {
+		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
+
 	}
 
 }

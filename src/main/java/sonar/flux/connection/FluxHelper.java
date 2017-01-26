@@ -21,7 +21,7 @@ public class FluxHelper extends FluxWrapper {
 
 	public long pullEnergy(IFlux from, long maxTransferRF, ActionType actionType) {
 		long extracted = 0;
-		maxTransferRF = Math.min(maxTransferRF, from.getTransferLimit());
+		maxTransferRF = Math.min(maxTransferRF, from.getCurrentTransferLimit());
 		if (from != null && maxTransferRF != 0) {
 			BlockCoords coords = from.getCoords();
 			if (coords == null) {
@@ -33,14 +33,22 @@ public class FluxHelper extends FluxWrapper {
 					BlockCoords translate = BlockCoords.translateCoords(coords, face);
 					TileEntity tile = translate.getTileEntity();
 					if (tile != null && !(tile instanceof IFlux)) {
-						extracted += SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getTransferLimit()), face, actionType);
+						long remove = SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getCurrentTransferLimit()), face.getOpposite(), actionType);
+						if (!actionType.shouldSimulate())
+							from.onEnergyRemoved(remove);
+						extracted += remove;
+
 					}
 				}
 				break;
 			case STORAGE:
 				TileEntity tile = coords.getTileEntity();
-				if (tile != null)
-					extracted += ((TileEntityStorage) tile).storage.extractEnergy((int) Math.min(maxTransferRF - extracted, Integer.MAX_VALUE), actionType.shouldSimulate());
+				if (tile != null) {
+					int remove = ((TileEntityStorage) tile).storage.extractEnergy((int) Math.min(maxTransferRF - extracted, Integer.MAX_VALUE), actionType.shouldSimulate());
+					if (!actionType.shouldSimulate())
+						from.onEnergyRemoved(remove);
+					extracted += remove;
+				}
 				break;
 			default:
 				break;
@@ -51,7 +59,7 @@ public class FluxHelper extends FluxWrapper {
 
 	public long pushEnergy(IFlux to, long maxTransferRF, ActionType actionType) {
 		long received = 0;
-		maxTransferRF = Math.min(maxTransferRF, to.getTransferLimit());
+		maxTransferRF = Math.min(maxTransferRF, to.getCurrentTransferLimit());
 		if (to != null && maxTransferRF != 0) {
 			BlockCoords coords = to.getCoords();
 			switch (to.getConnectionType()) {
@@ -60,14 +68,21 @@ public class FluxHelper extends FluxWrapper {
 					BlockCoords translate = BlockCoords.translateCoords(coords, face);
 					TileEntity tile = translate.getTileEntity();
 					if (tile != null && !(tile instanceof IFlux)) {
-						received += SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF - received, to.getTransferLimit()), face, actionType);
+						long added = SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF - received, to.getCurrentTransferLimit()), face.getOpposite(), actionType);
+						if (!actionType.shouldSimulate())
+							to.onEnergyAdded(added);
+						received += added;
 					}
 				}
 				break;
 			case STORAGE:
 				TileEntity tile = coords.getTileEntity();
-				if (tile != null && tile instanceof TileEntityStorage)
-					received += ((TileEntityStorage) coords.getTileEntity()).storage.receiveEnergy((int) Math.min(maxTransferRF - received, Integer.MAX_VALUE), actionType.shouldSimulate());
+				if (tile != null && tile instanceof TileEntityStorage) {
+					int added = ((TileEntityStorage) coords.getTileEntity()).storage.receiveEnergy((int) Math.min(maxTransferRF - received, Integer.MAX_VALUE), actionType.shouldSimulate());
+					if (!actionType.shouldSimulate())
+						to.onEnergyAdded(added);
+					received += added;
+				}
 				break;
 			case CONTROLLER:
 				break;

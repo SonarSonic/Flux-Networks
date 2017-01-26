@@ -38,7 +38,11 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 		if (maxExtract == 0) {
 			return 0;
 		}
-		return (int) (this.getNetwork().extractEnergy(Math.min(maxExtract, getTransferLimit()), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
+		int extracted = (int) (this.getNetwork().extractEnergy(Math.min(maxExtract, getCurrentTransferLimit()), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
+		if (!simulate && !disableLimit.getObject()) {
+			this.onEnergyRemoved(extracted);
+		}
+		return extracted;
 	}
 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
