@@ -23,32 +23,25 @@ public class FluxHelper extends FluxWrapper {
 		long extracted = 0;
 		maxTransferRF = Math.min(maxTransferRF, from.getCurrentTransferLimit());
 		if (from != null && maxTransferRF != 0) {
-			BlockCoords coords = from.getCoords();
-			if (coords == null) {
-				return extracted;
-			}
 			switch (from.getConnectionType()) {
 			case PLUG:
-				for (EnumFacing face : EnumFacing.VALUES) {
-					BlockCoords translate = BlockCoords.translateCoords(coords, face);
-					TileEntity tile = translate.getTileEntity();
-					if (tile != null && !(tile instanceof IFlux)) {
-						long remove = SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getCurrentTransferLimit()), face.getOpposite(), actionType);
+				TileEntity[] tiles = from.cachedTiles();
+				for (int i = 0; i < 6; i++) {
+					TileEntity tile = tiles[i];
+					if (tile != null) {
+						long remove = SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getCurrentTransferLimit()), EnumFacing.values()[i].getOpposite(), actionType);
 						if (!actionType.shouldSimulate())
 							from.onEnergyRemoved(remove);
 						extracted += remove;
-
 					}
 				}
 				break;
 			case STORAGE:
-				TileEntity tile = coords.getTileEntity();
-				if (tile != null) {
-					int remove = ((TileEntityStorage) tile).storage.extractEnergy((int) Math.min(maxTransferRF - extracted, Integer.MAX_VALUE), actionType.shouldSimulate());
-					if (!actionType.shouldSimulate())
-						from.onEnergyRemoved(remove);
-					extracted += remove;
-				}
+				TileEntityStorage tile = (TileEntityStorage) from;
+				int remove = tile.storage.extractEnergy((int) Math.min(maxTransferRF - extracted, Integer.MAX_VALUE), actionType.shouldSimulate());
+				if (!actionType.shouldSimulate())
+					from.onEnergyRemoved(remove);
+				extracted += remove;
 				break;
 			default:
 				break;
@@ -61,14 +54,14 @@ public class FluxHelper extends FluxWrapper {
 		long received = 0;
 		maxTransferRF = Math.min(maxTransferRF, to.getCurrentTransferLimit());
 		if (to != null && maxTransferRF != 0) {
-			BlockCoords coords = to.getCoords();
+			//BlockCoords coords = to.getCoords();
 			switch (to.getConnectionType()) {
 			case POINT:
-				for (EnumFacing face : EnumFacing.VALUES) {
-					BlockCoords translate = BlockCoords.translateCoords(coords, face);
-					TileEntity tile = translate.getTileEntity();
-					if (tile != null && !(tile instanceof IFlux)) {
-						long added = SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF - received, to.getCurrentTransferLimit()), face.getOpposite(), actionType);
+				TileEntity[] tiles = to.cachedTiles();
+				for (int i = 0; i < 6; i++) {
+					TileEntity tile = tiles[i];
+					if (tile != null) {
+						long added = SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF - received, to.getCurrentTransferLimit()), EnumFacing.values()[i].getOpposite(), actionType);
 						if (!actionType.shouldSimulate())
 							to.onEnergyAdded(added);
 						received += added;
@@ -76,13 +69,11 @@ public class FluxHelper extends FluxWrapper {
 				}
 				break;
 			case STORAGE:
-				TileEntity tile = coords.getTileEntity();
-				if (tile != null && tile instanceof TileEntityStorage) {
-					int added = ((TileEntityStorage) coords.getTileEntity()).storage.receiveEnergy((int) Math.min(maxTransferRF - received, Integer.MAX_VALUE), actionType.shouldSimulate());
-					if (!actionType.shouldSimulate())
-						to.onEnergyAdded(added);
-					received += added;
-				}
+				TileEntityStorage tile = (TileEntityStorage) to;
+				int added = tile.storage.receiveEnergy((int) Math.min(maxTransferRF - received, Integer.MAX_VALUE), actionType.shouldSimulate());
+				if (!actionType.shouldSimulate())
+					to.onEnergyAdded(added);
+				received += added;
 				break;
 			case CONTROLLER:
 				break;
@@ -94,18 +85,5 @@ public class FluxHelper extends FluxWrapper {
 	}
 
 	/** gets all the TileEntities which can send/receive energy adjacent to the given IFlux */
-	public Map<TileEntity, EnumFacing> getConnections(IFlux flux) {
-		Map<TileEntity, EnumFacing> tiles = new HashMap();
-		for (EnumFacing face : EnumFacing.VALUES) {
-			World world = flux.getDimension();
-			TileEntity tile = world.getTileEntity(flux.getCoords().getBlockPos().offset(face));
-			if (tile == null || tile.isInvalid()) {
-				continue;
-			}
-			if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) {
-				tiles.put(tile, face);
-			}
-		}
-		return tiles;
-	}
+	/* public Map<TileEntity, EnumFacing> getConnections(IFlux flux) { Map<TileEntity, EnumFacing> tiles = new HashMap(); for (EnumFacing face : EnumFacing.VALUES) { World world = flux.getDimension(); TileEntity tile = world.getTileEntity(flux.getCoords().getBlockPos().offset(face)); if (tile == null || tile.isInvalid()) { continue; } if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) { tiles.put(tile, face); } } return tiles; } */
 }

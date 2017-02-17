@@ -27,7 +27,9 @@ public class FluxWrapper {
 	}
 	
 	/**gets all the nearby Tile Entities from a Flux Connection which can push/pull energy*/
+	/*
 	public Map<TileEntity, EnumFacing> getConnections(IFlux flux){
 		return Collections.EMPTY_MAP;
 	}
+	*/
 }

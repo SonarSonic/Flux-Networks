@@ -42,6 +42,10 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 		return transfer.getObject();
 	}
 
+	public boolean canTransfer() {
+		return true;
+	}
+
 	@Override
 	public boolean canConnectEnergy(EnumFacing from) {
 		return false;

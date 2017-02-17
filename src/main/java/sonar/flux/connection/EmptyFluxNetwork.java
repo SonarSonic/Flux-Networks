@@ -172,4 +172,10 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 		return this;
 	}
 
+	@Override
+	public void updateSenders() {}
+
+	@Override
+	public void updateReceivers() {}
+
 }

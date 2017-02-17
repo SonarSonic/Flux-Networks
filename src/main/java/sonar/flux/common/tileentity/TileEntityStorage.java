@@ -51,12 +51,18 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 	@Override
 	public void markChanged(IDirtyPart part) {
 		super.markChanged(part);
-		if (part == storage) {
-			SonarCore.sendPacketAround(this, 128, 10);
+		if (this.worldObj != null) {
+			if (part == storage) {
+				SonarCore.sendPacketAround(this, 128, 10);
+			}
+			if (part == colour) {
+				SonarCore.sendPacketAround(this, 128, 11);
+			}
 		}
-		if (part == colour) {
-			SonarCore.sendPacketAround(this, 128, 11);
-		}
+	}
+
+	public boolean canTransfer() {
+		return true;
 	}
 
 	@Override

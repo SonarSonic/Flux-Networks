@@ -1,5 +1,6 @@
 package sonar.flux.api;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 
@@ -42,4 +43,8 @@ public interface IFlux {
 	
 	/**the custom name is assigned by the user, this allows easier identification of various Flux connections.*/
 	public String getCustomName();
+	
+	public TileEntity[] cachedTiles();
+	
+	public boolean canTransfer();
 }

@@ -4,18 +4,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
+import sonar.core.network.sync.DirtyPart;
+import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.ISyncPart;
+import sonar.core.network.sync.ISyncableListener;
+import sonar.core.network.sync.SyncPart;
 import sonar.core.network.sync.SyncTagType;
+import sonar.core.network.sync.SyncableList;
 import sonar.flux.api.EnergyStats;
 import sonar.flux.api.IFlux;
 import sonar.flux.api.INetworkStatistics;
 import sonar.flux.api.IFlux.ConnectionType;
 
-public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
+public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetworkStatistics, ISyncableListener, ISyncPart {
 
 	public static final int keep = 15;// how many receive/send values to keep
 	public static final int updateEvery = 20 * 5; // 5 second update time for graphing purposes
@@ -30,9 +38,9 @@ public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 	public final ArrayList<EnergyStats> records = new ArrayList<EnergyStats>();
 	public int ticks = 0;
 
-	public ArrayList<ISyncPart> parts = new ArrayList<ISyncPart>();
+	public SyncableList parts = new SyncableList(this);
 	{
-		parts.addAll(Arrays.asList(pointCount, plugCount, storageCount));
+		parts.addParts(pointCount, plugCount, storageCount);
 	}
 	
 	public void inputStatistics(EnergyStats stats, HashMap<ConnectionType, ArrayList<IFlux>> connections) {
@@ -54,16 +62,30 @@ public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
-		NBTHelper.readSyncParts(nbt, type, parts);
-		previousRecords.readData(nbt, type);
+		NBTTagCompound tag = nbt.getCompoundTag(getTagName());
+		NBTHelper.readSyncParts(tag, type, parts);
+		previousRecords.readData(tag, type);
 	}
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
-		NBTHelper.writeSyncParts(nbt, type, parts, false);
-		previousRecords.writeData(nbt, type);
+		NBTTagCompound tag = new NBTTagCompound();
+		NBTHelper.writeSyncParts(tag, type, parts, false);
+		previousRecords.writeData(tag, type);
+		nbt.setTag(getTagName(), tag);
 		return nbt;
 	}
+
+	@Override
+	public void writeToBuf(ByteBuf buf) {
+		ByteBufUtils.writeTag(buf, this.writeData(new NBTTagCompound(), SyncType.SAVE));
+	}
+
+	@Override
+	public void readFromBuf(ByteBuf buf) {
+		readData(ByteBufUtils.readTag(buf), SyncType.SAVE);
+	}
+	
 	@Override
 	public EnergyStats getLatestStats() {
 		return previousRecords;
@@ -87,6 +109,22 @@ public class NetworkStatistics implements INBTSyncable, INetworkStatistics {
 			break;		
 		}
 		return 0;
+	}
+
+	@Override
+	public void markChanged(IDirtyPart part) {
+		parts.markSyncPartChanged(part);
+		markChanged();
+	}
+
+	@Override
+	public boolean canSync(SyncType sync) {
+		return sync.isType(SyncType.SAVE, SyncType.DEFAULT_SYNC);
+	}
+
+	@Override
+	public String getTagName() {
+		return "stats";
 	}
 
 }

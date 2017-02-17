@@ -46,6 +46,8 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public SyncUUID playerUUID = new SyncUUID(5);
 	public SyncTagType.STRING customName = (STRING) new SyncTagType.STRING(6).setDefault("Flux Connection");
 	public SyncTagType.INT colour = new SyncTagType.INT(7);
+	public TileEntity[] cachedTiles = new TileEntity[6];
+	public boolean hasTiles;
 	public boolean[] connections = new boolean[6];
 	private final ConnectionType type;
 	public long currentTransfer;
@@ -123,6 +125,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	public void updateConnections() {
 		boolean changed = false;
+		hasTiles = false;
 		for (EnumFacing face : EnumFacing.VALUES) {
 			BlockPos pos = this.pos.offset(face);
 			TileEntity tile = getWorld().getTileEntity(pos);
@@ -131,21 +134,36 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 					if (!connections[face.getIndex()]) {
 						changed = true;
 						connections[face.getIndex()] = true;
+						cachedTiles[face.getIndex()] = tile;
 					}
+					hasTiles = true;
 					continue;
 				}
-				if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null && !connections[face.getIndex()]) {
-					changed = true;
-					connections[face.getIndex()] = true;
+				if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) {
+					if (!connections[face.getIndex()]) {
+						changed = true;
+						connections[face.getIndex()] = true;
+						cachedTiles[face.getIndex()] = tile;
+					}
+					hasTiles = true;
 				}
 			} else if (connections[face.getIndex()]) {
 				changed = true;
 				connections[face.getIndex()] = false;
+				cachedTiles[face.getIndex()] = null;
 			}
 
 		}
 		if (changed)
 			SonarCore.sendPacketAround(this, 128, 0);
+	}
+
+	public TileEntity[] cachedTiles() {
+		return cachedTiles;
+	}
+
+	public boolean canTransfer() {
+		return hasTiles;
 	}
 
 	public void onFirstTick() {
@@ -203,14 +221,14 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	@Override
 	public void onEnergyRemoved(long remove) {
-		currentTransfer-=remove;
+		currentTransfer -= remove;
 	}
 
 	@Override
 	public void onEnergyAdded(long added) {
-		currentTransfer-=added;		
+		currentTransfer -= added;
 	}
-	
+
 	@Override
 	public int getCurrentPriority() {
 		return priority.getObject();
@@ -278,6 +296,8 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			break;
 		case 1:
 			priority.readFromBuf(buf);
+			this.network.updateSenders();
+			this.network.updateReceivers();
 			break;
 		case 2:
 			limit.readFromBuf(buf);

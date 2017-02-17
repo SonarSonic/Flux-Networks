@@ -373,7 +373,8 @@ public class GuiFlux extends GuiFluxBase {
 				if (toRemove) {
 					strings.add(TextFormatting.RED + "REMOVE");
 				} else {
-					if(isCurrent)strings.add(TextFormatting.GREEN + "THIS CONNECTION!");
+					if (isCurrent)
+						strings.add(TextFormatting.GREEN + "THIS CONNECTION!");
 					strings.add(FontHelper.translate("flux.type") + ": " + TextFormatting.AQUA + selected.getConnectionType().toString());
 					strings.add(TextFormatting.GRAY + selected.getCoords().toString());
 					strings.add(GUI.MAX + ": " + TextFormatting.AQUA + (selected.getTransferLimit() == Long.MAX_VALUE ? "NO LIMIT" : selected.getTransferLimit()));
@@ -538,20 +539,7 @@ public class GuiFlux extends GuiFluxBase {
 			}
 			break;
 		case CONNECTIONS:
-			/*
-			if (button.id >= 10) {
-				ArrayList<ClientFlux> connections = common.getClientFluxConnection();
-				if (connections != null) {
-					int start = (int) (connections.size() * scroller.getCurrentScroll());
-					int flux = start + button.id - 10;
-					if (flux < connections.size()) {
-						clientFlux = connections.get(flux);
-						switchState(GuiState.EDIT_CONNECTION);
-						return;
-					}
-				}
-			}
-			*/
+			/* if (button.id >= 10) { ArrayList<ClientFlux> connections = common.getClientFluxConnection(); if (connections != null) { int start = (int) (connections.size() * scroller.getCurrentScroll()); int flux = start + button.id - 10; if (flux < connections.size()) { clientFlux = connections.get(flux); switchState(GuiState.EDIT_CONNECTION); return; } } } */
 			break;
 		case NETWORK_CREATE:
 		case NETWORK_EDIT:
@@ -642,10 +630,12 @@ public class GuiFlux extends GuiFluxBase {
 			break;
 		case PLAYERS:
 			FluxPlayer player = selectedPlayer;
-			if (player != null && x - guiLeft > 11 + 142 && x - guiLeft < 11 + 153) {
-				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.REMOVE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access));
-			} else if (mouseButton == 1) {
-				FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CHANGE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access.incrementAccess()));
+			if (player != null) {
+				if (x - guiLeft > 11 + 142 && x - guiLeft < 11 + 153) {
+					FluxNetworks.network.sendToServer(new PacketFluxButton(Type.REMOVE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access));
+				} else if (mouseButton == 1) {
+					FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CHANGE_PLAYER, tile.getPos(), getNetworkID(), player.id, player.access.incrementAccess()));
+				}
 			}
 			break;
 		case CONNECTIONS:

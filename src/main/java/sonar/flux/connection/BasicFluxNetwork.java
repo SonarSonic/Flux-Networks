@@ -44,6 +44,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	private ArrayList<IFlux> receivers = new ArrayList();
 	private ArrayList<IFlux> senders = new ArrayList();
+	public boolean updateSenders, updateReceivers;
 
 	// statistics
 	private long maxTransfer = 0, lastTransfer;
@@ -74,22 +75,31 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	public void updateNetwork() {
-		if (networkID.getObject() == -1) {
+
+		if (updateSenders) {
+			senders = getSenders();
+			updateSenders = false;
+		}
+		if (updateReceivers) {
+			receivers = getReceivers();
+			updateReceivers = false;
+		}
+
+		//if (networkID.getObject() == -1) {
+		if (networkID.getObject() == -1 || receivers.isEmpty() || senders.isEmpty()) {
 			return;
 		}
 		long maxStored = 0;
 		long energyStored = 0;
-		senders = getSenders();
-		receivers = getReceivers();
-
 		EnergyStats stats = new EnergyStats(0, 0, 0);
+
 		for (IFlux plug : senders) {
-			if (plug != null) {
+			if (plug != null && plug.canTransfer()) {
 				stats.maxSent += FluxAPI.getFluxHelper().pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
 			}
 		}
 		for (IFlux point : receivers) {
-			if (point != null) {
+			if (point != null && point.canTransfer()) {
 				stats.maxReceived += FluxAPI.getFluxHelper().pushEnergy(point, point.getTransferLimit(), ActionType.SIMULATE);
 				if (point instanceof TileEntityStorage) {
 					TileEntityStorage fluxStorage = (TileEntityStorage) point;
@@ -98,6 +108,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 				}
 			}
 		}
+
 		this.maxStored.setObject(maxStored);
 		this.energyStored.setObject(energyStored);
 
@@ -120,13 +131,14 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, pointRec, ActionType.PERFORM);
 						}
 					}
-					networkStats.getObject().latestRecords.transfer += limit - currentLimit;
+					networkStats.latestRecords.transfer += limit - currentLimit;
 
 				}
 				current--;
 			}
 		}
-		networkStats.getObject().inputStatistics(stats, connections);
+		networkStats.inputStatistics(stats, connections);
+
 	}
 
 	private void sortFluxNetwork(ArrayList<IFlux> flux, PriorityMode mode) {
@@ -183,7 +195,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	public boolean setController(IFluxController tile) {
-		if (tile == null) {
+		if (tile == null && connections.get(ConnectionType.CONTROLLER) != null) {
 			connections.get(ConnectionType.CONTROLLER).clear();
 		}
 		controller = tile;
@@ -283,7 +295,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			}
 		}
 		if (type == ActionType.PERFORM)
-			networkStats.getObject().latestRecords.transfer += used;
+			networkStats.latestRecords.transfer += used;
 
 		return used;
 	}
@@ -299,7 +311,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			used += FluxAPI.getFluxHelper().pullEnergy(flux, toTransfer, type);
 		}
 		if (type == ActionType.PERFORM)
-			networkStats.getObject().latestRecords.transfer += used;
+			networkStats.latestRecords.transfer += used;
 
 		return used;
 	}
@@ -319,6 +331,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		if (!connections.get(type).contains(flux))
 			connections.get(type).add(flux);
+		
+		this.updateReceivers();
+		this.updateSenders();
 		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
 	}
 
@@ -329,6 +344,8 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			this.setController(null);
 		}
 		connections.getOrDefault(flux.getConnectionType(), new ArrayList<IFlux>()).removeIf(connection -> connection.getCoords().equals(flux.getCoords()));
+		this.updateReceivers();
+		this.updateSenders();
 		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
 	}
 
@@ -373,14 +390,24 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		this.players = network.getPlayers();
 		this.energyStored.setObject(network.getEnergyAvailable());
 		this.maxStored.setObject(network.getMaxEnergyStored());
-		this.networkStats.setObject((NetworkStatistics) network.getStatistics());
+		this.networkStats = (NetworkStatistics) network.getStatistics();
 		return this;
 	}
 
 	@Override
 	public void markChanged(IDirtyPart part) {
+		this.parts.markSyncPartChanged(part);
 		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
+	}
 
+	@Override
+	public void updateSenders() {
+		this.updateSenders=true;
+	}
+
+	@Override
+	public void updateReceivers() {
+		this.updateReceivers=true;		
 	}
 
 }

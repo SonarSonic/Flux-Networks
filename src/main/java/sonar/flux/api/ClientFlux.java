@@ -1,5 +1,6 @@
 package sonar.flux.api;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 import sonar.flux.connection.EmptyFluxNetwork;
@@ -73,5 +74,15 @@ public class ClientFlux implements IFlux {
 
 	@Override
 	public void onEnergyAdded(long added) {}
+
+	@Override
+	public TileEntity[] cachedTiles() {
+		return new TileEntity[]{};
+	}
+
+	@Override
+	public boolean canTransfer() {
+		return false;
+	}
 
 }
