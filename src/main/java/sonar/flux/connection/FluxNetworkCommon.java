@@ -40,7 +40,8 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	public FluxPlayersList players = new FluxPlayersList();
 	public SyncableList parts = new SyncableList(this);
 	{
-		parts.addParts(cachedOwnerName, networkName, networkID, accessType, maxStored, energyStored, ownerUUID, colour, networkStats);
+		parts.addParts(cachedOwnerName, networkName, networkID, accessType, maxStored, energyStored, ownerUUID, colour, networkStats, players);
+		
 		colour.setObject(new CustomColour(41, 94, 138));
 
 	}

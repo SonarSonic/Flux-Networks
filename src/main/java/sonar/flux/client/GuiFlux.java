@@ -350,6 +350,7 @@ public class GuiFlux extends GuiFluxBase {
 			ArrayList<ClientFlux> connections = common.getClientFluxConnection();
 			start = (int) (connections.size() * scroller.getCurrentScroll());
 			finish = Math.min(start + listSize + 2, connections.size());
+			selected = null;
 			for (int i = start; i < finish; i++) {
 				ClientFlux flux = connections.get(i);
 				if (flux != null) {

@@ -4,17 +4,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.SonarAPI;
 import sonar.core.api.utils.ActionType;
 import sonar.core.api.utils.BlockCoords;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.FluxPlayer;
 import sonar.flux.api.FluxWrapper;
 import sonar.flux.api.IFlux;
 import sonar.flux.api.IFluxCommon;
+import sonar.flux.api.IFluxController;
+import sonar.flux.api.IFluxController.TransmitterMode;
 import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class FluxHelper extends FluxWrapper {
@@ -76,6 +83,47 @@ public class FluxHelper extends FluxWrapper {
 				received += added;
 				break;
 			case CONTROLLER:
+				IFluxController controller = (IFluxController) to;				
+				if (controller.getTransmitterMode() == TransmitterMode.OFF) {
+					break;
+				}
+				ArrayList<FluxPlayer> playerNames = (ArrayList<FluxPlayer>) controller.getNetwork().getPlayers().clone();
+				ArrayList<EntityPlayer> players = new ArrayList();
+				for (FluxPlayer player : playerNames) {
+					Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.id);
+					if (entity != null && entity instanceof EntityPlayer) {
+						players.add((EntityPlayer) entity);
+					}
+				}
+				for (EntityPlayer player : players) {
+					long receive = 0;
+					switch (controller.getTransmitterMode()) {
+					case HELD_ITEM:
+						ItemStack stack = player.getHeldItemMainhand();
+						receive = SonarAPI.getEnergyHelper().receiveEnergy(stack, maxTransferRF - received, actionType);
+						received += receive;
+						if (maxTransferRF - received <= 0) {
+							break;
+						}
+
+						break;
+					case HOTBAR:
+					case ON:
+						IInventory inv = player.inventory;
+						for (int i = 0; i < ((controller.getTransmitterMode() == TransmitterMode.ON) ? inv.getSizeInventory() : 9); i++) {
+							ItemStack itemStack = inv.getStackInSlot(i);
+							receive = SonarAPI.getEnergyHelper().receiveEnergy(itemStack, maxTransferRF - received, actionType);
+							received += receive;
+							if (maxTransferRF - received <= 0) {
+								break;
+							}
+						}
+						break;
+					default:
+						break;
+					}
+				}
+				
 				break;
 			default:
 				break;

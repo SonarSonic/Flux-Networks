@@ -85,7 +85,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			updateReceivers = false;
 		}
 
-		//if (networkID.getObject() == -1) {
+		// if (networkID.getObject() == -1) {
 		if (networkID.getObject() == -1 || receivers.isEmpty() || senders.isEmpty()) {
 			return;
 		}
@@ -245,54 +245,11 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		long used = 0;
 		for (IFlux flux : receivers) {
 			long toTransfer = Math.min(flux.getCurrentTransferLimit(), maxReceive - used);
-			if (flux instanceof IFluxController) {
-				IFluxController controller = (IFluxController) flux;
-				if (controller.getTransmitterMode() == TransmitterMode.OFF) {
-					break;
-				}
-				ArrayList<FluxPlayer> playerNames = (ArrayList<FluxPlayer>) players.clone();
-				ArrayList<EntityPlayer> players = new ArrayList();
-				for (FluxPlayer player : playerNames) {
-					Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.id);
-					if (entity != null && entity instanceof EntityPlayer) {
-						players.add((EntityPlayer) entity);
-					}
-				}
-				for (EntityPlayer player : players) {
-					long receive = 0;
-					switch (controller.getTransmitterMode()) {
-					case HELD_ITEM:
-						ItemStack stack = player.getHeldItemMainhand();
-						receive = SonarAPI.getEnergyHelper().receiveEnergy(stack, toTransfer, type);
-						used += receive;
-						if (maxReceive - used <= 0) {
-							break;
-						}
-
-						break;
-					case HOTBAR:
-					case ON:
-						IInventory inv = player.inventory;
-						for (int i = 0; i < ((controller.getTransmitterMode() == TransmitterMode.ON) ? inv.getSizeInventory() : 9); i++) {
-							ItemStack itemStack = inv.getStackInSlot(i);
-							receive = SonarAPI.getEnergyHelper().receiveEnergy(itemStack, toTransfer, type);
-							used += receive;
-							if (maxReceive - used <= 0) {
-								break;
-							}
-						}
-						break;
-					default:
-						break;
-					}
-				}
-			} else {
-				if (maxReceive - used <= 0) {
-					break;
-				}
-				long receive = FluxAPI.getFluxHelper().pushEnergy(flux, toTransfer, type);
-				used += receive;
+			if (maxReceive - used <= 0) {
+				break;
 			}
+			long receive = FluxAPI.getFluxHelper().pushEnergy(flux, toTransfer, type);
+			used += receive;
 		}
 		if (type == ActionType.PERFORM)
 			networkStats.latestRecords.transfer += used;
@@ -331,7 +288,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		if (!connections.get(type).contains(flux))
 			connections.get(type).add(flux);
-		
+
 		this.updateReceivers();
 		this.updateSenders();
 		FluxNetworks.getServerCache().markNetworkDirty(getNetworkID());
@@ -402,12 +359,12 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public void updateSenders() {
-		this.updateSenders=true;
+		this.updateSenders = true;
 	}
 
 	@Override
 	public void updateReceivers() {
-		this.updateReceivers=true;		
+		this.updateReceivers = true;
 	}
 
 }

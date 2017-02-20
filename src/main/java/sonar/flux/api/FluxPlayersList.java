@@ -37,14 +37,16 @@ public class FluxPlayersList extends ArrayList<FluxPlayer> implements IDirtyPart
 
 	public boolean add(FluxPlayer player) {
 		if (!containsPlayer(player)) {
-			markDirty();
+			super.add(player);
+			markChanged();
 			return hasChanged;
 		}
 		return false;
 	}
 
 	public boolean remove(FluxPlayer player) {
-		markDirty();
+		markChanged();
+		super.remove(player);
 		return hasChanged;
 	}
 
@@ -81,7 +83,7 @@ public class FluxPlayersList extends ArrayList<FluxPlayer> implements IDirtyPart
 		return listener;
 	}
 
-	public void markDirty() {
+	public void markChanged() {
 		if (listener != null)
 			listener.markChanged(this);
 	}

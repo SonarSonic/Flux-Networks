@@ -385,19 +385,24 @@ public class PacketFluxButton extends PacketCoords {
 
 		@Override
 		public IMessage onMessage(PacketFluxButton message, MessageContext ctx) {
-			EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
-			if (player != null && player.worldObj != null) {
-				World world = player.worldObj;
-				if (!message.type.local) {
-					MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-					world = server.worldServerForDimension(message.dimension);
-				}
-				TileEntity te = world.getTileEntity(message.pos);
-				if (te instanceof TileEntityFlux && message.objects != null) {
-					TileEntityFlux flux = (TileEntityFlux) te;
-					message.type.process(flux, player, message.objects);
-				}
-			}
+			SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable(){
+				@Override
+				public void run() {
+					EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
+					if (player != null && player.worldObj != null) {
+						World world = player.worldObj;
+						if (!message.type.local) {
+							MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+							world = server.worldServerForDimension(message.dimension);
+						}
+						TileEntity te = world.getTileEntity(message.pos);
+						if (te instanceof TileEntityFlux && message.objects != null) {
+							TileEntityFlux flux = (TileEntityFlux) te;
+							message.type.process(flux, player, message.objects);
+						}
+					}
+				}});
+			
 			return null;
 		}
 	}
