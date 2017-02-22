@@ -7,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.SonarLoader;
@@ -15,7 +17,7 @@ import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
 @Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla") })
-public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyReceiver, ITeslaConsumer {
+public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyReceiver, ITeslaConsumer, IEnergyStorage {
 
 	public TileEntityPlug() {
 		super(ConnectionType.PLUG);
@@ -45,6 +47,9 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 	}
 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if (CapabilityEnergy.ENERGY == capability) {
+			return true;
+		}
 		if (SonarLoader.teslaLoaded) {
 			if (capability == TeslaCapabilities.CAPABILITY_CONSUMER)
 				return true;
@@ -53,6 +58,9 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 	}
 
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if (CapabilityEnergy.ENERGY == capability) {
+			return (T) this;
+		}
 		if (SonarLoader.teslaLoaded) {
 			if (capability == TeslaCapabilities.CAPABILITY_CONSUMER) {
 				// in this situation this is just easier.
@@ -65,5 +73,35 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 	@Override
 	public long givePower(long power, boolean simulated) {
 		return this.receiveEnergy(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
+	}
+
+	@Override
+	public int receiveEnergy(int maxReceive, boolean simulate) {
+		return this.receiveEnergy(null, (int) Math.min(maxReceive, Integer.MAX_VALUE), simulate);
+	}
+
+	@Override
+	public int extractEnergy(int maxExtract, boolean simulate) {
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored() {
+		return 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored() {
+		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public boolean canExtract() {
+		return false;
+	}
+
+	@Override
+	public boolean canReceive() {
+		return true;
 	}
 }

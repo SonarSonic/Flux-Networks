@@ -1,15 +1,6 @@
 package sonar.flux.client;
 
-import java.awt.Color;
-
-import net.minecraft.util.text.TextFormatting;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.FluxNetworks;
-import sonar.flux.api.IFlux;
-import sonar.flux.api.IFluxCommon;
-import sonar.flux.api.IFlux.ConnectionType;
-import sonar.flux.api.IFluxController;
-import sonar.flux.common.tileentity.TileEntityStorage;
 
 public enum GUI {
 	CHANGE_SETTING("network.changeSetting"),//

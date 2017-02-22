@@ -22,19 +22,14 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.common.block.SonarBlockTip;
 import sonar.flux.api.FluxAPI;
-import sonar.flux.api.IFluxNetworkCache;
-import sonar.flux.common.block.FluxCable;
 import sonar.flux.common.block.FluxController;
 import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
 import sonar.flux.common.block.FluxStorage;
 import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.common.item.FluxItem;
-import sonar.flux.common.tileentity.TileEntityCable;
 import sonar.flux.common.tileentity.TileEntityController;
 import sonar.flux.common.tileentity.TileEntityPlug;
 import sonar.flux.common.tileentity.TileEntityPoint;
@@ -47,7 +42,7 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.1.4";
+	public static final String version = "1.1.6";
 
 	public static final int saveDimension = 0;
 

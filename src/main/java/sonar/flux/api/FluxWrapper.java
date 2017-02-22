@@ -1,12 +1,5 @@
 package sonar.flux.api;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import sonar.core.api.utils.ActionType;
 
 public class FluxWrapper {

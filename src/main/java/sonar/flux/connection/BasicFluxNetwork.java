@@ -8,13 +8,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import sonar.core.api.SonarAPI;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.network.sync.IDirtyPart;
@@ -29,7 +24,6 @@ import sonar.flux.api.IFlux.ConnectionType;
 import sonar.flux.api.IFluxController;
 import sonar.flux.api.IFluxController.PriorityMode;
 import sonar.flux.api.IFluxController.TransferMode;
-import sonar.flux.api.IFluxController.TransmitterMode;
 import sonar.flux.api.IFluxNetwork;
 import sonar.flux.api.PlayerAccess;
 import sonar.flux.common.tileentity.TileEntityFlux;
@@ -84,8 +78,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			receivers = getReceivers();
 			updateReceivers = false;
 		}
-
-		// if (networkID.getObject() == -1) {
 		if (networkID.getObject() == -1 || receivers.isEmpty() || senders.isEmpty()) {
 			return;
 		}

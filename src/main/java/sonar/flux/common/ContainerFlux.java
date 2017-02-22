@@ -1,12 +1,10 @@
 package sonar.flux.common;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.inventory.ContainerSync;
 import sonar.flux.FluxNetworks;
 import sonar.flux.client.GuiState;
 import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.network.FluxNetworkCache.ViewingType;
 
 public class ContainerFlux extends ContainerSync {
 

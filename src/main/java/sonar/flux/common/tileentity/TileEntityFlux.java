@@ -1,6 +1,5 @@
 package sonar.flux.common.tileentity;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import cofh.api.energy.IEnergyConnection;
@@ -9,8 +8,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -117,45 +114,46 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		return oldState.getBlock() != newState.getBlock();
 	}
 
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-		super.onDataPacket(net, packet);
+	public void onSyncPacketRequested(EntityPlayer player) {
+		super.onSyncPacketRequested(player);
 		SonarCore.sendPacketAround(this, 128, 0);
 	}
 
 	public void updateConnections() {
-		boolean changed = false;
-		hasTiles = false;
-		for (EnumFacing face : EnumFacing.VALUES) {
-			BlockPos pos = this.pos.offset(face);
-			TileEntity tile = getWorld().getTileEntity(pos);
-			if (tile != null && !(tile instanceof IFlux)) {
-				if (tile instanceof IEnergyConnection) {
-					if (!connections[face.getIndex()]) {
-						changed = true;
-						connections[face.getIndex()] = true;
-						cachedTiles[face.getIndex()] = tile;
+		if (isServer()) {
+			boolean changed = false;
+			hasTiles = false;
+			for (EnumFacing face : EnumFacing.VALUES) {
+				BlockPos pos = this.pos.offset(face);
+				TileEntity tile = getWorld().getTileEntity(pos);
+				if (tile != null && !(tile instanceof IFlux)) {
+					if (tile instanceof IEnergyConnection) {
+						if (!connections[face.getIndex()]) {
+							changed = true;
+							connections[face.getIndex()] = true;
+							cachedTiles[face.getIndex()] = tile;
+						}
+						hasTiles = true;
+						continue;
 					}
-					hasTiles = true;
-					continue;
-				}
-				if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) {
-					if (!connections[face.getIndex()]) {
-						changed = true;
-						connections[face.getIndex()] = true;
-						cachedTiles[face.getIndex()] = tile;
+					if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) {
+						if (!connections[face.getIndex()]) {
+							changed = true;
+							connections[face.getIndex()] = true;
+							cachedTiles[face.getIndex()] = tile;
+						}
+						hasTiles = true;
 					}
-					hasTiles = true;
+				} else if (connections[face.getIndex()]) {
+					changed = true;
+					connections[face.getIndex()] = false;
+					cachedTiles[face.getIndex()] = null;
 				}
-			} else if (connections[face.getIndex()]) {
-				changed = true;
-				connections[face.getIndex()] = false;
-				cachedTiles[face.getIndex()] = null;
-			}
 
+			}
+			if (changed)
+				SonarCore.sendPacketAround(this, 128, 0);
 		}
-		if (changed)
-			SonarCore.sendPacketAround(this, 128, 0);
 	}
 
 	public TileEntity[] cachedTiles() {

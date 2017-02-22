@@ -6,7 +6,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
-import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;

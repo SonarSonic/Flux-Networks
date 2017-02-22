@@ -1,8 +1,6 @@
 package sonar.flux.connection;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,16 +8,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.SonarAPI;
 import sonar.core.api.utils.ActionType;
-import sonar.core.api.utils.BlockCoords;
-import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxPlayer;
 import sonar.flux.api.FluxWrapper;
 import sonar.flux.api.IFlux;
-import sonar.flux.api.IFluxCommon;
 import sonar.flux.api.IFluxController;
 import sonar.flux.api.IFluxController.TransmitterMode;
 import sonar.flux.common.tileentity.TileEntityStorage;

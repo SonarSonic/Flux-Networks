@@ -1,8 +1,8 @@
 package sonar.flux.network;
 
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,30 +1,14 @@
 package sonar.flux.common.block;
 
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.block.ConnectedTile.PropertySonarFacing;
-import sonar.core.helpers.FontHelper;
-import sonar.core.helpers.SonarHelper;
-import sonar.core.utils.IGuiTile;
-import sonar.flux.FluxNetworks;
 import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.network.FluxNetworkCache.ViewingType;
 
 public abstract class FluxSidedConnection extends FluxConnection {
 
@@ -35,9 +19,11 @@ public abstract class FluxSidedConnection extends FluxConnection {
 	@Override
 	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
 		TileEntity tile = world.getTileEntity(pos);
-		if (tile != null && tile instanceof TileEntityFlux) {
-			TileEntityFlux flux = (TileEntityFlux) tile;
-			flux.updateConnections();
+		if (!tile.getWorld().isRemote) {
+			if (tile != null && tile instanceof TileEntityFlux) {
+				TileEntityFlux flux = (TileEntityFlux) tile;
+				flux.updateConnections();
+			}
 		}
 	}
 

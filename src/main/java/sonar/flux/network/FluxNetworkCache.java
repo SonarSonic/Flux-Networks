@@ -5,23 +5,15 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import sonar.core.helpers.NBTHelper;
-import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.IFluxCommon;
+import sonar.flux.api.IFluxCommon.AccessType;
 import sonar.flux.api.IFluxNetwork;
 import sonar.flux.api.IFluxNetworkCache;
-import sonar.flux.api.IFluxCommon.AccessType;
 import sonar.flux.connection.BasicFluxNetwork;
 import sonar.flux.connection.EmptyFluxNetwork;
-import sonar.flux.network.FluxNetworkCache.ViewingType;
 
 /** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
 public class FluxNetworkCache implements IFluxNetworkCache {
@@ -140,12 +132,13 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 			}
 		}
 		for (Entry<Integer, ArrayList<NetworkViewer>> entry : singleViewers.entrySet()) {
-			for (NetworkViewer viewer : (ArrayList<NetworkViewer>) entry.getValue().clone()) {
+			for (NetworkViewer viewer : (ArrayList<NetworkViewer>) entry.getValue().clone()) {				
 				if (viewer.player.equals(player)) {
 					entry.getValue().remove(viewer);
 				}
 			}
 		}
+		singleViewers.clear();
 	}
 
 	public void markNetworkDirty(int id) {
@@ -160,16 +153,14 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 	}
 
 	public void sendAllViewerPackets() {
-		/* for (NetworkViewer viewer : (ArrayList<NetworkViewer>) adminViewers.clone()) { sendViewerPackets(viewer, -1); } */
 		for (Entry<Integer, ArrayList<NetworkViewer>> entry : singleViewers.entrySet()) {
 			((ArrayList<NetworkViewer>) entry.getValue().clone()).forEach(viewer -> sendViewerPackets(viewer, entry.getKey()));
 		}
-
 	}
 
 	public void sendViewerPackets(NetworkViewer viewer, int id) {
 		if (viewer.player != null) {
-			if (viewer.type.forceSync() || !viewer.sentFirstPacket || updatedViewers.contains(id)) {
+			if (viewer.type.forceSync() || !viewer.sentFirstPacket){// || updatedViewers.contains(id)) {
 				viewer.sentFirstPacket();
 				switch (viewer.type) {
 				case NETWORK:
@@ -184,7 +175,7 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 				default:
 					break;
 				}
-				updatedViewers.remove(id);
+				//updatedViewers.remove(id);
 			}
 		}
 	}

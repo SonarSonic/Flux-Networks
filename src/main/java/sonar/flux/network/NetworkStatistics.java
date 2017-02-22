@@ -1,12 +1,10 @@
 package sonar.flux.network;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper;
@@ -15,13 +13,12 @@ import sonar.core.network.sync.DirtyPart;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.ISyncPart;
 import sonar.core.network.sync.ISyncableListener;
-import sonar.core.network.sync.SyncPart;
 import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncableList;
 import sonar.flux.api.EnergyStats;
 import sonar.flux.api.IFlux;
-import sonar.flux.api.INetworkStatistics;
 import sonar.flux.api.IFlux.ConnectionType;
+import sonar.flux.api.INetworkStatistics;
 
 public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetworkStatistics, ISyncableListener, ISyncPart {
 

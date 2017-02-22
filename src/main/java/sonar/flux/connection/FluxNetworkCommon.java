@@ -1,7 +1,6 @@
 package sonar.flux.connection;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
@@ -10,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.helpers.SonarHelper;
-import sonar.core.network.sync.ISyncPart;
 import sonar.core.network.sync.ISyncableListener;
 import sonar.core.network.sync.SyncEnum;
 import sonar.core.network.sync.SyncNBTAbstract;

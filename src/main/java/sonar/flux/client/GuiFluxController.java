@@ -3,9 +3,7 @@ package sonar.flux.client;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextFormatting;
 import sonar.core.SonarCore;
-import sonar.core.helpers.FontHelper;
 import sonar.flux.api.IFluxController;
 import sonar.flux.common.ContainerFlux;
 import sonar.flux.common.tileentity.TileEntityController;

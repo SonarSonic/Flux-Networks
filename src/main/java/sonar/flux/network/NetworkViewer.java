@@ -16,4 +16,11 @@ public class NetworkViewer {
 	public void sentFirstPacket() {
 		this.sentFirstPacket = true;
 	}
+	
+	public boolean equals(Object obj){		
+		if(obj!=null && obj instanceof NetworkViewer){
+			return ((NetworkViewer)obj).player.equals(player);
+		}		
+		return false;
+	}
 }
