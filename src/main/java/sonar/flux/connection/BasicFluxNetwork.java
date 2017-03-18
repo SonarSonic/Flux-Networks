@@ -118,13 +118,12 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 							break;
 						}
 						if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
-							long toTransfer = mode == TransferMode.EVEN ? Math.min((long) Math.ceil(((double) currentLimit / (double) receivers.size())), 1) : currentLimit;
+							long toTransfer = (long) (mode == TransferMode.EVEN ? Math.min(Math.ceil(((double) limit / (double) receivers.size())), currentLimit) : currentLimit);
 							long pointRec = FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM);
 							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, pointRec, ActionType.PERFORM);
 						}
 					}
 					networkStats.latestRecords.transfer += limit - currentLimit;
-
 				}
 				current--;
 			}

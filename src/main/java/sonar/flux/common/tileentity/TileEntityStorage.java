@@ -50,7 +50,7 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 	@Override
 	public void markChanged(IDirtyPart part) {
 		super.markChanged(part);
-		if (this.worldObj != null) {
+		if (getWorld() != null && this.isServer()) {
 			if (part == storage) {
 				SonarCore.sendPacketAround(this, 128, 10);
 			}

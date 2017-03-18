@@ -89,9 +89,11 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 		switch (id) {
 		case 10:
 			sendMode.readFromBuf(buf);
+			network.updateSenders();
 			break;
 		case 11:
 			receiveMode.readFromBuf(buf);
+			network.updateReceivers();
 			break;
 		case 12:
 			transfer.readFromBuf(buf);

@@ -19,11 +19,9 @@ public abstract class FluxSidedConnection extends FluxConnection {
 	@Override
 	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
 		TileEntity tile = world.getTileEntity(pos);
-		if (!tile.getWorld().isRemote) {
-			if (tile != null && tile instanceof TileEntityFlux) {
-				TileEntityFlux flux = (TileEntityFlux) tile;
-				flux.updateConnections();
-			}
+		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileEntityFlux) {
+			TileEntityFlux flux = (TileEntityFlux) tile;
+			flux.updateConnections();
 		}
 	}
 
@@ -36,7 +34,7 @@ public abstract class FluxSidedConnection extends FluxConnection {
 		if (tile != null && tile instanceof TileEntityFlux) {
 			TileEntityFlux flux = (TileEntityFlux) tile;
 			for (PropertySonarFacing face : ConnectedTile.faces) {
-				currentState = currentState.withProperty(face, flux.connections[face.facing.getIndex()]);
+				currentState = currentState.withProperty(face, flux.connections.getObjects().get(face.facing.getIndex()));
 			}
 		}
 		return currentState;
@@ -45,5 +43,4 @@ public abstract class FluxSidedConnection extends FluxConnection {
 	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, new IProperty[] { CONNECTED, ConnectedTile.NORTH, ConnectedTile.EAST, ConnectedTile.SOUTH, ConnectedTile.WEST, ConnectedTile.DOWN, ConnectedTile.UP });
 	}
-
 }

@@ -85,4 +85,4 @@ network.player.owner=Network Owner
 network.player.sharedOwner=Shared Owner
 network.player.blocked=Blocked
 
-fluxItem.Info=Obtained by burning Redstone
+fluxItem.Info=Obtained by thowing Redstone in fire or lava

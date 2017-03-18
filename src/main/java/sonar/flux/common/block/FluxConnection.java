@@ -67,7 +67,8 @@ public abstract class FluxConnection extends SonarMachineBlock {
 			TileEntity target = world.getTileEntity(pos);
 			if (target != null && target instanceof TileEntityFlux) {
 				TileEntityFlux flux = (TileEntityFlux) target;
-				if (flux.playerUUID.getUUID().equals(player.getGameProfile().getId()) || !flux.getNetwork().isFakeNetwork() && flux.getNetwork().getPlayerAccess(player).canEdit()) {
+				if ((flux.playerUUID.getUUID()==null || flux.playerUUID.getUUID().equals(player.getGameProfile().getId())) || !flux.getNetwork().isFakeNetwork() && flux.getNetwork().getPlayerAccess(player).canEdit()) {
+					flux.playerUUID.setObject(player.getGameProfile().getId());
 					FluxNetworks.getServerCache().addViewer(player, ViewingType.NETWORK, flux.getNetwork().getNetworkID());
 					player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
 				} else {
