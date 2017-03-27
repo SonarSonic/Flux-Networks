@@ -1,6 +1,7 @@
 package sonar.flux;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import sonar.core.api.energy.ISonarEnergyContainerHandler;
+import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.common.block.SonarBlockTip;
 import sonar.flux.api.FluxAPI;
 import sonar.flux.common.block.FluxController;
@@ -34,6 +37,7 @@ import sonar.flux.common.tileentity.TileEntityController;
 import sonar.flux.common.tileentity.TileEntityPlug;
 import sonar.flux.common.tileentity.TileEntityPoint;
 import sonar.flux.common.tileentity.TileEntityStorage;
+import sonar.flux.connection.FluxHelper;
 import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
@@ -42,7 +46,7 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.1.8";
+	public static final String version = "1.1.9";
 
 	public static final int saveDimension = 0;
 
@@ -54,6 +58,8 @@ public class FluxNetworks {
 
 	public FluxNetworkCache serverCache = new FluxNetworkCache();	
 	public ClientNetworkCache clientCache = new ClientNetworkCache();
+	public static List<ISonarEnergyHandler> energyHandlers;
+	public static List<ISonarEnergyContainerHandler> energyContainerHandlers;
 
 	public static SimpleNetworkWrapper network;
 	public static Logger logger = (Logger) LogManager.getLogger(modid);
@@ -90,7 +96,7 @@ public class FluxNetworks {
 		FluxAPI.init();
 
 		logger.info("Loading Config");
-		FluxConfig.loadMainConfig();
+		FluxConfig.startLoading();
 
 		logger.info("Loading Network");
 		network = NetworkRegistry.INSTANCE.newSimpleChannel("Flux-Networks");
@@ -153,6 +159,9 @@ public class FluxNetworks {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		FluxConfig.finishLoading();
+		FluxNetworks.energyHandlers = FluxHelper.getEnergyHandlers();
+		FluxNetworks.energyContainerHandlers = FluxHelper.getEnergyContainerHandlers();
 	}
 
 	@EventHandler

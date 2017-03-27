@@ -17,7 +17,6 @@ import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.EnergyStats;
-import sonar.flux.api.FluxAPI;
 import sonar.flux.api.FluxPlayer;
 import sonar.flux.api.IFlux;
 import sonar.flux.api.IFlux.ConnectionType;
@@ -87,12 +86,12 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 		for (IFlux plug : senders) {
 			if (plug != null && plug.canTransfer()) {
-				stats.maxSent += FluxAPI.getFluxHelper().pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
+				stats.maxSent += FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
 			}
 		}
 		for (IFlux point : receivers) {
 			if (point != null && point.canTransfer()) {
-				stats.maxReceived += FluxAPI.getFluxHelper().pushEnergy(point, point.getTransferLimit(), ActionType.SIMULATE);
+				stats.maxReceived += FluxHelper.pushEnergy(point, point.getTransferLimit(), ActionType.SIMULATE);
 				if (point instanceof TileEntityStorage) {
 					TileEntityStorage fluxStorage = (TileEntityStorage) point;
 					maxStored += fluxStorage.storage.getMaxEnergyStored();
@@ -111,7 +110,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			int current = mode.repeat;
 			while (current != 0) {
 				for (IFlux plug : senders) {
-					long limit = FluxAPI.getFluxHelper().pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
+					long limit = FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
 					long currentLimit = limit;
 					for (IFlux point : receivers) {
 						if (currentLimit <= 0) {
@@ -119,8 +118,8 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 						}
 						if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
 							long toTransfer = (long) (mode == TransferMode.EVEN ? Math.min(Math.ceil(((double) limit / (double) receivers.size())), currentLimit) : currentLimit);
-							long pointRec = FluxAPI.getFluxHelper().pushEnergy(point, toTransfer, ActionType.PERFORM);
-							currentLimit -= FluxAPI.getFluxHelper().pullEnergy(plug, pointRec, ActionType.PERFORM);
+							long pointRec = FluxHelper.pushEnergy(point, toTransfer, ActionType.PERFORM);
+							currentLimit -= FluxHelper.pullEnergy(plug, pointRec, ActionType.PERFORM);
 						}
 					}
 					networkStats.latestRecords.transfer += limit - currentLimit;
@@ -239,7 +238,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			if (maxReceive - used <= 0) {
 				break;
 			}
-			long receive = FluxAPI.getFluxHelper().pushEnergy(flux, toTransfer, type);
+			long receive = FluxHelper.pushEnergy(flux, toTransfer, type);
 			used += receive;
 		}
 		if (type == ActionType.PERFORM)
@@ -256,7 +255,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			if (maxExtract - used <= 0) {
 				break;
 			}
-			used += FluxAPI.getFluxHelper().pullEnergy(flux, toTransfer, type);
+			used += FluxHelper.pullEnergy(flux, toTransfer, type);
 		}
 		if (type == ActionType.PERFORM)
 			networkStats.latestRecords.transfer += used;

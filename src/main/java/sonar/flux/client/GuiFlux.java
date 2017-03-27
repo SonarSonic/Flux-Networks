@@ -46,6 +46,7 @@ public class GuiFlux extends GuiFluxBase {
 	// NETWORK_SELECT
 	private int changed;
 	public SonarScroller scroller;
+	public int lastClickX;
 
 	// EDIT_CONNECTION
 	public ClientFlux clientFlux;
@@ -298,6 +299,8 @@ public class GuiFlux extends GuiFluxBase {
 					int xPos = 11;
 					int yPos = 8 + (12 * i) - (12 * start);
 					renderNetwork(networks.get(i), isSelectedNetwork(networks.get(i)), xPos, yPos);
+					this.bindTexture(buttons);
+					this.drawTexturedModalRect(154, yPos, 56, 0, 12, 12);
 				}
 			}
 			bindTexture(getBackground());
@@ -484,8 +487,12 @@ public class GuiFlux extends GuiFluxBase {
 						if (id < networks.size()) {
 							IFluxCommon network = networks.get(id);
 							ArrayList<String> strings = new ArrayList<String>();
-							strings.add((FontHelper.translate("network.owner") + ": " + TextFormatting.AQUA + network.getCachedPlayerName()));
-							strings.add((FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(network.getAccessType().getName())));
+							if (x > guiLeft + 155) {
+								strings.add(TextFormatting.RED + "REMOVE");
+							} else {
+								strings.add((FontHelper.translate("network.owner") + ": " + TextFormatting.AQUA + network.getCachedPlayerName()));
+								strings.add((FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(network.getAccessType().getName())));
+							}
 							this.drawHoveringText(strings, x, y);
 						}
 					}
@@ -533,7 +540,12 @@ public class GuiFlux extends GuiFluxBase {
 					int start = (int) (this.getNetworks().size() * scroller.getCurrentScroll());
 					int network = start + button.id - 10;
 					if (network < this.getNetworks().size()) {
-						setNetwork(this.getNetworks().get(network));
+						IFluxCommon common = this.getNetworks().get(network);
+						if (lastClickX > guiLeft + 155) {
+							FluxNetworks.network.sendToServer(new PacketFluxButton(Type.DELETE_NETWORK, tile.getPos(), common.getNetworkID()));
+						} else {
+							setNetwork(common);
+						}
 					}
 				}
 			}
@@ -586,6 +598,7 @@ public class GuiFlux extends GuiFluxBase {
 
 	@Override
 	public void mouseClicked(int x, int y, int mouseButton) throws IOException {
+		lastClickX = x;
 		super.mouseClicked(x, y, mouseButton);
 		if (this.disabledState) {
 			return;

@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import sonar.core.SonarCore;
 import sonar.core.api.SonarAPI;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.network.sync.SyncTagType;
@@ -35,6 +36,7 @@ import sonar.flux.api.IFluxController;
 import sonar.flux.api.IFluxNetwork;
 import sonar.flux.common.block.FluxConnection;
 import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.connection.FluxHelper;
 import sonar.flux.network.FluxNetworkCache.ViewingType;
 import sonar.flux.network.PacketFluxError;
 
@@ -135,32 +137,32 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			for (EnumFacing face : EnumFacing.VALUES) {
 				BlockPos pos = this.pos.offset(face);
 				TileEntity tile = getWorld().getTileEntity(pos);
+				int ordinal = face.getIndex();
 				if (tile != null && !(tile instanceof IFlux)) {
-					if (tile instanceof IEnergyConnection) {
-						if (!connections.getObjects().get(face.getIndex())) {
+					if (FluxHelper.canTransferEnergy(tile, face) != null) {
+						if (!connections.getObjects().get(ordinal) || cachedTiles[ordinal] == null) {
 							changed = true;
-							connections.getObjects().set(face.getIndex(), true);
+							connections.getObjects().set(ordinal, true);
+							cachedTiles[ordinal] = tile;
+						}
+						hasTiles = true;
+					} else if (tile instanceof IEnergyConnection && FluxConfig.transfers.get(EnergyType.RF).a) {
+						if (!connections.getObjects().get(ordinal) || cachedTiles[ordinal] == null) {
+							changed = true;
+							connections.getObjects().set(ordinal, true);
 							cachedTiles[face.getIndex()] = tile;
 						}
 						hasTiles = true;
 						continue;
 					}
-					if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) {
-						if (!connections.getObjects().get(face.getIndex())) {
-							changed = true;
-							connections.getObjects().set(face.getIndex(), true);
-							cachedTiles[face.getIndex()] = tile;
-						}
-						hasTiles = true;
-					}
-				} else if (connections.getObjects().get(face.getIndex())) {
+				} else if (connections.getObjects().get(ordinal)) {
 					changed = true;
-					connections.getObjects().set(face.getIndex(), false);
+					connections.getObjects().set(ordinal, false);
 					cachedTiles[face.getIndex()] = null;
 				}
 
 			}
-			if (changed){
+			if (changed) {
 				SonarCore.sendFullSyncAroundWithRenderUpdate(this, 128);
 			}
 		}
@@ -278,7 +280,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			disableLimit.writeToBuf(buf);
 			break;
 		case 0:
-			
+
 			break;
 		case 1:
 			priority.writeToBuf(buf);
@@ -299,7 +301,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 			disableLimit.readFromBuf(buf);
 			break;
 		case 0:
-			//changed to sync part
+			// changed to sync part
 			break;
 		case 1:
 			priority.readFromBuf(buf);
