@@ -100,7 +100,7 @@ public class FluxHelper {
 					switch (controller.getTransmitterMode()) {
 					case HELD_ITEM:
 						ItemStack stack = player.getHeldItemMainhand();
-						if (FluxHelper.canTransferEnergy(stack) != null) {
+						if (stack != null && FluxHelper.canTransferEnergy(stack) != null) {
 							receive = SonarAPI.getEnergyHelper().receiveEnergy(stack, maxTransferRF - received, actionType);
 							received += receive;
 							if (maxTransferRF - received <= 0) {
@@ -113,7 +113,7 @@ public class FluxHelper {
 						IInventory inv = player.inventory;
 						for (int i = 0; i < ((controller.getTransmitterMode() == TransmitterMode.ON) ? inv.getSizeInventory() : 9); i++) {
 							ItemStack itemStack = inv.getStackInSlot(i);
-							if (FluxHelper.canTransferEnergy(itemStack) != null) {
+							if (itemStack != null && FluxHelper.canTransferEnergy(itemStack) != null) {
 								receive = SonarAPI.getEnergyHelper().receiveEnergy(itemStack, maxTransferRF - received, actionType);
 								received += receive;
 								if (maxTransferRF - received <= 0) {

@@ -46,7 +46,7 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.1.9";
+	public static final String version = "1.2.0";
 
 	public static final int saveDimension = 0;
 
