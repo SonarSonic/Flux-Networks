@@ -24,17 +24,17 @@ public class EntityFireItem extends EntityItem {
 	}
 
 	public boolean isEntityInvulnerable(DamageSource source) {
-		if (source == DamageSource.inFire) {
+		if (source == DamageSource.IN_FIRE) {
 			if (!changed) {
 				//if (changeTicks >= 30) {
 				ItemStack stack = getEntityItem().copy();
 				ItemStack newStack = null;
 				if (stack.getItem() == Items.REDSTONE) {
-					newStack = new ItemStack(FluxNetworks.flux, stack.stackSize, 0);
+					newStack = new ItemStack(FluxNetworks.flux, stack.getCount(), 0);
 				} else if (stack.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK)) {
-					newStack = new ItemStack(FluxNetworks.fluxBlock, stack.stackSize, 0);
+					newStack = new ItemStack(FluxNetworks.fluxBlock, stack.getCount(), 0);
 				} else if (stack.getItem() == Items.ENDER_EYE) {					
-					newStack = new ItemStack(FluxNetworks.fluxCore, stack.stackSize, 0);
+					newStack = new ItemStack(FluxNetworks.fluxCore, stack.getCount(), 0);
 				}
 				setEntityItemStack(newStack);
 				changed = true;

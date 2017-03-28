@@ -82,7 +82,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	public void changeNetwork(IFluxNetwork network, EntityPlayer player) {
 		if (isServer()) {
-			IBlockState state = worldObj.getBlockState(pos);
+			IBlockState state = world.getBlockState(pos);
 			if (state.getBlock() instanceof FluxConnection) {
 				this.network = network;
 				if (player != null && !network.isFakeNetwork() && this instanceof IFluxController && network.hasController()) {
@@ -94,7 +94,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 				networkID.setObject(network.getNetworkID());
 				colour.setObject(network.getNetworkColour().getRGB());
 
-				worldObj.setBlockState(pos, state.withProperty(FluxConnection.CONNECTED, !network.isFakeNetwork()), 2);
+				world.setBlockState(pos, state.withProperty(FluxConnection.CONNECTED, !network.isFakeNetwork()), 2);
 				markDirty();
 				markBlockForUpdate();
 			}
@@ -105,7 +105,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		network.removeFluxConnection(this);
 		networkID.setObject(-1);
 		network = EmptyFluxNetwork.INSTANCE;
-		worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(FluxConnection.CONNECTED, false), 2);
+		world.setBlockState(pos, world.getBlockState(pos).withProperty(FluxConnection.CONNECTED, false), 2);
 	}
 
 	public void update() {
@@ -250,7 +250,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	@Override
 	public World getDimension() {
-		return worldObj;
+		return world;
 	}
 
 	@Override

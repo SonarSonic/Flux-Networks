@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -71,8 +72,8 @@ public class FluxNetworks {
 	public static ArrayList<Block> registeredBlocks = new ArrayList();
 	public static CreativeTabs tab = new CreativeTabs("Flux Networks") {
 		@Override
-		public Item getTabIconItem() {
-			return Item.getItemFromBlock(fluxPlug);
+		public ItemStack getTabIconItem() {
+			return new ItemStack(Item.getItemFromBlock(fluxPlug));
 		}
 	};
 

@@ -89,7 +89,7 @@ public class FluxEvents {
 				if (newEntity != null) {
 					event.getEntity().setDead();
 					event.setCanceled(true);
-					event.getWorld().spawnEntityInWorld(newEntity);
+					event.getWorld().spawnEntity(newEntity);
 				}
 			}
 		}
