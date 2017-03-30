@@ -28,7 +28,7 @@ public class EntityFireItem extends EntityItem {
 			if (!changed) {
 				//if (changeTicks >= 30) {
 				ItemStack stack = getEntityItem().copy();
-				ItemStack newStack = null;
+				ItemStack newStack = ItemStack.EMPTY;
 				if (stack.getItem() == Items.REDSTONE) {
 					newStack = new ItemStack(FluxNetworks.flux, stack.getCount(), 0);
 				} else if (stack.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK)) {
