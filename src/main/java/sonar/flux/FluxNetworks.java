@@ -32,6 +32,7 @@ import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
 import sonar.flux.common.block.FluxStorage;
 import sonar.flux.common.entity.EntityFireItem;
+import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.item.FluxItem;
 import sonar.flux.common.tileentity.TileEntityController;
 import sonar.flux.common.tileentity.TileEntityPlug;
@@ -46,7 +47,7 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.2.0";
+	public static final String version = "1.2.1";
 
 	public static final int saveDimension = 0;
 
@@ -64,7 +65,7 @@ public class FluxNetworks {
 	public static SimpleNetworkWrapper network;
 	public static Logger logger = (Logger) LogManager.getLogger(modid);
 
-	public static Item flux, fluxCore;
+	public static Item flux, fluxCore, fluxConfigurator;
 	public static Block fluxBlock, fluxPlug, fluxPoint, fluxCable, fluxStorage, largeFluxStorage, massiveFluxStorage, fluxController;
 
 	public static ArrayList<Item> registeredItems = new ArrayList();
@@ -106,6 +107,7 @@ public class FluxNetworks {
 
 		flux = registerItem("Flux", new FluxItem());
 		fluxCore = registerItem("FluxCore", new Item());
+		fluxConfigurator = registerItem("FluxConfigurator", new FluxConfigurator());
 
 		//fluxCable = registerBlock("FluxCable", new FluxCable().setHardness(0.4F).setResistance(20.0F));
 		//GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");

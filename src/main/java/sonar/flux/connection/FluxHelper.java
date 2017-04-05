@@ -103,6 +103,8 @@ public class FluxHelper {
 						if (stack != null && FluxHelper.canTransferEnergy(stack) != null) {
 							receive = SonarAPI.getEnergyHelper().receiveEnergy(stack, maxTransferRF - received, actionType);
 							received += receive;
+							if (!actionType.shouldSimulate())
+								to.onEnergyRemoved(receive);
 							if (maxTransferRF - received <= 0) {
 								break;
 							}
@@ -116,6 +118,8 @@ public class FluxHelper {
 							if (itemStack != null && FluxHelper.canTransferEnergy(itemStack) != null) {
 								receive = SonarAPI.getEnergyHelper().receiveEnergy(itemStack, maxTransferRF - received, actionType);
 								received += receive;
+								if (!actionType.shouldSimulate())
+									to.onEnergyRemoved(receive);
 								if (maxTransferRF - received <= 0) {
 									break;
 								}
