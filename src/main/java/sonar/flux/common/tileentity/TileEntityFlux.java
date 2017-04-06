@@ -1,5 +1,6 @@
 package sonar.flux.common.tileentity;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -10,6 +11,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -29,9 +32,12 @@ import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.utils.IByteBufTile;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.FluxConfiguration;
+import sonar.flux.api.FluxConfigurationType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.IFlux;
 import sonar.flux.api.IFluxCommon;
+import sonar.flux.api.IFluxConfigurable;
 import sonar.flux.api.IFluxController;
 import sonar.flux.api.IFluxNetwork;
 import sonar.flux.common.block.FluxConnection;
@@ -40,7 +46,7 @@ import sonar.flux.connection.FluxHelper;
 import sonar.flux.network.FluxNetworkCache.ViewingType;
 import sonar.flux.network.PacketFluxError;
 
-public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, IEnergyHandler, IByteBufTile {
+public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, IEnergyHandler, IByteBufTile, IFluxConfigurable {
 	// shared
 	public SyncTagType.INT priority = new SyncTagType.INT(0);
 	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(FluxConfig.defaultLimit);
@@ -72,6 +78,14 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		this.type = type;
 	}
 
+	public boolean canAccess(EntityPlayer player){
+		return (playerUUID.getUUID()==null || playerUUID.getUUID().equals(player.getGameProfile().getId())) || !getNetwork().isFakeNetwork() && getNetwork().getPlayerAccess(player).canEdit();
+	}
+	
+	public UUID getConnectionOwner(){
+		return playerUUID.getUUID();
+	}
+	
 	public void setPlayerUUID(UUID name) {
 		this.playerUUID.setObject(name);
 	}
@@ -93,7 +107,6 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 				network.addFluxConnection(this);
 				networkID.setObject(network.getNetworkID());
 				colour.setObject(network.getNetworkColour().getRGB());
-
 				world.setBlockState(pos, state.withProperty(FluxConnection.CONNECTED, !network.isFakeNetwork()), 2);
 				markDirty();
 				markBlockForUpdate();
@@ -144,6 +157,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 							changed = true;
 							connections.getObjects().set(ordinal, true);
 							cachedTiles[ordinal] = tile;
+							connections.markChanged();
 						}
 						hasTiles = true;
 					} else if (tile instanceof IEnergyConnection && FluxConfig.transfers.get(EnergyType.RF).a) {
@@ -151,6 +165,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 							changed = true;
 							connections.getObjects().set(ordinal, true);
 							cachedTiles[face.getIndex()] = tile;
+							connections.markChanged();
 						}
 						hasTiles = true;
 						continue;
@@ -159,6 +174,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 					changed = true;
 					connections.getObjects().set(ordinal, false);
 					cachedTiles[face.getIndex()] = null;
+					connections.markChanged();
 				}
 
 			}
@@ -196,6 +212,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public void addConnection() {
 		if (isServer() && networkID.getObject() != -1) {
 			IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
+			// System.out.println("ADDED");
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				changeNetwork((IFluxNetwork) network, null);
 			}
@@ -207,6 +224,7 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public void removeConnection() {
 		if (isServer() && networkID.getObject() != -1) {
 			network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
+			// System.out.println("REMOVED");
 			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
 				((IFluxNetwork) network).removeFluxConnection(this);
 			}
@@ -271,6 +289,37 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	@Override
 	public int getMaxEnergyStored(EnumFacing from) {
 		return Integer.MAX_VALUE;
+	}
+
+	public NBTTagCompound addConfigs(NBTTagCompound config, EntityPlayer player) {
+		if (!this.getNetwork().isFakeNetwork() && network.getNetworkID() != -1) {
+			config.setInteger(FluxConfigurationType.NETWORK.getNBTName(), network.getNetworkID());
+		}
+		config.setInteger(FluxConfigurationType.PRIORITY.getNBTName(), this.getCurrentPriority());
+		config.setLong(FluxConfigurationType.TRANSFER.getNBTName(), this.getTransferLimit());
+		config.setBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName(), disableLimit.getObject());
+		return config;
+	}
+
+	public void readConfigs(NBTTagCompound config, EntityPlayer player) {
+		if (config.hasKey(FluxConfigurationType.NETWORK.getNBTName())) {
+			int storedID = config.getInteger(FluxConfigurationType.NETWORK.getNBTName());
+			if (storedID != -1) {
+				IFluxNetwork storedNetwork = FluxNetworks.getServerCache().getNetwork(storedID);
+				if (!storedNetwork.isFakeNetwork() && storedNetwork.getPlayerAccess(player).canConnect()) {
+					changeNetwork(storedNetwork);
+				}
+			}
+		}
+		if (config.hasKey(FluxConfigurationType.PRIORITY.getNBTName())) {
+			this.priority.setObject(config.getInteger(FluxConfigurationType.PRIORITY.getNBTName()));
+		}
+		if (config.hasKey(FluxConfigurationType.TRANSFER.getNBTName())) {
+			this.limit.setObject(config.getLong(FluxConfigurationType.TRANSFER.getNBTName()));
+		}
+		if (config.hasKey(FluxConfigurationType.DISABLE_LIMIT.getNBTName())) {
+			this.disableLimit.setObject(config.getBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName()));
+		}
 	}
 
 	@Override

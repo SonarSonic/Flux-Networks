@@ -69,7 +69,7 @@ public class PacketFluxButton extends PacketCoords {
 				if (flux.getNetwork().getNetworkName().equals(newName) && flux.getNetwork().getOwnerUUID().equals(player.getGameProfile().getId())) {
 					return;
 				}
-				IFluxCommon network = FluxNetworks.getServerCache().createNetwork(player.getGameProfile().getId(), newName, colour, access);
+				IFluxCommon network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
 				flux.changeNetwork((IFluxNetwork) FluxNetworks.getServerCache().getNetwork(network.getNetworkID()), player);
 			}
 		},

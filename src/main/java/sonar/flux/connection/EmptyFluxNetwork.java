@@ -178,4 +178,10 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	@Override
 	public void updateReceivers() {}
 
+	@Override
+	public void onDeleted() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

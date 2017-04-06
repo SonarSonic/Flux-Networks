@@ -39,7 +39,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	public SyncableList parts = new SyncableList(this);
 	{
 		parts.addParts(cachedOwnerName, networkName, networkID, accessType, maxStored, energyStored, ownerUUID, colour, networkStats, players);
-		
+
 		colour.setObject(new CustomColour(41, 94, 138));
 
 	}
@@ -80,7 +80,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 
 	@Override
 	public String getCachedPlayerName() {
-		if (cachedOwnerName.getObject().isEmpty()) {
+		if (cachedOwnerName.getObject() == null || cachedOwnerName.getObject().isEmpty()) {
 			GameProfile profile = SonarHelper.getProfileByUUID(ownerUUID.getUUID());
 			cachedOwnerName.setObject(profile != null ? profile.getName() : "");
 		}

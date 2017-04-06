@@ -91,7 +91,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		for (IFlux point : receivers) {
 			if (point != null && point.canTransfer()) {
-				stats.maxReceived += FluxHelper.pushEnergy(point, point.getTransferLimit(), ActionType.SIMULATE);
+				stats.maxReceived += FluxHelper.pushEnergy(point, point.getCurrentTransferLimit(), ActionType.SIMULATE);
 				if (point instanceof TileEntityStorage) {
 					TileEntityStorage fluxStorage = (TileEntityStorage) point;
 					maxStored += fluxStorage.storage.getMaxEnergyStored();
@@ -259,7 +259,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		if (type == ActionType.PERFORM)
 			networkStats.latestRecords.transfer += used;
-
 		return used;
 	}
 
@@ -355,6 +354,13 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public void updateReceivers() {
 		this.updateReceivers = true;
+	}
+
+	@Override
+	public void onDeleted() {
+		for (Entry<ConnectionType, ArrayList<IFlux>> entry : connections.entrySet()) {
+			entry.getValue().forEach(flux -> flux.changeNetwork(EmptyFluxNetwork.INSTANCE));
+		}
 	}
 
 }

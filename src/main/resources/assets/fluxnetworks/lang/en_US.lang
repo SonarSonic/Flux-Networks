@@ -14,6 +14,7 @@ tile.FluxController.name=Flux Controller
 tile.FluxBlock.name=Flux Block
 item.Flux.name=Flux
 item.FluxCore.name=Flux Core
+item.FluxConfigurator.name=Flux Configurator
 
 network.nav.home=Home
 network.nav.config=Network Connections

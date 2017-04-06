@@ -60,4 +60,6 @@ public interface IFluxNetwork extends IFluxCommon{
 	public void updateSenders();
 	
 	public void updateReceivers();
+	
+	public void onDeleted();
 }
