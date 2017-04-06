@@ -2,8 +2,6 @@ package sonar.flux.network;
 
 import java.util.UUID;
 
-import com.mojang.authlib.GameProfile;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldSavedData;
@@ -46,15 +44,7 @@ public class NetworkData extends WorldSavedData {
 					continue;
 				}
 				BasicFluxNetwork loaded = new BasicFluxNetwork(tag.getInteger("id"), id, tag.getString("name"), colour, AccessType.valueOf(tag.getString("access")));
-
-				if (tag.hasKey("cachePName")) {
-					loaded.cachedOwnerName.setObject(tag.getString("cachePName"));
-				} else {
-					GameProfile owner = SonarHelper.getProfileByUUID(loaded.getOwnerUUID());
-					if (owner != null)
-						loaded.cachedOwnerName.setObject(owner.getName());
-				}
-
+				loaded.cachedOwnerName.setObject(SonarHelper.getProfileByUUID(loaded.getOwnerUUID()).getName());
 				loaded.getPlayers().readData(tag.getCompoundTag("playerList"), SyncType.SAVE);
 				FluxNetworks.getServerCache().addNetwork(loaded);
 				if (!loaded.players.containsUUID(loaded.getOwnerUUID())) {
@@ -74,7 +64,6 @@ public class NetworkData extends WorldSavedData {
 				NBTTagCompound tag = new NBTTagCompound();
 				tag.setInteger("id", network.getNetworkID());
 				tag.setUniqueId("ownerUUID", network.getOwnerUUID());
-				tag.setString("cachePName", network.getCachedPlayerName());
 				tag.setString("name", network.getNetworkName());
 				tag.setTag("colour", network.getNetworkColour().writeData(new NBTTagCompound(), SyncType.SAVE));
 				tag.setString("access", network.getAccessType().name());

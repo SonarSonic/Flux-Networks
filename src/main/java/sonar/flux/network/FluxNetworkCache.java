@@ -88,8 +88,7 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 		return available;
 	}
 
-	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access) {
-		UUID playerUUID = player.getGameProfile().getId();
+	public IFluxNetwork createNetwork(UUID playerUUID, String name, CustomColour colour, AccessType access) {
 		networks.putIfAbsent(playerUUID, new ArrayList());
 		for (IFluxNetwork network : (ArrayList<IFluxNetwork>) networks.get(playerUUID).clone()) {
 			if (network.getNetworkName().equals(name)) {
@@ -97,17 +96,16 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 			}
 		}
 		int iD = createNewUniqueID();
-		BasicFluxNetwork network = new BasicFluxNetwork(iD, playerUUID, name, colour, access);
-		network.cachedOwnerName.setObject(player.getDisplayNameString());
+		IFluxNetwork network = new BasicFluxNetwork(iD, playerUUID, name, colour, access);
 		addNetwork(network);
-		FluxNetworks.logger.info("[NEW NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was created by " + player.getDisplayNameString());
+		FluxNetworks.logger.info("[NEW NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was created by " + network.getCachedPlayerName());
+
 		return network;
 	}
 
 	public void deleteNetwork(UUID playerName, IFluxNetwork toDelete) {
 		if (networks.get(playerName) != null) {
 			removeNetwork(toDelete);
-			toDelete.onDeleted();
 			FluxNetworks.logger.info("[DELETE NETWORK] '" + toDelete.getNetworkName() + "' with ID '" + toDelete.getNetworkID() + "' was deleted by " + toDelete.getCachedPlayerName());
 		}
 	}
@@ -146,7 +144,7 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 	public void markNetworkDirty(int id) {
 		ArrayList<NetworkViewer> viewers = singleViewers.get(id);
 		if (viewers != null && !viewers.isEmpty()) {
-			((ArrayList<NetworkViewer>) viewers.clone()).forEach(viewer -> viewer.sentFirstPacket = false);
+			viewers.forEach(viewer -> viewer.sentFirstPacket = false);
 		}
 	}
 
