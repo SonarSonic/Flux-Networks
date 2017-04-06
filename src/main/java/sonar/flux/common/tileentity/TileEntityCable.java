@@ -36,7 +36,7 @@ public class TileEntityCable extends TileEntitySonar implements IEnergyReceiver,
 				sides[face.getIndex()] = false;
 			}
 		}
-		this.worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(ConnectedTile.DOWN, sides[0]).withProperty(ConnectedTile.UP, sides[1]).withProperty(ConnectedTile.NORTH, sides[2]).withProperty(ConnectedTile.SOUTH, sides[3]).withProperty(ConnectedTile.WEST, sides[4]).withProperty(ConnectedTile.EAST, sides[5]));
+		this.world.setBlockState(pos, world.getBlockState(pos).withProperty(ConnectedTile.DOWN, sides[0]).withProperty(ConnectedTile.UP, sides[1]).withProperty(ConnectedTile.NORTH, sides[2]).withProperty(ConnectedTile.SOUTH, sides[3]).withProperty(ConnectedTile.WEST, sides[4]).withProperty(ConnectedTile.EAST, sides[5]));
 	}
 
 	public void validate() {

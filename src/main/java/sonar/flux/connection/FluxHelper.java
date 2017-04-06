@@ -170,6 +170,9 @@ public class FluxHelper {
 	}
 
 	public static ISonarEnergyContainerHandler canTransferEnergy(ItemStack stack) {
+		if(stack.isEmpty()){
+			return null;
+		}
 		List<ISonarEnergyContainerHandler> handlers = FluxNetworks.energyContainerHandlers;
 		for (ISonarEnergyContainerHandler handler : handlers) {
 			if (handler.canHandleItem(stack)) {

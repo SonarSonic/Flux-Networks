@@ -10,7 +10,7 @@
 "credits": "Created by Ollie Lansdell",
 "logoFile": "",
 "screenshots": [],
-"requiredMods": [ "Forge", "sonarcore" ],
+"requiredMods": [ "forge", "sonarcore" ],
 "dependencies": ["sonarcore"],
 "useDependencyInformation": true
 }

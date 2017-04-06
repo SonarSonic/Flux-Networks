@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -47,7 +49,8 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.2.1";
+
+	public static final String version = "2.0.0";
 
 	public static final int saveDimension = 0;
 
@@ -57,7 +60,7 @@ public class FluxNetworks {
 	@Instance(modid)
 	public static FluxNetworks instance;
 
-	public FluxNetworkCache serverCache = new FluxNetworkCache();	
+	public FluxNetworkCache serverCache = new FluxNetworkCache();
 	public ClientNetworkCache clientCache = new ClientNetworkCache();
 	public static List<ISonarEnergyHandler> energyHandlers;
 	public static List<ISonarEnergyContainerHandler> energyContainerHandlers;
@@ -72,21 +75,26 @@ public class FluxNetworks {
 	public static ArrayList<Block> registeredBlocks = new ArrayList();
 	public static CreativeTabs tab = new CreativeTabs("Flux Networks") {
 		@Override
-		public Item getTabIconItem() {
-			return Item.getItemFromBlock(fluxPlug);
+		public ItemStack getTabIconItem() {
+			return new ItemStack(Item.getItemFromBlock(fluxPlug));
 		}
 	};
 
 	public static Block registerBlock(String name, Block block) {
 		block.setCreativeTab(tab);
-		GameRegistry.registerBlock(block.setUnlocalizedName(name), SonarBlockTip.class, name);
+		block.setUnlocalizedName(name);
+		block.setRegistryName(modid, name);
+		GameRegistry.register(block);
+		GameRegistry.register(new SonarBlockTip(block).setRegistryName(modid, name));
 		registeredBlocks.add(block);
 		return block;
 	}
 
 	public static Item registerItem(String name, Item item) {
 		item.setCreativeTab(tab);
-		GameRegistry.registerItem(item.setUnlocalizedName(name), name);
+		item.setUnlocalizedName(name);
+		item.setRegistryName(modid, name);
+		GameRegistry.register(item);
 		registeredItems.add(item);
 		return item;
 	}
@@ -109,8 +117,9 @@ public class FluxNetworks {
 		fluxCore = registerItem("FluxCore", new Item());
 		fluxConfigurator = registerItem("FluxConfigurator", new FluxConfigurator());
 
-		//fluxCable = registerBlock("FluxCable", new FluxCable().setHardness(0.4F).setResistance(20.0F));
-		//GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");
+		// fluxCable = registerBlock("FluxCable", new
+		// FluxCable().setHardness(0.4F).setResistance(20.0F));
+		// GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");
 
 		fluxPlug = registerBlock("FluxPlug", new FluxPlug().setHardness(0.4F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileEntityPlug.class, "FluxPlug");
@@ -131,7 +140,7 @@ public class FluxNetworks {
 		GameRegistry.registerTileEntity(TileEntityStorage.Massive.class, "GargantuanFluxStorage");
 
 		logger.info("Loading Entities");
-		EntityRegistry.registerModEntity(EntityFireItem.class, "Flux", 0, instance, 64, 10, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(modid, "Flux"), EntityFireItem.class, "Flux", 0, instance, 64, 10, true);
 
 		logger.info("Loading Recipes");
 		FluxCrafting.addRecipes();

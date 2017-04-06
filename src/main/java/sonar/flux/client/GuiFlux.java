@@ -83,7 +83,7 @@ public class GuiFlux extends GuiFluxBase {
 		Keyboard.enableRepeatEvents(true);
 		this.xSize = state.x;
 		this.ySize = state.y;
-		this.mc.thePlayer.openContainer = this.inventorySlots;
+		this.mc.player.openContainer = this.inventorySlots;
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		scroller = new SonarScroller(this.guiLeft + 165, this.guiTop + 8, 123, 10);

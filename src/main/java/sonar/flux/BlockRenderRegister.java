@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
 import sonar.core.common.block.properties.IMetaRenderer;
 
@@ -16,7 +17,7 @@ public class BlockRenderRegister {
 		for (Block block : FluxNetworks.registeredBlocks) {
 			Item item = Item.getItemFromBlock(block);
 			if (item.getHasSubtypes()) {
-				List<ItemStack> stacks = new ArrayList();
+				NonNullList<ItemStack> stacks = NonNullList.create();
 				item.getSubItems(item, FluxNetworks.tab, stacks);
 				for (ItemStack stack : stacks) {
 					String variant = "variant=meta" + stack.getItemDamage();

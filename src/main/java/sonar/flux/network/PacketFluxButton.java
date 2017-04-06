@@ -389,8 +389,8 @@ public class PacketFluxButton extends PacketCoords {
 				@Override
 				public void run() {
 					EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
-					if (player != null && player.worldObj != null) {
-						World world = player.worldObj;
+					if (player != null && player.getEntityWorld() != null) {
+						World world = player.getEntityWorld();
 						if (!message.type.local) {
 							MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 							world = server.worldServerForDimension(message.dimension);

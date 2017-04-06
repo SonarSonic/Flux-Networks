@@ -1,7 +1,7 @@
 package sonar.flux.common.tileentity;
 
 import cofh.api.energy.IEnergyProvider;
-import mekanism.api.energy.ICableOutputter;
+//import mekanism.api.energy.ICableOutputter;
 import net.darkhax.tesla.api.ITeslaProducer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,8 +17,8 @@ import sonar.core.utils.IGuiTile;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
-@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"), @Optional.Interface(iface = "mekanism.api.energy.ICableOutputter", modid = "Mekanism") })
-public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, ICableOutputter, IEnergyStorage {
+@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla")/*, @Optional.Interface(iface = "mekanism.api.energy.ICableOutputter", modid = "Mekanism") */})
+public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, /*ICableOutputter,*/ IEnergyStorage {
 
 	public TileEntityPoint() {
 		super(ConnectionType.POINT);
@@ -74,12 +74,12 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 	public long takePower(long power, boolean simulated) {
 		return this.extractEnergy(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
 	}
-
+	/*
 	@Override
 	public boolean canOutputTo(EnumFacing dir) {
 		return true;
 	}
-
+	*/
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
 		return 0;
