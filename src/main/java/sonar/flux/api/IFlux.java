@@ -1,7 +1,5 @@
 package sonar.flux.api;
 
-import java.util.UUID;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
@@ -18,8 +16,6 @@ public interface IFlux {
 			return this==POINT || this==STORAGE || this==CONTROLLER;
 		}
 	}
-	public UUID getConnectionOwner();
-	
 	/**the dimension in which this Flux Connection is located*/
 	public World getDimension();
 	
@@ -51,6 +47,4 @@ public interface IFlux {
 	public TileEntity[] cachedTiles();
 	
 	public boolean canTransfer();
-	
-	public void changeNetwork(IFluxNetwork network);
 }

@@ -1,7 +1,5 @@
 package sonar.flux.api;
 
-import java.util.UUID;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
@@ -85,14 +83,6 @@ public class ClientFlux implements IFlux {
 	@Override
 	public boolean canTransfer() {
 		return false;
-	}
-
-	@Override
-	public void changeNetwork(IFluxNetwork network) {}
-
-	@Override
-	public UUID getConnectionOwner() {
-		return null;
 	}
 
 }
