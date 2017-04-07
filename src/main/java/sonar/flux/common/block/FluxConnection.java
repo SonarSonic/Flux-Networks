@@ -65,7 +65,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 
 	@Override
 	public boolean operateBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, BlockInteraction interact) {
-		ItemStack heldItem = player.getHeldItem(hand);
+		ItemStack heldItem = hand == null ? null : player.getHeldItem(hand);
 		if ((heldItem == null || !(heldItem.getItem() instanceof FluxConfigurator))) {
 			if (!world.isRemote) {
 				TileEntity target = world.getTileEntity(pos);
