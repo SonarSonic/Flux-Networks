@@ -3,6 +3,8 @@ package sonar.flux.connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -12,7 +14,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.SonarCore;
 import sonar.core.api.SonarAPI;
-import sonar.core.api.energy.EnergyType;
 import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.api.utils.ActionType;
@@ -88,7 +89,7 @@ public class FluxHelper {
 					break;
 				}
 				ArrayList<FluxPlayer> playerNames = (ArrayList<FluxPlayer>) controller.getNetwork().getPlayers().clone();
-				ArrayList<EntityPlayer> players = new ArrayList();
+				ArrayList<EntityPlayer> players = Lists.newArrayList();
 				for (FluxPlayer player : playerNames) {
 					Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.id);
 					if (entity != null && entity instanceof EntityPlayer) {
@@ -140,7 +141,7 @@ public class FluxHelper {
 	}
 
 	public static List<ISonarEnergyHandler> getEnergyHandlers() {
-		ArrayList<ISonarEnergyHandler> handlers = new ArrayList();
+		ArrayList<ISonarEnergyHandler> handlers = Lists.newArrayList();
 		for (ISonarEnergyHandler handler : SonarCore.energyHandlers) {
 			if (FluxConfig.transfers.get(handler.getProvidedType()).a) {
 				handlers.add(handler);
@@ -150,7 +151,7 @@ public class FluxHelper {
 	}
 
 	public static List<ISonarEnergyContainerHandler> getEnergyContainerHandlers() {
-		ArrayList<ISonarEnergyContainerHandler> handlers = new ArrayList();
+		ArrayList<ISonarEnergyContainerHandler> handlers = Lists.newArrayList();
 		for (ISonarEnergyContainerHandler handler : SonarCore.energyContainerHandlers) {
 			if (FluxConfig.transfers.get(handler.getProvidedType()).b) {
 				handlers.add(handler);
@@ -179,5 +180,5 @@ public class FluxHelper {
 		return null;
 	}
 	/** gets all the TileEntities which can send/receive energy adjacent to the given IFlux */
-	/* public Map<TileEntity, EnumFacing> getConnections(IFlux flux) { Map<TileEntity, EnumFacing> tiles = new HashMap(); for (EnumFacing face : EnumFacing.VALUES) { World world = flux.getDimension(); TileEntity tile = world.getTileEntity(flux.getCoords().getBlockPos().offset(face)); if (tile == null || tile.isInvalid()) { continue; } if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) { tiles.put(tile, face); } } return tiles; } */
+	/* public Map<TileEntity, EnumFacing> getConnections(IFlux flux) { Map<TileEntity, EnumFacing> tiles = Maps.newHashMap(); for (EnumFacing face : EnumFacing.VALUES) { World world = flux.getDimension(); TileEntity tile = world.getTileEntity(flux.getCoords().getBlockPos().offset(face)); if (tile == null || tile.isInvalid()) { continue; } if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) { tiles.put(tile, face); } } return tiles; } */
 }

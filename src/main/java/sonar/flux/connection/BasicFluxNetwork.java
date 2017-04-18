@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import sonar.core.api.utils.ActionType;
@@ -33,10 +36,10 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	// connections
 	private IFluxController controller = null;
-	private final HashMap<ConnectionType, ArrayList<IFlux>> connections = new HashMap();
+	private final HashMap<ConnectionType, ArrayList<IFlux>> connections = Maps.newHashMap();
 
-	private ArrayList<IFlux> receivers = new ArrayList();
-	private ArrayList<IFlux> senders = new ArrayList();
+	private ArrayList<IFlux> receivers = Lists.newArrayList();
+	private ArrayList<IFlux> senders = Lists.newArrayList();
 	public boolean updateSenders, updateReceivers;
 
 	// statistics
@@ -51,18 +54,18 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	public ArrayList<IFlux> getReceivers() {
-		ArrayList<IFlux> receivers = new ArrayList();
-		receivers.addAll(connections.getOrDefault(ConnectionType.POINT, new ArrayList()));
-		receivers.addAll(connections.getOrDefault(ConnectionType.STORAGE, new ArrayList()));
-		receivers.addAll(connections.getOrDefault(ConnectionType.CONTROLLER, new ArrayList()));
+		ArrayList<IFlux> receivers = Lists.newArrayList();
+		receivers.addAll(connections.getOrDefault(ConnectionType.POINT, Lists.newArrayList()));
+		receivers.addAll(connections.getOrDefault(ConnectionType.STORAGE, Lists.newArrayList()));
+		receivers.addAll(connections.getOrDefault(ConnectionType.CONTROLLER, Lists.newArrayList()));
 		sortFluxNetwork(receivers, hasController() ? controller.getReceiveMode() : PriorityMode.DEFAULT);
 		return receivers;
 	}
 
 	public ArrayList<IFlux> getSenders() {
-		ArrayList<IFlux> senders = new ArrayList();
-		senders.addAll(connections.getOrDefault(ConnectionType.PLUG, new ArrayList()));
-		senders.addAll(connections.getOrDefault(ConnectionType.STORAGE, new ArrayList()));
+		ArrayList<IFlux> senders = Lists.newArrayList();
+		senders.addAll(connections.getOrDefault(ConnectionType.PLUG, Lists.newArrayList()));
+		senders.addAll(connections.getOrDefault(ConnectionType.STORAGE, Lists.newArrayList()));
 		sortFluxNetwork(senders, hasController() ? controller.getSendMode() : PriorityMode.DEFAULT);
 		return senders;
 	}
@@ -207,7 +210,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
-		ArrayList<FluxPlayer> toDelete = new ArrayList();
+		ArrayList<FluxPlayer> toDelete = Lists.newArrayList();
 
 		for (FluxPlayer player : players) {
 			if (player.getUUID().equals(playerUUID)) {
@@ -273,7 +276,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			}
 		}
 		if (connections.get(type) == null) {
-			connections.put(type, new ArrayList());
+			connections.put(type, Lists.newArrayList());
 		}
 		if (!connections.get(type).contains(flux))
 			connections.get(type).add(flux);
@@ -297,7 +300,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public void buildFluxConnections() {
-		ArrayList<ClientFlux> clientConnections = new ArrayList();
+		ArrayList<ClientFlux> clientConnections = Lists.newArrayList();
 		Iterator<IFlux> iterator = receivers.iterator();
 		iterator.forEachRemaining(point -> clientConnections.add(new ClientFlux(point)));
 		senders.iterator().forEachRemaining(plug -> {

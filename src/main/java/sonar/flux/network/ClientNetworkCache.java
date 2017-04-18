@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.flux.api.IFluxNetwork;
 import sonar.flux.api.IFluxNetworkCache;
@@ -28,7 +30,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public ArrayList<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
-		ArrayList<IFluxNetwork> available = new ArrayList();
+		ArrayList<IFluxNetwork> available = Lists.newArrayList();
 		for (IFluxNetwork network : getAllNetworks()) {
 			if (network.getPlayerAccess(player).canConnect()) {
 				available.add(network);
@@ -39,7 +41,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public ArrayList<IFluxNetwork> getAllNetworks() {
-		ArrayList<IFluxNetwork> available = new ArrayList();
+		ArrayList<IFluxNetwork> available = Lists.newArrayList();
 		for (Entry<UUID, ArrayList<IFluxNetwork>> entry : networks.entrySet()) {
 			available.addAll(entry.getValue());
 		}

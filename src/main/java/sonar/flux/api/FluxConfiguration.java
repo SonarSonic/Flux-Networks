@@ -1,6 +1,5 @@
 package sonar.flux.api;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class FluxConfiguration {

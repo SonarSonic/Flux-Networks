@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import sonar.core.utils.CustomColour;
@@ -18,7 +20,7 @@ import sonar.flux.connection.EmptyFluxNetwork;
 /** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
 public class FluxNetworkCache implements IFluxNetworkCache {
 
-	public ArrayList<NetworkViewer> adminViewers = new ArrayList();
+	public ArrayList<NetworkViewer> adminViewers = Lists.newArrayList();
 	public ConcurrentHashMap<Integer, ArrayList<NetworkViewer>> singleViewers = new ConcurrentHashMap<Integer, ArrayList<NetworkViewer>>();
 	public ConcurrentHashMap<Integer, ArrayList<ViewingType>> updatedViewers = new ConcurrentHashMap<Integer, ArrayList<ViewingType>>();
 	public ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> networks = new ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>>();
@@ -46,7 +48,7 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 	}
 
 	public ArrayList<IFluxNetwork> getAllNetworks() {
-		ArrayList<IFluxNetwork> available = new ArrayList();
+		ArrayList<IFluxNetwork> available = Lists.newArrayList();
 		for (Entry<UUID, ArrayList<IFluxNetwork>> entry : networks.entrySet()) {
 			available.addAll(entry.getValue());
 		}
@@ -55,14 +57,14 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 
 	public void addNetwork(IFluxNetwork common) {
 		if (common.getOwnerUUID() != null) {
-			networks.putIfAbsent(common.getOwnerUUID(), new ArrayList());
+			networks.putIfAbsent(common.getOwnerUUID(), Lists.newArrayList());
 			networks.get(common.getOwnerUUID()).add(common);
 		}
 	}
 
 	public void removeNetwork(IFluxNetwork common) {
 		if (common.getOwnerUUID() != null) {
-			networks.putIfAbsent(common.getOwnerUUID(), new ArrayList());
+			networks.putIfAbsent(common.getOwnerUUID(), Lists.newArrayList());
 			networks.get(common.getOwnerUUID()).remove(common);
 		}
 	}
@@ -79,7 +81,7 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 	}
 
 	public ArrayList<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
-		ArrayList<IFluxNetwork> available = new ArrayList();
+		ArrayList<IFluxNetwork> available = Lists.newArrayList();
 		for (IFluxNetwork network : getAllNetworks()) {
 			if (network.getPlayerAccess(player).canConnect()) {
 				available.add(network);
@@ -90,7 +92,7 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 
 	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access) {
 		UUID playerUUID = player.getGameProfile().getId();
-		networks.putIfAbsent(playerUUID, new ArrayList());
+		networks.putIfAbsent(playerUUID, Lists.newArrayList());
 		for (IFluxNetwork network : (ArrayList<IFluxNetwork>) networks.get(playerUUID).clone()) {
 			if (network.getNetworkName().equals(name)) {
 				return network;
@@ -120,7 +122,7 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 			break;
 		case NETWORK:
 		case CONNECTIONS:
-			singleViewers.putIfAbsent(networkID, new ArrayList());
+			singleViewers.putIfAbsent(networkID, Lists.newArrayList());
 			singleViewers.get(networkID).add(viewer);
 			break;
 		}

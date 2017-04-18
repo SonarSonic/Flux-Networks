@@ -8,6 +8,8 @@ import java.util.List;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -448,7 +450,7 @@ public class GuiFlux extends GuiFluxBase {
 				selectedPlayer = currentPlayer;
 				if (selectedPlayer != null) {
 					boolean isOwner = common.getCachedPlayerName().equals(selectedPlayer.getCachedName());
-					List<String> strings = new ArrayList();
+					List<String> strings = Lists.newArrayList();
 					if (x > guiLeft + 11 + 142 && x < guiLeft + 11 + 153) {
 						strings.add(TextFormatting.RED + "Delete: " + selectedPlayer.getCachedName());
 					} else {
@@ -712,7 +714,7 @@ public class GuiFlux extends GuiFluxBase {
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
 		super.drawGuiContainerBackgroundLayer(var1, var2, var3);
 		if (state.hasScrollBar()) {
-			drawTexturedModalRect(scroller.left, scroller.start + (int) ((float) (scroller.end - scroller.start - 17) * scroller.getCurrentScroll()), 176, 0, 10, 15);
+			drawTexturedModalRect(scroller.left, scroller.top + (int) ((float) (scroller.length - 17) * scroller.getCurrentScroll()), 176, 0, 10, 15);
 		}
 	}
 

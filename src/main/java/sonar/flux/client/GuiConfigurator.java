@@ -6,17 +6,16 @@ import java.util.Map.Entry;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
-import sonar.core.client.gui.GuiSonar;
 import sonar.core.helpers.FontHelper;
-import sonar.core.utils.IWorldPosition;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxConfigurationType;
 import sonar.flux.common.ContainerConfigurator;
@@ -25,7 +24,7 @@ import sonar.flux.network.PacketConfiguratorSettings;
 
 public class GuiConfigurator extends GuiContainer {
 
-	public HashMap<FluxConfigurationType, Boolean> configs = new HashMap();
+	public HashMap<FluxConfigurationType, Boolean> configs = Maps.newHashMap();
 
 	public GuiConfigurator(EntityPlayer player, ItemStack configurator) {
 		super(new ContainerConfigurator(player));

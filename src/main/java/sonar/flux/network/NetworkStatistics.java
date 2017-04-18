@@ -3,6 +3,8 @@ package sonar.flux.network;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.common.collect.Lists;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -41,9 +43,9 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 	}
 	
 	public void inputStatistics(EnergyStats stats, HashMap<ConnectionType, ArrayList<IFlux>> connections) {
-		plugCount.setObject(connections.getOrDefault(ConnectionType.PLUG, new ArrayList()).size());
-		pointCount.setObject(connections.getOrDefault(ConnectionType.POINT, new ArrayList()).size());
-		storageCount.setObject(connections.getOrDefault(ConnectionType.STORAGE, new ArrayList()).size());
+		plugCount.setObject(connections.getOrDefault(ConnectionType.PLUG, Lists.newArrayList()).size());
+		pointCount.setObject(connections.getOrDefault(ConnectionType.POINT, Lists.newArrayList()).size());
+		storageCount.setObject(connections.getOrDefault(ConnectionType.STORAGE, Lists.newArrayList()).size());
 		if (previousRecords != null && (ticks >= updateEvery || records.isEmpty())) {
 			ticks = 0;
 			records.add(new EnergyStats(previousRecords.transfer, previousRecords.maxSent, previousRecords.maxReceived));

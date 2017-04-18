@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -43,11 +45,12 @@ import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
 
-@Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version, dependencies = "required-after:sonarcore")
+@Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version, dependencies = "required-after:sonarcore@[" + FluxNetworks.SONAR_VERSION + ",);")
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.2.2";
+	public static final String version = "1.2.3";
+	public static final String SONAR_VERSION = "3.2.7";
 
 	public static final int saveDimension = 0;
 
@@ -68,8 +71,8 @@ public class FluxNetworks {
 	public static Item flux, fluxCore, fluxConfigurator;
 	public static Block fluxBlock, fluxPlug, fluxPoint, fluxCable, fluxStorage, largeFluxStorage, massiveFluxStorage, fluxController;
 
-	public static ArrayList<Item> registeredItems = new ArrayList();
-	public static ArrayList<Block> registeredBlocks = new ArrayList();
+	public static ArrayList<Item> registeredItems = Lists.newArrayList();
+	public static ArrayList<Block> registeredBlocks = Lists.newArrayList();
 	public static CreativeTabs tab = new CreativeTabs("Flux Networks") {
 		@Override
 		public Item getTabIconItem() {

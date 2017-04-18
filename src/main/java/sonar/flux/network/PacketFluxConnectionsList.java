@@ -2,6 +2,8 @@ package sonar.flux.network;
 
 import java.util.ArrayList;
 
+import com.google.common.collect.Lists;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -33,7 +35,7 @@ public class PacketFluxConnectionsList implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.networkID = buf.readInt();
-		this.connections = new ArrayList();
+		this.connections = Lists.newArrayList();
 		NBTTagCompound compound = ByteBufUtils.readTag(buf);
 		NBTTagList list = compound.getTagList("connects", 10);
 

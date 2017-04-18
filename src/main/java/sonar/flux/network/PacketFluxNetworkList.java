@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.collect.Lists;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -34,7 +36,7 @@ public class PacketFluxNetworkList implements IMessage {
 	public void fromBytes(ByteBuf buf) {
 		NBTTagCompound compound = ByteBufUtils.readTag(buf);
 		NBTTagList list = compound.getTagList("nets", 10);
-		ArrayList<IFluxNetwork> networks = new ArrayList();
+		ArrayList<IFluxNetwork> networks = Lists.newArrayList();
 		for (int i = 0; i < list.tagCount(); i++) {
 			BasicFluxNetwork net = NBTHelper.instanceNBTSyncable(BasicFluxNetwork.class, list.getCompoundTagAt(i));
 			UUID name = net.getOwnerUUID();
@@ -67,7 +69,7 @@ public class PacketFluxNetworkList implements IMessage {
 				ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> newNetworks = new ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>>();
 				message.networks.forEach(network -> {
 					if (network.getOwnerUUID() != null) {
-						newNetworks.putIfAbsent(network.getOwnerUUID(), new ArrayList());
+						newNetworks.putIfAbsent(network.getOwnerUUID(), Lists.newArrayList());
 						IFluxNetwork target = cache.getNetwork(network.getNetworkID());
 						if (target != null && target.getOwnerUUID() != null && target.getOwnerUUID().equals(network.getOwnerUUID())) {
 							newNetworks.get(network.getOwnerUUID()).add(target.updateNetworkFrom(network));

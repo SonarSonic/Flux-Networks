@@ -1,7 +1,8 @@
 package sonar.flux;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -16,7 +17,7 @@ public class BlockRenderRegister {
 		for (Block block : FluxNetworks.registeredBlocks) {
 			Item item = Item.getItemFromBlock(block);
 			if (item.getHasSubtypes()) {
-				List<ItemStack> stacks = new ArrayList();
+				List<ItemStack> stacks = Lists.newArrayList();
 				item.getSubItems(item, FluxNetworks.tab, stacks);
 				for (ItemStack stack : stacks) {
 					String variant = "variant=meta" + stack.getItemDamage();

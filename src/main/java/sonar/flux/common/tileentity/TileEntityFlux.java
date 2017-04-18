@@ -1,6 +1,5 @@
 package sonar.flux.common.tileentity;
 
-import java.util.List;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -12,14 +11,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import sonar.core.SonarCore;
-import sonar.core.api.SonarAPI;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.SonarHelper;
@@ -32,7 +29,6 @@ import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.utils.IByteBufTile;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.FluxConfiguration;
 import sonar.flux.api.FluxConfigurationType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.IFlux;

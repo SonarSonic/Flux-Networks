@@ -1,12 +1,12 @@
 package sonar.flux;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.utils.Pair;
@@ -19,7 +19,7 @@ public class FluxConfig extends FluxNetworks {
 	public static int basicTransfer, herculeanTransfer, gargantuanTransfer;
 	public static int hyper = 4, god = 10;
 
-	public static Map<EnergyType, Pair<Boolean, Boolean>> transfers = new HashMap();
+	public static Map<EnergyType, Pair<Boolean, Boolean>> transfers = Maps.newHashMap();
 	public static Configuration config;
 
 	public static void startLoading() {
