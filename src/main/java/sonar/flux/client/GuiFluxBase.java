@@ -18,8 +18,9 @@ import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxError;
-import sonar.flux.api.IFlux;
-import sonar.flux.api.IFluxCommon;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxCommon.AccessType;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
@@ -85,22 +86,20 @@ public abstract class GuiFluxBase extends GuiSonar {
 		FontHelper.text(network.getCustomName(), x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 	}
 
-	public void renderNetwork(IFluxCommon network, boolean isSelected, int x, int y) {
-		int rgb = network.getNetworkColour().getRGB();
+	public void renderNetwork(String networkName, AccessType access, int rgb, boolean isSelected, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		drawRect(x, y, x + 154, y + 12, rgb);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(getBackgroundFromState(GuiState.NETWORK_SELECT));
 		drawTexturedModalRect(x, y, 0, /* isSelected ? 178 : 166 */166, 154, 12);
-		FontHelper.text(network.getNetworkName(), x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
+		FontHelper.text(networkName, x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 	}
 
-	public void renderNetworkInFull(IFluxCommon network, boolean isSelected, int x, int y) {
-		int rgb = network.getNetworkColour().getRGB();
+	public void renderNetworkInFull(String networkName, AccessType access, int rgb, boolean isSelected, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		drawRect(x, y, x + 154, y + 24, rgb);
 		drawRect(x + 1, y + 1, x + 154 - 1, y + 24 - 1, Color.BLACK.getRGB());
-		FontHelper.text(TextFormatting.BOLD + network.getNetworkName(), x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
-		FontHelper.text(FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(network.getAccessType().getName()), x + 3, y + 13, 0);
+		FontHelper.text(TextFormatting.BOLD + networkName, x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
+		FontHelper.text(FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(access.getName()), x + 3, y + 13, 0);
 	}
 
 	public void renderEnergyBar(int x, int y, long stored, long max, int startCol, int endCol) {
@@ -252,7 +251,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 			}
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public class NetworkButton extends ImageButton {
 
@@ -260,5 +259,5 @@ public abstract class GuiFluxBase extends GuiSonar {
 			super(id, x, y, bground, 0, 190, 154, 11);
 		}
 	}
-	
+
 }

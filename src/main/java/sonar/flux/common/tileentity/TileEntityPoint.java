@@ -14,11 +14,12 @@ import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.SonarLoader;
 import sonar.core.utils.IGuiTile;
+import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
 @Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"), @Optional.Interface(iface = "mekanism.api.energy.ICableOutputter", modid = "Mekanism") })
-public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, ICableOutputter, IEnergyStorage {
+public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, ICableOutputter, IEnergyStorage, IFluxPoint {
 
 	public TileEntityPoint() {
 		super(ConnectionType.POINT);

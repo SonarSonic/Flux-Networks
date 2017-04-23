@@ -1,4 +1,4 @@
-package sonar.flux.api;
+package sonar.flux.api.configurator;
 
 import net.minecraft.nbt.NBTTagCompound;
 

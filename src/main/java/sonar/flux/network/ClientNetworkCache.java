@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
-import sonar.flux.api.IFluxNetwork;
-import sonar.flux.api.IFluxNetworkCache;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.network.IFluxNetworkCache;
 import sonar.flux.connection.EmptyFluxNetwork;
 
 public class ClientNetworkCache implements IFluxNetworkCache {

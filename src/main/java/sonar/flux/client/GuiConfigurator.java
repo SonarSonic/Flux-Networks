@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.FluxConfigurationType;
+import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.common.ContainerConfigurator;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.network.PacketConfiguratorSettings;
@@ -46,7 +46,6 @@ public class GuiConfigurator extends GuiContainer {
 	protected void actionPerformed(GuiButton button) {
 		FluxConfigurationType type = FluxConfigurationType.values()[button.id];
 		configs.put(type, !configs.get(type));
-
 		this.buttonList.clear();
 		this.initGui();
 	}

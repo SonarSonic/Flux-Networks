@@ -1,8 +1,8 @@
-package sonar.flux.api;
+package sonar.flux.api.network;
 
 import java.util.ArrayList;
 
-import sonar.flux.api.IFlux.ConnectionType;
+import sonar.flux.api.tiles.IFlux.ConnectionType;
 
 public interface INetworkStatistics {
 

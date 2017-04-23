@@ -1,4 +1,4 @@
-package sonar.flux.api;
+package sonar.flux.api.configurator;
 
 public enum FluxConfigurationType{
 	NETWORK, PRIORITY, TRANSFER, DISABLE_LIMIT;

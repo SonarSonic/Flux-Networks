@@ -3,6 +3,7 @@ package sonar.flux.common;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
+import sonar.core.helpers.InventoryHelper;
 
 public class ContainerConfigurator extends Container {
 	public EntityPlayer player;
@@ -17,7 +18,7 @@ public class ContainerConfigurator extends Container {
 	}
 
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
-		return null;
+		return InventoryHelper.EMPTY;
 	}
 
 }

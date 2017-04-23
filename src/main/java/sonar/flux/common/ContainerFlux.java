@@ -9,27 +9,33 @@ import sonar.flux.common.tileentity.TileEntityFlux;
 public class ContainerFlux extends ContainerSync {
 
 	public GuiState state;
+	public TileEntityFlux entity;
+	public EntityPlayer player;
 
 	public ContainerFlux(EntityPlayer player, TileEntityFlux entity, boolean network) {
 		super(entity);
+		this.entity = entity;
+		this.player = player;
 	}
 
-	public void switchState(EntityPlayer player, TileEntityFlux entity, GuiState state) {
+	public void switchState(GuiState state) {
 		if (entity.isServer()) {
-			FluxNetworks.getServerCache().removeViewer(player);
-			FluxNetworks.getServerCache().addViewer(player, state.getViewingType(), entity.getNetwork().getNetworkID());
+			int networkID = entity.getNetworkID();
+			entity.listeners.clearListener(entity.listeners.findListener(player));
+			entity.listeners.addListener(player, state.getViewingType());
 		}
 		this.state = state;
+	}
+
+	public void onContainerClosed(EntityPlayer player) {
+		super.onContainerClosed(player);
+		if (entity.isServer()){
+			entity.listeners.clearListener(entity.listeners.findListener(player));
+		}
 	}
 
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
 		return true;
-	}
-
-	public void onContainerClosed(EntityPlayer player) {
-		super.onContainerClosed(player);
-		if (!player.getEntityWorld().isRemote)
-			FluxNetworks.getServerCache().removeViewer(player);
 	}
 }

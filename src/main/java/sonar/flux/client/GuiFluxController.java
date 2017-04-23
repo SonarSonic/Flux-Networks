@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.SonarCore;
-import sonar.flux.api.IFluxController;
+import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.common.ContainerFlux;
 import sonar.flux.common.tileentity.TileEntityController;
 

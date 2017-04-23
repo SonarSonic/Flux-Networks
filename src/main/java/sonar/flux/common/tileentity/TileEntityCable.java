@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 import sonar.core.api.SonarAPI;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.tileentity.TileEntitySonar;
-import sonar.flux.api.IFlux;
+import sonar.flux.api.tiles.IFlux;
 
 //to be fully implemented later
 public class TileEntityCable extends TileEntitySonar implements IEnergyReceiver, IEnergyProvider {

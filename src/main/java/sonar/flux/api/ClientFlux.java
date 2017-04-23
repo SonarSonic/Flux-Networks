@@ -5,6 +5,8 @@ import java.util.UUID;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.EmptyFluxNetwork;
 
 public class ClientFlux implements IFlux {
@@ -79,7 +81,7 @@ public class ClientFlux implements IFlux {
 
 	@Override
 	public TileEntity[] cachedTiles() {
-		return new TileEntity[]{};
+		return new TileEntity[] {};
 	}
 
 	@Override
@@ -88,11 +90,22 @@ public class ClientFlux implements IFlux {
 	}
 
 	@Override
-	public void changeNetwork(IFluxNetwork network) {}
-
-	@Override
 	public UUID getConnectionOwner() {
 		return null;
 	}
+
+	@Override
+	public int getNetworkID() {
+		return -1;
+	}
+
+	@Override
+	public void updateNeighbours(boolean full) {}
+
+	@Override
+	public void connect(IFluxNetwork network) {}
+
+	@Override
+	public void disconnect(IFluxNetwork network) {}
 
 }

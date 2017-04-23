@@ -16,16 +16,15 @@ import sonar.core.SonarCore;
 import sonar.core.api.utils.BlockCoords;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.IFlux.ConnectionType;
-import sonar.flux.api.IFluxCommon;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.tiles.IFlux.ConnectionType;
 
 public class PacketFluxConnectionsList implements IMessage {
 
 	public ArrayList<ClientFlux> connections;
 	public int networkID;
 
-	public PacketFluxConnectionsList() {
-	}
+	public PacketFluxConnectionsList() {}
 
 	public PacketFluxConnectionsList(ArrayList<ClientFlux> networks, int networkID) {
 		this.connections = networks;
@@ -71,11 +70,16 @@ public class PacketFluxConnectionsList implements IMessage {
 		@Override
 		public IMessage onMessage(PacketFluxConnectionsList message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
-				IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
-				if (!common.isFakeNetwork()) {
-					common.setClientConnections(message.connections);
-				}
+				SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable() {
+					@Override
+					public void run() {
+						String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
+						IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
+						if (!common.isFakeNetwork()) {
+							common.setClientConnections(message.connections);
+						}
+					}
+				});
 			}
 			return null;
 		}

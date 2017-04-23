@@ -1,4 +1,4 @@
-package sonar.flux.api;
+package sonar.flux.api.network;
 
 public enum PlayerAccess {
 	OWNER, SHARED_OWNER, USER, BLOCKED;

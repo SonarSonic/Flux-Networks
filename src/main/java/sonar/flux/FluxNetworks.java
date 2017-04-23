@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -49,7 +50,7 @@ import sonar.flux.network.FluxNetworkCache;
 public class FluxNetworks {
 
 	public static final String modid = "fluxnetworks";
-	public static final String version = "1.2.3";
+	public static final String version = "1.2.4";
 	public static final String SONAR_VERSION = "3.2.7";
 
 	public static final int saveDimension = 0;
@@ -170,7 +171,7 @@ public class FluxNetworks {
 	}
 
 	@EventHandler
-	public void onServerStopping(FMLServerStoppingEvent event) {
+	public void onServerStopping(FMLServerStoppedEvent event) {
 		serverCache.clearNetworks();
 		logger.info("Removed Networks");
 

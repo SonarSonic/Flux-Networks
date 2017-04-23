@@ -1,10 +1,13 @@
-package sonar.flux.api;
+package sonar.flux.api.tiles;
 
 import java.util.UUID;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
+import sonar.core.listener.ISonarListenable;
+import sonar.core.listener.PlayerListener;
+import sonar.flux.api.network.IFluxNetwork;
 
 /** extended by IFluxPoint & IFluxPlug you must use them if you wish to send and receive energy from the network */
 public interface IFlux {
@@ -18,6 +21,11 @@ public interface IFlux {
 			return this==POINT || this==STORAGE || this==CONTROLLER;
 		}
 	}
+	public int getNetworkID();
+	
+	/**the network this Flux connection is a part of*/
+	public IFluxNetwork getNetwork();
+	
 	public UUID getConnectionOwner();
 	
 	/**the dimension in which this Flux Connection is located*/
@@ -25,9 +33,6 @@ public interface IFlux {
 	
 	/**the location of the Flux Connection*/
 	public BlockCoords getCoords();
-
-	/**the network this Flux connection is a part of*/
-	public IFluxNetwork getNetwork();
 
 	/**the type of Flux Connection*/
 	public ConnectionType getConnectionType();
@@ -52,5 +57,9 @@ public interface IFlux {
 	
 	public boolean canTransfer();
 	
-	public void changeNetwork(IFluxNetwork network);
+	public void updateNeighbours(boolean full);
+	
+	public void connect(IFluxNetwork network);
+	
+	public void disconnect(IFluxNetwork network);
 }

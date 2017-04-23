@@ -18,11 +18,11 @@ import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.sync.SyncableList;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.FluxPlayer;
-import sonar.flux.api.FluxPlayersList;
-import sonar.flux.api.IFluxCommon;
-import sonar.flux.api.INetworkStatistics;
-import sonar.flux.api.PlayerAccess;
+import sonar.flux.api.network.FluxPlayer;
+import sonar.flux.api.network.FluxPlayersList;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.INetworkStatistics;
+import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.network.NetworkStatistics;
 
 public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListener {
@@ -45,8 +45,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 
 	}
 
-	public FluxNetworkCommon() {
-	}
+	public FluxNetworkCommon() {}
 
 	public FluxNetworkCommon(int ID, UUID owner, String name, CustomColour networkColour, AccessType type) {
 		ownerUUID.setObject(owner);
@@ -56,7 +55,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 		networkName.setObject(name);
 		colour.setObject(networkColour);
 		accessType.setObject(type);
-		players.add(new FluxPlayer(owner, PlayerAccess.OWNER));
+		players.add(new FluxPlayer(owner, PlayerAccess.OWNER, cachedOwnerName.getObject()));
 	}
 
 	@Override

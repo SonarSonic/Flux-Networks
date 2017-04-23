@@ -24,9 +24,10 @@ import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.FluxListener;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.network.FluxNetworkCache.ViewingType;
+import sonar.flux.connection.FluxHelper;
 
 public abstract class FluxConnection extends SonarMachineBlock {
 
@@ -72,8 +73,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 				if (target != null && target instanceof TileEntityFlux) {
 					TileEntityFlux flux = (TileEntityFlux) target;
 					if (flux.canAccess(player)) {
-						flux.playerUUID.setObject(player.getGameProfile().getId());
-						FluxNetworks.getServerCache().addViewer(player, ViewingType.NETWORK, flux.getNetwork().getNetworkID());
+						flux.listeners.addListener(player, FluxListener.FULL_NETWORK);
 						player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
 					} else {
 						FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + "You don't have permission to access this network", world, player);
@@ -93,7 +93,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 			TileEntityFlux flux = (TileEntityFlux) target;
 			if (player != null && player instanceof EntityPlayer) {
 				flux.setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
-				flux.updateConnections();
+				flux.updateNeighbours(true);
 			}
 		}
 	}

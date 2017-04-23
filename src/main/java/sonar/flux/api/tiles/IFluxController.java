@@ -1,9 +1,9 @@
-package sonar.flux.api;
+package sonar.flux.api.tiles;
 
 import sonar.flux.FluxConfig;
 
 /** implemented by the Flux Controller TileEntity */
-public interface IFluxController extends IFlux {
+public interface IFluxController extends IFluxPoint {
 
 	public enum PriorityMode {
 		DEFAULT, LARGEST, SMALLEST;

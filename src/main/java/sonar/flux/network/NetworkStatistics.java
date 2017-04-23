@@ -17,10 +17,12 @@ import sonar.core.network.sync.ISyncPart;
 import sonar.core.network.sync.ISyncableListener;
 import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncableList;
-import sonar.flux.api.EnergyStats;
-import sonar.flux.api.IFlux;
-import sonar.flux.api.IFlux.ConnectionType;
-import sonar.flux.api.INetworkStatistics;
+import sonar.flux.api.network.EnergyStats;
+import sonar.flux.api.network.FluxCache;
+import sonar.flux.api.network.INetworkStatistics;
+import sonar.flux.api.tiles.IFlux;
+import sonar.flux.api.tiles.IFlux.ConnectionType;
+import sonar.flux.api.tiles.IFluxListenable;
 
 public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetworkStatistics, ISyncableListener, ISyncPart {
 
@@ -42,10 +44,10 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 		parts.addParts(pointCount, plugCount, storageCount);
 	}
 	
-	public void inputStatistics(EnergyStats stats, HashMap<ConnectionType, ArrayList<IFlux>> connections) {
-		plugCount.setObject(connections.getOrDefault(ConnectionType.PLUG, Lists.newArrayList()).size());
-		pointCount.setObject(connections.getOrDefault(ConnectionType.POINT, Lists.newArrayList()).size());
-		storageCount.setObject(connections.getOrDefault(ConnectionType.STORAGE, Lists.newArrayList()).size());
+	public void inputStatistics(EnergyStats stats, HashMap<FluxCache, ArrayList<IFluxListenable>> connections) {
+		plugCount.setObject(connections.getOrDefault(FluxCache.plug, Lists.newArrayList()).size());
+		pointCount.setObject(connections.getOrDefault(FluxCache.point, Lists.newArrayList()).size());
+		storageCount.setObject(connections.getOrDefault(FluxCache.storage, Lists.newArrayList()).size());
 		if (previousRecords != null && (ticks >= updateEvery || records.isEmpty())) {
 			ticks = 0;
 			records.add(new EnergyStats(previousRecords.transfer, previousRecords.maxSent, previousRecords.maxReceived));

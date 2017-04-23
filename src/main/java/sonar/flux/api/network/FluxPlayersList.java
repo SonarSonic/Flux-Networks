@@ -1,4 +1,4 @@
-package sonar.flux.api;
+package sonar.flux.api.network;
 
 import java.util.ArrayList;
 import java.util.UUID;

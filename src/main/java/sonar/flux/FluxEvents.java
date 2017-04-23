@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
-import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkData;
@@ -34,7 +34,6 @@ public class FluxEvents {
 			for (IFluxNetwork network : networks) {
 				network.updateNetwork();
 			}
-			cache.sendAllViewerPackets();
 		}
 	}
 
@@ -61,15 +60,8 @@ public class FluxEvents {
 			}
 		}
 	}
-
-	@SubscribeEvent
-	public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.player.getEntityWorld().isRemote) {
-			return;
-		}
-		FluxNetworks.getServerCache().removeViewer(event.player);
-	}
-
+	
+	
 	@SubscribeEvent
 	public void onEntityAdded(EntityJoinWorldEvent event) {
 		if (event.getWorld().isRemote) {
@@ -93,6 +85,17 @@ public class FluxEvents {
 				}
 			}
 		}
-
+	}
+	
+	public static void logNewNetwork(IFluxNetwork network){
+		FluxNetworks.logger.info("[NEW NETWORK] '%s' with ID '%s' was created by %s", network.getNetworkName(), network.getNetworkID(), network.getCachedPlayerName());
+	}
+	
+	public static void logRemoveNetwork(IFluxNetwork network){
+		FluxNetworks.logger.info("[DELETE NETWORK] '%s' with ID '%s' was removed by %s", network.getNetworkName(), network.getNetworkID(), network.getCachedPlayerName());
+	}
+	
+	public static void logLoadedNetwork(IFluxNetwork network){		
+		FluxNetworks.logger.info("[LOADED NETWORK] '%s' with ID '%s' with owner %s", network.getNetworkName(), network.getNetworkID(), network.getCachedPlayerName());
 	}
 }

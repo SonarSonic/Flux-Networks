@@ -1,6 +1,6 @@
 package sonar.flux.client;
 
-import sonar.flux.network.FluxNetworkCache.ViewingType;
+import sonar.flux.api.FluxListener;
 
 public enum GuiState {
 	INDEX(176, 166), NETWORK_SELECT(176, 166), NETWORK_STATS(176, 166), NETWORK_CREATE(176, 166), NETWORK_EDIT(176, 166), CONNECTIONS(176, 166), EDIT_CONNECTION(176, 166), PLAYERS(176, 166);
@@ -15,11 +15,11 @@ public enum GuiState {
 		return (this == NETWORK_SELECT || this == CONNECTIONS || this == PLAYERS);
 	}
 
-	public ViewingType getViewingType() {
+	public FluxListener getViewingType() {
 		if (this == CONNECTIONS || this == EDIT_CONNECTION) {
-			return ViewingType.CONNECTIONS;
+			return FluxListener.CONNECTIONS;
 		}
-		return ViewingType.NETWORK;
+		return FluxListener.SYNC_NETWORK;
 	}
 
 	public String getClientName() {

@@ -1,4 +1,4 @@
-package sonar.flux.api;
+package sonar.flux.api.network;
 
 import java.util.UUID;
 
@@ -14,6 +14,11 @@ public class FluxPlayer implements INBTSyncable {
 	public String cachedName = "";
 	public PlayerAccess access;
 
+	public FluxPlayer(UUID id, PlayerAccess access, String cachedName) {
+		this(id, access);
+		this.cachedName = cachedName;
+	}
+
 	public FluxPlayer(UUID id, PlayerAccess access) {
 		this.id = id;
 		this.access = access;
@@ -21,7 +26,7 @@ public class FluxPlayer implements INBTSyncable {
 
 	public FluxPlayer(NBTTagCompound tag) {
 		readData(tag, SyncType.SAVE);
-		if (FMLCommonHandler.instance().getEffectiveSide().isServer()) {
+		if (cachedName.isEmpty() && FMLCommonHandler.instance().getEffectiveSide().isServer()) {
 			this.cachedName = SonarHelper.getProfileByUUID(id).getName();
 		}
 	}

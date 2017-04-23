@@ -17,7 +17,7 @@ import sonar.core.api.SonarAPI;
 import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
-import sonar.flux.api.IFlux;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileEntityCable;
 
 public class FluxCable extends SonarMachineBlock {

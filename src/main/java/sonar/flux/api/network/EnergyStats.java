@@ -1,4 +1,4 @@
-package sonar.flux.api;
+package sonar.flux.api.network;
 
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.nbt.INBTSyncable;
@@ -6,8 +6,8 @@ import sonar.core.helpers.NBTHelper.SyncType;
 
 /** by default the energy stats are synced every tick, this may change to make stuff more efficient in the future*/
 public class EnergyStats implements INBTSyncable{
-	public long transfer, maxSent,maxReceived;
-	public String tagName = "stats";		
+	public static final String tagName = "stats";	
+	public long transfer, maxSent,maxReceived;	
 	
 	public EnergyStats(long transfer, long maxSent, long maxReceived) {
 		this.transfer=transfer;

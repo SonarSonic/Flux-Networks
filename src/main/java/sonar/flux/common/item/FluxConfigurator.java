@@ -15,8 +15,8 @@ import sonar.core.api.IFlexibleGui;
 import sonar.core.common.item.SonarItem;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
-import sonar.flux.api.FluxConfigurationType;
-import sonar.flux.api.IFluxConfigurable;
+import sonar.flux.api.configurator.FluxConfigurationType;
+import sonar.flux.api.configurator.IFluxConfigurable;
 import sonar.flux.client.GuiConfigurator;
 import sonar.flux.common.ContainerConfigurator;
 

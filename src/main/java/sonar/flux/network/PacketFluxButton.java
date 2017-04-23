@@ -24,13 +24,14 @@ import sonar.core.network.PacketCoords;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxError;
-import sonar.flux.api.IFluxCommon;
-import sonar.flux.api.IFluxCommon.AccessType;
-import sonar.flux.api.IFluxNetwork;
-import sonar.flux.api.PlayerAccess;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.api.network.IFluxCommon.AccessType;
 import sonar.flux.client.GuiState;
 import sonar.flux.common.ContainerFlux;
 import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.connection.FluxHelper;
 
 public class PacketFluxButton extends PacketCoords {
 
@@ -48,11 +49,11 @@ public class PacketFluxButton extends PacketCoords {
 				if (flux.getNetwork().getNetworkID() == networkID) {
 					return;
 				}
-				IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID);
-				if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
-					if (((IFluxNetwork) network).getPlayerAccess(player).canConnect()) {
-						flux.getNetwork().removeFluxConnection(flux);
-						flux.changeNetwork((IFluxNetwork) network, player);
+				IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(networkID);
+				if (!network.isFakeNetwork()) {
+					if (network.getPlayerAccess(player).canConnect()) {
+						flux.getNetwork().removeConnection(flux);
+						network.addConnection(flux);			
 					} else {
 						FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.ACCESS_DENIED), (EntityPlayerMP) player);
 					}
@@ -66,11 +67,12 @@ public class PacketFluxButton extends PacketCoords {
 				String newName = (String) objs[0];
 				CustomColour colour = (CustomColour) objs[1];
 				AccessType access = (AccessType) objs[2];
-				if (flux.getNetwork().getNetworkName().equals(newName) && flux.getNetwork().getOwnerUUID().equals(player.getGameProfile().getId())) {
+				if (flux.getNetwork().getNetworkName().equals(newName) && flux.getNetwork().getOwnerUUID().equals(FluxHelper.getOwnerUUID(player))) {
 					return;
 				}
-				IFluxCommon network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
-				flux.changeNetwork((IFluxNetwork) FluxNetworks.getServerCache().getNetwork(network.getNetworkID()), player);
+				IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
+				flux.getNetwork().removeConnection(flux);
+				network.addConnection(flux);
 			}
 		},
 		/** requires the network ID and the new name */
@@ -87,7 +89,7 @@ public class PacketFluxButton extends PacketCoords {
 						common.setNetworkName(newName);
 						common.setAccessType(access);
 						common.setCustomColour(colour);
-						common.sendChanges();
+						common.markDirty();
 					} else {
 						FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.EDIT_NETWORK), (EntityPlayerMP) player);
 					}
@@ -103,7 +105,7 @@ public class PacketFluxButton extends PacketCoords {
 
 				if (!toDelete.isFakeNetwork() && toDelete instanceof IFluxNetwork) {
 					if (toDelete.getPlayerAccess(player).canDelete()) {
-						FluxNetworks.getServerCache().deleteNetwork(player.getGameProfile().getId(), (IFluxNetwork) toDelete);
+						FluxNetworks.getServerCache().onPlayerRemoveNetwork(FluxHelper.getOwnerUUID(player), (IFluxNetwork) toDelete);
 					} else {
 						FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.NOT_OWNER), (EntityPlayerMP) player);
 					}
@@ -157,7 +159,7 @@ public class PacketFluxButton extends PacketCoords {
 					if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
 						IFluxNetwork network = ((IFluxNetwork) common);
 						network.addPlayerAccess(newPlayer, access);
-						network.sendChanges();
+						network.markDirty();
 					} else {
 						FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.EDIT_NETWORK), (EntityPlayerMP) player);
 					}
@@ -176,7 +178,7 @@ public class PacketFluxButton extends PacketCoords {
 					if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
 						IFluxNetwork network = ((IFluxNetwork) common);
 						network.removePlayerAccess(newPlayer, access);
-						network.sendChanges();
+						network.markDirty();
 					} else {
 						FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.EDIT_NETWORK), (EntityPlayerMP) player);
 					}
@@ -193,10 +195,10 @@ public class PacketFluxButton extends PacketCoords {
 					IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
 					if (!common.isFakeNetwork() && common instanceof IFluxNetwork) {
 						if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
-							if (!player.getGameProfile().getId().equals(newPlayer)) {
+							if (!FluxHelper.getOwnerUUID(player).equals(newPlayer)) {
 								IFluxNetwork network = ((IFluxNetwork) common);
 								network.addPlayerAccess(newPlayer, access);
-								network.sendChanges();
+								network.markDirty();
 							} else {
 								// FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.NOT_OWNER), (EntityPlayerMP) player);
 							}
@@ -213,9 +215,9 @@ public class PacketFluxButton extends PacketCoords {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				IFluxNetwork network = flux.getNetwork();
-				if ((Integer) objs[0] == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && flux.playerUUID.getUUID().equals(player.getGameProfile().getId())) {
-					flux.disconnectFromNetwork();
-					network.sendChanges();
+				if ((Integer) objs[0] == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && flux.playerUUID.getUUID().equals(FluxHelper.getOwnerUUID(player))) {
+					network.removeConnection(flux);
+					//network.sendChanges(); //TODO trigger this another way
 				}
 			}
 
@@ -226,7 +228,7 @@ public class PacketFluxButton extends PacketCoords {
 				GuiState state = (GuiState) objs[0];
 				Container container = player.openContainer;
 				if (container != null && container instanceof ContainerFlux) {
-					((ContainerFlux) container).switchState(player, flux, state);
+					((ContainerFlux) container).switchState(state);
 				}
 			}
 		};

@@ -21,19 +21,20 @@ import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.EnergyStats;
-import sonar.flux.api.FluxPlayer;
-import sonar.flux.api.IFlux;
-import sonar.flux.api.IFlux.ConnectionType;
-import sonar.flux.api.IFluxCommon;
-import sonar.flux.api.IFluxCommon.AccessType;
-import sonar.flux.api.IFluxController;
-import sonar.flux.api.INetworkStatistics;
-import sonar.flux.api.PlayerAccess;
+import sonar.flux.api.network.EnergyStats;
+import sonar.flux.api.network.FluxPlayer;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.INetworkStatistics;
+import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.api.network.IFluxCommon.AccessType;
+import sonar.flux.api.tiles.IFlux;
+import sonar.flux.api.tiles.IFluxController;
+import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.common.tileentity.TileEntityStorage;
 import sonar.flux.connection.BasicFluxNetwork;
 import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.connection.FluxHelper;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
 
@@ -246,8 +247,7 @@ public class GuiFlux extends GuiFluxBase {
 		FontHelper.text(GUI.MAX + ":", 87, 48, colour);
 		FontHelper.text(GUI.IGNORE_LIMIT + ": " + TextFormatting.WHITE + tile.disableLimit.getObject().toString(), 7, 48 + 18, colour);
 		FontHelper.text(FontHelper.translate(tile.getBlockType().getLocalizedName()), 20, 8, 0);
-		renderNetwork(common, true, 11, 8);
-
+		renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), true, 11, 8);
 		switch (type) {
 		case CONTROLLER:
 			IFluxController controller = (IFluxController) flux;
@@ -297,10 +297,11 @@ public class GuiFlux extends GuiFluxBase {
 			int start = (int) (networks.size() * scroller.getCurrentScroll());
 			int finish = Math.min(start + listSize, networks.size());
 			for (int i = start; i < finish; i++) {
-				if (networks.get(i) != null) {
+				IFluxCommon common = networks.get(i);
+				if (common != null) {
 					int xPos = 11;
 					int yPos = 8 + (12 * i) - (12 * start);
-					renderNetwork(networks.get(i), isSelectedNetwork(networks.get(i)), xPos, yPos);
+					renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), isSelectedNetwork(networks.get(i)), xPos, yPos);
 					this.bindTexture(buttons);
 					this.drawTexturedModalRect(154, yPos, 56, 0, 12, 12);
 				}
@@ -330,11 +331,11 @@ public class GuiFlux extends GuiFluxBase {
 
 				FontHelper.text(GUI.ACCESS_SETTING + ": " + TextFormatting.AQUA + FontHelper.translate(currentAccess.getName()), 8, 40, 0);
 				FontHelper.text(FontHelper.translate("Preview") + ": ", 8, 96, 0);
-				BasicFluxNetwork net = new BasicFluxNetwork(0, player.getGameProfile().getId(), name.getText().isEmpty() ? "Network Name" : name.getText(), colour, currentAccess);
-				if (this.showFullPreview) {
-					this.renderNetworkInFull(net, previewSelected, 11, 110);
+				String networkName = name.getText().isEmpty() ? "Network Name" : name.getText();
+				if (showFullPreview) {
+					renderNetworkInFull(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 110);
 				} else {
-					this.renderNetwork(net, previewSelected, 11, 110);
+					renderNetwork(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 110);
 				}
 
 				if (x - guiLeft > 55 && x - guiLeft < 165 && y - guiTop > 63 + 32 && y - guiTop < 68 + 32 + 4) {
@@ -396,20 +397,20 @@ public class GuiFlux extends GuiFluxBase {
 				renderNavigationPrompt("No Statistics Available", "Network Selection");
 				break;
 			} else {
-				renderNetwork(common, true, 11, 8);
-				int colour = common.getNetworkColour().getRGB();
+				renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), true, 11, 8);
+				int rgb = common.getNetworkColour().getRGB();
 				INetworkStatistics stats = common.getStatistics();
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.PLUGS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.PLUG), 12, 26, colour);
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.POINTS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.POINT), 12, 26 + 12 * 1, colour);
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.STORAGE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.STORAGE), 12, 26 + 12 * 2, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.PLUGS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.PLUG), 12, 26, rgb);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.POINTS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.POINT), 12, 26 + 12 * 1, rgb);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.STORAGE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.getConnectionCount(ConnectionType.STORAGE), 12, 26 + 12 * 2, rgb);
 
 				EnergyStats energyStats = stats.getLatestStats();
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_SENT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxSent), 12, 26 + 12 * 3, colour);
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_RECEIVE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxReceived), 12, 26 + 12 * 4, colour);
-				FontHelper.text(TextFormatting.DARK_GRAY + GUI.TRANSFER.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.transfer), 12, 26 + 12 * 5, colour);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_SENT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxSent), 12, 26 + 12 * 3, rgb);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.MAX_RECEIVE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.maxReceived), 12, 26 + 12 * 4, rgb);
+				FontHelper.text(TextFormatting.DARK_GRAY + GUI.TRANSFER.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(energyStats.transfer), 12, 26 + 12 * 5, rgb);
 
-				renderEnergyBar(14, 120, common.getEnergyAvailable(), common.getMaxEnergyStored(), colour, colour);
-				FontHelper.text("Network Buffer ", 14, 110, colour);
+				renderEnergyBar(14, 120, common.getEnergyAvailable(), common.getMaxEnergyStored(), rgb, rgb);
+				FontHelper.text("Network Buffer ", 14, 110, rgb);
 
 			}
 			break;

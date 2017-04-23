@@ -14,19 +14,19 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import sonar.core.SonarCore;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.IFluxCommon;
-import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
 
 public class PacketFluxNetworkList implements IMessage {
 
 	public ArrayList<? extends IFluxNetwork> networks;
 
-	public PacketFluxNetworkList() {
-	}
+	public PacketFluxNetworkList() {}
 
 	public PacketFluxNetworkList(ArrayList<? extends IFluxNetwork> toSend) {
 		this.networks = toSend;
@@ -65,19 +65,25 @@ public class PacketFluxNetworkList implements IMessage {
 		@Override
 		public IMessage onMessage(PacketFluxNetworkList message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				ClientNetworkCache cache = FluxNetworks.getClientCache();
-				ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> newNetworks = new ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>>();
-				message.networks.forEach(network -> {
-					if (network.getOwnerUUID() != null) {
-						newNetworks.putIfAbsent(network.getOwnerUUID(), Lists.newArrayList());
-						IFluxNetwork target = cache.getNetwork(network.getNetworkID());
-						if (target != null && target.getOwnerUUID() != null && target.getOwnerUUID().equals(network.getOwnerUUID())) {
-							newNetworks.get(network.getOwnerUUID()).add(target.updateNetworkFrom(network));
-						} else
-							newNetworks.get(network.getOwnerUUID()).add(network);
+
+				SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable() {
+					@Override
+					public void run() {
+						ClientNetworkCache cache = FluxNetworks.getClientCache();
+						ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> newNetworks = new ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>>();
+						message.networks.forEach(network -> {
+							if (network.getOwnerUUID() != null) {
+								newNetworks.putIfAbsent(network.getOwnerUUID(), Lists.newArrayList());
+								IFluxNetwork target = cache.getNetwork(network.getNetworkID());
+								if (target != null && target.getOwnerUUID() != null && target.getOwnerUUID().equals(network.getOwnerUUID())) {
+									newNetworks.get(network.getOwnerUUID()).add(target.updateNetworkFrom(network));
+								} else
+									newNetworks.get(network.getOwnerUUID()).add(network);
+							}
+						});
+						cache.networks = newNetworks;
 					}
 				});
-				cache.networks = newNetworks;
 			}
 
 			return null;
