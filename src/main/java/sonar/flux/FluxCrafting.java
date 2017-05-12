@@ -61,6 +61,7 @@ public class FluxCrafting extends FluxNetworks {
 		addShaped(new ItemStack(fluxController, 1), new Object[] { "BCB", "R R", "BBB", 'C', fluxCore, 'B', fluxBlock, 'R', flux });
 		addShaped(new ItemStack(fluxPlug, 1), new Object[] { " C ", "CBC", " C ", 'C', fluxCore, 'B', fluxBlock });
 		addShaped(new ItemStack(fluxPoint, 1), new Object[] { " C ", "CBC", " C ", 'C', fluxCore, 'B', Blocks.REDSTONE_BLOCK });
+		addShaped(new ItemStack(fluxConfigurator, 1), new Object[] { " CP", " OC", "O  ", 'C', fluxCore, 'P', Items.ENDER_PEARL, 'O', Blocks.OBSIDIAN });
 		addStorageRecipe(new ItemStack(fluxStorage, 1), new Object[] { "BBB", "G G", "BBB", 'B', fluxBlock, 'G', "paneGlassColorless" });
 		addStorageRecipe(new ItemStack(largeFluxStorage, 1), new Object[] { "BBB", "G G", "BBB", 'B', fluxStorage, 'G', "paneGlassColorless" });
 		addStorageRecipe(new ItemStack(massiveFluxStorage, 1), new Object[] { "BBB", "G G", "BBB", 'B', largeFluxStorage, 'G', "paneGlassColorless" });
