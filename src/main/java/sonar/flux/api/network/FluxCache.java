@@ -27,6 +27,7 @@ public class FluxCache<T extends IFluxListenable> {
 
 		public void update(BasicFluxNetwork network) {
 			network.setHasConnections(!network.getConnections(this).isEmpty());
+			controller.update(network); //update priorities
 		}
 
 	};

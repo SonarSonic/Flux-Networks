@@ -7,6 +7,8 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -45,14 +47,6 @@ public abstract class GuiFluxBase extends GuiSonar {
 
 	public TileEntityFlux tile;
 
-	public ResourceLocation getBackgroundFromState(GuiState state) {
-		if (state == GuiState.CONNECTIONS)
-			return connections;
-		if (state == GuiState.NETWORK_SELECT || state == GuiState.PLAYERS)
-			return GuiFlux.select;
-		return GuiFlux.bground;
-	}
-
 	public GuiFluxBase(Container container, TileEntityFlux tile) {
 		super(container, tile);
 		this.tile = tile;
@@ -60,7 +54,6 @@ public abstract class GuiFluxBase extends GuiSonar {
 	}
 
 	public void renderFlux(IFlux network, boolean isSelected, int x, int y) {
-		// int rgb = network.getNetworkColour().getRGB();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		int colour = midBlue;
 		switch (network.getConnectionType()) {
@@ -81,7 +74,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 		}
 
 		drawRect(x, y, x + 154, y + 12, colour);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(getBackgroundFromState(GuiState.NETWORK_SELECT));
+		Minecraft.getMinecraft().getTextureManager().bindTexture(state.getBackground());
 		drawTexturedModalRect(x, y, 0, /* isSelected ? 178 : 166 */166, 154, 12);
 		FontHelper.text(network.getCustomName(), x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 	}
@@ -89,7 +82,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 	public void renderNetwork(String networkName, AccessType access, int rgb, boolean isSelected, int x, int y) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		drawRect(x, y, x + 154, y + 12, rgb);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(getBackgroundFromState(GuiState.NETWORK_SELECT));
+		Minecraft.getMinecraft().getTextureManager().bindTexture(select);
 		drawTexturedModalRect(x, y, 0, /* isSelected ? 178 : 166 */166, 154, 12);
 		FontHelper.text(networkName, x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 	}
@@ -119,13 +112,13 @@ public abstract class GuiFluxBase extends GuiSonar {
 		GL11.glScaled(1.0 / 0.75, 1.0 / 0.75, 1.0 / 0.75);
 	}
 
-	protected void drawCreativeTabHoveringText(String tabName, int mouseX, int mouseY) {
+	public void drawCreativeTabHoveringText(String tabName, int mouseX, int mouseY) {
 		if (tile.error == FluxError.NONE) {
 			super.drawCreativeTabHoveringText(tabName, mouseX, mouseY);
 		}
 	}
 
-	protected void drawHoveringText(List<String> textLines, int x, int y) {
+	public void drawHoveringText(List<String> textLines, int x, int y) {
 		if (tile.error == FluxError.NONE) {
 			super.drawHoveringText(textLines, x, y);
 		}
@@ -145,7 +138,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 
 	/// STATE
 	public void switchState(GuiState state) {
-		FluxNetworks.network.sendToServer(new PacketFluxButton(Type.STATE_CHANGE, tile.getPos(), state));
+		FluxNetworks.network.sendToServer(new PacketFluxButton(Type.STATE_CHANGE, tile.getPos(), state.type));
 		this.state = state;
 		reset();
 	}
@@ -172,7 +165,7 @@ public abstract class GuiFluxBase extends GuiSonar {
 	}
 
 	public ResourceLocation getBackground() {
-		return getBackgroundFromState(state);
+		return state.getBackground();
 	}
 
 	/// CUSTOM BUTTONS
@@ -198,6 +191,10 @@ public abstract class GuiFluxBase extends GuiSonar {
 		}
 	}
 
+	public SelectButtons selectButton(int id, int x, int y, int texX, String name) {
+		return new SelectButtons(id, x, y, texX, name);
+	}
+
 	@SideOnly(Side.CLIENT)
 	public class SelectButtons extends ImageButton {
 		public int id;
@@ -219,8 +216,8 @@ public abstract class GuiFluxBase extends GuiSonar {
 		public int id;
 		public GuiState buttonState;
 
-		public NavigationButtons(GuiState state, int id, int x, int y, int texX) {
-			super(id, x, y, navigation, texX / 2, 0, 16, 16);
+		public NavigationButtons(GuiState state, int id, int x, int y) {
+			super(id, x, y, navigation, state.texX / 2, 0, 16, 16);
 			this.id = id;
 			this.buttonState = state;
 		}
@@ -253,11 +250,27 @@ public abstract class GuiFluxBase extends GuiSonar {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public class NetworkButton extends ImageButton {
+	public static class NetworkButton extends ImageButton {
 
 		public NetworkButton(int id, int x, int y) {
 			super(id, x, y, bground, 0, 190, 154, 11);
 		}
+	}
+
+	public FontRenderer getFontRenderer() {
+		return this.fontRendererObj;
+	}
+
+	public List<GuiButton> getButtonList() {
+		return buttonList;
+	}
+
+	public int getXSize() {
+		return xSize;
+	}
+
+	public int getYSize() {
+		return ySize;
 	}
 
 }

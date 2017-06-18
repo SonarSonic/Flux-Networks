@@ -7,6 +7,8 @@ import sonar.flux.api.tiles.IFlux.ConnectionType;
 public interface INetworkStatistics {
 
 	public int getConnectionCount(ConnectionType type);
+	
+	public EnergyStats getCurrentStats();
 		
 	public EnergyStats getLatestStats();
 	

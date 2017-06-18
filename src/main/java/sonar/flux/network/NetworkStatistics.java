@@ -36,7 +36,7 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 	public EnergyStats latestRecords = new EnergyStats(0, 0, 0);
 
 	/** public SyncTagType.LONG lastSend = new SyncTagType.LONG(2); public SyncTagType.LONG currentSend = new SyncTagType.LONG(3); public SyncTagType.LONG lastReceive = new SyncTagType.LONG(4); public SyncTagType.LONG currentReceive = new SyncTagType.LONG(5); public SyncTagType.LONG lastMaxSend = new SyncTagType.LONG(6); public SyncTagType.LONG currentMaxSend = new SyncTagType.LONG(7); public SyncTagType.LONG lastMaxReceive = new SyncTagType.LONG(8); public SyncTagType.LONG currentMaxReceive = new SyncTagType.LONG(9); */
-	public final ArrayList<EnergyStats> records = new ArrayList<EnergyStats>();
+	//public final ArrayList<EnergyStats> records = new ArrayList<EnergyStats>();
 	public int ticks = 0;
 
 	public SyncableList parts = new SyncableList(this);
@@ -48,6 +48,7 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 		plugCount.setObject(connections.getOrDefault(FluxCache.plug, Lists.newArrayList()).size());
 		pointCount.setObject(connections.getOrDefault(FluxCache.point, Lists.newArrayList()).size());
 		storageCount.setObject(connections.getOrDefault(FluxCache.storage, Lists.newArrayList()).size());
+		/*
 		if (previousRecords != null && (ticks >= updateEvery || records.isEmpty())) {
 			ticks = 0;
 			records.add(new EnergyStats(previousRecords.transfer, previousRecords.maxSent, previousRecords.maxReceived));
@@ -59,20 +60,21 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 		}
 		previousRecords = new EnergyStats(latestRecords.transfer, latestRecords.maxSent, latestRecords.maxReceived);
 		latestRecords = stats;
+		*/
 	}
 
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
 		NBTTagCompound tag = nbt.getCompoundTag(getTagName());
 		NBTHelper.readSyncParts(tag, type, parts);
-		previousRecords.readData(tag, type);
+		//previousRecords.readData(tag, type);
 	}
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTHelper.writeSyncParts(tag, type, parts, false);
-		previousRecords.writeData(tag, type);
+		//previousRecords.writeData(tag, type);
 		nbt.setTag(getTagName(), tag);
 		return nbt;
 	}
@@ -94,7 +96,7 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 
 	@Override
 	public ArrayList<EnergyStats> getRecordedStats() {
-		return records;
+		return null;//records;
 	}
 
 	@Override
@@ -126,6 +128,11 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 	@Override
 	public String getTagName() {
 		return "stats";
+	}
+
+	@Override
+	public EnergyStats getCurrentStats() {
+		return latestRecords;
 	}
 
 }

@@ -37,14 +37,17 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 
 	@Override
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+		/*
 		if (maxReceive == 0) {
 			return 0;
 		}
-		int received = (int) (this.getNetwork().receiveEnergy(Math.min(maxReceive, getCurrentTransferLimit()), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
-		if (!simulate && !disableLimit.getObject()) {
-			this.onEnergyAdded(received);
+		int received = (int) (this.getNetwork().receiveEnergy(Math.min(maxReceive, getValidTransfer(maxReceive, from)), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
+		if (!simulate){// && !disableLimit.getObject()) {
+			this.onEnergyAdded(from, received);
 		}
 		return received;
+		*/
+		return 0;
 	}
 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {

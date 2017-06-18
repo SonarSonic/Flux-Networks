@@ -22,18 +22,23 @@ import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
 
+//TODO make a single packet version for updates
 public class PacketFluxNetworkList implements IMessage {
 
 	public ArrayList<? extends IFluxNetwork> networks;
+	public boolean update;
 
 	public PacketFluxNetworkList() {}
 
-	public PacketFluxNetworkList(ArrayList<? extends IFluxNetwork> toSend) {
+	public PacketFluxNetworkList(ArrayList<? extends IFluxNetwork> toSend, boolean update) {
 		this.networks = toSend;
+		this.update = update;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
+		update = buf.readBoolean();
+
 		NBTTagCompound compound = ByteBufUtils.readTag(buf);
 		NBTTagList list = compound.getTagList("nets", 10);
 		ArrayList<IFluxNetwork> networks = Lists.newArrayList();
@@ -49,6 +54,7 @@ public class PacketFluxNetworkList implements IMessage {
 
 	@Override
 	public void toBytes(ByteBuf buf) {
+		buf.writeBoolean(update);
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTTagList list = new NBTTagList();
 		for (IFluxCommon network : networks) {
@@ -81,7 +87,8 @@ public class PacketFluxNetworkList implements IMessage {
 									newNetworks.get(network.getOwnerUUID()).add(network);
 							}
 						});
-						cache.networks = newNetworks;
+						if (!message.update)
+							cache.networks = newNetworks;
 					}
 				});
 			}

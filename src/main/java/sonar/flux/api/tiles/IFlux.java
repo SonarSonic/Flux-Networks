@@ -3,6 +3,7 @@ package sonar.flux.api.tiles;
 import java.util.UUID;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 import sonar.core.listener.ISonarListenable;
@@ -43,9 +44,17 @@ public interface IFlux {
 	/**the current RF/t this Flux connection can receive*/
 	public long getCurrentTransferLimit();
 	
-	public void onEnergyRemoved(long remove);
+	public long getCurrentTransfer(EnumFacing face);
 	
-	public void onEnergyAdded(long added);
+	public long getValidTransfer(long valid, EnumFacing face);
+	
+	public void onEnergyRemoved(EnumFacing face, long remove);
+	
+	public void onEnergyAdded(EnumFacing face, long added);
+	
+	public void setMaxSend(long send);
+	
+	public void setMaxReceive(long receive);
 
 	/**the higher the priority the sooner the Flux connection will receive power*/
 	public int getCurrentPriority();

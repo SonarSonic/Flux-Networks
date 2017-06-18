@@ -27,8 +27,8 @@ import sonar.flux.api.FluxError;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.api.network.IFluxCommon.AccessType;
-import sonar.flux.client.GuiState;
 import sonar.flux.common.ContainerFlux;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.connection.FluxHelper;
@@ -53,7 +53,7 @@ public class PacketFluxButton extends PacketCoords {
 				if (!network.isFakeNetwork()) {
 					if (network.getPlayerAccess(player).canConnect()) {
 						flux.getNetwork().removeConnection(flux);
-						network.addConnection(flux);			
+						network.addConnection(flux);
 					} else {
 						FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.ACCESS_DENIED), (EntityPlayerMP) player);
 					}
@@ -67,12 +67,11 @@ public class PacketFluxButton extends PacketCoords {
 				String newName = (String) objs[0];
 				CustomColour colour = (CustomColour) objs[1];
 				AccessType access = (AccessType) objs[2];
-				if (flux.getNetwork().getNetworkName().equals(newName) && flux.getNetwork().getOwnerUUID().equals(FluxHelper.getOwnerUUID(player))) {
-					return;
+				if (flux.getNetwork().isFakeNetwork()) {
+					IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
+					flux.getNetwork().removeConnection(flux);
+					network.addConnection(flux);
 				}
-				IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
-				flux.getNetwork().removeConnection(flux);
-				network.addConnection(flux);
 			}
 		},
 		/** requires the network ID and the new name */
@@ -84,7 +83,7 @@ public class PacketFluxButton extends PacketCoords {
 				CustomColour colour = (CustomColour) objs[2];
 				AccessType access = (AccessType) objs[3];
 				IFluxNetwork common = FluxNetworks.getServerCache().getNetwork(networkID);
-				if (!common.isFakeNetwork() && common instanceof IFluxNetwork) {
+				if (!common.isFakeNetwork()) {
 					if (common.getPlayerAccess(player).canEdit()) {
 						common.setNetworkName(newName);
 						common.setAccessType(access);
@@ -102,7 +101,6 @@ public class PacketFluxButton extends PacketCoords {
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
 				int networkID = (Integer) objs[0];
 				IFluxNetwork toDelete = FluxNetworks.getServerCache().getNetwork(networkID);
-
 				if (!toDelete.isFakeNetwork() && toDelete instanceof IFluxNetwork) {
 					if (toDelete.getPlayerAccess(player).canDelete()) {
 						FluxNetworks.getServerCache().onPlayerRemoveNetwork(FluxHelper.getOwnerUUID(player), (IFluxNetwork) toDelete);
@@ -110,7 +108,6 @@ public class PacketFluxButton extends PacketCoords {
 						FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.NOT_OWNER), (EntityPlayerMP) player);
 					}
 				}
-				// FluxNetworks.getServerCache().clearNetworks();
 			}
 		},
 		/** requires the priority to set */
@@ -217,7 +214,7 @@ public class PacketFluxButton extends PacketCoords {
 				IFluxNetwork network = flux.getNetwork();
 				if ((Integer) objs[0] == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && flux.playerUUID.getUUID().equals(FluxHelper.getOwnerUUID(player))) {
 					network.removeConnection(flux);
-					//network.sendChanges(); //TODO trigger this another way
+					// network.sendChanges(); //TODO trigger this another way
 				}
 			}
 
@@ -225,7 +222,7 @@ public class PacketFluxButton extends PacketCoords {
 		STATE_CHANGE(-1, true) {
 			@Override
 			public void process(TileEntityFlux flux, EntityPlayer player, Object[] objs) {
-				GuiState state = (GuiState) objs[0];
+				GuiTypeMessage state = (GuiTypeMessage) objs[0];
 				Container container = player.openContainer;
 				if (container != null && container instanceof ContainerFlux) {
 					((ContainerFlux) container).switchState(state);
@@ -280,7 +277,7 @@ public class PacketFluxButton extends PacketCoords {
 				break;
 			case STATE_CHANGE:
 				objs = new Object[1];
-				objs[0] = GuiState.values()[buf.readInt()];
+				objs[0] = GuiTypeMessage.values()[buf.readInt()];
 				break;
 			case ADD_PLAYER:
 				objs = new Object[3];
@@ -325,7 +322,7 @@ public class PacketFluxButton extends PacketCoords {
 				buf.writeLong((Long) objs[0]);
 				break;
 			case STATE_CHANGE:
-				buf.writeInt(((GuiState) objs[0]).ordinal());
+				buf.writeInt(((GuiTypeMessage) objs[0]).ordinal());
 				break;
 			case ADD_PLAYER:
 				buf.writeInt((Integer) objs[0]);
@@ -348,17 +345,16 @@ public class PacketFluxButton extends PacketCoords {
 		public abstract void process(TileEntityFlux flux, EntityPlayer player, Object[] objs);
 	}
 
-	public PacketFluxButton() {
-	}
+	public PacketFluxButton() {}
 
-	public PacketFluxButton(Type type, BlockPos pos, Object... obj) {
+	public PacketFluxButton(Type type, BlockPos pos, Object...obj) {
 		super(pos);
 		this.type = type;
 		this.objects = obj;
 	}
 
 	/** must be used if the TYPE isn't local */
-	public PacketFluxButton(int dimension, Type type, BlockPos pos, Object... obj) {
+	public PacketFluxButton(int dimension, Type type, BlockPos pos, Object...obj) {
 		super(pos);
 		this.dimension = dimension;
 		this.type = type;
@@ -387,7 +383,7 @@ public class PacketFluxButton extends PacketCoords {
 
 		@Override
 		public IMessage onMessage(PacketFluxButton message, MessageContext ctx) {
-			SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable(){
+			SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
 					EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
@@ -403,8 +399,9 @@ public class PacketFluxButton extends PacketCoords {
 							message.type.process(flux, player, message.objects);
 						}
 					}
-				}});
-			
+				}
+			});
+
 			return null;
 		}
 	}

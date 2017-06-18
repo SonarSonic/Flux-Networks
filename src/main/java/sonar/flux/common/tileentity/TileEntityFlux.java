@@ -57,7 +57,11 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 	public boolean hasTiles;
 	public SyncTagTypeList<Boolean> connections = new SyncTagTypeList<Boolean>(NBT.TAG_END, 8);
 	private final ConnectionType type;
-	public long currentTransfer;
+
+	public long toReceive = 0; // is reset after each tick, the network calculates the max accept based upon priorities and sorting etc.
+	public long toSend = 0;
+	public long totalTransferMax; // may need to be changed
+	public long[] currentTransfer = new long[6];
 
 	{
 		syncList.addParts(priority, limit, disableLimit, networkID, playerUUID, customName, colour, connections); // , colour, connections);
@@ -118,7 +122,10 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 	public void update() {
 		super.update();
 		if (isServer()) {
-			currentTransfer = limit.getObject();
+			totalTransferMax = limit.getObject();
+			for (int i = 0; i < 6; i++) {
+				currentTransfer[i] = limit.getObject();
+			}
 			if (checkTicks >= 20) {
 				updateNeighbours(false);
 				checkTicks = 0;
@@ -197,7 +204,7 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 	}
 
 	public void addConnection() {
-		if (isServer() && networkID.getObject() != -1) {
+		if (isServer()) {
 			FluxHelper.addConnection(this);
 			updateNeighbours(true);
 			SonarCore.sendPacketAround(this, 128, 0);
@@ -205,7 +212,7 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 	}
 
 	public void removeConnection() {
-		if (isServer() && networkID.getObject() != -1) {
+		if (isServer()) {
 			FluxHelper.removeConnection(this);
 		}
 	}
@@ -232,17 +239,27 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 
 	@Override
 	public long getCurrentTransferLimit() {
-		return disableLimit.getObject() ? Long.MAX_VALUE : currentTransfer;
+		return disableLimit.getObject() ? Long.MAX_VALUE : totalTransferMax;
 	}
 
 	@Override
-	public void onEnergyRemoved(long remove) {
-		currentTransfer -= remove;
+	public long getCurrentTransfer(EnumFacing face) {
+		return face == null ? getCurrentTransferLimit() : Math.min(getCurrentTransferLimit(), currentTransfer[face.ordinal()]);
 	}
 
 	@Override
-	public void onEnergyAdded(long added) {
-		currentTransfer -= added;
+	public long getValidTransfer(long valid, EnumFacing face) {
+		return Math.min(valid, getCurrentTransferLimit());//getCurrentTransfer(face));
+	}
+
+	@Override
+	public void onEnergyRemoved(EnumFacing face, long remove) {
+		totalTransferMax -= remove;
+	}
+
+	@Override
+	public void onEnergyAdded(EnumFacing face, long added) {
+		totalTransferMax -= added;
 	}
 
 	@Override
@@ -374,5 +391,15 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 	@Override
 	public boolean isValid() {
 		return !isInvalid();
+	}
+
+	@Override
+	public void setMaxSend(long send) {
+		toSend = send;
+	}
+
+	@Override
+	public void setMaxReceive(long receive) {
+		toReceive = receive;
 	}
 }

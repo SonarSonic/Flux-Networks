@@ -60,8 +60,7 @@ public class FluxEvents {
 			}
 		}
 	}
-	
-	
+
 	@SubscribeEvent
 	public void onEntityAdded(EntityJoinWorldEvent event) {
 		if (event.getWorld().isRemote) {
@@ -86,16 +85,16 @@ public class FluxEvents {
 			}
 		}
 	}
-	
-	public static void logNewNetwork(IFluxNetwork network){
-		FluxNetworks.logger.info("[NEW NETWORK] '%s' with ID '%s' was created by %s", network.getNetworkName(), network.getNetworkID(), network.getCachedPlayerName());
+
+	public static void logNewNetwork(IFluxNetwork network) {
+		FluxNetworks.logger.info("[NEW NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was created by " + network.getCachedPlayerName());
 	}
-	
-	public static void logRemoveNetwork(IFluxNetwork network){
-		FluxNetworks.logger.info("[DELETE NETWORK] '%s' with ID '%s' was removed by %s", network.getNetworkName(), network.getNetworkID(), network.getCachedPlayerName());
+
+	public static void logRemoveNetwork(IFluxNetwork network) {
+		FluxNetworks.logger.info("[DELETE NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was removed by " + network.getCachedPlayerName());
 	}
-	
-	public static void logLoadedNetwork(IFluxNetwork network){		
-		FluxNetworks.logger.info("[LOADED NETWORK] '%s' with ID '%s' with owner %s", network.getNetworkName(), network.getNetworkID(), network.getCachedPlayerName());
+
+	public static void logLoadedNetwork(IFluxNetwork network) {
+		FluxNetworks.logger.info("[LOADED NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' with owner " + network.getCachedPlayerName());
 	}
 }

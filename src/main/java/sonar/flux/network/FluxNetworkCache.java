@@ -1,6 +1,7 @@
 package sonar.flux.network;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +12,10 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import sonar.core.helpers.FunctionHelper;
+import sonar.core.listener.ISonarListenable;
+import sonar.core.listener.ListenableList;
+import sonar.core.listener.ListenerTally;
+import sonar.core.listener.PlayerListener;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
@@ -23,11 +28,15 @@ import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
 
 /** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
-public class FluxNetworkCache implements IFluxNetworkCache {
+public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<PlayerListener> {
 
+	public ListenableList<PlayerListener> listeners = new ListenableList(this, FluxListener.values().length);
 	public ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> networks = new ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>>();
-
 	public int uniqueID = 1;
+
+	public static FluxNetworkCache instance() {
+		return FluxNetworks.getServerCache();
+	}
 
 	public void clearNetworks() {
 		networks.clear();
@@ -50,15 +59,31 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 		return EmptyFluxNetwork.INSTANCE;
 	}
 
+	public IFluxNetwork getNetwork(int iD) {
+		return forEachNetwork(n -> !n.isFakeNetwork() && iD == n.getNetworkID());
+	}
+
 	public ArrayList<IFluxNetwork> getAllNetworks() {
 		ArrayList<IFluxNetwork> available = Lists.newArrayList();
 		networks.values().forEach(l -> l.forEach(n -> available.add(n)));
 		return available;
 	}
 
+	public ArrayList<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
+		ArrayList<IFluxNetwork> available = Lists.newArrayList();
+		forEachNetwork(network -> {
+			if (network.getPlayerAccess(player).canConnect())
+				available.add(network);
+			return false;
+		});
+
+		return available;
+	}
+
 	public void addNetwork(IFluxNetwork network) {
-		if (network.getOwnerUUID() != null) {
+		if (network.getOwnerUUID() != null){
 			networks.computeIfAbsent(network.getOwnerUUID(), FunctionHelper.ARRAY).add(network);
+			updateNetworkList();
 		}
 	}
 
@@ -66,21 +91,8 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 		if (common.getOwnerUUID() != null && networks.get(common.getOwnerUUID()) != null) {
 			common.onRemoved();
 			networks.get(common.getOwnerUUID()).remove(common);
+			updateNetworkList();
 		}
-	}
-
-	public IFluxNetwork getNetwork(int iD) {
-		return forEachNetwork(n -> !n.isFakeNetwork() && iD == n.getNetworkID());
-	}
-
-	public ArrayList<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
-		ArrayList<IFluxNetwork> available = Lists.newArrayList();
-		for (IFluxNetwork network : getAllNetworks()) {
-			if (network.getPlayerAccess(player).canConnect()) {
-				available.add(network);
-			}
-		}
-		return available;
 	}
 
 	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access) {
@@ -102,12 +114,42 @@ public class FluxNetworkCache implements IFluxNetworkCache {
 	public void onPlayerRemoveNetwork(UUID uuid, IFluxNetwork remove) {
 		if (networks.get(uuid) != null) {
 			removeNetwork(remove);
-			remove.onRemoved();
-			FluxEvents.logNewNetwork(remove);
+			FluxEvents.logRemoveNetwork(remove);
 		}
 	}
-	
-	public static FluxNetworkCache instance() {
-		return FluxNetworks.getServerCache();
+
+	public void updateNetworkList() {
+		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK);
+		players.forEach(listener -> {
+			ArrayList<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, false);
+			FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), listener.player);
+		});
+	}
+
+	@Override
+	public boolean isValid() {
+		return true;
+	}
+
+	@Override
+	public ListenableList<PlayerListener> getListenerList() {
+		return listeners;
+	}
+
+	@Override
+	public void onListenerAdded(ListenerTally<PlayerListener> tally) {}
+
+	@Override
+	public void onListenerRemoved(ListenerTally<PlayerListener> tally) {}
+
+	@Override
+	public void onSubListenableAdded(ISonarListenable<PlayerListener> listen) {
+		//System.out.println("ADDED:" + listen);
+	}
+
+	@Override
+	public void onSubListenableRemoved(ISonarListenable<PlayerListener> listen) {
+		//System.out.println("REMOVED:" + listen);			
+		
 	}
 }

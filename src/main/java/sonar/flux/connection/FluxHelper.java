@@ -34,8 +34,11 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxController.PriorityMode;
+import sonar.flux.api.tiles.IFluxController.TransferMode;
 import sonar.flux.api.tiles.IFluxController.TransmitterMode;
 import sonar.flux.api.tiles.IFluxListenable;
+import sonar.flux.api.tiles.IFluxPlug;
+import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.common.tileentity.TileEntityStorage;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.PacketFluxConnectionsList;
@@ -44,16 +47,22 @@ import sonar.flux.network.PacketFluxNetworkList;
 public class FluxHelper {
 
 	public static void addConnection(IFluxListenable flux) {
-		IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
-		if (!network.isFakeNetwork()) {
-			network.addConnection(flux);
+		FluxNetworkCache.instance().getListenerList().addSubListenable(flux);
+		if (flux.getNetworkID() != -1) {
+			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
+			if (!network.isFakeNetwork()) {
+				network.addConnection(flux);
+			}
 		}
 	}
 
 	public static void removeConnection(IFluxListenable flux) {
-		IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
-		if (!network.isFakeNetwork()) {
-			network.removeConnection(flux);
+		FluxNetworkCache.instance().getListenerList().removeSubListenable(flux);
+		if (flux.getNetworkID() != -1) {
+			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
+			if (!network.isFakeNetwork()) {
+				network.removeConnection(flux);
+			}
 		}
 	}
 
@@ -95,21 +104,36 @@ public class FluxHelper {
 					break;
 				case FULL_NETWORK:
 					ArrayList<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(tally.listener.player, true);
-					FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend), tally.listener.player);
+					FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), tally.listener.player);
 					tally.removeTallies(1, type);
 					tally.addTallies(1, FluxListener.SYNC_NETWORK);
 					break;
 				case STATISTICS:
-					// TODO keep STATISTICS up-to-date
+					FluxNetworks.network.sendTo(new PacketFluxNetworkList(Lists.newArrayList(network), true), tally.listener.player);
 					break;
 				case SYNC_NETWORK:
-					// TODO sync parts have changed - update
 					break;
 				default:
 					break;
 				}
 			}
 		}
+	}
+
+	public static long transferEnergy(IFluxPlug plug, List<IFluxPoint> points, TransferMode mode) {
+		long limit = FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
+		long currentLimit = limit;
+		for (IFluxPoint point : points) {
+			if (currentLimit <= 0) {
+				break;
+			}
+			if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
+				long toTransfer = (long) (mode == TransferMode.EVEN ? Math.min(Math.ceil(((double) limit / (double) points.size())), currentLimit) : currentLimit);
+				long pointRec = FluxHelper.pushEnergy(point, toTransfer, ActionType.PERFORM);
+				currentLimit -= FluxHelper.pullEnergy(plug, pointRec, ActionType.PERFORM);
+			}
+		}
+		return 0;
 	}
 
 	public static long pullEnergy(IFlux from, long maxTransferRF, ActionType actionType) {
@@ -122,9 +146,12 @@ public class FluxHelper {
 				for (int i = 0; i < 6; i++) {
 					TileEntity tile = tiles[i];
 					if (tile != null) {
-						long remove = SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getCurrentTransferLimit()), EnumFacing.values()[i].getOpposite(), actionType);
+						EnumFacing face = EnumFacing.values()[i].getOpposite();
+						long simulate = SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getCurrentTransferLimit()), face, ActionType.SIMULATE);
+						
+						long remove = SonarAPI.getEnergyHelper().extractEnergy(tile, from.getValidTransfer(simulate, face), face, actionType);
 						if (!actionType.shouldSimulate())
-							from.onEnergyRemoved(remove);
+							from.onEnergyRemoved(EnumFacing.VALUES[i], remove);
 						extracted += remove;
 					}
 				}
@@ -133,7 +160,7 @@ public class FluxHelper {
 				TileEntityStorage tile = (TileEntityStorage) from;
 				int remove = tile.storage.extractEnergy((int) Math.min(maxTransferRF - extracted, Integer.MAX_VALUE), actionType.shouldSimulate());
 				if (!actionType.shouldSimulate())
-					from.onEnergyRemoved(remove);
+					from.onEnergyRemoved(EnumFacing.VALUES[0], remove);
 				extracted += remove;
 				break;
 			default:
@@ -154,9 +181,11 @@ public class FluxHelper {
 				for (int i = 0; i < 6; i++) {
 					TileEntity tile = tiles[i];
 					if (tile != null) {
-						long added = SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF - received, to.getCurrentTransferLimit()), EnumFacing.values()[i].getOpposite(), actionType);
+						EnumFacing face = EnumFacing.values()[i].getOpposite();
+						long simulate = SonarAPI.getEnergyHelper().receiveEnergy(tile, Math.min(maxTransferRF - received, to.getCurrentTransferLimit()), face, ActionType.SIMULATE);
+						long added = SonarAPI.getEnergyHelper().receiveEnergy(tile, to.getValidTransfer(simulate, face), face, actionType);
 						if (!actionType.shouldSimulate())
-							to.onEnergyAdded(added);
+							to.onEnergyAdded(EnumFacing.VALUES[i], added);
 						received += added;
 					}
 				}
@@ -165,7 +194,7 @@ public class FluxHelper {
 				TileEntityStorage tile = (TileEntityStorage) to;
 				int added = tile.storage.receiveEnergy((int) Math.min(maxTransferRF - received, Integer.MAX_VALUE), actionType.shouldSimulate());
 				if (!actionType.shouldSimulate())
-					to.onEnergyAdded(added);
+					to.onEnergyAdded(EnumFacing.VALUES[0], added);
 				received += added;
 				break;
 			case CONTROLLER:
@@ -190,7 +219,7 @@ public class FluxHelper {
 							receive = SonarAPI.getEnergyHelper().receiveEnergy(stack, maxTransferRF - received, actionType);
 							received += receive;
 							if (!actionType.shouldSimulate())
-								to.onEnergyRemoved(receive);
+								to.onEnergyRemoved(EnumFacing.VALUES[0], receive);
 							if (maxTransferRF - received <= 0) {
 								break;
 							}
@@ -205,7 +234,7 @@ public class FluxHelper {
 								receive = SonarAPI.getEnergyHelper().receiveEnergy(itemStack, maxTransferRF - received, actionType);
 								received += receive;
 								if (!actionType.shouldSimulate())
-									to.onEnergyRemoved(receive);
+									to.onEnergyRemoved(EnumFacing.VALUES[0], receive);
 								if (maxTransferRF - received <= 0) {
 									break;
 								}

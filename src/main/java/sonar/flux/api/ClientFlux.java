@@ -3,6 +3,7 @@ package sonar.flux.api;
 import java.util.UUID;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 import sonar.flux.api.network.IFluxNetwork;
@@ -74,10 +75,10 @@ public class ClientFlux implements IFlux {
 	}
 
 	@Override
-	public void onEnergyRemoved(long remove) {}
+	public void onEnergyRemoved(EnumFacing face, long remove) {}
 
 	@Override
-	public void onEnergyAdded(long added) {}
+	public void onEnergyAdded(EnumFacing face, long added) {}
 
 	@Override
 	public TileEntity[] cachedTiles() {
@@ -107,5 +108,27 @@ public class ClientFlux implements IFlux {
 
 	@Override
 	public void disconnect(IFluxNetwork network) {}
+
+	@Override
+	public long getCurrentTransfer(EnumFacing face) {
+		return 0;
+	}
+
+	@Override
+	public long getValidTransfer(long valid, EnumFacing face) {
+		return 0;
+	}
+
+	@Override
+	public void setMaxSend(long send) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMaxReceive(long receive) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

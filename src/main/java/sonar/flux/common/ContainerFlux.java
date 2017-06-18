@@ -3,12 +3,12 @@ package sonar.flux.common;
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.inventory.ContainerSync;
 import sonar.flux.FluxNetworks;
-import sonar.flux.client.GuiState;
+import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.common.tileentity.TileEntityFlux;
 
 public class ContainerFlux extends ContainerSync {
 
-	public GuiState state;
+	public GuiTypeMessage state;
 	public TileEntityFlux entity;
 	public EntityPlayer player;
 
@@ -18,7 +18,7 @@ public class ContainerFlux extends ContainerSync {
 		this.player = player;
 	}
 
-	public void switchState(GuiState state) {
+	public void switchState(GuiTypeMessage state) {
 		if (entity.isServer()) {
 			int networkID = entity.getNetworkID();
 			entity.listeners.clearListener(entity.listeners.findListener(player));

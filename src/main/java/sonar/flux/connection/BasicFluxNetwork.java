@@ -57,10 +57,10 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public Queue<IFluxListenable> toAdd = new ConcurrentLinkedQueue<IFluxListenable>();
 	public Queue<IFluxListenable> toRemove = new ConcurrentLinkedQueue<IFluxListenable>();
 	public boolean hasConnections;
+	// public EnergyStats stats = new EnergyStats(0, 0, 0);
 
 	// statistics
-	private long maxTransfer = 0, lastTransfer;
-	
+
 	public BasicFluxNetwork() {
 		super();
 	}
@@ -114,6 +114,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public void updateTypes() {
 		if (!changedTypes.isEmpty()) {
 			changedTypes.forEach(type -> type.update(this));
+			changedTypes.clear();
 		}
 	}
 
@@ -121,54 +122,60 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		return connections.computeIfAbsent(type, FunctionHelper.ARRAY);
 	}
 
+	public TransferMode getTransferMode() {
+		IFluxController controller = getController();
+		return controller != null ? controller.getTransferMode().isBanned() ? TransferMode.DEFAULT : controller.getTransferMode() : TransferMode.DEFAULT;
+	}
+
 	public void updateNetwork() {
 		addConnections();
 		removeConnections();
 		updateTypes();
+		TransferMode mode = getTransferMode();
+		List<IFluxStorage> buffer = getConnections(FluxCache.storage);
 		List<IFluxPoint> points = getConnections(FluxCache.point);
 		List<IFluxPlug> plugs = getConnections(FluxCache.plug);
+		
 		if (networkID.getObject() == -1 || points.isEmpty() || plugs.isEmpty()) {
 			return;
 		}
-		EnergyStats stats = new EnergyStats(0, 0, 0);
+		EnergyStats stats = getStatistics().getCurrentStats();
 		plugs.forEach(plug -> stats.maxSent += FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE));
 		points.forEach(point -> stats.maxReceived += FluxHelper.pushEnergy(point, point.getCurrentTransferLimit(), ActionType.SIMULATE));
-
-		long currentTransfer = maxTransfer;
-		lastTransfer = currentTransfer;
+		long currentTransfer = stats.transfer;
+		
 		if (stats.maxReceived != 0 && stats.maxSent != 0) {
 			IFluxController controller = getController();
-			TransferMode mode = controller != null ? controller.getTransferMode().isBanned() ? TransferMode.DEFAULT : controller.getTransferMode() : TransferMode.DEFAULT;
 			int current = mode.repeat;
 			while (current != 0) {
 				for (IFluxPlug plug : plugs) {
-
+					FluxHelper.transferEnergy(plug, points, mode);
+					/*					
 					long limit = FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
 					long currentLimit = limit;
 					for (IFluxPoint point : points) {
 						if (currentLimit <= 0) {
 							break;
 						}
-						if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
-							long toTransfer = (long) (mode == TransferMode.EVEN ? Math.min(Math.ceil(((double) limit / (double) points.size())), currentLimit) : currentLimit);
-							long pointRec = FluxHelper.pushEnergy(point, toTransfer, ActionType.PERFORM);
-							currentLimit -= FluxHelper.pullEnergy(plug, pointRec, ActionType.PERFORM);
+						if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both long toTransfer = (long) (mode == TransferMode.EVEN ? Math.min(Math.ceil(((double) limit / (double) points.size())), currentLimit) : currentLimit); long pointRec = FluxHelper.pushEnergy(point, toTransfer, ActionType.PERFORM); currentLimit -= FluxHelper.pullEnergy(plug, pointRec, ActionType.PERFORM); } } stats.transfer += limit - currentLimit; } current--; } }
+							networkStats.inputStatistics(stats, connections);
 						}
 					}
-
-					networkStats.latestRecords.transfer += limit - currentLimit;
+					*/
 				}
 				current--;
 			}
 		}
-		networkStats.inputStatistics(stats, connections);
+		
 	}
+
+	// TODO retreieve maxsend, etc from the sending/receiving methods
 
 	public void resetStorageValues() {
 		List<IFluxStorage> storages = getConnections(FluxCache.storage);
 		long maxStored = 0;
 		long energyStored = 0;
-		for(IFluxStorage storage : storages){
+		for (IFluxStorage storage : storages) {
 			maxStored += storage.getMaxEnergyStored();
 			energyStored += storage.getEnergyStored();
 		}
@@ -210,7 +217,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public void markDirty() {
 		connectAll();
-		forEachViewer(FluxListener.SYNC_NETWORK, player -> FluxNetworks.network.sendTo(new PacketFluxNetworkList(Lists.newArrayList(this)), player));
+		FluxNetworkCache.instance().updateNetworkList();
 	}
 
 	@Override
@@ -322,7 +329,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public void markChanged(IDirtyPart part) {
 		this.parts.markSyncPartChanged(part);
-		//this.markDirty();
+		// this.markDirty();
 	}
 
 	public void connectAll() {
