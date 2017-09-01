@@ -56,6 +56,7 @@ public class FluxCrafting extends FluxNetworks {
 		RecipeSorter.register("fluxNetworks:storage", FluxCrafting.StorageCrafting.class, Category.SHAPED, "after:forge:shapedore");
 		//addShaped(new ItemStack(burntRedstoneBlock, 1), new Object[] { "AAA", "AAA", "AAA", 'A', burntRedstone });
 		//addShapeless(new ItemStack(burntRedstone, 9), new Object[] { new ItemStack(burntRedstoneBlock, 1) });
+		addShaped(new ItemStack(fluxConfigurator, 1), new Object[] { " CP", " OC", "O  ", 'C', fluxCore, 'P', Items.ENDER_PEARL, 'O', Blocks.OBSIDIAN });
 		addShaped(new ItemStack(fluxBlock, 1), new Object[] { "ACA", "CAC", "ACA", 'A', flux, 'C', fluxCore });
 		addShaped(new ItemStack(fluxCore, 4), new Object[] { "GCG", "CAC", "GCG", 'C', Blocks.OBSIDIAN, 'G', flux, 'A', Items.ENDER_EYE });
 		addShaped(new ItemStack(fluxController, 1), new Object[] { "BCB", "R R", "BBB", 'C', fluxCore, 'B', fluxBlock, 'R', flux });

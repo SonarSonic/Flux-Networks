@@ -139,7 +139,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		if (networkID.getObject() == -1 || points.isEmpty() || plugs.isEmpty()) {
 			return;
 		}
-		EnergyStats stats = getStatistics().getCurrentStats();
+		EnergyStats stats = new EnergyStats(0,0,0);
 		plugs.forEach(plug -> stats.maxSent += FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE));
 		points.forEach(point -> stats.maxReceived += FluxHelper.pushEnergy(point, point.getCurrentTransferLimit(), ActionType.SIMULATE));
 		long currentTransfer = stats.transfer;
@@ -149,7 +149,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			int current = mode.repeat;
 			while (current != 0) {
 				for (IFluxPlug plug : plugs) {
-					FluxHelper.transferEnergy(plug, points, mode);
+					stats.transfer+= FluxHelper.transferEnergy(plug, points, mode);
 					/*					
 					long limit = FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE);
 					long currentLimit = limit;
@@ -166,6 +166,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 				current--;
 			}
 		}
+		networkStats.inputStatistics(stats, connections);
 		
 	}
 
@@ -242,6 +243,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public long receiveEnergy(long maxReceive, ActionType type) {
+		/*
 		long used = 0;
 		List<IFluxPoint> points = getConnections(FluxCache.point);
 		for (IFluxPoint flux : points) {
@@ -254,12 +256,14 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		if (type == ActionType.PERFORM)
 			networkStats.latestRecords.transfer += used;
-
 		return used;
+		 */
+		return 0;
 	}
 
 	@Override
 	public long extractEnergy(long maxExtract, ActionType type) {
+		/*
 		long used = 0;
 		List<IFluxPlug> plugs = getConnections(FluxCache.plug);
 		for (IFluxPlug flux : plugs) {
@@ -272,6 +276,8 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		if (type == ActionType.PERFORM)
 			networkStats.latestRecords.transfer += used;
 		return used;
+		*/
+		return 0;
 	}
 
 	@Override
@@ -355,8 +361,14 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		toAdd.clear();
 		toRemove.clear();
 	}
+	
+	public void updateFluxTallies(){		
+		networkStats.plugCount.setObject(getConnections(FluxCache.plug).size());
+		networkStats.pointCount.setObject(getConnections(FluxCache.point).size());
+		networkStats.storageCount.setObject(getConnections(FluxCache.storage).size());
+	}
 
-	public void setHasConnections(boolean bool) {
+	public void setHasConnections(boolean bool) {		
 		hasConnections = bool;
 	}
 

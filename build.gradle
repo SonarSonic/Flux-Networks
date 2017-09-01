@@ -12,12 +12,6 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-}
-*/
 version = "${minecraft_version}-${mod_version}"
 group= "sonar.flux"
 archivesBaseName = "FluxNetworks"
@@ -25,21 +19,28 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 minecraft {
-    version = "1.10.2-12.18.3.2281"
+    version = "1.10.2-12.18.3.2422"
     runDir = "run"
     mappings = "snapshot_20161111"
     makeObfSourceJar = false
 }
 
-dependencies {
+repositories {  
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
+}
 
+dependencies {
+    compileOnly "tesla:Tesla:${tesla_version}"
+    compileOnly "mekanism:Mekanism:${mekanism_version}"
 }
 
 processResources
 {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
-
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'                

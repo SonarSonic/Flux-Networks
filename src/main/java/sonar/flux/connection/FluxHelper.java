@@ -43,6 +43,7 @@ import sonar.flux.common.tileentity.TileEntityStorage;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.PacketFluxConnectionsList;
 import sonar.flux.network.PacketFluxNetworkList;
+import sonar.flux.network.PacketNetworkStatistics;
 
 public class FluxHelper {
 
@@ -109,7 +110,7 @@ public class FluxHelper {
 					tally.addTallies(1, FluxListener.SYNC_NETWORK);
 					break;
 				case STATISTICS:
-					FluxNetworks.network.sendTo(new PacketFluxNetworkList(Lists.newArrayList(network), true), tally.listener.player);
+					FluxNetworks.network.sendTo(new PacketNetworkStatistics(network.getNetworkID(), network.getStatistics()), tally.listener.player);
 					break;
 				case SYNC_NETWORK:
 					break;
@@ -133,7 +134,7 @@ public class FluxHelper {
 				currentLimit -= FluxHelper.pullEnergy(plug, pointRec, ActionType.PERFORM);
 			}
 		}
-		return 0;
+		return limit-currentLimit;
 	}
 
 	public static long pullEnergy(IFlux from, long maxTransferRF, ActionType actionType) {
@@ -148,7 +149,7 @@ public class FluxHelper {
 					if (tile != null) {
 						EnumFacing face = EnumFacing.values()[i].getOpposite();
 						long simulate = SonarAPI.getEnergyHelper().extractEnergy(tile, Math.min(maxTransferRF - extracted, from.getCurrentTransferLimit()), face, ActionType.SIMULATE);
-						
+
 						long remove = SonarAPI.getEnergyHelper().extractEnergy(tile, from.getValidTransfer(simulate, face), face, actionType);
 						if (!actionType.shouldSimulate())
 							from.onEnergyRemoved(EnumFacing.VALUES[i], remove);

@@ -154,10 +154,10 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 			int ordinal = face.getIndex();
 			BlockPos pos = getPos().offset(face);
 			TileEntity tile = getWorld().getTileEntity(pos);
-			boolean canConnect = FluxHelper.canConnect(tile, face);
+			boolean canConnect = tile == null ? false : FluxHelper.canConnect(tile, face);
 			if (full || canConnect != connections.getObjects().get(ordinal)) {
-				setNeighbour(face, canConnect ? tile : null);
-				changed = true;
+				if (setNeighbour(face, canConnect ? tile : null))
+					changed = true;
 			}
 			if (canConnect)
 				hasTiles = true;
@@ -168,10 +168,12 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 		}
 	}
 
-	public void setNeighbour(EnumFacing face, TileEntity tile) {
+	public boolean setNeighbour(EnumFacing face, TileEntity tile) {
+		TileEntity prev = cachedTiles[face.getIndex()];
 		boolean changed = tile != null;
 		connections.getObjects().set(face.getIndex(), changed);
 		cachedTiles[face.getIndex()] = tile;
+		return prev != tile;
 	}
 
 	public TileEntity[] cachedTiles() {
@@ -249,7 +251,7 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 
 	@Override
 	public long getValidTransfer(long valid, EnumFacing face) {
-		return Math.min(valid, getCurrentTransferLimit());//getCurrentTransfer(face));
+		return Math.min(valid, getCurrentTransferLimit());// getCurrentTransfer(face));
 	}
 
 	@Override

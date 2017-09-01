@@ -59,7 +59,6 @@ public class PacketFluxConnectionsList implements IMessage {
 			netTag.setLong("limit", flux.getTransferLimit());
 			netTag.setString("name", flux.customName);
 			list.appendTag(netTag);
-
 		}
 		tag.setTag("connects", list);
 		ByteBufUtils.writeTag(buf, tag);

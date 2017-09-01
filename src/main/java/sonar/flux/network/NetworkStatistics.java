@@ -24,7 +24,7 @@ import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.api.tiles.IFluxListenable;
 
-public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetworkStatistics, ISyncableListener, ISyncPart {
+public class NetworkStatistics extends DirtyPart implements INetworkStatistics, ISyncableListener, ISyncPart {
 
 	public static final int keep = 15;// how many receive/send values to keep
 	public static final int updateEvery = 20 * 5; // 5 second update time for graphing purposes
@@ -51,31 +51,32 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 		/*
 		if (previousRecords != null && (ticks >= updateEvery || records.isEmpty())) {
 			ticks = 0;
-			records.add(new EnergyStats(previousRecords.transfer, previousRecords.maxSent, previousRecords.maxReceived));
-			if (records.size() > keep) {
-				records.remove(0);
-			}
+			//records.add(new EnergyStats(previousRecords.transfer, previousRecords.maxSent, previousRecords.maxReceived));
+			//if (records.size() > keep) {
+			//	records.remove(0);
+			//}
 		} else {
 			ticks++;
 		}
+		*/
 		previousRecords = new EnergyStats(latestRecords.transfer, latestRecords.maxSent, latestRecords.maxReceived);
 		latestRecords = stats;
-		*/
+		
 	}
 
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
 		NBTTagCompound tag = nbt.getCompoundTag(getTagName());
-		NBTHelper.readSyncParts(tag, type, parts);
-		//previousRecords.readData(tag, type);
+		NBTHelper.readSyncParts(tag, type, parts);		
+		previousRecords.readData(nbt, type);
 	}
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTHelper.writeSyncParts(tag, type, parts, false);
-		//previousRecords.writeData(tag, type);
 		nbt.setTag(getTagName(), tag);
+		previousRecords.writeData(nbt, type);
 		return nbt;
 	}
 
@@ -127,7 +128,7 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, INetwo
 
 	@Override
 	public String getTagName() {
-		return "stats";
+		return "nstats";
 	}
 
 	@Override
