@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import sonar.core.SonarCore;
 import sonar.core.network.PacketCoords;
 import sonar.core.network.PacketTileEntityHandler;
 import sonar.flux.api.FluxError;
@@ -38,8 +39,10 @@ public class PacketFluxError extends PacketCoords {
 		@Override
 		public IMessage processMessage(EntityPlayer player, MessageContext ctx, PacketFluxError message, TileEntity target) {
 			if (target instanceof TileEntityFlux) {
+                SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
 				TileEntityFlux flux = (TileEntityFlux) target;
 				flux.error=message.error;
+                });
 			}
 			return null;
 		}

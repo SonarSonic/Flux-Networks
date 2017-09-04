@@ -1,12 +1,12 @@
 package sonar.flux.common.block;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.flux.common.tileentity.TileEntityController;
+
+import java.util.List;
 
 public class FluxController extends FluxConnection {
 
@@ -21,7 +21,12 @@ public class FluxController extends FluxConnection {
 	}
 
 	@Override
-	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
+    public void standardInfo(ItemStack stack, EntityPlayer player, List<String> list) {
+        list.add("Manages Energy");
+    }
+
+    @Override
+    public void standardInfo(ItemStack stack, World world, List<String> list) {
 		list.add("Manages Energy");
 	}
 }

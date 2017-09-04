@@ -5,34 +5,50 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
+
+repositories {
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
+    maven {
+        name = "CoFH Maven"
+        url = "http://maven.covers1624.net"
+    }
+    flatDir {
+        dirs 'libs'
+}
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-}
-*/
 version = "${minecraft_version}-${mod_version}"
 group= "sonar.flux"
-archivesBaseName = "FluxNetworks"
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+archivesBaseName = "fluxnetworks"
+sourceCompatibility = targetCompatibility = "1.8"
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
 
 minecraft {
-    version = "1.11.2-13.20.0.2259"
+    version = "1.12.1-14.22.0.2469"
     runDir = "run"
-    mappings = "snapshot_20161220"
+    mappings = "snapshot_20170903"
     makeObfSourceJar = false
 }
 
-dependencies {
 
+dependencies {
+    compileOnly "tesla:Tesla:${tesla_version}"
+    compileOnly "mekanism:Mekanism:${mekanism_version}"
+    deobfCompile "cofh:RedstoneFlux:${redstoneflux_version}"
+    deobfCompile name: 'sonarcore-1.12.1-5.0.0-deobf'
 }
 
 processResources

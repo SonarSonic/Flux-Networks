@@ -1,6 +1,5 @@
 package sonar.flux.common.block;
 
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -12,7 +11,7 @@ import sonar.flux.common.tileentity.TileEntityFlux;
 
 public abstract class FluxSidedConnection extends FluxConnection {
 
-	protected FluxSidedConnection() {
+    FluxSidedConnection() {
 		super();
 	}
 
@@ -21,7 +20,7 @@ public abstract class FluxSidedConnection extends FluxConnection {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileEntityFlux) {
 			TileEntityFlux flux = (TileEntityFlux) tile;
-			flux.updateConnections();
+            flux.updateNeighbours(true);
 		}
 	}
 
@@ -41,6 +40,6 @@ public abstract class FluxSidedConnection extends FluxConnection {
 	}
 
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { CONNECTED, ConnectedTile.NORTH, ConnectedTile.EAST, ConnectedTile.SOUTH, ConnectedTile.WEST, ConnectedTile.DOWN, ConnectedTile.UP });
+        return new BlockStateContainer(this, CONNECTED, ConnectedTile.NORTH, ConnectedTile.EAST, ConnectedTile.SOUTH, ConnectedTile.WEST, ConnectedTile.DOWN, ConnectedTile.UP);
 	}
 }

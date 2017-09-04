@@ -1,7 +1,5 @@
 package sonar.flux.network;
 
-import java.util.ArrayList;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,8 +12,10 @@ import sonar.core.SonarCore;
 import sonar.core.api.utils.BlockCoords;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.IFlux.ConnectionType;
-import sonar.flux.api.IFluxCommon;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.tiles.IFlux.ConnectionType;
+
+import java.util.ArrayList;
 
 public class PacketFluxConnectionsList implements IMessage {
 
@@ -33,7 +33,7 @@ public class PacketFluxConnectionsList implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.networkID = buf.readInt();
-		this.connections = new ArrayList();
+        this.connections = new ArrayList<>();
 		NBTTagCompound compound = ByteBufUtils.readTag(buf);
 		NBTTagList list = compound.getTagList("connects", 10);
 
@@ -42,7 +42,6 @@ public class PacketFluxConnectionsList implements IMessage {
 			ClientFlux net = new ClientFlux(BlockCoords.readFromNBT(c), ConnectionType.values()[c.getInteger("type")], c.getInteger("priority"), c.getLong("limit"), c.getString("name"));
 			connections.add(net);
 		}
-
 	}
 
 	@Override
@@ -58,22 +57,22 @@ public class PacketFluxConnectionsList implements IMessage {
 			netTag.setLong("limit", flux.getTransferLimit());
 			netTag.setString("name", flux.customName);
 			list.appendTag(netTag);
-
 		}
 		tag.setTag("connects", list);
 		ByteBufUtils.writeTag(buf, tag);
-
 	}
 
 	public static class Handler implements IMessageHandler<PacketFluxConnectionsList, IMessage> {
 		@Override
 		public IMessage onMessage(PacketFluxConnectionsList message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
+                SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
 				String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
 				IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
 				if (!common.isFakeNetwork()) {
 					common.setClientConnections(message.connections);
 				}
+                });
 			}
 			return null;
 		}

@@ -1,7 +1,7 @@
 package sonar.flux.common.tileentity;
 
-import cofh.api.energy.IEnergyProvider;
-//import mekanism.api.energy.ICableOutputter;
+import cofh.redstoneflux.api.IEnergyProvider;
+import mekanism.api.energy.IStrictEnergyOutputter;
 import net.darkhax.tesla.api.ITeslaProducer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,11 +14,16 @@ import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.SonarLoader;
 import sonar.core.utils.IGuiTile;
+import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
-@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla")/*, @Optional.Interface(iface = "mekanism.api.energy.ICableOutputter", modid = "Mekanism") */})
-public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, /*ICableOutputter,*/ IEnergyStorage {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"),
+        @Optional.Interface(iface = "mekanism.api.energy.IStrictEnergyOutputter", modid = "mekanism"),
+        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyProvider", modid = "redstoneflux")
+})
+public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, IStrictEnergyOutputter, IEnergyStorage, IFluxPoint {
 
 	public TileEntityPoint() {
 		super(ConnectionType.POINT);
@@ -35,16 +40,22 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 		return new GuiFlux((Container) getGuiContainer(player), this, player);
 	}
 
-	@Override
-	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+    public int energyExtract(EnumFacing from, int maxExtract, boolean simulate) {
 		if (maxExtract == 0) {
 			return 0;
 		}
-		int extracted = (int) (this.getNetwork().extractEnergy(Math.min(maxExtract, getCurrentTransferLimit()), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
+        int extracted = (int) this.getNetwork().extractEnergy(Math.min(maxExtract, getValidTransfer(maxExtract, from)), simulate ? ActionType.SIMULATE : ActionType.PERFORM);
 		if (!simulate && !disableLimit.getObject()) {
-			this.onEnergyRemoved(extracted);
+            this.onEnergyRemoved(from, extracted);
 		}
 		return extracted;
+        //return 0;
+    }
+
+    @Override
+    @Optional.Method(modid = "redstoneflux")
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return energyExtract(from, maxExtract, simulate);
 	}
 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -72,14 +83,19 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 
 	@Override
 	public long takePower(long power, boolean simulated) {
-		return this.extractEnergy(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
+        return energyExtract(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
 	}
-	/*
+
 	@Override
-	public boolean canOutputTo(EnumFacing dir) {
+    public boolean canOutputEnergy(EnumFacing dir) {
 		return true;
 	}
-	*/
+
+    @Override
+    public double pullEnergy(EnumFacing side, double amount, boolean simulate) {
+        return energyExtract(side, (int) Math.min(amount, Integer.MAX_VALUE), simulate);
+    }
+
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
 		return 0;
@@ -87,7 +103,7 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 
 	@Override
 	public int extractEnergy(int maxExtract, boolean simulate) {
-		return this.extractEnergy(null, (int) Math.min(maxExtract, Integer.MAX_VALUE), simulate);
+        return energyExtract(null, Math.min(maxExtract, Integer.MAX_VALUE), simulate);
 	}
 
 	@Override
@@ -109,5 +125,4 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 	public boolean canReceive() {
 		return false;
 	}
-
 }

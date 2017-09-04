@@ -14,7 +14,6 @@ import sonar.flux.FluxNetworks;
 
 public class FluxCommon implements IGuiHandler {
 
-
 	public void registerRenderThings() {
 	}
 
@@ -23,6 +22,8 @@ public class FluxCommon implements IGuiHandler {
 		FluxNetworks.network.registerMessage(PacketFluxNetworkList.Handler.class, PacketFluxNetworkList.class, 1, Side.CLIENT);
 		FluxNetworks.network.registerMessage(PacketFluxConnectionsList.Handler.class, PacketFluxConnectionsList.class, 2, Side.CLIENT);
 		FluxNetworks.network.registerMessage(PacketFluxError.Handler.class, PacketFluxError.class, 3, Side.CLIENT);
+        FluxNetworks.network.registerMessage(PacketConfiguratorSettings.Handler.class, PacketConfiguratorSettings.class, 4, Side.SERVER);
+        FluxNetworks.network.registerMessage(PacketNetworkStatistics.Handler.class, PacketNetworkStatistics.class, 5, Side.CLIENT);
 	}
 
 	@Override
@@ -50,7 +51,6 @@ public class FluxCommon implements IGuiHandler {
 					return ((IGuiItem) equipped.getItem()).getGuiContainer(player, equipped);
 				}
 			}
-
 		}
 		return null;
 	}
@@ -71,10 +71,8 @@ public class FluxCommon implements IGuiHandler {
 					return ((IGuiItem) equipped.getItem()).getGuiScreen(player, equipped);
 				}
 			}
-
 		}
 
 		return null;
 	}
-
 }
