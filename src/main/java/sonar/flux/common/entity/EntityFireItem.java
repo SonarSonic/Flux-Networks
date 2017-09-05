@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 import sonar.flux.FluxNetworks;
 
 public class EntityFireItem extends EntityItem {
-	public boolean changed = false;
-	public int changeTicks = 0;
+    public boolean changed;
+    public int changeTicks;
 
 	public EntityFireItem(World world) {
 		super(world);
@@ -27,7 +27,7 @@ public class EntityFireItem extends EntityItem {
 		if (source == DamageSource.IN_FIRE) {
 			if (!changed) {
 				//if (changeTicks >= 30) {
-				ItemStack stack = getEntityItem().copy();
+                ItemStack stack = getItem().copy();
 				ItemStack newStack = ItemStack.EMPTY;
 				if (stack.getItem() == Items.REDSTONE) {
 					newStack = new ItemStack(FluxNetworks.flux, stack.getCount(), 0);
@@ -36,7 +36,7 @@ public class EntityFireItem extends EntityItem {
 				} else if (stack.getItem() == Items.ENDER_EYE) {					
 					newStack = new ItemStack(FluxNetworks.fluxCore, stack.getCount(), 0);
 				}
-				setEntityItemStack(newStack);
+                setItem(newStack);
 				changed = true;
 				//	changeTicks = 0;
 				//} else {
@@ -52,5 +52,4 @@ public class EntityFireItem extends EntityItem {
 	public boolean isBurning() {
 		return false;
 	}
-
 }

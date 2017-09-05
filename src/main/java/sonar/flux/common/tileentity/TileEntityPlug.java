@@ -1,6 +1,7 @@
 package sonar.flux.common.tileentity;
 
-import cofh.api.energy.IEnergyReceiver;
+import cofh.redstoneflux.api.IEnergyReceiver;
+import mekanism.api.energy.IStrictEnergyAcceptor;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,11 +14,16 @@ import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.SonarLoader;
 import sonar.core.utils.IGuiTile;
+import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
-@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla") })
-public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyReceiver, ITeslaConsumer, IEnergyStorage {
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla"),
+        @Optional.Interface(iface = "mekanism.api.energy.IStrictEnergyAcceptor", modid = "mekanism"),
+        @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyReceiver", modid = "redstoneflux")
+})
+public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyReceiver, ITeslaConsumer, IStrictEnergyAcceptor, IEnergyStorage, IFluxPlug {
 
 	public TileEntityPlug() {
 		super(ConnectionType.PLUG);
@@ -34,16 +40,22 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 		return new GuiFlux((Container) getGuiContainer(player), this, player);
 	}
 
-	@Override
-	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+    public int energyReceive(EnumFacing from, int maxReceive, boolean simulate) {
 		if (maxReceive == 0) {
 			return 0;
 		}
-		int received = (int) (this.getNetwork().receiveEnergy(Math.min(maxReceive, getCurrentTransferLimit()), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
-		if (!simulate && !disableLimit.getObject()) {
-			this.onEnergyAdded(received);
+        int received = (int) this.getNetwork().receiveEnergy(Math.min(maxReceive, getValidTransfer(maxReceive, from)), simulate ? ActionType.SIMULATE : ActionType.PERFORM);
+        if (!simulate) {// && !disableLimit.getObject()) {
+            this.onEnergyAdded(from, received);
 		}
 		return received;
+        //return 0;
+    }
+
+    @Override
+    @Optional.Method(modid = "redstoneflux")
+    public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
+        return energyReceive(from, maxReceive, simulate);
 	}
 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -72,12 +84,12 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 
 	@Override
 	public long givePower(long power, boolean simulated) {
-		return this.receiveEnergy(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
+        return energyReceive(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
 	}
 
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
-		return this.receiveEnergy(null, (int) Math.min(maxReceive, Integer.MAX_VALUE), simulate);
+        return energyReceive(null, Math.min(maxReceive, Integer.MAX_VALUE), simulate);
 	}
 
 	@Override
@@ -104,4 +116,14 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 	public boolean canReceive() {
 		return true;
 	}
+
+    @Override
+    public double acceptEnergy(EnumFacing enumFacing, double maxReceive, boolean simulate) {
+        return energyReceive(enumFacing, (int) maxReceive, simulate);
+    }
+
+    @Override
+    public boolean canReceiveEnergy(EnumFacing enumFacing) {
+        return true;
+    }
 }

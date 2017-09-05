@@ -1,8 +1,5 @@
 package sonar.flux;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -18,14 +15,14 @@ public class BlockRenderRegister {
 			Item item = Item.getItemFromBlock(block);
 			if (item.getHasSubtypes()) {
 				NonNullList<ItemStack> stacks = NonNullList.create();
-				item.getSubItems(item, FluxNetworks.tab, stacks);
+                item.getSubItems(FluxNetworks.tab, stacks);
 				for (ItemStack stack : stacks) {
 					String variant = "variant=meta" + stack.getItemDamage();
 					if (block instanceof IMetaRenderer) {
 						IMetaRenderer meta = (IMetaRenderer) block;
 						variant = "variant=" + meta.getVariant(stack.getItemDamage()).getName();
 					}
-					ModelLoader.setCustomModelResourceLocation(item, stack.getItemDamage(), new ModelResourceLocation(FluxNetworks.modid + ":" + item.getUnlocalizedName().substring(5), variant));
+                    ModelLoader.setCustomModelResourceLocation(item, stack.getItemDamage(), new ModelResourceLocation(FluxNetworks.modid + ':' + item.getUnlocalizedName().substring(5), variant));
 				}
 			} else {
 				registerBlock(block);
@@ -36,7 +33,7 @@ public class BlockRenderRegister {
 	public static void registerBlock(Block block) {
 		if (block != null) {
 			Item item = Item.getItemFromBlock(block);
-			ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(FluxNetworks.modid + ":" + item.getUnlocalizedName().substring(5), "inventory"));
+            ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(FluxNetworks.modid + ':' + item.getUnlocalizedName().substring(5), "inventory"));
 		}
 	}
 }

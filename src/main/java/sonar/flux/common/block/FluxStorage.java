@@ -1,13 +1,13 @@
 package sonar.flux.common.block;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.common.tileentity.TileEntityStorage;
+
+import java.util.List;
 
 public class FluxStorage extends FluxConnection {
 
@@ -37,12 +37,27 @@ public class FluxStorage extends FluxConnection {
 	}
 
 	@Override
-	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
+    public void standardInfo(ItemStack stack, EntityPlayer player, List<String> list) {
 		list.add("Stores Energy");
 	}
 
 	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
+    public void standardInfo(ItemStack stack, World world, List<String> list) {
+        list.add("Stores Energy");
+    }
+
+    @Override
+    public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List<String> list) {
+        if (stack.hasTagCompound()) {
+            int energy = stack.getTagCompound().getInteger("energy");
+            if (energy != 0) {
+                list.add(FontHelper.translate("energy.stored") + ": " + FontHelper.formatStorage(energy));
+            }
+        }
+    }
+
+    @Override
+    public void addSpecialToolTip(ItemStack stack, World world, List<String> list) {
 		if (stack.hasTagCompound()) {
 			int energy = stack.getTagCompound().getInteger("energy");
 			if (energy != 0) {

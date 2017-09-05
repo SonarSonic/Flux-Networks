@@ -1,26 +1,28 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.FluxPlayersList;
-import sonar.flux.api.IFlux;
-import sonar.flux.api.IFluxController;
-import sonar.flux.api.IFluxNetwork;
-import sonar.flux.api.PlayerAccess;
+import sonar.flux.api.network.FluxCache;
+import sonar.flux.api.network.FluxPlayersList;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.api.tiles.IFluxController;
+import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.network.NetworkStatistics;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class EmptyFluxNetwork implements IFluxNetwork {
 
 	public final static IFluxNetwork INSTANCE = new EmptyFluxNetwork();
 	public static final NetworkStatistics stats = new NetworkStatistics();
-	public CustomColour colour = new CustomColour(41, 94, 138);
+    public final static CustomColour colour = new CustomColour(41, 94, 138);
 
 	@Override
 	public void updateNetwork() {
@@ -79,12 +81,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void sendChanges() {
-	}
-
-	@Override
-	public boolean setController(IFluxController controller) {
-		return false;
+    public void markDirty() {
 	}
 
 	@Override
@@ -116,11 +113,11 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void addFluxConnection(IFlux flux) {
+    public void addConnection(IFluxListenable flux) {
 	}
 
 	@Override
-	public void removeFluxConnection(IFlux flux) {
+    public void removeConnection(IFluxListenable flux) {
 	}
 
 	@Override
@@ -144,12 +141,11 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
 	@Override
 	public ArrayList<ClientFlux> getClientFluxConnection() {
-		return new ArrayList();
+        return new ArrayList<>();
 	}
 
 	@Override
 	public void buildFluxConnections() {
-
 	}
 
 	@Override
@@ -173,9 +169,19 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void updateSenders() {}
+    public void onRemoved() {
+    }
 
 	@Override
-	public void updateReceivers() {}
+    public void markTypeDirty(FluxCache... caches) {
+    }
 
+    @Override
+    public <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void setHasConnections(boolean bool) {
+    }
 }
