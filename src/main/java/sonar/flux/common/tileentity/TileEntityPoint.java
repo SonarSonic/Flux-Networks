@@ -18,7 +18,7 @@ import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
-@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"), @Optional.Interface(iface = "mekanism.api.energy.ICableOutputter", modid = "Mekanism") })
+@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"), @Optional.Interface(iface = "mekanism.api.energy.IStrictEnergyOutputter", modid = "Mekanism") })
 public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, IStrictEnergyOutputter, IEnergyStorage, IFluxPoint {
 
 	public TileEntityPoint() {

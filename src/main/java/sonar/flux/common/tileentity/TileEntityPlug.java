@@ -41,10 +41,11 @@ public class TileEntityPlug extends TileEntityFlux implements IGuiTile, IEnergyR
 		if (maxReceive == 0) {
 			return 0;
 		}
-		int received = (int) (this.getNetwork().receiveEnergy(Math.min(maxReceive, getValidTransfer(maxReceive, from)), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
+		int received = (int) (getNetwork().receiveEnergy(Math.min(maxReceive, getValidTransfer(maxReceive, from)), simulate ? ActionType.SIMULATE : ActionType.PERFORM));
 		if (!simulate){// && !disableLimit.getObject()) {
 			this.onEnergyAdded(from, received);
 		}
+		
 		return received;
 		*/
 		return 0;
