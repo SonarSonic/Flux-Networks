@@ -13,7 +13,7 @@ import java.awt.*;
 public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStorage> {
 
     //@Override
-	public void renderTileEntityAt(TileEntityStorage te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(TileEntityStorage te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
 		if (te.storage.getEnergyStored() != 0 && te.storage.getMaxEnergyStored() != 0) {
 			GL11.glPushMatrix();
 			RenderHelper.saveBlendState();			

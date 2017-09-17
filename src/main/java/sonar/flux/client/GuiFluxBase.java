@@ -9,7 +9,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-import sonar.core.client.gui.GuiSonar;
+import sonar.core.client.gui.GuiSonarTile;
 import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
@@ -26,7 +26,7 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class GuiFluxBase extends GuiSonar {
+public abstract class GuiFluxBase extends GuiSonarTile {
 
 	public static final ResourceLocation select = new ResourceLocation("fluxnetworks:textures/gui/networkSelect.png");
 	public static final ResourceLocation connections = new ResourceLocation("fluxnetworks:textures/gui/connections.png");
