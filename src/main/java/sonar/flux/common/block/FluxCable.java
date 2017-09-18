@@ -85,7 +85,7 @@ public class FluxCable extends SonarMachineBlock {
 	public boolean checkBlockInDirection(IBlockAccess world, BlockPos pos, EnumFacing dir) {
 		TileEntity tile = world.getTileEntity(pos.offset(dir));
 		if (tile != null) {
-            if (tile instanceof IFlux || tile instanceof TileEntityCable || SonarLoader.rfLoaded && tile instanceof IEnergyConnection) {
+            if (tile instanceof IFlux || tile instanceof TileEntityCable || (SonarLoader.rfLoaded && tile instanceof IEnergyConnection)) {
 				return true;
 			}
 			if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, dir) != null) {

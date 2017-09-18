@@ -224,8 +224,8 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
         if (!this.getNetwork().isFakeNetwork() && network.getNetworkID() != -1) {
             config.setInteger(FluxConfigurationType.NETWORK.getNBTName(), getNetwork().getNetworkID());
         }
-        config.setInteger(FluxConfigurationType.PRIORITY.getNBTName(), this.getCurrentPriority());
-        config.setLong(FluxConfigurationType.TRANSFER.getNBTName(), this.getTransferLimit());
+        config.setInteger(FluxConfigurationType.PRIORITY.getNBTName(), priority.getObject());
+        config.setLong(FluxConfigurationType.TRANSFER.getNBTName(), limit.getObject());
         config.setBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName(), disableLimit.getObject());
         return config;
     }
@@ -235,6 +235,7 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
             int storedID = config.getInteger(FluxConfigurationType.NETWORK.getNBTName());
             if (storedID != -1) {
                 FluxHelper.removeConnection(this);
+                this.networkID.setObject(storedID);
                 FluxHelper.addConnection(this);
             }
         }
@@ -308,7 +309,7 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
-
+	
 	@Override
     @Optional.Method(modid = "redstoneflux")
 	public int getEnergyStored(EnumFacing from) {

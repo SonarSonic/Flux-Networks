@@ -30,7 +30,7 @@ import java.util.List;
 public abstract class FluxConnection extends SonarMachineBlock {
 
 	public static final PropertyBool CONNECTED = PropertyBool.create("connected");
-	
+
 	public FluxConnection() {
 		super(SonarMaterials.machine, false, true);
 	}
@@ -59,33 +59,33 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	}
 
 	@Override
-    public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List<String> list) {
-    }
+	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List<String> list) {
+	}
 
-    @Override
-    public void addSpecialToolTip(ItemStack stack, World world, List<String> list) {
-    }
+	@Override
+	public void addSpecialToolTip(ItemStack stack, World world, List<String> list) {
+	}
 
 	@Override
 	public boolean operateBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, BlockInteraction interact) {
-        ItemStack heldItem = hand == null ? null : player.getHeldItem(hand);
-        if (heldItem == null || !(heldItem.getItem() instanceof FluxConfigurator)) {
-            if (!world.isRemote) {
-			TileEntity target = world.getTileEntity(pos);
-			if (target != null && target instanceof TileEntityFlux) {
-				TileEntityFlux flux = (TileEntityFlux) target;
-                    if (flux.canAccess(player)) {
-                        flux.listeners.addListener(player, FluxListener.FULL_NETWORK);
-					player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
-				} else {
-                        FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + "You don't have permission to access this network", world, player);
+		ItemStack heldItem = hand == null ? null : player.getHeldItem(hand);
+		if (heldItem.isEmpty() || !(heldItem.getItem() instanceof FluxConfigurator)) {
+			if (!world.isRemote) {
+				TileEntity target = world.getTileEntity(pos);
+				if (target != null && target instanceof TileEntityFlux) {
+					TileEntityFlux flux = (TileEntityFlux) target;
+					if (flux.canAccess(player)) {
+						flux.listeners.addListener(player, FluxListener.FULL_NETWORK);
+						player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
+					} else {
+						FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + "You don't have permission to access this network", world, player);
+					}
 				}
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
-        return false;
-    }
 
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemstack) {
@@ -95,13 +95,13 @@ public abstract class FluxConnection extends SonarMachineBlock {
 			TileEntityFlux flux = (TileEntityFlux) target;
 			if (player != null && player instanceof EntityPlayer) {
 				flux.setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
-                flux.updateNeighbours(true);
+				flux.updateNeighbours(true);
 			}
 		}
 	}
-	
+
 	public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(CONNECTED, meta == 1);
+		return this.getDefaultState().withProperty(CONNECTED, meta == 1);
 	}
 
 	public int getMetaFromState(IBlockState state) {
@@ -114,6 +114,6 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	}
 
 	protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, CONNECTED);
+		return new BlockStateContainer(this, CONNECTED);
 	}
 }

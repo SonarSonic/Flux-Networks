@@ -43,6 +43,15 @@ minecraft {
     makeObfSourceJar = false
 }
 
+task deobfJar(type: Jar) { // Generate deobfuscated
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+tasks.build.dependsOn('deobfJar')
+artifacts {
+    archives deobfJar
+    archives jar
+}
 
 dependencies {
     compileOnly "tesla:Tesla:${tesla_version}"
