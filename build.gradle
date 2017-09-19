@@ -37,9 +37,9 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.1-14.22.0.2469"
+    version = "${forge_version}"
     runDir = "run"
-    mappings = "snapshot_20170903"
+    mappings = "snapshot_20170624"
     makeObfSourceJar = false
 }
 
@@ -57,7 +57,7 @@ dependencies {
     compileOnly "tesla:Tesla:${tesla_version}"
     compileOnly "mekanism:Mekanism:${mekanism_version}"
     deobfCompile "cofh:RedstoneFlux:${redstoneflux_version}"
-    deobfCompile name: 'sonarcore-1.12.1-5.0.0-deobf'
+    deobfCompile name: "sonarcore-${sonarcore_version}-deobf"
 }
 
 processResources

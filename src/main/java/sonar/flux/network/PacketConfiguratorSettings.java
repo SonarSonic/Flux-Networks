@@ -39,7 +39,7 @@ public class PacketConfiguratorSettings implements IMessage {
             SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
                 EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
                 ItemStack heldItem = player.getHeldItem(player.getActiveHand());
-                if (heldItem != null && heldItem.getItem() instanceof FluxConfigurator) {
+                if (!heldItem.isEmpty() && heldItem.getItem() instanceof FluxConfigurator) {
                     NBTTagCompound tag = heldItem.getTagCompound();
                     if (tag == null) {
                         heldItem.setTagCompound(tag = new NBTTagCompound());

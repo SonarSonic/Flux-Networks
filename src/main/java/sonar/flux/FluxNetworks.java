@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.common.block.SonarBlockTip;
@@ -45,11 +46,14 @@ import sonar.flux.network.FluxNetworkCache;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod(modid = FluxNetworks.modid, name = "FluxNetworks", version = FluxNetworks.version, dependencies = "required-after:sonarcore@[" + FluxNetworks.SONAR_VERSION + ",);")
+@Mod(modid = FluxNetworks.modid, name = FluxNetworks.name, acceptedMinecraftVersions = FluxNetworks.mc_versions, version = FluxNetworks.version, dependencies = "required-after:sonarcore@[" + FluxNetworks.SONAR_VERSION + ",);")
 public class FluxNetworks {
+
+	public static final String name = "FluxNetworks";
 	public static final String modid = "fluxnetworks";
-    public static final String version = "3.0.0";
-    public static final String SONAR_VERSION = "5.0.0";
+	public static final String version = "3.0.1";
+	public static final String mc_versions = "[1.12,1.12.1,1.12.2]";
+	public static final String SONAR_VERSION = "5.0.1";
 
 	public static final int saveDimension = 0;
 
@@ -67,11 +71,11 @@ public class FluxNetworks {
 	public static SimpleNetworkWrapper network;
 	public static Logger logger = (Logger) LogManager.getLogger(modid);
 
-    public static Item flux, fluxCore, fluxConfigurator;
+	public static Item flux, fluxCore, fluxConfigurator;
 	public static Block fluxBlock, fluxPlug, fluxPoint, fluxCable, fluxStorage, largeFluxStorage, massiveFluxStorage, fluxController;
 
-    public static ArrayList<Item> registeredItems = new ArrayList<>();
-    public static ArrayList<Block> registeredBlocks = new ArrayList<>();
+	public static ArrayList<Item> registeredItems = new ArrayList<>();
+	public static ArrayList<Block> registeredBlocks = new ArrayList<>();
 	public static CreativeTabs tab = new CreativeTabs("Flux Networks") {
 		@Override
 		public ItemStack getTabIconItem() {
@@ -83,8 +87,8 @@ public class FluxNetworks {
 		block.setCreativeTab(tab);
 		block.setUnlocalizedName(name);
 		block.setRegistryName(modid, name);
-        ForgeRegistries.BLOCKS.register(block);
-        ForgeRegistries.ITEMS.register(new SonarBlockTip(block).setRegistryName(modid, name));
+		ForgeRegistries.BLOCKS.register(block);
+		ForgeRegistries.ITEMS.register(new SonarBlockTip(block).setRegistryName(modid, name));
 		registeredBlocks.add(block);
 		return block;
 	}
@@ -93,14 +97,14 @@ public class FluxNetworks {
 		item.setCreativeTab(tab);
 		item.setUnlocalizedName(name);
 		item.setRegistryName(modid, name);
-        ForgeRegistries.ITEMS.register(item);
+		ForgeRegistries.ITEMS.register(item);
 		registeredItems.add(item);
 		return item;
 	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-        logger.info("Initialising API");
+		logger.info("Initialising API");
 		FluxAPI.init();
 
 		logger.info("Loading Config");
@@ -114,7 +118,7 @@ public class FluxNetworks {
 
 		flux = registerItem("Flux", new FluxItem());
 		fluxCore = registerItem("FluxCore", new Item());
-        fluxConfigurator = registerItem("FluxConfigurator", new FluxConfigurator());
+		fluxConfigurator = registerItem("FluxConfigurator", new FluxConfigurator());
 
 		// fluxCable = registerBlock("FluxCable", new
 		// FluxCable().setHardness(0.4F).setResistance(20.0F));
@@ -145,7 +149,7 @@ public class FluxNetworks {
 		FluxCrafting.addRecipes();
 
 		logger.info("Loading Packets");
-        FluxCommon.registerPackets();
+		FluxCommon.registerPackets();
 
 		logger.info("Loading Renderers");
 		proxy.registerRenderThings();
@@ -174,7 +178,7 @@ public class FluxNetworks {
 	}
 
 	@EventHandler
-    public void onServerStopping(FMLServerStoppedEvent event) {
+	public void onServerStopping(FMLServerStoppedEvent event) {
 		serverCache.clearNetworks();
 		logger.info("Removed Networks");
 	}

@@ -31,7 +31,7 @@ public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStac
 			if (tile instanceof IFluxConfigurable) {
 				IFluxConfigurable configurable = (IFluxConfigurable) tile;
 				if (configurable.canAccess(player)) {
-					ItemStack stack = hand == null ? null : player.getHeldItem(hand);
+					ItemStack stack = hand == null ? ItemStack.EMPTY : player.getHeldItem(hand);
 					if (player.isSneaking()) {
 						NBTTagCompound configs = stack.getOrCreateSubCompound(CONFIGS_TAG);
 						stack.setTagInfo(CONFIGS_TAG, configurable.addConfigs(new NBTTagCompound(), player));

@@ -70,7 +70,7 @@ public class FluxEvents {
 			EntityItem entityItem = (EntityItem) entity;
             ItemStack stack = entityItem.getItem();
             Item item;
-			if (stack != null && (item = stack.getItem()) != null && (item == Items.REDSTONE || item == Items.ENDER_EYE || item == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))) {
+			if (!stack.isEmpty() && (item = stack.getItem()) != null && (item == Items.REDSTONE || item == Items.ENDER_EYE || item == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))) {
 				EntityFireItem newEntity = new EntityFireItem(event.getWorld(), entityItem.posX, entityItem.posY, entityItem.posZ, stack);
 				newEntity.motionX = entityItem.motionX;
 				newEntity.motionY = entityItem.motionY;

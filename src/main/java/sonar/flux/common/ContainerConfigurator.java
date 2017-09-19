@@ -18,7 +18,7 @@ public class ContainerConfigurator extends Container {
     }
 
     public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
-        return InventoryHelper.EMPTY;
+        return ItemStack.EMPTY;
     }
 
 }
