@@ -1,15 +1,14 @@
 package sonar.flux;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.utils.Pair;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FluxConfig extends FluxNetworks {
 
@@ -19,7 +18,7 @@ public class FluxConfig extends FluxNetworks {
 	public static int basicTransfer, herculeanTransfer, gargantuanTransfer;
 	public static int hyper = 4, god = 10;
 
-	public static Map<EnergyType, Pair<Boolean, Boolean>> transfers = new HashMap();
+    public static Map<EnergyType, Pair<Boolean, Boolean>> transfers = new HashMap<>();
 	public static Configuration config;
 
 	public static void startLoading() {
@@ -40,7 +39,6 @@ public class FluxConfig extends FluxNetworks {
 		banHyper = config.getBoolean("Ban Hyper Mode", "settings", false, "prevents the use of Hyper Mode");
 		banGod = config.getBoolean("Ban God Mode", "settings", false, "prevents the use of God Mode");
 		config.save();
-
 	}
 
 	public static void finishLoading() {
@@ -58,5 +56,4 @@ public class FluxConfig extends FluxNetworks {
 		prop.setLanguageKey(name);
 		return prop.getBoolean(defaultValue);
 	}
-
 }

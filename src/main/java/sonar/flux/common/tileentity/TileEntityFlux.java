@@ -1,25 +1,24 @@
 package sonar.flux.common.tileentity;
 
-import java.util.UUID;
-
+import cofh.redstoneflux.api.IEnergyHandler;
 import com.google.common.collect.Lists;
-
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.Optional;
 import sonar.core.SonarCore;
-import sonar.core.api.SonarAPI;
-import sonar.core.api.energy.EnergyType;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.SonarHelper;
+import sonar.core.listener.ISonarListenable;
+import sonar.core.listener.ListenableList;
+import sonar.core.listener.ListenerTally;
+import sonar.core.listener.PlayerListener;
 import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncTagType.INT;
 import sonar.core.network.sync.SyncTagType.LONG;
@@ -28,19 +27,21 @@ import sonar.core.network.sync.SyncTagTypeList;
 import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.utils.IByteBufTile;
 import sonar.flux.FluxConfig;
-import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxError;
-import sonar.flux.api.IFlux;
-import sonar.flux.api.IFluxCommon;
-import sonar.flux.api.IFluxController;
-import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.FluxListener;
+import sonar.flux.api.configurator.FluxConfigurationType;
+import sonar.flux.api.configurator.IFluxConfigurable;
+import sonar.flux.api.network.FluxCache;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.common.block.FluxConnection;
 import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
-import sonar.flux.network.FluxNetworkCache.ViewingType;
-import sonar.flux.network.PacketFluxError;
 
-public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, IEnergyHandler, IByteBufTile {
+import java.util.UUID;
+
+@Optional.InterfaceList({@Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyHandler", modid = "redstoneflux")})
+public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, IEnergyHandler, IByteBufTile, IFluxConfigurable {
 	// shared
 	public SyncTagType.INT priority = new SyncTagType.INT(0);
 	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(FluxConfig.defaultLimit);
@@ -49,20 +50,24 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public SyncUUID playerUUID = new SyncUUID(5);
 	public SyncTagType.STRING customName = (STRING) new SyncTagType.STRING(6).setDefault("Flux Connection");
 	public SyncTagType.INT colour = new SyncTagType.INT(7);
+    public ListenableList<PlayerListener> listeners = new ListenableList(this, FluxListener.values().length);
 	public TileEntity[] cachedTiles = new TileEntity[6];
 	public boolean hasTiles;
-	public SyncTagTypeList<Boolean> connections = new SyncTagTypeList<Boolean>(NBT.TAG_END, 8);
+    public SyncTagTypeList<Boolean> connections = new SyncTagTypeList<>(NBT.TAG_END, 8);
 	private final ConnectionType type;
-	public long currentTransfer;
+    public long toReceive; // is reset after each tick, the network calculates the max accept based upon priorities and sorting etc.
+    public long toSend;
+    public long totalTransferMax; // may need to be changed
+    public long[] currentTransfer = new long[6];
 
 	{
-		syncList.addParts(priority, limit, disableLimit, networkID, playerUUID, customName, colour, connections);
+        syncList.addParts(priority, limit, disableLimit, networkID, playerUUID, customName, colour, connections); // , colour, connections);
 		connections.setObjects(Lists.newArrayList(false, false, false, false, false, false));
 	}
 
 	// server only
 	public IFluxNetwork network = EmptyFluxNetwork.INSTANCE;
-	private int checkTicks = 0;
+    private int checkTicks;
 
 	// client only
 	public FluxError error = FluxError.NONE;
@@ -76,48 +81,55 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		this.playerUUID.setObject(name);
 	}
 
-	public void changeNetwork(IFluxNetwork network) {
-		changeNetwork(network, null);
-	}
-
-	public void changeNetwork(IFluxNetwork network, EntityPlayer player) {
-		if (isServer()) {
-			IBlockState state = world.getBlockState(pos);
-			if (state.getBlock() instanceof FluxConnection) {
+    @Override
+    public void connect(IFluxNetwork network) {
 				this.network = network;
-				if (player != null && !network.isFakeNetwork() && this instanceof IFluxController && network.hasController()) {
-					FluxNetworks.network.sendTo(new PacketFluxError(getPos(), FluxError.HAS_CONTROLLER), (EntityPlayerMP) player);
-					changeNetwork(EmptyFluxNetwork.INSTANCE, null);
-					return;
-				}
-				network.addFluxConnection(this);
-				networkID.setObject(network.getNetworkID());
+        this.networkID.setObject(network.getNetworkID());
 				colour.setObject(network.getNetworkColour().getRGB());
+        setState(true);
+        markBlockForUpdate();
+    }
 
-				world.setBlockState(pos, state.withProperty(FluxConnection.CONNECTED, !network.isFakeNetwork()), 2);
-				markDirty();
+    @Override
+    public void disconnect(IFluxNetwork network) {
+        if (network.getNetworkID() == this.networkID.getObject()) {
+            this.network = EmptyFluxNetwork.INSTANCE;
+            this.networkID.setObject(-1);
+            colour.setObject(EmptyFluxNetwork.colour.getRGB());
+            setState(false);
 				markBlockForUpdate();
 			}
 		}
+
+    public void setState(boolean bool) {
+        World world = getWorld();
+        IBlockState state = getWorld().getBlockState(getPos());
+        if (state.getBlock() instanceof FluxConnection) // sanity check
+            world.setBlockState(getPos(), state.withProperty(FluxConnection.CONNECTED, bool), 2);
+    }
+
+    public boolean canAccess(EntityPlayer player) {
+        return playerUUID.getUUID() == null || playerUUID.getUUID().equals(FluxHelper.getOwnerUUID(player)) || !getNetwork().isFakeNetwork() && getNetwork().getPlayerAccess(player).canEdit();
 	}
 
-	public void disconnectFromNetwork() {
-		network.removeFluxConnection(this);
-		networkID.setObject(-1);
-		network = EmptyFluxNetwork.INSTANCE;
-		world.setBlockState(pos, world.getBlockState(pos).withProperty(FluxConnection.CONNECTED, false), 2);
+    public UUID getConnectionOwner() {
+        return playerUUID.getUUID();
 	}
 
 	public void update() {
 		super.update();
 		if (isServer()) {
-			currentTransfer = limit.getObject();
+            totalTransferMax = limit.getObject();
+            for (int i = 0; i < 6; i++) {
+                currentTransfer[i] = limit.getObject();
+            }
 			if (checkTicks >= 20) {
-				updateConnections();
+                updateNeighbours(false);
 				checkTicks = 0;
 			} else {
 				checkTicks++;
 			}
+            listeners.forEach(tally -> FluxHelper.sendPacket(getNetwork(), tally));
 		}
 	}
 
@@ -126,51 +138,47 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	}
 
 	public void onSyncPacketRequested(EntityPlayer player) {
-		updateConnections();
+        updateNeighbours(true);
 		super.onSyncPacketRequested(player);
 	}
 
-	public void updateConnections() {
-		if (isServer()) {
+    @Override
+    public void updateNeighbours(boolean full) {
 			boolean changed = false;
 			hasTiles = false;
-			for (EnumFacing face : EnumFacing.VALUES) {
-				BlockPos pos = this.pos.offset(face);
-				TileEntity tile = getWorld().getTileEntity(pos);
+        for (EnumFacing face : getValidFaces()) {
 				int ordinal = face.getIndex();
-				if (tile != null && !(tile instanceof IFlux)) {
-					if (FluxHelper.canTransferEnergy(tile, face) != null) {
-						if (!connections.getObjects().get(ordinal) || cachedTiles[ordinal] == null) {
+            BlockPos pos = getPos().offset(face);
+            TileEntity tile = getWorld().getTileEntity(pos);
+            boolean canConnect = tile != null && FluxHelper.canConnect(tile, face);
+            if (full || canConnect != connections.getObjects().get(ordinal)) {
+                if (setNeighbour(face, canConnect ? tile : null))
 							changed = true;
-							connections.getObjects().set(ordinal, true);
-							cachedTiles[ordinal] = tile;
 						}
+            if (canConnect)
 						hasTiles = true;
-					} else if (tile instanceof IEnergyConnection && FluxConfig.transfers.get(EnergyType.RF).a) {
-						if (!connections.getObjects().get(ordinal) || cachedTiles[ordinal] == null) {
-							changed = true;
-							connections.getObjects().set(ordinal, true);
-							cachedTiles[face.getIndex()] = tile;
-						}
-						hasTiles = true;
-						continue;
-					}
-				} else if (connections.getObjects().get(ordinal)) {
-					changed = true;
-					connections.getObjects().set(ordinal, false);
-					cachedTiles[face.getIndex()] = null;
-				}
-
 			}
 			if (changed) {
+            connections.markChanged();
 				SonarCore.sendFullSyncAroundWithRenderUpdate(this, 128);
 			}
 		}
+
+    public boolean setNeighbour(EnumFacing face, TileEntity tile) {
+        TileEntity prev = cachedTiles[face.getIndex()];
+        boolean changed = tile != null;
+        connections.getObjects().set(face.getIndex(), changed);
+        cachedTiles[face.getIndex()] = tile;
+        return prev != tile;
 	}
 
 	public TileEntity[] cachedTiles() {
 		return cachedTiles;
 	}
+
+    public EnumFacing[] getValidFaces() {
+        return EnumFacing.values();
+    }
 
 	public boolean canTransfer() {
 		return hasTiles;
@@ -179,8 +187,8 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public void onFirstTick() {
 		super.onFirstTick();
 		addConnection();
-		if (this.isClient())
-			this.requestSyncPacket();
+        if (isClient())
+            requestSyncPacket();
 	}
 
 	public void invalidate() {
@@ -194,23 +202,52 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	}
 
 	public void addConnection() {
-		if (isServer() && networkID.getObject() != -1) {
-			IFluxCommon network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
-			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
-				changeNetwork((IFluxNetwork) network, null);
-			}
-			updateConnections();
+        if (isServer()) {
+            FluxHelper.addConnection(this);
+            updateNeighbours(true);
 			SonarCore.sendPacketAround(this, 128, 0);
 		}
 	}
 
 	public void removeConnection() {
-		if (isServer() && networkID.getObject() != -1) {
-			network = FluxNetworks.getServerCache().getNetwork(networkID.getObject());
-			if (!network.isFakeNetwork() && network instanceof IFluxNetwork) {
-				((IFluxNetwork) network).removeFluxConnection(this);
+        if (isServer()) {
+            FluxHelper.removeConnection(this);
 			}
 		}
+
+    @Override
+    public int getNetworkID() {
+        return networkID.getObject();
+    }
+
+    public NBTTagCompound addConfigs(NBTTagCompound config, EntityPlayer player) {
+        if (!this.getNetwork().isFakeNetwork() && network.getNetworkID() != -1) {
+            config.setInteger(FluxConfigurationType.NETWORK.getNBTName(), getNetwork().getNetworkID());
+        }
+        config.setInteger(FluxConfigurationType.PRIORITY.getNBTName(), priority.getObject());
+        config.setLong(FluxConfigurationType.TRANSFER.getNBTName(), limit.getObject());
+        config.setBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName(), disableLimit.getObject());
+        return config;
+    }
+
+    public void readConfigs(NBTTagCompound config, EntityPlayer player) {
+        if (config.hasKey(FluxConfigurationType.NETWORK.getNBTName())) {
+            int storedID = config.getInteger(FluxConfigurationType.NETWORK.getNBTName());
+            if (storedID != -1) {
+                FluxHelper.removeConnection(this);
+                this.networkID.setObject(storedID);
+                FluxHelper.addConnection(this);
+            }
+        }
+        if (config.hasKey(FluxConfigurationType.PRIORITY.getNBTName())) {
+            this.priority.setObject(config.getInteger(FluxConfigurationType.PRIORITY.getNBTName()));
+        }
+        if (config.hasKey(FluxConfigurationType.TRANSFER.getNBTName())) {
+            this.limit.setObject(config.getLong(FluxConfigurationType.TRANSFER.getNBTName()));
+        }
+        if (config.hasKey(FluxConfigurationType.DISABLE_LIMIT.getNBTName())) {
+            this.disableLimit.setObject(config.getBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName()));
+        }
 	}
 
 	@Override
@@ -230,17 +267,27 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 
 	@Override
 	public long getCurrentTransferLimit() {
-		return disableLimit.getObject() ? Long.MAX_VALUE : currentTransfer;
+        return disableLimit.getObject() ? Long.MAX_VALUE : totalTransferMax;
+    }
+
+    @Override
+    public long getCurrentTransfer(EnumFacing face) {
+        return face == null ? getCurrentTransferLimit() : Math.min(getCurrentTransferLimit(), currentTransfer[face.ordinal()]);
 	}
 
 	@Override
-	public void onEnergyRemoved(long remove) {
-		currentTransfer -= remove;
+    public long getValidTransfer(long valid, EnumFacing face) {
+        return Math.min(valid, getCurrentTransferLimit());//getCurrentTransfer(face));
 	}
 
 	@Override
-	public void onEnergyAdded(long added) {
-		currentTransfer -= added;
+    public void onEnergyRemoved(EnumFacing face, long remove) {
+        totalTransferMax -= remove;
+    }
+
+    @Override
+    public void onEnergyAdded(EnumFacing face, long added) {
+        totalTransferMax -= added;
 	}
 
 	@Override
@@ -262,13 +309,15 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
-
+	
 	@Override
+    @Optional.Method(modid = "redstoneflux")
 	public int getEnergyStored(EnumFacing from) {
 		return 0;
 	}
 
 	@Override
+    @Optional.Method(modid = "redstoneflux")
 	public int getMaxEnergyStored(EnumFacing from) {
 		return Integer.MAX_VALUE;
 	}
@@ -278,9 +327,6 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		switch (id) {
 		case -1:
 			disableLimit.writeToBuf(buf);
-			break;
-		case 0:
-
 			break;
 		case 1:
 			priority.writeToBuf(buf);
@@ -300,13 +346,9 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		case -1:
 			disableLimit.readFromBuf(buf);
 			break;
-		case 0:
-			// changed to sync part
-			break;
 		case 1:
 			priority.readFromBuf(buf);
-			this.network.updateSenders();
-			this.network.updateReceivers();
+                getNetwork().markTypeDirty(FluxCache.flux);
 			break;
 		case 2:
 			limit.readFromBuf(buf);
@@ -317,16 +359,52 @@ public abstract class TileEntityFlux extends TileEntitySonar implements IFlux, I
 		case 4:
 			EntityPlayer player = SonarHelper.getPlayerFromUUID(playerUUID.getUUID());
 			if (player != null) {
-				FluxNetworks.getServerCache().addViewer(player, ViewingType.CONNECTIONS, networkID.getObject());
+                    listeners.addListener(player, FluxListener.CONNECTIONS);
 			}
 			break;
 		case 5:
 			player = SonarHelper.getPlayerFromUUID(playerUUID.getUUID());
 			if (player != null) {
-				FluxNetworks.getServerCache().removeViewer(player);
-				FluxNetworks.getServerCache().addViewer(player, ViewingType.NETWORK, networkID.getObject());
+                    listeners.clearListener(listeners.findListener(player));
+                    listeners.addListener(player, FluxListener.SYNC_NETWORK);
 			}
 			break;
 		}
 	}
+
+    @Override
+    public ListenableList<PlayerListener> getListenerList() {
+        return listeners;
+    }
+
+    @Override
+    public void onListenerAdded(ListenerTally<PlayerListener> tally) {
+    }
+
+    @Override
+    public void onListenerRemoved(ListenerTally<PlayerListener> tally) {
+    }
+
+    @Override
+    public void onSubListenableAdded(ISonarListenable<PlayerListener> listen) {
+    }
+
+    @Override
+    public void onSubListenableRemoved(ISonarListenable<PlayerListener> listen) {
+    }
+
+    @Override
+    public boolean isValid() {
+        return !isInvalid();
+    }
+
+    @Override
+    public void setMaxSend(long send) {
+        toSend = send;
+    }
+
+    @Override
+    public void setMaxReceive(long receive) {
+        toReceive = receive;
+    }
 }

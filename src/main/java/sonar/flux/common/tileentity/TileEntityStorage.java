@@ -11,10 +11,12 @@ import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxConfig;
+import sonar.flux.api.network.FluxCache;
+import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.common.ContainerFlux;
 
-public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
+public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFluxStorage {
 
 	public final SyncEnergyStorage storage;
 	public int maxTransfer;
@@ -52,13 +54,23 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 		super.markChanged(part);
 		if (getWorld() != null && this.isServer()) {
 			if (part == storage) {
+                network.markTypeDirty(FluxCache.storage);
 				SonarCore.sendPacketAround(this, 128, 10);
-			}
-			if (part == colour) {
+            } else if (part == colour) {
 				SonarCore.sendPacketAround(this, 128, 11);
 			}
 		}
 	}
+
+    @Override
+    public long getMaxEnergyStored() {
+        return storage.getFullCapacity();
+    }
+
+    @Override
+    public long getEnergyStored() {
+        return storage.getEnergyLevel();
+    }
 
 	public boolean canTransfer() {
 		return true;
@@ -96,9 +108,8 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile {
 
 	public void readData(NBTTagCompound nbt, SyncType type) {
 		super.readData(nbt, type);
-		if (type.isType(SyncType.DROP)) {
+        if (type.isType(SyncType.DROP))
 			this.storage.setEnergyStored(nbt.getInteger("energy"));
-		}
 	}
 
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {

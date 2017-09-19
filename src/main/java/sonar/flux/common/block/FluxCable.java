@@ -1,7 +1,6 @@
 package sonar.flux.common.block;
 
-import cofh.api.energy.IEnergyConnection;
-import net.minecraft.block.properties.IProperty;
+import cofh.redstoneflux.api.IEnergyConnection;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -17,7 +16,8 @@ import sonar.core.api.SonarAPI;
 import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
-import sonar.flux.api.IFlux;
+import sonar.core.integration.SonarLoader;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileEntityCable;
 
 public class FluxCable extends SonarMachineBlock {
@@ -26,7 +26,7 @@ public class FluxCable extends SonarMachineBlock {
 
 	public FluxCable() {
 		super(SonarMaterials.machine, false, true);
-		this.setBlockBounds(4 * 0.0625, 4 * 0.0625, 4 * 0.0625, 1 - (4 * 0.0625), 1 - (4 * 0.0625), 1 - (4 * 0.0625));
+        this.setBlockBounds(4 * 0.0625, 4 * 0.0625, 4 * 0.0625, 1 - 4 * 0.0625, 1 - 4 * 0.0625, 1 - 4 * 0.0625);
 	}
 
 	public static final PropertyBool NORTH = PropertyBool.create("north");
@@ -85,7 +85,7 @@ public class FluxCable extends SonarMachineBlock {
 	public boolean checkBlockInDirection(IBlockAccess world, BlockPos pos, EnumFacing dir) {
 		TileEntity tile = world.getTileEntity(pos.offset(dir));
 		if (tile != null) {
-			if (tile instanceof IFlux || tile instanceof TileEntityCable || tile instanceof IEnergyConnection) {
+            if (tile instanceof IFlux || tile instanceof TileEntityCable || (SonarLoader.rfLoaded && tile instanceof IEnergyConnection)) {
 				return true;
 			}
 			if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, dir) != null) {
@@ -95,23 +95,23 @@ public class FluxCable extends SonarMachineBlock {
 		return false;
 	}
 
-	public IBlockState getStateFromMeta(int meta) {
+	/*public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState();
-	}
+	}*/
 
 	public int getMetaFromState(IBlockState state) {
 		return 0;
 	}
 
-	public IBlockState getActualState(IBlockState state, IBlockAccess w, BlockPos pos) {
+	/*public IBlockState getActualState(IBlockState state, IBlockAccess w, BlockPos pos) {
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
 		return state.withProperty(NORTH, checkBlockInDirection(w, pos, EnumFacing.NORTH)).withProperty(SOUTH, checkBlockInDirection(w, pos, EnumFacing.SOUTH)).withProperty(WEST, checkBlockInDirection(w, pos, EnumFacing.WEST)).withProperty(EAST, checkBlockInDirection(w, pos, EnumFacing.EAST)).withProperty(UP, checkBlockInDirection(w, pos, EnumFacing.UP)).withProperty(DOWN, checkBlockInDirection(w, pos, EnumFacing.DOWN));
-	}
+	}*/
 
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { NORTH, EAST, SOUTH, WEST, DOWN, UP });
+        return new BlockStateContainer(this, NORTH, EAST, SOUTH, WEST, DOWN, UP);
 	}
 
 	@Override

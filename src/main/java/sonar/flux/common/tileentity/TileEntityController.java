@@ -5,12 +5,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import sonar.core.network.sync.SyncEnum;
 import sonar.core.utils.IGuiTile;
-import sonar.flux.api.IFluxController;
+import sonar.flux.api.network.FluxCache;
+import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.client.GuiFluxController;
 import sonar.flux.common.ContainerFlux;
 
 public class TileEntityController extends TileEntityFlux implements IGuiTile, IFluxController {
-
 	public SyncEnum<PriorityMode> sendMode = new SyncEnum(PriorityMode.values(), 10);
 	public SyncEnum<PriorityMode> receiveMode = new SyncEnum(PriorityMode.values(), 11);
 	public SyncEnum<TransmitterMode> transmitter = new SyncEnum(TransmitterMode.values(), 12);
@@ -89,11 +89,11 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 		switch (id) {
 		case 10:
 			sendMode.readFromBuf(buf);
-			network.updateSenders();
+                network.markTypeDirty(FluxCache.controller);
 			break;
 		case 11:
 			receiveMode.readFromBuf(buf);
-			network.updateReceivers();
+                network.markTypeDirty(FluxCache.controller);
 			break;
 		case 12:
 			transfer.readFromBuf(buf);
@@ -106,5 +106,4 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 			break;
 		}
 	}
-
 }

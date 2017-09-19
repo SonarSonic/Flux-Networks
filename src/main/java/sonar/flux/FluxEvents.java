@@ -1,7 +1,5 @@
 package sonar.flux;
 
-import java.util.ArrayList;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -12,14 +10,15 @@ import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
-import sonar.flux.api.IFluxNetwork;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkData;
+
+import java.util.ArrayList;
 
 public class FluxEvents {
 
@@ -34,7 +33,6 @@ public class FluxEvents {
 			for (IFluxNetwork network : networks) {
 				network.updateNetwork();
 			}
-			cache.sendAllViewerPackets();
 		}
 	}
 
@@ -63,14 +61,6 @@ public class FluxEvents {
 	}
 
 	@SubscribeEvent
-	public void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-		if (event.player.getEntityWorld().isRemote) {
-			return;
-		}
-		FluxNetworks.getServerCache().removeViewer(event.player);
-	}
-
-	@SubscribeEvent
 	public void onEntityAdded(EntityJoinWorldEvent event) {
 		if (event.getWorld().isRemote) {
 			return;
@@ -78,9 +68,9 @@ public class FluxEvents {
 		final Entity entity = event.getEntity();
 		if (entity instanceof EntityItem && !(entity instanceof EntityFireItem)) {
 			EntityItem entityItem = (EntityItem) entity;
-			ItemStack stack = entityItem.getEntityItem();
-			Item item = null;
-			if (stack != null && (item = stack.getItem()) != null && (item == Items.REDSTONE || item == Items.ENDER_EYE || item == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))) {
+            ItemStack stack = entityItem.getItem();
+            Item item;
+			if (!stack.isEmpty() && (item = stack.getItem()) != null && (item == Items.REDSTONE || item == Items.ENDER_EYE || item == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))) {
 				EntityFireItem newEntity = new EntityFireItem(event.getWorld(), entityItem.posX, entityItem.posY, entityItem.posZ, stack);
 				newEntity.motionX = entityItem.motionX;
 				newEntity.motionY = entityItem.motionY;
@@ -93,6 +83,17 @@ public class FluxEvents {
 				}
 			}
 		}
+    }
 
+    public static void logNewNetwork(IFluxNetwork network) {
+        FluxNetworks.logger.info("[NEW NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was created by " + network.getCachedPlayerName());
+    }
+
+    public static void logRemoveNetwork(IFluxNetwork network) {
+        FluxNetworks.logger.info("[DELETE NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was removed by " + network.getCachedPlayerName());
+    }
+
+    public static void logLoadedNetwork(IFluxNetwork network) {
+        FluxNetworks.logger.info("[LOADED NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' with owner " + network.getCachedPlayerName());
 	}
 }

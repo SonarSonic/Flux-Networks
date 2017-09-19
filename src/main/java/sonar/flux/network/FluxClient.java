@@ -14,5 +14,4 @@ public class FluxClient extends FluxCommon {
 		ItemRenderRegister.register();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityStorage.class, new RenderFluxStorage());
 	}
-
 }

@@ -2,22 +2,25 @@ package sonar.flux.common;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.inventory.ContainerSync;
-import sonar.flux.FluxNetworks;
-import sonar.flux.client.GuiState;
+import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.common.tileentity.TileEntityFlux;
 
 public class ContainerFlux extends ContainerSync {
+    public TileEntityFlux entity;
+    public EntityPlayer player;
 
-	public GuiState state;
+    public GuiTypeMessage state;
 
 	public ContainerFlux(EntityPlayer player, TileEntityFlux entity, boolean network) {
 		super(entity);
+        this.entity = entity;
+        this.player = player;
 	}
 
-	public void switchState(EntityPlayer player, TileEntityFlux entity, GuiState state) {
+    public void switchState(GuiTypeMessage state) {
 		if (entity.isServer()) {
-			FluxNetworks.getServerCache().removeViewer(player);
-			FluxNetworks.getServerCache().addViewer(player, state.getViewingType(), entity.getNetwork().getNetworkID());
+            entity.listeners.clearListener(entity.listeners.findListener(player));
+            entity.listeners.addListener(player, state.getViewingType());//I think this sends the packet again or messes with block pos
 		}
 		this.state = state;
 	}
@@ -29,7 +32,8 @@ public class ContainerFlux extends ContainerSync {
 
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
-		if (!player.getEntityWorld().isRemote)
-			FluxNetworks.getServerCache().removeViewer(player);
+        if (entity.isServer()) {
+            entity.listeners.clearListener(entity.listeners.findListener(player));
+        }
 	}
 }
