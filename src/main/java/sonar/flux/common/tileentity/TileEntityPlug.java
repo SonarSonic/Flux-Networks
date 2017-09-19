@@ -1,6 +1,6 @@
 package sonar.flux.common.tileentity;
 
-import cofh.redstoneflux.api.IEnergyReceiver;
+import cofh.api.energy.IEnergyReceiver;
 import mekanism.api.energy.IStrictEnergyAcceptor;
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.capability.TeslaCapabilities;

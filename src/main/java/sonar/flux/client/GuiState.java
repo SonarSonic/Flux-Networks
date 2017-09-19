@@ -5,7 +5,13 @@ import net.minecraft.util.ResourceLocation;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.flux.api.FluxListener;
-import sonar.flux.client.states.*;
+import sonar.flux.client.states.GuiStateIndex;
+import sonar.flux.client.states.GuiStateNetworkConnections;
+import sonar.flux.client.states.GuiStateNetworkCreate;
+import sonar.flux.client.states.GuiStateNetworkEdit;
+import sonar.flux.client.states.GuiStateNetworkPlayers;
+import sonar.flux.client.states.GuiStateNetworkSelect;
+import sonar.flux.client.states.GuiStateNetworkStats;
 
 public abstract class GuiState {
     public static final GuiStateIndex INDEX = new GuiStateIndex();

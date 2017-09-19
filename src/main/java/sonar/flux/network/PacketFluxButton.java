@@ -1,6 +1,10 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import com.mojang.authlib.GameProfile;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,9 +32,6 @@ import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.common.ContainerFlux;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.connection.FluxHelper;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 public class PacketFluxButton extends PacketCoords {
 
@@ -406,7 +407,7 @@ public class PacketFluxButton extends PacketCoords {
 						World world = player.getEntityWorld();
 						if (!message.type.local) {
 							MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-                        world = server.getWorld(message.dimension);
+                        world = server.worldServerForDimension(message.dimension);
 						}
 						TileEntity te = world.getTileEntity(message.pos);
 						if (te instanceof TileEntityFlux && message.objects != null) {

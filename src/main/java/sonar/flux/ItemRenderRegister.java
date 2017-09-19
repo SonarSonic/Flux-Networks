@@ -13,7 +13,7 @@ public class ItemRenderRegister {
 		for (Item item : FluxNetworks.registeredItems) {
 			if (item.getHasSubtypes()) {
 				NonNullList<ItemStack> stacks = NonNullList.create();
-                item.getSubItems(FluxNetworks.tab, stacks);
+                item.getSubItems(item, FluxNetworks.tab, stacks);
 				for (ItemStack stack : stacks) {
 					String variant = "variant=meta" + stack.getItemDamage();
 					if (item instanceof IMetaRenderer) {

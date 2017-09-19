@@ -1,19 +1,24 @@
 package sonar.flux.client.states;
 
+import java.awt.Color;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.opengl.GL11;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxCommon.AccessType;
-import sonar.flux.client.*;
+import sonar.flux.client.GUI;
+import sonar.flux.client.GuiFlux;
+import sonar.flux.client.GuiFluxBase;
+import sonar.flux.client.GuiState;
+import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
-
-import java.awt.*;
 
 public class GuiStateNetworkEdit extends GuiState {
 

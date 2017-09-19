@@ -1,12 +1,17 @@
 package sonar.flux.api.network;
 
-import com.google.common.collect.Lists;
-import sonar.flux.api.tiles.*;
-import sonar.flux.connection.BasicFluxNetwork;
-import sonar.flux.connection.FluxHelper;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import sonar.flux.api.tiles.IFluxController;
+import sonar.flux.api.tiles.IFluxListenable;
+import sonar.flux.api.tiles.IFluxPlug;
+import sonar.flux.api.tiles.IFluxPoint;
+import sonar.flux.api.tiles.IFluxStorage;
+import sonar.flux.connection.BasicFluxNetwork;
+import sonar.flux.connection.FluxHelper;
 
 public class FluxCache<T extends IFluxListenable> {
 

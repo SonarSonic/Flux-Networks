@@ -1,13 +1,13 @@
 package sonar.flux.api.network;
 
+import java.util.List;
+import java.util.UUID;
+
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.utils.ActionType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * all server stored Networks will implement this

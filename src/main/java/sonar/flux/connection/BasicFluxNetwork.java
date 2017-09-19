@@ -1,6 +1,16 @@
 package sonar.flux.connection;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
+
 import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import sonar.core.api.utils.ActionType;
@@ -10,15 +20,19 @@ import sonar.core.network.sync.IDirtyPart;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.FluxListener;
-import sonar.flux.api.network.*;
-import sonar.flux.api.tiles.*;
+import sonar.flux.api.network.EnergyStats;
+import sonar.flux.api.network.FluxCache;
+import sonar.flux.api.network.FluxPlayer;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxController.TransferMode;
+import sonar.flux.api.tiles.IFluxListenable;
+import sonar.flux.api.tiles.IFluxPlug;
+import sonar.flux.api.tiles.IFluxPoint;
+import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkStatistics;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
 
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
 

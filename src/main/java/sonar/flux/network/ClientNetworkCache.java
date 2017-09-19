@@ -1,14 +1,14 @@
 package sonar.flux.network;
 
-import net.minecraft.entity.player.EntityPlayer;
-import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.api.network.IFluxNetworkCache;
-import sonar.flux.connection.EmptyFluxNetwork;
-
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import net.minecraft.entity.player.EntityPlayer;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.network.IFluxNetworkCache;
+import sonar.flux.connection.EmptyFluxNetwork;
 
 public class ClientNetworkCache implements IFluxNetworkCache {
 

@@ -15,7 +15,7 @@ public class BlockRenderRegister {
 			Item item = Item.getItemFromBlock(block);
 			if (item.getHasSubtypes()) {
 				NonNullList<ItemStack> stacks = NonNullList.create();
-                item.getSubItems(FluxNetworks.tab, stacks);
+                item.getSubItems(item, FluxNetworks.tab, stacks);
 				for (ItemStack stack : stacks) {
 					String variant = "variant=meta" + stack.getItemDamage();
 					if (block instanceof IMetaRenderer) {

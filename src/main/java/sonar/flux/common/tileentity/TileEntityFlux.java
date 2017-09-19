@@ -1,7 +1,10 @@
 package sonar.flux.common.tileentity;
 
-import cofh.redstoneflux.api.IEnergyHandler;
+import java.util.UUID;
+
 import com.google.common.collect.Lists;
+
+import cofh.api.energy.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,8 +40,6 @@ import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.common.block.FluxConnection;
 import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
-
-import java.util.UUID;
 
 @Optional.InterfaceList({@Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyHandler", modid = "redstoneflux")})
 public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, IEnergyHandler, IByteBufTile, IFluxConfigurable {

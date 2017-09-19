@@ -1,12 +1,12 @@
 package sonar.flux.api.network;
 
+import java.util.UUID;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.helpers.SonarHelper;
-
-import java.util.UUID;
 
 public class FluxPlayer implements INBTSyncable {
 

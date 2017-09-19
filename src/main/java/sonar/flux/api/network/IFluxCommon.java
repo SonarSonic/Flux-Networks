@@ -1,11 +1,11 @@
 package sonar.flux.api.network;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * both client and server networks implement this

@@ -1,5 +1,11 @@
 package sonar.flux.client;
 
+import java.awt.Color;
+import java.util.Collections;
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -8,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 import sonar.core.client.gui.GuiSonarTile;
 import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.helpers.FontHelper;
@@ -21,10 +26,6 @@ import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
-
-import java.awt.*;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class GuiFluxBase extends GuiSonarTile {
 
@@ -127,7 +128,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 		if (tile.error != FluxError.NONE) {
 			if (this.errorDisplayTicks < this.errorDisplayTime) {
 				errorDisplayTicks++;
-                drawHoveringText(Collections.singletonList(TextFormatting.RED + "" + TextFormatting.BOLD + FontHelper.translate(tile.error.getErrorMessage())), x, y, fontRenderer);
+                drawHoveringText(Collections.singletonList(TextFormatting.RED + "" + TextFormatting.BOLD + FontHelper.translate(tile.error.getErrorMessage())), x, y, fontRendererObj);
 			} else {
 				errorDisplayTicks = 0;
 				tile.error = FluxError.NONE;
@@ -175,9 +176,9 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 			super(id, x, y, new ResourceLocation("fluxnetworks:textures/gui/buttons/buttons.png"), 0, 0, 16, 16);
 		}
 
-        public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
-            super.drawButton(mc, x, y, partialTicks);
-            this.hovered = x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
+        public void drawButton(Minecraft mc, int x, int y) {
+            super.drawButton(mc, x, y);
+            this.hovered = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
 			if (hovered) {
 				this.textureY = 0;
 			} else {
@@ -228,7 +229,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
         public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
 			if (visible) {
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                hovered = x >= this.x && y >= this.y && x < this.x + width + 1 && y < this.y + height + 1;
+                hovered = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + width + 1 && y < this.yPosition + height + 1;
                 /*short short1 = 219;
 				int k = 0;
 
@@ -242,7 +243,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 
 				mc.getTextureManager().bindTexture(texture);
 				GL11.glScaled(0.5, 0.5, 0.5);
-                drawTexturedModalRect((float) (this.x / 0.5), (float) (this.y / 0.5), textureX, state == buttonState ? textureY : textureY + 32, sizeX * 2, sizeY * 2);
+                drawTexturedModalRect((float) (this.xPosition / 0.5), (float) (this.yPosition / 0.5), textureX, state == buttonState ? textureY : textureY + 32, sizeX * 2, sizeY * 2);
 				GL11.glScaled(1.0 / 0.5, 1.0 / 0.5, 1.0 / 0.5);
 			}
 		}
@@ -257,7 +258,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 	}
 	
     public FontRenderer getFontRenderer() {
-        return this.fontRenderer;
+        return this.fontRendererObj;
     }
 
     public List<GuiButton> getButtonList() {

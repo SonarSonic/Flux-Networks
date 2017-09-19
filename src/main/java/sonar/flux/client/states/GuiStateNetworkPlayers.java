@@ -1,6 +1,11 @@
 package sonar.flux.client.states;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
@@ -17,10 +22,6 @@ import sonar.flux.client.GuiState;
 import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GuiStateNetworkPlayers extends GuiState {
 

@@ -1,5 +1,9 @@
 package sonar.flux.connection;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.utils.ActionType;
@@ -13,10 +17,6 @@ import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.network.NetworkStatistics;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class EmptyFluxNetwork implements IFluxNetwork {
 

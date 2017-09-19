@@ -1,5 +1,12 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.helpers.FunctionHelper;
 import sonar.core.listener.ISonarListenable;
@@ -16,13 +23,6 @@ import sonar.flux.api.network.IFluxNetworkCache;
 import sonar.flux.connection.BasicFluxNetwork;
 import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 
 /**
  * all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI

@@ -1,5 +1,7 @@
 package sonar.flux;
 
+import java.util.ArrayList;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -17,8 +19,6 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkData;
-
-import java.util.ArrayList;
 
 public class FluxEvents {
 
@@ -68,7 +68,7 @@ public class FluxEvents {
 		final Entity entity = event.getEntity();
 		if (entity instanceof EntityItem && !(entity instanceof EntityFireItem)) {
 			EntityItem entityItem = (EntityItem) entity;
-            ItemStack stack = entityItem.getItem();
+            ItemStack stack = entityItem.getEntityItem();
             Item item;
 			if (!stack.isEmpty() && (item = stack.getItem()) != null && (item == Items.REDSTONE || item == Items.ENDER_EYE || item == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK))) {
 				EntityFireItem newEntity = new EntityFireItem(event.getWorld(), entityItem.posX, entityItem.posY, entityItem.posZ, stack);

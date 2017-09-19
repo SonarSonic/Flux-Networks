@@ -1,14 +1,15 @@
 package sonar.flux.client;
 
+import java.awt.Color;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
-import org.lwjgl.opengl.GL11;
 import sonar.core.helpers.RenderHelper;
 import sonar.flux.common.tileentity.TileEntityStorage;
-
-import java.awt.*;
 
 public class RenderFluxStorage extends TileEntitySpecialRenderer<TileEntityStorage> {
 

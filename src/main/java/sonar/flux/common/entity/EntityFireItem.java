@@ -27,7 +27,7 @@ public class EntityFireItem extends EntityItem {
 		if (source == DamageSource.IN_FIRE) {
 			if (!changed) {
 				//if (changeTicks >= 30) {
-                ItemStack stack = getItem().copy();
+                ItemStack stack = getEntityItem().copy();
 				ItemStack newStack = ItemStack.EMPTY;
 				if (stack.getItem() == Items.REDSTONE) {
 					newStack = new ItemStack(FluxNetworks.flux, stack.getCount(), 0);
@@ -36,7 +36,7 @@ public class EntityFireItem extends EntityItem {
 				} else if (stack.getItem() == Items.ENDER_EYE) {					
 					newStack = new ItemStack(FluxNetworks.fluxCore, stack.getCount(), 0);
 				}
-                setItem(newStack);
+                setEntityItemStack(newStack);
 				changed = true;
 				//	changeTicks = 0;
 				//} else {

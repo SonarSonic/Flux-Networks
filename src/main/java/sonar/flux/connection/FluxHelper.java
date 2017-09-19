@@ -1,6 +1,11 @@
 package sonar.flux.connection;
 
-import cofh.redstoneflux.api.IEnergyConnection;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+
+import cofh.api.energy.IEnergyConnection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -22,17 +27,19 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxListener;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.api.tiles.*;
+import sonar.flux.api.tiles.IFlux;
+import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxController.PriorityMode;
 import sonar.flux.api.tiles.IFluxController.TransferMode;
 import sonar.flux.api.tiles.IFluxController.TransmitterMode;
+import sonar.flux.api.tiles.IFluxListenable;
+import sonar.flux.api.tiles.IFluxPlug;
+import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.common.tileentity.TileEntityStorage;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.PacketFluxConnectionsList;
 import sonar.flux.network.PacketFluxNetworkList;
 import sonar.flux.network.PacketNetworkStatistics;
-
-import java.util.*;
 
 public class FluxHelper {
 

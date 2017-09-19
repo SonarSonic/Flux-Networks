@@ -1,5 +1,7 @@
 package sonar.flux.api;
 
+import java.util.UUID;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -7,8 +9,6 @@ import sonar.core.api.utils.BlockCoords;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.EmptyFluxNetwork;
-
-import java.util.UUID;
 
 public class ClientFlux implements IFlux {
 

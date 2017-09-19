@@ -1,8 +1,10 @@
 package sonar.flux.network;
 
+import java.util.UUID;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
@@ -12,8 +14,6 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxCommon.AccessType;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
-
-import java.util.UUID;
 
 public class NetworkData extends WorldSavedData {
 

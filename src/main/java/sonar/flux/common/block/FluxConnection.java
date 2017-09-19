@@ -1,5 +1,7 @@
 package sonar.flux.common.block;
 
+import java.util.List;
+
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -24,8 +26,6 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxListener;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileEntityFlux;
-
-import java.util.List;
 
 public abstract class FluxConnection extends SonarMachineBlock {
 

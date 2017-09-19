@@ -1,5 +1,8 @@
 package sonar.flux.client.states;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
@@ -14,9 +17,6 @@ import sonar.flux.client.GuiState;
 import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GuiStateNetworkSelect extends GuiState {
 

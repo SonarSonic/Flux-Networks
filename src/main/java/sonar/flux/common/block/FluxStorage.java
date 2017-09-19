@@ -1,13 +1,13 @@
 package sonar.flux.common.block;
 
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.common.tileentity.TileEntityStorage;
-
-import java.util.List;
 
 public class FluxStorage extends FluxConnection {
 

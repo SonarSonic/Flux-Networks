@@ -1,18 +1,28 @@
 package sonar.flux.connection;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import com.mojang.authlib.GameProfile;
+
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.helpers.SonarHelper;
-import sonar.core.network.sync.*;
+import sonar.core.network.sync.ISyncableListener;
+import sonar.core.network.sync.SyncEnum;
+import sonar.core.network.sync.SyncNBTAbstract;
+import sonar.core.network.sync.SyncTagType;
+import sonar.core.network.sync.SyncUUID;
+import sonar.core.network.sync.SyncableList;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.network.*;
+import sonar.flux.api.network.FluxPlayer;
+import sonar.flux.api.network.FluxPlayersList;
+import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.INetworkStatistics;
+import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.network.NetworkStatistics;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListener {
 

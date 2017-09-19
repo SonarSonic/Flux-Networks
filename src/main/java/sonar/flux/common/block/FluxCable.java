@@ -1,6 +1,6 @@
 package sonar.flux.common.block;
 
-import cofh.redstoneflux.api.IEnergyConnection;
+import cofh.api.energy.IEnergyConnection;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;

@@ -1,5 +1,7 @@
 package sonar.flux.client.states;
 
+import java.util.ArrayList;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
@@ -14,8 +16,6 @@ import sonar.flux.client.GuiFluxBase.NetworkButton;
 import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketFluxButton.Type;
-
-import java.util.ArrayList;
 
 public class GuiStateNetworkConnections extends GuiStateScrollable {
 
