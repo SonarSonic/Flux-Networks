@@ -71,9 +71,10 @@ public class PacketFluxButton extends PacketCoords {
 				CustomColour colour = (CustomColour) objs[1];
 				AccessType access = (AccessType) objs[2];
                 if (flux.getNetwork().isFakeNetwork()) {
-                    IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
+                    IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);    				
                     flux.getNetwork().removeConnection(flux);
                     network.addConnection(flux);
+				
 				}
 			}
 		},

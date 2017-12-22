@@ -8,12 +8,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 import sonar.core.SonarCrafting;
 import sonar.core.common.block.SonarBlockTip;
 
 public class FluxCrafting extends FluxNetworks {
+
 	public static class StorageCrafting extends ShapedOreRecipe {
-		
+
 		public StorageCrafting(ItemStack result, Object... recipe) {
 			super(new ResourceLocation(modid, result.getUnlocalizedName()), result, recipe);
 			setRegistryName(new ResourceLocation(modid, result.getUnlocalizedName()));
@@ -38,6 +40,19 @@ public class FluxCrafting extends FluxNetworks {
 			stack.setTagCompound(newTag);
 			return stack;
 		}
+	}
+
+	public static class FluxRecipe extends ShapelessOreRecipe {
+
+		public FluxRecipe(ItemStack result, Object[] recipe) {
+			super(new ResourceLocation(modid, result.getUnlocalizedName() + "flint"), result, recipe);
+		}
+
+		@Override
+		public ItemStack getCraftingResult(InventoryCrafting crafting) {
+			return super.getCraftingResult(crafting);
+		}
+
 	}
 
 	public static void addRecipes() {

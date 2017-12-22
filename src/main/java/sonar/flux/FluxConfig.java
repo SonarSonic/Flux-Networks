@@ -14,6 +14,9 @@ public class FluxConfig extends FluxNetworks {
 
 	public static long defaultLimit;
 	public static boolean banHyper, banGod;
+	public static boolean enableFluxRecipe;
+	public static boolean enableFluxRedstoneDrop;
+	public static int redstone_ore_chance, redstone_ore_max_drop, redstone_ore_min_drop;
 	public static int basicCapacity, herculeanCapacity, gargantuanCapacity;
 	public static int basicTransfer, herculeanTransfer, gargantuanTransfer;
 	public static int hyper = 4, god = 10;
@@ -38,6 +41,13 @@ public class FluxConfig extends FluxNetworks {
 
 		banHyper = config.getBoolean("Ban Hyper Mode", "settings", false, "prevents the use of Hyper Mode");
 		banGod = config.getBoolean("Ban God Mode", "settings", false, "prevents the use of God Mode");
+		enableFluxRecipe = config.getBoolean("Disables Flux Recipe (from fire)", "flux_recipe", true, "enables Redstone being turned into Flux when dropped in fire");
+		
+		enableFluxRedstoneDrop = config.getBoolean("Enable Flux Drop (from Redstone Ore)", "flux_recipe", true, "enables Redstone Ore to drop Flux with normal redstone drops");	
+		redstone_ore_chance = config.getInt("Chance of Flux Drop (from Redstone Ore)", "flux_recipe", 50, 1, 5000, "the chance of a drop occurring (random, but roughly every 50 blocks)");	
+		redstone_ore_min_drop = config.getInt("Minimum Flux Drop (from Redstone Ore)", "flux_recipe", 4, 1, 64, "the minimum Flux dropped from Redstone ore if a drop occurs");
+		redstone_ore_max_drop = config.getInt("Maximum Flux Drop (from Redstone Ore)", "flux_recipe", 16, 1, 64, "the maximum Flux dropped from Redstone Ore if a drop occurs");
+		
 		config.save();
 	}
 

@@ -25,7 +25,7 @@ public class GuiFlux extends GuiFluxBase {
 
 	public EntityPlayer player;
 	public IFluxCommon common = EmptyFluxNetwork.INSTANCE;
-    public boolean disabledState;
+	public boolean disabledState;
 
 	public GuiFlux(Container container, TileEntityFlux tile, EntityPlayer player) {
 		super(container, tile);
@@ -39,7 +39,7 @@ public class GuiFlux extends GuiFluxBase {
 
 	@Override
 	public void initGui() {
-        super.initGui();
+		super.initGui();
 		common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
 		Keyboard.enableRepeatEvents(true);
 		this.xSize = state.x;
@@ -49,12 +49,12 @@ public class GuiFlux extends GuiFluxBase {
 		this.guiTop = (this.height - this.ySize) / 2;
 		disabledState = false;
 
-        int i = 0;
-        for (GuiState state : GuiState.VALUES) {
-            buttonList.add(new NavigationButtons(state, -i, guiLeft + 2 + 18 * i, guiTop - 15));
-            i++;
+		int i = 0;
+		for (GuiState state : GuiState.VALUES) {
+			buttonList.add(new NavigationButtons(state, -i, guiLeft + 2 + 18 * i, guiTop - 15));
+			i++;
 		}
-        state.init(this);
+		state.init(this);
 	}
 
 	public boolean isSelectedNetwork(IFluxCommon network) {
@@ -67,8 +67,9 @@ public class GuiFlux extends GuiFluxBase {
 		FontHelper.text(GUI.PRIORITY + ":", 7, 48, colour);
 		FontHelper.text(GUI.MAX + ":", 87, 48, colour);
 		FontHelper.text(GUI.IGNORE_LIMIT + ": " + TextFormatting.WHITE + tile.disableLimit.getObject().toString(), 7, 48 + 18, colour);
-        //FontHelper.text(FontHelper.translate(tile.getBlockType().getLocalizedName()), 20, 8, 0);
-        renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), true, 11, 8);
+		// FontHelper.text(FontHelper.translate(tile.getBlockType().getLocalizedName()),
+		// 20, 8, 0);
+		renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), true, 11, 8);
 
 		switch (type) {
 		case CONTROLLER:
@@ -99,68 +100,68 @@ public class GuiFlux extends GuiFluxBase {
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		if (!disabledState) {
-            for (SonarTextField field : state.getFields(this)) {
+			for (SonarTextField field : state.getFields(this)) {
 				field.drawTextBox();
 			}
 		}
 		common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
-        ///int networkColour = common.getNetworkColour().getRGB();
+		/// int networkColour = common.getNetworkColour().getRGB();
 
-        state.draw(this, x, y);
+		state.draw(this, x, y);
 		drawError(x - guiLeft, y - guiTop);
 	}
 
 	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
-        forScrollers(s -> s.handleMouse(state.needsScrollBars(), state.getSelectionSize(this)));
+		forScrollers(s -> s.handleMouse(state.needsScrollBars(), state.getSelectionSize(this)));
 	}
 
 	public void drawScreen(int x, int y, float var) {
 		super.drawScreen(x, y, var);
-        forScrollers(s -> s.drawScreen(x, y, state.needsScrollBars()));
+		forScrollers(s -> s.drawScreen(x, y, state.needsScrollBars()));
 	}
 
 	protected void actionPerformed(GuiButton button) {
-        if (button != null) {
-		if (button instanceof NavigationButtons) {
-			switchState(((NavigationButtons) button).buttonState);
-			reset();
-			return;
+		if (button != null) {
+			if (button instanceof NavigationButtons) {
+				switchState(((NavigationButtons) button).buttonState);
+				reset();
+				return;
+			}
+			if (!disabledState)
+				state.button(this, button);
 		}
-            if (!disabledState)
-                state.button(this, button);
-					}
-				}
+	}
 
 	@Override
 	public void mouseClicked(int x, int y, int mouseButton) throws IOException {
 		super.mouseClicked(x, y, mouseButton);
-        if (!disabledState) {
-            for (SonarTextField field : state.getFields(this)) {
-			field.mouseClicked(x - guiLeft, y - guiTop, mouseButton);
-		}
-            state.click(this, x, y, mouseButton);
+		if (!disabledState) {
+			for (SonarTextField field : state.getFields(this)) {
+				field.mouseClicked(x - guiLeft, y - guiTop, mouseButton);
+			}
+			state.click(this, x, y, mouseButton);
 		}
 	}
 
 	@Override
 	public void keyTyped(char c, int i) throws IOException {
-        if (disabledState) {
+		if (disabledState) {
 			super.keyTyped(c, i);
 			return;
 		}
-        for (SonarTextField field : state.getFields(this)) {
+		for (SonarTextField field : state.getFields(this)) {
 			if (field != null && field.isFocused()) {
 				if (c == 13 || c == 27) {
 					field.setFocused(false);
 				} else {
 					field.textboxKeyTyped(c, i);
-                    state.textboxKeyTyped(this, field, c, i);
-		}
+					state.textboxKeyTyped(this, field, c, i);
+				}
 				return;
 			}
-			}
-        if (state.type(this, c, i)) {
+		}
+		if (state.type(this, c, i)) {
 			super.keyTyped(c, i);
 		}
 	}
@@ -168,13 +169,13 @@ public class GuiFlux extends GuiFluxBase {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
 		super.drawGuiContainerBackgroundLayer(var1, var2, var3);
-        forScrollers(s -> drawTexturedModalRect(s.left, s.top + (int) ((float) (s.length - 17) * s.getCurrentScroll()), 176, 0, 10, 15));
+		forScrollers(s -> drawTexturedModalRect(s.left, s.top + (int) ((float) (s.length - 17) * s.getCurrentScroll()), 176, 0, 10, 15));
 	}
 
-    public void forScrollers(Consumer<SonarScroller> action) {
-        SonarScroller[] scrollers = state.getScrollers();
-        for (SonarScroller scroller : scrollers) {
-            action.accept(scroller);
+	public void forScrollers(Consumer<SonarScroller> action) {
+		SonarScroller[] scrollers = state.getScrollers();
+		for (SonarScroller scroller : scrollers) {
+			action.accept(scroller);
 		}
 	}
 }

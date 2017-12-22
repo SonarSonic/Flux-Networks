@@ -31,10 +31,6 @@ public class EntityFireItem extends EntityItem {
 				ItemStack newStack = ItemStack.EMPTY;
 				if (stack.getItem() == Items.REDSTONE) {
 					newStack = new ItemStack(FluxNetworks.flux, stack.getCount(), 0);
-				} else if (stack.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK)) {
-					newStack = new ItemStack(FluxNetworks.fluxBlock, stack.getCount(), 0);
-				} else if (stack.getItem() == Items.ENDER_EYE) {					
-					newStack = new ItemStack(FluxNetworks.fluxCore, stack.getCount(), 0);
 				}
                 setItem(newStack);
 				changed = true;

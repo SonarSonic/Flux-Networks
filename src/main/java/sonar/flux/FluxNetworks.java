@@ -1,5 +1,11 @@
 package sonar.flux;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -20,9 +26,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.common.block.SonarBlockTip;
@@ -32,6 +35,7 @@ import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
 import sonar.flux.common.block.FluxStorage;
 import sonar.flux.common.entity.EntityFireItem;
+import sonar.flux.common.item.AdminConfigurator;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.item.FluxItem;
 import sonar.flux.common.tileentity.TileEntityController;
@@ -43,17 +47,14 @@ import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mod(modid = FluxNetworks.modid, name = FluxNetworks.name, acceptedMinecraftVersions = FluxNetworks.mc_versions, version = FluxNetworks.version, dependencies = "required-after:sonarcore@[" + FluxNetworks.SONAR_VERSION + ",);")
 public class FluxNetworks {
 
 	public static final String name = "FluxNetworks";
 	public static final String modid = "fluxnetworks";
-	public static final String version = "3.0.1";
+	public static final String version = "3.0.2";
 	public static final String mc_versions = "[1.12,1.12.2]";
-	public static final String SONAR_VERSION = "5.0.1";
+	public static final String SONAR_VERSION = "5.0.4";
 
 	public static final int saveDimension = 0;
 
@@ -71,7 +72,7 @@ public class FluxNetworks {
 	public static SimpleNetworkWrapper network;
 	public static Logger logger = (Logger) LogManager.getLogger(modid);
 
-	public static Item flux, fluxCore, fluxConfigurator;
+	public static Item flux, fluxCore, fluxConfigurator, adminConfigurator;
 	public static Block fluxBlock, fluxPlug, fluxPoint, fluxCable, fluxStorage, largeFluxStorage, massiveFluxStorage, fluxController;
 
 	public static ArrayList<Item> registeredItems = new ArrayList<>();
@@ -119,6 +120,7 @@ public class FluxNetworks {
 		flux = registerItem("Flux", new FluxItem());
 		fluxCore = registerItem("FluxCore", new Item());
 		fluxConfigurator = registerItem("FluxConfigurator", new FluxConfigurator());
+		adminConfigurator = registerItem("AdminConfigurator", new AdminConfigurator());
 
 		// fluxCable = registerBlock("FluxCable", new
 		// FluxCable().setHardness(0.4F).setResistance(20.0F));
@@ -180,7 +182,8 @@ public class FluxNetworks {
 	@EventHandler
 	public void onServerStopping(FMLServerStoppedEvent event) {
 		serverCache.clearNetworks();
-		logger.info("Removed Networks");
+		clientCache.clearNetworks();
+		logger.info("Cleared Network Caches");
 	}
 
 	public static ClientNetworkCache getClientCache() {

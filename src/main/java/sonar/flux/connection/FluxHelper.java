@@ -85,7 +85,7 @@ public class FluxHelper {
                         FluxNetworks.network.sendTo(new PacketFluxConnectionsList(network.getClientFluxConnection(), network.getNetworkID()), tally.listener.player);
                         break;
                     case FULL_NETWORK:
-                        ArrayList<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(tally.listener.player, true);
+                        ArrayList<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(tally.listener.player, false);
                         FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), tally.listener.player);
                         tally.removeTallies(1, type);
                         tally.addTallies(1, FluxListener.SYNC_NETWORK);
