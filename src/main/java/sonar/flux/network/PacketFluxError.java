@@ -39,7 +39,7 @@ public class PacketFluxError extends PacketCoords {
 		@Override
 		public IMessage processMessage(EntityPlayer player, MessageContext ctx, PacketFluxError message, TileEntity target) {
 			if (target instanceof TileEntityFlux) {
-                SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+                SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
 				TileEntityFlux flux = (TileEntityFlux) target;
 				flux.error=message.error;
                 });

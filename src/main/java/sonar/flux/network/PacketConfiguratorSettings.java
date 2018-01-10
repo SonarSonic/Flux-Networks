@@ -36,7 +36,7 @@ public class PacketConfiguratorSettings implements IMessage {
 
         @Override
         public IMessage onMessage(PacketConfiguratorSettings message, MessageContext ctx) {
-            SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+            SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
                 EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
                 ItemStack heldItem = player.getHeldItem(player.getActiveHand());
                 if (!heldItem.isEmpty() && heldItem.getItem() instanceof FluxConfigurator) {

@@ -38,9 +38,6 @@ public class FluxCommon implements IGuiHandler {
 			case IGuiTile.ID:
 				return ((IGuiTile) entity).getGuiContainer(player);
 			case 2:
-				// if ((entity instanceof IFlux)) {
-				// return new ContainerFlux(player, entity, false);
-				// }
 				break;
 			}
 		} else {

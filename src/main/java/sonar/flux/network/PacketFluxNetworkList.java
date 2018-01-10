@@ -64,7 +64,7 @@ public class PacketFluxNetworkList implements IMessage {
 		@Override
 		public IMessage onMessage(PacketFluxNetworkList message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+				SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
 					FluxNetworks.getClientCache().updateNetworksFromPacket(message.networks, message.update);
 				});
 			}

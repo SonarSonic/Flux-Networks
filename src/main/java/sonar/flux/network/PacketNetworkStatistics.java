@@ -44,7 +44,7 @@ public class PacketNetworkStatistics implements IMessage {
         @Override
         public IMessage onMessage(PacketNetworkStatistics message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {
-                SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+                SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
                     String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
                     IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
                     if (!common.isFakeNetwork()) {

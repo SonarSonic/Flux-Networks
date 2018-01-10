@@ -401,7 +401,7 @@ public class PacketFluxButton extends PacketCoords {
 
 		@Override
 		public IMessage onMessage(PacketFluxButton message, MessageContext ctx) {
-            SonarCore.proxy.getThreadListener(ctx).addScheduledTask(() -> {
+            SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
 					EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
 					if (player != null && player.getEntityWorld() != null) {
 						World world = player.getEntityWorld();
