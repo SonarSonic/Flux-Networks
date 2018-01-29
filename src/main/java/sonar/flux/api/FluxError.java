@@ -2,27 +2,22 @@ package sonar.flux.api;
 
 public enum FluxError {
 
-	NONE,
-	HAS_CONTROLLER,
-	NOT_OWNER,
-	ACCESS_DENIED,
-	EDIT_NETWORK,
-	INVALID_USER;
-	
-	public String getErrorMessage(){
-		switch(this){
-		case HAS_CONTROLLER:
-			return "network.error.hasController";
-		case NOT_OWNER:
-			return "network.error.notOwner";
-		case ACCESS_DENIED:
-			return "network.error.accessDenied";
-		case EDIT_NETWORK:
-			return "network.error.editNetwork";
-		case INVALID_USER:
-			return "network.error.invalidUser";
-		default:
-			return "";
-		}
+	NONE("You can't do that, but I don't know why... (contact mod dev)"), //
+	HAS_CONTROLLER("network.error.hasController"), //
+	NOT_OWNER("network.error.notOwner"), //
+	ACCESS_DENIED("network.error.accessDenied"), //
+	EDIT_NETWORK("network.error.editNetwork"), //
+	NETWORK_MAX_REACHED("network.error.networkMaxReached"), //
+	INVALID_USER("network.error.invalidUser");//
+		
+	String message;
+
+	FluxError(String message) {
+		this.message = message;
 	}
+
+	public String getErrorMessage() {
+		return message;
+	}
+
 }

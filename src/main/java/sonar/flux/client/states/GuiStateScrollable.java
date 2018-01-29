@@ -1,11 +1,12 @@
 package sonar.flux.client.states;
 
+import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import sonar.core.client.gui.GuiGridElement;
 import sonar.flux.client.GuiState;
 import sonar.flux.client.GuiTypeMessage;
-
-import java.util.List;
 
 public abstract class GuiStateScrollable<T> extends GuiState {
 

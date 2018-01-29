@@ -1,9 +1,9 @@
 package sonar.flux.api.network;
 
+import java.util.ArrayList;
+
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
-
-import java.util.ArrayList;
 
 public interface INetworkStatistics extends INBTSyncable {
 

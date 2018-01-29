@@ -1,10 +1,15 @@
 package sonar.flux.client;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.util.function.Consumer;
+
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.input.Keyboard;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
@@ -16,10 +21,6 @@ import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.common.tileentity.TileEntityStorage;
 import sonar.flux.connection.EmptyFluxNetwork;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.function.Consumer;
 
 public class GuiFlux extends GuiFluxBase {
 
@@ -175,7 +176,9 @@ public class GuiFlux extends GuiFluxBase {
 	public void forScrollers(Consumer<SonarScroller> action) {
 		SonarScroller[] scrollers = state.getScrollers();
 		for (SonarScroller scroller : scrollers) {
-			action.accept(scroller);
+			if (scroller != null) {
+				action.accept(scroller);
+			}
 		}
 	}
 }

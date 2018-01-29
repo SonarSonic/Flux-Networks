@@ -2,16 +2,12 @@ package sonar.flux.client;
 
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import sonar.core.client.gui.GuiSelectionGrid;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.api.tiles.IFlux.ConnectionType;
-import sonar.flux.common.ContainerAdminConfigurator;
+import sonar.flux.common.containers.ContainerAdminConfigurator;
 import sonar.flux.network.ClientNetworkCache;
 
 public class GuiAdminConfigurator extends GuiSelectionGrid<IFluxNetwork> {

@@ -18,7 +18,7 @@ import sonar.core.helpers.SonarHelper;
 import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.api.configurator.IFluxConfigurable;
 import sonar.flux.client.GuiConfigurator;
-import sonar.flux.common.ContainerConfigurator;
+import sonar.flux.common.containers.ContainerConfigurator;
 
 public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStack> {
 
@@ -30,7 +30,7 @@ public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStac
 			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof IFluxConfigurable) {
 				IFluxConfigurable configurable = (IFluxConfigurable) tile;
-				if (configurable.canAccess(player)) {
+				if (configurable.canAccess(player).canEdit()) {
 					ItemStack stack = hand == null ? ItemStack.EMPTY : player.getHeldItem(hand);
 					if (player.isSneaking()) {
 						NBTTagCompound configs = stack.getOrCreateSubCompound(CONFIGS_TAG);

@@ -1,11 +1,14 @@
 package sonar.flux.common.block;
 
+import java.util.List;
+
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumHand;
@@ -24,8 +27,6 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxListener;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileEntityFlux;
-
-import java.util.List;
 
 public abstract class FluxConnection extends SonarMachineBlock {
 
@@ -57,13 +58,8 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	public boolean dropStandard(IBlockAccess world, BlockPos pos) {
 		return false;
 	}
-
 	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List<String> list) {
-	}
-
-	@Override
-	public void addSpecialToolTip(ItemStack stack, World world, List<String> list) {
+	public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
 	}
 
 	@Override
@@ -74,7 +70,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 				TileEntity target = world.getTileEntity(pos);
 				if (target != null && target instanceof TileEntityFlux) {
 					TileEntityFlux flux = (TileEntityFlux) target;
-					if (flux.canAccess(player)) {
+					if (flux.canAccess(player).canEdit()) {
 						flux.listeners.addListener(player, FluxListener.FULL_NETWORK);
 						player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
 					} else {

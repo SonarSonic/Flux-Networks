@@ -15,7 +15,7 @@ import sonar.core.common.item.SonarItem;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.api.FluxListener;
 import sonar.flux.client.GuiAdminConfigurator;
-import sonar.flux.common.ContainerAdminConfigurator;
+import sonar.flux.common.containers.ContainerAdminConfigurator;
 import sonar.flux.network.FluxNetworkCache;
 
 public class AdminConfigurator extends SonarItem implements IFlexibleGui<ItemStack> {

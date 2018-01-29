@@ -1,5 +1,7 @@
 package sonar.flux;
 
+import java.util.ArrayList;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -21,8 +23,6 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkData;
-
-import java.util.ArrayList;
 
 public class FluxEvents {
 

@@ -1,32 +1,19 @@
 package sonar.flux.api.network;
 
-import sonar.core.api.nbt.INBTSyncable;
-import sonar.core.utils.CustomColour;
-import sonar.flux.api.ClientFlux;
-
 import java.util.ArrayList;
 import java.util.UUID;
+
+import sonar.core.api.nbt.INBTSyncable;
+import sonar.core.utils.CustomColour;
+import sonar.flux.api.AccessType;
+import sonar.flux.api.ClientFlux;
 
 /**
  * both client and server networks implement this
  */
 public interface IFluxCommon extends INBTSyncable {
 
-    enum AccessType {
-        PUBLIC, PRIVATE, RESTRICTED;
-
-        public String getName() {
-            switch (this) {
-                case PUBLIC:
-                    return "network.public";
-                case PRIVATE:
-                    return "network.private";
-                case RESTRICTED:
-                    return "network.restricted";
-            }
-            return "";
-        }
-    }
+    
 
     /**
      * the access settings of this network

@@ -1,9 +1,8 @@
-package sonar.flux.common;
+package sonar.flux.common.containers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import sonar.core.helpers.InventoryHelper;
 
 public class ContainerConfigurator extends Container {
     public EntityPlayer player;

@@ -14,7 +14,7 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.network.IFluxCommon.AccessType;
+import sonar.flux.api.AccessType;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
 

@@ -1,6 +1,5 @@
 package sonar.flux;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,12 +23,10 @@ import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import sonar.core.SonarRegister;
 import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.core.api.energy.ISonarEnergyHandler;
-import sonar.core.common.block.SonarBlockTip;
 import sonar.flux.api.FluxAPI;
 import sonar.flux.common.block.FluxController;
 import sonar.flux.common.block.FluxPlug;
@@ -53,9 +50,9 @@ public class FluxNetworks {
 
 	public static final String name = "FluxNetworks";
 	public static final String modid = "fluxnetworks";
-	public static final String version = "3.0.2";
+	public static final String version = "3.0.3";
 	public static final String mc_versions = "[1.12,1.12.2]";
-	public static final String SONAR_VERSION = "5.0.4";
+	public static final String SONAR_VERSION = "5.0.5";
 
 	public static final int saveDimension = 0;
 
@@ -118,10 +115,10 @@ public class FluxNetworks {
 		GameRegistry.registerTileEntity(TileEntityStorage.Basic.class, "FluxStorage");
 
 		largeFluxStorage = SonarRegister.addBlock(modid, tab, "HerculeanFluxStorage", new FluxStorage.Herculean().setHardness(0.6F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityStorage.Advanced.class, "HerculeanFluxStorage");
+		GameRegistry.registerTileEntity(TileEntityStorage.Herculean.class, "HerculeanFluxStorage");
 
 		massiveFluxStorage = SonarRegister.addBlock(modid, tab, "GargantuanFluxStorage", new FluxStorage.Gargantuan().setHardness(0.6F).setResistance(20.0F));
-		GameRegistry.registerTileEntity(TileEntityStorage.Massive.class, "GargantuanFluxStorage");
+		GameRegistry.registerTileEntity(TileEntityStorage.Gargantuan.class, "GargantuanFluxStorage");
 
 		logger.info("Loading Entities");
 		EntityRegistry.registerModEntity(new ResourceLocation(modid, "Flux"), EntityFireItem.class, "Flux", 0, instance, 64, 10, true);

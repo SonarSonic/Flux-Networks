@@ -1,5 +1,11 @@
 package sonar.flux.client;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -7,17 +13,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.opengl.GL11;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.configurator.FluxConfigurationType;
-import sonar.flux.common.ContainerConfigurator;
+import sonar.flux.common.containers.ContainerConfigurator;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.network.PacketConfiguratorSettings;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 public class GuiConfigurator extends GuiContainer {
 

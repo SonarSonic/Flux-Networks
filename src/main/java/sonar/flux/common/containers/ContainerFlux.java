@@ -1,4 +1,4 @@
-package sonar.flux.common;
+package sonar.flux.common.containers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.inventory.ContainerSync;

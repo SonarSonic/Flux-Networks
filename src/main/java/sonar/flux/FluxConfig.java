@@ -1,14 +1,14 @@
 package sonar.flux;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.utils.Pair;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FluxConfig extends FluxNetworks {
 
@@ -19,6 +19,7 @@ public class FluxConfig extends FluxNetworks {
 	public static int redstone_ore_chance, redstone_ore_max_drop, redstone_ore_min_drop;
 	public static int basicCapacity, herculeanCapacity, gargantuanCapacity;
 	public static int basicTransfer, herculeanTransfer, gargantuanTransfer;
+	public static int maximum_per_player;
 	public static int hyper = 4, god = 10;
 
     public static Map<EnergyType, Pair<Boolean, Boolean>> transfers = new HashMap<>();
@@ -29,6 +30,7 @@ public class FluxConfig extends FluxNetworks {
 		config.load();
 		defaultLimit = (long) config.getFloat("Default Transfer Limit", "energy", 256000, 0, Long.MAX_VALUE, "the default transfer limit of a flux connection");
 
+		maximum_per_player = config.getInt("Maximum Networks Per Player", "networks", -1, -1, Integer.MAX_VALUE, "-1 = no limit");
 		basicCapacity = config.getInt("Basic Storage Capacity", "energy", 256000, 0, Integer.MAX_VALUE, "");
 		basicTransfer = config.getInt("Basic Storage Transfer", "energy", 6400, 0, Integer.MAX_VALUE, "");
 		herculeanCapacity = config.getInt("Herculean Storage Capacity", "energy", 12800000, 0, Integer.MAX_VALUE, "");

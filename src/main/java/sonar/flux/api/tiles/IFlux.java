@@ -1,12 +1,14 @@
 package sonar.flux.api.tiles;
 
+import java.util.UUID;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 import sonar.flux.api.network.IFluxNetwork;
-
-import java.util.UUID;
+import sonar.flux.api.network.PlayerAccess;
 
 /**
  * extended by IFluxPoint & IFluxPlug you must use them if you wish to send and receive energy from the network
@@ -33,6 +35,8 @@ public interface IFlux {
     IFluxNetwork getNetwork();
 
     UUID getConnectionOwner();
+
+    PlayerAccess canAccess(EntityPlayer player);
 
     /**
      * the dimension in which this Flux Connection is located

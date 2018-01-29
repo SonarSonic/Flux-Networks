@@ -1,19 +1,24 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.core.network.sync.*;
+import sonar.core.network.sync.DirtyPart;
+import sonar.core.network.sync.IDirtyPart;
+import sonar.core.network.sync.ISyncPart;
+import sonar.core.network.sync.ISyncableListener;
+import sonar.core.network.sync.SyncTagType;
+import sonar.core.network.sync.SyncableList;
 import sonar.flux.api.network.EnergyStats;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.INetworkStatistics;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.api.tiles.IFluxListenable;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class NetworkStatistics extends DirtyPart implements INetworkStatistics, ISyncableListener, ISyncPart {
 

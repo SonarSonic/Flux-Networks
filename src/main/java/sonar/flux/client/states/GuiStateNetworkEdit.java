@@ -1,19 +1,24 @@
 package sonar.flux.client.states;
 
+import java.awt.Color;
+
+//import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.opengl.GL11;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
-import sonar.flux.FluxNetworks;
-import sonar.flux.api.network.IFluxCommon.AccessType;
-import sonar.flux.client.*;
-import sonar.flux.network.PacketFluxButton;
-import sonar.flux.network.PacketFluxButton.Type;
-
-import java.awt.*;
+import sonar.flux.api.AccessType;
+import sonar.flux.client.GUI;
+import sonar.flux.client.GuiFlux;
+import sonar.flux.client.GuiFluxBase;
+import sonar.flux.client.GuiState;
+import sonar.flux.client.GuiTypeMessage;
+import sonar.flux.network.PacketHelper;
+import sonar.flux.network.PacketType;
+import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class GuiStateNetworkEdit extends GuiState {
 
@@ -32,7 +37,7 @@ public class GuiStateNetworkEdit extends GuiState {
         if (flux.disabledState) {
             flux.renderNavigationPrompt("No network to edit", "Network Selection");
         } else {
-            GL11.glPushMatrix();
+            pushMatrix();
             if (GuiFluxBase.state == GuiState.NETWORK_CREATE)
                 FontHelper.textCentre(GUI.CREATE_NETWORK.toString(), flux.getXSize(), 8, Color.GRAY.getRGB());
             else
@@ -62,7 +67,7 @@ public class GuiStateNetworkEdit extends GuiState {
             if (x - flux.getGuiLeft() > 5 && x - flux.getGuiLeft() < 165 && y - flux.getGuiTop() > 38 && y - flux.getGuiTop() < 52) {
                 flux.drawCreativeTabHoveringText(GUI.CHANGE_SETTING.toString(), x - flux.getGuiLeft(), y - flux.getGuiTop());
             }
-            GL11.glPopMatrix();
+            popMatrix();
         }
     }
 
@@ -88,9 +93,9 @@ public class GuiStateNetworkEdit extends GuiState {
             case 6:
                 if (!name.getText().isEmpty()) {
                     if (GuiFluxBase.state == GuiState.NETWORK_CREATE) {
-                        FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CREATE_NETWORK, flux.tile.getPos(), name.getText(), getCurrentColour(), currentAccess));
+						PacketHelper.sendPacketToServer(PacketType.CREATE_NETWORK, flux.tile, PacketHelper.createNetworkCreationPacket(name.getText(), getCurrentColour(), currentAccess));
                     } else {
-                        FluxNetworks.network.sendToServer(new PacketFluxButton(Type.EDIT_NETWORK, flux.tile.getPos(), flux.getNetworkID(), name.getText(), getCurrentColour(), currentAccess));
+                    	PacketHelper.sendPacketToServer(PacketType.EDIT_NETWORK, flux.tile, PacketHelper.createNetworkEditPacket(flux.getNetworkID(), name.getText(), getCurrentColour(), currentAccess));
                     }
                     flux.switchState(GuiState.NETWORK_SELECT);
                     resetCreateTab(flux);

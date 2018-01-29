@@ -1,26 +1,26 @@
 package sonar.flux.client.states;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.FluxNetworks;
+import sonar.flux.api.AccessType;
 import sonar.flux.api.network.FluxPlayer;
-import sonar.flux.api.network.IFluxCommon.AccessType;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.client.GuiFluxBase;
 import sonar.flux.client.GuiState;
 import sonar.flux.client.GuiTypeMessage;
-import sonar.flux.network.PacketFluxButton;
-import sonar.flux.network.PacketFluxButton.Type;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import sonar.flux.network.PacketHelper;
+import sonar.flux.network.PacketType;
 
 public class GuiStateNetworkPlayers extends GuiState {
 
@@ -104,7 +104,7 @@ public class GuiStateNetworkPlayers extends GuiState {
         switch (button.id) {
             case 1:
                 if (!playerName.getText().isEmpty()) {
-                    FluxNetworks.network.sendToServer(new PacketFluxButton(Type.ADD_PLAYER, flux.tile.getPos(), flux.getNetworkID(), playerName.getText(), PlayerAccess.USER));
+                 	PacketHelper.sendPacketToServer(PacketType.ADD_PLAYER, flux.tile, PacketHelper.createAddPlayerPacket(flux.getNetworkID(), playerName.getText(), PlayerAccess.USER));
                     return;
                 }
                 break;
@@ -116,9 +116,9 @@ public class GuiStateNetworkPlayers extends GuiState {
     public void click(GuiFlux flux, int x, int y, int mouseButton) {
         if (selectedPlayer != null) {
             if (x - flux.getGuiLeft() > 11 + 142 && x - flux.getGuiLeft() < 11 + 153) {
-                FluxNetworks.network.sendToServer(new PacketFluxButton(Type.REMOVE_PLAYER, flux.tile.getPos(), flux.getNetworkID(), selectedPlayer.id, selectedPlayer.access));
+                PacketHelper.sendPacketToServer(PacketType.REMOVE_PLAYER, flux.tile, PacketHelper.createRemovePlayerPacket(flux.getNetworkID(), selectedPlayer.id, PlayerAccess.USER));
             } else if (mouseButton == 1) {
-                FluxNetworks.network.sendToServer(new PacketFluxButton(Type.CHANGE_PLAYER, flux.tile.getPos(), flux.getNetworkID(), selectedPlayer.id, selectedPlayer.access.incrementAccess()));
+                PacketHelper.sendPacketToServer(PacketType.CHANGE_PLAYER, flux.tile, PacketHelper.createChangePlayerPacket(flux.getNetworkID(), selectedPlayer.id, PlayerAccess.USER));
             }
         }
     }

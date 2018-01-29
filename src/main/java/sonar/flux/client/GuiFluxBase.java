@@ -1,5 +1,10 @@
 package sonar.flux.client;
 
+import java.awt.Color;
+import java.util.Collections;
+import java.util.List;
+
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -8,23 +13,19 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 import sonar.core.client.gui.GuiSonarTile;
 import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.AccessType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.network.IFluxCommon;
-import sonar.flux.api.network.IFluxCommon.AccessType;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.network.PacketFluxButton;
-import sonar.flux.network.PacketFluxButton.Type;
-
-import java.awt.*;
-import java.util.Collections;
-import java.util.List;
+import sonar.flux.network.PacketHelper;
+import sonar.flux.network.PacketType;
+import static net.minecraft.client.renderer.GlStateManager.*;
 
 public abstract class GuiFluxBase extends GuiSonarTile {
 
@@ -53,7 +54,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 	}
 
 	public void renderFlux(IFlux network, boolean isSelected, int x, int y) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		color(1.0F, 1.0F, 1.0F, 1.0F);
 		int colour = midBlue;
 		switch (network.getConnectionType()) {
 		case POINT:
@@ -79,7 +80,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 	}
 
     public void renderNetwork(String networkName, AccessType access, int rgb, boolean isSelected, int x, int y) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		color(1.0F, 1.0F, 1.0F, 1.0F);
 		drawRect(x, y, x + 154, y + 12, rgb);
         Minecraft.getMinecraft().getTextureManager().bindTexture(select);
 		drawTexturedModalRect(x, y, 0, /* isSelected ? 178 : 166 */166, 154, 12);
@@ -87,7 +88,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 	}
 
     public void renderNetworkInFull(String networkName, AccessType access, int rgb, boolean isSelected, int x, int y) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		color(1.0F, 1.0F, 1.0F, 1.0F);
 		drawRect(x, y, x + 154, y + 24, rgb);
 		drawRect(x + 1, y + 1, x + 154 - 1, y + 24 - 1, Color.BLACK.getRGB());
         FontHelper.text(TextFormatting.BOLD + networkName, x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
@@ -106,9 +107,9 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 
 	public void renderNavigationPrompt(String error, String prompt) {
 		FontHelper.textCentre(FontHelper.translate(error), xSize, 10, Color.GRAY.getRGB());
-		GL11.glScaled(0.75, 0.75, 0.75);
+		scale(0.75, 0.75, 0.75);
         FontHelper.textCentre("Click" + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + "Above", (int) (xSize * 1.0 / 0.75), (int) (20 * 1.0 / 0.75), Color.GRAY.getRGB());
-		GL11.glScaled(1.0 / 0.75, 1.0 / 0.75, 1.0 / 0.75);
+		scale(1.0 / 0.75, 1.0 / 0.75, 1.0 / 0.75);
 	}
 
     public void drawCreativeTabHoveringText(String tabName, int mouseX, int mouseY) {
@@ -137,9 +138,9 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 
 	/// STATE
 	public void switchState(GuiState state) {
-        FluxNetworks.network.sendToServer(new PacketFluxButton(Type.STATE_CHANGE, tile.getPos(), state.type));
+	    PacketHelper.sendPacketToServer(PacketType.GUI_STATE_CHANGE, tile, PacketHelper.createStateChangePacket(state.type));
         GuiFluxBase.state = state;
-		reset();
+        doReset();//force quick reset
 	}
 
 	public int getNetworkID() {
@@ -153,13 +154,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 
 	public void setNetwork(IFluxCommon network) {
 		if (network.getNetworkID() != -1) {
-			FluxNetworks.network.sendToServer(new PacketFluxButton(Type.SET_NETWORK, tile.getPos(), network.getNetworkID(), network.getCachedPlayerName()));
-		}
-	}
-
-	public void changeNetworkName(int networkID, String name) {
-		if (networkID != -1 && name != null && !name.isEmpty()) {
-			FluxNetworks.network.sendToServer(new PacketFluxButton(Type.EDIT_NETWORK, tile.getPos(), networkID, name));
+		    PacketHelper.sendPacketToServer(PacketType.SET_NETWORK, tile, PacketHelper.createNetworkSetPacket(network.getNetworkID()));
 		}
 	}
 
@@ -227,7 +222,7 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 
         public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
 			if (visible) {
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+				color(1.0F, 1.0F, 1.0F, 1.0F);
                 hovered = x >= this.x && y >= this.y && x < this.x + width + 1 && y < this.y + height + 1;
                 /*short short1 = 219;
 				int k = 0;
@@ -241,9 +236,9 @@ public abstract class GuiFluxBase extends GuiSonarTile {
                 }*/
 
 				mc.getTextureManager().bindTexture(texture);
-				GL11.glScaled(0.5, 0.5, 0.5);
+				scale(0.5, 0.5, 0.5);
                 drawTexturedModalRect((float) (this.x / 0.5), (float) (this.y / 0.5), textureX, state == buttonState ? textureY : textureY + 32, sizeX * 2, sizeY * 2);
-				GL11.glScaled(1.0 / 0.5, 1.0 / 0.5, 1.0 / 0.5);
+				scale(1.0 / 0.5, 1.0 / 0.5, 1.0 / 0.5);
 			}
 		}
 	}

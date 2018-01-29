@@ -14,7 +14,7 @@ import sonar.flux.FluxConfig;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.client.GuiFlux;
-import sonar.flux.common.ContainerFlux;
+import sonar.flux.common.containers.ContainerFlux;
 
 public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFluxStorage {
 
@@ -28,15 +28,15 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 		}
 	}
 
-	public static class Advanced extends TileEntityStorage {
-		public Advanced() {
+	public static class Herculean extends TileEntityStorage {
+		public Herculean() {
 			super(FluxConfig.herculeanCapacity, FluxConfig.herculeanTransfer);
 			customName.setDefault("Herculean Storage");
 		}
 	}
 
-	public static class Massive extends TileEntityStorage {
-		public Massive() {
+	public static class Gargantuan extends TileEntityStorage {
+		public Gargantuan() {
 			super(FluxConfig.gargantuanCapacity, FluxConfig.gargantuanTransfer);
 			customName.setDefault("Gargantuan Storage");
 		}

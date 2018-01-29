@@ -1,7 +1,10 @@
 package sonar.flux.client.states;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
+import sonar.core.helpers.FontHelper;
+import sonar.flux.client.GUI;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.client.GuiFluxBase;
 import sonar.flux.client.GuiState;
@@ -16,6 +19,7 @@ public class GuiStateNetworkCreate extends GuiState {
     @Override
     public void draw(GuiFlux flux, int x, int y) {
         GuiState.NETWORK_EDIT.draw(flux, x, y);
+        //FontHelper.text("Join Network" + ": " + TextFormatting.AQUA + "true", 8, 58, 0);
     }
 
     @Override

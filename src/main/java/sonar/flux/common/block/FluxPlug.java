@@ -1,12 +1,12 @@
 package sonar.flux.common.block;
 
-import net.minecraft.entity.player.EntityPlayer;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.flux.common.tileentity.TileEntityPlug;
-
-import java.util.List;
 
 public class FluxPlug extends FluxSidedConnection {
 
@@ -20,13 +20,8 @@ public class FluxPlug extends FluxSidedConnection {
 		return new TileEntityPlug();
 	}
 
-	@Override
-    public void standardInfo(ItemStack stack, EntityPlayer player, List<String> list) {
-		list.add("Sends Energy");
-	}
-
     @Override
-    public void standardInfo(ItemStack stack, World world, List<String> list) {
+    public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
         list.add("Sends Energy");
     }
 }

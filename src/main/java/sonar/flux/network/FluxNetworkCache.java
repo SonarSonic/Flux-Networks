@@ -1,22 +1,5 @@
 package sonar.flux.network;
 
-import net.minecraft.entity.player.EntityPlayer;
-import sonar.core.helpers.FunctionHelper;
-import sonar.core.listener.ISonarListenable;
-import sonar.core.listener.ListenableList;
-import sonar.core.listener.ListenerTally;
-import sonar.core.listener.PlayerListener;
-import sonar.core.utils.CustomColour;
-import sonar.flux.FluxEvents;
-import sonar.flux.FluxNetworks;
-import sonar.flux.api.FluxListener;
-import sonar.flux.api.network.IFluxCommon.AccessType;
-import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.api.network.IFluxNetworkCache;
-import sonar.flux.connection.BasicFluxNetwork;
-import sonar.flux.connection.EmptyFluxNetwork;
-import sonar.flux.connection.FluxHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -24,8 +7,25 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-/** all the flux networks are created/stored/deleted here, an instance is found
- * via the FluxAPI */
+import net.minecraft.entity.player.EntityPlayer;
+import sonar.core.helpers.FunctionHelper;
+import sonar.core.listener.ISonarListenable;
+import sonar.core.listener.ListenableList;
+import sonar.core.listener.ListenerTally;
+import sonar.core.listener.PlayerListener;
+import sonar.core.utils.CustomColour;
+import sonar.flux.FluxConfig;
+import sonar.flux.FluxEvents;
+import sonar.flux.FluxNetworks;
+import sonar.flux.api.AccessType;
+import sonar.flux.api.FluxListener;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.network.IFluxNetworkCache;
+import sonar.flux.connection.BasicFluxNetwork;
+import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.connection.FluxHelper;
+
+/** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
 public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<PlayerListener> {
 	public ListenableList<PlayerListener> listeners = new ListenableList(this, FluxListener.values().length);
 	public ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> networks = new ConcurrentHashMap<>();
@@ -38,15 +38,14 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 
 	public void clearNetworks() {
 		networks.clear();
-		uniqueID=1;
+		uniqueID = 1;
 	}
 
 	public int createNewUniqueID() {
 		return uniqueID++;
 	}
 
-	/** goes through every network, if the predicate is true it will return the
-	 * network, if false it will continue */
+	/** goes through every network, if the predicate is true it will return the network, if false it will continue */
 	public IFluxNetwork forEachNetwork(Predicate<IFluxNetwork> found) {
 		for (Entry<UUID, ArrayList<IFluxNetwork>> entry : networks.entrySet()) {
 			for (IFluxNetwork common : entry.getValue()) {
@@ -94,6 +93,15 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		}
 	}
 
+	public boolean hasSpaceForNetwork(EntityPlayer player) {
+		if(FluxConfig.maximum_per_player==-1){
+			return true;
+		}
+		UUID ownerUUID = FluxHelper.getOwnerUUID(player);
+		List<IFluxNetwork> created = networks.getOrDefault(ownerUUID, new ArrayList());
+		return created.size() < FluxConfig.maximum_per_player;
+	}
+
 	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access) {
 		UUID playerUUID = FluxHelper.getOwnerUUID(player);
 		networks.putIfAbsent(playerUUID, new ArrayList<>());
@@ -105,8 +113,8 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		int iD = createNewUniqueID();
 		BasicFluxNetwork network = new BasicFluxNetwork(iD, playerUUID, name, colour, access);
 		network.cachedOwnerName.setObject(player.getDisplayNameString());
-		addNetwork(network);
 
+		addNetwork(network);
 		FluxEvents.logNewNetwork(network);
 		return network;
 	}
@@ -121,7 +129,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	public void updateNetworkListeners() {
 		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK);
 		players.forEach(listener -> {
-			ArrayList<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, false);
+			ArrayList<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, FluxHelper.isPlayerAdmin(listener.player));
 			FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), listener.player);
 		});
 	}

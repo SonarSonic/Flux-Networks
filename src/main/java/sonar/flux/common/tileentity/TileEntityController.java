@@ -8,7 +8,7 @@ import sonar.core.utils.IGuiTile;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.client.GuiFluxController;
-import sonar.flux.common.ContainerFlux;
+import sonar.flux.common.containers.ContainerFlux;
 
 public class TileEntityController extends TileEntityFlux implements IGuiTile, IFluxController {
 	public SyncEnum<PriorityMode> sendMode = new SyncEnum(PriorityMode.values(), 10);
@@ -89,11 +89,11 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 		switch (id) {
 		case 10:
 			sendMode.readFromBuf(buf);
-                network.markTypeDirty(FluxCache.controller);
+			network.markTypeDirty(FluxCache.controller);
 			break;
 		case 11:
 			receiveMode.readFromBuf(buf);
-                network.markTypeDirty(FluxCache.controller);
+			network.markTypeDirty(FluxCache.controller);
 			break;
 		case 12:
 			transfer.readFromBuf(buf);

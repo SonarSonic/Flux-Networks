@@ -1,5 +1,7 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -14,8 +16,6 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
-
-import java.util.ArrayList;
 
 public class PacketFluxConnectionsList implements IMessage {
 

@@ -9,6 +9,4 @@ public interface IFluxConfigurable extends IFlux {
     NBTTagCompound addConfigs(NBTTagCompound config, EntityPlayer player);
 
     void readConfigs(NBTTagCompound config, EntityPlayer player);
-
-    boolean canAccess(EntityPlayer player);
 }

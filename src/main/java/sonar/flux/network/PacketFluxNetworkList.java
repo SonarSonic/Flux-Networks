@@ -1,5 +1,7 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -15,10 +17,6 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
-
-import java.util.ArrayList;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 //TODO make a single packet version for updates
 public class PacketFluxNetworkList implements IMessage {

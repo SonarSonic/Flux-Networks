@@ -16,7 +16,7 @@ import sonar.core.integration.SonarLoader;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.client.GuiFlux;
-import sonar.flux.common.ContainerFlux;
+import sonar.flux.common.containers.ContainerFlux;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla"),

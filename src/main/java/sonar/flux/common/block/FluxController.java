@@ -1,12 +1,12 @@
 package sonar.flux.common.block;
 
-import net.minecraft.entity.player.EntityPlayer;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.flux.common.tileentity.TileEntityController;
-
-import java.util.List;
 
 public class FluxController extends FluxConnection {
 
@@ -19,14 +19,9 @@ public class FluxController extends FluxConnection {
 	public TileEntity createNewTileEntity(World var1, int var2) {
 		return new TileEntityController();
 	}
-
-	@Override
-    public void standardInfo(ItemStack stack, EntityPlayer player, List<String> list) {
-        list.add("Manages Energy");
-    }
-
+	
     @Override
-    public void standardInfo(ItemStack stack, World world, List<String> list) {
+    public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
 		list.add("Manages Energy");
 	}
 }
