@@ -30,8 +30,10 @@ import sonar.core.network.sync.SyncTagTypeList;
 import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.utils.IByteBufTile;
 import sonar.flux.FluxConfig;
+import sonar.flux.api.AdditionType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.FluxListener;
+import sonar.flux.api.RemovalType;
 import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.api.configurator.IFluxConfigurable;
 import sonar.flux.api.network.FluxCache;
@@ -106,8 +108,9 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 	public void setState(boolean bool) {
 		World world = getWorld();
 		IBlockState state = getWorld().getBlockState(getPos());
-		if (state.getBlock() instanceof FluxConnection) // sanity check
+		if (state.getBlock() instanceof FluxConnection){ // sanity check
 			world.setBlockState(getPos(), state.withProperty(FluxConnection.CONNECTED, bool), 2);
+		}
 	}
 
 	public PlayerAccess canAccess(EntityPlayer player) {
@@ -194,33 +197,27 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 
 	public void onFirstTick() {
 		super.onFirstTick();
-		addConnection();
+		if (isServer()) {
+			FluxHelper.addConnection(this, AdditionType.ADD);
+			updateNeighbours(true);
+			SonarCore.sendPacketAround(this, 128, 0);
+		}
 		if (isClient())
 			requestSyncPacket();
 	}
 
 	public void invalidate() {
 		super.invalidate();
-		removeConnection();
+		if(isServer()){
+			FluxHelper.removeConnection(this, RemovalType.REMOVE);
+		}	
 	}
-
+	
 	public void onChunkUnload() {
 		super.onChunkUnload();
-		removeConnection();
-	}
-
-	public void addConnection() {
-		if (isServer()) {
-			FluxHelper.addConnection(this);
-			updateNeighbours(true);
-			SonarCore.sendPacketAround(this, 128, 0);
-		}
-	}
-
-	public void removeConnection() {
-		if (isServer()) {
-			FluxHelper.removeConnection(this);
-		}
+		if(isServer()){
+			FluxHelper.removeConnection(this, RemovalType.CHUNK_UNLOAD);
+		}	
 	}
 
 	@Override
@@ -242,9 +239,9 @@ public class TileEntityFlux extends TileEntitySonar implements IFluxListenable, 
 		if (config.hasKey(FluxConfigurationType.NETWORK.getNBTName())) {
 			int storedID = config.getInteger(FluxConfigurationType.NETWORK.getNBTName());
 			if (storedID != -1) {
-				FluxHelper.removeConnection(this);
+				FluxHelper.removeConnection(this, null);
 				this.networkID.setObject(storedID);
-				FluxHelper.addConnection(this);
+				FluxHelper.addConnection(this, null);
 			}
 		}
 		if (config.hasKey(FluxConfigurationType.PRIORITY.getNBTName())) {

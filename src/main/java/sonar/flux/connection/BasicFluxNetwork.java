@@ -19,8 +19,10 @@ import sonar.core.helpers.SonarHelper;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
+import sonar.flux.api.AdditionType;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.FluxListener;
+import sonar.flux.api.RemovalType;
 import sonar.flux.api.network.EnergyStats;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayer;
@@ -43,7 +45,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public Queue<IFluxListenable> toAdd = new ConcurrentLinkedQueue<>();
 	public Queue<IFluxListenable> toRemove = new ConcurrentLinkedQueue<>();
 	public boolean hasConnections;
-	// public EnergyStats stats = new EnergyStats(0, 0, 0);
 
 	// statistics
 	private long maxTransfer, lastTransfer;
@@ -266,14 +267,14 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	@Override
-	public void addConnection(IFluxListenable tile) {
+	public void addConnection(IFluxListenable tile, AdditionType type) {
 		toAdd.add(tile);
 		toRemove.remove(tile); // prevents tiles being removed if it's
 								// unnecessary
 	}
 
 	@Override
-	public void removeConnection(IFluxListenable tile) {
+	public void removeConnection(IFluxListenable tile, RemovalType type) {
 		toRemove.add(tile);
 		toAdd.remove(tile); // prevents tiles being removed if it's unnecessary
 	}

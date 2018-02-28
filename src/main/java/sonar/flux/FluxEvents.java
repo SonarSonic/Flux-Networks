@@ -48,17 +48,21 @@ public class FluxEvents {
 		if (event.getWorld().isRemote) {
 			return;
 		}
-		if (event.getWorld().provider.getDimension() == FluxNetworks.saveDimension) {
-			MapStorage storage = event.getWorld().getPerWorldStorage();
-			NetworkData data = (NetworkData) storage.getOrLoadData(NetworkData.class, NetworkData.tag);
-			if (data == null) {
+		MapStorage storage = event.getWorld().getMapStorage();
+		NetworkData data = (NetworkData) storage.getOrLoadData(NetworkData.class, NetworkData.tag);
+		if (data == null) {
+			/// for recovering data previously saved in perWorldStorage - this should be left in until at least 1.13
+			NetworkData old_data = (NetworkData) event.getWorld().getPerWorldStorage().getOrLoadData(NetworkData.class, NetworkData.tag);
+			if (old_data != null) {
+				old_data.loadAllNetworks();
+				old_data.clearLoadedNetworks();	
+				storage.setData(NetworkData.tag, new NetworkData(NetworkData.tag));
+			} else {
 				storage.setData(NetworkData.tag, new NetworkData(NetworkData.tag));
 			}
-			else
-			{
-				data.loadAllNetworks();
-				data.clearLoadedNetworks();
-			}
+		} else {
+			data.loadAllNetworks();
+			data.clearLoadedNetworks();
 		}
 	}
 
@@ -91,9 +95,7 @@ public class FluxEvents {
 				newEntity.setDefaultPickupDelay();
 				if (newEntity != null) {
 					event.getEntity().setDead();
-					// event.setCanceled(true) fixes duping but causes "Fetching
-					// addPacket for removed entity" warning on each
-					// Redstone/EnderEye Drop
+					// event.setCanceled(true) fixes duping but causes "Fetching addPacket for removed entity" warning on each Redstone/EnderEye Drop
 					event.getWorld().spawnEntity(newEntity);
 				}
 			}

@@ -86,7 +86,6 @@ public class NetworkData extends WorldSavedData {
 			nbt.setTag(TAG_LIST, list);
 			FluxNetworks.logger.debug("ALL " + list.tagCount() + " Networks were saved successfully");
 		}
-
 		return nbt;
 	}
 

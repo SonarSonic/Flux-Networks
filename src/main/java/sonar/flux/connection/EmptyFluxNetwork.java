@@ -10,7 +10,9 @@ import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
+import sonar.flux.api.AdditionType;
 import sonar.flux.api.ClientFlux;
+import sonar.flux.api.RemovalType;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayersList;
 import sonar.flux.api.network.IFluxNetwork;
@@ -114,11 +116,11 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-    public void addConnection(IFluxListenable flux) {
+    public void addConnection(IFluxListenable flux, AdditionType type) {
 	}
 
 	@Override
-    public void removeConnection(IFluxListenable flux) {
+    public void removeConnection(IFluxListenable flux, RemovalType type) {
 	}
 
 	@Override

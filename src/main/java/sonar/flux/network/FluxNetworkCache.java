@@ -159,13 +159,8 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	public void onListenerRemoved(ListenerTally<PlayerListener> tally) {}
 
 	@Override
-	public void onSubListenableAdded(ISonarListenable<PlayerListener> listen) {
-		// System.out.println("ADDED:" + listen);
-	}
+	public void onSubListenableAdded(ISonarListenable<PlayerListener> listen) {}
 
 	@Override
-	public void onSubListenableRemoved(ISonarListenable<PlayerListener> listen) {
-		// System.out.println("REMOVED:" + listen);
-
-	}
+	public void onSubListenableRemoved(ISonarListenable<PlayerListener> listen) {}
 }

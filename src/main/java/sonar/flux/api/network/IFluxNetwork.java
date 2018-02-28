@@ -7,6 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.utils.ActionType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
+import sonar.flux.api.AdditionType;
+import sonar.flux.api.RemovalType;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
 
@@ -80,13 +82,15 @@ public interface IFluxNetwork extends IFluxCommon {
 
     /**
      * adds a Flux Connection to the network, this could be a PLUG, POINT or STORAGE
+     * @param type TODO
      */
-    void addConnection(IFluxListenable flux);
+    void addConnection(IFluxListenable flux, AdditionType type);
 
     /**
      * removes a Flux Connection from the network
+     * @param type TODO
      */
-    void removeConnection(IFluxListenable flux);
+    void removeConnection(IFluxListenable flux, RemovalType type);
 
     void buildFluxConnections();
 

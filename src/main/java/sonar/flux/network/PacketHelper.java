@@ -13,7 +13,9 @@ import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
+import sonar.flux.api.AdditionType;
 import sonar.flux.api.FluxError;
+import sonar.flux.api.RemovalType;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
@@ -49,8 +51,8 @@ public class PacketHelper {
 		IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!network.isFakeNetwork()) {
 			if (network.getPlayerAccess(player).canConnect()) {
-				source.getNetwork().removeConnection(source);
-				network.addConnection(source);
+				source.getNetwork().removeConnection(source, RemovalType.REMOVE);
+				network.addConnection(source, AdditionType.ADD);
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.ACCESS_DENIED);
 			}
@@ -273,7 +275,7 @@ public class PacketHelper {
 		int networkID = packetTag.getInteger("networkID");
 		IFluxNetwork network = source.getNetwork();
 		if (networkID == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && source.playerUUID.getUUID().equals(FluxHelper.getOwnerUUID(player))) {
-			network.removeConnection(source);
+			network.removeConnection(source, RemovalType.REMOVE);
 		}
 		return null;
 
