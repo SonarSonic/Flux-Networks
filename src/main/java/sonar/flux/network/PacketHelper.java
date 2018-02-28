@@ -77,7 +77,6 @@ public class PacketHelper {
 		CustomColour colour = new CustomColour(packetTag.getInteger("colourRGB"));
 		AccessType access = AccessType.values()[packetTag.getInteger("accessType")];
 
-		IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
 		IFluxNetwork common = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!common.isFakeNetwork()) {
 			if (common.getPlayerAccess(player).canEdit()) {

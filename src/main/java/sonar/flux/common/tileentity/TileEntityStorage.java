@@ -72,7 +72,6 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 			if (storage.getEnergyStored() < targetEnergy) {
 				storage.setEnergyStored(Math.min(storage.getEnergyStored() + inc, targetEnergy));
 			} else {
-
 				storage.setEnergyStored(Math.max(storage.getEnergyStored() - inc, targetEnergy));
 			}
 		} else {
