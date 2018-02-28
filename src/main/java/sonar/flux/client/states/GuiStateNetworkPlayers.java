@@ -12,6 +12,7 @@ import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
+import sonar.core.helpers.SonarHelper;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.PlayerAccess;
@@ -118,7 +119,7 @@ public class GuiStateNetworkPlayers extends GuiState {
             if (x - flux.getGuiLeft() > 11 + 142 && x - flux.getGuiLeft() < 11 + 153) {
                 PacketHelper.sendPacketToServer(PacketType.REMOVE_PLAYER, flux.tile, PacketHelper.createRemovePlayerPacket(flux.getNetworkID(), selectedPlayer.id, PlayerAccess.USER));
             } else if (mouseButton == 1) {
-                PacketHelper.sendPacketToServer(PacketType.CHANGE_PLAYER, flux.tile, PacketHelper.createChangePlayerPacket(flux.getNetworkID(), selectedPlayer.id, PlayerAccess.USER));
+                PacketHelper.sendPacketToServer(PacketType.CHANGE_PLAYER, flux.tile, PacketHelper.createChangePlayerPacket(flux.getNetworkID(), selectedPlayer.id, selectedPlayer.access));
             }
         }
     }

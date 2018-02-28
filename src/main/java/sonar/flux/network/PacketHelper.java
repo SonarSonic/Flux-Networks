@@ -244,6 +244,9 @@ public class PacketHelper {
 		UUID playerChanged = packetTag.getUniqueId("playerChanged");
 		if (playerChanged != null) {
 			PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
+			access = SonarHelper.incrementEnum(access, PlayerAccess.values());
+			while(access.canDelete()){access=SonarHelper.incrementEnum(access, PlayerAccess.values());}
+			
 			IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
 			if (!common.isFakeNetwork() && common instanceof IFluxNetwork) {
 				if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
