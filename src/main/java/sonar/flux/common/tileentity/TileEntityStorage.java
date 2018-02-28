@@ -49,28 +49,59 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 		syncList.addPart(storage);
 	}
 
+	public long lastStorageUpdate;
+	public boolean updateStorage;
+	public int targetEnergy;
+
+	public void update() {
+		super.update();
+		if (isServer()) {
+			if (updateStorage && lastStorageUpdate == 0) {
+				lastStorageUpdate = getWorld().getWorldTime(); //stops it jumping on first receive
+			} else if (updateStorage && getWorld().getWorldTime() > lastStorageUpdate + 20) {
+				SonarCore.sendPacketAround(this, 128, 10);
+				lastStorageUpdate = getWorld().getWorldTime();
+				updateStorage = false;
+			}
+		} else if (updateStorage && storage.getEnergyStored() != targetEnergy) {
+			int inc = storage.getMaxEnergyStored() / 50;
+			int dif = Math.abs(storage.getEnergyStored() - targetEnergy);
+			if (dif < inc * 2) {
+				inc = inc / 4; // slows when it gets closer
+			}
+			if (storage.getEnergyStored() < targetEnergy) {
+				storage.setEnergyStored(Math.min(storage.getEnergyStored() + inc, targetEnergy));
+			} else {
+
+				storage.setEnergyStored(Math.max(storage.getEnergyStored() - inc, targetEnergy));
+			}
+		} else {
+			updateStorage = false;
+		}
+	}
+
 	@Override
 	public void markChanged(IDirtyPart part) {
 		super.markChanged(part);
 		if (getWorld() != null && this.isServer()) {
 			if (part == storage) {
-                network.markTypeDirty(FluxCache.storage);
-				SonarCore.sendPacketAround(this, 128, 10);
-            } else if (part == colour) {
+				network.markTypeDirty(FluxCache.storage);
+				updateStorage = true;
+			} else if (part == colour) {
 				SonarCore.sendPacketAround(this, 128, 11);
 			}
 		}
 	}
 
-    @Override
-    public long getMaxEnergyStored() {
-        return storage.getFullCapacity();
-    }
+	@Override
+	public long getMaxEnergyStored() {
+		return storage.getFullCapacity();
+	}
 
-    @Override
-    public long getEnergyStored() {
-        return storage.getEnergyLevel();
-    }
+	@Override
+	public long getEnergyStored() {
+		return storage.getEnergyLevel();
+	}
 
 	public boolean canTransfer() {
 		return true;
@@ -108,7 +139,7 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 
 	public void readData(NBTTagCompound nbt, SyncType type) {
 		super.readData(nbt, type);
-        if (type.isType(SyncType.DROP))
+		if (type.isType(SyncType.DROP))
 			this.storage.setEnergyStored(nbt.getInteger("energy"));
 	}
 
@@ -125,7 +156,7 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 		super.writePacket(buf, id);
 		switch (id) {
 		case 10:
-			storage.writeToBuf(buf);
+			buf.writeInt(storage.getEnergyStored());
 			break;
 		case 11:
 			colour.writeToBuf(buf);
@@ -138,7 +169,8 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 		super.readPacket(buf, id);
 		switch (id) {
 		case 10:
-			storage.readFromBuf(buf);
+			targetEnergy = buf.readInt();
+			updateStorage = true;
 			break;
 		case 11:
 			colour.readFromBuf(buf);
