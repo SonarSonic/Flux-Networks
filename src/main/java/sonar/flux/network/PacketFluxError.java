@@ -15,9 +15,8 @@ import sonar.flux.common.tileentity.TileEntityFlux;
 public class PacketFluxError extends PacketCoords {
 
 	public FluxError error;
-	
-	public PacketFluxError() {
-	}
+
+	public PacketFluxError() {}
 
 	public PacketFluxError(BlockPos pos, FluxError error) {
 		super(pos);
@@ -30,19 +29,19 @@ public class PacketFluxError extends PacketCoords {
 	}
 
 	public void toBytes(ByteBuf buf) {
-		super.toBytes(buf);		
+		super.toBytes(buf);
 		buf.writeInt(error.ordinal());
 	}
-	
+
 	public static class Handler extends PacketTileEntityHandler<PacketFluxError> {
 
 		@Override
 		public IMessage processMessage(EntityPlayer player, MessageContext ctx, PacketFluxError message, TileEntity target) {
 			if (target instanceof TileEntityFlux) {
-                SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
-				TileEntityFlux flux = (TileEntityFlux) target;
-				flux.error=message.error;
-                });
+				SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
+					TileEntityFlux flux = (TileEntityFlux) target;
+					flux.error = message.error;
+				});
 			}
 			return null;
 		}
