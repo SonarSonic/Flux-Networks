@@ -49,24 +49,15 @@ public class FluxEvents {
 			return;
 		}
 		if (event.getWorld().provider.getDimension() == FluxNetworks.saveDimension) {
-			NetworkData data = (NetworkData) event.getWorld().getPerWorldStorage().getOrLoadData(NetworkData.class, NetworkData.tag);
-			if (data != null) {
-				data.loadAllNetworks();
-				data.clearLoadedNetworks();
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void onWorldSave(WorldEvent.Save event) {
-		if (event.getWorld().isRemote) {
-			return;
-		}
-		if (event.getWorld().provider.getDimension() == FluxNetworks.saveDimension) {
 			MapStorage storage = event.getWorld().getPerWorldStorage();
 			NetworkData data = (NetworkData) storage.getOrLoadData(NetworkData.class, NetworkData.tag);
-			if (data == null && !FluxNetworks.getServerCache().getAllNetworks().isEmpty()) {
+			if (data == null) {
 				storage.setData(NetworkData.tag, new NetworkData(NetworkData.tag));
+			}
+			else
+			{
+				data.loadAllNetworks();
+				data.clearLoadedNetworks();
 			}
 		}
 	}
