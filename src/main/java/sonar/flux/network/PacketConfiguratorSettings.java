@@ -9,47 +9,46 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import sonar.core.SonarCore;
+import sonar.core.utils.SonarCompat;
 import sonar.flux.common.item.FluxConfigurator;
 
 public class PacketConfiguratorSettings implements IMessage {
 
-	public NBTTagCompound disabledTag;
-	
-	public PacketConfiguratorSettings() {}
+    public NBTTagCompound disabledTag;
 
-	public PacketConfiguratorSettings(NBTTagCompound disabledTag) {
-		this.disabledTag = disabledTag;
-	}
+    public PacketConfiguratorSettings() {
+    }
 
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		disabledTag = ByteBufUtils.readTag(buf);
-	}
+    public PacketConfiguratorSettings(NBTTagCompound disabledTag) {
+        this.disabledTag = disabledTag;
+    }
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		ByteBufUtils.writeTag(buf, disabledTag);
-	}
+    @Override
+    public void fromBytes(ByteBuf buf) {
+        disabledTag = ByteBufUtils.readTag(buf);
+    }
 
-	public static class Handler implements IMessageHandler<PacketConfiguratorSettings, IMessage> {
+    @Override
+    public void toBytes(ByteBuf buf) {
+        ByteBufUtils.writeTag(buf, disabledTag);
+    }
 
-		@Override
-		public IMessage onMessage(PacketConfiguratorSettings message, MessageContext ctx) {
-			SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
-					ItemStack heldItem = player.getHeldItem(player.getActiveHand());
-					if (heldItem != null && heldItem.getItem() instanceof FluxConfigurator) {
-						NBTTagCompound tag = heldItem.getTagCompound();
-						if (tag == null) {
-							heldItem.setTagCompound(tag = new NBTTagCompound());
-						}
-						tag.setTag(FluxConfigurator.DISABLED_TAG, message.disabledTag);
-					}
-				}
-			});
-			return null;
-		}
-	}
+    public static class Handler implements IMessageHandler<PacketConfiguratorSettings, IMessage> {
+
+        @Override
+        public IMessage onMessage(PacketConfiguratorSettings message, MessageContext ctx) {
+            SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
+                EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
+                ItemStack heldItem = player.getHeldItem(player.getActiveHand());
+                if (!SonarCompat.isEmpty(heldItem) && heldItem.getItem() instanceof FluxConfigurator) {
+                    NBTTagCompound tag = heldItem.getTagCompound();
+                    if (tag == null) {
+                        heldItem.setTagCompound(tag = new NBTTagCompound());
+                    }
+                    tag.setTag(FluxConfigurator.DISABLED_TAG, message.disabledTag);
+                }
+            });
+            return null;
+        }
+    }
 }

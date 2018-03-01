@@ -2,48 +2,31 @@ package sonar.flux.client;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.text.TextFormatting;
-import sonar.core.SonarCore;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
-import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.ClientFlux;
-import sonar.flux.api.network.EnergyStats;
-import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxCommon;
-import sonar.flux.api.network.INetworkStatistics;
-import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.api.network.IFluxCommon.AccessType;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
+import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.common.tileentity.TileEntityStorage;
-import sonar.flux.connection.BasicFluxNetwork;
 import sonar.flux.connection.EmptyFluxNetwork;
-import sonar.flux.connection.FluxHelper;
-import sonar.flux.network.PacketFluxButton;
-import sonar.flux.network.PacketFluxButton.Type;
 
 public class GuiFlux extends GuiFluxBase {
 
 	public EntityPlayer player;
 	public IFluxCommon common = EmptyFluxNetwork.INSTANCE;
-	public boolean disabledState = false;
+	public boolean disabledState;
 
 	public GuiFlux(Container container, TileEntityFlux tile, EntityPlayer player) {
 		super(container, tile);
@@ -66,9 +49,10 @@ public class GuiFlux extends GuiFluxBase {
 		this.guiLeft = (this.width - this.xSize) / 2;
 		this.guiTop = (this.height - this.ySize) / 2;
 		disabledState = false;
+
 		int i = 0;
 		for (GuiState state : GuiState.VALUES) {
-			buttonList.add(new NavigationButtons(state, -i, guiLeft + 2 + (18 * i), guiTop - 15));
+			buttonList.add(new NavigationButtons(state, -i, guiLeft + 2 + 18 * i, guiTop - 15));
 			i++;
 		}
 		state.init(this);
@@ -84,8 +68,10 @@ public class GuiFlux extends GuiFluxBase {
 		FontHelper.text(GUI.PRIORITY + ":", 7, 48, colour);
 		FontHelper.text(GUI.MAX + ":", 87, 48, colour);
 		FontHelper.text(GUI.IGNORE_LIMIT + ": " + TextFormatting.WHITE + tile.disableLimit.getObject().toString(), 7, 48 + 18, colour);
-		//FontHelper.text(FontHelper.translate(tile.getBlockType().getLocalizedName()), 20, 8, 0);
+		// FontHelper.text(FontHelper.translate(tile.getBlockType().getLocalizedName()),
+		// 20, 8, 0);
 		renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), true, 11, 8);
+
 		switch (type) {
 		case CONTROLLER:
 			IFluxController controller = (IFluxController) flux;
@@ -120,7 +106,8 @@ public class GuiFlux extends GuiFluxBase {
 			}
 		}
 		common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
-		int networkColour = common.getNetworkColour().getRGB();
+		/// int networkColour = common.getNetworkColour().getRGB();
+
 		state.draw(this, x, y);
 		drawError(x - guiLeft, y - guiTop);
 	}
@@ -189,7 +176,9 @@ public class GuiFlux extends GuiFluxBase {
 	public void forScrollers(Consumer<SonarScroller> action) {
 		SonarScroller[] scrollers = state.getScrollers();
 		for (SonarScroller scroller : scrollers) {
-			action.accept(scroller);
+			if (scroller != null) {
+				action.accept(scroller);
+			}
 		}
 	}
 }

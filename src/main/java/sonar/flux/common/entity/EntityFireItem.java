@@ -1,17 +1,16 @@
 package sonar.flux.common.entity;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import sonar.core.utils.SonarCompat;
 import sonar.flux.FluxNetworks;
 
 public class EntityFireItem extends EntityItem {
-	public boolean changed = false;
-	public int changeTicks = 0;
+    public boolean changed;
+    public int changeTicks;
 
 	public EntityFireItem(World world) {
 		super(world);
@@ -27,14 +26,10 @@ public class EntityFireItem extends EntityItem {
 		if (source == DamageSource.inFire) {
 			if (!changed) {
 				//if (changeTicks >= 30) {
-				ItemStack stack = getEntityItem().copy();
-				ItemStack newStack = null;
+                ItemStack stack = getEntityItem().copy();
+				ItemStack newStack = SonarCompat.getEmpty();
 				if (stack.getItem() == Items.REDSTONE) {
-					newStack = new ItemStack(FluxNetworks.flux, stack.stackSize, 0);
-				} else if (stack.getItem() == Item.getItemFromBlock(Blocks.REDSTONE_BLOCK)) {
-					newStack = new ItemStack(FluxNetworks.fluxBlock, stack.stackSize, 0);
-				} else if (stack.getItem() == Items.ENDER_EYE) {					
-					newStack = new ItemStack(FluxNetworks.fluxCore, stack.stackSize, 0);
+					newStack = new ItemStack(FluxNetworks.flux, SonarCompat.getCount(stack), 0);
 				}
 				setEntityItemStack(newStack);
 				changed = true;
@@ -52,5 +47,4 @@ public class EntityFireItem extends EntityItem {
 	public boolean isBurning() {
 		return false;
 	}
-
 }

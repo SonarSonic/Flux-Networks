@@ -3,4 +3,3 @@ package sonar.flux.api.configurator;
 
 import net.minecraftforge.fml.common.API;
 import sonar.flux.api.FluxAPI;
-

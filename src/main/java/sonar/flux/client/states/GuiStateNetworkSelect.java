@@ -11,17 +11,20 @@ import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.client.GuiFlux;
+import sonar.flux.client.GuiFluxBase;
+import sonar.flux.client.GuiFluxBase.NetworkButton;
 import sonar.flux.client.GuiState;
 import sonar.flux.client.GuiTypeMessage;
-import sonar.flux.client.GuiFluxBase.NetworkButton;
 import sonar.flux.network.PacketFluxButton;
-import sonar.flux.network.PacketFluxButton.Type;
+import sonar.flux.network.PacketHelper;
+import sonar.flux.network.PacketType;
 
 public class GuiStateNetworkSelect extends GuiState {
 
 	public SonarScroller scroller;
 	public int lastClickX;
 	public static int listSize = 10;
+	public int toDelete = -1;
 
 	public GuiStateNetworkSelect() {
 		super(GuiTypeMessage.NETWORK_SELECT, 176, 166, 128, "network.nav.networks");
@@ -40,9 +43,9 @@ public class GuiStateNetworkSelect extends GuiState {
 			IFluxCommon common = networks.get(i);
 			if (common != null) {
 				int xPos = 11;
-				int yPos = 8 + (12 * i) - (12 * start);
+				int yPos = 8 + 12 * i - 12 * start;
 				flux.renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), flux.isSelectedNetwork(networks.get(i)), xPos, yPos);
-				flux.bindTexture(flux.buttons);
+				flux.bindTexture(GuiFluxBase.buttons);
 				flux.drawTexturedModalRect(154, yPos, 56, 0, 12, 12);
 			}
 		}
@@ -54,12 +57,17 @@ public class GuiStateNetworkSelect extends GuiState {
 				int id = button.id - 10 + start;
 				if (id < networks.size()) {
 					IFluxCommon network = networks.get(id);
-					ArrayList<String> strings = new ArrayList<String>();
+					ArrayList<String> strings = new ArrayList<>();
 					if (x > flux.getGuiLeft() + 155) {
-						strings.add(TextFormatting.RED + "REMOVE");
+						if (network.getNetworkID() == toDelete) {
+							strings.add(TextFormatting.RED + "ARE YOU SURE?");
+							strings.add(TextFormatting.RED + "DELETE NETWORK");
+						} else {
+							strings.add(TextFormatting.RED + "DELETE NETWORK");
+						}
 					} else {
-						strings.add((FontHelper.translate("network.owner") + ": " + TextFormatting.AQUA + network.getCachedPlayerName()));
-						strings.add((FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(network.getAccessType().getName())));
+						strings.add(FontHelper.translate("network.owner") + ": " + TextFormatting.AQUA + network.getCachedPlayerName());
+						strings.add(FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(network.getAccessType().getName()));
 					}
 					flux.drawHoveringText(strings, x - flux.getGuiLeft(), y - flux.getGuiTop());
 				}
@@ -70,23 +78,32 @@ public class GuiStateNetworkSelect extends GuiState {
 
 	@Override
 	public void init(GuiFlux flux) {
+		toDelete=-1;
 		scroller = new SonarScroller(flux.getGuiLeft() + 165, flux.getGuiTop() + 8, 123, 10);
 		scroller.currentScroll = 0;
 		for (int i = 0; i < listSize; i++) {
-			flux.getButtonList().add(new NetworkButton(10 + i, flux.getGuiLeft() + 7, flux.getGuiTop() + 8 + (i * 12)));
+			flux.getButtonList().add(new NetworkButton(10 + i, flux.getGuiLeft() + 7, flux.getGuiTop() + 8 + i * 12));
 		}
 	}
 
 	@Override
 	public void button(GuiFlux flux, GuiButton button) {
-		if (button.id >= 10) {
+		if (button instanceof NetworkButton && button.id >= 10) {
 			List<? extends IFluxCommon> networks = flux.getNetworks();
 			int start = (int) (networks.size() * scroller.getCurrentScroll());
 			int network = start + button.id - 10;
 			if (network < networks.size()) {
 				IFluxCommon common = networks.get(network);
 				if (lastClickX > flux.getGuiLeft() + 155) {
-					FluxNetworks.network.sendToServer(new PacketFluxButton(Type.DELETE_NETWORK, flux.tile.getPos(), common.getNetworkID()));
+					int id = common.getNetworkID();
+					if (id != -1) {
+						if (toDelete == id) {
+							PacketHelper.sendPacketToServer(PacketType.DELETE_NETWORK, flux.tile, PacketHelper.createNetworkDeletePacket(common.getNetworkID()));
+							toDelete = -1;
+						} else {
+							toDelete = id;
+						}
+					}
 				} else {
 					flux.setNetwork(common);
 				}
@@ -97,7 +114,7 @@ public class GuiStateNetworkSelect extends GuiState {
 
 	public boolean type(GuiFlux flux, char c, int i) {
 		if (c == '\b') {
-			FluxNetworks.network.sendToServer(new PacketFluxButton(Type.DELETE_NETWORK, flux.tile.getPos(), flux.getNetworkID()));
+			PacketHelper.sendPacketToServer(PacketType.DELETE_NETWORK, flux.tile, PacketHelper.createNetworkDeletePacket(flux.getNetworkID()));
 			return false;
 		}
 		return true;

@@ -1,10 +1,6 @@
 package sonar.flux.network;
 
 import java.util.ArrayList;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.google.common.collect.Lists;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +20,6 @@ import sonar.flux.connection.BasicFluxNetwork;
 
 //TODO make a single packet version for updates
 public class PacketFluxNetworkList implements IMessage {
-
 	public ArrayList<? extends IFluxNetwork> networks;
 	public boolean update;
 
@@ -41,13 +36,9 @@ public class PacketFluxNetworkList implements IMessage {
 
 		NBTTagCompound compound = ByteBufUtils.readTag(buf);
 		NBTTagList list = compound.getTagList("nets", 10);
-		ArrayList<IFluxNetwork> networks = Lists.newArrayList();
+		ArrayList<IFluxNetwork> networks = new ArrayList<>();
 		for (int i = 0; i < list.tagCount(); i++) {
-			BasicFluxNetwork net = NBTHelper.instanceNBTSyncable(BasicFluxNetwork.class, list.getCompoundTagAt(i));
-			UUID name = net.getOwnerUUID();
-			if (name != null) {
-				networks.add(net);
-			}
+			networks.add(NBTHelper.instanceNBTSyncable(BasicFluxNetwork.class, list.getCompoundTagAt(i)));
 		}
 		this.networks = networks;
 	}
@@ -71,28 +62,10 @@ public class PacketFluxNetworkList implements IMessage {
 		@Override
 		public IMessage onMessage(PacketFluxNetworkList message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-
-				SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable() {
-					@Override
-					public void run() {
-						ClientNetworkCache cache = FluxNetworks.getClientCache();
-						ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> newNetworks = new ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>>();
-						message.networks.forEach(network -> {
-							if (network.getOwnerUUID() != null) {
-								newNetworks.putIfAbsent(network.getOwnerUUID(), Lists.newArrayList());
-								IFluxNetwork target = cache.getNetwork(network.getNetworkID());
-								if (target != null && target.getOwnerUUID() != null && target.getOwnerUUID().equals(network.getOwnerUUID())) {
-									newNetworks.get(network.getOwnerUUID()).add(target.updateNetworkFrom(network));
-								} else
-									newNetworks.get(network.getOwnerUUID()).add(network);
-							}
-						});
-						if (!message.update)
-							cache.networks = newNetworks;
-					}
+				SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
+					FluxNetworks.getClientCache().updateNetworksFromPacket(message.networks, message.update);
 				});
 			}
-
 			return null;
 		}
 	}

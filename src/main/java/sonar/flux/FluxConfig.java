@@ -1,9 +1,8 @@
 package sonar.flux;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -15,11 +14,15 @@ public class FluxConfig extends FluxNetworks {
 
 	public static long defaultLimit;
 	public static boolean banHyper, banGod;
+	public static boolean enableFluxRecipe;
+	public static boolean enableFluxRedstoneDrop;
+	public static int redstone_ore_chance, redstone_ore_max_drop, redstone_ore_min_drop;
 	public static int basicCapacity, herculeanCapacity, gargantuanCapacity;
 	public static int basicTransfer, herculeanTransfer, gargantuanTransfer;
+	public static int maximum_per_player;
 	public static int hyper = 4, god = 10;
 
-	public static Map<EnergyType, Pair<Boolean, Boolean>> transfers = Maps.newHashMap();
+    public static Map<EnergyType, Pair<Boolean, Boolean>> transfers = new HashMap<>();
 	public static Configuration config;
 
 	public static void startLoading() {
@@ -27,6 +30,7 @@ public class FluxConfig extends FluxNetworks {
 		config.load();
 		defaultLimit = (long) config.getFloat("Default Transfer Limit", "energy", 256000, 0, Long.MAX_VALUE, "the default transfer limit of a flux connection");
 
+		maximum_per_player = config.getInt("Maximum Networks Per Player", "networks", -1, -1, Integer.MAX_VALUE, "-1 = no limit");
 		basicCapacity = config.getInt("Basic Storage Capacity", "energy", 256000, 0, Integer.MAX_VALUE, "");
 		basicTransfer = config.getInt("Basic Storage Transfer", "energy", 6400, 0, Integer.MAX_VALUE, "");
 		herculeanCapacity = config.getInt("Herculean Storage Capacity", "energy", 12800000, 0, Integer.MAX_VALUE, "");
@@ -39,8 +43,14 @@ public class FluxConfig extends FluxNetworks {
 
 		banHyper = config.getBoolean("Ban Hyper Mode", "settings", false, "prevents the use of Hyper Mode");
 		banGod = config.getBoolean("Ban God Mode", "settings", false, "prevents the use of God Mode");
+		enableFluxRecipe = config.getBoolean("Disables Flux Recipe (from fire)", "flux_recipe", true, "enables Redstone being turned into Flux when dropped in fire");
+		
+		enableFluxRedstoneDrop = config.getBoolean("Enable Flux Drop (from Redstone Ore)", "flux_recipe", true, "enables Redstone Ore to drop Flux with normal redstone drops");	
+		redstone_ore_chance = config.getInt("Chance of Flux Drop (from Redstone Ore)", "flux_recipe", 50, 1, 5000, "the chance of a drop occurring (random, but roughly every 50 blocks)");	
+		redstone_ore_min_drop = config.getInt("Minimum Flux Drop (from Redstone Ore)", "flux_recipe", 4, 1, 64, "the minimum Flux dropped from Redstone ore if a drop occurs");
+		redstone_ore_max_drop = config.getInt("Maximum Flux Drop (from Redstone Ore)", "flux_recipe", 16, 1, 64, "the maximum Flux dropped from Redstone Ore if a drop occurs");
+		
 		config.save();
-
 	}
 
 	public static void finishLoading() {
@@ -58,5 +68,4 @@ public class FluxConfig extends FluxNetworks {
 		prop.setLanguageKey(name);
 		return prop.getBoolean(defaultValue);
 	}
-
 }

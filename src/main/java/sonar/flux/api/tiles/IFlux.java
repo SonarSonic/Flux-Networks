@@ -2,73 +2,96 @@ package sonar.flux.api.tiles;
 
 import java.util.UUID;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
-import sonar.core.listener.ISonarListenable;
-import sonar.core.listener.PlayerListener;
 import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.network.PlayerAccess;
 
-/** extended by IFluxPoint & IFluxPlug you must use them if you wish to send and receive energy from the network */
+/**
+ * extended by IFluxPoint & IFluxPlug you must use them if you wish to send and receive energy from the network
+ */
 public interface IFlux {
 
-	public enum ConnectionType {
-		POINT, PLUG, STORAGE, CONTROLLER;
-		public boolean canSend(){
-			return this==PLUG || this==STORAGE;
-		}
-		public boolean canReceive(){
-			return this==POINT || this==STORAGE || this==CONTROLLER;
-		}
-	}
-	public int getNetworkID();
-	
-	/**the network this Flux connection is a part of*/
-	public IFluxNetwork getNetwork();
-	
-	public UUID getConnectionOwner();
-	
-	/**the dimension in which this Flux Connection is located*/
-	public World getDimension();
-	
-	/**the location of the Flux Connection*/
-	public BlockCoords getCoords();
+    enum ConnectionType {
+        POINT, PLUG, STORAGE, CONTROLLER;
 
-	/**the type of Flux Connection*/
-	public ConnectionType getConnectionType();
+        public boolean canSend() {
+            return this == PLUG || this == STORAGE;
+        }
 
-	/**the maximum RF/t this Flux connection can receive*/
-	public long getTransferLimit();
-	
-	/**the current RF/t this Flux connection can receive*/
-	public long getCurrentTransferLimit();
-	
-	public long getCurrentTransfer(EnumFacing face);
-	
-	public long getValidTransfer(long valid, EnumFacing face);
-	
-	public void onEnergyRemoved(EnumFacing face, long remove);
-	
-	public void onEnergyAdded(EnumFacing face, long added);
-	
-	public void setMaxSend(long send);
-	
-	public void setMaxReceive(long receive);
+        public boolean canReceive() {
+            return this == POINT || this == STORAGE || this == CONTROLLER;
+        }
+    }
 
-	/**the higher the priority the sooner the Flux connection will receive power*/
-	public int getCurrentPriority();
-	
-	/**the custom name is assigned by the user, this allows easier identification of various Flux connections.*/
-	public String getCustomName();
-	
-	public TileEntity[] cachedTiles();
-	
-	public boolean canTransfer();
-	
-	public void updateNeighbours(boolean full);
-	
-	public void connect(IFluxNetwork network);
-	
-	public void disconnect(IFluxNetwork network);
+    int getNetworkID();
+
+    /**
+     * the network this Flux connection is a part of
+     */
+    IFluxNetwork getNetwork();
+
+    UUID getConnectionOwner();
+
+    PlayerAccess canAccess(EntityPlayer player);
+
+    /**
+     * the dimension in which this Flux Connection is located
+     */
+    World getDimension();
+
+    /**
+     * the location of the Flux Connection
+     */
+    BlockCoords getCoords();
+
+    /**
+     * the type of Flux Connection
+     */
+    ConnectionType getConnectionType();
+
+    /**
+     * the maximum RF/t this Flux connection can receive
+     */
+    long getTransferLimit();
+
+    /**
+     * the current RF/t this Flux connection can receive
+     */
+    long getCurrentTransferLimit();
+
+    long getCurrentTransfer(EnumFacing face);
+
+    long getValidTransfer(long valid, EnumFacing face);
+
+    void onEnergyRemoved(EnumFacing face, long remove);
+
+    void onEnergyAdded(EnumFacing face, long added);
+
+    void setMaxSend(long send);
+
+    void setMaxReceive(long receive);
+
+    /**
+     * the higher the priority the sooner the Flux connection will receive power
+     */
+    int getCurrentPriority();
+
+    /**
+     * the custom name is assigned by the user, this allows easier identification of various Flux connections.
+     */
+    String getCustomName();
+
+    TileEntity[] cachedTiles();
+
+    boolean canTransfer();
+
+    void updateNeighbours(boolean full);
+
+    void connect(IFluxNetwork network);
+
+    void disconnect(IFluxNetwork network);
 }

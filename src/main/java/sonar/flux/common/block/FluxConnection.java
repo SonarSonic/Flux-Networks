@@ -2,13 +2,13 @@ package sonar.flux.common.block;
 
 import java.util.List;
 
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumHand;
@@ -23,11 +23,11 @@ import sonar.core.common.block.SonarMaterials;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.IGuiTile;
+import sonar.core.utils.SonarCompat;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxListener;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.connection.FluxHelper;
 
 public abstract class FluxConnection extends SonarMachineBlock {
 
@@ -59,20 +59,19 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	public boolean dropStandard(IBlockAccess world, BlockPos pos) {
 		return false;
 	}
-
 	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
+	public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
 	}
 
 	@Override
 	public boolean operateBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, BlockInteraction interact) {
-		ItemStack heldItem = hand == null ? null : player.getHeldItem(hand);
-		if ((heldItem == null || !(heldItem.getItem() instanceof FluxConfigurator))) {
+		ItemStack heldItem = hand == null ? SonarCompat.getEmpty() : player.getHeldItem(hand);
+		if (SonarCompat.isEmpty(heldItem) || !(heldItem.getItem() instanceof FluxConfigurator)) {
 			if (!world.isRemote) {
 				TileEntity target = world.getTileEntity(pos);
 				if (target != null && target instanceof TileEntityFlux) {
 					TileEntityFlux flux = (TileEntityFlux) target;
-					if (flux.canAccess(player)) {
+					if (flux.canAccess(player).canEdit()) {
 						flux.listeners.addListener(player, FluxListener.FULL_NETWORK);
 						player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
 					} else {
@@ -99,7 +98,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	}
 
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(CONNECTED, meta == 1 ? true : false);
+		return this.getDefaultState().withProperty(CONNECTED, meta == 1);
 	}
 
 	public int getMetaFromState(IBlockState state) {
@@ -112,6 +111,6 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	}
 
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] { CONNECTED });
+		return new BlockStateContainer(this, CONNECTED);
 	}
 }

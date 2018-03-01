@@ -5,55 +5,64 @@ import java.util.UUID;
 
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.utils.CustomColour;
+import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientFlux;
 
-/**both client and server networks implement this*/
+/**
+ * both client and server networks implement this
+ */
 public interface IFluxCommon extends INBTSyncable {
 
-	public enum AccessType {
-		PUBLIC, PRIVATE, RESTRICTED;	
-		
-		public String getName(){
-			switch(this){
-			case PUBLIC: return "network.public";
-			case PRIVATE: return "network.private";
-			case RESTRICTED: return "network.restricted";	
-			}
-			return "";
-		}			
-	}		
-	/**the access settings of this network*/
-	public AccessType getAccessType();
+    
 
-	/**the id this network is registered by under the Owners name*/
-	public int getNetworkID();
-	
-	/**the custom set network name of this network*/
-	public String getNetworkName();
-	
-	/**the player name of the owner, this may change to a UUID in the future be warned...*/	
-	public String getCachedPlayerName();	
-	
-	public UUID getOwnerUUID();
-	
-	/**gets the custom set network colour**/
-	public CustomColour getNetworkColour();	
-	
-	/**gets the latest network statistics for display*/
-	public INetworkStatistics getStatistics();
+    /**
+     * the access settings of this network
+     */
+    AccessType getAccessType();
 
-	/**gets the last full count of energy available in the system from connected Flux Storage*/
-	public long getEnergyAvailable();
+    /**
+     * the id this network is registered by under the Owners name
+     */
+    int getNetworkID();
 
-	/**gets the last full count of the max energy stored allowed in connected Flux Storage*/
-	public long getMaxEnergyStored();
-	
-	public void setClientConnections(ArrayList<ClientFlux> flux);
-	
-	public ArrayList<ClientFlux> getClientFluxConnection();
-	
-	public boolean isFakeNetwork();
-	
-	public FluxPlayersList getPlayers();
+    /**
+     * the custom set network name of this network
+     */
+    String getNetworkName();
+
+    /**
+     * the player name of the owner, this may change to a UUID in the future be warned...
+     */
+    String getCachedPlayerName();
+
+    UUID getOwnerUUID();
+
+    /**
+     * gets the custom set network colour
+     **/
+    CustomColour getNetworkColour();
+
+    /**
+     * gets the latest network statistics for display
+     */
+    INetworkStatistics getStatistics();
+
+    /**
+     * gets the last full count of energy available in the system from connected Flux Storage
+     */
+    long getEnergyAvailable();
+
+    /**
+     * gets the last full count of the max energy stored allowed in connected Flux Storage
+     */
+    long getMaxEnergyStored();
+
+    void setClientConnections(ArrayList<ClientFlux> flux);
+
+    ArrayList<ClientFlux> getClientFluxConnection();
+
+    boolean isFakeNetwork();
+
+    FluxPlayersList getPlayers();
 }
 

@@ -2,11 +2,12 @@ package sonar.flux.common.block;
 
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.helpers.FontHelper;
+import sonar.flux.FluxConfig;
 import sonar.flux.common.tileentity.TileEntityStorage;
 
 public class FluxStorage extends FluxConnection {
@@ -19,7 +20,15 @@ public class FluxStorage extends FluxConnection {
 
 		@Override
 		public TileEntity createNewTileEntity(World world, int i) {
-			return new TileEntityStorage.Advanced();
+			return new TileEntityStorage.Herculean();
+		}
+
+		public int getMaxStorage() {
+			return FluxConfig.herculeanCapacity;
+		}
+
+		public int getMaxTransfer() {
+			return FluxConfig.herculeanTransfer;
 		}
 	}
 
@@ -27,7 +36,15 @@ public class FluxStorage extends FluxConnection {
 
 		@Override
 		public TileEntity createNewTileEntity(World world, int i) {
-			return new TileEntityStorage.Massive();
+			return new TileEntityStorage.Gargantuan();
+		}
+
+		public int getMaxStorage() {
+			return FluxConfig.gargantuanCapacity;
+		}
+
+		public int getMaxTransfer() {
+			return FluxConfig.gargantuanTransfer;
 		}
 	}
 
@@ -36,18 +53,17 @@ public class FluxStorage extends FluxConnection {
 		return new TileEntityStorage.Basic();
 	}
 
-	@Override
-	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
-		list.add("Stores Energy");
+	public int getMaxStorage() {
+		return FluxConfig.basicCapacity;
+	}
+
+	public int getMaxTransfer() {
+		return FluxConfig.basicTransfer;
 	}
 
 	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
-		if (stack.hasTagCompound()) {
-			int energy = stack.getTagCompound().getInteger("energy");
-			if (energy != 0) {
-				list.add(FontHelper.translate("energy.stored") + ": " + FontHelper.formatStorage(energy));
-			}
-		}
+	public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
+		int energy = tag == null ? 0 : tag.getInteger("energy");
+		list.add(FontHelper.translate("network.energy.stored") + ": " + FontHelper.formatStorage(energy) + "/" + FontHelper.formatStorage(getMaxStorage()));
 	}
 }

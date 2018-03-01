@@ -2,8 +2,6 @@ package sonar.flux.network;
 
 import java.util.ArrayList;
 
-import com.google.common.collect.Lists;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -24,7 +22,8 @@ public class PacketFluxConnectionsList implements IMessage {
 	public ArrayList<ClientFlux> connections;
 	public int networkID;
 
-	public PacketFluxConnectionsList() {}
+	public PacketFluxConnectionsList() {
+	}
 
 	public PacketFluxConnectionsList(ArrayList<ClientFlux> networks, int networkID) {
 		this.connections = networks;
@@ -34,7 +33,7 @@ public class PacketFluxConnectionsList implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.networkID = buf.readInt();
-		this.connections = Lists.newArrayList();
+        this.connections = new ArrayList<>();
 		NBTTagCompound compound = ByteBufUtils.readTag(buf);
 		NBTTagList list = compound.getTagList("connects", 10);
 
@@ -43,7 +42,6 @@ public class PacketFluxConnectionsList implements IMessage {
 			ClientFlux net = new ClientFlux(BlockCoords.readFromNBT(c), ConnectionType.values()[c.getInteger("type")], c.getInteger("priority"), c.getLong("limit"), c.getString("name"));
 			connections.add(net);
 		}
-
 	}
 
 	@Override
@@ -62,23 +60,19 @@ public class PacketFluxConnectionsList implements IMessage {
 		}
 		tag.setTag("connects", list);
 		ByteBufUtils.writeTag(buf, tag);
-
 	}
 
 	public static class Handler implements IMessageHandler<PacketFluxConnectionsList, IMessage> {
 		@Override
 		public IMessage onMessage(PacketFluxConnectionsList message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
-				SonarCore.proxy.getThreadListener(ctx).addScheduledTask(new Runnable() {
-					@Override
-					public void run() {
-						String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
-						IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
-						if (!common.isFakeNetwork()) {
-							common.setClientConnections(message.connections);
-						}
-					}
-				});
+                SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
+				String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
+				IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
+				if (!common.isFakeNetwork()) {
+					common.setClientConnections(message.connections);
+				}
+                });
 			}
 			return null;
 		}

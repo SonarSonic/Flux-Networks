@@ -1,6 +1,6 @@
 [
 {
-"modid": "FluxNetworks",
+"modid": "fluxnetworks",
 "name": "Flux Networks",
 "description": "Create Wireless Energy Networks",
 "version": "${version}",
@@ -10,7 +10,7 @@
 "credits": "Created by Ollie Lansdell",
 "logoFile": "",
 "screenshots": [],
-"requiredMods": [ "Forge", "sonarcore" ],
+"requiredMods": [ "forge", "sonarcore" ],
 "dependencies": ["sonarcore"],
 "useDependencyInformation": true
 }

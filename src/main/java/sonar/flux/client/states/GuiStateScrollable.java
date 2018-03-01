@@ -10,51 +10,54 @@ import sonar.flux.client.GuiTypeMessage;
 
 public abstract class GuiStateScrollable<T> extends GuiState {
 
-	public List<ElementList<T>> lists = Lists.newArrayList();
-	
-	public GuiStateScrollable(GuiTypeMessage type, int x, int y, int texX, String client) {
-		super(type, x, y, texX, client);
-	}
+    public List<ElementList<T>> lists = Lists.newArrayList();
 
-	public float getCurrentScroll(int gridID) {return 0;}
-	
-	public void onGridClicked(int gridID, T selection, int pos, int button, boolean empty) {}
-	
-	public void renderGridElement(int gridID, T selection, int x, int y, int slot) {}
-	
-	public void renderElementToolTip(int gridID, T selection, int x, int y) {}
+    public GuiStateScrollable(GuiTypeMessage type, int x, int y, int texX, String client) {
+        super(type, x, y, texX, client);
+    }
 
-	
-	
-	
-	public static class ElementList<T> extends GuiGridElement<T> {
-		public final GuiStateScrollable<T> gui;
+    public float getCurrentScroll(int gridID) {
+        return 0;
+    }
 
-		public ElementList(GuiStateScrollable gui, int gridID, int xPos, int yPos, int eWidth, int eHeight, int gWidth, int gHeight) {
-			super(gridID, xPos, yPos, eWidth, eHeight, gWidth, gHeight);
-			this.gui = gui;
-		}
+    public void onGridClicked(int gridID, T selection, int pos, int button, boolean empty) {
+    }
 
-		@Override
-		public float getCurrentScroll() {
-			return gui.getCurrentScroll(gridID);
-		}
+    public void renderGridElement(int gridID, T selection, int x, int y, int slot) {
+    }
 
-		@Override
-		public void onGridClicked(T selection, int pos, int button, boolean empty) {
-			gui.onGridClicked(button, selection, pos, button, empty);
-		}
+    public void renderElementToolTip(int gridID, T selection, int x, int y) {
+    }
 
-		@Override
-		public void renderGridElement(T selection, int x, int y, int slot) {
-			gui.renderGridElement(slot, selection, x, y, slot);
-		}
 
-		@Override
-		public void renderElementToolTip(T selection, int x, int y) {
-			gui.renderElementToolTip(y, selection, x, y);
-		}
+    public static class ElementList<T> extends GuiGridElement<T> {
+        public final GuiStateScrollable<T> gui;
 
-	}
+        public ElementList(GuiStateScrollable gui, int gridID, int xPos, int yPos, int eWidth, int eHeight, int gWidth, int gHeight) {
+            super(gridID, xPos, yPos, eWidth, eHeight, gWidth, gHeight);
+            this.gui = gui;
+        }
+
+        @Override
+        public float getCurrentScroll() {
+            return gui.getCurrentScroll(gridID);
+        }
+
+        @Override
+        public void onGridClicked(T selection, int pos, int button, boolean empty) {
+            gui.onGridClicked(button, selection, pos, button, empty);
+        }
+
+        @Override
+        public void renderGridElement(T selection, int x, int y, int slot) {
+            gui.renderGridElement(slot, selection, x, y, slot);
+        }
+
+        @Override
+        public void renderElementToolTip(T selection, int x, int y) {
+            gui.renderElementToolTip(y, selection, x, y);
+        }
+
+    }
 
 }

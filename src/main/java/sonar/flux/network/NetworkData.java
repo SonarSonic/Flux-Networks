@@ -1,8 +1,9 @@
 package sonar.flux.network;
 
+import java.util.List;
 import java.util.UUID;
 
-import com.mojang.authlib.GameProfile;
+import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -10,13 +11,11 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.AccessType;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.api.network.IFluxCommon.AccessType;
 import sonar.flux.connection.BasicFluxNetwork;
 
 public class NetworkData extends WorldSavedData {
@@ -31,9 +30,21 @@ public class NetworkData extends WorldSavedData {
 	public static String NETWORK_NAME = "name";
 	public static String ACCESS = "access";
 	public static String PLAYER_LIST = "playerList";
+	public List<IFluxNetwork> loaded = Lists.newArrayList();
 
 	public NetworkData(String name) {
 		super(name);
+	}
+
+	public void loadAllNetworks() {
+		loaded.forEach(network -> {
+			FluxNetworks.getServerCache().addNetwork(network);
+			FluxEvents.logLoadedNetwork(network);
+		});
+	}
+
+	public void clearLoadedNetworks() {
+		loaded.clear();
 	}
 
 	@Override
@@ -42,22 +53,16 @@ public class NetworkData extends WorldSavedData {
 		if (nbt.hasKey(TAG_LIST)) {
 			NBTTagList list = nbt.getTagList(TAG_LIST, NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i++) {
-				try {
-					NBTTagCompound tag = list.getCompoundTagAt(i);
-					int networkID = tag.getInteger(NETWORK_ID);
-					String networkName = tag.getString(NETWORK_NAME);
-					UUID ownerUUID = tag.getUniqueId(OWNER_UUID);
-					String cachedPlayer = tag.getString(CACHE_PLAYER);
-					CustomColour colour = NBTHelper.instanceNBTSyncable(CustomColour.class, tag.getCompoundTag(COLOUR));
-					AccessType type = AccessType.valueOf(tag.getString(ACCESS));
-					BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, networkName, colour, type);
-					network.getPlayers().readData(tag.getCompoundTag(PLAYER_LIST), SyncType.SAVE);
-					FluxNetworks.getServerCache().addNetwork(network);
-					FluxEvents.logLoadedNetwork(network);
-				} catch (Throwable t) {
-					FluxNetworks.logger.info("FAILED TO LOAD A NETWORK");
-					t.printStackTrace();
-				}
+				NBTTagCompound tag = list.getCompoundTagAt(i);
+				int networkID = tag.getInteger(NETWORK_ID);
+				String networkName = tag.getString(NETWORK_NAME);
+				UUID ownerUUID = tag.getUniqueId(OWNER_UUID);
+				String cachedPlayer = tag.getString(CACHE_PLAYER);
+				CustomColour colour = NBTHelper.instanceNBTSyncable(CustomColour.class, tag.getCompoundTag(COLOUR));
+				AccessType type = AccessType.valueOf(tag.getString(ACCESS));
+				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, networkName, colour, type);
+				network.getPlayers().readData(tag.getCompoundTag(PLAYER_LIST), SyncType.SAVE);
+				loaded.add(network);
 			}
 		}
 	}
@@ -85,6 +90,6 @@ public class NetworkData extends WorldSavedData {
 	}
 
 	public boolean isDirty() {
-		return true;
+		return true;//!FluxNetworks.getServerCache().getAllNetworks().isEmpty();
 	}
 }

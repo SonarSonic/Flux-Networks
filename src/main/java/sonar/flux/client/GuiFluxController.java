@@ -5,7 +5,7 @@ import java.io.IOException;
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.SonarCore;
 import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.common.ContainerFlux;
+import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.common.tileentity.TileEntityController;
 
 public class GuiFluxController extends GuiFlux {

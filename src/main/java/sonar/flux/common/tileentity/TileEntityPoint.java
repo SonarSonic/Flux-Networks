@@ -16,9 +16,13 @@ import sonar.core.integration.SonarLoader;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.client.GuiFlux;
-import sonar.flux.common.ContainerFlux;
+import sonar.flux.common.containers.ContainerFlux;
 
-@Optional.InterfaceList({ @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"), @Optional.Interface(iface = "mekanism.api.energy.IStrictEnergyOutputter", modid = "Mekanism") })
+@Optional.InterfaceList({
+        @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaProducer", modid = "tesla"),
+        @Optional.Interface(iface = "mekanism.api.energy.IStrictEnergyOutputter", modid = "mekanism"),
+        @Optional.Interface(iface = "cofh.api.energy.IEnergyProvider", modid = "cofhcore")
+})
 public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergyProvider, ITeslaProducer, IStrictEnergyOutputter, IEnergyStorage, IFluxPoint {
 
 	public TileEntityPoint() {
@@ -36,14 +40,22 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 		return new GuiFlux((Container) getGuiContainer(player), this, player);
 	}
 
-	@Override
-	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
-		/* if (maxExtract == 0) { return 0; } int extracted = (int)
-		 * (this.getNetwork().extractEnergy(Math.min(maxExtract,
-		 * getValidTransfer(maxExtract, from)), simulate ? ActionType.SIMULATE :
-		 * ActionType.PERFORM)); if (!simulate){// && !disableLimit.getObject())
-		 * { this.onEnergyRemoved(from, extracted); } */
-		return 0;
+    public int energyExtract(EnumFacing from, int maxExtract, boolean simulate) {
+		if (maxExtract == 0) {
+			return 0;
+		}
+        int extracted = (int) this.getNetwork().extractEnergy(Math.min(maxExtract, getValidTransfer(maxExtract, from)), simulate ? ActionType.SIMULATE : ActionType.PERFORM);
+		if (!simulate && !disableLimit.getObject()) {
+            this.onEnergyRemoved(from, extracted);
+		}
+		return extracted;
+        //return 0;
+    }
+
+    @Override
+    @Optional.Method(modid = "cofhcore")
+    public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
+        return energyExtract(from, maxExtract, simulate);
 	}
 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -71,21 +83,18 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 
 	@Override
 	public long takePower(long power, boolean simulated) {
-		return extractEnergy(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
-	}
-
-	//// MEKANISM \\\\\\
-	
-	@Override
-	public double pullEnergy(EnumFacing side, double amount, boolean simulate) {
-		return extractEnergy(side, (int) Math.min(amount, Integer.MAX_VALUE), simulate);
-
+        return energyExtract(null, (int) Math.min(power, Integer.MAX_VALUE), simulated);
 	}
 
 	@Override
-	public boolean canOutputEnergy(EnumFacing dir) {
+    public boolean canOutputEnergy(EnumFacing dir) {
 		return true;
 	}
+
+    @Override
+    public double pullEnergy(EnumFacing side, double amount, boolean simulate) {
+        return energyExtract(side, (int) Math.min(amount, Integer.MAX_VALUE), simulate);
+    }
 
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate) {
@@ -94,7 +103,7 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 
 	@Override
 	public int extractEnergy(int maxExtract, boolean simulate) {
-		return extractEnergy(null, (int) Math.min(maxExtract, Integer.MAX_VALUE), simulate);
+        return energyExtract(null, Math.min(maxExtract, Integer.MAX_VALUE), simulate);
 	}
 
 	@Override
@@ -116,5 +125,4 @@ public class TileEntityPoint extends TileEntityFlux implements IGuiTile, IEnergy
 	public boolean canReceive() {
 		return false;
 	}
-
 }

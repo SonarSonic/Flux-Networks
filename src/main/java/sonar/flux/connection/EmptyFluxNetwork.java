@@ -4,18 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.core.listener.ISonarListenable;
-import sonar.core.listener.ListenableList;
-import sonar.core.listener.ListenerTally;
-import sonar.core.listener.PlayerListener;
 import sonar.core.utils.CustomColour;
+import sonar.flux.api.AccessType;
+import sonar.flux.api.AdditionType;
 import sonar.flux.api.ClientFlux;
+import sonar.flux.api.RemovalType;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayersList;
 import sonar.flux.api.network.IFluxNetwork;
@@ -28,10 +25,11 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
 	public final static IFluxNetwork INSTANCE = new EmptyFluxNetwork();
 	public static final NetworkStatistics stats = new NetworkStatistics();
-	public final static CustomColour colour = new CustomColour(41, 94, 138);
+    public final static CustomColour colour = new CustomColour(41, 94, 138);
 
 	@Override
-	public void updateNetwork() {}
+	public void updateNetwork() {
+	}
 
 	@Override
 	public AccessType getAccessType() {
@@ -74,22 +72,28 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void setNetworkName(String name) {}
+	public void setNetworkName(String name) {
+	}
 
 	@Override
-	public void setAccessType(AccessType type) {}
+	public void setAccessType(AccessType type) {
+	}
 
 	@Override
-	public void setCustomColour(CustomColour colour) {}
+	public void setCustomColour(CustomColour colour) {
+	}
 
 	@Override
-	public void markDirty() {}
+    public void markDirty() {
+	}
 
 	@Override
-	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {}
+	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
+	}
 
 	@Override
-	public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {}
+	public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {
+	}
 
 	@Override
 	public long receiveEnergy(long maxReceive, ActionType simulate) {
@@ -112,10 +116,12 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void addConnection(IFluxListenable flux) {}
+    public void addConnection(IFluxListenable flux, AdditionType type) {
+	}
 
 	@Override
-	public void removeConnection(IFluxListenable flux) {}
+    public void removeConnection(IFluxListenable flux, RemovalType type) {
+	}
 
 	@Override
 	public NetworkStatistics getStatistics() {
@@ -123,10 +129,13 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void setClientConnections(ArrayList<ClientFlux> flux) {}
+	public void setClientConnections(ArrayList<ClientFlux> flux) {
+
+	}
 
 	@Override
-	public void readData(NBTTagCompound nbt, SyncType type) {}
+	public void readData(NBTTagCompound nbt, SyncType type) {
+	}
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
@@ -135,11 +144,12 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
 	@Override
 	public ArrayList<ClientFlux> getClientFluxConnection() {
-		return Lists.newArrayList();
+        return new ArrayList<>();
 	}
 
 	@Override
-	public void buildFluxConnections() {}
+	public void buildFluxConnections() {
+	}
 
 	@Override
 	public boolean isFakeNetwork() {
@@ -162,17 +172,19 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void onRemoved() {}
+    public void onRemoved() {
+    }
 
 	@Override
-	public void markTypeDirty(FluxCache...caches) {}
+    public void markTypeDirty(FluxCache... caches) {
+    }
 
-	@Override
-	public <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type) {
-		return Lists.newArrayList();
-	}
+    @Override
+    public <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type) {
+        return new ArrayList<>();
+    }
 
-	@Override
-	public void setHasConnections(boolean bool) {}
-
+    @Override
+    public void setHasConnections(boolean bool) {
+    }
 }

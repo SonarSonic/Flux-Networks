@@ -5,42 +5,65 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
+
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
+
+repositories {
+    maven {
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
+    }
+    maven {
+        name = "CoFH Maven"
+        url = "http://maven.covers1624.net"
+    }
+    flatDir {
+        dirs 'libs'
+}
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "${minecraft_version}-${mod_version}"
 group= "sonar.flux"
-archivesBaseName = "FluxNetworks"
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+archivesBaseName = "fluxnetworks"
+sourceCompatibility = targetCompatibility = "1.8"
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
 
 minecraft {
-    version = "1.10.2-12.18.3.2422"
+    version = "${forge_version}"
     runDir = "run"
     mappings = "snapshot_20161111"
     makeObfSourceJar = false
 }
 
-repositories {  
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
+task deobfJar(type: Jar) { // Generate deobfuscated
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+tasks.build.dependsOn('deobfJar')
+artifacts {
+    archives deobfJar
+    archives jar
 }
 
 dependencies {
     compileOnly "tesla:Tesla:${tesla_version}"
     compileOnly "mekanism:Mekanism:${mekanism_version}"
+    deobfCompile "cofh:CoFHCore:${cofh_version}"
 }
 
 processResources
 {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
+
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'                

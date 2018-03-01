@@ -11,18 +11,20 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.client.GUI;
 import sonar.flux.client.GuiFlux;
+import sonar.flux.client.GuiFluxBase;
 import sonar.flux.client.GuiFluxBase.NetworkButton;
 import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.network.PacketFluxButton;
-import sonar.flux.network.PacketFluxButton.Type;
+import sonar.flux.network.PacketHelper;
+import sonar.flux.network.PacketType;
 
 public class GuiStateNetworkConnections extends GuiStateScrollable {
 
 	public SonarScroller scroller;
-	public ClientFlux selected = null;
-	public boolean toRemove = false;
-	public static int listSize = 10;	
-	
+	public ClientFlux selected;
+	public boolean toRemove;
+	public static int listSize = 10;
+
 	public GuiStateNetworkConnections() {
 		super(GuiTypeMessage.CONNECTIONS, 176, 166, 64, "network.nav.config");
 	}
@@ -41,7 +43,7 @@ public class GuiStateNetworkConnections extends GuiStateScrollable {
 			ClientFlux clientFlux = connections.get(i);
 			if (clientFlux != null) {
 				int posX = 11;
-				int posY = 8 + (12 * i) - (12 * start);
+				int posY = 8 + 12 * i - 12 * start;
 				if (x > flux.getGuiLeft() + posX && x < flux.getGuiLeft() + posX + 154 && y >= flux.getGuiTop() + posY && y < flux.getGuiTop() + posY + 12) {
 					toRemove = x > flux.getGuiLeft() + posX + 144;
 					selected = clientFlux;
@@ -49,14 +51,14 @@ public class GuiStateNetworkConnections extends GuiStateScrollable {
 				} else {
 					flux.renderFlux(clientFlux, false, posX, posY);
 				}
-				flux.bindTexture(flux.buttons);
+				flux.bindTexture(GuiFluxBase.buttons);
 				flux.drawTexturedModalRect(154, posY, 56, 0, 12, 12);
 			}
 		}
 		flux.bindTexture(flux.getBackground());
 		if (selected != null) {
 			boolean isCurrent = selected.coords.getBlockPos().equals(flux.tile.getPos());
-			ArrayList<String> strings = new ArrayList<String>();
+			ArrayList<String> strings = new ArrayList<>();
 			if (toRemove) {
 				strings.add(TextFormatting.RED + "REMOVE");
 			} else {
@@ -77,7 +79,7 @@ public class GuiStateNetworkConnections extends GuiStateScrollable {
 	public void init(GuiFlux flux) {
 		scroller = new SonarScroller(flux.getGuiLeft() + 165, flux.getGuiTop() + 8, 146, 10);
 		for (int i = 0; i < listSize + 2; i++) {
-			flux.getButtonList().add(new NetworkButton(10 + i, flux.getGuiLeft() + 7, flux.getGuiTop() + 8 + (i * 12)));
+			flux.getButtonList().add(new NetworkButton(10 + i, flux.getGuiLeft() + 7, flux.getGuiTop() + 8 + i * 12));
 		}
 	}
 
@@ -87,7 +89,7 @@ public class GuiStateNetworkConnections extends GuiStateScrollable {
 	@Override
 	public void click(GuiFlux flux, int x, int y, int mouseButton) {
 		if (toRemove && selected != null) {
-			FluxNetworks.network.sendToServer(new PacketFluxButton(selected.coords.getDimension(), Type.REMOVE_CONNECTION, selected.coords.getBlockPos(), flux.getNetworkID()));
+			PacketHelper.sendPacketToServer(PacketType.REMOVE_CONNECTION, selected.coords, PacketHelper.createDisconnectPacket(flux.getNetworkID()));
 		}
 	}
 
@@ -98,7 +100,7 @@ public class GuiStateNetworkConnections extends GuiStateScrollable {
 
 	@Override
 	public SonarScroller[] getScrollers() {
-		return new SonarScroller[] {scroller};
+		return new SonarScroller[] { scroller };
 	}
 
 	@Override

@@ -1,3 +1,4 @@
 package sonar.flux.api.tiles;
 
-public interface IFluxPlug extends IFluxListenable {}
+public interface IFluxPlug extends IFluxListenable {
+}

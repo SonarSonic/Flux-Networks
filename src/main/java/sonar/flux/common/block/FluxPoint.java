@@ -2,8 +2,8 @@ package sonar.flux.common.block;
 
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.flux.common.tileentity.TileEntityPoint;
@@ -24,9 +24,8 @@ public class FluxPoint extends FluxSidedConnection {
 		return true;
 	}
 
-	@Override
-	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
-		list.add("Receives Energy");
-	}
-
+    @Override
+    public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
+        list.add("Receives Energy");
+    }
 }

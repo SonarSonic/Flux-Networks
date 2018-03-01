@@ -1,22 +1,22 @@
 package sonar.flux.api.network;
 
 public enum PlayerAccess {
-	OWNER, SHARED_OWNER, USER, BLOCKED;
+	OWNER, SHARED_OWNER, USER, BLOCKED, CREATIVE;
 
 	public boolean canDelete() {
-		return this == OWNER;
+		return this == OWNER || this == CREATIVE;
 	}
 
 	public boolean canEdit() {
-		return this == OWNER || this == SHARED_OWNER;
+		return this == OWNER || this == SHARED_OWNER || this == CREATIVE;
 	}
 
 	public boolean canConnect() {
-		return this == OWNER || this == SHARED_OWNER || this == USER;
+		return this == OWNER || this == SHARED_OWNER || this == USER || this == CREATIVE;
 	}
-	
-	public String getName(){
-		switch(this){
+
+	public String getName() {
+		switch (this) {
 		case BLOCKED:
 			return "network.player.blocked";
 		case OWNER:
@@ -26,12 +26,12 @@ public enum PlayerAccess {
 		case USER:
 			return "network.player.user";
 		default:
-			return "";		
+			return "";
 		}
 	}
 
 	public PlayerAccess incrementAccess() {
-		switch(this){
+		switch (this) {
 		case USER:
 			return SHARED_OWNER;
 		case SHARED_OWNER:

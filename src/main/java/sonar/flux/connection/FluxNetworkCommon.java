@@ -3,7 +3,6 @@ package sonar.flux.connection;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +16,7 @@ import sonar.core.network.sync.SyncTagType;
 import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.sync.SyncableList;
 import sonar.core.utils.CustomColour;
+import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.FluxPlayersList;
@@ -29,23 +29,24 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 
 	public SyncTagType.STRING cachedOwnerName = new SyncTagType.STRING(0), networkName = new SyncTagType.STRING(1);
 	public SyncTagType.INT networkID = new SyncTagType.INT(2);
-	public SyncEnum<AccessType> accessType = new SyncEnum<AccessType>(AccessType.values(), 3).setDefault(AccessType.PRIVATE);
+    public SyncEnum<AccessType> accessType = new SyncEnum<>(AccessType.values(), 3).setDefault(AccessType.PRIVATE);
 	public SyncTagType.LONG maxStored = new SyncTagType.LONG(4);
 	public SyncTagType.LONG energyStored = new SyncTagType.LONG(5);
 	public SyncUUID ownerUUID = new SyncUUID(6);
 	public SyncNBTAbstract<CustomColour> colour = new SyncNBTAbstract(CustomColour.class, 7);
 	public NetworkStatistics networkStats = new NetworkStatistics();
-	public ArrayList<ClientFlux> fluxConnections = Lists.newArrayList();
+    public ArrayList<ClientFlux> fluxConnections = new ArrayList<>();
 	public FluxPlayersList players = new FluxPlayersList();
 	public SyncableList parts = new SyncableList(this);
+
 	{
 		parts.addParts(cachedOwnerName, networkName, networkID, accessType, maxStored, energyStored, ownerUUID, colour, networkStats, players);
-
+		
 		colour.setObject(new CustomColour(41, 94, 138));
-
 	}
 
-	public FluxNetworkCommon() {}
+	public FluxNetworkCommon() {
+	}
 
 	public FluxNetworkCommon(int ID, UUID owner, String name, CustomColour networkColour, AccessType type) {
 		ownerUUID.setObject(owner);
@@ -55,7 +56,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 		networkName.setObject(name);
 		colour.setObject(networkColour);
 		accessType.setObject(type);
-		players.add(new FluxPlayer(owner, PlayerAccess.OWNER, cachedOwnerName.getObject()));
+        players.add(new FluxPlayer(owner, PlayerAccess.OWNER, cachedOwnerName.getObject()));
 	}
 
 	@Override
@@ -80,7 +81,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 
 	@Override
 	public String getCachedPlayerName() {
-		if (cachedOwnerName.getObject() == null || cachedOwnerName.getObject().isEmpty()) {
+        if (cachedOwnerName.getObject() == null || cachedOwnerName.getObject().isEmpty()) {
 			GameProfile profile = SonarHelper.getProfileByUUID(ownerUUID.getUUID());
 			cachedOwnerName.setObject(profile != null ? profile.getName() : "");
 		}

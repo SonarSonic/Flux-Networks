@@ -7,12 +7,11 @@ import sonar.flux.api.tiles.IFlux.ConnectionType;
 
 public interface INetworkStatistics extends INBTSyncable {
 
-	public int getConnectionCount(ConnectionType type);
-	
-	public EnergyStats getCurrentStats();
-		
-	public EnergyStats getLatestStats();
-	
-	public ArrayList<EnergyStats> getRecordedStats();
-	
+    int getConnectionCount(ConnectionType type);
+
+    EnergyStats getLatestStats();
+
+    ArrayList<EnergyStats> getRecordedStats();
+
+    EnergyStats getCurrentStats();
 }
