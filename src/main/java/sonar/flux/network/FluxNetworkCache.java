@@ -27,7 +27,7 @@ import sonar.flux.connection.FluxHelper;
 
 /** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
 public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<PlayerListener> {
-	public ListenableList<PlayerListener> listeners = new ListenableList(this, FluxListener.values().length);
+	public ListenableList<PlayerListener> listeners = new ListenableList<>(this, FluxListener.values().length);
 	public ConcurrentHashMap<UUID, ArrayList<IFluxNetwork>> networks = new ConcurrentHashMap<>();
 
 	public int uniqueID = 1;

@@ -11,6 +11,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -19,6 +21,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -44,6 +47,7 @@ import sonar.flux.connection.FluxHelper;
 import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
+import sonar.flux.network.NetworkData;
 
 @Mod(modid = FluxNetworks.modid, name = FluxNetworks.name, acceptedMinecraftVersions = FluxNetworks.mc_versions, version = FluxNetworks.version, dependencies = "required-after:sonarcore@[" + FluxNetworks.SONAR_VERSION + ",);")
 public class FluxNetworks {
@@ -155,8 +159,16 @@ public class FluxNetworks {
 		FluxNetworks.energyContainerHandlers = FluxHelper.getEnergyContainerHandlers();
 	}
 
+    @EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        MapStorage storage = DimensionManager.getWorld(0).getMapStorage();
+        if(storage.getOrLoadData(NetworkData.class, NetworkData.IDENTIFIER) == null) {
+            storage.setData(NetworkData.IDENTIFIER, new NetworkData());
+        }
+    }
+    
 	@EventHandler
-	public void onServerStopping(FMLServerStoppedEvent event) {
+	public void onServerStopped(FMLServerStoppedEvent event) {
 		serverCache.clearNetworks();
 		clientCache.clearNetworks();
 		logger.info("Cleared Network Caches");
