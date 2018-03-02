@@ -11,14 +11,14 @@
     "variants": {
         "inventory": [{            
                  "submodel": {
-                    "down": { "model":"fluxnetworks:FluxCableConnection"},                    
-                    "up": { "model":"fluxnetworks:FluxCableConnection", "x": 180}
+                    "down": { "model":"fluxnetworks:fluxcableconnection"},                    
+                    "up": { "model":"fluxnetworks:fluxcableconnection", "x": 180}
                   }
                 }],
          "north":{
             "true":{
                  "submodel": {
-                    "north": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 180 }
+                    "north": { "model":"fluxnetworks:fluxcableconnection", "x": 90, "y": 180 }
                 }
             },
             "false":{
@@ -28,7 +28,7 @@
         "east":{
             "true":{
                  "submodel": {
-                    "east": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 270 }
+                    "east": { "model":"fluxnetworks:fluxcableconnection", "x": 90, "y": 270 }
                 }
             },
             "false":{
@@ -38,7 +38,7 @@
         "south":{
             "true":{
                  "submodel": {
-                    "south": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 0 }
+                    "south": { "model":"fluxnetworks:fluxcableconnection", "x": 90, "y": 0 }
                 }
             },
             "false":{
@@ -48,7 +48,7 @@
         "west":{
             "true":{
                  "submodel": {
-                    "west": { "model":"fluxnetworks:FluxCableConnection", "x": 90, "y": 90 }
+                    "west": { "model":"fluxnetworks:fluxcableconnection", "x": 90, "y": 90 }
                 }
             },
             "false":{
@@ -58,7 +58,7 @@
         "down":{
             "true":{
                  "submodel": {
-                    "down": { "model":"fluxnetworks:FluxCableConnection"}
+                    "down": { "model":"fluxnetworks:fluxcableconnection"}
                 }
             },
             "false":{
@@ -68,7 +68,7 @@
         "up":{
             "true":{
                  "submodel": {
-                    "up": { "model":"fluxnetworks:FluxCableConnection", "x": 180}
+                    "up": { "model":"fluxnetworks:fluxcableconnection", "x": 180}
                 }
             },
             "false":{

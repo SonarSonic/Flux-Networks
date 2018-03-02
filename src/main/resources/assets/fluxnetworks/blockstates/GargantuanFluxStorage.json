@@ -1,7 +1,7 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model":"fluxnetworks:FluxStorage",
+        "model":"fluxnetworks:fluxstorage",
         "transform":"forge:default-block",
         "textures": {
             "1":"fluxnetworks:model/tier3",

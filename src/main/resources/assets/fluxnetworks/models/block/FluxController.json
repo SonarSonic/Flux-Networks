@@ -1,9 +1,9 @@
 {
     "textures": {
-        "0": "fluxnetworks:model/fluxController_bottom",
+        "0": "fluxnetworks:model/fluxcontroller_bottom",
         "1": "fluxnetworks:model/flux_controller",
-        "top": "fluxnetworks:model/fluxController_top",
-        "particle": "fluxnetworks:model/fluxController_bottom"
+        "top": "fluxnetworks:model/fluxcontroller_top",
+        "particle": "fluxnetworks:model/fluxcontroller_bottom"
     },
     "elements": [
         {

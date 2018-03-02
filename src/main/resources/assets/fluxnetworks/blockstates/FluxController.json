@@ -1,7 +1,7 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model":"fluxnetworks:FluxController",
+        "model":"fluxnetworks:fluxcontroller",
         "transform":"forge:default-block"
      },
     "variants": {
@@ -9,12 +9,12 @@
         "connected":{
             "true":{
                  "textures": {                 
-                    "top":"fluxnetworks:model/fluxController_top"
+                    "top":"fluxnetworks:model/fluxcontroller_top"
                   }
             },
             "false":{
                  "textures": {                 
-                    "top":"fluxnetworks:model/fluxController_top_off"
+                    "top":"fluxnetworks:model/fluxcontroller_top_off"
                   }                
             }
          }        
