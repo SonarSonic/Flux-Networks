@@ -6,13 +6,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -22,10 +19,8 @@ import sonar.flux.api.FluxListener;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.network.FluxNetworkCache;
-import sonar.flux.network.NetworkData;
 
 public class FluxEvents {
-
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 		if (event.side == Side.CLIENT) {
@@ -42,30 +37,7 @@ public class FluxEvents {
 			}
 		}
 	}
-
-	@SubscribeEvent
-	public void onWorldLoad(WorldEvent.Load event) {
-		if (event.getWorld().isRemote) {
-			return;
-		}
-		MapStorage storage = event.getWorld().getMapStorage();
-		NetworkData data = (NetworkData) storage.getOrLoadData(NetworkData.class, NetworkData.tag);
-		if (data == null) {
-			/// for recovering data previously saved in perWorldStorage - this should be left in until at least 1.13
-			NetworkData old_data = (NetworkData) event.getWorld().getPerWorldStorage().getOrLoadData(NetworkData.class, NetworkData.tag);
-			if (old_data != null) {
-				old_data.loadAllNetworks();
-				old_data.clearLoadedNetworks();	
-				storage.setData(NetworkData.tag, new NetworkData(NetworkData.tag));
-			} else {
-				storage.setData(NetworkData.tag, new NetworkData(NetworkData.tag));
-			}
-		} else {
-			data.loadAllNetworks();
-			data.clearLoadedNetworks();
-		}
-	}
-
+	
 	@SubscribeEvent
 	public void dropFluxEvent(HarvestDropsEvent drops) {
 		if (!FluxConfig.enableFluxRedstoneDrop || !(drops.getState().getBlock() == Blocks.REDSTONE_ORE || (drops.getState().getBlock() == Blocks.LIT_REDSTONE_ORE)) || drops.getHarvester() instanceof FakePlayer || drops.isSilkTouching()) {
@@ -74,7 +46,6 @@ public class FluxEvents {
 		if (SonarCore.randInt(0, FluxConfig.redstone_ore_chance) == 1) {
 			drops.getDrops().add(new ItemStack(FluxNetworks.flux, Math.max(1, SonarCore.randInt(FluxConfig.redstone_ore_min_drop, FluxConfig.redstone_ore_max_drop))));
 		}
-
 	}
 
 	@SubscribeEvent
@@ -86,7 +57,6 @@ public class FluxEvents {
 		if (entity instanceof EntityItem && !(entity instanceof EntityFireItem)) {
 			EntityItem entityItem = (EntityItem) entity;
 			ItemStack stack = entityItem.getItem();
-			Item item;
 			if (!stack.isEmpty() && stack.getItem() == Items.REDSTONE) {
 				EntityFireItem newEntity = new EntityFireItem(event.getWorld(), entityItem.posX, entityItem.posY, entityItem.posZ, stack);
 				newEntity.motionX = entityItem.motionX;
