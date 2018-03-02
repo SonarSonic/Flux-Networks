@@ -26,13 +26,13 @@ public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStac
 	public static final String CONFIGS_TAG = "configs";
 	public static final String DISABLED_TAG = "disabled";
 
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	@Override
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof IFluxConfigurable) {
 				IFluxConfigurable configurable = (IFluxConfigurable) tile;
 				if (configurable.canAccess(player).canEdit()) {
-					ItemStack stack = hand == null ? SonarCompat.getEmpty() : player.getHeldItem(hand);
 					if (player.isSneaking()) {
 						NBTTagCompound configs = stack.getSubCompound(CONFIGS_TAG, true);
 						stack.setTagInfo(CONFIGS_TAG, configurable.addConfigs(new NBTTagCompound(), player));
@@ -68,8 +68,8 @@ public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStac
 		return EnumActionResult.SUCCESS;
 	}
 
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-		ItemStack stack = hand == null ? null : player.getHeldItem(hand);
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
 		if (!world.isRemote)
 			SonarCore.instance.guiHandler.openBasicItemStack(false, stack, player, world, player.getPosition(), 0);
 		return new ActionResult(EnumActionResult.SUCCESS, stack);

@@ -1,0 +1,22 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"fluxnetworks:fluxcontroller",
+        "transform":"forge:default-block"
+     },
+    "variants": {
+        "inventory": [{}],
+        "connected":{
+            "true":{
+                 "textures": {                 
+                    "top":"fluxnetworks:model/fluxcontroller_top"
+                  }
+            },
+            "false":{
+                 "textures": {                 
+                    "top":"fluxnetworks:model/fluxcontroller_top_off"
+                  }                
+            }
+         }        
+    }
+}

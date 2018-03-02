@@ -50,9 +50,9 @@ public class FluxNetworks {
 
 	public static final String name = "FluxNetworks";
 	public static final String modid = "fluxnetworks";
-	public static final String version = "3.0.4";
-	public static final String mc_versions = "[1.12,1.12.2]";
-	public static final String SONAR_VERSION = "5.0.6";
+	public static final String version = "1.3.9";
+	public static final String mc_versions = "[1.9.4, 1.10.2]";
+	public static final String SONAR_VERSION = "3.3.1";
 
 	public static final int saveDimension = 0;
 

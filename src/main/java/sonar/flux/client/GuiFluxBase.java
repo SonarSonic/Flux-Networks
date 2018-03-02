@@ -29,9 +29,9 @@ import static net.minecraft.client.renderer.GlStateManager.*;
 
 public abstract class GuiFluxBase extends GuiSonarTile {
 
-	public static final ResourceLocation select = new ResourceLocation("fluxnetworks:textures/gui/networkSelect.png");
+	public static final ResourceLocation select = new ResourceLocation("fluxnetworks:textures/gui/networkselect.png");
 	public static final ResourceLocation connections = new ResourceLocation("fluxnetworks:textures/gui/connections.png");
-	public static final ResourceLocation bground = new ResourceLocation("fluxnetworks:textures/gui/fluxPlug.png");
+	public static final ResourceLocation bground = new ResourceLocation("fluxnetworks:textures/gui/fluxplug.png");
 	public static final ResourceLocation buttons = new ResourceLocation("fluxnetworks:textures/gui/buttons/buttons.png");
 	public static final ResourceLocation navigation = new ResourceLocation("fluxnetworks:textures/gui/navigation.png");
 	public static final CustomColour[] colours = new CustomColour[] { new CustomColour(41, 94, 138), new CustomColour(52, 52, 119), new CustomColour(88, 42, 114), new CustomColour(136, 45, 96), new CustomColour(170, 57, 57), new CustomColour(170, 111, 57), new CustomColour(198, 185, 0), new CustomColour(96, 151, 50) };

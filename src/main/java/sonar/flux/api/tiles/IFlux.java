@@ -15,7 +15,7 @@ import sonar.flux.api.network.PlayerAccess;
  */
 public interface IFlux {
 
-    enum ConnectionType {
+    public enum ConnectionType {
         POINT, PLUG, STORAGE, CONTROLLER;
 
         public boolean canSend() {
