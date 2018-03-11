@@ -1,0 +1,92 @@
+itemGroup.Flux Networks=Flux Networks
+
+//machine upgrades
+upgrade.maximum=Максимум установлено
+upgrade.incompatible=Несовместимое обновление
+upgrade.accepted=Принятые обновления
+
+tile.FluxPlug.name=Флакс разъём
+tile.FluxPoint.name=Флакс точка
+tile.FluxStorage.name=Базовое флаксовое хранилище
+tile.HerculeanFluxStorage.name=Геркулесовое флаксовое хранилище
+tile.GargantuanFluxStorage.name=Гигантское флаксовое хранилище
+tile.FluxController.name=Флакс контроллер
+tile.FluxBlock.name=Флакс блок
+item.Flux.name=Флакс
+item.FluxCore.name=Флакс ядро
+item.FluxConfigurator.name=Флакс конфигуратор
+item.AdminConfigurator.name=Админ конфигуратор
+
+network.nav.home=Дом
+network.nav.config=Сетевые соединения
+network.nav.networks=Выбор сети
+network.nav.statistics=Сетевая статистика
+network.add=Добавить
+network.create=Создать новую сеть
+network.edit=Редактировать сеть
+network.rename=Переименовать
+network.delete=Удалить
+network.back=Назад
+network.notConnected=Не подключено
+network.protection=Защита
+network.restricted=Ограниченый
+network.private=Частный
+network.public=Публичный
+network.sendMode=Режим отправки
+network.receiveMode=Режим приема
+network.transferMode=Режим передачи
+network.transmitterMode=Режим передатчика
+network.on=Вкл.
+network.off=Выкл.
+network.hotbar=Только горячая панель
+network.held=Только удерживаемый предмет
+network.default=По умолчанию
+network.notransfer=Нет передачи
+network.transfer.even=Равномерное распределение
+network.transfer.surge=Всплеск
+network.transfer.hyper=Гипервсплеск
+network.transfer.god=Режим бога
+network.largest=Самый большой сначала
+network.smallest=Самый маленький сначала
+network.nextColour=Следующий цвет
+network.name=Имя
+network.colour=Цвет
+network.accessSetting=Настройка доступа
+network.changeSetting=Изменить настройки
+network.change=Изменить
+network.owner=Владелец
+network.players=Разрешенные игроки
+flux.type=Флакс тип
+flux.coords=Флакс координаты
+flux.ignorelimit=Игнорировать лимит
+point.priority=Приоритет
+point.max=Макс.
+plug.sending=Отправка
+plug.receiving=Получение
+plug.plugs=Разъёмы
+plug.points=Точки
+plug.storage=Хранилища
+plug.transfer=Передача
+
+network.energy.transfer=Передача
+network.energy.maxReceived=Макс. прием
+network.energy.maxSent=Макс. передача
+network.energy.received=Получено
+network.energy.sent=Отправлено
+network.energy.stored=Хранится
+
+//errors
+network.error.hasController=В этой сети уже есть контроллер
+network.error.notOwner=Только владелец может удалить сеть
+network.error.accessDenied=Доступ запрещен
+network.error.editNetwork=Вы не можете редактировать эту сеть
+network.error.networkMaxReached=У вас уже есть максимальное количество сетей.
+network.error.invalidUser=Ни один пользователь с этим именем не может быть найден
+
+//players
+network.player.user=Пользователь
+network.player.owner=Владелец сети
+network.player.sharedOwner=Общий владелец
+network.player.blocked=Блокированный
+
+fluxItem.Info=Получается путем бросания Редстоуна в огонь или лаву
