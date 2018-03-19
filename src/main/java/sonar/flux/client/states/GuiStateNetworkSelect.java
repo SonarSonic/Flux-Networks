@@ -1,21 +1,20 @@
 package sonar.flux.client.states;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.client.GuiFluxBase;
 import sonar.flux.client.GuiFluxBase.NetworkButton;
 import sonar.flux.client.GuiState;
 import sonar.flux.client.GuiTypeMessage;
-import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
 
@@ -57,7 +56,7 @@ public class GuiStateNetworkSelect extends GuiState {
 				int id = button.id - 10 + start;
 				if (id < networks.size()) {
 					IFluxCommon network = networks.get(id);
-					ArrayList<String> strings = new ArrayList<>();
+					List<String> strings = Lists.newArrayList();
 					if (x > flux.getGuiLeft() + 155) {
 						if (network.getNetworkID() == toDelete) {
 							strings.add(TextFormatting.RED + "ARE YOU SURE?");

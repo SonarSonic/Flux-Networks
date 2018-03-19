@@ -1,20 +1,21 @@
 package sonar.flux.client.states;
 
-import java.util.ArrayList;
+
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.client.GUI;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.client.GuiFluxBase;
 import sonar.flux.client.GuiFluxBase.NetworkButton;
 import sonar.flux.client.GuiTypeMessage;
-import sonar.flux.network.PacketFluxButton;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
 
@@ -35,7 +36,7 @@ public class GuiStateNetworkConnections extends GuiStateScrollable {
 			flux.renderNavigationPrompt("No Connections Available", "Network Selection");
 			return;
 		}
-		ArrayList<ClientFlux> connections = flux.common.getClientFluxConnection();
+		List<ClientFlux> connections = flux.common.getClientFluxConnection();
 		int start = (int) (connections.size() * scroller.getCurrentScroll());
 		int finish = Math.min(start + listSize + 2, connections.size());
 		selected = null;
@@ -58,7 +59,7 @@ public class GuiStateNetworkConnections extends GuiStateScrollable {
 		flux.bindTexture(flux.getBackground());
 		if (selected != null) {
 			boolean isCurrent = selected.coords.getBlockPos().equals(flux.tile.getPos());
-			ArrayList<String> strings = new ArrayList<>();
+			List<String> strings = Lists.newArrayList();
 			if (toRemove) {
 				strings.add(TextFormatting.RED + "REMOVE");
 			} else {

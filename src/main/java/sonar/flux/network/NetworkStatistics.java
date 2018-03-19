@@ -1,7 +1,9 @@
 package sonar.flux.network;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,10 +45,10 @@ public class NetworkStatistics extends DirtyPart implements INetworkStatistics, 
 		parts.addParts(pointCount, plugCount, storageCount);
 	}
 	
-    public void inputStatistics(EnergyStats stats, HashMap<FluxCache, ArrayList<IFluxListenable>> connections) {
-        plugCount.setObject(connections.getOrDefault(FluxCache.plug, new ArrayList<>()).size());
-        pointCount.setObject(connections.getOrDefault(FluxCache.point, new ArrayList<>()).size());
-        storageCount.setObject(connections.getOrDefault(FluxCache.storage, new ArrayList<>()).size());
+    public void inputStatistics(EnergyStats stats, HashMap<FluxCache, List<IFluxListenable>> connections) {
+        plugCount.setObject(connections.getOrDefault(FluxCache.plug, Lists.newArrayList()).size());
+        pointCount.setObject(connections.getOrDefault(FluxCache.point, Lists.newArrayList()).size());
+        storageCount.setObject(connections.getOrDefault(FluxCache.storage, Lists.newArrayList()).size());
         /*if (previousRecords != null && (ticks >= updateEvery || records.isEmpty())) {
 			ticks = 0;
             //records.add(new EnergyStats(previousRecords.transfer, previousRecords.maxSent, previousRecords.maxReceived));
@@ -92,7 +94,7 @@ public class NetworkStatistics extends DirtyPart implements INetworkStatistics, 
 	}
 
 	@Override
-	public ArrayList<EnergyStats> getRecordedStats() {
+	public List<EnergyStats> getRecordedStats() {
         return null;//records;
 	}
 

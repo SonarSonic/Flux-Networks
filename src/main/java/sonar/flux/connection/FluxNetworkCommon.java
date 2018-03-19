@@ -1,8 +1,9 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,7 +36,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	public SyncUUID ownerUUID = new SyncUUID(6);
 	public SyncNBTAbstract<CustomColour> colour = new SyncNBTAbstract(CustomColour.class, 7);
 	public NetworkStatistics networkStats = new NetworkStatistics();
-    public ArrayList<ClientFlux> fluxConnections = new ArrayList<>();
+    public List<ClientFlux> fluxConnections = Lists.newArrayList();
 	public FluxPlayersList players = new FluxPlayersList();
 	public SyncableList parts = new SyncableList(this);
 
@@ -109,12 +110,12 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	}
 
 	@Override
-	public void setClientConnections(ArrayList<ClientFlux> flux) {
-		this.fluxConnections = (ArrayList<ClientFlux>) flux.clone();
+	public void setClientConnections(List<ClientFlux> flux) {
+		this.fluxConnections = Lists.newArrayList(flux);
 	}
 
 	@Override
-	public ArrayList<ClientFlux> getClientFluxConnection() {
+	public List<ClientFlux> getClientFluxConnection() {
 		return fluxConnections;
 	}
 

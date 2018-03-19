@@ -1,9 +1,10 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
+import com.google.common.collect.Lists;
 
 import cofh.redstoneflux.api.IEnergyConnection;
 import net.minecraft.entity.Entity;
@@ -98,7 +99,7 @@ public class FluxHelper {
 					FluxNetworks.network.sendTo(new PacketFluxConnectionsList(network.getClientFluxConnection(), network.getNetworkID()), tally.listener.player);
 					break;
 				case FULL_NETWORK:
-					ArrayList<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(tally.listener.player, false);
+					List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(tally.listener.player, false);
 					FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), tally.listener.player);
 					tally.removeTallies(1, type);
 					tally.addTallies(1, FluxListener.SYNC_NETWORK);
@@ -196,8 +197,8 @@ public class FluxHelper {
 				if (controller.getTransmitterMode() == TransmitterMode.OFF) {
 					break;
 				}
-				ArrayList<FluxPlayer> playerNames = (ArrayList<FluxPlayer>) controller.getNetwork().getPlayers().clone();
-				ArrayList<EntityPlayer> players = new ArrayList<>();
+				List<FluxPlayer> playerNames = controller.getNetwork().getPlayers();
+				List<EntityPlayer> players = Lists.newArrayList();
 				for (FluxPlayer player : playerNames) {
 					Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.id);
 					if (entity != null && entity instanceof EntityPlayer) {
@@ -253,7 +254,7 @@ public class FluxHelper {
 	}
 
 	public static List<ISonarEnergyHandler> getEnergyHandlers() {
-		ArrayList<ISonarEnergyHandler> handlers = new ArrayList<>();
+		List<ISonarEnergyHandler> handlers = Lists.newArrayList();
 		for (ISonarEnergyHandler handler : SonarCore.energyHandlers) {
 			if (FluxConfig.transfers.get(handler.getProvidedType()).a) {
 				handlers.add(handler);
@@ -263,7 +264,7 @@ public class FluxHelper {
 	}
 
 	public static List<ISonarEnergyContainerHandler> getEnergyContainerHandlers() {
-		ArrayList<ISonarEnergyContainerHandler> handlers = new ArrayList<>();
+		List<ISonarEnergyContainerHandler> handlers = Lists.newArrayList();
 		for (ISonarEnergyContainerHandler handler : SonarCore.energyContainerHandlers) {
 			if (FluxConfig.transfers.get(handler.getProvidedType()).b) {
 				handlers.add(handler);

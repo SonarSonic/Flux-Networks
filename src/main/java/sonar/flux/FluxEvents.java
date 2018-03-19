@@ -1,6 +1,6 @@
 package sonar.flux;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -28,7 +28,7 @@ public class FluxEvents {
 		}
 		if (event.phase == Phase.START) {
 			FluxNetworkCache cache = FluxNetworks.getServerCache();
-			ArrayList<IFluxNetwork> networks = cache.getAllNetworks();
+			List<IFluxNetwork> networks = cache.getAllNetworks();
 			for (IFluxNetwork network : networks) {
 				network.updateNetwork();
 			}

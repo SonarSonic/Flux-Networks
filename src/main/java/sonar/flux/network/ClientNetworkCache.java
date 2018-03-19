@@ -1,8 +1,10 @@
 package sonar.flux.network;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.flux.FluxNetworks;
@@ -12,7 +14,7 @@ import sonar.flux.connection.EmptyFluxNetwork;
 
 public class ClientNetworkCache implements IFluxNetworkCache {
 
-	public HashMap<Integer, IFluxNetwork> networks = new HashMap<>();
+	public Map<Integer, IFluxNetwork> networks = Maps.newHashMap();
 
 	public void clearNetworks() {
 		networks.clear();
@@ -27,12 +29,12 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 		return EmptyFluxNetwork.INSTANCE;
 	}
 
-	public void updateNetworksFromPacket(ArrayList<? extends IFluxNetwork> packet, boolean updateEntireList) {
+	public void updateNetworksFromPacket(List<? extends IFluxNetwork> networks2, boolean updateEntireList) {
 		if (updateEntireList) {
-			packet.forEach(network -> readNetworkFromPacket(network));
+			networks2.forEach(network -> readNetworkFromPacket(network));
 		} else {
-			HashMap newMap = new HashMap();
-			packet.forEach(network -> newMap.put(network.getNetworkID(), network));
+			Map<Integer, IFluxNetwork> newMap = Maps.newHashMap();
+			networks2.forEach(network -> newMap.put(network.getNetworkID(), network));
 			networks = newMap;
 		}
 	}
@@ -48,7 +50,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public List<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
-		ArrayList<IFluxNetwork> available = new ArrayList<>();
+		List<IFluxNetwork> available = Lists.newArrayList();
 		for (IFluxNetwork network : getAllNetworks()) {
 			if (network.getPlayerAccess(player).canConnect()) {
 				available.add(network);
@@ -59,7 +61,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public List<IFluxNetwork> getAllNetworks() {
-		ArrayList<IFluxNetwork> available = new ArrayList<>();
+		List<IFluxNetwork> available = Lists.newArrayList();
 		networks.values().forEach(net -> available.add(net));
 		return available;
 	}

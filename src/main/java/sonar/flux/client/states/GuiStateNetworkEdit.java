@@ -1,5 +1,8 @@
 package sonar.flux.client.states;
 
+import static net.minecraft.client.renderer.GlStateManager.popMatrix;
+import static net.minecraft.client.renderer.GlStateManager.pushMatrix;
+
 import java.awt.Color;
 
 //import org.lwjgl.opengl.GL11;
@@ -18,7 +21,6 @@ import sonar.flux.client.GuiState;
 import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
-import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class GuiStateNetworkEdit extends GuiState {
 

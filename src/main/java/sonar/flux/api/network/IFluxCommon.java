@@ -1,6 +1,6 @@
 package sonar.flux.api.network;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import sonar.core.api.nbt.INBTSyncable;
@@ -57,9 +57,9 @@ public interface IFluxCommon extends INBTSyncable {
      */
     long getMaxEnergyStored();
 
-    void setClientConnections(ArrayList<ClientFlux> flux);
+    void setClientConnections(List<ClientFlux> flux);
 
-    ArrayList<ClientFlux> getClientFluxConnection();
+    List<ClientFlux> getClientFluxConnection();
 
     boolean isFakeNetwork();
 

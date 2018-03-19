@@ -1,6 +1,5 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +39,7 @@ import sonar.flux.network.NetworkStatistics;
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
 
 	// connections
-	public HashMap<FluxCache, ArrayList<IFluxListenable>> connections = new HashMap<>();
+	public HashMap<FluxCache, List<IFluxListenable>> connections = new HashMap<>();
 	public List<FluxCache> changedTypes = Lists.newArrayList(FluxCache.types);
 	public Queue<IFluxListenable> toAdd = new ConcurrentLinkedQueue<>();
 	public Queue<IFluxListenable> toRemove = new ConcurrentLinkedQueue<>();
@@ -211,7 +210,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
-		ArrayList<FluxPlayer> toDelete = new ArrayList<>();
+		List<FluxPlayer> toDelete = Lists.newArrayList();
 
 		players.stream().filter(p -> p.getUUID().equals(playerUUID)).forEach(toDelete::add);
 		players.removeAll(toDelete);
@@ -281,7 +280,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public void buildFluxConnections() {
-		ArrayList<ClientFlux> clientConnections = new ArrayList<>();
+		List<ClientFlux> clientConnections = Lists.newArrayList();
 		List<IFluxListenable> connections = getConnections(FluxCache.flux);
 		connections.forEach(flux -> clientConnections.add(new ClientFlux(flux)));
 		this.fluxConnections = clientConnections;

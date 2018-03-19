@@ -1,7 +1,6 @@
 package sonar.flux.client.states;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -12,7 +11,6 @@ import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
-import sonar.core.helpers.SonarHelper;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.PlayerAccess;
@@ -58,7 +56,7 @@ public class GuiStateNetworkPlayers extends GuiState {
         } else if (flux.disabledState) {
             flux.renderNavigationPrompt("Unavailable in Private Mode", "Edit Network");
         } else {
-            ArrayList<FluxPlayer> players = flux.common.getPlayers();
+            List<FluxPlayer> players = flux.common.getPlayers();
             FluxPlayer currentPlayer = null;
             if (!players.isEmpty()) {
                 int start = (int) (players.size() * scroller.getCurrentScroll());

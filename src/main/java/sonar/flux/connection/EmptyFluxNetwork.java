@@ -1,8 +1,9 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -129,7 +130,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void setClientConnections(ArrayList<ClientFlux> flux) {
+	public void setClientConnections(List<ClientFlux> flux) {
 
 	}
 
@@ -143,8 +144,8 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public ArrayList<ClientFlux> getClientFluxConnection() {
-        return new ArrayList<>();
+	public List<ClientFlux> getClientFluxConnection() {
+        return Lists.newArrayList();
 	}
 
 	@Override
@@ -181,7 +182,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
     @Override
     public <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type) {
-        return new ArrayList<>();
+        return Lists.newArrayList();
     }
 
     @Override

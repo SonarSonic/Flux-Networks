@@ -1,9 +1,11 @@
 package sonar.flux.client;
 
+import static net.minecraft.client.renderer.GlStateManager.color;
+import static net.minecraft.client.renderer.GlStateManager.scale;
+
 import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
-
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -25,7 +27,6 @@ import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileEntityFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
-import static net.minecraft.client.renderer.GlStateManager.*;
 
 public abstract class GuiFluxBase extends GuiSonarTile {
 
