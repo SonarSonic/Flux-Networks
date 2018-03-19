@@ -1,12 +1,17 @@
 package sonar.flux.api;
 
+import java.util.List;
 import java.util.UUID;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
+import sonar.flux.api.energy.IEnergyTransfer;
+import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFlux;
@@ -71,29 +76,6 @@ public class ClientFlux implements IFlux {
 		return customName;
 	}
 
-	@Override
-	public long getCurrentTransferLimit() {
-		return limit;
-	}
-
-	@Override
-    public void onEnergyRemoved(EnumFacing face, long remove) {
-    }
-
-	@Override
-    public void onEnergyAdded(EnumFacing face, long added) {
-    }
-
-	@Override
-	public TileEntity[] cachedTiles() {
-		return new TileEntity[]{};
-	}
-
-	@Override
-	public boolean canTransfer() {
-		return false;
-	}
-
     @Override
     public UUID getConnectionOwner() {
         return null;
@@ -105,25 +87,11 @@ public class ClientFlux implements IFlux {
     }
 
     @Override
-    public void updateNeighbours(boolean full) {
-    }
-
-    @Override
     public void connect(IFluxNetwork network) {
     }
 
     @Override
     public void disconnect(IFluxNetwork network) {
-    }
-
-    @Override
-    public long getCurrentTransfer(EnumFacing face) {
-        return 0;
-    }
-
-    @Override
-    public long getValidTransfer(long valid, EnumFacing face) {
-        return 0;
     }
 
     @Override
@@ -137,5 +105,10 @@ public class ClientFlux implements IFlux {
 	@Override
 	public PlayerAccess canAccess(EntityPlayer player) {
 		return PlayerAccess.SHARED_OWNER;
+	}
+
+	@Override
+	public ITransferHandler getTransferHandler() {
+		return null;
 	}
 }

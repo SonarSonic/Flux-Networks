@@ -26,7 +26,7 @@ import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxListener;
 import sonar.flux.common.item.FluxConfigurator;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 
 public abstract class FluxConnection extends SonarMachineBlock {
 
@@ -68,8 +68,8 @@ public abstract class FluxConnection extends SonarMachineBlock {
 		if (heldItem.isEmpty() || !(heldItem.getItem() instanceof FluxConfigurator)) {
 			if (!world.isRemote) {
 				TileEntity target = world.getTileEntity(pos);
-				if (target != null && target instanceof TileEntityFlux) {
-					TileEntityFlux flux = (TileEntityFlux) target;
+				if (target != null && target instanceof TileFlux) {
+					TileFlux flux = (TileFlux) target;
 					if (flux.canAccess(player).canEdit()) {
 						flux.listeners.addListener(player, FluxListener.FULL_NETWORK);
 						player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
@@ -87,11 +87,11 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemstack) {
 		super.onBlockPlacedBy(world, pos, state, player, itemstack);
 		TileEntity target = world.getTileEntity(pos);
-		if (target != null && target instanceof TileEntityFlux) {
-			TileEntityFlux flux = (TileEntityFlux) target;
+		if (target != null && target instanceof TileFlux) {
+			TileFlux flux = (TileFlux) target;
 			if (player != null && player instanceof EntityPlayer) {
 				flux.setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
-				flux.updateNeighbours(true);
+				flux.getTransferHandler().updateTransfers();
 			}
 		}
 	}

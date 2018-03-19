@@ -7,6 +7,7 @@ import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientFlux;
+import sonar.flux.connection.transfer.stats.NetworkStatistics;
 
 /**
  * both client and server networks implement this
@@ -45,7 +46,7 @@ public interface IFluxCommon extends INBTSyncable {
     /**
      * gets the latest network statistics for display
      */
-    INetworkStatistics getStatistics();
+    NetworkStatistics getStatistics();
 
     /**
      * gets the last full count of energy available in the system from connected Flux Storage

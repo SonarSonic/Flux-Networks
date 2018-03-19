@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import sonar.flux.common.tileentity.TileEntityController;
+import sonar.flux.common.tileentity.TileController;
 
 public class FluxController extends FluxConnection {
 
@@ -17,7 +17,7 @@ public class FluxController extends FluxConnection {
 	
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileEntityController();
+		return new TileController();
 	}
 	
     @Override

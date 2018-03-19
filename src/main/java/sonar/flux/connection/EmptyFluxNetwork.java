@@ -20,16 +20,20 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
-import sonar.flux.network.NetworkStatistics;
+import sonar.flux.connection.transfer.stats.NetworkStatistics;
 
 public class EmptyFluxNetwork implements IFluxNetwork {
 
 	public final static IFluxNetwork INSTANCE = new EmptyFluxNetwork();
-	public static final NetworkStatistics stats = new NetworkStatistics();
+	public final NetworkStatistics stats = new NetworkStatistics(this);
     public final static CustomColour colour = new CustomColour(41, 94, 138);
 
 	@Override
-	public void updateNetwork() {
+	public void onStartServerTick() {
+	}
+	
+	@Override
+	public void onEndServerTick() {
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import sonar.core.SonarCore;
 import sonar.core.network.PacketCoords;
 import sonar.core.network.PacketTileEntityHandler;
 import sonar.flux.api.FluxError;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 
 public class PacketFluxError extends PacketCoords {
 
@@ -37,9 +37,9 @@ public class PacketFluxError extends PacketCoords {
 
 		@Override
 		public IMessage processMessage(EntityPlayer player, MessageContext ctx, PacketFluxError message, TileEntity target) {
-			if (target instanceof TileEntityFlux) {
+			if (target instanceof TileFlux) {
 				SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
-					TileEntityFlux flux = (TileEntityFlux) target;
+					TileFlux flux = (TileFlux) target;
 					flux.error = message.error;
 				});
 			}

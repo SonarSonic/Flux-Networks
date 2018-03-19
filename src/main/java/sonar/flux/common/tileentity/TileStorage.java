@@ -6,43 +6,49 @@ import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
+import sonar.core.api.energy.EnergyType;
+import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
 import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxConfig;
+import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.client.GuiFlux;
 import sonar.flux.common.containers.ContainerFlux;
+import sonar.flux.connection.transfer.StorageTransfer;
+import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
-public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFluxStorage {
+public class TileStorage extends TileFlux implements IGuiTile, IFluxStorage {
 
+	public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 	public final SyncEnergyStorage storage;
 	public int maxTransfer;
 
-	public static class Basic extends TileEntityStorage {
+	public static class Basic extends TileStorage {
 		public Basic() {
 			super(FluxConfig.basicCapacity, FluxConfig.basicTransfer);
 			customName.setDefault("Basic Storage");
 		}
 	}
 
-	public static class Herculean extends TileEntityStorage {
+	public static class Herculean extends TileStorage {
 		public Herculean() {
 			super(FluxConfig.herculeanCapacity, FluxConfig.herculeanTransfer);
 			customName.setDefault("Herculean Storage");
 		}
 	}
 
-	public static class Gargantuan extends TileEntityStorage {
+	public static class Gargantuan extends TileStorage {
 		public Gargantuan() {
 			super(FluxConfig.gargantuanCapacity, FluxConfig.gargantuanTransfer);
 			customName.setDefault("Gargantuan Storage");
 		}
 	}
 
-	public TileEntityStorage(int capacity, int transfer) {
+	public TileStorage(int capacity, int transfer) {
 		super(ConnectionType.STORAGE);
 		maxTransfer = transfer;
 		storage = new SyncEnergyStorage(capacity, maxTransfer);
@@ -102,7 +108,7 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 		return storage.getEnergyLevel();
 	}
 
-	public boolean canTransfer() {
+	public boolean hasTransfers() {
 		return true;
 	}
 
@@ -175,5 +181,10 @@ public class TileEntityStorage extends TileEntityFlux implements IGuiTile, IFlux
 			colour.readFromBuf(buf);
 			break;
 		}
+	}
+
+	@Override
+	public ITransferHandler getTransferHandler() {
+		return handler;
 	}
 }

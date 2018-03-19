@@ -18,14 +18,14 @@ import sonar.flux.api.tiles.IFlux;
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyProvider", modid = "redstoneflux"),
         @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyReceiver", modid = "redstoneflux")
 })
-public class TileEntityCable extends TileEntitySonar implements IEnergyReceiver, IEnergyProvider {
+public class TileCable extends TileEntitySonar implements IEnergyReceiver, IEnergyProvider {
 	public void updateConnections() {
 		boolean[] sides = new boolean[6];
 		for (EnumFacing face : EnumFacing.VALUES) {
 			BlockPos pos = this.pos.offset(face);
 			TileEntity tile = getWorld().getTileEntity(pos);
 			if (tile != null && !(tile instanceof IFlux)) {
-                if (tile instanceof TileEntityCable || SonarLoader.rfLoaded && tile instanceof IEnergyConnection) {
+                if (tile instanceof TileCable || SonarLoader.rfLoaded && tile instanceof IEnergyConnection) {
 					sides[face.getIndex()] = true;
 					continue;
 				}

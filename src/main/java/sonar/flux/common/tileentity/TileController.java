@@ -3,20 +3,26 @@ package sonar.flux.common.tileentity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import sonar.core.api.energy.EnergyType;
+import sonar.core.api.utils.ActionType;
 import sonar.core.network.sync.SyncEnum;
 import sonar.core.utils.IGuiTile;
+import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.client.GuiFluxController;
 import sonar.flux.common.containers.ContainerFlux;
+import sonar.flux.connection.transfer.ControllerTransfer;
+import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
-public class TileEntityController extends TileEntityFlux implements IGuiTile, IFluxController {
+public class TileController extends TileFlux implements IGuiTile, IFluxController {
 	public SyncEnum<PriorityMode> sendMode = new SyncEnum(PriorityMode.values(), 10);
 	public SyncEnum<PriorityMode> receiveMode = new SyncEnum(PriorityMode.values(), 11);
 	public SyncEnum<TransmitterMode> transmitter = new SyncEnum(TransmitterMode.values(), 12);
 	public SyncEnum<TransferMode> transfer = new SyncEnum(TransferMode.values(), 13);
+	public final SingleTransferHandler handler = new SingleTransferHandler(this, new ControllerTransfer(this));
 
-	public TileEntityController() {
+	public TileController() {
 		super(ConnectionType.CONTROLLER);
 		syncList.addParts(sendMode, receiveMode, transmitter, transfer);
 		customName.setDefault("Flux Controller");
@@ -42,7 +48,7 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 		return transfer.getObject();
 	}
 
-	public boolean canTransfer() {
+	public boolean hasTransfers() {
 		return true;
 	}
 
@@ -105,5 +111,10 @@ public class TileEntityController extends TileEntityFlux implements IGuiTile, IF
 			customName.readFromBuf(buf);
 			break;
 		}
+	}
+
+	@Override
+	public ITransferHandler getTransferHandler() {
+		return handler;
 	}
 }

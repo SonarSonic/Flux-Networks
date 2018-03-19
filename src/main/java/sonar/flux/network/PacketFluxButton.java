@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import sonar.core.SonarCore;
 import sonar.core.network.PacketCoords;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 
 /** FIXME, shouldn't need to have coords attached */
 public class PacketFluxButton extends PacketCoords {
@@ -69,8 +69,8 @@ public class PacketFluxButton extends PacketCoords {
 						world = server.getWorld(message.dimension);
 					}
 					TileEntity te = world.getTileEntity(message.pos);
-					if (te instanceof TileEntityFlux) {
-						TileEntityFlux source = (TileEntityFlux) te;
+					if (te instanceof TileFlux) {
+						TileFlux source = (TileFlux) te;
 						newMessage.value = message.type.doPacket(source, player, message.packetTag);				
 					}
 				}

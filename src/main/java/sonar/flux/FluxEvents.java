@@ -21,23 +21,31 @@ import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.network.FluxNetworkCache;
 
 public class FluxEvents {
+
 	@SubscribeEvent
 	public void onServerTick(TickEvent.ServerTickEvent event) {
 		if (event.side == Side.CLIENT) {
 			return;
 		}
+		FluxNetworkCache cache = FluxNetworks.getServerCache();
+		List<IFluxNetwork> networks = cache.getAllNetworks();
 		if (event.phase == Phase.START) {
-			FluxNetworkCache cache = FluxNetworks.getServerCache();
-			List<IFluxNetwork> networks = cache.getAllNetworks();
 			for (IFluxNetwork network : networks) {
-				network.updateNetwork();
+				network.onStartServerTick();
 			}
 			if (cache.getListenerList().hasListeners(FluxListener.ADMIN.ordinal())) {
 				cache.updateAdminListeners();
 			}
 		}
+		if (event.phase == Phase.START) {
+
+			for (IFluxNetwork network : networks) {
+				network.onEndServerTick();
+			}
+		}
+
 	}
-	
+
 	@SubscribeEvent
 	public void dropFluxEvent(HarvestDropsEvent drops) {
 		if (!FluxConfig.enableFluxRedstoneDrop || !(drops.getState().getBlock() == Blocks.REDSTONE_ORE || (drops.getState().getBlock() == Blocks.LIT_REDSTONE_ORE)) || drops.getHarvester() instanceof FakePlayer || drops.isSilkTouching()) {

@@ -11,18 +11,18 @@ import sonar.core.SonarCore;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxCommon;
-import sonar.flux.api.network.INetworkStatistics;
+import sonar.flux.connection.transfer.stats.NetworkStatistics;
 
 public class PacketNetworkStatistics implements IMessage {
 
     public int networkID;
-    public INetworkStatistics stats;
+    public NetworkStatistics stats;
     public NBTTagCompound received;
 
     public PacketNetworkStatistics() {
     }
 
-    public PacketNetworkStatistics(int networkID, INetworkStatistics stats) {
+    public PacketNetworkStatistics(int networkID, NetworkStatistics stats) {
         this.networkID = networkID;
         this.stats = stats;
     }

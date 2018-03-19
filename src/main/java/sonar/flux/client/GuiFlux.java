@@ -18,8 +18,8 @@ import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.common.tileentity.TileEntityFlux;
-import sonar.flux.common.tileentity.TileEntityStorage;
+import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.common.tileentity.TileStorage;
 import sonar.flux.connection.EmptyFluxNetwork;
 
 public class GuiFlux extends GuiFluxBase {
@@ -28,7 +28,7 @@ public class GuiFlux extends GuiFluxBase {
 	public IFluxCommon common = EmptyFluxNetwork.INSTANCE;
 	public boolean disabledState;
 
-	public GuiFlux(Container container, TileEntityFlux tile, EntityPlayer player) {
+	public GuiFlux(Container container, TileFlux tile, EntityPlayer player) {
 		super(container, tile);
 		this.player = player;
 	}
@@ -85,7 +85,7 @@ public class GuiFlux extends GuiFluxBase {
 		case POINT:
 			break;
 		case STORAGE:
-			TileEntityStorage entity = (TileEntityStorage) flux;
+			TileStorage entity = (TileStorage) flux;
 			renderEnergyBar(14, 90 + 4, entity.storage.getEnergyStored(), entity.storage.getMaxEnergyStored(), midBlue, FontHelper.getIntFromColor(41, 94, 220));
 			IFluxCommon common = FluxNetworks.getClientCache().getNetwork(tile.networkID.getObject());
 			renderEnergyBar(14, 130 + 4, common.getEnergyAvailable(), common.getMaxEnergyStored(), colour, colour);

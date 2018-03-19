@@ -20,7 +20,9 @@ public interface IFluxNetwork extends IFluxCommon {
     /**
      * called every tick like TileEntities, you shouldn't be calling this method
      */
-    void updateNetwork();
+    void onStartServerTick();
+    
+    void onEndServerTick();
 
     /**
      * returns true if a {@link IFluxController} has been connected

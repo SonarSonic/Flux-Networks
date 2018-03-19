@@ -22,9 +22,8 @@ import sonar.flux.api.ClientFlux;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.FluxPlayersList;
 import sonar.flux.api.network.IFluxCommon;
-import sonar.flux.api.network.INetworkStatistics;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.network.NetworkStatistics;
+import sonar.flux.connection.transfer.stats.NetworkStatistics;
 
 public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListener {
 
@@ -35,7 +34,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	public SyncTagType.LONG energyStored = new SyncTagType.LONG(5);
 	public SyncUUID ownerUUID = new SyncUUID(6);
 	public SyncNBTAbstract<CustomColour> colour = new SyncNBTAbstract(CustomColour.class, 7);
-	public NetworkStatistics networkStats = new NetworkStatistics();
+	public NetworkStatistics networkStats = new NetworkStatistics(this);
     public List<ClientFlux> fluxConnections = Lists.newArrayList();
 	public FluxPlayersList players = new FluxPlayersList();
 	public SyncableList parts = new SyncableList(this);
@@ -95,7 +94,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	}
 
 	@Override
-	public INetworkStatistics getStatistics() {
+	public NetworkStatistics getStatistics() {
 		return networkStats;
 	}
 

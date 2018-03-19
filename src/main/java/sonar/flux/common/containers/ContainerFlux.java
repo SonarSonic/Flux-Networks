@@ -3,15 +3,15 @@ package sonar.flux.common.containers;
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.inventory.ContainerSync;
 import sonar.flux.client.GuiTypeMessage;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 
 public class ContainerFlux extends ContainerSync {
-    public TileEntityFlux entity;
+    public TileFlux entity;
     public EntityPlayer player;
 
     public GuiTypeMessage state;
 
-	public ContainerFlux(EntityPlayer player, TileEntityFlux entity, boolean network) {
+	public ContainerFlux(EntityPlayer player, TileFlux entity, boolean network) {
 		super(entity);
         this.entity = entity;
         this.player = player;

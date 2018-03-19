@@ -21,12 +21,12 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.GuiTypeMessage;
 import sonar.flux.common.containers.ContainerFlux;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.FluxHelper;
 
 public class PacketHelper {
 
-	public static void sendPacketToServer(PacketType type, TileEntityFlux source, NBTTagCompound packetTag) {
+	public static void sendPacketToServer(PacketType type, TileFlux source, NBTTagCompound packetTag) {
 		BlockCoords coords = source.getCoords();
 		FluxNetworks.network.sendToServer(new PacketFluxButton(type, coords.getBlockPos(), packetTag, coords.getDimension()));
 	}
@@ -43,7 +43,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doNetworkSetPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doNetworkSetPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		if (source.getNetwork().getNetworkID() == networkID) {
 			return null;
@@ -71,7 +71,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doNetworkEditPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doNetworkEditPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		String newName = packetTag.getString("networkName");
 		CustomColour colour = new CustomColour(packetTag.getInteger("colourRGB"));
@@ -101,7 +101,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doNetworkCreationPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doNetworkCreationPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		String newName = packetTag.getString("networkName");
 		CustomColour colour = new CustomColour(packetTag.getInteger("colourRGB"));
 		AccessType access = AccessType.values()[packetTag.getInteger("accessType")];
@@ -119,7 +119,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doNetworkDeletePacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doNetworkDeletePacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		IFluxNetwork toDelete = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!toDelete.isFakeNetwork() && toDelete instanceof IFluxNetwork) {
@@ -140,7 +140,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doSetPriorityPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doSetPriorityPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int priority = packetTag.getInteger("priority");
 		if (source.canAccess(player).canEdit()) {
 			source.priority.setObject(priority);
@@ -158,7 +158,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doSetTransferLimitPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doSetTransferLimitPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		long priority = packetTag.getLong("transferLimit");
 		if (source.canAccess(player).canEdit()) {
 			source.limit.setObject(priority);
@@ -178,7 +178,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doAddPlayerPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doAddPlayerPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		String playerName = packetTag.getString("playerName");
 		PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
@@ -211,7 +211,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doRemovePlayerPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doRemovePlayerPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		UUID playerRemoved = packetTag.getUniqueId("playerRemoved");
 		PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
@@ -238,7 +238,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doChangePlayerPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doChangePlayerPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		UUID playerChanged = packetTag.getUniqueId("playerChanged");
 		if (playerChanged != null) {
@@ -273,7 +273,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doDisconnectPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doDisconnectPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		IFluxNetwork network = source.getNetwork();
 		if (networkID == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && source.playerUUID.getUUID().equals(FluxHelper.getOwnerUUID(player))) {
@@ -291,7 +291,7 @@ public class PacketHelper {
 		return tag;
 	}
 
-	public static IMessage doStateChangePacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public static IMessage doStateChangePacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		GuiTypeMessage state = GuiTypeMessage.values()[packetTag.getInteger("guiType")];
 		Container container = player.openContainer;
 		if (container != null && container instanceof ContainerFlux) {

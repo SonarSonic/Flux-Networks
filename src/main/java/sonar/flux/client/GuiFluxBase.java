@@ -24,7 +24,7 @@ import sonar.flux.api.AccessType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
 
@@ -46,9 +46,9 @@ public abstract class GuiFluxBase extends GuiSonarTile {
 
 	public static GuiState state = GuiState.INDEX;
 
-	public TileEntityFlux tile;
+	public TileFlux tile;
 
-	public GuiFluxBase(Container container, TileEntityFlux tile) {
+	public GuiFluxBase(Container container, TileFlux tile) {
 		super(container, tile);
 		this.tile = tile;
 		this.tile.error = FluxError.NONE;

@@ -8,7 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxConfig;
-import sonar.flux.common.tileentity.TileEntityStorage;
+import sonar.flux.common.tileentity.TileStorage;
 
 public class FluxStorage extends FluxConnection {
 
@@ -20,7 +20,7 @@ public class FluxStorage extends FluxConnection {
 
 		@Override
 		public TileEntity createNewTileEntity(World world, int i) {
-			return new TileEntityStorage.Herculean();
+			return new TileStorage.Herculean();
 		}
 
 		public int getMaxStorage() {
@@ -36,7 +36,7 @@ public class FluxStorage extends FluxConnection {
 
 		@Override
 		public TileEntity createNewTileEntity(World world, int i) {
-			return new TileEntityStorage.Gargantuan();
+			return new TileStorage.Gargantuan();
 		}
 
 		public int getMaxStorage() {
@@ -50,7 +50,7 @@ public class FluxStorage extends FluxConnection {
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int i) {
-		return new TileEntityStorage.Basic();
+		return new TileStorage.Basic();
 	}
 
 	public int getMaxStorage() {

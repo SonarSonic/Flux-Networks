@@ -1,5 +1,6 @@
 package sonar.flux.api.tiles;
 
+import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,6 +8,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
+import sonar.flux.api.energy.IEnergyTransfer;
+import sonar.flux.api.energy.IFluxTransfer;
+import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 
@@ -17,7 +21,7 @@ public interface IFlux {
 
     enum ConnectionType {
         POINT, PLUG, STORAGE, CONTROLLER;
-
+    	/*
         public boolean canSend() {
             return this == PLUG || this == STORAGE;
         }
@@ -25,6 +29,14 @@ public interface IFlux {
         public boolean canReceive() {
             return this == POINT || this == STORAGE || this == CONTROLLER;
         }
+        */
+    	public boolean canAddPhantomPower(){
+            return this == PLUG;
+    	}
+    	
+    	public boolean canRemovePhantomPower(){
+            return this == POINT;
+    	}
     }
 
     int getNetworkID();
@@ -57,19 +69,13 @@ public interface IFlux {
      * the maximum RF/t this Flux connection can receive
      */
     long getTransferLimit();
+    
 
-    /**
-     * the current RF/t this Flux connection can receive
-     */
-    long getCurrentTransferLimit();
-
-    long getCurrentTransfer(EnumFacing face);
-
-    long getValidTransfer(long valid, EnumFacing face);
-
+    /*
     void onEnergyRemoved(EnumFacing face, long remove);
 
     void onEnergyAdded(EnumFacing face, long added);
+    */
 
     void setMaxSend(long send);
 
@@ -85,12 +91,8 @@ public interface IFlux {
      */
     String getCustomName();
 
-    TileEntity[] cachedTiles();
-
-    boolean canTransfer();
-
-    void updateNeighbours(boolean full);
-
+    ITransferHandler getTransferHandler();
+    
     void connect(IFluxNetwork network);
 
     void disconnect(IFluxNetwork network);

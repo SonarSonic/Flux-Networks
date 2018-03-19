@@ -1,26 +1,38 @@
 package sonar.flux.common.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.block.ConnectedTile.PropertySonarFacing;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 
 public abstract class FluxSidedConnection extends FluxConnection {
 
-    FluxSidedConnection() {
+	FluxSidedConnection() {
 		super();
 	}
 
 	@Override
 	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+		super.onNeighborChange(world, pos, neighbor);
+		updateTransfers(world, pos);
+	}
+
+	public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
+		super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
+		updateTransfers(world, observerPos);
+	}
+
+	public void updateTransfers(IBlockAccess world, BlockPos pos) {
 		TileEntity tile = world.getTileEntity(pos);
-		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileEntityFlux) {
-			TileEntityFlux flux = (TileEntityFlux) tile;
-            flux.updateNeighbours(true);
+		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileFlux) {
+			TileFlux flux = (TileFlux) tile;
+			flux.getTransferHandler().updateTransfers();
 		}
 	}
 
@@ -30,8 +42,8 @@ public abstract class FluxSidedConnection extends FluxConnection {
 		int y = pos.getY();
 		int z = pos.getZ();
 		TileEntity tile = w.getTileEntity(pos);
-		if (tile != null && tile instanceof TileEntityFlux) {
-			TileEntityFlux flux = (TileEntityFlux) tile;
+		if (tile != null && tile instanceof TileFlux) {
+			TileFlux flux = (TileFlux) tile;
 			for (PropertySonarFacing face : ConnectedTile.faces) {
 				currentState = currentState.withProperty(face, flux.connections.getObjects().get(face.facing.getIndex()));
 			}
@@ -40,6 +52,6 @@ public abstract class FluxSidedConnection extends FluxConnection {
 	}
 
 	protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, CONNECTED, ConnectedTile.NORTH, ConnectedTile.EAST, ConnectedTile.SOUTH, ConnectedTile.WEST, ConnectedTile.DOWN, ConnectedTile.UP);
+		return new BlockStateContainer(this, CONNECTED, ConnectedTile.NORTH, ConnectedTile.EAST, ConnectedTile.SOUTH, ConnectedTile.WEST, ConnectedTile.DOWN, ConnectedTile.UP);
 	}
 }

@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import sonar.flux.common.tileentity.TileEntityPoint;
+import sonar.flux.common.tileentity.TileFluxPoint;
 
 public class FluxPoint extends FluxSidedConnection {
 
@@ -17,7 +17,7 @@ public class FluxPoint extends FluxSidedConnection {
 
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileEntityPoint();
+		return new TileFluxPoint();
 	}
 
 	public boolean hasSpecialRenderer() {

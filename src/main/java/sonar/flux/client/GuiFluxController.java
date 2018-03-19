@@ -6,14 +6,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.SonarCore;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.common.containers.ContainerFlux;
-import sonar.flux.common.tileentity.TileEntityController;
+import sonar.flux.common.tileentity.TileController;
 
 public class GuiFluxController extends GuiFlux {
 	// public static final ResourceLocation bground = new ResourceLocation("FluxNetworks:textures/gui/fluxPlug.png");
 
-	public TileEntityController entity;
+	public TileController entity;
 
-	public GuiFluxController(EntityPlayer player, TileEntityController entity) {
+	public GuiFluxController(EntityPlayer player, TileController entity) {
 		super(new ContainerFlux(player, entity, false), entity, player);
 		this.entity = entity;
 	}

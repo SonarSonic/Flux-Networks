@@ -3,7 +3,7 @@ package sonar.flux.network;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import sonar.flux.common.tileentity.TileEntityFlux;
+import sonar.flux.common.tileentity.TileFlux;
 
 public enum PacketType {
 	SET_NETWORK(PacketHelper::doNetworkSetPacket), //
@@ -22,11 +22,11 @@ public enum PacketType {
 		this.action = action;
 	}
 
-	public IMessage doPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+	public IMessage doPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		return action.doPacket(source, player, packetTag);
 	}
 
 	public interface IPacketAction {
-		public IMessage doPacket(TileEntityFlux source, EntityPlayer player, NBTTagCompound packetTag);
+		public IMessage doPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag);
 	}
 }
