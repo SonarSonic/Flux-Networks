@@ -1,5 +1,7 @@
 package sonar.flux.common.tileentity;
 
+import com.google.common.collect.Lists;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -11,17 +13,16 @@ import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
-import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxConfig;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
-import sonar.flux.client.GuiFlux;
+import sonar.flux.client.GuiTab;
 import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.connection.transfer.StorageTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
-public class TileStorage extends TileFlux implements IGuiTile, IFluxStorage {
+public class TileStorage extends TileFlux implements IFluxStorage {
 
 	public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 	public final SyncEnergyStorage storage;
@@ -110,16 +111,6 @@ public class TileStorage extends TileFlux implements IGuiTile, IFluxStorage {
 
 	public boolean hasTransfers() {
 		return true;
-	}
-
-	@Override
-	public Object getGuiContainer(EntityPlayer player) {
-		return new ContainerFlux(player, this, false);
-	}
-
-	@Override
-	public Object getGuiScreen(EntityPlayer player) {
-		return new GuiFlux((Container) getGuiContainer(player), this, player);
 	}
 
 	@Override

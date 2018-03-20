@@ -1,21 +1,23 @@
 package sonar.flux.common.tileentity;
 
+import com.google.common.collect.Lists;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import sonar.core.api.energy.EnergyType;
-import sonar.core.api.utils.ActionType;
+import net.minecraft.world.World;
+import sonar.core.api.IFlexibleGui;
 import sonar.core.network.sync.SyncEnum;
-import sonar.core.utils.IGuiTile;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.client.GuiFluxController;
+import sonar.flux.client.GuiTab;
 import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.connection.transfer.ControllerTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
-public class TileController extends TileFlux implements IGuiTile, IFluxController {
+public class TileController extends TileFlux implements IFlexibleGui, IFluxController {
 	public SyncEnum<PriorityMode> sendMode = new SyncEnum(PriorityMode.values(), 10);
 	public SyncEnum<PriorityMode> receiveMode = new SyncEnum(PriorityMode.values(), 11);
 	public SyncEnum<TransmitterMode> transmitter = new SyncEnum(TransmitterMode.values(), 12);
@@ -55,16 +57,6 @@ public class TileController extends TileFlux implements IGuiTile, IFluxControlle
 	@Override
 	public boolean canConnectEnergy(EnumFacing from) {
 		return false;
-	}
-
-	@Override
-	public Object getGuiContainer(EntityPlayer player) {
-		return new ContainerFlux(player, this, false);
-	}
-
-	@Override
-	public Object getGuiScreen(EntityPlayer player) {
-		return new GuiFluxController(player, this);
 	}
 
 	@Override

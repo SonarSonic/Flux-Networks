@@ -1,5 +1,6 @@
 package sonar.flux.common.tileentity;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -8,6 +9,7 @@ import cofh.redstoneflux.api.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.Optional;
 import sonar.core.SonarCore;
+import sonar.core.api.IFlexibleGui;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.listener.ListenableList;
@@ -27,6 +30,7 @@ import sonar.core.network.sync.SyncTagTypeList;
 import sonar.core.network.sync.SyncUUID;
 import sonar.core.network.utils.IByteBufTile;
 import sonar.flux.FluxConfig;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.FluxListener;
@@ -37,12 +41,16 @@ import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFluxListenable;
+import sonar.flux.client.GuiTab;
 import sonar.flux.common.block.FluxConnection;
+import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
+import sonar.flux.network.FluxNetworkCache;
+import sonar.flux.network.PacketFluxNetworkList;
 
 @Optional.InterfaceList({ @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyHandler", modid = "redstoneflux") })
-public abstract class TileFlux extends TileEntitySonar implements IFluxListenable, IEnergyHandler, IByteBufTile, IFluxConfigurable {
+public abstract class TileFlux extends TileEntitySonar implements IFluxListenable, IEnergyHandler, IByteBufTile, IFluxConfigurable, IFlexibleGui {
 
 	private final ConnectionType type;
 
@@ -401,5 +409,25 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		if (config.hasKey(FluxConfigurationType.DISABLE_LIMIT.getNBTName())) {
 			this.disableLimit.setObject(config.getBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName()));
 		}
+	}
+
+	@Override
+    public void onGuiOpened(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag){
+    	FluxNetworkCache.instance().getListenerList().addListener(player, FluxListener.FULL_NETWORK);
+		listeners.addListener(player, FluxListener.FULL_NETWORK);
+
+		List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(player, false);
+		FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), (EntityPlayerMP) player);
+		
+    }
+    
+	@Override
+	public Object getServerElement(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
+		return new ContainerFlux(player, this);
+	}
+
+	@Override
+	public Object getClientElement(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
+		return GuiTab.INDEX.getGuiScreen(this, Lists.newArrayList(GuiTab.INDEX, GuiTab.NETWORK_SELECT, GuiTab.CONNECTIONS, GuiTab.NETWORK_STATS, GuiTab.PLAYERS, GuiTab.NETWORK_EDIT, GuiTab.NETWORK_CREATE));
 	}
 }

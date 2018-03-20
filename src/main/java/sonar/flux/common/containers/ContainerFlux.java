@@ -11,7 +11,7 @@ public class ContainerFlux extends ContainerSync {
 
     public GuiTypeMessage state;
 
-	public ContainerFlux(EntityPlayer player, TileFlux entity, boolean network) {
+	public ContainerFlux(EntityPlayer player, TileFlux entity) {
 		super(entity);
         this.entity = entity;
         this.player = player;

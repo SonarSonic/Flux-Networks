@@ -71,7 +71,7 @@ public class GuiConfigurator extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(GuiFluxBase.bground);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(AbstractGuiTab.blank_flux_gui);
         drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 

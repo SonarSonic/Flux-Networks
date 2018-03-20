@@ -42,7 +42,7 @@ public class GuiAdminConfigurator extends GuiSelectionGrid<IFluxNetwork> {
 
 	@Override
 	public void renderStrings(int x, int y) {
-		FontHelper.textCentre("Admin Configurator", xSize, 10, GuiFluxBase.midBlue);
+		FontHelper.textCentre("Admin Configurator", xSize, 10, AbstractGuiTab.midBlue);
 	}
 
 	@Override

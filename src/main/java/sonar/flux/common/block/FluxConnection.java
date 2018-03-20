@@ -17,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import sonar.core.SonarCore;
 import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
@@ -71,8 +72,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 				if (target != null && target instanceof TileFlux) {
 					TileFlux flux = (TileFlux) target;
 					if (flux.canAccess(player).canEdit()) {
-						flux.listeners.addListener(player, FluxListener.FULL_NETWORK);
-						player.openGui(FluxNetworks.instance, IGuiTile.ID, world, pos.getX(), pos.getY(), pos.getZ());
+						flux.openFlexibleGui(player, 0);
 					} else {
 						FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + "You don't have permission to access this network", world, player);
 					}
