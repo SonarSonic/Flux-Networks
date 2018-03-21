@@ -1,7 +1,9 @@
 package sonar.flux.connection.transfer;
 
+import net.minecraft.item.ItemStack;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
+import sonar.core.helpers.ItemStackHelper;
 import sonar.flux.api.energy.IEnergyTransfer;
 import sonar.flux.common.tileentity.TileStorage;
 
@@ -30,6 +32,11 @@ public class StorageTransfer extends BaseFluxTransfer implements IEnergyTransfer
 			removedFromNetwork(added); // even though the storage is part of the network, we still want to know how much it "took" from the network
 		}
 		return added;
+	}
+
+	@Override
+	public ItemStack getDisplayStack() {
+		return ItemStackHelper.getBlockItem(tile.getWorld(), tile.getPos());
 	}
 	
 }

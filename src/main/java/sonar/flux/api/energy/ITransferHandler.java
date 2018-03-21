@@ -10,7 +10,9 @@ public interface ITransferHandler {
 	
 	void onEndWorldTick();
 	
-	//void onNetworkChanged();
+	long getAdded();
+	
+	long getRemoved();
 
     boolean hasTransfers();
 

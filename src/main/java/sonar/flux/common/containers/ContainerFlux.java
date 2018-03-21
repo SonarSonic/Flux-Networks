@@ -2,27 +2,23 @@ package sonar.flux.common.containers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.inventory.ContainerSync;
-import sonar.flux.client.GuiTypeMessage;
+import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.network.ListenerHelper;
 
 public class ContainerFlux extends ContainerSync {
-    public TileFlux entity;
-    public EntityPlayer player;
-
-    public GuiTypeMessage state;
+	public TileFlux entity;
+	public EntityPlayer player;
 
 	public ContainerFlux(EntityPlayer player, TileFlux entity) {
 		super(entity);
-        this.entity = entity;
-        this.player = player;
+		this.entity = entity;
+		this.player = player;
 	}
 
-    public void switchState(GuiTypeMessage state) {
-		if (entity.isServer()) {
-            entity.listeners.clearListener(entity.listeners.findListener(player));
-            entity.listeners.addListener(player, state.getViewingType());//I think this sends the packet again or messes with block pos
-		}
-		this.state = state;
+	@Override
+	public void detectAndSendChanges() {
+		super.detectAndSendChanges();
 	}
 
 	@Override
@@ -32,8 +28,6 @@ public class ContainerFlux extends ContainerSync {
 
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
-        if (entity.isServer()) {
-            entity.listeners.clearListener(entity.listeners.findListener(player));
-        }
+		ListenerHelper.onPlayerCloseTileGui(entity, player);
 	}
 }

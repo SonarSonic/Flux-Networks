@@ -12,19 +12,26 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.client.gui.GuiSonar;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
+import sonar.flux.api.ClientFlux;
+import sonar.flux.api.ClientTransfer;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.tiles.IFlux;
+import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.network.PacketHelper;
+import sonar.flux.network.PacketType;
 
 public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 
@@ -84,6 +91,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		if (tab != getCurrentTab()) {
 			Object screen = tab.getGuiScreen(flux, tabs);
 			FMLCommonHandler.instance().showGuiScreen(screen);
+			PacketHelper.sendPacketToServer(PacketType.GUI_STATE_CHANGE, flux, PacketHelper.createStateChangePacket(tab));
 		}
 	}
 
@@ -96,13 +104,16 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 	@Override
 	protected void keyTyped(char c, int i) throws IOException {
 		if (isCloseKey(i)) {
-			if (origin != null) {
-				FMLCommonHandler.instance().showGuiScreen(origin);
-				return;
-			}
-			if (getCurrentTab() != GuiTab.INDEX) {
-				FMLCommonHandler.instance().showGuiScreen(GuiTab.INDEX.getGuiScreen(flux, tabs));
-				return;
+			boolean isTyping = this.fieldList.stream().anyMatch(f -> f.isFocused());
+			if (!isTyping) {
+				if (origin != null) {
+					FMLCommonHandler.instance().showGuiScreen(origin);
+					return;
+				}
+				if (getCurrentTab() != GuiTab.INDEX) {
+					FMLCommonHandler.instance().showGuiScreen(GuiTab.INDEX.getGuiScreen(flux, tabs));
+					return;
+				}
 			}
 		}
 		super.keyTyped(c, i);
@@ -113,32 +124,6 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 	}
 
 	//// RENDER METHODs \\\\
-
-	public void renderFlux(IFlux network, boolean isSelected, int x, int y) {
-		color(1.0F, 1.0F, 1.0F, 1.0F);
-		int colour = midBlue;
-		switch (network.getConnectionType()) {
-		case POINT:
-			colour = new CustomColour(136, 40, 40).getRGB();
-			break;
-		case PLUG:
-			colour = colours[7].getRGB();
-			break;
-		case STORAGE:
-			colour = midBlue;
-			break;
-		case CONTROLLER:
-			colour = new CustomColour(100, 100, 120).getRGB();
-			break;
-		default:
-			break;
-		}
-
-		drawRect(x, y, x + 154, y + 12, colour);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(getBackground());
-		drawTexturedModalRect(x, y, 0, /* isSelected ? 178 : 166 */166, 154, 12);
-		FontHelper.text(network.getCustomName(), x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
-	}
 
 	public void renderNetwork(String networkName, AccessType access, int rgb, boolean isSelected, int x, int y) {
 		color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -171,6 +156,89 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		scale(0.75, 0.75, 0.75);
 		FontHelper.textCentre("Click" + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + "Above", (int) (xSize * 1.0 / 0.75), (int) (20 * 1.0 / 0.75), Color.GRAY.getRGB());
 		scale(1.0 / 0.75, 1.0 / 0.75, 1.0 / 0.75);
+	}
+
+	public void renderFlux(IFlux flux, boolean isSelected, int x, int y) {
+		int rgb = this.getCurrentTab() == GuiTab.INDEX ? common.getNetworkColour().getRGB() : flux.getConnectionType().gui_colour;
+		color(1.0F, 1.0F, 1.0F, 1.0F);
+		drawRect(x, y, x + 154, y + 18, rgb);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(scroller_flux_gui);
+		if (flux.isChunkLoaded()) {
+			drawTexturedModalRect(x, y, 0, 166, 154, 10);
+			drawTexturedModalRect(x, y + 10, 0, 166 + 4, 154, 8);
+		} else {
+			drawTexturedModalRect(x, y, 0, 226, 154, 18);
+		}
+		drawNormalItemStack(flux.getConnectionType().getDisplayStack(), x + 2, y + 1);
+		if (this.getCurrentTab() == GuiTab.INDEX) {
+			FontHelper.text("TOTAL: " + flux.getTransferHandler().getAdded() + " " + EnergyType.FE.getUsageSuffix(), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
+		} else {
+			FontHelper.text(flux.getCustomName(), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
+		}
+	}
+
+	public List<String> getTextLines(IFlux flux) {
+		List<String> textLines = Lists.newArrayList();
+		textLines.add(TextFormatting.BOLD + flux.getCustomName());
+		if (flux.isChunkLoaded()) {
+			if (flux.getCoords().getBlockPos().equals(this.flux.getPos())) {
+				// textLines.add(TextFormatting.GREEN + "THIS CONNECTION!");
+			}
+			// textLines.add(FontHelper.translate("flux.type") + ": " + TextFormatting.AQUA + flux.getConnectionType().toString());
+			addTransferStrings(textLines, flux.getConnectionType(), EnergyType.FE, flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
+			textLines.add(GUI.TRANSFER_LIMIT + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? "NO LIMIT" : flux.getTransferLimit()));
+			textLines.add(GUI.PRIORITY + ": " + TextFormatting.GREEN + flux.getCurrentPriority());
+		} else {
+			textLines.add(TextFormatting.DARK_RED + "CHUNK UNLOADED");
+		}
+		textLines.add(TextFormatting.ITALIC + flux.getCoords().toString());
+		return textLines;
+
+	}
+
+	public void renderFluxTransfer(ClientTransfer transfer, int x, int y, int rgb) {
+		color(1.0F, 1.0F, 1.0F, 1.0F);
+		drawRect(x, y, x + 154, y + 18, rgb);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(scroller_flux_gui);
+		drawTexturedModalRect(x, y, 0, 166, 154, 10);
+		drawTexturedModalRect(x, y + 10, 0, 166 + 4, 154, 8);
+		String direction = (transfer.direction == null ? "PHANTOM" : transfer.direction.toString().toUpperCase());
+		String transferS = transfer.added + " " + transfer.energyType.getUsageSuffix();
+		drawNormalItemStack(transfer.stack, x + 2, y + 1);
+
+		FontHelper.text("" + direction + ": " + transferS, 24, 5, rgb);
+	}
+
+	public List<String> getTextLines(ClientTransfer transfer) {
+		List<String> textLines = Lists.newArrayList();
+		textLines.add(TextFormatting.BOLD + transfer.stack.getDisplayName());
+		ConnectionType type = transfer.handler.flux.getConnectionType();
+		addTransferStrings(textLines, type, transfer.getEnergyType(), transfer.added, transfer.removed);
+		// textLines.add("Limit Usage: " + Math.floor(((double) (transfer.added + transfer.removed) / transfer.handler.add_limit) * 100) + " %");
+		// textLines.add("Direction: " + (transfer.direction == null ? "PHANTOM" : transfer.direction.toString().toUpperCase()));
+		textLines.add("Type: " + transfer.energyType.getName());
+
+		return textLines;
+	}
+
+	public void addTransferStrings(List<String> string, ConnectionType type, EnergyType energyType, long added, long removed) {
+
+		if (type.canAdd()) {
+			String addedString = added + " " + energyType.getUsageSuffix();
+			if (added == 0) {
+				string.add("Input:" + TextFormatting.GOLD + " " + addedString);
+			} else {
+				string.add("Input:" + TextFormatting.GREEN + " + " + addedString);
+			}
+		}
+		if (type.canRemove()) {
+			String removedString = removed + " " + energyType.getUsageSuffix();
+			if (removed == 0) {
+				string.add("Output:" + TextFormatting.GOLD + " " + removedString);
+			} else {
+				string.add("Output:" + TextFormatting.RED + " - " + removedString);
+			}
+		}
 	}
 
 }

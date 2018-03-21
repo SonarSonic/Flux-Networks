@@ -19,7 +19,7 @@ import sonar.flux.api.RemovalType;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.client.GuiTypeMessage;
+import sonar.flux.client.GuiTab;
 import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.FluxHelper;
@@ -283,20 +283,17 @@ public class PacketHelper {
 
 	}
 
-	//// DISCONNECT \\\\
+	//// TAB CHANGE \\\\
 
-	public static NBTTagCompound createStateChangePacket(GuiTypeMessage guiType) {
+	public static NBTTagCompound createStateChangePacket(GuiTab tab) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("guiType", guiType.ordinal());
+		tag.setInteger("guiType", tab.ordinal());
 		return tag;
 	}
 
 	public static IMessage doStateChangePacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
-		GuiTypeMessage state = GuiTypeMessage.values()[packetTag.getInteger("guiType")];
-		Container container = player.openContainer;
-		if (container != null && container instanceof ContainerFlux) {
-			((ContainerFlux) container).switchState(state);
-		}
+		GuiTab tab = GuiTab.values()[packetTag.getInteger("guiType")];
+		ListenerHelper.onPlayerOpenTab(source, player, tab);
 		return null;
 
 	}

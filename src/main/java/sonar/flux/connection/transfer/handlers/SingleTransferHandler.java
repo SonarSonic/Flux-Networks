@@ -23,20 +23,20 @@ public class SingleTransferHandler extends FluxTransferHandler implements ITrans
 
 	@Override
 	public long addToNetwork(long maxTransferRF, ActionType actionType) {
-		long add = transfer.addToNetwork(getValidAdditionL(maxTransferRF), actionType);
+		long add = transfer.addToNetwork(getValidAddition(maxTransferRF), actionType);
 		if (!actionType.shouldSimulate()) {
 			max_add -= add;
 		}
-		return 0;
+		return add;
 	}
 
 	@Override
 	public long removeFromNetwork(long maxTransferRF, ActionType actionType) {
-		long remove = transfer.removeFromNetwork(getValidRemovalL(maxTransferRF), actionType);
+		long remove = transfer.removeFromNetwork(getValidRemoval(maxTransferRF), actionType);
 		if (!actionType.shouldSimulate()) {
 			max_remove -= remove;
 		}
-		return 0;
+		return remove;
 	}
 
 	@Override

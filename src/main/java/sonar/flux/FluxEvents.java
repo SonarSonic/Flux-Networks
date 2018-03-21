@@ -37,7 +37,7 @@ public class FluxEvents {
 				cache.updateAdminListeners();
 			}
 		}
-		if (event.phase == Phase.START) {
+		if (event.phase == Phase.END) {
 
 			for (IFluxNetwork network : networks) {
 				network.onEndServerTick();

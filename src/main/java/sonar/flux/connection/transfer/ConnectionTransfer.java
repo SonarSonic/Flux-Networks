@@ -1,10 +1,12 @@
 package sonar.flux.connection.transfer;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.SonarAPI;
 import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.api.utils.ActionType;
+import sonar.core.helpers.ItemStackHelper;
 import sonar.flux.api.energy.IEnergyTransfer;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
@@ -61,5 +63,10 @@ public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTrans
 	@Override
 	public boolean isInvalid() {
 		return tile.isInvalid();
+	}
+
+	@Override
+	public ItemStack getDisplayStack() {
+		return ItemStackHelper.getBlockItem(tile.getWorld(), tile.getPos());
 	}
 }

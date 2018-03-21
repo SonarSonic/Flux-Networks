@@ -15,7 +15,7 @@ import sonar.flux.common.tileentity.TileController;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.common.tileentity.TileStorage;
 
-public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController> {
+public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController, Object> {
 
 	public GuiTabControllerIndex(TileController tile, List<GuiTab> tabs) {
 		super(tile, tabs);

@@ -42,7 +42,10 @@ public abstract class TileFluxIC2 extends TileFluxForgeEnergy implements IEnergy
 	@Optional.Method(modid = "IC2")
 	public void invalidate() {
 		super.invalidate();
-		onChunkUnload();
+		if (!this.getWorld().isRemote && IC2Connected) {
+			MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
+			IC2Connected = false;
+		}
 	}
 
 	@Override

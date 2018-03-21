@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.SonarAPI;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
+import sonar.core.helpers.ItemStackHelper;
 import sonar.flux.api.energy.IEnergyTransfer;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.tiles.IFluxController;
@@ -88,6 +89,11 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 			}
 		}
 		return received;
+	}
+
+	@Override
+	public ItemStack getDisplayStack() {
+		return ItemStackHelper.getBlockItem(controller.getWorld(), controller.getPos());
 	}
 
 }

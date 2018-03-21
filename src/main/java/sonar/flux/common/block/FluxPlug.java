@@ -22,6 +22,6 @@ public class FluxPlug extends FluxSidedConnection {
 
     @Override
     public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
-        list.add("Sends Energy");
+        list.add("For adding energy to the Flux Network");
     }
 }

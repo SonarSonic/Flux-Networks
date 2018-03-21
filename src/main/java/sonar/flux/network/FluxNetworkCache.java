@@ -129,7 +129,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	}
 
 	public void updateNetworkListeners() {
-		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK);
+		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
 		players.forEach(listener -> {
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, FluxHelper.isPlayerAdmin(listener.player));
 			FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), listener.player);
@@ -153,16 +153,4 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	public ListenableList<PlayerListener> getListenerList() {
 		return listeners;
 	}
-
-	@Override
-	public void onListenerAdded(ListenerTally<PlayerListener> tally) {}
-
-	@Override
-	public void onListenerRemoved(ListenerTally<PlayerListener> tally) {}
-
-	@Override
-	public void onSubListenableAdded(ISonarListenable<PlayerListener> listen) {}
-
-	@Override
-	public void onSubListenableRemoved(ISonarListenable<PlayerListener> listen) {}
 }

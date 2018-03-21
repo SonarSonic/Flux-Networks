@@ -23,7 +23,7 @@ import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
 
-public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<FluxPlayer> {
+public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlayer> {
 
 	public SonarTextField playerName;
 	//public FluxPlayer selectedPlayer;
@@ -96,9 +96,6 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<FluxPlayer> {
 		FontHelper.text(element.getCachedName(), 0 + 3, 0 + 2, Color.white.getRGB());
 		bindTexture(buttons);
 		drawTexturedModalRect(0 + 154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
-
-		bindTexture(buttons);
-		drawTexturedModalRect(0, 170, 56, 0, 12, 12);
 	}
 
 	@Override

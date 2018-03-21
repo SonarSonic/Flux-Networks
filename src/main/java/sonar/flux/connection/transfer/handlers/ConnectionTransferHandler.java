@@ -28,6 +28,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 	public final TileEntity tile;
 	public final List<EnumFacing> validFaces;
 	public boolean hasTransfers;
+	public boolean wasChanged = true;
 
 	public ConnectionTransferHandler(TileEntity tile, IFlux flux, List<EnumFacing> validFaces) {
 		super(flux);
@@ -35,7 +36,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		this.validFaces = validFaces;
 	}
 
-	Map<EnumFacing, IFluxTransfer> transfers = Maps.newHashMap();
+	public Map<EnumFacing, IFluxTransfer> transfers = Maps.newHashMap();
 	{
 		for (EnumFacing face : EnumFacing.VALUES) {
 			transfers.put(face, null);
@@ -79,7 +80,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		if (transfer != null) {
 			long toTransfer = StoredEnergyStack.convert(maxReceive, energy_type, EnergyType.RF);
 			// FIXME this could override priority!!!!
-			long added = flux.getNetwork().receiveEnergy(Math.min(toTransfer, getValidAdditionL(toTransfer)), type);
+			long added = flux.getNetwork().receiveEnergy(Math.min(toTransfer, getValidAddition(toTransfer)), type);
 			if (!type.shouldSimulate()) {
 				transfer.addedToNetwork(added);
 				max_add -= added;
@@ -94,7 +95,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		if (transfer != null) {
 			long toTransfer = StoredEnergyStack.convert(maxReceive, energy_type, EnergyType.RF);
 			// FIXME this could override priority!!!!
-			long removed = flux.getNetwork().extractEnergy(Math.min(toTransfer, getValidRemovalL(toTransfer)), type);
+			long removed = flux.getNetwork().extractEnergy(Math.min(toTransfer, getValidRemoval(toTransfer)), type);
 			if (!type.shouldSimulate()) {
 				transfer.removedFromNetwork(removed);
 				max_remove -= removed;
@@ -136,11 +137,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 				change = true;
 			}
 		}
-		if (change) {
-			hasTransfers = transfers.entrySet().stream().anyMatch((E) -> E.getValue() != null);
-			// connections.markChanged();
-			//SonarCore.sendFullSyncAroundWithRenderUpdate(tile, 128);
-		}
+		wasChanged = change;
 	}
 
 	@Override

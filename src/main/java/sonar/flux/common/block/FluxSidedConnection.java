@@ -32,7 +32,7 @@ public abstract class FluxSidedConnection extends FluxConnection {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileFlux) {
 			TileFlux flux = (TileFlux) tile;
-			flux.getTransferHandler().updateTransfers();
+			flux.updateTransfers();
 		}
 	}
 

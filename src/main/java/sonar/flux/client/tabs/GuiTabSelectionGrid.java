@@ -15,15 +15,16 @@ import sonar.core.client.gui.IGridGui;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.utils.CustomColour;
+import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 
-public abstract class GuiTabSelectionGrid<T> extends AbstractGuiTab implements IGridGui<T> {
+public abstract class GuiTabSelectionGrid<T extends TileFlux, G> extends AbstractGuiTab<T> implements IGridGui<G> {
 
 	public Map<SelectionGrid, SonarScroller> grids = Maps.newHashMap();
 
-	public GuiTabSelectionGrid(TileFlux tile, List tabs) {
+	public GuiTabSelectionGrid(T tile, List tabs) {
 		super(tile, tabs);
 	}
 
@@ -64,7 +65,16 @@ public abstract class GuiTabSelectionGrid<T> extends AbstractGuiTab implements I
 		bindTexture(this.getBackground());
 		drawTexturedModalRect(scroller.left, scroller.top + (int) ((float) (scroller.length - 17) * scroller.getCurrentScroll()), 176, 0, 10, 15);
 		GlStateManager.color(1, 1, 1, 1);
-		
+	}
+
+	@Override
+	public void startToolTipRender(int gridID, G selection, int x, int y) {
+		GlStateManager.disableDepth();
+		GlStateManager.disableLighting();
+		renderElementToolTip(gridID, selection, x, y);
+		GlStateManager.enableLighting();
+		GlStateManager.enableDepth();
+		net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
 	}
 
 	public void handleMouseInput() throws IOException {

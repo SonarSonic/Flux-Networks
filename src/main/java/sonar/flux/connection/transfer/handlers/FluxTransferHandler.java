@@ -13,12 +13,12 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 	}
 
 	@Override
-	public double getMaxRemove() {
+	public long getMaxRemove() {
 		return flux.getTransferLimit();
 	}
 
 	@Override
-	public double getMaxAdd() {
+	public long getMaxAdd() {
 		return flux.getTransferLimit();
 	}
 }

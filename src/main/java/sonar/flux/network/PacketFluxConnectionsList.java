@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import sonar.core.SonarCore;
 import sonar.core.api.utils.BlockCoords;
+import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.network.IFluxCommon;
@@ -42,8 +43,7 @@ public class PacketFluxConnectionsList implements IMessage {
 
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound c = list.getCompoundTagAt(i);
-			ClientFlux net = new ClientFlux(BlockCoords.readFromNBT(c), ConnectionType.values()[c.getInteger("type")], c.getInteger("priority"), c.getLong("limit"), c.getString("name"));
-			connections.add(net);
+			connections.add(new ClientFlux(c));
 		}
 	}
 
@@ -52,15 +52,7 @@ public class PacketFluxConnectionsList implements IMessage {
 		buf.writeInt(networkID);
 		NBTTagCompound tag = new NBTTagCompound();
 		NBTTagList list = new NBTTagList();
-		for (ClientFlux flux : connections) {
-			NBTTagCompound netTag = new NBTTagCompound();
-			BlockCoords.writeToNBT(netTag, flux.getCoords());
-			netTag.setInteger("type", flux.getConnectionType().ordinal());
-			netTag.setInteger("priority", flux.getCurrentPriority());
-			netTag.setLong("limit", flux.getTransferLimit());
-			netTag.setString("name", flux.customName);
-			list.appendTag(netTag);
-		}
+		connections.forEach(flux -> list.appendTag(flux.writeData(new NBTTagCompound(), SyncType.SAVE)));
 		tag.setTag("connects", list);
 		ByteBufUtils.writeTag(buf, tag);
 	}

@@ -38,6 +38,7 @@ import sonar.flux.api.tiles.IFluxController.TransmitterMode;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.api.tiles.IFluxPoint;
+import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.common.tileentity.TileStorage;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.PacketFluxConnectionsList;
@@ -51,7 +52,7 @@ public class FluxHelper {
 		if (flux.getNetworkID() != -1) {
 			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
 			if (!network.isFakeNetwork()) {
-				network.addConnection(flux, null);
+				network.addConnection(flux, type);
 			}
 		}
 	}
@@ -61,7 +62,7 @@ public class FluxHelper {
 		if (flux.getNetworkID() != -1) {
 			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
 			if (!network.isFakeNetwork()) {
-				network.removeConnection(flux, null);
+				network.removeConnection(flux, type);
 			}
 		}
 	}
@@ -89,34 +90,14 @@ public class FluxHelper {
 		}
 	}
 
-	public static void sendPacket(IFluxNetwork network, ListenerTally<PlayerListener> tally) {
+	public static void sendPacket(IFluxNetwork network, TileFlux flux, ListenerTally<PlayerListener> tally) {
 		for (int i = 0; i < tally.tallies.length; i++) {
 			if (tally.tallies[i] > 0) {
-				FluxListener type = FluxListener.values()[i];
-				switch (type) {
-				case CONNECTIONS:
-					network.buildFluxConnections();
-					FluxNetworks.network.sendTo(new PacketFluxConnectionsList(network.getClientFluxConnection(), network.getNetworkID()), tally.listener.player);
-					break;
-				case FULL_NETWORK:
-					List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(tally.listener.player, false);
-					FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), tally.listener.player);
-					tally.removeTallies(1, type);
-					tally.addTallies(1, FluxListener.SYNC_NETWORK);
-					break;
-				case STATISTICS:
-					FluxNetworks.network.sendTo(new PacketNetworkStatistics(network.getNetworkID(), network.getStatistics()), tally.listener.player);
-					break;
-				case SYNC_NETWORK:
-					break;
-				default:
-					break;
-				}
+				
 			}
 		}
 	}
 
-	@Deprecated
 	public static long transferEnergy(IFluxPlug plug, List<IFluxPoint> points, TransferMode mode) {
 		long currentLimit = Long.MAX_VALUE;
 		for (IFluxPoint point : points) {
@@ -170,6 +151,9 @@ public class FluxHelper {
 	}
 
 	public static ISonarEnergyHandler canTransferEnergy(TileEntity tile, EnumFacing dir) {
+		if(tile instanceof IFlux){
+			return null;
+		}
 		List<ISonarEnergyHandler> handlers = FluxNetworks.energyHandlers;
 		for (ISonarEnergyHandler handler : handlers) {
 			if (handler.canProvideEnergy(tile, dir)) {

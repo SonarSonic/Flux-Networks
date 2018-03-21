@@ -63,6 +63,7 @@ public class FluxStorage extends FluxConnection {
 
 	@Override
 	public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
+        list.add("Stores energy in the Flux Network");
 		int energy = tag == null ? 0 : tag.getInteger("energy");
 		list.add(FontHelper.translate("network.energy.stored") + ": " + FontHelper.formatStorage(energy) + "/" + FontHelper.formatStorage(getMaxStorage()));
 	}

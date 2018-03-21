@@ -13,22 +13,26 @@ import sonar.flux.api.energy.IFluxTransfer;
 public abstract class BaseFluxTransfer implements IFluxTransfer {
 
 	public EnergyType energy_type;
-	public long transfer = 0;
-	public final List<Long> old_transfers = Lists.newArrayList();
+	public long added = 0;
+	public long removed = 0;
+	//public final List<Long> old_transfers = Lists.newArrayList();
 
 	public BaseFluxTransfer(EnergyType type) {
 		this.energy_type = type;
 	}
 
 	public void onStartServerTick() {
-		transfer = 0;
+		added = 0;
+		removed = 0;
 	}
 
 	public void onEndWorldTick() {
+		/*
 		old_transfers.add(transfer);
 		if (old_transfers.size() > 10) {
 			old_transfers.remove(0);
 		}
+		*/
 	}
 
 	@Override
@@ -44,13 +48,13 @@ public abstract class BaseFluxTransfer implements IFluxTransfer {
 
 	@Override
 	public final void addedToNetwork(long add) {
-		transfer += add;
+		added += add;
 		onTransferAdded(add);
 	}
 
 	@Override
 	public final void removedFromNetwork(long remove) {
-		transfer -= remove;
+		removed += remove;
 		onTransferRemoved(remove);
 	}
 

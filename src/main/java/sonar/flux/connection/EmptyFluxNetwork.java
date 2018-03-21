@@ -18,6 +18,7 @@ import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayersList;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
@@ -192,4 +193,10 @@ public class EmptyFluxNetwork implements IFluxNetwork {
     @Override
     public void setHasConnections(boolean bool) {
     }
+
+	@Override
+	public void addFluxListener(IFluxListenable listener) {}
+
+	@Override
+	public void removeFluxListener(IFluxListenable listener) {}
 }

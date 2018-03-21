@@ -17,7 +17,7 @@ import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
 
-public class GuiTabNetworkSelection extends GuiTabSelectionGrid<IFluxCommon> {
+public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxCommon> {
 
 	public GuiTabNetworkSelection(TileFlux tile, List tabs) {
 		super(tile, tabs);
@@ -39,7 +39,7 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<IFluxCommon> {
 
 	@Override
 	public void onGridClicked(int gridID, IFluxCommon element, int x, int y, int pos, int button, boolean empty) {
-		if (!isSelectedNetwork(element)) {
+		if (element !=null && !isSelectedNetwork(element)) {
 			PacketHelper.sendPacketToServer(PacketType.SET_NETWORK, flux, PacketHelper.createNetworkSetPacket(element.getNetworkID()));
 		}
 	}
@@ -55,16 +55,6 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<IFluxCommon> {
 		strings.add(FontHelper.translate("network.owner") + ": " + TextFormatting.AQUA + element.getCachedPlayerName());
 		strings.add(FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(element.getAccessType().getName()));
 		drawHoveringText(strings, x, y);
-	}
-
-	@Override
-	public void startToolTipRender(int gridID, IFluxCommon selection, int x, int y) {
-		GlStateManager.disableDepth();
-		GlStateManager.disableLighting();
-		//renderElementToolTip(gridID, selection, x, y);
-		GlStateManager.enableLighting();
-		GlStateManager.enableDepth();
-		net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
 	}
 
 	@Override

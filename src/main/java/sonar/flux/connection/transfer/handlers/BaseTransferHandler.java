@@ -7,22 +7,32 @@ import sonar.flux.api.energy.ITransferHandler;
 
 public abstract class BaseTransferHandler implements ITransferHandler {
 
-	public double max_remove;
-	public double max_add;
+	public long remove_limit;
+	public long max_remove;
+	public long add_limit;
+	public long max_add;
 
-	public abstract double getMaxRemove();
+	public abstract long getMaxRemove();
 
-	public abstract double getMaxAdd();
+	public abstract long getMaxAdd();
 
 	@Override
 	public void onStartServerTick() {
-		max_remove = getMaxRemove();
-		max_add = getMaxAdd();		
+		max_remove = remove_limit = getMaxRemove();
+		max_add = add_limit = getMaxAdd();		
 	}
 	
 	@Override
 	public void onEndWorldTick() {
 		
+	}
+	
+	public long getAdded(){
+		return add_limit - max_add;
+	}
+	
+	public long getRemoved(){
+		return remove_limit - max_remove;
 	}
 
 	@Override
@@ -30,7 +40,7 @@ public abstract class BaseTransferHandler implements ITransferHandler {
 		long added = 0;
 		for (IFluxTransfer transfer : getTransfers()) {
 			if (transfer != null && transfer instanceof IEnergyTransfer) {
-				long toTransfer = getValidAdditionL(maxTransferRF - added);
+				long toTransfer = getValidAddition(maxTransferRF - added);
 				long add = ((IEnergyTransfer)transfer).addToNetwork(toTransfer, actionType);
 				added += add;
 				if (!actionType.shouldSimulate()) {
@@ -46,7 +56,7 @@ public abstract class BaseTransferHandler implements ITransferHandler {
 		long removed = 0;
 		for (IFluxTransfer transfer : getTransfers()) {
 			if (transfer != null && transfer instanceof IEnergyTransfer) {
-				long toTransfer = getValidRemovalL(maxTransferRF - removed);
+				long toTransfer = getValidRemoval(maxTransferRF - removed);
 				long remove = ((IEnergyTransfer)transfer).removeFromNetwork(toTransfer, actionType);
 				removed += remove;
 				if (!actionType.shouldSimulate()) {
@@ -57,27 +67,19 @@ public abstract class BaseTransferHandler implements ITransferHandler {
 		return removed;
 	}
 
-	public long getValidAdditionL(double maxReceive) {
-		return (long)getValidAddition(maxReceive);
-	}
-
-	public long getValidRemovalL(double maxRemoval) {
-		return (long)getValidRemoval(maxRemoval);
-	}
-
-	public double getValidAddition(double maxReceive) {
+	public long getValidAddition(long maxReceive) {
 		return Math.min(maxReceive, getValidMaxAddition());
 	}
 
-	public double getValidRemoval(double maxRemoval) {
+	public long getValidRemoval(long maxRemoval) {
 		return Math.min(maxRemoval, getValidMaxRemoval());
 	}
 
-	public double getValidMaxAddition() {
-		return Math.floor(max_add);
+	public long getValidMaxAddition() {
+		return max_add;
 	}
 
-	public double getValidMaxRemoval() {
-		return Math.floor(max_remove);
+	public long getValidMaxRemoval() {
+		return max_remove;
 	}
 }

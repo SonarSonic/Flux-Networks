@@ -26,7 +26,7 @@ public class GuiAdminConfigurator extends GuiSelectionGrid<IFluxNetwork> {
 	}
 
 	@Override
-	public void onGridClicked(IFluxNetwork element, int pos, int button, boolean empty) {
+	public void onGridClicked(IFluxNetwork element, int x, int y, int pos, int button, boolean empty) {
 
 	}
 

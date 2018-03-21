@@ -4,38 +4,63 @@ import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
+import sonar.core.helpers.FontHelper;
+import sonar.core.utils.CustomColour;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.IEnergyTransfer;
 import sonar.flux.api.energy.IFluxTransfer;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.client.AbstractGuiTab;
 
 /**
  * extended by IFluxPoint & IFluxPlug you must use them if you wish to send and receive energy from the network
  */
 public interface IFlux {
 
-    enum ConnectionType {
-        POINT, PLUG, STORAGE, CONTROLLER;
-    	/*
-        public boolean canSend() {
+    public enum ConnectionType {
+        POINT(FontHelper.getIntFromColor(136, 40, 40)), PLUG(FontHelper.getIntFromColor(96, 151, 50)), STORAGE(FontHelper.getIntFromColor(41, 94, 138)), CONTROLLER(FontHelper.getIntFromColor(100, 100, 120));
+    	
+    	public int gui_colour;
+    	
+    	ConnectionType(int gui_colour){
+    		this.gui_colour = gui_colour;
+    	}
+    	
+        public boolean canAdd() {
             return this == PLUG || this == STORAGE;
         }
 
-        public boolean canReceive() {
+        public boolean canRemove() {
             return this == POINT || this == STORAGE || this == CONTROLLER;
         }
-        */
+        
     	public boolean canAddPhantomPower(){
             return this == PLUG;
     	}
     	
     	public boolean canRemovePhantomPower(){
             return this == POINT;
+    	}
+    	
+    	public ItemStack getDisplayStack(){
+    		switch(this){
+			case CONTROLLER:
+				return new ItemStack(FluxNetworks.fluxController);
+			case PLUG:
+				return new ItemStack(FluxNetworks.fluxPlug);
+			case POINT:
+				return new ItemStack(FluxNetworks.fluxPoint);
+			case STORAGE:
+				return new ItemStack(FluxNetworks.fluxStorage);
+    		}
+    		return ItemStack.EMPTY;
     	}
     }
 
@@ -86,6 +111,8 @@ public interface IFlux {
      */
     int getCurrentPriority();
 
+    boolean isChunkLoaded();
+    
     /**
      * the custom name is assigned by the user, this allows easier identification of various Flux connections.
      */

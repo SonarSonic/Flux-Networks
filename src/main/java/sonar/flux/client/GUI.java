@@ -9,9 +9,17 @@ public enum GUI {
 	PLUGS("plug.plugs"), //
 	POINTS("plug.points"), //
 	STORAGE("plug.storage"), //
+	CONTROLLERS("plug.controllers"), //
+	
+	TOTAL_INPUT("network.energy.input"),
+	TOTAL_OUTPUT("network.energy.output"),
+	TOTAL_STORAGE_CHANGE("network.energy.storedchange"),
+	TOTAL_NETWORK_TRANSFER("network.energy.totaltransfer"),
+	
 	MAX_SENT("network.energy.maxSent"), //
 	MAX_RECEIVE("network.energy.maxReceived"), //
 	TRANSFER("network.energy.transfer"), //
+	TRANSFER_LIMIT("network.energy.transferlimit"), //
 	NETWORK_NAME("network.name"), //
 	CREATE_NETWORK("network.create"), //
 	EDIT_NETWORK("network.edit"), //

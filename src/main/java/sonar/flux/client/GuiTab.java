@@ -2,10 +2,12 @@ package sonar.flux.client;
 
 import java.util.List;
 
-import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.api.tiles.IFluxStorage;
+import com.google.common.collect.Lists;
+
+import sonar.flux.api.FluxListener;
 import sonar.flux.client.tabs.GuiTabConnectionIndex;
 import sonar.flux.client.tabs.GuiTabControllerIndex;
+import sonar.flux.client.tabs.GuiTabFluxPlugIndex;
 import sonar.flux.client.tabs.GuiTabNetworkConnections;
 import sonar.flux.client.tabs.GuiTabNetworkCreate;
 import sonar.flux.client.tabs.GuiTabNetworkEdit;
@@ -15,6 +17,7 @@ import sonar.flux.client.tabs.GuiTabNetworkStatistics;
 import sonar.flux.client.tabs.GuiTabStorageIndex;
 import sonar.flux.common.tileentity.TileController;
 import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.common.tileentity.TileFluxPlug;
 import sonar.flux.common.tileentity.TileStorage;
 
 public enum GuiTab {
@@ -30,6 +33,27 @@ public enum GuiTab {
 		return name();
 	}
 	
+	public List<FluxListener> getMonitoringTypes(){
+		switch(this){
+		case CONNECTIONS:
+			return Lists.newArrayList(FluxListener.SYNC_NETWORK_CONNECTIONS);
+		case INDEX:
+			return Lists.newArrayList(FluxListener.SYNC_INDEX, FluxListener.SYNC_NETWORK_STATS);
+		case NETWORK_CREATE:
+			return Lists.newArrayList(FluxListener.SYNC_INDEX);
+		case NETWORK_EDIT:
+			return Lists.newArrayList(FluxListener.SYNC_INDEX);
+		case NETWORK_SELECT:
+			return Lists.newArrayList(FluxListener.SYNC_NETWORK_LIST);
+		case NETWORK_STATS:
+			return Lists.newArrayList(FluxListener.SYNC_NETWORK_STATS);
+		case PLAYERS:
+			return Lists.newArrayList(FluxListener.SYNC_PLAYERS, FluxListener.SYNC_NETWORK_CONNECTIONS);		
+			//admin screen
+		}
+		return Lists.newArrayList();
+	}
+	
 	public Object getGuiScreen(TileFlux flux, List<GuiTab> tabs){
 		switch(this){
 		case CONNECTIONS:
@@ -40,6 +64,9 @@ public enum GuiTab {
 			}
 			if(flux instanceof TileStorage){
 				return new GuiTabStorageIndex((TileStorage) flux, tabs);
+			}
+			if(flux instanceof TileFluxPlug){
+				return new GuiTabFluxPlugIndex((TileFluxPlug) flux, tabs);
 			}
 			return new GuiTabConnectionIndex(flux, tabs);
 		case NETWORK_CREATE:
@@ -52,8 +79,6 @@ public enum GuiTab {
 			return new GuiTabNetworkStatistics(flux, tabs);
 		case PLAYERS:
 			return new GuiTabNetworkPlayers(flux, tabs);
-		default:
-			break;	
 		}
 		return null;	
 	}

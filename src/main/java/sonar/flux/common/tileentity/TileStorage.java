@@ -61,7 +61,7 @@ public class TileStorage extends TileFlux implements IFluxStorage {
 	public int targetEnergy;
 
 	public void update() {
-		super.update();
+		super.update();		
 		if (isServer()) {
 			if (updateStorage && lastStorageUpdate == 0) {
 				lastStorageUpdate = getWorld().getWorldTime(); //stops it jumping on first receive
@@ -84,6 +84,7 @@ public class TileStorage extends TileFlux implements IFluxStorage {
 		} else {
 			updateStorage = false;
 		}
+		
 	}
 
 	@Override

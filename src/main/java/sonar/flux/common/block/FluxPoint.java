@@ -26,6 +26,6 @@ public class FluxPoint extends FluxSidedConnection {
 
     @Override
     public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
-        list.add("Receives Energy");
+        list.add("For removing energy from the Flux Network");
     }
 }

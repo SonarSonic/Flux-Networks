@@ -1,6 +1,9 @@
 package sonar.flux.network;
 
+import java.util.List;
 import java.util.UUID;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,6 +15,7 @@ import sonar.core.utils.CustomColour;
 import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
+import sonar.flux.api.ClientFlux;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
 
@@ -28,9 +32,9 @@ public class NetworkData extends WorldSavedData {
 	public static String ACCESS = "access";
 	public static String PLAYER_LIST = "playerList";
 
-    public NetworkData(String name) {
-        super(name);
-    }
+	public NetworkData(String name) {
+		super(name);
+	}
 
 	public NetworkData() {
 		this(IDENTIFIER);
@@ -38,7 +42,7 @@ public class NetworkData extends WorldSavedData {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-	    FluxNetworkCache cache = FluxNetworks.getServerCache();
+		FluxNetworkCache cache = FluxNetworks.getServerCache();
 		cache.uniqueID = nbt.getInteger(UNIQUE_ID);
 		if (nbt.hasKey(TAG_LIST)) {
 			NBTTagList list = nbt.getTagList(TAG_LIST, NBT.TAG_COMPOUND);
@@ -52,6 +56,13 @@ public class NetworkData extends WorldSavedData {
 				AccessType type = AccessType.valueOf(tag.getString(ACCESS));
 				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, networkName, colour, type);
 				network.getPlayers().readData(tag.getCompoundTag(PLAYER_LIST), SyncType.SAVE);
+				NBTTagList unloaded_connections = tag.getTagList("unloaded", NBT.TAG_COMPOUND);
+				List<ClientFlux> unloaded = Lists.newArrayList();
+				for (int j = 0; j < unloaded_connections.tagCount(); j++) {
+					NBTTagCompound c = unloaded_connections.getCompoundTagAt(j);
+					unloaded.add(new ClientFlux(c));
+				}
+				network.unloaded = unloaded;
 				cache.addNetwork(network);
 				FluxEvents.logLoadedNetwork(network);
 			}
@@ -60,24 +71,28 @@ public class NetworkData extends WorldSavedData {
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        FluxNetworkCache cache = FluxNetworks.getServerCache();
+		FluxNetworkCache cache = FluxNetworks.getServerCache();
 		nbt.setInteger(UNIQUE_ID, cache.uniqueID);
-		if(cache.getAllNetworks().size() > 0)
-		{
-    		NBTTagList list = new NBTTagList();
-    		for (IFluxNetwork network : FluxNetworks.getServerCache().getAllNetworks()) {
-    			NBTTagCompound tag = new NBTTagCompound();
-    			tag.setInteger(NETWORK_ID, network.getNetworkID());
-    			tag.setUniqueId(OWNER_UUID, network.getOwnerUUID());
-    			tag.setString(CACHE_PLAYER, network.getCachedPlayerName());
-    			tag.setString(NETWORK_NAME, network.getNetworkName());
-    			tag.setTag(COLOUR, network.getNetworkColour().writeData(new NBTTagCompound(), SyncType.SAVE));
-    			tag.setString(ACCESS, network.getAccessType().name());
-    			tag.setTag(PLAYER_LIST, network.getPlayers().writeData(new NBTTagCompound(), SyncType.SAVE));
-    			list.appendTag(tag);
-    		}
-    		nbt.setTag(TAG_LIST, list);
-    		FluxNetworks.logger.debug("ALL " + list.tagCount() + " Networks were saved successfully");
+		if (cache.getAllNetworks().size() > 0) {
+			NBTTagList list = new NBTTagList();
+			for (IFluxNetwork network : FluxNetworks.getServerCache().getAllNetworks()) {
+				NBTTagCompound tag = new NBTTagCompound();
+				tag.setInteger(NETWORK_ID, network.getNetworkID());
+				tag.setUniqueId(OWNER_UUID, network.getOwnerUUID());
+				tag.setString(CACHE_PLAYER, network.getCachedPlayerName());
+				tag.setString(NETWORK_NAME, network.getNetworkName());
+				tag.setTag(COLOUR, network.getNetworkColour().writeData(new NBTTagCompound(), SyncType.SAVE));
+				tag.setString(ACCESS, network.getAccessType().name());
+				tag.setTag(PLAYER_LIST, network.getPlayers().writeData(new NBTTagCompound(), SyncType.SAVE));
+				if (network instanceof BasicFluxNetwork) {
+					NBTTagList unloaded_connections = new NBTTagList();
+					((BasicFluxNetwork) network).unloaded.forEach(flux -> unloaded_connections.appendTag(flux.writeData(new NBTTagCompound(), SyncType.SAVE)));
+					tag.setTag("unloaded", unloaded_connections);
+				}
+				list.appendTag(tag);
+			}
+			nbt.setTag(TAG_LIST, list);
+			FluxNetworks.logger.debug("ALL " + list.tagCount() + " Networks were saved successfully");
 		}
 		return nbt;
 	}

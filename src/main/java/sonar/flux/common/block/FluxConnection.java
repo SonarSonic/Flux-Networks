@@ -91,7 +91,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 			TileFlux flux = (TileFlux) target;
 			if (player != null && player instanceof EntityPlayer) {
 				flux.setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
-				flux.getTransferHandler().updateTransfers();
+				flux.updateTransfers();
 			}
 		}
 	}

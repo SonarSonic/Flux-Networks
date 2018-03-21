@@ -9,6 +9,7 @@ import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.RemovalType;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
 
@@ -95,6 +96,10 @@ public interface IFluxNetwork extends IFluxCommon {
     void removeConnection(IFluxListenable flux, RemovalType type);
 
     void buildFluxConnections();
+    
+    void addFluxListener(IFluxListenable listener);
+    
+    void removeFluxListener(IFluxListenable listener);
 
     IFluxNetwork updateNetworkFrom(IFluxNetwork network);
 
