@@ -1,4 +1,4 @@
-package sonar.flux.api.energy;
+package sonar.flux.api.energy.internal;
 
 import net.minecraft.item.ItemStack;
 import sonar.core.api.energy.EnergyType;
@@ -13,7 +13,7 @@ public interface IFluxTransfer extends INBTSyncable {
 	void addedToNetwork(long add, EnergyType energyType);
 	
 	void removedFromNetwork(long remove, EnergyType energyType);
-	
+		
 	EnergyType getEnergyType();
 	
 	ItemStack getDisplayStack();

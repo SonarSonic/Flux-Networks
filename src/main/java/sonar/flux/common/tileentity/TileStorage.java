@@ -8,7 +8,7 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
 import sonar.flux.FluxConfig;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.connection.transfer.StorageTransfer;

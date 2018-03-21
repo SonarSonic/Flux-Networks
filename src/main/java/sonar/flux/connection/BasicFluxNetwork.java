@@ -397,8 +397,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public boolean canConvert(EnergyType from, EnergyType to) {
-		//return !disabledConversion();
-		return from==to;
+		return !disabledConversion() || from==to;
 	}
 
 	@Override

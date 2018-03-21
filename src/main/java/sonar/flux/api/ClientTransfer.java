@@ -7,7 +7,7 @@ import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.flux.api.energy.IFluxTransfer;
+import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.connection.transfer.BaseFluxTransfer;
 import sonar.flux.connection.transfer.ISidedTransfer;
 import sonar.flux.connection.transfer.PhantomTransfer;

@@ -11,8 +11,8 @@ import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.flux.api.energy.IFluxTransfer;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.IFluxTransfer;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.transfer.handlers.BaseTransferHandler;
 

@@ -2,8 +2,8 @@ package sonar.flux.connection.transfer.handlers;
 
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.energy.IEnergyTransfer;
-import sonar.flux.api.energy.IFluxTransfer;
+import sonar.flux.api.energy.internal.IEnergyTransfer;
+import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
 
@@ -23,12 +23,12 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 	public long addToNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
 		long added = 0;
 		for (IFluxTransfer transfer : getTransfers()) {
-			if (transfer != null && getNetwork().canConvert(energyType, transfer.getEnergyType()) && transfer instanceof IEnergyTransfer) {
-				long toTransfer = getValidAddition(maxTransferRF - added);
-				long add = ((IEnergyTransfer)transfer).addToNetwork(toTransfer, energyType, actionType);
+			if (transfer != null && getNetwork().canConvert(energyType, transfer.getEnergyType()) && transfer instanceof IEnergyTransfer) {		
+				long toTransfer = getValidAddition(maxTransferRF - added, energyType);				
+				long add = ((IEnergyTransfer)transfer).addToNetworkWithConvert(toTransfer, energyType, actionType);				
 				added += add;
 				if (!actionType.shouldSimulate()) {
-					max_add -= add;
+					max_add -= EnergyType.convert(add, energyType, getNetwork().getDefaultEnergyType());
 				}
 			}
 		}
@@ -40,11 +40,11 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 		long removed = 0;
 		for (IFluxTransfer transfer : getTransfers()) {
 			if (transfer != null && getNetwork().canConvert(energyType, transfer.getEnergyType()) && transfer instanceof IEnergyTransfer) {
-				long toTransfer = getValidRemoval(maxTransferRF - removed);
-				long remove = ((IEnergyTransfer)transfer).removeFromNetwork(toTransfer, energyType, actionType);
+				long toTransfer = getValidRemoval(maxTransferRF - removed);				
+				long remove = ((IEnergyTransfer)transfer).removeFromNetworkWithConvert(toTransfer, energyType, actionType);				
 				removed += remove;
 				if (!actionType.shouldSimulate()) {
-					max_remove -= remove;
+					max_remove -= EnergyType.convert(remove, energyType, getNetwork().getDefaultEnergyType());
 				}
 			}
 		}
@@ -59,5 +59,13 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 	@Override
 	public long getMaxAdd() {
 		return flux.getTransferLimit();
+	}
+
+	public long getValidAddition(long maxReceive, EnergyType type) {
+		return Math.min(maxReceive, EnergyType.convert(getValidMaxAddition(), getNetwork().getDefaultEnergyType(), type));
+	}
+
+	public long getValidRemoval(long maxRemoval, EnergyType type) {
+		return Math.min(maxRemoval, EnergyType.convert(getValidMaxRemoval(), getNetwork().getDefaultEnergyType(), type));
 	}
 }

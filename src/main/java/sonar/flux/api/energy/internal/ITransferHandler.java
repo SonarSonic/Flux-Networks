@@ -1,4 +1,4 @@
-package sonar.flux.api.energy;
+package sonar.flux.api.energy.internal;
 
 import java.util.List;
 import java.util.Map;

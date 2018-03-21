@@ -30,10 +30,10 @@ public class GuiTabNetworkStatistics extends AbstractGuiTab {
 			FontHelper.text(TextFormatting.DARK_GRAY + GUI.POINTS.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.flux_point_count, 12, 26 + 12, rgb);
 			FontHelper.text(TextFormatting.DARK_GRAY + GUI.STORAGE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + stats.flux_storage_count, 12, 26 + 12 * 2, rgb);
 
-			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_INPUT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(stats.total_energy_added), 12, 26 + 12 * 3, rgb);
-			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_OUTPUT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(stats.total_energy_removed), 12, 26 + 12 * 4, rgb);
-			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_STORAGE_CHANGE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(stats.network_energy_change), 12, 26 + 12 * 5, rgb);
-			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_NETWORK_TRANSFER.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(stats.total_energy_added - stats.total_energy_removed), 12, 26 + 12 * 6, rgb);
+			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_INPUT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(common.getDefaultEnergyType(), stats.total_energy_added), 12, 26 + 12 * 3, rgb);
+			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_OUTPUT.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(common.getDefaultEnergyType(), stats.total_energy_removed), 12, 26 + 12 * 4, rgb);
+			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_STORAGE_CHANGE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(common.getDefaultEnergyType(), stats.network_energy_change), 12, 26 + 12 * 5, rgb);
+			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_NETWORK_TRANSFER.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(common.getDefaultEnergyType(), stats.total_energy_added - stats.total_energy_removed), 12, 26 + 12 * 6, rgb);
 
 			FontHelper.text("Network Buffer ", 14, 120, rgb);
 			renderEnergyBar(14, 130, stats.network_energy, stats.network_energy_capacity, rgb, rgb);

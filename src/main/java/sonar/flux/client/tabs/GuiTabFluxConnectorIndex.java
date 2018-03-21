@@ -8,7 +8,7 @@ import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.ClientTransfer;
-import sonar.flux.api.energy.IFluxTransfer;
+import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFluxConnector;

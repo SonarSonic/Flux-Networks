@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.flux.api.energy.IFluxTransfer;
+import sonar.flux.api.energy.internal.IFluxTransfer;
 
 public abstract class BaseFluxTransfer implements IFluxTransfer {
 

@@ -8,7 +8,7 @@ import sonar.core.api.IFlexibleGui;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.common.tileentity.energy.TileFluxTesla;
 import sonar.flux.connection.transfer.handlers.ConnectionTransferHandler;
 
@@ -27,7 +27,8 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
 
 	@Override
     public long removePhantomEnergyFromNetwork(EnumFacing from, long max_add, EnergyType energy_type, ActionType type) {
-		return getConnectionType().canRemovePhantomPower() ? handler.removePhantomEnergyFromNetwork(from, max_add, energy_type, type) : 0;
+		//PHANTOM REMOVAL IS DISCOURAGED
+		return 0;//getConnectionType().canRemovePhantomPower() ? handler.removePhantomEnergyFromNetwork(from, max_add, energy_type, type) : 0;
     }
 
 	@Override

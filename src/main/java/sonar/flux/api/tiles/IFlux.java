@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 

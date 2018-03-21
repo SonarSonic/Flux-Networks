@@ -5,23 +5,23 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.SonarAPI;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.api.energy.StoredEnergyStack;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.ItemStackHelper;
-import sonar.flux.api.energy.IEnergyTransfer;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.internal.IEnergyTransfer;
+import sonar.flux.api.energy.internal.ITransferHandler;
 
 public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTransfer, ISidedTransfer {
 
 	public final ITransferHandler transferHandler;
-	public final ISonarEnergyHandler handler;
+	public final IFluxEnergyHandler handler;
 	public final TileEntity tile;
 	public final EnumFacing direction;
 	public long totalTransferMax; // may need to be changed
 
-	public ConnectionTransfer(ITransferHandler transferHandler, ISonarEnergyHandler handler, TileEntity tile, EnumFacing direction) {
-		super(handler.getProvidedType());
+	public ConnectionTransfer(ITransferHandler transferHandler, IFluxEnergyHandler handler, TileEntity tile, EnumFacing direction) {
+		super(handler.getEnergyType());
 		this.transferHandler = transferHandler;
 		this.handler = handler;
 		this.tile = tile;
@@ -39,25 +39,30 @@ public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTrans
 	}
 
 	@Override
-	public long addToNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
+	public long addToNetwork(long maxTransferRF, ActionType actionType) {
 		EnumFacing face = direction.getOpposite();
-		StoredEnergyStack toAdd = new StoredEnergyStack(handler.getProvidedType(), EnergyType.convert(maxTransferRF, energyType, getEnergyType()));		
-		long remove = SonarAPI.getEnergyHelper().extractEnergy(tile, maxTransferRF, face, actionType);
-		if (!actionType.shouldSimulate()) {
-			addedToNetwork(remove, getEnergyType());
+		if (handler.canRemoveEnergy(tile, face)) {
+			long remove = handler.removeEnergy(maxTransferRF, tile, face, actionType);
+			if (!actionType.shouldSimulate()) {
+				addedToNetwork(remove, getEnergyType());
+			}
+			return remove;
 		}
-		return remove;
+		return 0;
 
 	}
 
 	@Override
-	public long removeFromNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
+	public long removeFromNetwork(long maxTransferRF, ActionType actionType) {
 		EnumFacing face = direction.getOpposite();
-		long added = SonarAPI.getEnergyHelper().receiveEnergy(tile, maxTransferRF, face, actionType);
-		if (!actionType.shouldSimulate()){
-			removedFromNetwork(added, getEnergyType());
+		if (handler.canAddEnergy(tile, face)) {
+			long added = handler.addEnergy(maxTransferRF, tile, face, actionType);
+			if (!actionType.shouldSimulate()) {
+				removedFromNetwork(added, getEnergyType());
+			}
+			return added;
 		}
-		return added;
+		return 0;
 	}
 
 	@Override

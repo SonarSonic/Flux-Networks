@@ -12,7 +12,7 @@ import sonar.core.api.SonarAPI;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.ItemStackHelper;
-import sonar.flux.api.energy.IEnergyTransfer;
+import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.tiles.IFluxController.TransmitterMode;
 import sonar.flux.common.tileentity.TileController;
@@ -28,12 +28,12 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 	}
 
 	@Override
-	public long addToNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
+	public long addToNetwork(long maxTransferRF, ActionType actionType) {
 		return 0;
 	}
 
 	@Override
-	public long removeFromNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
+	public long removeFromNetwork(long maxTransferRF, ActionType actionType) {
 		if (controller.getTransmitterMode() == TransmitterMode.OFF) {
 			return 0;
 		}

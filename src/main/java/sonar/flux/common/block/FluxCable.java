@@ -19,6 +19,7 @@ import sonar.core.common.block.SonarMaterials;
 import sonar.core.integration.SonarLoader;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileCable;
+import sonar.flux.connection.FluxHelper;
 
 public class FluxCable extends SonarMachineBlock {
 
@@ -88,7 +89,7 @@ public class FluxCable extends SonarMachineBlock {
             if (tile instanceof IFlux || tile instanceof TileCable || (SonarLoader.rfLoaded && tile instanceof IEnergyConnection)) {
 				return true;
 			}
-			if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, dir) != null) {
+			if (FluxHelper.getValidHandler(tile, dir) != null) {
 				return true;
 			}
 		}

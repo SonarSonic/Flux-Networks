@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.network.sync.SyncEnum;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.connection.transfer.ControllerTransfer;

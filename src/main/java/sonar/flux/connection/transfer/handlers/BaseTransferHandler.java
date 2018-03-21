@@ -1,9 +1,9 @@
 package sonar.flux.connection.transfer.handlers;
 
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.energy.IEnergyTransfer;
-import sonar.flux.api.energy.IFluxTransfer;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.IEnergyTransfer;
+import sonar.flux.api.energy.internal.IFluxTransfer;
+import sonar.flux.api.energy.internal.ITransferHandler;
 
 public abstract class BaseTransferHandler implements ITransferHandler {
 

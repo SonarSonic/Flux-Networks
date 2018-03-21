@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFlux;

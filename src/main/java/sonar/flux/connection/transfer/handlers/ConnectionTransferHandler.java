@@ -12,11 +12,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.api.energy.StoredEnergyStack;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.energy.IFluxTransfer;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.internal.IFluxTransfer;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.FluxHelper;
 import sonar.flux.connection.transfer.ConnectionTransfer;
@@ -76,7 +76,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 			}
 
 		} else if (transfer == null) {
-			ISonarEnergyHandler handler = FluxHelper.canTransferEnergy(expected_source, from);
+			IFluxEnergyHandler handler = FluxHelper.getValidHandler(expected_source, from);
 			if (handler != null) {
 				transfer = transfers.computeIfAbsent(from, E -> new ConnectionTransfer(this, handler, tile, from));
 			} else {
@@ -90,10 +90,10 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
 		if (transfer != null && getNetwork().canTransfer(energy_type)) {
 			// FIXME this could override priority!!!!
-			long added = flux.getNetwork().receiveEnergy(getValidAddition(maxReceive), energy_type, type);
+			long added = flux.getNetwork().receiveEnergy(getValidAddition(maxReceive, energy_type), energy_type, type);
 			if (!type.shouldSimulate()) {
 				transfer.addedToNetwork(added, energy_type);
-				max_add -= added;
+				max_add -= EnergyType.convert(added, energy_type, getNetwork().getDefaultEnergyType());
 			}
 			return added;
 		}
@@ -104,10 +104,10 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
 		if (transfer != null && getNetwork().canTransfer(energy_type)) {
 			// FIXME this could override priority!!!!
-			long removed = flux.getNetwork().extractEnergy(getValidRemoval(maxReceive), energy_type, type);
+			long removed = flux.getNetwork().extractEnergy(getValidRemoval(maxReceive, energy_type), energy_type, type);
 			if (!type.shouldSimulate()) {
 				transfer.removedFromNetwork(removed, energy_type);
-				max_remove -= removed;
+				max_remove -= EnergyType.convert(removed, energy_type, getNetwork().getDefaultEnergyType());
 			}
 			return removed;
 		}
@@ -121,8 +121,8 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 
 	public void setTransfer(EnumFacing face, TileEntity tile) {
 		IFluxTransfer transfer = transfers.get(face);
-		ISonarEnergyHandler handler;
-		if (tile == null || (handler = FluxHelper.canTransferEnergy(tile, face.getOpposite())) == null) {
+		IFluxEnergyHandler handler;
+		if (tile == null || (handler = FluxHelper.getValidHandler(tile, face.getOpposite())) == null) {
 			transfers.put(face, null);
 		} else if (transfer == null || !(transfer instanceof ConnectionTransfer) || ((ConnectionTransfer) transfer).getTile() != tile) {
 			ConnectionTransfer newTransfer = new ConnectionTransfer(this, handler, tile, face);

@@ -7,9 +7,9 @@ import com.google.common.collect.Lists;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.energy.IEnergyTransfer;
-import sonar.flux.api.energy.IFluxTransfer;
-import sonar.flux.api.energy.ITransferHandler;
+import sonar.flux.api.energy.internal.IEnergyTransfer;
+import sonar.flux.api.energy.internal.IFluxTransfer;
+import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
 
 public class SingleTransferHandler extends FluxTransferHandler implements ITransferHandler {
@@ -24,7 +24,7 @@ public class SingleTransferHandler extends FluxTransferHandler implements ITrans
 	@Override
 	public long addToNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
 		if (getNetwork().canConvert(energyType, getNetwork().getDefaultEnergyType())) {
-			long add = transfer.addToNetwork(getValidAddition(maxTransferRF), energyType, actionType);
+			long add = transfer.addToNetworkWithConvert(getValidAddition(maxTransferRF), energyType, actionType);
 			if (!actionType.shouldSimulate()) {
 				max_add -= add;
 			}
@@ -36,7 +36,7 @@ public class SingleTransferHandler extends FluxTransferHandler implements ITrans
 	@Override
 	public long removeFromNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
 		if (getNetwork().canConvert(energyType, getNetwork().getDefaultEnergyType())) {
-			long remove = transfer.removeFromNetwork(getValidRemoval(maxTransferRF), energyType, actionType);
+			long remove = transfer.removeFromNetworkWithConvert(getValidRemoval(maxTransferRF), energyType, actionType);
 			if (!actionType.shouldSimulate()) {
 				max_remove -= remove;
 			}

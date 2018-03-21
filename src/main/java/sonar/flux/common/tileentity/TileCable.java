@@ -12,6 +12,7 @@ import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.integration.SonarLoader;
 import sonar.flux.api.tiles.IFlux;
+import sonar.flux.connection.FluxHelper;
 
 //to be fully implemented later
 @Optional.InterfaceList({
@@ -29,7 +30,7 @@ public class TileCable extends TileEntitySonar implements IEnergyReceiver, IEner
 					sides[face.getIndex()] = true;
 					continue;
 				}
-				if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) {
+				if (FluxHelper.getValidHandler(tile, face) != null) {
 					sides[face.getIndex()] = true;
 				}
 			} else {

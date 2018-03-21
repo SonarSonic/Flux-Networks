@@ -12,7 +12,6 @@ import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.energy.ISonarEnergyContainerHandler;
-import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.api.utils.ActionType;
 import sonar.core.listener.ListenerTally;
 import sonar.core.listener.PlayerListener;
@@ -21,6 +20,7 @@ import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.RemovalType;
+import sonar.flux.api.energy.IFluxEnergyHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxController.PriorityMode;
@@ -115,13 +115,13 @@ public class FluxHelper {
 	 * @Deprecated public static long pushEnergy(IFlux to, long maxTransferRF, ActionType actionType) { long received = 0; maxTransferRF = Math.min(maxTransferRF, to.getCurrentTransferLimit()); if (to != null && maxTransferRF != 0 && to.hasTransfers()) { switch (to.getConnectionType()) { case POINT: received += to.getTransferHandler().removeFromNetwork(maxTransferRF - received, actionType); break; case STORAGE: break; case CONTROLLER: break; default: break; } } return received; } */
 
 	public static boolean canConnect(TileEntity tile, EnumFacing dir) {
-		return tile != null && !(tile instanceof IFlux) && canTransferEnergy(tile, dir) != null;// || SonarLoader.rfLoaded && tile instanceof IEnergyConnection && FluxConfig.transfers.get(EnergyType.RF).a);
+		return tile != null && !(tile instanceof IFlux) && getValidHandler(tile, dir) != null;// || SonarLoader.rfLoaded && tile instanceof IEnergyConnection && FluxConfig.transfers.get(EnergyType.RF).a);
 	}
 
-	public static List<ISonarEnergyHandler> getEnergyHandlers() {
-		List<ISonarEnergyHandler> handlers = new ArrayList<>();
-		for (ISonarEnergyHandler handler : SonarCore.energyHandlers) {
-			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfers.get(handler.getProvidedType());
+	public static List<IFluxEnergyHandler> getEnergyHandlers() {
+		List<IFluxEnergyHandler> handlers = new ArrayList<>();
+		for (IFluxEnergyHandler handler : FluxNetworks.loadedEnergyHandlers) {
+			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfers.get(handler.getEnergyType());
 			if (canTransfer!=null && canTransfer.a) {
 				handlers.add(handler);
 			}
@@ -140,13 +140,13 @@ public class FluxHelper {
 		return handlers;
 	}
 
-	public static ISonarEnergyHandler canTransferEnergy(TileEntity tile, EnumFacing dir) {
-		if(tile instanceof IFlux){
+	public static IFluxEnergyHandler getValidHandler(TileEntity tile, EnumFacing dir) {
+		if(tile == null || tile instanceof IFlux){
 			return null;
 		}
-		List<ISonarEnergyHandler> handlers = FluxNetworks.energyHandlers;
-		for (ISonarEnergyHandler handler : handlers) {
-			if (handler.canProvideEnergy(tile, dir)) {
+		List<IFluxEnergyHandler> handlers = FluxNetworks.enabledEnergyHandlers;
+		for (IFluxEnergyHandler handler : handlers) {
+			if (handler.canRenderConnection(tile, dir)) {
 				return handler;
 			}
 		}
@@ -165,6 +165,4 @@ public class FluxHelper {
 		}
 		return null;
 	}
-	/* /** gets all the TileEntities which can send/receive energy adjacent to the given IFlux */
-	/* public Map<TileEntity, EnumFacing> getConnections(IFlux flux) { Map<TileEntity, EnumFacing> tiles = new HashMap<>(); for (EnumFacing face : EnumFacing.VALUES) { World world = flux.getDimension(); TileEntity tile = world.getTileEntity(flux.getCoords().getBlockPos().offset(face)); if (tile == null || tile.isInvalid()) { continue; } if (SonarAPI.getEnergyHelper().canTransferEnergy(tile, face) != null) { tiles.put(tile, face); } } return tiles; } */
 }
