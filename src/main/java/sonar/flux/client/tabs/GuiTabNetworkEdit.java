@@ -15,6 +15,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import sonar.core.SonarCore;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
@@ -32,6 +34,8 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 	public int currentColour;
 	public AccessType currentAccess = AccessType.PRIVATE;
 	public boolean previewSelected = true, showFullPreview = true;
+	public boolean disableConversion = false;
+	public EnergyType type = EnergyType.FE;
 
 	public GuiTabNetworkEdit(TileFlux tile, List<GuiTab> tabs) {
 		super(tile, tabs);
@@ -50,6 +54,8 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 				buttonList.add(new GuiButton(5, getGuiLeft() + 5, getGuiTop() + 140, 80, 20, "Reset"));
 				buttonList.add(new GuiButton(6, getGuiLeft() + 90, getGuiTop() + 140, 80, 20, "Save Changes"));
 				currentAccess = common.getAccessType();
+				disableConversion = common.disabledConversion();
+				type = common.getDefaultEnergyType();
 			} else {
 				disabled = true;
 			}
@@ -81,6 +87,8 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 			Gui.drawRect(55, 63 + 32, 165, 68 + 32 + 4, colour.getRGB());
 
 			FontHelper.text(GUI.ACCESS_SETTING + ": " + TextFormatting.AQUA + FontHelper.translate(currentAccess.getName()), 8, 40, 0);
+			FontHelper.text("Allow Conversion" + ": " + TextFormatting.AQUA + !disableConversion, 8, 52, 0);
+			FontHelper.text("Energy Type" + ": " + TextFormatting.AQUA + type.getName(), 8, 64, 0);
 			FontHelper.text(FontHelper.translate("Preview") + ": ", 8, 96, 0);
 			String networkName = name.getText().isEmpty() ? "Network Name" : name.getText();
 			if (showFullPreview) {
@@ -94,6 +102,12 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 			}
 			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 && y - getGuiTop() < 52) {
 				drawHoveringText(GUI.CHANGE_SETTING.toString(), x - getGuiLeft(), y - getGuiTop());
+			}
+			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+12 && y - getGuiTop() < 52+12) {
+				drawHoveringText("Allow Conversion: " + !disableConversion, x - getGuiLeft(), y - getGuiTop());
+			}
+			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+24 && y - getGuiTop() < 52+24) {
+				drawHoveringText("Energy Type" + ": " + type.getName(), x - getGuiLeft(), y - getGuiTop());
 			}
 			popMatrix();
 		}
@@ -110,9 +124,9 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 			if (!name.getText().isEmpty()) {
 
 				if (getCurrentTab() == GuiTab.NETWORK_CREATE) {
-					PacketHelper.sendPacketToServer(PacketType.CREATE_NETWORK, flux, PacketHelper.createNetworkCreationPacket(name.getText(), getCurrentColour(), currentAccess));
+					PacketHelper.sendPacketToServer(PacketType.CREATE_NETWORK, flux, PacketHelper.createNetworkCreationPacket(name.getText(), getCurrentColour(), currentAccess, disableConversion, type));
 				} else {
-					PacketHelper.sendPacketToServer(PacketType.EDIT_NETWORK, flux, PacketHelper.createNetworkEditPacket(getNetworkID(), name.getText(), getCurrentColour(), currentAccess));
+					PacketHelper.sendPacketToServer(PacketType.EDIT_NETWORK, flux, PacketHelper.createNetworkEditPacket(getNetworkID(), name.getText(), getCurrentColour(), currentAccess, disableConversion, type));
 				}
 
 				switchTab(GuiTab.NETWORK_SELECT);
@@ -143,8 +157,21 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 && y - getGuiTop() < 52) {
 			currentAccess = AccessType.values()[currentAccess.ordinal() + 1 < AccessType.values().length ? currentAccess.ordinal() + 1 : 0];
 		}
+
+		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+12 && y - getGuiTop() < 52+12) {
+			disableConversion = !disableConversion;
+		}
 		if (x - getGuiLeft() > 11 && x - getGuiLeft() < 165 && y - getGuiTop() > 108 && y - getGuiTop() < 134) {
 			showFullPreview = !showFullPreview;
+		}
+		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+24 && y - getGuiTop() < 52+24) {
+	        int ordinal = SonarCore.energyTypes.getObjectID(type.getName()) + 1;
+	        EnergyType type = SonarCore.energyTypes.getRegisteredObject(ordinal);
+	        if (type == null) {
+	            this.type = SonarCore.energyTypes.getRegisteredObject(0);
+	        } else {
+	            this.type = type;
+	        }
 		}
 
 	}

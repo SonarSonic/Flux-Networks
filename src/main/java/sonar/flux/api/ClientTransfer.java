@@ -1,20 +1,17 @@
 package sonar.flux.api;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
-import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.flux.api.energy.IFluxTransfer;
-import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.connection.transfer.BaseFluxTransfer;
 import sonar.flux.connection.transfer.ISidedTransfer;
 import sonar.flux.connection.transfer.PhantomTransfer;
-import sonar.flux.connection.transfer.SidedPhantomTransfer;
+import sonar.flux.network.NetworkData;
 
 public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
@@ -32,7 +29,7 @@ public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
-		energyType = EnergyType.values()[nbt.getByte("e")];
+		energyType = SonarCore.energyTypes.getRegisteredObject(nbt.getInteger(NetworkData.ENERGY_TYPE));
 		byte direction_byte = nbt.getByte("d");
 		direction = direction_byte == -1 ? null : EnumFacing.VALUES[direction_byte];
 		isPhantomPower = nbt.getBoolean("p");
@@ -43,7 +40,7 @@ public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
-		nbt.setByte("e", (byte) energyType.ordinal());
+		nbt.setInteger(NetworkData.ENERGY_TYPE, SonarCore.energyTypes.getObjectID(energyType.getName()));	
 		nbt.setByte("d", direction == null ? -1 : (byte) direction.ordinal());
 		if (isPhantomPower)
 			nbt.setBoolean("p", isPhantomPower);
@@ -79,10 +76,10 @@ public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 	public void onEndWorldTick() {}
 
 	@Override
-	public void addedToNetwork(long add) {}
+	public void addedToNetwork(long add, EnergyType energyType) {}
 
 	@Override
-	public void removedFromNetwork(long remove) {}
+	public void removedFromNetwork(long remove, EnergyType energyType) {}
 
 	@Override
 	public EnergyType getEnergyType() {

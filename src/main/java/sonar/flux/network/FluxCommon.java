@@ -2,14 +2,10 @@ package sonar.flux.network;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.utils.IGuiItem;
-import sonar.core.utils.IGuiTile;
 import sonar.flux.FluxNetworks;
 
 public class FluxCommon implements IGuiHandler {

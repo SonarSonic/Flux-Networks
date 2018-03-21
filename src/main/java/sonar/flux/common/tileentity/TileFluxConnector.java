@@ -1,25 +1,14 @@
 package sonar.flux.common.tileentity;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
 
-import com.google.common.collect.Lists;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import sonar.core.SonarCore;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
-import sonar.flux.api.energy.IFluxTransfer;
 import sonar.flux.api.energy.ITransferHandler;
-import sonar.flux.client.GuiTab;
-import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.common.tileentity.energy.TileFluxTesla;
 import sonar.flux.connection.transfer.handlers.ConnectionTransferHandler;
 
@@ -42,16 +31,16 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
     }
 
 	@Override
-	public void updateTransfers(){
-		super.updateTransfers();
+	public void updateTransfers(EnumFacing ...faces){
+		super.updateTransfers(faces);
 		if(handler.wasChanged){
-			ArrayList<Boolean> bool = Lists.newArrayList();
+			ArrayList<Boolean> bool = new ArrayList<>();
 			for(EnumFacing face : EnumFacing.VALUES){
 				bool.add(handler.transfers.get(face)!=null);
 			}
 			connections.setObjects(bool);
 		}
-		SonarCore.sendFullSyncAround(this, 128);
+		SonarCore.sendFullSyncAroundWithRenderUpdate(this, 128);
 	}
 
 	@Override

@@ -1,49 +1,35 @@
 package sonar.flux.connection;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import com.google.common.collect.Lists;
-
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.SonarCore;
-import sonar.core.api.SonarAPI;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.api.utils.ActionType;
-import sonar.core.integration.SonarLoader;
 import sonar.core.listener.ListenerTally;
 import sonar.core.listener.PlayerListener;
+import sonar.core.utils.Pair;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AdditionType;
-import sonar.flux.api.FluxListener;
 import sonar.flux.api.RemovalType;
-import sonar.flux.api.energy.IEnergyTransfer;
-import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxController.PriorityMode;
 import sonar.flux.api.tiles.IFluxController.TransferMode;
-import sonar.flux.api.tiles.IFluxController.TransmitterMode;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.common.tileentity.TileStorage;
 import sonar.flux.network.FluxNetworkCache;
-import sonar.flux.network.PacketFluxConnectionsList;
-import sonar.flux.network.PacketFluxNetworkList;
-import sonar.flux.network.PacketNetworkStatistics;
 
 public class FluxHelper {
 
@@ -98,29 +84,31 @@ public class FluxHelper {
 		}
 	}
 
-	public static long transferEnergy(IFluxPlug plug, List<IFluxPoint> points, TransferMode mode) {
+	public static long transferEnergy(IFluxPlug plug, List<IFluxPoint> points, EnergyType type, TransferMode mode) {
 		long currentLimit = Long.MAX_VALUE;
+		
 		for (IFluxPoint point : points) {
 			if (currentLimit <= 0) {
 				break;
 			}
 			if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both
-				long toTransfer = addEnergyToNetwork(plug, removeEnergyFromNetwork(point, currentLimit, ActionType.SIMULATE), ActionType.SIMULATE);
+				long toTransfer = addEnergyToNetwork(plug, type, removeEnergyFromNetwork(point, type, currentLimit, ActionType.SIMULATE), ActionType.SIMULATE);
 				if (toTransfer > 0) {
-					long pointRec = removeEnergyFromNetwork(point, toTransfer, ActionType.PERFORM);
-					currentLimit -= addEnergyToNetwork(plug, pointRec, ActionType.PERFORM);
+					long pointRec = removeEnergyFromNetwork(point, type, toTransfer, ActionType.PERFORM);
+					currentLimit -= addEnergyToNetwork(plug, type, pointRec, ActionType.PERFORM);
 				}
 			}
 		}
+		
 		return Long.MAX_VALUE - currentLimit;
 	}
 
-	public static long addEnergyToNetwork(IFlux from, long maxTransferRF, ActionType actionType) {
-		return from.getTransferHandler().addToNetwork(maxTransferRF, actionType);
+	public static long addEnergyToNetwork(IFlux from, EnergyType type, long maxTransferRF, ActionType actionType) {
+		return from.getTransferHandler().addToNetwork(maxTransferRF, type, actionType);
 	}
 
-	public static long removeEnergyFromNetwork(IFlux from, long maxTransferRF, ActionType actionType) {
-		return from.getTransferHandler().removeFromNetwork(maxTransferRF, actionType);
+	public static long removeEnergyFromNetwork(IFlux from, EnergyType type, long maxTransferRF, ActionType actionType) {
+		return from.getTransferHandler().removeFromNetwork(maxTransferRF, type, actionType);
 	}
 
 	/* @Deprecated public static long pullEnergy(IFlux from, long maxTransferRF, ActionType actionType) { long extracted = 0; maxTransferRF = Math.min(maxTransferRF, from.getCurrentTransferLimit()); if (from != null && maxTransferRF != 0) { switch (from.getConnectionType()) { case PLUG: extracted += from.getTransferHandler().addToNetwork(maxTransferRF - extracted, actionType); break; case STORAGE: break; default: break; } } return extracted; }
@@ -131,9 +119,10 @@ public class FluxHelper {
 	}
 
 	public static List<ISonarEnergyHandler> getEnergyHandlers() {
-		List<ISonarEnergyHandler> handlers = Lists.newArrayList();
+		List<ISonarEnergyHandler> handlers = new ArrayList<>();
 		for (ISonarEnergyHandler handler : SonarCore.energyHandlers) {
-			if (FluxConfig.transfers.get(handler.getProvidedType()).a) {
+			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfers.get(handler.getProvidedType());
+			if (canTransfer!=null && canTransfer.a) {
 				handlers.add(handler);
 			}
 		}
@@ -141,9 +130,10 @@ public class FluxHelper {
 	}
 
 	public static List<ISonarEnergyContainerHandler> getEnergyContainerHandlers() {
-		List<ISonarEnergyContainerHandler> handlers = Lists.newArrayList();
+		List<ISonarEnergyContainerHandler> handlers = new ArrayList<>();
 		for (ISonarEnergyContainerHandler handler : SonarCore.energyContainerHandlers) {
-			if (FluxConfig.transfers.get(handler.getProvidedType()).b) {
+			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfers.get(handler.getProvidedType());
+			if (canTransfer!=null &&canTransfer.b) {
 				handlers.add(handler);
 			}
 		}

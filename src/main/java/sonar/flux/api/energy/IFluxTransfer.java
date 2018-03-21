@@ -10,9 +10,9 @@ public interface IFluxTransfer extends INBTSyncable {
 	
 	void onEndWorldTick();
 	
-	void addedToNetwork(long add);
+	void addedToNetwork(long add, EnergyType energyType);
 	
-	void removedFromNetwork(long remove);
+	void removedFromNetwork(long remove, EnergyType energyType);
 	
 	EnergyType getEnergyType();
 	

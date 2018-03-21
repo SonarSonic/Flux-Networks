@@ -1,5 +1,6 @@
 package sonar.flux.api.network;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -34,9 +35,7 @@ public class FluxCache<T extends IFluxListenable> {
     public static final FluxCache storage = new FluxCache(IFluxStorage.class) {
 
         public void update(BasicFluxNetwork network) {
-            network.resetStorageValues();
             controller.update(network); //update priorities
-            network.updateFluxTallies();
         }
 
     };
@@ -71,7 +70,7 @@ public class FluxCache<T extends IFluxListenable> {
     }
 
     public static List<FluxCache> getValidTypes(IFluxListenable tile) {
-        List<FluxCache> valid = Lists.newArrayList();
+        List<FluxCache> valid = new ArrayList<>();
         for (FluxCache handler : FluxCache.types) {
             if (handler.clazz.isInstance(tile)) {
                 valid.add(handler);

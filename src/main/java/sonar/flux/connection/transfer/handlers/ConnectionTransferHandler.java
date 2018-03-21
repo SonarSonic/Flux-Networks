@@ -1,15 +1,16 @@
 package sonar.flux.connection.transfer.handlers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.energy.ISonarEnergyHandler;
 import sonar.core.api.energy.StoredEnergyStack;
@@ -36,7 +37,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		this.validFaces = validFaces;
 	}
 
-	public Map<EnumFacing, IFluxTransfer> transfers = Maps.newHashMap();
+	public Map<EnumFacing, IFluxTransfer> transfers = new HashMap<>();
 	{
 		for (EnumFacing face : EnumFacing.VALUES) {
 			transfers.put(face, null);
@@ -55,52 +56,60 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		transfers.entrySet().stream().filter(E -> E.getValue() != null).forEach(E -> E.getValue().onEndWorldTick());
 	}
 
-	public IFluxTransfer getValidPhantomTransfer(EnumFacing from, EnergyType energy_type) {
-		if (flux.getNetwork().isFakeNetwork()) {
+	public IFluxTransfer getValidPhantomTransfer(EnumFacing from, EnergyType energy_type, ActionType type) {
+		if (getNetwork().isFakeNetwork()) {
 			return null;
 		}
 		IFluxTransfer transfer = transfers.get(from);
 		TileEntity expected_source = from == null ? null : tile.getWorld().getTileEntity(tile.getPos().offset(from));
 		if (from == null || expected_source == null || (transfer != null && transfer instanceof ISidedTransfer && ((ISidedTransfer) transfer).getTile() != expected_source)) {
-			transfer = transfers.computeIfAbsent(null, E -> new PhantomTransfer(energy_type));
-			/// FIXME MAKE THE PHANTOM HANDLER RF ONLY?
+			if (type.shouldSimulate()) {
+				transfer = transfers.getOrDefault(null, new PhantomTransfer(energy_type));
+			} else {
+				if (energy_type == EnergyType.EU) {
+					Optional<Entry<EnumFacing, IFluxTransfer>> firstEUTransfer = transfers.entrySet().stream().filter(E -> E.getValue() != null && E.getValue().getEnergyType() == EnergyType.EU).findAny();
+					if (firstEUTransfer.isPresent()) {
+						return firstEUTransfer.get().getValue();
+					}
+				}
+				transfer = transfers.computeIfAbsent(null, E -> new PhantomTransfer(energy_type));
+			}
+
 		} else if (transfer == null) {
 			ISonarEnergyHandler handler = FluxHelper.canTransferEnergy(expected_source, from);
 			if (handler != null) {
-				transfer = transfers.computeIfAbsent(null, E -> new ConnectionTransfer(this, handler, tile, from));
+				transfer = transfers.computeIfAbsent(from, E -> new ConnectionTransfer(this, handler, tile, from));
 			} else {
-				transfer = transfers.computeIfAbsent(null, E -> new SidedPhantomTransfer(energy_type, expected_source, from));
+				transfer = transfers.computeIfAbsent(from, E -> new SidedPhantomTransfer(energy_type, expected_source, from));
 			}
 		}
 		return transfer;
 	}
 
 	public long addPhantomEnergyToNetwork(EnumFacing from, long maxReceive, EnergyType energy_type, ActionType type) {
-		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type);
-		if (transfer != null) {
-			long toTransfer = StoredEnergyStack.convert(maxReceive, energy_type, EnergyType.RF);
+		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
+		if (transfer != null && getNetwork().canTransfer(energy_type)) {
 			// FIXME this could override priority!!!!
-			long added = flux.getNetwork().receiveEnergy(Math.min(toTransfer, getValidAddition(toTransfer)), type);
+			long added = flux.getNetwork().receiveEnergy(getValidAddition(maxReceive), energy_type, type);
 			if (!type.shouldSimulate()) {
-				transfer.addedToNetwork(added);
+				transfer.addedToNetwork(added, energy_type);
 				max_add -= added;
 			}
-			return StoredEnergyStack.convert(added, EnergyType.RF, energy_type);
+			return added;
 		}
 		return 0;
 	}
 
 	public long removePhantomEnergyFromNetwork(EnumFacing from, long maxReceive, EnergyType energy_type, ActionType type) {
-		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type);
-		if (transfer != null) {
-			long toTransfer = StoredEnergyStack.convert(maxReceive, energy_type, EnergyType.RF);
+		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
+		if (transfer != null && getNetwork().canTransfer(energy_type)) {
 			// FIXME this could override priority!!!!
-			long removed = flux.getNetwork().extractEnergy(Math.min(toTransfer, getValidRemoval(toTransfer)), type);
+			long removed = flux.getNetwork().extractEnergy(getValidRemoval(maxReceive), energy_type, type);
 			if (!type.shouldSimulate()) {
-				transfer.removedFromNetwork(removed);
+				transfer.removedFromNetwork(removed, energy_type);
 				max_remove -= removed;
 			}
-			return StoredEnergyStack.convert(removed, EnergyType.RF, energy_type);
+			return removed;
 		}
 		return 0;
 	}
@@ -123,18 +132,20 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		}
 	}
 
-	public void updateTransfers() {
+	public void updateTransfers(EnumFacing... faces) {
 		boolean change = false;
-		for (EnumFacing face : validFaces) {
-			int index = face.getIndex();
-			BlockPos neighbour_pos = tile.getPos().offset(face);
-			TileEntity neighbour_tile = tile.getWorld().getTileEntity(neighbour_pos);
+		for (EnumFacing face : faces) {
+			if (validFaces.contains(face)) {
+				int index = face.getIndex();
+				BlockPos neighbour_pos = tile.getPos().offset(face);
+				TileEntity neighbour_tile = tile.getWorld().getTileEntity(neighbour_pos);
 
-			boolean wasConnected = transfers.get(face) != null;
-			setTransfer(face, neighbour_tile);
-			boolean isConnected = transfers.get(face) != null;
-			if (wasConnected != isConnected) {
-				change = true;
+				boolean wasConnected = transfers.get(face) != null;
+				setTransfer(face, neighbour_tile);
+				boolean isConnected = transfers.get(face) != null;
+				if (wasConnected != isConnected) {
+					change = true;
+				}
 			}
 		}
 		wasChanged = change;

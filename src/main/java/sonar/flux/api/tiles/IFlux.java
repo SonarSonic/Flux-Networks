@@ -1,23 +1,16 @@
 package sonar.flux.api.tiles;
 
-import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.FontHelper;
-import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.energy.IEnergyTransfer;
-import sonar.flux.api.energy.IFluxTransfer;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.client.AbstractGuiTab;
 
 /**
  * extended by IFluxPoint & IFluxPlug you must use them if you wish to send and receive energy from the network

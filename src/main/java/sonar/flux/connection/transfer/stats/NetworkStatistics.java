@@ -1,22 +1,14 @@
 package sonar.flux.connection.transfer.stats;
 
-import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.DirtyPart;
 import sonar.core.network.sync.IDirtyPart;
-import sonar.core.network.sync.ISyncableListener;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.IFluxCommon;
-import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.connection.BasicFluxNetwork;
@@ -41,8 +33,6 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, IDirty
 	public NetworkStatistics(IFluxCommon network) {
 		this.network = network;
 	}
-
-	public int plugCount, pointCount, storageCount;
 
 	public void onStartServerTick() {
 		BasicFluxNetwork network = ((BasicFluxNetwork) this.network);

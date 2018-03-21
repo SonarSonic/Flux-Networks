@@ -5,25 +5,23 @@ import static net.minecraft.client.renderer.GlStateManager.scale;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.energy.EnergyType;
+import sonar.core.api.energy.StoredEnergyStack;
 import sonar.core.client.gui.GuiSonar;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
-import sonar.flux.api.ClientFlux;
 import sonar.flux.api.ClientTransfer;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.tiles.IFlux;
@@ -171,20 +169,21 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		}
 		drawNormalItemStack(flux.getConnectionType().getDisplayStack(), x + 2, y + 1);
 		if (this.getCurrentTab() == GuiTab.INDEX) {
-			FontHelper.text("TOTAL: " + flux.getTransferHandler().getAdded() + " " + EnergyType.FE.getUsageSuffix(), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
+			List<String> textLines = new ArrayList<>();
+			addTransferStrings(textLines, flux.getConnectionType(), EnergyType.FE, flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
+			FontHelper.text(textLines.get(0), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 		} else {
 			FontHelper.text(flux.getCustomName(), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
 		}
 	}
 
 	public List<String> getTextLines(IFlux flux) {
-		List<String> textLines = Lists.newArrayList();
+		List<String> textLines = new ArrayList<>();
 		textLines.add(TextFormatting.BOLD + flux.getCustomName());
 		if (flux.isChunkLoaded()) {
 			if (flux.getCoords().getBlockPos().equals(this.flux.getPos())) {
 				// textLines.add(TextFormatting.GREEN + "THIS CONNECTION!");
 			}
-			// textLines.add(FontHelper.translate("flux.type") + ": " + TextFormatting.AQUA + flux.getConnectionType().toString());
 			addTransferStrings(textLines, flux.getConnectionType(), EnergyType.FE, flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
 			textLines.add(GUI.TRANSFER_LIMIT + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? "NO LIMIT" : flux.getTransferLimit()));
 			textLines.add(GUI.PRIORITY + ": " + TextFormatting.GREEN + flux.getCurrentPriority());
@@ -205,15 +204,22 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		String direction = (transfer.direction == null ? "PHANTOM" : transfer.direction.toString().toUpperCase());
 		String transferS = transfer.added + " " + transfer.energyType.getUsageSuffix();
 		drawNormalItemStack(transfer.stack, x + 2, y + 1);
-
-		FontHelper.text("" + direction + ": " + transferS, 24, 5, rgb);
+		List<String> textLines = new ArrayList<>();
+		long converted_add = StoredEnergyStack.convert(transfer.added, EnergyType.FE, transfer.getEnergyType());
+		long converted_remove = StoredEnergyStack.convert(transfer.removed, EnergyType.FE, transfer.getEnergyType());
+		addTransferStrings(textLines,transfer.handler.flux.getConnectionType(), transfer.getEnergyType(), converted_add, converted_remove);
+		GlStateManager.scale(0.75, 0.75, 0.75);
+		FontHelper.text(transfer.stack.getDisplayName(), 34, 3, rgb);
+		FontHelper.text(textLines.get(0), 34, 14, rgb);
 	}
 
 	public List<String> getTextLines(ClientTransfer transfer) {
-		List<String> textLines = Lists.newArrayList();
+		List<String> textLines = new ArrayList<>();
 		textLines.add(TextFormatting.BOLD + transfer.stack.getDisplayName());
 		ConnectionType type = transfer.handler.flux.getConnectionType();
-		addTransferStrings(textLines, type, transfer.getEnergyType(), transfer.added, transfer.removed);
+		long converted_add = StoredEnergyStack.convert(transfer.added, EnergyType.FE, transfer.getEnergyType());
+		long converted_remove = StoredEnergyStack.convert(transfer.removed, EnergyType.FE, transfer.getEnergyType());
+		addTransferStrings(textLines, type, transfer.getEnergyType(), converted_add, converted_remove);
 		// textLines.add("Limit Usage: " + Math.floor(((double) (transfer.added + transfer.removed) / transfer.handler.add_limit) * 100) + " %");
 		// textLines.add("Direction: " + (transfer.direction == null ? "PHANTOM" : transfer.direction.toString().toUpperCase()));
 		textLines.add("Type: " + transfer.energyType.getName());
@@ -223,6 +229,18 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 
 	public void addTransferStrings(List<String> string, ConnectionType type, EnergyType energyType, long added, long removed) {
 
+		if(type == ConnectionType.STORAGE){
+			long change = Math.abs(removed) - added;
+			if(change ==0){
+				string.add("Change:" + TextFormatting.GOLD + " " + change + " " + energyType.getStorageSuffix());
+			}else if(change < 0){
+				string.add("Change:" + TextFormatting.RED + " - " + Math.abs(change) + " " + energyType.getStorageSuffix());				
+			}else if(change > 0){
+				string.add("Change:" + TextFormatting.GREEN + " + " + change + " " + energyType.getStorageSuffix());				
+			}
+			return;
+		}
+		
 		if (type.canAdd()) {
 			String addedString = added + " " + energyType.getUsageSuffix();
 			if (added == 0) {

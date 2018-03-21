@@ -1,14 +1,15 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
+import sonar.core.SonarCore;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
@@ -30,6 +31,8 @@ public class NetworkData extends WorldSavedData {
 	public static String CACHE_PLAYER = "cachePName";
 	public static String NETWORK_NAME = "name";
 	public static String ACCESS = "access";
+	public static String CONVERSION = "convert";
+	public static String ENERGY_TYPE = "energy_type";
 	public static String PLAYER_LIST = "playerList";
 
 	public NetworkData(String name) {
@@ -54,10 +57,12 @@ public class NetworkData extends WorldSavedData {
 				String cachedPlayer = tag.getString(CACHE_PLAYER);
 				CustomColour colour = NBTHelper.instanceNBTSyncable(CustomColour.class, tag.getCompoundTag(COLOUR));
 				AccessType type = AccessType.valueOf(tag.getString(ACCESS));
-				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, networkName, colour, type);
+				boolean enableConversion = tag.getBoolean(CONVERSION);
+				EnergyType energyType = SonarCore.energyTypes.getRegisteredObject(tag.getInteger(ENERGY_TYPE));
+				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, networkName, colour, type, enableConversion, energyType);
 				network.getPlayers().readData(tag.getCompoundTag(PLAYER_LIST), SyncType.SAVE);
 				NBTTagList unloaded_connections = tag.getTagList("unloaded", NBT.TAG_COMPOUND);
-				List<ClientFlux> unloaded = Lists.newArrayList();
+				List<ClientFlux> unloaded = new ArrayList<>();
 				for (int j = 0; j < unloaded_connections.tagCount(); j++) {
 					NBTTagCompound c = unloaded_connections.getCompoundTagAt(j);
 					unloaded.add(new ClientFlux(c));
@@ -83,6 +88,8 @@ public class NetworkData extends WorldSavedData {
 				tag.setString(NETWORK_NAME, network.getNetworkName());
 				tag.setTag(COLOUR, network.getNetworkColour().writeData(new NBTTagCompound(), SyncType.SAVE));
 				tag.setString(ACCESS, network.getAccessType().name());
+				tag.setBoolean(CONVERSION, network.disabledConversion());
+				tag.setInteger(ENERGY_TYPE, SonarCore.energyTypes.getObjectID(network.getDefaultEnergyType().getName()));		        
 				tag.setTag(PLAYER_LIST, network.getPlayers().writeData(new NBTTagCompound(), SyncType.SAVE));
 				if (network instanceof BasicFluxNetwork) {
 					NBTTagList unloaded_connections = new NBTTagList();

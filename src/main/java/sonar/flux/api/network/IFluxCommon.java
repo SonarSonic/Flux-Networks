@@ -3,6 +3,7 @@ package sonar.flux.api.network;
 import java.util.List;
 import java.util.UUID;
 
+import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
@@ -58,6 +59,11 @@ public interface IFluxCommon extends INBTSyncable {
      */
     long getMaxEnergyStored();
 
+    
+    boolean disabledConversion();
+    
+    EnergyType getDefaultEnergyType();
+    
     void setClientConnections(List<ClientFlux> flux);
 
     List<ClientFlux> getClientFluxConnection();

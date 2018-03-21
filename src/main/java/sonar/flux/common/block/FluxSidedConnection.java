@@ -9,7 +9,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.block.ConnectedTile.PropertySonarFacing;
+import sonar.core.helpers.SonarHelper;
 import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.common.tileentity.energy.TileAbstractEnergyConnector;
 
 public abstract class FluxSidedConnection extends FluxConnection {
 
@@ -20,20 +22,21 @@ public abstract class FluxSidedConnection extends FluxConnection {
 	@Override
 	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
 		super.onNeighborChange(world, pos, neighbor);
-		updateTransfers(world, pos);
-	}
 
+		TileEntity tile = world.getTileEntity(pos);
+		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileAbstractEnergyConnector) {
+			TileAbstractEnergyConnector flux = (TileAbstractEnergyConnector) tile;
+			flux.onNeighborChange(SonarHelper.getBlockDirection(pos, neighbor));
+		}
+	}	
+	
+	@Override
 	public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
 		super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
-		updateTransfers(world, observerPos);
+		onNeighborChange(world, observerPos, changedBlockPos);
 	}
 
 	public void updateTransfers(IBlockAccess world, BlockPos pos) {
-		TileEntity tile = world.getTileEntity(pos);
-		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileFlux) {
-			TileFlux flux = (TileFlux) tile;
-			flux.updateTransfers();
-		}
 	}
 
 	public IBlockState getActualState(IBlockState state, IBlockAccess w, BlockPos pos) {

@@ -2,25 +2,18 @@ package sonar.flux.client.tabs;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SelectionGrid;
-import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
-import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.ClientTransfer;
 import sonar.flux.api.tiles.IFlux;
@@ -29,13 +22,11 @@ import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.GUI;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.network.PacketHelper;
-import sonar.flux.network.PacketType;
 
 public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Object> {
 
 	public static ChunkDisplayOptions chunk_display_option = ChunkDisplayOptions.BOTH;
-	public static Map<ConnectionType, Boolean> canDisplay = Maps.newHashMap();
+	public static Map<ConnectionType, Boolean> canDisplay = new HashMap<>();
 
 	static {
 		for (ConnectionType type : ConnectionType.values()) {
@@ -224,7 +215,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 	@Override
 	public List getGridList(int gridID) {
 		// FIXME DO SORTING
-		List gridList = Lists.newArrayList();
+		List gridList = new ArrayList<>();
 		common.getClientFluxConnection().forEach(c -> {
 			if (chunk_display_option.canDisplay(c) && canDisplay.get(c.getConnectionType())) {
 				c.addToGuiList(gridList, true, false);

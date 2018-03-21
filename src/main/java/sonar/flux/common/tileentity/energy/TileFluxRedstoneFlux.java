@@ -2,9 +2,7 @@ package sonar.flux.common.tileentity.energy;
 
 import cofh.redstoneflux.api.IEnergyProvider;
 import cofh.redstoneflux.api.IEnergyReceiver;
-import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;

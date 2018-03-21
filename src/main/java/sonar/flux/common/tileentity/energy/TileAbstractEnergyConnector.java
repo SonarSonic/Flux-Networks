@@ -1,8 +1,7 @@
 package sonar.flux.common.tileentity.energy;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 import net.minecraft.util.EnumFacing;
 import sonar.flux.api.tiles.IFluxConnection;
@@ -11,7 +10,7 @@ import sonar.flux.connection.transfer.handlers.FluxConnectionWrapper;
 
 public abstract class TileAbstractEnergyConnector extends TileFlux implements IFluxConnection {
 
-	public Map<EnumFacing, FluxConnectionWrapper> wrappers = Maps.newHashMap();
+	public Map<EnumFacing, FluxConnectionWrapper> wrappers = new HashMap<>();
 	{
 		wrappers.put(null, new FluxConnectionWrapper(null, this));
 		for(EnumFacing face : EnumFacing.VALUES){
@@ -24,6 +23,10 @@ public abstract class TileAbstractEnergyConnector extends TileFlux implements IF
 
 	public FluxConnectionWrapper getConnectionWrapper(EnumFacing side){
 		return wrappers.get(side);
+	}
+	
+	public void onNeighborChange(EnumFacing direction) {
+		updateTransfers(direction);
 	}
 	
 }

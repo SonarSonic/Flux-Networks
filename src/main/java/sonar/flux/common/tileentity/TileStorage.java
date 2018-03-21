@@ -1,15 +1,9 @@
 package sonar.flux.common.tileentity;
 
-import com.google.common.collect.Lists;
-
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
-import sonar.core.api.energy.EnergyType;
-import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
@@ -17,12 +11,10 @@ import sonar.flux.FluxConfig;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
-import sonar.flux.client.GuiTab;
-import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.connection.transfer.StorageTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
-public class TileStorage extends TileFlux implements IFluxStorage {
+public class TileStorage extends TileFluxConnector implements IFluxStorage {
 
 	public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 	public final SyncEnergyStorage storage;
@@ -86,6 +78,9 @@ public class TileStorage extends TileFlux implements IFluxStorage {
 		}
 		
 	}
+	public EnumFacing[] getValidFaces() {
+		return new EnumFacing[]{EnumFacing.UP, EnumFacing.DOWN};
+	}
 
 	@Override
 	public void markChanged(IDirtyPart part) {
@@ -116,7 +111,7 @@ public class TileStorage extends TileFlux implements IFluxStorage {
 
 	@Override
 	public long getTransferLimit() {
-		return storage.getMaxExtract();
+		return Math.min(super.getTransferLimit(), storage.getMaxExtract());
 	}
 
 	@Override
@@ -166,6 +161,7 @@ public class TileStorage extends TileFlux implements IFluxStorage {
 		super.readPacket(buf, id);
 		switch (id) {
 		case 10:
+			//FIXME - if they are in the gui, update power instantly
 			targetEnergy = buf.readInt();
 			updateStorage = true;
 			break;

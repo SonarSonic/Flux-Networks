@@ -2,7 +2,6 @@ package sonar.flux.connection.transfer;
 
 import net.minecraft.item.ItemStack;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.helpers.ItemStackHelper;
 
 public class PhantomTransfer extends BaseFluxTransfer {
 

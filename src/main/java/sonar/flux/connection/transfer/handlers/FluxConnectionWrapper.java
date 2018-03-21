@@ -9,7 +9,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxConnection;
 import sonar.flux.api.tiles.IFluxPoint;
 

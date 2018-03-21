@@ -1,10 +1,9 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.flux.FluxNetworks;
@@ -14,7 +13,7 @@ import sonar.flux.connection.EmptyFluxNetwork;
 
 public class ClientNetworkCache implements IFluxNetworkCache {
 
-	public Map<Integer, IFluxNetwork> networks = Maps.newHashMap();
+	public Map<Integer, IFluxNetwork> networks = new HashMap<>();
 
 	public void clearNetworks() {
 		networks.clear();
@@ -33,7 +32,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 		if (updateEntireList) {
 			networks2.forEach(network -> readNetworkFromPacket(network));
 		} else {
-			Map<Integer, IFluxNetwork> newMap = Maps.newHashMap();
+			Map<Integer, IFluxNetwork> newMap = new HashMap<>();
 			networks2.forEach(network -> newMap.put(network.getNetworkID(), network));
 			networks = newMap;
 		}
@@ -50,7 +49,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public List<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
-		List<IFluxNetwork> available = Lists.newArrayList();
+		List<IFluxNetwork> available = new ArrayList<>();
 		for (IFluxNetwork network : getAllNetworks()) {
 			if (network.getPlayerAccess(player).canConnect()) {
 				available.add(network);
@@ -61,7 +60,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public List<IFluxNetwork> getAllNetworks() {
-		List<IFluxNetwork> available = Lists.newArrayList();
+		List<IFluxNetwork> available = new ArrayList<>();
 		networks.values().forEach(net -> available.add(net));
 		return available;
 	}

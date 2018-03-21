@@ -17,15 +17,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import sonar.core.SonarCore;
 import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
-import sonar.core.utils.IGuiTile;
-import sonar.flux.FluxNetworks;
-import sonar.flux.api.FluxListener;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileFlux;
 
@@ -89,10 +85,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 		TileEntity target = world.getTileEntity(pos);
 		if (target != null && target instanceof TileFlux) {
 			TileFlux flux = (TileFlux) target;
-			if (player != null && player instanceof EntityPlayer) {
-				flux.setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
-				flux.updateTransfers();
-			}
+			flux.onBlockPlacedBy(world, pos, state, player, itemstack);
 		}
 	}
 

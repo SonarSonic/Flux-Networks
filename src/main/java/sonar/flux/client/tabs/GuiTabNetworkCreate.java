@@ -2,7 +2,6 @@ package sonar.flux.client.tabs;
 
 import java.util.List;
 
-import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 

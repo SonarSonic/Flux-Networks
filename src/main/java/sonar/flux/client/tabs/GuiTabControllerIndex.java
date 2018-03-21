@@ -1,19 +1,14 @@
 package sonar.flux.client.tabs;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.SonarCore;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.FluxNetworks;
-import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileController;
-import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.common.tileentity.TileStorage;
 
 public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController, Object> {
 

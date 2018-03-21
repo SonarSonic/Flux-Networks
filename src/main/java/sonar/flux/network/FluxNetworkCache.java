@@ -1,18 +1,17 @@
 package sonar.flux.network;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.entity.player.EntityPlayer;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.FunctionHelper;
 import sonar.core.listener.ISonarListenable;
 import sonar.core.listener.ListenableList;
-import sonar.core.listener.ListenerTally;
 import sonar.core.listener.PlayerListener;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxConfig;
@@ -64,13 +63,13 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	}
 
 	public List<IFluxNetwork> getAllNetworks() {
-		List<IFluxNetwork> available = Lists.newArrayList();
+		List<IFluxNetwork> available = new ArrayList<>();
 		networks.values().forEach(available::addAll);
 		return available;
 	}
 
 	public List<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
-		List<IFluxNetwork> available = Lists.newArrayList();
+		List<IFluxNetwork> available = new ArrayList<>();
 		forEachNetwork(network -> {
 			if (admin || network.getPlayerAccess(player).canConnect())
 				available.add(network);
@@ -100,20 +99,20 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 			return true;
 		}
 		UUID ownerUUID = FluxHelper.getOwnerUUID(player);
-		List<IFluxNetwork> created = networks.getOrDefault(ownerUUID, Lists.newArrayList());
+		List<IFluxNetwork> created = networks.getOrDefault(ownerUUID, new ArrayList<>());
 		return created.size() < FluxConfig.maximum_per_player;
 	}
 
-	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access) {
+	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access, boolean disableConvert, EnergyType defaultEnergy) {
 		UUID playerUUID = FluxHelper.getOwnerUUID(player);
-		networks.putIfAbsent(playerUUID, Lists.newArrayList());
+		networks.putIfAbsent(playerUUID, new ArrayList<>());
 		for (IFluxNetwork network : networks.get(playerUUID)) {
 			if (network.getNetworkName().equals(name)) {
 				return network;
 			}
 		}
 		int iD = createNewUniqueID();
-		BasicFluxNetwork network = new BasicFluxNetwork(iD, playerUUID, name, colour, access);
+		BasicFluxNetwork network = new BasicFluxNetwork(iD, playerUUID, name, colour, access, disableConvert, defaultEnergy);
 		network.cachedOwnerName.setObject(player.getDisplayNameString());
 
 		addNetwork(network);

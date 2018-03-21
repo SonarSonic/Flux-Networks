@@ -1,36 +1,21 @@
 package sonar.flux.client.tabs;
 
-import static net.minecraft.client.renderer.GlStateManager.color;
-
-import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
-import sonar.core.api.energy.EnergyType;
-import sonar.core.api.energy.StoredEnergyStack;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
-import sonar.core.helpers.FontHelper;
-import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.ClientTransfer;
 import sonar.flux.api.energy.IFluxTransfer;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.client.GuiTab;
-import sonar.flux.common.tileentity.TileFluxPlug;
+import sonar.flux.common.tileentity.TileFluxConnector;
 
-public class GuiTabFluxPlugIndex extends GuiTabConnectionIndex<TileFluxPlug, Object> {
+public class GuiTabFluxConnectorIndex extends GuiTabConnectionIndex<TileFluxConnector, Object> {
 
-	public GuiTabFluxPlugIndex(TileFluxPlug tile, List<GuiTab> tabs) {
+	public GuiTabFluxConnectorIndex(TileFluxConnector tile, List<GuiTab> tabs) {
 		super(tile, tabs);
 	}
 
@@ -44,7 +29,6 @@ public class GuiTabFluxPlugIndex extends GuiTabConnectionIndex<TileFluxPlug, Obj
 	@Override
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
-		// FontHelper.textCentre("Connected Blocks", getXSize(), 76, common.getNetworkColour());
 
 	}
 
@@ -77,7 +61,7 @@ public class GuiTabFluxPlugIndex extends GuiTabConnectionIndex<TileFluxPlug, Obj
 
 	@Override
 	public List getGridList(int gridID) {
-		List<IFluxTransfer> gridList = Lists.newArrayList();
+		List<IFluxTransfer> gridList = new ArrayList<>();
 		flux.getClientFlux().addToGuiList(gridList, true, true);
 		return gridList;
 	}

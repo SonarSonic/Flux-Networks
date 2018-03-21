@@ -1,7 +1,10 @@
 package sonar.flux.api.energy;
 
 import java.util.List;
+import java.util.Map;
 
+import net.minecraft.util.EnumFacing;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 
 public interface ITransferHandler {
@@ -16,11 +19,11 @@ public interface ITransferHandler {
 
     boolean hasTransfers();
 
-    void updateTransfers();
+    void updateTransfers(EnumFacing ...faces);
 
     List<IFluxTransfer> getTransfers();
 
-	long addToNetwork(long maxTransferRF, ActionType actionType);
+	long addToNetwork(long maxTransferRF, EnergyType type, ActionType actionType);
 	
-	long removeFromNetwork(long maxTransferRF, ActionType actionType);
+	long removeFromNetwork(long maxTransferRF, EnergyType type, ActionType actionType);
 }

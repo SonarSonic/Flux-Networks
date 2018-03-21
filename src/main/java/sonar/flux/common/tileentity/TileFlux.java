@@ -8,8 +8,10 @@ import com.google.common.collect.Lists;
 import cofh.redstoneflux.api.IEnergyHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -19,8 +21,6 @@ import net.minecraftforge.fml.common.Optional;
 import sonar.core.SonarCore;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.common.tileentity.TileEntitySonar;
-import sonar.core.helpers.NBTHelper;
-import sonar.core.helpers.SonarHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.listener.ListenableList;
 import sonar.core.listener.PlayerListener;
@@ -35,7 +35,6 @@ import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.ClientTransferHandler;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.FluxListener;
 import sonar.flux.api.RemovalType;
@@ -105,10 +104,17 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		/* if (isServer()) { totalTransferMax = limit.getObject(); for (int i = 0; i < 6; i++) { currentTransfer[i] = limit.getObject(); } if (checkTicks >= 20) { updateTransfers(false); checkTicks = 0; } else { checkTicks++; } listeners.forEach(tally -> FluxHelper.sendPacket(getNetwork(), tally)); } */
 	}
 
-	public void updateTransfers() {
-		getTransferHandler().updateTransfers();
+	public void updateTransfers(EnumFacing ...faces) {
+		getTransferHandler().updateTransfers(faces);
 	}
 
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemstack) {
+		if (player != null && player instanceof EntityPlayer) {
+			setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
+			updateTransfers(EnumFacing.VALUES);
+		}
+	}
+	
 	//// NETWORK CONNECTION \\\\
 
 	@Override
@@ -151,7 +157,6 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 
 	//// TILE ENTITY CONNECTIONS \\\\
 
-	/* @Override public void updateNeighbours(boolean full) { boolean changed = false; hasTransfers = false; for (EnumFacing face : getValidFaces()) { int index = face.getIndex(); BlockPos neighbour_pos = getPos().offset(face); TileEntity neighbour_tile = getWorld().getTileEntity(neighbour_pos); boolean canConnect = neighbour_tile != null && FluxHelper.canConnect(neighbour_tile, face.getOpposite()); if (full || canConnect != connections.getObjects().get(index)) { if (setNeighbour(face, canConnect ? neighbour_tile : null)) { changed = true; } } if (canConnect) { hasTransfers = true; } } if (changed) { connections.markChanged(); SonarCore.sendFullSyncAroundWithRenderUpdate(this, 128); } } public boolean setNeighbour(EnumFacing face, TileEntity tile) { TileEntity prev = cachedTiles[face.getIndex()]; boolean changed = tile != null; connections.getObjects().set(face.getIndex(), changed); cachedTiles[face.getIndex()] = tile; return prev != tile; } public void setOrCreateFluxTransfer(EnumFacing face, TileEntity tile) {} public void onSyncPacketRequested(EntityPlayer player) { updateNeighbours(true); super.onSyncPacketRequested(player); } public TileEntity[] cachedTiles() { return cachedTiles; } */
 	public EnumFacing[] getValidFaces() {
 		return EnumFacing.values();
 	}
@@ -270,7 +275,7 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
-		if (type.isType(SyncType.SPECIAL)) {
+		if (type.isType(SyncType.SPECIAL) || (this.network.isFakeNetwork() && type.isType(SyncType.DEFAULT_SYNC))) {
 			if (nbt.hasKey("client_flux")) {
 				client_flux = new ClientFlux(nbt.getCompoundTag("client_flux"));
 			}
@@ -280,7 +285,7 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
-		if (type.isType(SyncType.SPECIAL)) {
+		if (type.isType(SyncType.SPECIAL) || (this.network.isFakeNetwork() && type.isType(SyncType.DEFAULT_SYNC))) {
 			if (listeners.hasListeners(FluxListener.SYNC_INDEX.ordinal())) {
 				client_flux = new ClientFlux(this);
 				nbt.setTag("client_flux", client_flux.writeData(new NBTTagCompound(), type));

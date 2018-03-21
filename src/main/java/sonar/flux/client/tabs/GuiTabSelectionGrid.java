@@ -1,28 +1,24 @@
 package sonar.flux.client.tabs;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import sonar.core.client.gui.IGridGui;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
-import sonar.core.utils.CustomColour;
-import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.client.AbstractGuiTab;
-import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 
 public abstract class GuiTabSelectionGrid<T extends TileFlux, G> extends AbstractGuiTab<T> implements IGridGui<G> {
 
-	public Map<SelectionGrid, SonarScroller> grids = Maps.newHashMap();
+	public Map<SelectionGrid, SonarScroller> grids = new HashMap<>();
 
 	public GuiTabSelectionGrid(T tile, List tabs) {
 		super(tile, tabs);
@@ -33,7 +29,7 @@ public abstract class GuiTabSelectionGrid<T extends TileFlux, G> extends Abstrac
 	@Override
 	public void initGui() {
 		super.initGui();
-		Map<SelectionGrid, SonarScroller> newgrids = Maps.newHashMap();
+		Map<SelectionGrid, SonarScroller> newgrids = new HashMap<>();
 		addGrids(newgrids);
 		grids = newgrids;		
 		

@@ -1,12 +1,13 @@
 package sonar.flux.api;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants.NBT;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
@@ -14,12 +15,11 @@ import sonar.flux.api.energy.IFluxTransfer;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.transfer.handlers.BaseTransferHandler;
-import sonar.flux.connection.transfer.handlers.FluxTransferHandler;
 
 public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 
 	public IFlux flux; // CLIENTFLUX or normal flux
-	public List<IFluxTransfer> transfers = Lists.newArrayList();
+	public List<IFluxTransfer> transfers = new ArrayList<>();
 	public long max_remove;
 	public long max_add;
 	public long add_limit;
@@ -92,7 +92,7 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 	}
 
 	@Override
-	public void updateTransfers() {}
+	public void updateTransfers(EnumFacing ...face) {}
 
 	@Override
 	public List<IFluxTransfer> getTransfers() {
@@ -100,12 +100,12 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 	}
 
 	@Override
-	public long addToNetwork(long maxTransferRF, ActionType actionType) {
+	public long addToNetwork(long maxTransferRF, EnergyType type, ActionType actionType) {
 		return 0;
 	}
 
 	@Override
-	public long removeFromNetwork(long maxTransferRF, ActionType actionType) {
+	public long removeFromNetwork(long maxTransferRF, EnergyType type, ActionType actionType) {
 		return 0;
 	}
 

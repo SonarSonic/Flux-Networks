@@ -2,10 +2,9 @@ package sonar.flux.client.tabs;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -100,7 +99,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 
 	@Override
 	public void renderElementToolTip(int gridID, FluxPlayer element, int x, int y) {
-		List<String> strings = Lists.newArrayList();
+		List<String> strings = new ArrayList<>();
 		boolean isOwner = common.getCachedPlayerName().equals(element.getCachedName());
 		if (x > getGuiLeft() + 11 + 142 && x < getGuiLeft() + 11 + 153) {
 			strings.add(TextFormatting.RED + "Delete: " + element.getCachedName());

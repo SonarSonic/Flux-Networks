@@ -1,11 +1,9 @@
 package sonar.flux.client.tabs;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
@@ -51,7 +49,7 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 
 	@Override
 	public void renderElementToolTip(int gridID, IFluxCommon element, int x, int y) {
-		List<String> strings = Lists.newArrayList();
+		List<String> strings = new ArrayList<>();
 		strings.add(FontHelper.translate("network.owner") + ": " + TextFormatting.AQUA + element.getCachedPlayerName());
 		strings.add(FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(element.getAccessType().getName()));
 		drawHoveringText(strings, x, y);

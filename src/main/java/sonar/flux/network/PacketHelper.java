@@ -1,13 +1,16 @@
 package sonar.flux.network;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import sonar.core.SonarCore;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.CustomColour;
@@ -20,7 +23,6 @@ import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.GuiTab;
-import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.FluxHelper;
 
@@ -62,20 +64,24 @@ public class PacketHelper {
 
 	//// EDIT NETWORK \\\\
 
-	public static NBTTagCompound createNetworkEditPacket(int networkID, String networkName, CustomColour networkColour, AccessType accessType) {
+	public static NBTTagCompound createNetworkEditPacket(int networkID, String networkName, CustomColour networkColour, AccessType accessType, boolean disableConvert, EnergyType defaultEnergy) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("networkID", networkID);
-		tag.setString("networkName", networkName);
-		tag.setInteger("colourRGB", networkColour.getRGB());
-		tag.setInteger("accessType", accessType.ordinal());
+		tag.setInteger(NetworkData.NETWORK_ID, networkID);
+		tag.setString(NetworkData.NETWORK_NAME, networkName);
+		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
+		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
+		tag.setBoolean(NetworkData.CONVERSION, disableConvert);
+		tag.setInteger(NetworkData.ENERGY_TYPE, SonarCore.energyTypes.getObjectID(defaultEnergy.getName()));	
 		return tag;
 	}
 
 	public static IMessage doNetworkEditPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
-		int networkID = packetTag.getInteger("networkID");
-		String newName = packetTag.getString("networkName");
-		CustomColour colour = new CustomColour(packetTag.getInteger("colourRGB"));
-		AccessType access = AccessType.values()[packetTag.getInteger("accessType")];
+		int networkID = packetTag.getInteger(NetworkData.NETWORK_ID);
+		String newName = packetTag.getString(NetworkData.NETWORK_NAME);
+		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
+		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
+		boolean disableConversion = packetTag.getBoolean(NetworkData.CONVERSION);
+		EnergyType energyType = SonarCore.energyTypes.getRegisteredObject(packetTag.getInteger(NetworkData.ENERGY_TYPE));
 
 		IFluxNetwork common = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!common.isFakeNetwork()) {
@@ -83,6 +89,8 @@ public class PacketHelper {
 				common.setNetworkName(newName);
 				common.setAccessType(access);
 				common.setCustomColour(colour);
+				common.setDisableConversion(disableConversion);
+				common.setDefaultEnergyType(energyType);
 				common.markDirty();
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.EDIT_NETWORK);
@@ -93,22 +101,29 @@ public class PacketHelper {
 
 	//// CREATE NETWORK \\\\
 
-	public static NBTTagCompound createNetworkCreationPacket(String networkName, CustomColour networkColour, AccessType accessType) {
+	public static NBTTagCompound createNetworkCreationPacket(String networkName, CustomColour networkColour, AccessType accessType, boolean disableConvert, EnergyType defaultEnergy) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString("networkName", networkName);
-		tag.setInteger("colourRGB", networkColour.getRGB());
-		tag.setInteger("accessType", accessType.ordinal());
+		tag.setString(NetworkData.NETWORK_NAME, networkName);
+		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
+		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
+		tag.setBoolean(NetworkData.CONVERSION, disableConvert);
+		tag.setInteger(NetworkData.ENERGY_TYPE, SonarCore.energyTypes.getObjectID(defaultEnergy.getName()));	
 		return tag;
 	}
 
 	public static IMessage doNetworkCreationPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
-		String newName = packetTag.getString("networkName");
-		CustomColour colour = new CustomColour(packetTag.getInteger("colourRGB"));
-		AccessType access = AccessType.values()[packetTag.getInteger("accessType")];
+		String newName = packetTag.getString(NetworkData.NETWORK_NAME);
+		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
+		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
+		boolean enableConversion = packetTag.getBoolean(NetworkData.CONVERSION);
+		EnergyType energyType = SonarCore.energyTypes.getRegisteredObject(packetTag.getInteger(NetworkData.ENERGY_TYPE));
+		
 		if (FluxNetworks.getServerCache().hasSpaceForNetwork(player)) {
-			IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access);
-		}
-		return new PacketFluxError(source.getPos(), FluxError.NOT_OWNER);
+			IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access, enableConversion, energyType);
+		}		
+		List<IFluxNetwork> networks = FluxNetworkCache.instance().getAllowedNetworks(player, false);
+		FluxNetworks.network.sendTo(new PacketFluxNetworkList(networks, true), (EntityPlayerMP) player);
+		return null;
 	}
 
 	//// DELETE NETWORK \\\\

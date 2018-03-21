@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
+import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.RemovalType;
-import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
 
@@ -49,6 +49,10 @@ public interface IFluxNetwork extends IFluxCommon {
      * sets the colour of this network
      */
     void setCustomColour(CustomColour colour);
+    
+    void setDisableConversion(boolean disable);
+    
+    void setDefaultEnergyType(EnergyType type);
 
     void markTypeDirty(FluxCache... caches);
 
@@ -75,13 +79,15 @@ public interface IFluxNetwork extends IFluxCommon {
 
     /**
      * used for pushing energy into the network it returns the amount received
+     * @param energyType TODO
      */
-    long receiveEnergy(long maxReceive, ActionType type);
+    long receiveEnergy(long maxReceive, EnergyType energyType, ActionType type);
 
     /**
      * used for pulling energy from the network it returns the amount extracted
+     * @param energyType TODO
      */
-    long extractEnergy(long maxExtract, ActionType type);
+    long extractEnergy(long maxExtract, EnergyType energyType, ActionType type);
 
     /**
      * adds a Flux Connection to the network, this could be a PLUG, POINT or STORAGE
@@ -104,4 +110,8 @@ public interface IFluxNetwork extends IFluxCommon {
     IFluxNetwork updateNetworkFrom(IFluxNetwork network);
 
     void onRemoved();
+    
+    boolean canConvert(EnergyType from, EnergyType to);
+    
+    boolean canTransfer(EnergyType type);
 }

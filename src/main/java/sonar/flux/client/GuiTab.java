@@ -1,5 +1,6 @@
 package sonar.flux.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -7,7 +8,7 @@ import com.google.common.collect.Lists;
 import sonar.flux.api.FluxListener;
 import sonar.flux.client.tabs.GuiTabConnectionIndex;
 import sonar.flux.client.tabs.GuiTabControllerIndex;
-import sonar.flux.client.tabs.GuiTabFluxPlugIndex;
+import sonar.flux.client.tabs.GuiTabFluxConnectorIndex;
 import sonar.flux.client.tabs.GuiTabNetworkConnections;
 import sonar.flux.client.tabs.GuiTabNetworkCreate;
 import sonar.flux.client.tabs.GuiTabNetworkEdit;
@@ -18,6 +19,7 @@ import sonar.flux.client.tabs.GuiTabStorageIndex;
 import sonar.flux.common.tileentity.TileController;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.common.tileentity.TileFluxPlug;
+import sonar.flux.common.tileentity.TileFluxPoint;
 import sonar.flux.common.tileentity.TileStorage;
 
 public enum GuiTab {
@@ -51,7 +53,7 @@ public enum GuiTab {
 			return Lists.newArrayList(FluxListener.SYNC_PLAYERS, FluxListener.SYNC_NETWORK_CONNECTIONS);		
 			//admin screen
 		}
-		return Lists.newArrayList();
+		return new ArrayList<>();
 	}
 	
 	public Object getGuiScreen(TileFlux flux, List<GuiTab> tabs){
@@ -66,7 +68,10 @@ public enum GuiTab {
 				return new GuiTabStorageIndex((TileStorage) flux, tabs);
 			}
 			if(flux instanceof TileFluxPlug){
-				return new GuiTabFluxPlugIndex((TileFluxPlug) flux, tabs);
+				return new GuiTabFluxConnectorIndex((TileFluxPlug) flux, tabs);
+			}
+			if(flux instanceof TileFluxPoint){
+				return new GuiTabFluxConnectorIndex((TileFluxPoint) flux, tabs);
 			}
 			return new GuiTabConnectionIndex(flux, tabs);
 		case NETWORK_CREATE:

@@ -1,19 +1,12 @@
 package sonar.flux.common.tileentity;
 
-import com.google.common.collect.Lists;
-
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.network.sync.SyncEnum;
 import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.client.GuiTab;
-import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.connection.transfer.ControllerTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 

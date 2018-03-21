@@ -1,6 +1,7 @@
 package sonar.flux.client.tabs;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -8,15 +9,11 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import sonar.core.SonarCore;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.api.tiles.IFlux;
-import sonar.flux.api.tiles.IFlux.ConnectionType;
-import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.CheckBox;
 import sonar.flux.client.GUI;
 import sonar.flux.client.GuiTab;
@@ -128,7 +125,7 @@ public class GuiTabConnectionIndex<T extends TileFlux, G> extends GuiTabSelectio
 
 	@Override
 	public List getGridList(int gridID) {
-		return Lists.newArrayList();
+		return new ArrayList<>();
 	}
 
 	@Override

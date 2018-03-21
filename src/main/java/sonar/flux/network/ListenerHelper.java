@@ -1,9 +1,6 @@
 package sonar.flux.network;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import sonar.flux.api.energy.IFluxTransfer;
-import sonar.flux.api.energy.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;

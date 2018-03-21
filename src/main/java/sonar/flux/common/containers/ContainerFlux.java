@@ -2,7 +2,6 @@ package sonar.flux.common.containers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.inventory.ContainerSync;
-import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.ListenerHelper;
 
