@@ -33,9 +33,6 @@ public class FluxEvents {
 			for (IFluxNetwork network : networks) {
 				network.onStartServerTick();
 			}
-			if (cache.getListenerList().hasListeners(FluxListener.ADMIN.ordinal())) {
-				cache.updateAdminListeners();
-			}
 		}
 		if (event.phase == Phase.END) {
 

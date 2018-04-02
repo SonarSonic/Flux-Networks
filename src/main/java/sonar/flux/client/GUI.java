@@ -25,7 +25,15 @@ public enum GUI {
 	EDIT_NETWORK("network.edit"), //
 	MAX("point.max"), //
 	PRIORITY("point.priority"), //
-	IGNORE_LIMIT("flux.ignorelimit");
+	IGNORE_LIMIT("flux.ignorelimit"),
+	
+	GUI_TAB_INDEX("network.tab.home"),	
+	GUI_TAB_CONNECTIONS("network.tab.connections"),
+	GUI_TAB_NETWORK_SELECTION("network.tab.networks"),
+	GUI_TAB_STATISTICS("network.tab.statistics"),
+	GUI_TAB_NETWORK_EDIT("network.tab.editnetwork"),
+	GUI_TAB_NETWORK_CREATE("network.tab.createnetwork"),
+	GUI_TAB_PLAYERS("network.tab.players");
 
 	String text;
 

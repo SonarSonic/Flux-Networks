@@ -24,6 +24,7 @@ import sonar.core.helpers.SonarHelper;
 import sonar.core.network.PacketTileSync;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.utils.CustomColour;
+import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
@@ -132,14 +133,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		this.networkStats.onStartServerTick();
 		List<IFluxStorage> storage = getConnections(FluxCache.storage);
 		List<IFluxPoint> points = getConnections(FluxCache.point);
-
 		if (!storage.isEmpty() && !points.isEmpty()) {
 			storage.forEach(s -> FluxHelper.transferEnergy(s, points, getDefaultEnergyType(), TransferMode.DEFAULT));
 		}
-
-		/* TransferMode mode = getTransferMode(); List<IFluxStorage> buffer = getConnections(FluxCache.storage); List<IFluxPoint> points = getConnections(FluxCache.point); List<IFluxPlug> plugs = getConnections(FluxCache.plug); if (networkID.getObject() == -1 || points.isEmpty() || plugs.isEmpty()) { return; } EnergyStats stats = new EnergyStats(0, 0, 0); plugs.forEach(plug -> stats.maxSent += FluxHelper.addEnergyToNetwork(plug, Long.MAX_VALUE, ActionType.SIMULATE)); points.forEach(point -> stats.maxReceived += FluxHelper.removeEnergyFromNetwork(point, Long.MAX_VALUE, ActionType.SIMULATE)); long currentTransfer = stats.transfer; if (stats.maxReceived != 0 && stats.maxSent != 0) { IFluxController controller = getController(); int current = mode.repeat; while (current != 0) { for (IFluxPlug plug : plugs) { stats.transfer += FluxHelper.transferEnergy(plug, points, mode); /* long limit = FluxHelper.pullEnergy(plug, plug.getCurrentTransferLimit(), ActionType.SIMULATE); long currentLimit = limit; for (IFluxPoint point : points) { if (currentLimit <= 0) { break; } if (point.getConnectionType() != plug.getConnectionType()) {// storages can be both long toTransfer = (long) (mode == TransferMode.EVEN ? Math.min(Math.ceil(((double) limit / (double) points.size())), currentLimit) : currentLimit); long pointRec = FluxHelper.pushEnergy(point, toTransfer, ActionType.PERFORM); currentLimit -= FluxHelper.pullEnergy(plug, pointRec, ActionType.PERFORM); } } stats.transfer += limit - currentLimit; } current--; } } + networkStats.inputStatistics(stats, connections); } } */
-		/* } current--; } } */
-		// networkStats.inputStatistics(stats, connections);
 	}
 
 	@Override
@@ -153,46 +149,8 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public int listenerTicks = 0;
 
 	public void sendPacketToListeners() {
-		if (listenerTicks >= 20) {
-			listenerTicks = 0;
-		} else {
-			listenerTicks++;
-		}
-		/** update the network list every 20 ticks - FIXME make this only occur if there is a change to the network list! */
-		if (listenerTicks == 0) {
-			flux_listeners.forEach(flux -> flux.getListenerList().getListeners(FluxListener.SYNC_NETWORK_LIST).forEach(l -> {
-				List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(l.player, false);
-				FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), l.player);
-			}));
-		}
-		if (listenerTicks == 10) {
-			/** update the connections list every 20 ticks - FIXME make this only occur if there is a change to the connection list!! */
-			buildFluxConnections();
-			flux_listeners.forEach(flux -> flux.getListenerList().getListeners(FluxListener.SYNC_NETWORK_CONNECTIONS).forEach(l -> {
-				FluxNetworks.network.sendTo(new PacketFluxConnectionsList(getClientFluxConnection(), getNetworkID()), l.player);
-			}));
-		}
-		/** send Transfer packets */
-		if (listenerTicks == 15) {
-
-		}
-
-		/** send index information on every tick */
-		flux_listeners.forEach(flux -> flux.getListenerList().getListeners(FluxListener.SYNC_INDEX).forEach(l -> {
-			if (flux instanceof TileFlux) {
-				TileFlux tile = (TileFlux) flux;
-				NBTTagCompound syncTag = tile.writeData(new NBTTagCompound(), SyncType.SPECIAL);
-				SonarCore.network.sendTo(new PacketTileSync(tile.getCoords().getBlockPos(), syncTag, SyncType.SPECIAL), l.player);
-			}
-			// FIXME send block infomation at the end of the energy tick
-			// FluxNetworks.network.sendTo(new PacketNetworkStatistics(getNetworkID(), getStatistics()), l.player);
-		}));
-
-		/** send network statistics on every tick */
-		flux_listeners.forEach(flux -> flux.getListenerList().getListeners(FluxListener.SYNC_NETWORK_STATS).forEach(l -> {
-			FluxNetworks.network.sendTo(new PacketNetworkStatistics(getNetworkID(), getStatistics()), l.player);
-		}));
-
+		FluxListener.SYNC_INDEX.sendPackets(this, flux_listeners);
+		FluxListener.SYNC_NETWORK_STATS.sendPackets(this, flux_listeners);
 	}
 
 	@Override
@@ -225,20 +183,19 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		this.colour.setObject(colour);
 	}
 
-    
 	@Override
-	public  void setDisableConversion(boolean disable){
-    	this.disableConversion.setObject(disable);
-    }
-    
+	public void setDisableConversion(boolean disable) {
+		this.disableConversion.setObject(disable);
+	}
+
 	@Override
-	public void setDefaultEnergyType(EnergyType type){
+	public void setDefaultEnergyType(EnergyType type) {
 		this.defaultEnergyType.setEnergyType(type);
-	}	
-    
+	}
+
 	public void markDirty() {
 		connectAll();
-		FluxNetworkCache.instance().updateNetworkListeners();
+		FluxNetworkCache.instance().onNetworksChanged();
 	}
 
 	@Override
@@ -263,7 +220,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	@Override
-	public long receiveEnergy(long maxReceive, EnergyType energyType, ActionType type) {
+	public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type) {
 		long used = 0;
 		List<IFluxPoint> points = getConnections(FluxCache.point);
 		for (IFluxPoint flux : points) {
@@ -278,7 +235,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	@Override
-	public long extractEnergy(long maxExtract, EnergyType energyType, ActionType type) {
+	public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type) {
 		long used = 0;
 		List<IFluxPlug> plugs = getConnections(FluxCache.plug);
 		for (IFluxPlug flux : plugs) {
@@ -322,6 +279,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public void addFluxListener(IFluxListenable listener) {
 		ListHelper.addWithCheck(flux_listeners, listener);
+		for (FluxListener listen : FluxListener.values()) {
+			listen.sendPackets(this, Lists.newArrayList(listener));
+		}
 	}
 
 	@Override
@@ -329,6 +289,10 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		flux_listeners.removeIf(f -> f == listener);
 	}
 
+    public List<IFluxListenable> getFluxListeners(){
+    	return this.flux_listeners;
+    }
+    
 	@Override
 	public PlayerAccess getPlayerAccess(EntityPlayer player) {
 		if (FluxHelper.isPlayerAdmin(player)) {
@@ -397,7 +361,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public boolean canConvert(EnergyType from, EnergyType to) {
-		return !disabledConversion() || from==to;
+		return (from == to || !disabledConversion() && FluxConfig.conversion.get(from).contains(to)) || FluxConfig.conversion_override.get(from).contains(to);
 	}
 
 	@Override

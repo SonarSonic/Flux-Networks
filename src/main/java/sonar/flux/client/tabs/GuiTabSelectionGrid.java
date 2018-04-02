@@ -31,8 +31,8 @@ public abstract class GuiTabSelectionGrid<T extends TileFlux, G> extends Abstrac
 		super.initGui();
 		Map<SelectionGrid, SonarScroller> newgrids = new HashMap<>();
 		addGrids(newgrids);
-		grids = newgrids;		
-		
+		grids = newgrids;
+
 	}
 
 	public abstract void addGrids(Map<SelectionGrid, SonarScroller> grids);
@@ -49,7 +49,8 @@ public abstract class GuiTabSelectionGrid<T extends TileFlux, G> extends Abstrac
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		for (Entry<SelectionGrid, SonarScroller> entry : grids.entrySet()) {
-			renderScroller(entry.getValue());
+			if (entry.getKey().isScrollable())
+				renderScroller(entry.getValue());
 			entry.getKey().renderGrid(this, x, y);
 		}
 	}
@@ -79,8 +80,8 @@ public abstract class GuiTabSelectionGrid<T extends TileFlux, G> extends Abstrac
 	}
 
 	public void drawScreen(int x, int y, float var) {
-		super.drawScreen(x, y, var);		
-		for(Entry<SelectionGrid, SonarScroller> entry : grids.entrySet()){
+		super.drawScreen(x, y, var);
+		for (Entry<SelectionGrid, SonarScroller> entry : grids.entrySet()) {
 			entry.getKey().setList(Lists.newArrayList(getGridList(entry.getKey().gridID)));
 			entry.getValue().drawScreen(x - guiLeft, y - guiTop, entry.getKey().isScrollable());
 		}

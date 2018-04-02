@@ -82,7 +82,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	public void addNetwork(IFluxNetwork network) {
 		if (network.getOwnerUUID() != null) {
 			networks.computeIfAbsent(network.getOwnerUUID(), FunctionHelper.ARRAY).add(network);
-			updateNetworkListeners();
+			onNetworksChanged();
 		}
 	}
 
@@ -90,7 +90,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		if (common.getOwnerUUID() != null && networks.get(common.getOwnerUUID()) != null) {
 			common.onRemoved();
 			networks.get(common.getOwnerUUID()).remove(common);
-			updateNetworkListeners();
+			onNetworksChanged();
 		}
 	}
 
@@ -126,7 +126,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 			FluxEvents.logRemoveNetwork(remove);
 		}
 	}
-
+	
 	public void updateNetworkListeners() {
 		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
 		players.forEach(listener -> {
@@ -141,6 +141,11 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, true);
 			FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), listener.player);
 		});
+	}
+	
+	public void onNetworksChanged(){
+		updateNetworkListeners();
+		ListenerHelper.onNetworkListChanged();
 	}
 
 	@Override

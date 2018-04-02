@@ -66,7 +66,7 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 
 	@Override
 	public GuiTab getCurrentTab() {
-		return GuiTab.NETWORK_SELECT;
+		return GuiTab.NETWORK_SELECTION;
 	}
 
 }

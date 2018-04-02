@@ -42,7 +42,7 @@ public interface IFlux {
             return this == POINT;
     	}
     	
-    	public ItemStack getDisplayStack(){
+    	public ItemStack getRepresentiveStack(){
     		switch(this){
 			case CONTROLLER:
 				return new ItemStack(FluxNetworks.fluxController);
@@ -55,7 +55,10 @@ public interface IFlux {
     		}
     		return ItemStack.EMPTY;
     	}
+    	
     }
+
+	ItemStack getDisplayStack();
 
     int getNetworkID();
 

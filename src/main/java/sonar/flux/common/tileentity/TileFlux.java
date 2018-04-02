@@ -11,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -220,6 +221,12 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	public IFluxNetwork getNetwork() {
 		return network;
 	}
+	
+	@Override
+	public ItemStack getDisplayStack(){
+        Item item = Item.getItemFromBlock(this.getBlockType());
+		return new ItemStack(item, 1, 0);
+	}
 
 	@Override
 	public ConnectionType getConnectionType() {
@@ -409,6 +416,6 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 
 	@Override
 	public Object getClientElement(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
-		return GuiTab.INDEX.getGuiScreen(this, Lists.newArrayList(GuiTab.INDEX, GuiTab.NETWORK_SELECT, GuiTab.CONNECTIONS, GuiTab.NETWORK_STATS, GuiTab.PLAYERS, GuiTab.NETWORK_EDIT, GuiTab.NETWORK_CREATE));
+		return GuiTab.INDEX.getGuiScreen(this, Lists.newArrayList(GuiTab.INDEX, GuiTab.NETWORK_SELECTION, GuiTab.CONNECTIONS, GuiTab.NETWORK_STATISTICS, GuiTab.PLAYERS, GuiTab.NETWORK_EDIT, GuiTab.NETWORK_CREATE));
 	}
 }

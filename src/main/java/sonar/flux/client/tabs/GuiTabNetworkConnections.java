@@ -41,11 +41,11 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 	@Override
 	public void initGui() {
 		super.initGui();
-		buttonList.add(new ConnectionTypeButton(this, 0, ConnectionType.PLUG, GUI.PLUGS.toString(), getGuiLeft() + 12, getGuiTop() + 140));
-		buttonList.add(new ConnectionTypeButton(this, 1, ConnectionType.POINT, GUI.POINTS.toString(), getGuiLeft() + 52, getGuiTop() + 140));
-		buttonList.add(new ConnectionTypeButton(this, 2, ConnectionType.STORAGE, GUI.STORAGE.toString(), getGuiLeft() + 92, getGuiTop() + 140));
-		buttonList.add(new ConnectionTypeButton(this, 3, ConnectionType.CONTROLLER, GUI.CONTROLLERS.toString(), getGuiLeft() + 132, getGuiTop() + 140));
-		//buttonList.add(new ChunkLoadedButton(this, 4, getGuiLeft() + 120, getGuiTop() + 140));
+		buttonList.add(new ConnectionTypeButton(this, 0, ConnectionType.PLUG, GUI.PLUGS.toString(), getGuiLeft() + 12, getGuiTop() + 142));
+		buttonList.add(new ConnectionTypeButton(this, 1, ConnectionType.POINT, GUI.POINTS.toString(), getGuiLeft() + 52, getGuiTop() + 142));
+		buttonList.add(new ConnectionTypeButton(this, 2, ConnectionType.STORAGE, GUI.STORAGE.toString(), getGuiLeft() + 92, getGuiTop() + 142));
+		buttonList.add(new ConnectionTypeButton(this, 3, ConnectionType.CONTROLLER, GUI.CONTROLLERS.toString(), getGuiLeft() + 132, getGuiTop() + 142));
+		buttonList.add(new ChunkLoadedButton(this, 4, getGuiLeft() + 12, getGuiTop() + 120));
 	}
 
 	public static enum ChunkDisplayOptions {
@@ -81,28 +81,30 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		public GuiTabNetworkConnections gui;
 
 		protected ChunkLoadedButton(GuiTabNetworkConnections gui, int id, int x, int y) {
-			super(id, x, y, 16, 16, "");
+			super(id, x, y, 72, 16, "");
 			this.gui = gui;
 		}
 
 		@Override
 		public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
 			if (this.visible) {
+	            this.hovered = x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
 				GlStateManager.color(1, 1, 1, 1);
-				drawRect(this.x, this.y, 16, 16, gui.common.getNetworkColour().getRGB());
+				drawRect(this.x-1, this.y-1, this.x + 1 + this.width, this.y + this.height + 1, AbstractGuiTab.grey);
 				switch (gui.chunk_display_option) {
 				case BOTH:
-					drawRect(this.x + 1, this.y + 1, this.x + 16 - 1, this.y + 16 - 1, AbstractGuiTab.midBlue);
+					drawRect(this.x, this.y, this.x + this.width, this.y + this.height, gui.common.getNetworkColour().getRGB());
 					GlStateManager.color(1, 1, 1, 1);
 					mc.getTextureManager().bindTexture(AbstractGuiTab.scroller_flux_gui);
-					drawTexturedModalRect(this.x + 1 + 7, this.y + 1, 4, 227, 16 - 1, 16 - 1);
+					drawTexturedModalRect(this.x, this.y, 4, 227, this.width, this.height/2);
 					break;
 				case LOADED:
-					drawRect(this.x + 1, this.y + 1, this.x + 16 - 1, this.y + 16 - 1, AbstractGuiTab.midBlue);
+					drawRect(this.x, this.y, this.x + this.width, this.y + this.height, gui.common.getNetworkColour().getRGB());
 					break;
 				case UNLOADED:
+					GlStateManager.color(1, 1, 1, 1);
 					mc.getTextureManager().bindTexture(AbstractGuiTab.scroller_flux_gui);
-					drawTexturedModalRect(this.x + 1, this.y + 1, 4, 227, 16 - 1, 16 - 1);
+					drawTexturedModalRect(this.x, this.y, 4, 227, this.width, this.height);
 					break;
 				default:
 					break;
@@ -138,7 +140,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 				drawRect(this.x-1, this.y-1, this.x + 32+1, this.y + 16+1, type.gui_colour);
 				GlStateManager.color(1, 1, 1, 1);
 				drawRect(this.x, this.y, this.x + 32, this.y + 16, Color.BLACK.getRGB());
-				gui.drawNormalItemStack(type.getDisplayStack(), this.x, this.y);
+				gui.drawNormalItemStack(type.getRepresentiveStack(), this.x, this.y);
 				if (gui.canDisplay.get(type)) {
 					mc.getTextureManager().bindTexture(AbstractGuiTab.buttons);
 					GlStateManager.color(1, 1, 1, 1);
@@ -162,7 +164,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 			return;
 		}
 		if (button instanceof ChunkLoadedButton) {
-			SonarHelper.incrementEnum(chunk_display_option, ChunkDisplayOptions.values());
+			chunk_display_option = SonarHelper.incrementEnum(chunk_display_option, ChunkDisplayOptions.values());
 			return;
 		}
 	}
@@ -180,7 +182,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 	}
 
 	public void addGrids(Map<SelectionGrid, SonarScroller> grids) {
-		SelectionGrid grid = new SelectionGrid(this, 0, 11, 8, 154, 18, 1, 7);
+		SelectionGrid grid = new SelectionGrid(this, 0, 11, 8, 154, 18, 1, 6);
 		SonarScroller scroller = new SonarScroller(grid.xPos + (grid.gWidth * grid.eWidth), grid.yPos, grid.gHeight * grid.eHeight, 7);
 		grids.put(grid, scroller);
 	}

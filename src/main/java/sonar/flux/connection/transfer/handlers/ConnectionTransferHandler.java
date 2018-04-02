@@ -78,7 +78,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		} else if (transfer == null) {
 			IFluxEnergyHandler handler = FluxHelper.getValidHandler(expected_source, from);
 			if (handler != null) {
-				transfer = transfers.computeIfAbsent(from, E -> new ConnectionTransfer(this, handler, tile, from));
+				transfer = transfers.computeIfAbsent(from, E -> new ConnectionTransfer(this, handler, expected_source, from));
 			} else {
 				transfer = transfers.computeIfAbsent(from, E -> new SidedPhantomTransfer(energy_type, expected_source, from));
 			}
@@ -90,7 +90,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
 		if (transfer != null && getNetwork().canTransfer(energy_type)) {
 			// FIXME this could override priority!!!!
-			long added = flux.getNetwork().receiveEnergy(getValidAddition(maxReceive, energy_type), energy_type, type);
+			long added = flux.getNetwork().addPhantomEnergyToNetwork(getValidAddition(maxReceive, energy_type), energy_type, type);
 			if (!type.shouldSimulate()) {
 				transfer.addedToNetwork(added, energy_type);
 				max_add -= EnergyType.convert(added, energy_type, getNetwork().getDefaultEnergyType());
@@ -104,7 +104,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
 		if (transfer != null && getNetwork().canTransfer(energy_type)) {
 			// FIXME this could override priority!!!!
-			long removed = flux.getNetwork().extractEnergy(getValidRemoval(maxReceive, energy_type), energy_type, type);
+			long removed = flux.getNetwork().removePhantomEnergyFromNetwork(getValidRemoval(maxReceive, energy_type), energy_type, type);
 			if (!type.shouldSimulate()) {
 				transfer.removedFromNetwork(removed, energy_type);
 				max_remove -= EnergyType.convert(removed, energy_type, getNetwork().getDefaultEnergyType());

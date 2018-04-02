@@ -70,12 +70,7 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 		} else {
 			pushMatrix();
 
-			if (getCurrentTab() == GuiTab.NETWORK_CREATE) {
-				FontHelper.textCentre(GUI.CREATE_NETWORK.toString(), xSize, 8, Color.GRAY.getRGB());
-			} else {
-				FontHelper.textCentre(GUI.EDIT_NETWORK.toString(), xSize, 8, Color.GRAY.getRGB());
-			}
-
+			FontHelper.textCentre(getCurrentTab().getClientName(), xSize, 8, Color.GRAY.getRGB());
 			FontHelper.text(GUI.NETWORK_NAME + ": ", 8, 24, 0);
 			FontHelper.text("Colour" + ": ", 8, 80, 0);
 
@@ -129,7 +124,7 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 					PacketHelper.sendPacketToServer(PacketType.EDIT_NETWORK, flux, PacketHelper.createNetworkEditPacket(getNetworkID(), name.getText(), getCurrentColour(), currentAccess, disableConversion, type));
 				}
 
-				switchTab(GuiTab.NETWORK_SELECT);
+				switchTab(GuiTab.NETWORK_SELECTION);
 				resetCreateTab();
 				return;
 			}

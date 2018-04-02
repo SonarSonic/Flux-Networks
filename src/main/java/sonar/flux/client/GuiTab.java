@@ -23,7 +23,7 @@ import sonar.flux.common.tileentity.TileFluxPoint;
 import sonar.flux.common.tileentity.TileStorage;
 
 public enum GuiTab {
-	INDEX(0), NETWORK_SELECT(128), CONNECTIONS(64), NETWORK_STATS(192), NETWORK_EDIT(256), PLAYERS(386), NETWORK_CREATE(320);
+	INDEX(0), NETWORK_SELECTION(128), CONNECTIONS(64), NETWORK_STATISTICS(192), NETWORK_EDIT(256), PLAYERS(386), NETWORK_CREATE(320);
 
 	public int texX;
 	
@@ -32,6 +32,24 @@ public enum GuiTab {
 	}
 	
 	public String getClientName() {
+		switch(this){
+		case INDEX:
+			return GUI.GUI_TAB_INDEX.toString();
+		case NETWORK_SELECTION:
+			return GUI.GUI_TAB_NETWORK_SELECTION.toString();
+		case CONNECTIONS:
+			return GUI.GUI_TAB_CONNECTIONS.toString();
+		case NETWORK_STATISTICS:
+			return GUI.GUI_TAB_STATISTICS.toString();
+		case NETWORK_EDIT:
+			return GUI.GUI_TAB_NETWORK_EDIT.toString();
+		case PLAYERS:
+			return GUI.GUI_TAB_PLAYERS.toString();
+		case NETWORK_CREATE:
+			return GUI.GUI_TAB_NETWORK_CREATE.toString();
+		default:
+			break;		
+		}
 		return name();
 	}
 	
@@ -45,9 +63,9 @@ public enum GuiTab {
 			return Lists.newArrayList(FluxListener.SYNC_INDEX);
 		case NETWORK_EDIT:
 			return Lists.newArrayList(FluxListener.SYNC_INDEX);
-		case NETWORK_SELECT:
+		case NETWORK_SELECTION:
 			return Lists.newArrayList(FluxListener.SYNC_NETWORK_LIST);
-		case NETWORK_STATS:
+		case NETWORK_STATISTICS:
 			return Lists.newArrayList(FluxListener.SYNC_NETWORK_STATS);
 		case PLAYERS:
 			return Lists.newArrayList(FluxListener.SYNC_PLAYERS, FluxListener.SYNC_NETWORK_CONNECTIONS);		
@@ -78,9 +96,9 @@ public enum GuiTab {
 			return new GuiTabNetworkCreate(flux, tabs);
 		case NETWORK_EDIT:
 			return new GuiTabNetworkEdit(flux, tabs);
-		case NETWORK_SELECT:
+		case NETWORK_SELECTION:
 			return new GuiTabNetworkSelection(flux, tabs);
-		case NETWORK_STATS:
+		case NETWORK_STATISTICS:
 			return new GuiTabNetworkStatistics(flux, tabs);
 		case PLAYERS:
 			return new GuiTabNetworkPlayers(flux, tabs);

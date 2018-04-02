@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.energy.EnergyType;
@@ -101,12 +103,12 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public long receiveEnergy(long maxReceive, EnergyType energyType, ActionType simulate) {
+	public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType simulate) {
 		return 0;
 	}
 
 	@Override
-	public long extractEnergy(long maxExtract, EnergyType energyType, ActionType simulate) {
+	public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType simulate) {
 		return 0;
 	}
 
@@ -222,5 +224,10 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	@Override
 	public boolean canTransfer(EnergyType type) {
 		return false;
+	}
+
+	@Override
+	public List<IFluxListenable> getFluxListeners() {
+		return Lists.newArrayList();
 	}
 }

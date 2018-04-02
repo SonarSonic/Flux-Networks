@@ -14,6 +14,7 @@ import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.GuiTab;
@@ -56,7 +57,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 
 	@Override
 	public void addGrids(Map<SelectionGrid, SonarScroller> grids) {
-		SelectionGrid grid = new SelectionGrid(this, 0, 11, 8, 154, 11, 1, 13);
+		SelectionGrid grid = new SelectionGrid(this, 0, 11, 8, 154, 11, 1, 11);
 		SonarScroller scroller = new SonarScroller(grid.xPos + (grid.gWidth * grid.eWidth), grid.yPos, grid.gHeight * grid.eHeight, 7);
 		grids.put(grid, scroller);
 	}
@@ -76,7 +77,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	@Override
 	public void onGridClicked(int gridID, FluxPlayer element, int x, int y, int pos, int button, boolean empty) {
 		if (element != null) {
-            if (x - getGuiLeft() > 11 + 142 && x - getGuiLeft() < 11 + 153) {
+            if (x - getGuiLeft() > 153 && x - getGuiLeft() < 164) {
                 PacketHelper.sendPacketToServer(PacketType.REMOVE_PLAYER, flux, PacketHelper.createRemovePlayerPacket(flux.getNetworkID(), element.id, PlayerAccess.USER));
             } else if (button == 1) {
                 PacketHelper.sendPacketToServer(PacketType.CHANGE_PLAYER, flux, PacketHelper.createChangePlayerPacket(flux.getNetworkID(), element.id, element.access));
@@ -92,7 +93,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 
 		bindTexture(getBackground());
 		drawTexturedModalRect(0, 0, 0, 166, 154, 12);
-		FontHelper.text(element.getCachedName(), 0 + 3, 0 + 2, Color.white.getRGB());
+		FontHelper.text(element.getCachedName(), 0 + 3, 0 + 2, Color.white.getRGB());		
 		bindTexture(buttons);
 		drawTexturedModalRect(0 + 154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
 	}
@@ -122,6 +123,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 
 	@Override
 	public List getGridList(int gridID) {
+		this.common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
 		return common.getPlayers();
 	}
 

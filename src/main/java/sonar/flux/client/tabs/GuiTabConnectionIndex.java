@@ -64,7 +64,7 @@ public class GuiTabConnectionIndex<T extends TileFlux, G> extends GuiTabSelectio
     public void actionPerformed(GuiButton button) throws IOException {
     	super.actionPerformed(button);
         if (button.id == 0) {
-        	switchTab(GuiTab.NETWORK_SELECT);
+        	switchTab(GuiTab.NETWORK_SELECTION);
             return;
         }
         if(button.id == 3){
@@ -83,7 +83,7 @@ public class GuiTabConnectionIndex<T extends TileFlux, G> extends GuiTabSelectio
 	public void mouseClicked(int x, int y, int mouseButton) throws IOException {
 		super.mouseClicked(x, y, mouseButton);
 		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 10 && y - getGuiTop() < 20) {
-        	switchTab(GuiTab.NETWORK_SELECT);
+        	switchTab(GuiTab.NETWORK_SELECTION);
         }
     }
     

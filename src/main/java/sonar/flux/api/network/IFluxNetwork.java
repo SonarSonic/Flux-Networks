@@ -81,13 +81,13 @@ public interface IFluxNetwork extends IFluxCommon {
      * used for pushing energy into the network it returns the amount received
      * @param energyType TODO
      */
-    long receiveEnergy(long maxReceive, EnergyType energyType, ActionType type);
+    long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type);
 
     /**
      * used for pulling energy from the network it returns the amount extracted
      * @param energyType TODO
      */
-    long extractEnergy(long maxExtract, EnergyType energyType, ActionType type);
+    long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type);
 
     /**
      * adds a Flux Connection to the network, this could be a PLUG, POINT or STORAGE
@@ -107,6 +107,8 @@ public interface IFluxNetwork extends IFluxCommon {
     
     void removeFluxListener(IFluxListenable listener);
 
+    List<IFluxListenable> getFluxListeners();
+    
     IFluxNetwork updateNetworkFrom(IFluxNetwork network);
 
     void onRemoved();

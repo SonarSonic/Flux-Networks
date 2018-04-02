@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import sonar.core.api.nbt.INBTSyncable;
@@ -23,6 +24,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	public int priority;
 	public long limit;
 	public String customName;
+	public ItemStack stack;
 	public ClientTransferHandler handler;
 
 	public ClientFlux(IFlux flux) {
@@ -32,15 +34,17 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		this.limit = flux.getTransferLimit();
 		this.customName = flux.getCustomName();
 		this.handler = ClientTransferHandler.getInstanceFromHandler(flux, flux.getTransferHandler());
+		this.stack = flux.getDisplayStack();
 	}
 
-	public ClientFlux(BlockCoords coords, ConnectionType type, int priority, long limit, String customName, ClientTransferHandler handler) {
+	public ClientFlux(BlockCoords coords, ConnectionType type, int priority, long limit, String customName, ClientTransferHandler handler, ItemStack stack) {
 		this.coords = coords;
 		this.connection_type = type;
 		this.priority = priority;
 		this.limit = limit;
 		this.customName = customName;
 		this.handler = handler;
+		this.stack = stack;
 	}
 
 	public ClientFlux(NBTTagCompound tag) {
@@ -61,6 +65,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		handler = new ClientTransferHandler(this);
 		handler.readData(nbt.getCompoundTag("handler"), type);
 		isChunkLoaded = nbt.getBoolean("isChunkLoaded");
+		stack = new ItemStack(nbt);
 	}
 
 	@Override
@@ -72,6 +77,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		nbt.setString("name", customName);
 		nbt.setTag("handler", handler.writeData(new NBTTagCompound(), type));
 		nbt.setBoolean("isChunkLoaded", isChunkLoaded);
+		stack.writeToNBT(nbt);
 		return nbt;
 	}
 
@@ -156,5 +162,10 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	@Override
 	public boolean isChunkLoaded() {
 		return isChunkLoaded;
+	}
+
+	@Override
+	public ItemStack getDisplayStack() {
+		return stack;
 	}
 }

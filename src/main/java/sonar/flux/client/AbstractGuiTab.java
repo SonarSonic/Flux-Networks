@@ -167,7 +167,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		} else {
 			drawTexturedModalRect(x, y, 0, 226, 154, 18);
 		}
-		drawNormalItemStack(flux.getConnectionType().getDisplayStack(), x + 2, y + 1);
+		drawNormalItemStack(flux.getDisplayStack(), x + 2, y + 1);
 		if (this.getCurrentTab() == GuiTab.INDEX) {
 			List<String> textLines = new ArrayList<>();
 			addTransferStrings(textLines, flux.getConnectionType(), common.getDefaultEnergyType(), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());

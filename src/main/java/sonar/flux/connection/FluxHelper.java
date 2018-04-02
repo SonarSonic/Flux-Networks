@@ -121,7 +121,7 @@ public class FluxHelper {
 	public static List<IFluxEnergyHandler> getEnergyHandlers() {
 		List<IFluxEnergyHandler> handlers = new ArrayList<>();
 		for (IFluxEnergyHandler handler : FluxNetworks.loadedEnergyHandlers) {
-			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfers.get(handler.getEnergyType());
+			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfer_types.get(handler.getEnergyType());
 			if (canTransfer!=null && canTransfer.a) {
 				handlers.add(handler);
 			}
@@ -132,7 +132,7 @@ public class FluxHelper {
 	public static List<ISonarEnergyContainerHandler> getEnergyContainerHandlers() {
 		List<ISonarEnergyContainerHandler> handlers = new ArrayList<>();
 		for (ISonarEnergyContainerHandler handler : SonarCore.energyContainerHandlers) {
-			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfers.get(handler.getProvidedType());
+			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfer_types.get(handler.getProvidedType());
 			if (canTransfer!=null &&canTransfer.b) {
 				handlers.add(handler);
 			}

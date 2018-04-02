@@ -308,7 +308,7 @@ public class PacketHelper {
 
 	public static IMessage doStateChangePacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		GuiTab tab = GuiTab.values()[packetTag.getInteger("guiType")];
-		ListenerHelper.onPlayerOpenTab(source, player, tab);
+		ListenerHelper.onPlayerOpenTab(source, player, tab);		
 		return null;
 
 	}
