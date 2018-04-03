@@ -73,7 +73,10 @@ public enum FluxListener {
 	}
 
 	public static void sendPlayerList(BasicFluxNetwork network, List<IFluxListenable> flux_listeners) {
-		//TODO
+		flux_listeners.forEach(flux -> flux.getListenerList().getListeners(FluxListener.SYNC_PLAYERS).forEach(l -> {
+			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(l.player, false);
+			FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), l.player);
+		}));
 	}
 
 	public interface IPacketAction {

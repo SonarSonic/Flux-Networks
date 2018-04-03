@@ -54,11 +54,9 @@ public class FluxNetworks {
 
 	public static final String name = "FluxNetworks";
 	public static final String modid = "fluxnetworks";
-	public static final String version = "3.0.5";
+	public static final String version = "3.0.6";
 	public static final String mc_versions = "[1.12,1.12.2]";
-	public static final String SONAR_VERSION = "5.0.6";
-
-	public static final int saveDimension = 0;
+	public static final String SONAR_VERSION = "5.0.7";
 
 	@SidedProxy(clientSide = "sonar.flux.network.FluxClient", serverSide = "sonar.flux.network.FluxCommon")
 	public static FluxCommon proxy;

@@ -168,4 +168,11 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	public ItemStack getDisplayStack() {
 		return stack;
 	}
+	
+	public boolean equals(Object obj){
+		if(obj!=null && obj instanceof ClientFlux){
+			return ((ClientFlux)obj).coords.equals(coords);
+		}
+		return false;
+	}
 }

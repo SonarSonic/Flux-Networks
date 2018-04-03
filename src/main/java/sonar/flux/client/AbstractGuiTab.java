@@ -35,7 +35,9 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 
 	public List<GuiTab> tabs;
 
-	public static final ResourceLocation buttons = new ResourceLocation("fluxnetworks:textures/gui/buttons/buttons.png");
+	public static final ResourceLocation small_buttons = new ResourceLocation("fluxnetworks:textures/gui/buttons/small_buttons.png");
+	public static final ResourceLocation large_buttons = new ResourceLocation("fluxnetworks:textures/gui/buttons/large_buttons.png");
+	public static final ResourceLocation navigation = new ResourceLocation("fluxnetworks:textures/gui/navigation.png");
 	public static final ResourceLocation scroller_flux_gui = new ResourceLocation("fluxnetworks:textures/gui/scroller_flux_gui.png");
 	public static final ResourceLocation blank_flux_gui = new ResourceLocation("fluxnetworks:textures/gui/blank_flux_gui.png");
 
@@ -171,9 +173,9 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		if (this.getCurrentTab() == GuiTab.INDEX) {
 			List<String> textLines = new ArrayList<>();
 			addTransferStrings(textLines, flux.getConnectionType(), common.getDefaultEnergyType(), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
-			FontHelper.text(textLines.get(0), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
+			FontHelper.text(textLines.get(0), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : Color.WHITE.getRGB());
 		} else {
-			FontHelper.text(flux.getCustomName(), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
+			FontHelper.text(flux.getCustomName(), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? flux.getConnectionType().gui_colour : Color.WHITE.getRGB());
 		}
 	}
 

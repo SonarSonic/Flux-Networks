@@ -24,6 +24,7 @@ import sonar.flux.api.AccessType;
 import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.GUI;
 import sonar.flux.client.GuiTab;
+import sonar.flux.client.LargeButton;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
@@ -46,13 +47,13 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 		super.initGui();
 		if (getCurrentTab() == GuiTab.NETWORK_CREATE) {
 			initEditFields(mc.player.getName() + "'s" + " Network", colours[currentColour]);
-			buttonList.add(new GuiButton(5, getGuiLeft() + 5, getGuiTop() + 140, 80, 20, "Reset"));
-			buttonList.add(new GuiButton(6, getGuiLeft() + 90, getGuiTop() + 140, 80, 20, "Create"));
+			buttonList.add(new LargeButton(this, "Reset", 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
+			buttonList.add(new LargeButton(this, "Create", 6, getGuiLeft() + 105, getGuiTop() + 134, 51, 0));
 		} else {
 			if (!common.isFakeNetwork()) {
 				initEditFields(common.getNetworkName(), common.getNetworkColour());
-				buttonList.add(new GuiButton(5, getGuiLeft() + 5, getGuiTop() + 140, 80, 20, "Reset"));
-				buttonList.add(new GuiButton(6, getGuiLeft() + 90, getGuiTop() + 140, 80, 20, "Save Changes"));
+				buttonList.add(new LargeButton(this, "Reset", 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
+				buttonList.add(new LargeButton(this, "Save Changes", 6, getGuiLeft() + 105, getGuiTop() + 134, 17, 0));
 				currentAccess = common.getAccessType();
 				disableConversion = common.disabledConversion();
 				type = common.getDefaultEnergyType();
@@ -86,11 +87,11 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 			FontHelper.text("Energy Type" + ": " + TextFormatting.AQUA + type.getName(), 8, 64, 0);
 			FontHelper.text(FontHelper.translate("Preview") + ": ", 8, 96, 0);
 			String networkName = name.getText().isEmpty() ? "Network Name" : name.getText();
-			if (showFullPreview) {
-				renderNetworkInFull(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 110);
-			} else {
-				renderNetwork(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 110);
-			}
+			//if (showFullPreview) {
+			//	renderNetworkInFull(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 110);
+			//} else {
+				renderNetwork(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 116);
+			//}
 
 			if (x - getGuiLeft() > 55 && x - getGuiLeft() < 165 && y - getGuiTop() > 63 + 32 && y - getGuiTop() < 68 + 32 + 4) {
 				drawHoveringText(GUI.NEXT_COLOUR.toString(), x - getGuiLeft(), y - getGuiTop());
@@ -136,7 +137,7 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 	@Override
 	public void mouseClicked(int x, int y, int mouseButton) throws IOException {
 		super.mouseClicked(x, y, mouseButton);
-		if (mouseButton == 1) {
+		if (mouseButton == 1 && name.isFocused()) {
 			name.setText("");
 		}
 		if (x - getGuiLeft() > 55 && x - getGuiLeft() < 165 && y - getGuiTop() > 63 + 32 && y - getGuiTop() < 68 + 32 + 4) {

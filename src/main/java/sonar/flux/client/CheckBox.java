@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import net.minecraft.client.Minecraft;
 
-public class CheckBox extends SelectButtons {
+public class CheckBox extends SmallButton {
 
 	public CheckBox(AbstractGuiTab gui, int id, int x, int y, boolean isChecked, String name) {
 		super(gui, id, x, y, isChecked ? 256 : 280, name);

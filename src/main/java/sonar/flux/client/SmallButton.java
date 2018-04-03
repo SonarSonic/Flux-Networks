@@ -6,13 +6,13 @@ import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.helpers.FontHelper;
 
 @SideOnly(Side.CLIENT)
-public class SelectButtons extends ImageButton {
+public class SmallButton extends ImageButton {
 	public int id;
 	public String name;
 	public AbstractGuiTab gui;
 
-	public SelectButtons(AbstractGuiTab gui, int id, int x, int y, int texX, String name) {
-		super(id, x, y, AbstractGuiTab.buttons, texX / 2, 0, 11, 11);
+	public SmallButton(AbstractGuiTab gui, int id, int x, int y, int texX, String name) {
+		super(id, x, y, AbstractGuiTab.small_buttons, texX / 2, 0, 11, 11);
 		this.gui = gui;
 		this.id = id;
 		this.name = name;

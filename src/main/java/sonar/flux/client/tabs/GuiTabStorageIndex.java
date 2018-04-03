@@ -19,11 +19,12 @@ public class GuiTabStorageIndex extends GuiTabConnectionIndex<TileStorage, Objec
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		int colour = common.getNetworkColour().getRGB();
-		renderEnergyBar(14, 90 + 4, flux.storage.getEnergyStored(), flux.storage.getMaxEnergyStored(), midBlue, FontHelper.getIntFromColor(41, 94, 220));
+		//renderEnergyBar(14, 90 + 4, flux.storage.getEnergyStored(), flux.storage.getMaxEnergyStored(), midBlue, FontHelper.getIntFromColor(41, 94, 220));
+		renderEnergyBar(14, 90 + 4, flux.storage.getEnergyStored(), flux.storage.getMaxEnergyStored(), colour, colour);
 		IFluxCommon common = FluxNetworks.getClientCache().getNetwork(flux.networkID.getObject());
-		renderEnergyBar(14, 130 + 4, common.getStatistics().network_energy, common.getStatistics().network_energy_capacity, colour, colour);
-		FontHelper.text("Local Buffer: ", 14, 80 + 4, Color.DARK_GRAY.getRGB());
-		FontHelper.text("Network Buffer: " + (common.getStatistics().network_energy != 0 ? +(flux.storage.getEnergyStored() * 100 / common.getStatistics().network_energy) + " %" : ""), 14, 120 + 4, colour);
+		renderEnergyBar(14, 134, common.getStatistics().network_energy, common.getStatistics().network_energy_capacity, colour, colour);
+		FontHelper.text("Local Buffer: ", 14, 80 + 4, colour);
+		FontHelper.text("Network Buffer: " + (common.getStatistics().network_energy != 0 ? +(flux.storage.getEnergyStored() * 100 / common.getStatistics().network_energy) + " %" : ""), 14, 124, colour);
 	}
 
 }

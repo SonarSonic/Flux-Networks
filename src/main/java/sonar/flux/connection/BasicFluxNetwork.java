@@ -151,6 +151,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public void sendPacketToListeners() {
 		FluxListener.SYNC_INDEX.sendPackets(this, flux_listeners);
 		FluxListener.SYNC_NETWORK_STATS.sendPackets(this, flux_listeners);
+		FluxListener.SYNC_NETWORK_CONNECTIONS.sendPackets(this, flux_listeners);
 	}
 
 	@Override

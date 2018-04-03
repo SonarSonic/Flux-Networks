@@ -36,8 +36,8 @@ public class GuiTabNetworkStatistics extends AbstractGuiTab {
 			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_STORAGE_CHANGE.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(common.getDefaultEnergyType(), stats.network_energy_change), 12, 26 + 12 * 6, rgb);
 			FontHelper.text(TextFormatting.DARK_GRAY + GUI.TOTAL_NETWORK_TRANSFER.toString() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.formatOutput(common.getDefaultEnergyType(), stats.total_energy_added - stats.total_energy_removed), 12, 26 + 12 * 7, rgb);
 
-			FontHelper.text("Network Buffer ", 14, 128, rgb);
-			renderEnergyBar(14, 138, stats.network_energy, stats.network_energy_capacity, rgb, rgb);
+			FontHelper.text("Network Buffer ", 14, 124, rgb);
+			renderEnergyBar(14, 134, stats.network_energy, stats.network_energy_capacity, rgb, rgb);
 		}
 	}
 
