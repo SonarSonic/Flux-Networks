@@ -189,7 +189,7 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		super.onFirstTick();
 		if (isServer()) {
 			FluxHelper.addConnection(this, AdditionType.ADD);
-			updateTransfers();
+			updateTransfers(EnumFacing.VALUES);
 			SonarCore.sendPacketAround(this, 128, 0);
 		}
 		if (isClient())
