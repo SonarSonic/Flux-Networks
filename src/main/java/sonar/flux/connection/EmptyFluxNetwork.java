@@ -230,4 +230,10 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	public List<IFluxListenable> getFluxListeners() {
 		return Lists.newArrayList();
 	}
+
+	@Override
+	public void debugConnectedBlocks() {}
+
+	@Override
+	public void debugValidateFluxConnections() {}
 }

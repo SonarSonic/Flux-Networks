@@ -14,9 +14,12 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
+import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.FunctionHelper;
 import sonar.core.helpers.ListHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
@@ -91,7 +94,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		while (iterator.hasNext()) {
 			IFluxListenable tile = iterator.next();
 			FluxCache.getValidTypes(tile).forEach(type -> {
-				if (((List<IFluxListenable>)getConnections(type)).removeIf(F -> F.getCoords().equals(tile.getCoords()))) {
+				if (((List<IFluxListenable>) getConnections(type)).removeIf(F -> F.getCoords().equals(tile.getCoords()))) {
 					type.disconnect(this, tile);
 					markTypeDirty(type);
 				}
@@ -289,10 +292,10 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		flux_listeners.removeIf(f -> f == listener);
 	}
 
-    public List<IFluxListenable> getFluxListeners(){
-    	return this.flux_listeners;
-    }
-    
+	public List<IFluxListenable> getFluxListeners() {
+		return this.flux_listeners;
+	}
+
 	@Override
 	public PlayerAccess getPlayerAccess(EntityPlayer player) {
 		if (FluxHelper.isPlayerAdmin(player)) {
@@ -367,5 +370,36 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public boolean canTransfer(EnergyType type) {
 		return type == getDefaultEnergyType() || canConvert(type, getDefaultEnergyType());
+	}
+
+	@Override
+	public void debugConnectedBlocks() {
+		List<IFluxListenable> flux = getConnections(FluxCache.flux);
+		flux.forEach(f -> f.getTransferHandler().updateTransfers(EnumFacing.VALUES));
+	}
+
+	@Override
+	public void debugValidateFluxConnections() {
+		List<IFluxListenable> flux = Lists.newArrayList(getConnections(FluxCache.flux));
+		
+		flux.forEach(f -> removeConnection(f, RemovalType.REMOVE));
+		removeConnections();
+
+		List<IFluxListenable> copy = new ArrayList<>();
+		for (IFluxListenable fl : flux) {
+			boolean match = copy.removeIf(f -> f.getCoords()!=null && f.getCoords().equals(fl.getCoords()));
+			if (!match) {
+				copy.add(fl);
+			} else {
+				TileEntity tile = fl.getCoords().getTileEntity();
+				if (tile != null && tile instanceof IFluxListenable) {
+					copy.add((IFluxListenable) tile);
+				}
+			}
+		}
+		
+		copy.forEach(f -> this.addConnection(f, AdditionType.ADD));
+		addConnections();
+		buildFluxConnections();
 	}
 }

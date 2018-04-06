@@ -24,7 +24,8 @@ public class LargeButton extends ImageButton {
 	}
 
 	public void drawButtonForegroundLayer(int x, int y) {
-		gui.drawSonarCreativeTabHoveringText(hover, x, y);
+		if (!hover.isEmpty())
+			gui.drawSonarCreativeTabHoveringText(hover, x, y);
 	}
 
 	public void drawButton(Minecraft mc, int x, int y, float partialTicks) {

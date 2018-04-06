@@ -14,8 +14,8 @@ import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.client.CheckBox;
 import sonar.flux.FluxTranslate;
+import sonar.flux.client.CheckBox;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 

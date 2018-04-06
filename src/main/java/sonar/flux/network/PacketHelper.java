@@ -277,7 +277,6 @@ public class PacketHelper {
 			}
 		}
 		return new PacketFluxError(source.getPos(), FluxError.INVALID_USER);
-
 	}
 
 	//// DISCONNECT \\\\
@@ -295,7 +294,6 @@ public class PacketHelper {
 			network.removeConnection(source, RemovalType.REMOVE);
 		}
 		return null;
-
 	}
 
 	//// TAB CHANGE \\\\
@@ -310,6 +308,29 @@ public class PacketHelper {
 		GuiTab tab = GuiTab.values()[packetTag.getInteger("guiType")];
 		ListenerHelper.onPlayerOpenTab(source, player, tab);		
 		return null;
+	}
 
+	//// RESET_CONNECTED_BLOCKS \\\\
+
+	public static NBTTagCompound createResetConnectedBlocksPacket() {
+		return new NBTTagCompound();
+	}
+
+	public static IMessage doResetConnectedBlocksPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+		IFluxNetwork network = source.getNetwork();
+		network.debugConnectedBlocks();
+		return null;
+	}
+
+	//// VALIDATE FLUX CONNECTIONS \\\\
+
+	public static NBTTagCompound createValidateConnectionsPacket() {
+		return new NBTTagCompound();
+	}
+
+	public static IMessage doValidateConnectionsPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
+		IFluxNetwork network = source.getNetwork();
+		network.debugValidateFluxConnections();
+		return null;
 	}
 }

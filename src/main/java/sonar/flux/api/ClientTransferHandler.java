@@ -59,14 +59,16 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 
 	public static ClientTransferHandler getInstanceFromHandler(IFlux flux, ITransferHandler handler) {
 		ClientTransferHandler clienthandler = new ClientTransferHandler(flux);
-		if (handler instanceof BaseTransferHandler) {
-			BaseTransferHandler base_handler = (BaseTransferHandler) handler;
-			clienthandler.max_add = base_handler.max_add;
-			clienthandler.max_remove = base_handler.max_remove;
-			clienthandler.add_limit = base_handler.add_limit;
-			clienthandler.remove_limit = base_handler.remove_limit;
+		if (flux.isChunkLoaded()) {
+			if (handler instanceof BaseTransferHandler) {
+				BaseTransferHandler base_handler = (BaseTransferHandler) handler;
+				clienthandler.max_add = base_handler.max_add;
+				clienthandler.max_remove = base_handler.max_remove;
+				clienthandler.add_limit = base_handler.add_limit;
+				clienthandler.remove_limit = base_handler.remove_limit;
+			}
+			handler.getTransfers().stream().filter(h -> h != null).forEach(t -> clienthandler.transfers.add(ClientTransfer.getInstanceFromHandler(clienthandler, t)));
 		}
-		handler.getTransfers().stream().filter(h -> h != null).forEach(t -> clienthandler.transfers.add(ClientTransfer.getInstanceFromHandler(clienthandler, t)));
 		return clienthandler;
 	}
 
@@ -92,7 +94,7 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 	}
 
 	@Override
-	public void updateTransfers(EnumFacing ...face) {}
+	public void updateTransfers(EnumFacing... face) {}
 
 	@Override
 	public List<IFluxTransfer> getTransfers() {

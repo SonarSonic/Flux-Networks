@@ -57,6 +57,7 @@ dependencies {
     compileOnly "tesla:Tesla:${tesla_version}"
     compileOnly "mekanism:Mekanism:${mekanism_version}"
     deobfCompile "cofh:RedstoneFlux:${redstoneflux_version}"
+    compileOnly "appeng:appliedenergistics2:${ae2_version}"
 }
 
 processResources

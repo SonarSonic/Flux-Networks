@@ -15,7 +15,9 @@ public enum PacketType {
 	REMOVE_PLAYER(PacketHelper::doRemovePlayerPacket), //
 	CHANGE_PLAYER(PacketHelper::doChangePlayerPacket), //
 	REMOVE_CONNECTION(PacketHelper::doDisconnectPacket), //
-	GUI_STATE_CHANGE(PacketHelper::doStateChangePacket);
+	GUI_STATE_CHANGE(PacketHelper::doStateChangePacket),
+	DEBUG_CONNECTED_BLOCKS(PacketHelper::doResetConnectedBlocksPacket), //
+	DEBUG_FLUX_CONNECTIONS(PacketHelper::doValidateConnectionsPacket);
 	public IPacketAction action;
 
 	PacketType(IPacketAction action) {

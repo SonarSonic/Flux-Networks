@@ -58,6 +58,7 @@ public class FluxTranslate {
 	public static final Localisation GUI_TAB_STATISTICS = t("network.tab.statistics");
 	public static final Localisation GUI_TAB_NETWORK_EDIT = t("network.tab.editnetwork");
 	public static final Localisation GUI_TAB_NETWORK_CREATE = t("network.tab.createnetwork");
+	public static final Localisation GUI_TAB_DEBUG = t("network.tab.debug");
 	public static final Localisation GUI_TAB_PLAYERS = t("network.tab.players");
 	
 	//// INDEX TAB \\\\

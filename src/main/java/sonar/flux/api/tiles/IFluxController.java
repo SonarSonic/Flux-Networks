@@ -1,6 +1,8 @@
 package sonar.flux.api.tiles;
 
+import sonar.core.translate.Localisation;
 import sonar.flux.FluxConfig;
+import sonar.flux.FluxTranslate;
 
 /**
  * implemented by the Flux Controller TileEntity
@@ -8,45 +10,39 @@ import sonar.flux.FluxConfig;
 public interface IFluxController extends IFluxPoint {
 
     enum PriorityMode {
-        DEFAULT, LARGEST, SMALLEST;
+        DEFAULT(FluxTranslate.PRIORITY_DEFAULT), //
+        LARGEST(FluxTranslate.PRIORITY_LARGEST), //
+        SMALLEST(FluxTranslate.PRIORITY_SMALLEST);//
 
-        public String getName() {
-            switch (this) {
-                case DEFAULT:
-                    return "network.default";
-                case LARGEST:
-                    return "network.largest";
-                case SMALLEST:
-                    return "network.smallest";
-            }
-            return "";
-        }
+    	Localisation message;
+
+    	PriorityMode(Localisation message) {
+    		this.message = message;
+    	}
+
+    	public String getDisplayName() {
+    		return message.t();
+    	}
     }
 
-    enum TransferMode {
-        DEFAULT(1), EVEN(1), SURGE(1), HYPER(FluxConfig.hyper), GOD(FluxConfig.god);
+    public enum TransferMode {
+        DEFAULT(FluxTranslate.TRANSFER_NONE,1), //
+        EVEN(FluxTranslate.TRANSFER_EVEN, 1), //
+        SURGE(FluxTranslate.TRANSFER_SURGE, 1), //
+        HYPER(FluxTranslate.TRANSFER_HYPER, FluxConfig.hyper), //
+        GOD(FluxTranslate.TRANSFER_GOD, FluxConfig.god);//
 
-        public int repeat;
+        int repeat;
+    	Localisation message;
 
-        TransferMode(int repeat) {
+    	TransferMode(Localisation message, int repeat) {
+    		this.message = message;
             this.repeat = repeat;
-        }
+    	}
 
-        public String getName() {
-            switch (this) {
-                case DEFAULT:
-                    return "network.notransfer";
-                case EVEN:
-                    return "network.transfer.even";
-                case SURGE:
-                    return "network.transfer.surge";
-                case HYPER:
-                    return "network.transfer.hyper";
-                case GOD:
-                    return "network.transfer.god";
-            }
-            return "";
-        }
+    	public String getDisplayName() {
+    		return message.t();
+    	}
 
         public boolean isBanned() {
             if (this == GOD) {
@@ -54,25 +50,23 @@ public interface IFluxController extends IFluxPoint {
             }
             return this == HYPER && FluxConfig.banHyper;
         }
-
     }
 
     enum TransmitterMode {
-        OFF, ON, HOTBAR, HELD_ITEM;
+        OFF(FluxTranslate.OFF), //
+        ON(FluxTranslate.ON), //
+        HOTBAR(FluxTranslate.TRANSMITTER_HOTBAR_ONLY), //
+        HELD_ITEM(FluxTranslate.TRANSMITTER_HELD_ITEM_ONLY);//
 
-        public String getName() {
-            switch (this) {
-                case OFF:
-                    return "network.off";
-                case ON:
-                    return "network.on";
-                case HOTBAR:
-                    return "network.hotbar";
-                case HELD_ITEM:
-                    return "network.held";
-            }
-            return "";
-        }
+    	Localisation message;
+
+    	TransmitterMode(Localisation message) {
+    		this.message = message;
+    	}
+
+    	public String getDisplayName() {
+    		return message.t();
+    	}
     }
 
     /***/

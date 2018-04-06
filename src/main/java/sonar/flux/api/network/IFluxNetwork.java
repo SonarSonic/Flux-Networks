@@ -116,4 +116,8 @@ public interface IFluxNetwork extends IFluxCommon {
     boolean canConvert(EnergyType from, EnergyType to);
     
     boolean canTransfer(EnergyType type);
+    
+    void debugConnectedBlocks();
+    
+    void debugValidateFluxConnections();
 }

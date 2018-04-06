@@ -416,6 +416,6 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 
 	@Override
 	public Object getClientElement(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
-		return GuiTab.INDEX.getGuiScreen(this, Lists.newArrayList(GuiTab.INDEX, GuiTab.NETWORK_SELECTION, GuiTab.CONNECTIONS, GuiTab.NETWORK_STATISTICS, GuiTab.PLAYERS, GuiTab.NETWORK_EDIT, GuiTab.NETWORK_CREATE));
+		return GuiTab.INDEX.getGuiScreen(this, Lists.newArrayList(GuiTab.INDEX, GuiTab.NETWORK_SELECTION, GuiTab.CONNECTIONS, GuiTab.NETWORK_STATISTICS, GuiTab.PLAYERS, GuiTab.DEBUG, GuiTab.NETWORK_EDIT, GuiTab.NETWORK_CREATE));
 	}
 }

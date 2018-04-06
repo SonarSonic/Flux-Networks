@@ -62,6 +62,7 @@ network.tab.statistics=Network Statistics
 network.tab.createnetwork=Create New Network
 network.tab.players=Allowed Players
 network.tab.editnetwork=Edit Network
+network.tab.debug=Debug Network
 
 //INDEX TAB
 connection.config.priority=Priority

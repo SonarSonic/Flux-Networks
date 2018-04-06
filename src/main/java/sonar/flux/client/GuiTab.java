@@ -5,12 +5,14 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.FluxListener;
 import sonar.flux.client.tabs.GuiTabConnectionIndex;
 import sonar.flux.client.tabs.GuiTabControllerIndex;
 import sonar.flux.client.tabs.GuiTabFluxConnectorIndex;
 import sonar.flux.client.tabs.GuiTabNetworkConnections;
 import sonar.flux.client.tabs.GuiTabNetworkCreate;
+import sonar.flux.client.tabs.GuiTabNetworkDebug;
 import sonar.flux.client.tabs.GuiTabNetworkEdit;
 import sonar.flux.client.tabs.GuiTabNetworkPlayers;
 import sonar.flux.client.tabs.GuiTabNetworkSelection;
@@ -23,7 +25,7 @@ import sonar.flux.common.tileentity.TileFluxPoint;
 import sonar.flux.common.tileentity.TileStorage;
 
 public enum GuiTab {
-	INDEX(0), NETWORK_SELECTION(128), CONNECTIONS(64), NETWORK_STATISTICS(192), NETWORK_EDIT(256), PLAYERS(386), NETWORK_CREATE(320);
+	INDEX(0), NETWORK_SELECTION(128), CONNECTIONS(64), NETWORK_STATISTICS(192), NETWORK_EDIT(256), PLAYERS(386), NETWORK_CREATE(320), DEBUG(450);
 
 	public int texX;
 	
@@ -34,21 +36,21 @@ public enum GuiTab {
 	public String getClientName() {
 		switch(this){
 		case INDEX:
-			return GUI.GUI_TAB_INDEX.toString();
+			return FluxTranslate.GUI_TAB_INDEX.t();
 		case NETWORK_SELECTION:
-			return GUI.GUI_TAB_NETWORK_SELECTION.toString();
+			return FluxTranslate.GUI_TAB_NETWORK_SELECTION.t();
 		case CONNECTIONS:
-			return GUI.GUI_TAB_CONNECTIONS.toString();
+			return FluxTranslate.GUI_TAB_CONNECTIONS.t();
 		case NETWORK_STATISTICS:
-			return GUI.GUI_TAB_STATISTICS.toString();
+			return FluxTranslate.GUI_TAB_STATISTICS.t();
 		case NETWORK_EDIT:
-			return GUI.GUI_TAB_NETWORK_EDIT.toString();
+			return FluxTranslate.GUI_TAB_NETWORK_EDIT.t();
 		case PLAYERS:
-			return GUI.GUI_TAB_PLAYERS.toString();
+			return FluxTranslate.GUI_TAB_PLAYERS.t();
 		case NETWORK_CREATE:
-			return GUI.GUI_TAB_NETWORK_CREATE.toString();
-		default:
-			break;		
+			return FluxTranslate.GUI_TAB_NETWORK_CREATE.t();
+		case DEBUG:
+			return FluxTranslate.GUI_TAB_DEBUG.t();	
 		}
 		return name();
 	}
@@ -69,7 +71,10 @@ public enum GuiTab {
 			return Lists.newArrayList(FluxListener.SYNC_NETWORK_STATS);
 		case PLAYERS:
 			return Lists.newArrayList(FluxListener.SYNC_PLAYERS, FluxListener.SYNC_NETWORK_CONNECTIONS);		
-			//admin screen
+		case DEBUG:
+			break;
+		default:
+			break;
 		}
 		return new ArrayList<>();
 	}
@@ -102,6 +107,8 @@ public enum GuiTab {
 			return new GuiTabNetworkStatistics(flux, tabs);
 		case PLAYERS:
 			return new GuiTabNetworkPlayers(flux, tabs);
+		case DEBUG:
+			return new GuiTabNetworkDebug(flux, tabs);
 		}
 		return null;	
 	}
