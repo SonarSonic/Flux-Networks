@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import sonar.core.client.gui.GuiSelectionGrid;
 import sonar.core.helpers.FontHelper;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.containers.ContainerAdminConfigurator;
 import sonar.flux.network.ClientNetworkCache;
@@ -35,14 +36,14 @@ public class GuiAdminConfigurator extends GuiSelectionGrid<IFluxNetwork> {
 		this.bindTexture(bars);
 		this.drawTexturedModalRect(xPos+ x, yPos+y*eHeight, 0, 0, 250, 32);
 		FontHelper.text(element.getNetworkName(), xPos+ x + 4, yPos+y*eHeight +6, element.getNetworkColour().getRGB());
-		FontHelper.text("Owner: " + element.getCachedPlayerName(), xPos+ x + 4, yPos+y*eHeight +18, 0);
+		FontHelper.text(FluxTranslate.NETWORK_OWNER.t() + ": " + element.getCachedPlayerName(), xPos+ x + 4, yPos+y*eHeight +18, 0);
 		FontHelper.text("" + element.getAccessType(), xPos+ x + 4 + 200, yPos+y*eHeight +6, 0);
-		FontHelper.text("UID: " + element.getNetworkID(), xPos+ x + 4 + 200, yPos+y*eHeight +18, 0);
+		FontHelper.text(FluxTranslate.UUID.t() + ": " + element.getNetworkID(), xPos+ x + 4 + 200, yPos+y*eHeight +18, 0);
 	}
 
 	@Override
 	public void renderStrings(int x, int y) {
-		FontHelper.textCentre("Admin Configurator", xSize, 10, AbstractGuiTab.midBlue);
+		FontHelper.textCentre(FontHelper.translate("item.AdminConfigurator.name"), xSize, 10, AbstractGuiTab.midBlue);
 	}
 
 	@Override

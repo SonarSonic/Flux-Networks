@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.helpers.FontHelper;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.client.AbstractGuiTab;
@@ -30,8 +31,8 @@ public class GuiTabConfirmNetworkDeletion extends AbstractGuiTab<TileFlux> {
 	@Override
 	public void initGui() {
 		super.initGui();
-		buttonList.add(new LargeButton(this, "Cancel", 0, getGuiLeft() + 60, getGuiTop() + 80, 68, 0));
-		buttonList.add(new LargeButton(this, "Delete Network", 1, getGuiLeft() + 100, getGuiTop() + 80, 51, 0));
+		buttonList.add(new LargeButton(this, FluxTranslate.CANCEL.t(), 0, getGuiLeft() + 60, getGuiTop() + 80, 68, 0));
+		buttonList.add(new LargeButton(this, FluxTranslate.NETWORK_DELETE.t(), 1, getGuiLeft() + 100, getGuiTop() + 80, 51, 0));
 	}
 
 	@Override
@@ -53,7 +54,7 @@ public class GuiTabConfirmNetworkDeletion extends AbstractGuiTab<TileFlux> {
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		renderNetwork(toDelete.getNetworkName(), toDelete.getAccessType(), toDelete.getNetworkColour().getRGB(), true, 11, 60);
-		FontHelper.textCentre("Confirm deletion of", xSize, 40, toDelete.getNetworkColour().getRGB());
+		FontHelper.textCentre(FluxTranslate.NETWORK_CONFIRM_DELETE.t(), xSize, 40, toDelete.getNetworkColour().getRGB());
 	}
 
 	@Override

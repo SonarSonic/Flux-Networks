@@ -22,7 +22,7 @@ import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.client.AbstractGuiTab;
-import sonar.flux.client.GUI;
+import sonar.flux.FluxTranslate;
 import sonar.flux.client.GuiTab;
 import sonar.flux.client.LargeButton;
 import sonar.flux.common.tileentity.TileFlux;
@@ -47,13 +47,13 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 		super.initGui();
 		if (getCurrentTab() == GuiTab.NETWORK_CREATE) {
 			initEditFields(mc.player.getName() + "'s" + " Network", colours[currentColour]);
-			buttonList.add(new LargeButton(this, "Reset", 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
-			buttonList.add(new LargeButton(this, "Create", 6, getGuiLeft() + 105, getGuiTop() + 134, 51, 0));
+			buttonList.add(new LargeButton(this, FluxTranslate.RESET.t(), 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
+			buttonList.add(new LargeButton(this, FluxTranslate.CREATE.t(), 6, getGuiLeft() + 105, getGuiTop() + 134, 51, 0));
 		} else {
 			if (!common.isFakeNetwork()) {
 				initEditFields(common.getNetworkName(), common.getNetworkColour());
-				buttonList.add(new LargeButton(this, "Reset", 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
-				buttonList.add(new LargeButton(this, "Save Changes", 6, getGuiLeft() + 105, getGuiTop() + 134, 17, 0));
+				buttonList.add(new LargeButton(this, FluxTranslate.RESET.t(), 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
+				buttonList.add(new LargeButton(this, FluxTranslate.SAVE_CHANGE.t(), 6, getGuiLeft() + 105, getGuiTop() + 134, 17, 0));
 				currentAccess = common.getAccessType();
 				disableConversion = common.disabledConversion();
 				type = common.getDefaultEnergyType();
@@ -67,43 +67,40 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		if (disabled) {
-			renderNavigationPrompt("No network to edit", "Network Selection");
+			renderNavigationPrompt(FluxTranslate.ERROR_NO_NETWORK_TO_EDIT.t(), FluxTranslate.GUI_TAB_NETWORK_SELECTION.t());
 		} else {
 			pushMatrix();
 
 			FontHelper.textCentre(getCurrentTab().getClientName(), xSize, 8, Color.GRAY.getRGB());
-			FontHelper.text(GUI.NETWORK_NAME + ": ", 8, 24, 0);
-			FontHelper.text("Colour" + ": ", 8, 80, 0);
+			FontHelper.text(FluxTranslate.NAME.t() + ": ", 8, 24, 0);
+			FontHelper.text(FluxTranslate.COLOR.t() + ": ", 8, 80, 0);
 
-			FontHelper.text(TextFormatting.RED + "R:", 46, 80, -1);
-			FontHelper.text(TextFormatting.GREEN + "G:", 86, 80, -1);
-			FontHelper.text(TextFormatting.BLUE + "B:", 126, 80, -1);
+			FontHelper.text(TextFormatting.RED + FluxTranslate.COLOUR_RED_CHAR.t() + ":", 46, 80, -1);
+			FontHelper.text(TextFormatting.GREEN + FluxTranslate.COLOUR_GREEN_CHAR.t() + ":", 86, 80, -1);
+			FontHelper.text(TextFormatting.BLUE + FluxTranslate.COLOUR_BLUE_CHAR.t() + ":", 126, 80, -1);
 
 			CustomColour colour = getCurrentColour();
 			Gui.drawRect(55, 63 + 32, 165, 68 + 32 + 4, colour.getRGB());
 
-			FontHelper.text(GUI.ACCESS_SETTING + ": " + TextFormatting.AQUA + FontHelper.translate(currentAccess.getName()), 8, 40, 0);
-			FontHelper.text("Allow Conversion" + ": " + TextFormatting.AQUA + !disableConversion, 8, 52, 0);
-			FontHelper.text("Energy Type" + ": " + TextFormatting.AQUA + type.getName(), 8, 64, 0);
-			FontHelper.text(FontHelper.translate("Preview") + ": ", 8, 96, 0);
-			String networkName = name.getText().isEmpty() ? "Network Name" : name.getText();
-			//if (showFullPreview) {
-			//	renderNetworkInFull(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 110);
-			//} else {
-				renderNetwork(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 116);
-			//}
+			FontHelper.text(FluxTranslate.ACCESS_SETTING.t() + ": " + TextFormatting.AQUA + currentAccess.getDisplayName(), 8, 40, 0);
+			FontHelper.text(FluxTranslate.ALLOW_CONVERSION.t() + ": " + TextFormatting.AQUA + FluxTranslate.translateBoolean(!disableConversion), 8, 52, 0);
+			FontHelper.text(FluxTranslate.ENERGY_TYPE.t() + ": " + TextFormatting.AQUA + type.getName(), 8, 64, 0);
+			FontHelper.text(FluxTranslate.PREVIEW.t() + ": ", 8, 96, 0);
+			String networkName = name.getText().isEmpty() ? FluxTranslate.NETWORK_NAME.t() : name.getText();
+
+			renderNetwork(networkName, currentAccess, colour.getRGB(), previewSelected, 11, 116);
 
 			if (x - getGuiLeft() > 55 && x - getGuiLeft() < 165 && y - getGuiTop() > 63 + 32 && y - getGuiTop() < 68 + 32 + 4) {
-				drawHoveringText(GUI.NEXT_COLOUR.toString(), x - getGuiLeft(), y - getGuiTop());
+				drawHoveringText(FluxTranslate.NEXT_COLOUR.t(), x - getGuiLeft(), y - getGuiTop());
 			}
 			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 && y - getGuiTop() < 52) {
-				drawHoveringText(GUI.CHANGE_SETTING.toString(), x - getGuiLeft(), y - getGuiTop());
+				drawHoveringText(FluxTranslate.CHANGE_SETTING.t(), x - getGuiLeft(), y - getGuiTop());
 			}
-			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+12 && y - getGuiTop() < 52+12) {
-				drawHoveringText("Allow Conversion: " + !disableConversion, x - getGuiLeft(), y - getGuiTop());
+			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 12 && y - getGuiTop() < 52 + 12) {
+				drawHoveringText(FluxTranslate.ALLOW_CONVERSION.t() + ": " + FluxTranslate.translateBoolean(!disableConversion), x - getGuiLeft(), y - getGuiTop());
 			}
-			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+24 && y - getGuiTop() < 52+24) {
-				drawHoveringText("Energy Type" + ": " + type.getName(), x - getGuiLeft(), y - getGuiTop());
+			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 24 && y - getGuiTop() < 52 + 24) {
+				drawHoveringText(FluxTranslate.ENERGY_TYPE.t() + ": " + type.getName(), x - getGuiLeft(), y - getGuiTop());
 			}
 			popMatrix();
 		}
@@ -154,20 +151,20 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 			currentAccess = AccessType.values()[currentAccess.ordinal() + 1 < AccessType.values().length ? currentAccess.ordinal() + 1 : 0];
 		}
 
-		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+12 && y - getGuiTop() < 52+12) {
+		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 12 && y - getGuiTop() < 52 + 12) {
 			disableConversion = !disableConversion;
 		}
 		if (x - getGuiLeft() > 11 && x - getGuiLeft() < 165 && y - getGuiTop() > 108 && y - getGuiTop() < 134) {
 			showFullPreview = !showFullPreview;
 		}
-		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38+24 && y - getGuiTop() < 52+24) {
-	        int ordinal = SonarCore.energyTypes.getObjectID(type.getName()) + 1;
-	        EnergyType type = SonarCore.energyTypes.getRegisteredObject(ordinal);
-	        if (type == null) {
-	            this.type = SonarCore.energyTypes.getRegisteredObject(0);
-	        } else {
-	            this.type = type;
-	        }
+		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 24 && y - getGuiTop() < 52 + 24) {
+			int ordinal = SonarCore.energyTypes.getObjectID(type.getName()) + 1;
+			EnergyType type = SonarCore.energyTypes.getRegisteredObject(ordinal);
+			if (type == null) {
+				this.type = SonarCore.energyTypes.getRegisteredObject(0);
+			} else {
+				this.type = type;
+			}
 		}
 
 	}

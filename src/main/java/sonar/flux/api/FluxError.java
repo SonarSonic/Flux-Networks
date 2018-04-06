@@ -1,23 +1,26 @@
 package sonar.flux.api;
 
+import sonar.core.translate.Localisation;
+import sonar.flux.FluxTranslate;
+
 public enum FluxError {
 
-	NONE("You can't do that, but I don't know why... (contact mod dev)"), //
-	HAS_CONTROLLER("network.error.hasController"), //
-	NOT_OWNER("network.error.notOwner"), //
-	ACCESS_DENIED("network.error.accessDenied"), //
-	EDIT_NETWORK("network.error.editNetwork"), //
-	NETWORK_MAX_REACHED("network.error.networkMaxReached"), //
-	INVALID_USER("network.error.invalidUser");//
+	NONE(FluxTranslate.ERROR_NONE_ERROR), //
+	HAS_CONTROLLER(FluxTranslate.ERROR_HAS_CONTROLLER), //
+	NOT_OWNER(FluxTranslate.ERROR_NOT_OWNER), //
+	ACCESS_DENIED(FluxTranslate.ERROR_ACCESS_DENIED), //
+	EDIT_NETWORK(FluxTranslate.ERROR_EDIT_NETWORK), //
+	NETWORK_MAX_REACHED(FluxTranslate.ERROR_NETWORK_MAX_REACHED), //
+	INVALID_USER(FluxTranslate.ERROR_INVALID_USER);//
 		
-	String message;
+	Localisation message;
 
-	FluxError(String message) {
+	FluxError(Localisation message) {
 		this.message = message;
-	}
+	}	
 
 	public String getErrorMessage() {
-		return message;
+		return message.t();
 	}
 
 }

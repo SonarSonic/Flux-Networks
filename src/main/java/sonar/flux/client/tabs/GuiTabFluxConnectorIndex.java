@@ -29,13 +29,10 @@ public class GuiTabFluxConnectorIndex extends GuiTabConnectionIndex<TileFluxConn
 	@Override
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
-
 	}
 
 	@Override
-	public void onGridClicked(int gridID, Object element, int x, int y, int pos, int button, boolean empty) {
-
-	}
+	public void onGridClicked(int gridID, Object element, int x, int y, int pos, int button, boolean empty) {}
 
 	@Override
 	public void renderGridElement(int gridID, Object element, int x, int y, int slot) {

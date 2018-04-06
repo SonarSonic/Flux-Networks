@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.SonarCore;
 import sonar.core.helpers.FontHelper;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileController;
@@ -21,10 +22,10 @@ public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController,
 		super.drawGuiContainerForegroundLayer(x, y);
 		int colour = common.getNetworkColour().getRGB();
 		IFluxController controller = (IFluxController) flux;
-		FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.sendMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(controller.getSendMode().getName()), 8, 66 + 18, colour);
-		FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.receiveMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(controller.getReceiveMode().getName()), 8, 86 + 18, colour);
-		FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.transferMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(controller.getTransferMode().getName()) + (controller.getTransferMode().isBanned() ? TextFormatting.RED + " BANNED" : ""), 8, 106 + 18, colour);
-		FontHelper.text(TextFormatting.DARK_GRAY + FontHelper.translate("network.transmitterMode") + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FontHelper.translate(controller.getTransmitterMode().getName()), 8, 126 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.SEND_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getSendMode().getDisplayName(), 8, 66 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.RECEIVE_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getReceiveMode().getDisplayName(), 8, 86 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.TRANSFER_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getTransferMode().getDisplayName() + (controller.getTransferMode().isBanned() ? TextFormatting.RED + " " + FluxTranslate.BANNED.t() : ""), 8, 106 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.TRANSMITTER_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getTransmitterMode().getDisplayName(), 8, 126 + 18, colour);
 	}
 
 	@Override

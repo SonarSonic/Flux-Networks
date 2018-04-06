@@ -134,10 +134,10 @@ public class FluxNetworks {
 
 		logger.info("Loading Renderers");
 		proxy.registerRenderThings();
-
-		logger.info("Finished Pre-Initialization");
 		
-		FluxASMLoader.load(event.getAsmData());
+		FluxASMLoader.load(event.getAsmData());		
+		proxy.preInit(event);
+		logger.info("Finished Pre-Initialization");
 	}
 
 	@EventHandler
@@ -150,6 +150,7 @@ public class FluxNetworks {
 		MinecraftForge.EVENT_BUS.register(new FluxEvents());
 		logger.info("Loaded Events");
 
+		proxy.init(event);
 		logger.info("Finished Initialization");
 	}
 
@@ -158,6 +159,7 @@ public class FluxNetworks {
 		FluxConfig.finishLoading();
 		FluxNetworks.enabledEnergyHandlers = FluxHelper.getEnergyHandlers();
 		FluxNetworks.energyContainerHandlers = FluxHelper.getEnergyContainerHandlers();
+		proxy.postInit(event);
 	}
 
     @EventHandler

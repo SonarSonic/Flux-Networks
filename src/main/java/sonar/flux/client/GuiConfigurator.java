@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.common.containers.ContainerConfigurator;
 import sonar.flux.common.item.FluxConfigurator;
@@ -37,7 +38,7 @@ public class GuiConfigurator extends GuiContainer {
         super.initGui();
         for (Entry<FluxConfigurationType, Boolean> entry : configs.entrySet()) {
             int ordinal = entry.getKey().ordinal();
-            buttonList.add(new GuiButton(ordinal, guiLeft + 100, guiTop + 20 + ordinal * 24, 60, 20, entry.getValue() ? TextFormatting.RED + "DISABLED" : TextFormatting.GREEN + "ENABLED"));
+            buttonList.add(new GuiButton(ordinal, guiLeft + 100, guiTop + 20 + ordinal * 24, 60, 20, entry.getValue() ? TextFormatting.RED + FluxTranslate.DISABLED.t() : TextFormatting.GREEN + FluxTranslate.ENABLED.t()));
         }
     }
 
@@ -52,7 +53,7 @@ public class GuiConfigurator extends GuiContainer {
     @Override
     public void drawGuiContainerForegroundLayer(int x, int y) {
         super.drawGuiContainerForegroundLayer(x, y);
-        FontHelper.textCentre(TextFormatting.UNDERLINE + "Flux Configurator", this.xSize, 8, -1);
+        FontHelper.textCentre(TextFormatting.UNDERLINE + FontHelper.translate("item.FluxConfigurator.name"), this.xSize, 8, -1);
         for (Entry<FluxConfigurationType, Boolean> entry : configs.entrySet()) {
             FontHelper.text(entry.getKey().name(), 8, 26 + entry.getKey().ordinal() * 24, -1);
         }

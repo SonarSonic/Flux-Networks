@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxConfig;
+import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileStorage;
 
 public class FluxStorage extends FluxConnection {
@@ -63,8 +64,8 @@ public class FluxStorage extends FluxConnection {
 
 	@Override
 	public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
-        list.add("Stores energy in the Flux Network");
+        list.add(FluxTranslate.FLUX_STORAGE_TOOLTIP.t());
 		int energy = tag == null ? 0 : tag.getInteger("energy");
-		list.add(FontHelper.translate("network.energy.stored") + ": " + FontHelper.formatStorage(energy) + "/" + FontHelper.formatStorage(getMaxStorage()));
+		list.add(FluxTranslate.STORED.t() + ": " + FontHelper.formatStorage(energy) + "/" + FontHelper.formatStorage(getMaxStorage()));
 	}
 }

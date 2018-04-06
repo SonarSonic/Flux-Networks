@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileFluxPlug;
 
 public class FluxPlug extends FluxSidedConnection {
@@ -22,6 +23,6 @@ public class FluxPlug extends FluxSidedConnection {
 
     @Override
     public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
-        list.add("For adding energy to the Flux Network");
+        list.add(FluxTranslate.FLUX_PLUG_TOOLTIP.t());
     }
 }

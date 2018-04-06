@@ -22,6 +22,7 @@ import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
+import sonar.flux.FluxTranslate;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileFlux;
 
@@ -70,7 +71,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 					if (flux.canAccess(player).canEdit()) {
 						flux.openFlexibleGui(player, 0);
 					} else {
-						FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + "You don't have permission to access this network", world, player);
+						FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + FluxTranslate.ERROR_NO_PERMISSION.t(), world, player);
 					}
 				}
 			}

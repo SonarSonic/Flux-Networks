@@ -53,36 +53,6 @@ public class FluxCable extends SonarMachineBlock {
 		return true;
 	}
 
-/*
-	@Override
-	public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
-
-		Vec3d vec3d = start.subtract((double) pos.getX(), (double) pos.getY(), (double) pos.getZ());
-		Vec3d vec3d1 = end.subtract((double) pos.getX(), (double) pos.getY(), (double) pos.getZ());		
-		
-		
-		RayTraceResult raytraceresult = boundingBox.calculateIntercept(vec3d, vec3d1);
-		
-		
-		this.bounds = ;
-		
-		return raytraceresult == null ? null : new RayTraceResult(raytraceresult.hitVec.addVector((double) pos.getX(), (double) pos.getY(), (double) pos.getZ()), raytraceresult.sideHit, pos);
-	}
-
-	@Override
-	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
-		return bounds.offset(pos);
-	}
-	@Deprecated
-	public void addCollisionBoxToList(IBlockState blockState, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn) {
-		addCollisionBoxToList(pos, entityBox, collidingBoxes, blockState.getCollisionBoundingBox(world, pos));
-		IBlockState state = blockState.getActualState(world, pos);
-		if (state.getValue(NORTH)) {
-			AxisAlignedBB sideBox = new AxisAlignedBB(0, 4 * 0.0625, 4 * 0.0625, 1 - (8 * 0.0625), 1 - (4 * 0.0625), 1 - (4 * 0.0625));
-			collidingBoxes.add(sideBox);
-		}
-	}
-*/
 	public boolean checkBlockInDirection(IBlockAccess world, BlockPos pos, EnumFacing dir) {
 		TileEntity tile = world.getTileEntity(pos.offset(dir));
 		if (tile != null) {

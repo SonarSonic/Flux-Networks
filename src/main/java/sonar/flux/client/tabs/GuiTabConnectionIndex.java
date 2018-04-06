@@ -15,7 +15,7 @@ import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.client.CheckBox;
-import sonar.flux.client.GUI;
+import sonar.flux.FluxTranslate;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 
@@ -46,17 +46,16 @@ public class GuiTabConnectionIndex<T extends TileFlux, G> extends GuiTabSelectio
         fluxName.setText(flux.getCustomName());
            
         fieldList.addAll(Lists.newArrayList(priority, limit, fluxName));
-        buttonList.add(new CheckBox(this, 3, getGuiLeft() + 156, getGuiTop() + 64, !flux.disableLimit.getObject(), "Enable Limit: " + !flux.disableLimit.getObject()));     
+        buttonList.add(new CheckBox(this, 3, getGuiLeft() + 156, getGuiTop() + 64, !flux.disableLimit.getObject(), FluxTranslate.ENABLE_LIMIT.t() + ": " + FluxTranslate.translateBoolean(!flux.disableLimit.getObject())));     
     }	
 
     @Override
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		int colour = common.getNetworkColour().getRGB();
-		FontHelper.text(GUI.NETWORK_NAME + ": ", 7, 30, colour);
-		FontHelper.text(GUI.PRIORITY + ":", 7, 48, colour);
-		FontHelper.text(GUI.TRANSFER_LIMIT + ":", 7, 48+18, colour);
-		//FontHelper.text(GUI.IGNORE_LIMIT + ": " + TextFormatting.WHITE + flux.disableLimit.getObject().toString(), 7, 48 + 18, colour);
+		FontHelper.text(FluxTranslate.NAME.t() + ": ", 7, 30, colour);
+		FontHelper.text(FluxTranslate.PRIORITY.t() + ":", 7, 48, colour);
+		FontHelper.text(FluxTranslate.TRANSFER_LIMIT.t() + ":", 7, 48+18, colour);
 		renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), true, 11, 8);
 	}
     

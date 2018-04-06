@@ -15,7 +15,9 @@ import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
+import sonar.core.translate.Localisation;
 import sonar.core.utils.SortingDirection;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.ClientTransfer;
 import sonar.flux.api.SortingType;
@@ -25,7 +27,6 @@ import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.ConnectionDirectionButton;
 import sonar.flux.client.ConnectionSortingButton;
 import sonar.flux.client.ConnectedBlocksButton;
-import sonar.flux.client.GUI;
 import sonar.flux.client.GuiTab;
 import sonar.flux.client.LargeButton;
 import sonar.flux.common.tileentity.TileFlux;
@@ -55,30 +56,30 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 	@Override
 	public void initGui() {
 		super.initGui();
-		buttonList.add(new ConnectionTypeButton(this, 0, ConnectionType.PLUG, GUI.PLUGS.toString(), getGuiLeft() + 12, getGuiTop() + 142));
-		buttonList.add(new ConnectionTypeButton(this, 1, ConnectionType.POINT, GUI.POINTS.toString(), getGuiLeft() + 52, getGuiTop() + 142));
-		buttonList.add(new ConnectionTypeButton(this, 2, ConnectionType.STORAGE, GUI.STORAGE.toString(), getGuiLeft() + 92, getGuiTop() + 142));
-		buttonList.add(new ConnectionTypeButton(this, 3, ConnectionType.CONTROLLER, GUI.CONTROLLERS.toString(), getGuiLeft() + 132, getGuiTop() + 142));
+		buttonList.add(new ConnectionTypeButton(this, 0, ConnectionType.PLUG, FluxTranslate.PLUGS.t(), getGuiLeft() + 12, getGuiTop() + 142));
+		buttonList.add(new ConnectionTypeButton(this, 1, ConnectionType.POINT, FluxTranslate.POINTS.t(), getGuiLeft() + 52, getGuiTop() + 142));
+		buttonList.add(new ConnectionTypeButton(this, 2, ConnectionType.STORAGE, FluxTranslate.STORAGE.t(), getGuiLeft() + 92, getGuiTop() + 142));
+		buttonList.add(new ConnectionTypeButton(this, 3, ConnectionType.CONTROLLER, FluxTranslate.CONTROLLERS.t(), getGuiLeft() + 132, getGuiTop() + 142));
 		buttonList.add(new ChunkLoadedButton(this, 4, getGuiLeft() + 92, getGuiTop() + 120));
 		buttonList.add(new ConnectionSortingButton(this, 5, getGuiLeft() + 11, getGuiTop() + 119));
 		buttonList.add(new ConnectionDirectionButton(this, 6, getGuiLeft() + 12+16, getGuiTop() + 119));
 		buttonList.add(new ConnectedBlocksButton(this, 6, getGuiLeft() + 51, getGuiTop() + 119));
-		buttonList.add(new LargeButton(this, "Clear Filter Settings", 7, getGuiLeft() + 52+16, getGuiTop() + 119, 68, 0));
+		buttonList.add(new LargeButton(this, FluxTranslate.SORTING_CLEAR.t(), 7, getGuiLeft() + 52+16, getGuiTop() + 119, 68, 0));
 	}
 
 	public static enum ChunkDisplayOptions {
-		BOTH, LOADED, UNLOADED;
+		BOTH(FluxTranslate.SORTING_BOTH), //
+		LOADED(FluxTranslate.SORTING_LOADED), //
+		UNLOADED(FluxTranslate.SORTING_UNLOADED);//
 
-		public String getDisplayString() {
-			switch (this) {
-			case BOTH:
-				return "Unloaded & Loaded";
-			case LOADED:
-				return "Loaded";
-			case UNLOADED:
-				return "Unloaded";
-			}
-			return name();
+		Localisation message;
+
+		ChunkDisplayOptions(Localisation message) {
+			this.message = message;
+		}
+
+		public String getDisplayName() {
+			return message.t();
 		}
 
 		public boolean canDisplay(IFlux flux) {
@@ -131,7 +132,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		}
 
 		public void drawButtonForegroundLayer(int x, int y) {
-			gui.drawSonarCreativeTabHoveringText("Chunk: " + gui.chunk_display_option.getDisplayString(), x, y);
+			gui.drawSonarCreativeTabHoveringText(FluxTranslate.CHUNK.t() + ": " + gui.chunk_display_option.getDisplayName(), x, y);
 		}
 
 	}
@@ -168,7 +169,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		}
 
 		public void drawButtonForegroundLayer(int x, int y) {
-			gui.drawSonarCreativeTabHoveringText("Show " + typeName + ": " + gui.canDisplay.get(type), x, y);
+			gui.drawSonarCreativeTabHoveringText(FluxTranslate.SHOW.t() + " " + typeName + ": " + gui.canDisplay.get(type), x, y);
 		}
 
 	}
@@ -206,8 +207,6 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 			switch(button.id){
 			case 7:
 				chunk_display_option = ChunkDisplayOptions.BOTH;
-				//sorting_type = SortingType.PRIORITY;
-				//sorting_dir = SortingDirection.UP;
 				showConnections = false;
 				canDisplay = new HashMap<>();
 				for (ConnectionType type : ConnectionType.values()) {
@@ -223,11 +222,11 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		super.drawGuiContainerForegroundLayer(x, y);
 		if (getGridList(0).isEmpty()) {
 			if (common.isFakeNetwork()) {
-				renderNavigationPrompt("No Connections Available", "Network Selection");
+				renderNavigationPrompt(FluxTranslate.ERROR_NO_CONNECTIONS.t(), FluxTranslate.GUI_TAB_NETWORK_SELECTION.t());
 			} else if (common.getClientFluxConnection().isEmpty()) {
-				FontHelper.textCentre(FontHelper.translate("Waiting for server"), xSize, 10, Color.GRAY.getRGB());
+				FontHelper.textCentre(FluxTranslate.ERROR_WAITING_FOR_SERVER.t(), xSize, 10, Color.GRAY.getRGB());
 			} else {
-				FontHelper.textCentre(FontHelper.translate("No Matches"), xSize, 14, Color.GRAY.getRGB());
+				FontHelper.textCentre(FluxTranslate.ERROR_NO_MATCHES.t(), xSize, 14, Color.GRAY.getRGB());
 			}
 		}
 	}

@@ -5,6 +5,7 @@ import static net.minecraft.client.renderer.GlStateManager.color;
 import net.minecraft.client.Minecraft;
 import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.utils.SortingDirection;
+import sonar.flux.FluxTranslate;
 import sonar.flux.client.tabs.GuiTabNetworkConnections;
 
 public class ConnectedBlocksButton extends ImageButton {
@@ -16,7 +17,7 @@ public class ConnectedBlocksButton extends ImageButton {
 	}
 
 	public void drawButtonForegroundLayer(int x, int y) {
-		gui.drawSonarCreativeTabHoveringText("Show Connected Blocks: " + gui.showConnections, x, y);
+		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_SHOW_CONNECTED.t() + ": " + gui.showConnections, x, y);
 	}
 
 	public void drawButton(Minecraft mc, int x, int y, float partialTicks) {

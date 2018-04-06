@@ -15,6 +15,7 @@ import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.GuiTab;
@@ -36,7 +37,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	public void initGui() {
 		super.initGui();
 		int networkColour = common.getNetworkColour().getRGB();
-		buttonList.add(new SmallButton(this, 1, getGuiLeft() + 150, getGuiTop() + 138, 136, "Add"));
+		buttonList.add(new SmallButton(this, 1, getGuiLeft() + 150, getGuiTop() + 138, 136, FluxTranslate.ADD.t()));
 		playerName = new SonarTextField(1, getFontRenderer(), 14, 138, 130, 12).setBoxOutlineColour(networkColour);
 		playerName.setMaxStringLength(24);
 		playerName.setText("");
@@ -48,9 +49,9 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 		super.drawGuiContainerForegroundLayer(x, y);
 		if (getGridList(0).isEmpty()) {
 			if (common.isFakeNetwork()) {
-				renderNavigationPrompt("No players can be added", "Network Selection");
+				renderNavigationPrompt(FluxTranslate.ERROR_NO_PLAYERS_CAN_BE_ADDED.t(), FluxTranslate.GUI_TAB_NETWORK_SELECTION.t());
 			} else if (disabled) {
-				renderNavigationPrompt("Unavailable in Private Mode", "Edit Network");
+				renderNavigationPrompt(FluxTranslate.ERROR_UNAVAILABLE_IN_PRIVATE.t(), FluxTranslate.GUI_TAB_NETWORK_EDIT.t());
 			}
 		}
 	}
@@ -104,10 +105,10 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 		List<String> strings = new ArrayList<>();
 		boolean isOwner = common.getCachedPlayerName().equals(element.getCachedName());
 		if (x > 153) {
-			strings.add(TextFormatting.RED + "Delete: " + element.getCachedName());
+			strings.add(TextFormatting.RED + FluxTranslate.DELETE.t() + ": " + element.getCachedName());
 		} else {
-			strings.add(TextFormatting.AQUA + "Config: " + FontHelper.translate(isOwner ? PlayerAccess.OWNER.getName() : element.access.getName()));
-			strings.add("Right click to change");
+			strings.add(TextFormatting.AQUA + FluxTranslate.CONFIG.t() + ": " + FontHelper.translate(isOwner ? PlayerAccess.OWNER.getName() : element.access.getName()));
+			strings.add(FluxTranslate.RIGHT_CLICK_TO_CHANGE.t());
 		}
 		drawHoveringText(strings, x, y);
 	}

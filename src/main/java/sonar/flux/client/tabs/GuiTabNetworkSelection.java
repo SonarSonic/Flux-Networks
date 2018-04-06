@@ -10,6 +10,7 @@ import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
@@ -26,7 +27,7 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		if (getGridList(0).isEmpty()) {
-			renderNavigationPrompt("No available networks", "Create a New Network");
+			renderNavigationPrompt(FluxTranslate.ERROR_NO_NETWORKS.t(), FluxTranslate.GUI_TAB_NETWORK_CREATE.t());
 		}
 	}
 
@@ -60,10 +61,10 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 	public void renderElementToolTip(int gridID, IFluxCommon element, int x, int y) {
 		List<String> strings = new ArrayList<>();
 		if (x > 153) {
-			strings.add(TextFormatting.RED + "Delete: " + element.getNetworkName());
+			strings.add(TextFormatting.RED + FluxTranslate.DELETE.t() + ": " + element.getNetworkName());
 		} else {
-			strings.add(FontHelper.translate("network.owner") + ": " + TextFormatting.AQUA + element.getCachedPlayerName());
-			strings.add(FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(element.getAccessType().getName()));
+			strings.add(FluxTranslate.NETWORK_OWNER.t() + ": " + TextFormatting.AQUA + element.getCachedPlayerName());
+			strings.add(FluxTranslate.ACCESS_SETTING.t() + ": " + TextFormatting.AQUA + element.getAccessType().getDisplayName());
 		}
 		drawHoveringText(strings, x, y);
 	}

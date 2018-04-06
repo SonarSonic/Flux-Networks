@@ -91,10 +91,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		while (iterator.hasNext()) {
 			IFluxListenable tile = iterator.next();
 			FluxCache.getValidTypes(tile).forEach(type -> {
-				if (getConnections(type).remove(tile)) {
+				if (((List<IFluxListenable>)getConnections(type)).removeIf(F -> F.getCoords().equals(tile.getCoords()))) {
 					type.disconnect(this, tile);
 					markTypeDirty(type);
-
 				}
 			});
 			iterator.remove();

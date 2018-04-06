@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileFluxPoint;
 
 public class FluxPoint extends FluxSidedConnection {
@@ -20,12 +21,8 @@ public class FluxPoint extends FluxSidedConnection {
 		return new TileFluxPoint();
 	}
 
-	public boolean hasSpecialRenderer() {
-		return true;
-	}
-
     @Override
     public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
-        list.add("For removing energy from the Flux Network");
+        list.add(FluxTranslate.FLUX_POINT_TOOLTIP.t());
     }
 }

@@ -21,6 +21,7 @@ import sonar.core.client.gui.GuiSonar;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientTransfer;
 import sonar.flux.api.network.IFluxCommon;
@@ -138,7 +139,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		drawRect(x, y, x + 154, y + 24, rgb);
 		drawRect(x + 1, y + 1, x + 154 - 1, y + 24 - 1, Color.BLACK.getRGB());
 		FontHelper.text(TextFormatting.BOLD + networkName, x + 3, y + 2, isSelected ? Color.WHITE.getRGB() : Color.DARK_GRAY.getRGB());
-		FontHelper.text(FontHelper.translate("network.accessSetting") + ": " + TextFormatting.AQUA + FontHelper.translate(access.getName()), x + 3, y + 13, 0);
+		FontHelper.text(FluxTranslate.ACCESS_SETTING.t() + ": " + TextFormatting.AQUA + access.getDisplayName(), x + 3, y + 13, 0);
 	}
 
 	public void renderEnergyBar(int x, int y, long stored, long max, int startCol, int endCol) {
@@ -152,9 +153,9 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 	}
 
 	public void renderNavigationPrompt(String error, String prompt) {
-		FontHelper.textCentre(FontHelper.translate(error), xSize, 10, Color.GRAY.getRGB());
+		FontHelper.textCentre(error, xSize, 10, Color.GRAY.getRGB());
 		scale(0.75, 0.75, 0.75);
-		FontHelper.textCentre("Click" + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + "Above", (int) (xSize * 1.0 / 0.75), (int) (20 * 1.0 / 0.75), Color.GRAY.getRGB());
+		FontHelper.textCentre(FluxTranslate.CLICK.t() + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE.t(), (int) (xSize * 1.0 / 0.75), (int) (20 * 1.0 / 0.75), Color.GRAY.getRGB());
 		scale(1.0 / 0.75, 1.0 / 0.75, 1.0 / 0.75);
 	}
 
@@ -187,10 +188,10 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 				// textLines.add(TextFormatting.GREEN + "THIS CONNECTION!");
 			}
 			addTransferStrings(textLines, flux.getConnectionType(), common.getDefaultEnergyType(), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
-			textLines.add(GUI.TRANSFER_LIMIT + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? "NO LIMIT" : flux.getTransferLimit()));
-			textLines.add(GUI.PRIORITY + ": " + TextFormatting.GREEN + flux.getCurrentPriority());
+			textLines.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? FluxTranslate.NO_LIMIT.t() : flux.getTransferLimit()));
+			textLines.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + flux.getCurrentPriority());
 		} else {
-			textLines.add(TextFormatting.DARK_RED + "CHUNK UNLOADED");
+			textLines.add(TextFormatting.DARK_RED + FluxTranslate.ERROR_CHUNK_UNLOADED.t());
 		}
 		textLines.add(TextFormatting.ITALIC + flux.getCoords().toString());
 		return textLines;
@@ -203,7 +204,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(scroller_flux_gui);
 		drawTexturedModalRect(x, y, 0, 166, 154, 10);
 		drawTexturedModalRect(x, y + 10, 0, 166 + 4, 154, 8);
-		String direction = (transfer.direction == null ? "PHANTOM" : transfer.direction.toString().toUpperCase());
+		String direction = (transfer.direction == null ? FluxTranslate.PHANTOM.t() : transfer.direction.toString().toUpperCase());
 		String transferS = FontHelper.formatOutput(transfer.energyType, transfer.added);
 		drawNormalItemStack(transfer.stack, x + 2, y + 1);
 		List<String> textLines = new ArrayList<>();
@@ -218,9 +219,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		textLines.add(TextFormatting.BOLD + transfer.stack.getDisplayName());
 		ConnectionType type = transfer.handler.flux.getConnectionType();
 		addTransferStrings(textLines, type, transfer.getEnergyType(), transfer.added, transfer.removed);
-		// textLines.add("Limit Usage: " + Math.floor(((double) (transfer.added + transfer.removed) / transfer.handler.add_limit) * 100) + " %");
-		// textLines.add("Direction: " + (transfer.direction == null ? "PHANTOM" : transfer.direction.toString().toUpperCase()));
-		textLines.add("Type: " + transfer.energyType.getName());
+		textLines.add(FluxTranslate.TYPE.t() + ": " + transfer.energyType.getName());
 
 		return textLines;
 	}
@@ -230,11 +229,11 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		if(type == ConnectionType.STORAGE){
 			long change = Math.abs(removed) - added;
 			if(change ==0){
-				string.add("Change:" + TextFormatting.GOLD + " " + FontHelper.formatOutput(energyType, change));
+				string.add(FluxTranslate.CHANGE.t() + ":" + TextFormatting.GOLD + " " + FontHelper.formatOutput(energyType, change));
 			}else if(change < 0){
-				string.add("Change:" + TextFormatting.RED + " - " + FontHelper.formatOutput(energyType, Math.abs(change)));				
+				string.add(FluxTranslate.CHANGE.t() + ":" + TextFormatting.RED + " - " + FontHelper.formatOutput(energyType, Math.abs(change)));				
 			}else if(change > 0){
-				string.add("Change:" + TextFormatting.GREEN + " + " + FontHelper.formatOutput(energyType, change));				
+				string.add(FluxTranslate.CHANGE.t() + ":" + TextFormatting.GREEN + " + " + FontHelper.formatOutput(energyType, change));				
 			}
 			return;
 		}
@@ -242,17 +241,17 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		if (type.canAdd()) {
 			String addedString = FontHelper.formatOutput(energyType, added);
 			if (added == 0) {
-				string.add("Input:" + TextFormatting.GOLD + " " + addedString);
+				string.add(FluxTranslate.TOTAL_INPUT.t() + ":" + TextFormatting.GOLD + " " + addedString);
 			} else {
-				string.add("Input:" + TextFormatting.GREEN + " + " + addedString);
+				string.add(FluxTranslate.TOTAL_INPUT.t() + ":" + TextFormatting.GREEN + " + " + addedString);
 			}
 		}
 		if (type.canRemove()) {
 			String removedString = FontHelper.formatOutput(energyType, removed);
 			if (removed == 0) {
-				string.add("Output:" + TextFormatting.GOLD + " " + removedString);
+				string.add(FluxTranslate.TOTAL_OUTPUT.t() + ":" + TextFormatting.GOLD + " " + removedString);
 			} else {
-				string.add("Output:" + TextFormatting.RED + " - " + removedString);
+				string.add(FluxTranslate.TOTAL_OUTPUT.t() + ":" + TextFormatting.RED + " - " + removedString);
 			}
 		}
 	}

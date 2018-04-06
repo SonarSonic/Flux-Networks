@@ -5,6 +5,7 @@ import java.util.List;
 
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileStorage;
@@ -23,8 +24,8 @@ public class GuiTabStorageIndex extends GuiTabConnectionIndex<TileStorage, Objec
 		renderEnergyBar(14, 90 + 4, flux.storage.getEnergyStored(), flux.storage.getMaxEnergyStored(), colour, colour);
 		IFluxCommon common = FluxNetworks.getClientCache().getNetwork(flux.networkID.getObject());
 		renderEnergyBar(14, 134, common.getStatistics().network_energy, common.getStatistics().network_energy_capacity, colour, colour);
-		FontHelper.text("Local Buffer: ", 14, 80 + 4, colour);
-		FontHelper.text("Network Buffer: " + (common.getStatistics().network_energy != 0 ? +(flux.storage.getEnergyStored() * 100 / common.getStatistics().network_energy) + " %" : ""), 14, 124, colour);
+		FontHelper.text(FluxTranslate.LOCAL_BUFFER.t() + ": ", 14, 80 + 4, colour);
+		FontHelper.text(FluxTranslate.NETWORK_BUFFER.t() + ": " + (common.getStatistics().network_energy != 0 ? +(flux.storage.getEnergyStored() * 100 / common.getStatistics().network_energy) + " %" : ""), 14, 124, colour);
 	}
 
 }

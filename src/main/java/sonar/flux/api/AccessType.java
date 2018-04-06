@@ -1,17 +1,20 @@
 package sonar.flux.api;
 
-public enum AccessType {
-	PUBLIC, PRIVATE, RESTRICTED;
+import sonar.core.translate.Localisation;
+import sonar.flux.FluxTranslate;
 
-	public String getName() {
-		switch (this) {
-		case PUBLIC:
-			return "network.public";
-		case PRIVATE:
-			return "network.private";
-		case RESTRICTED:
-			return "network.restricted";
-		}
-		return "";
+public enum AccessType {
+	PUBLIC(FluxTranslate.ACCESS_PUBLIC),//
+	PRIVATE(FluxTranslate.ACCESS_PRIVATE),//
+	RESTRICTED(FluxTranslate.ACCESS_RESTRICTED);//
+
+	Localisation message;
+
+	AccessType(Localisation message) {
+		this.message = message;
+	}
+
+	public String getDisplayName() {
+		return message.t();
 	}
 }

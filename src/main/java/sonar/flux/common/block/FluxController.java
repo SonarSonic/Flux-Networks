@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileController;
 
 public class FluxController extends FluxConnection {
@@ -22,6 +23,6 @@ public class FluxController extends FluxConnection {
 	
     @Override
     public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
-		list.add("Manages Energy");
+		list.add(FluxTranslate.FLUX_CONTROLLER_TOOLTIP.t());
 	}
 }

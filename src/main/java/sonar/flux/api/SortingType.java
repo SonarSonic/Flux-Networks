@@ -4,34 +4,28 @@ import java.util.Comparator;
 import java.util.List;
 
 import sonar.core.helpers.SonarHelper;
+import sonar.core.translate.Localisation;
 import sonar.core.utils.SortingDirection;
+import sonar.flux.FluxTranslate;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
 
 public enum SortingType {
 
-	PRIORITY, TRANSFER, TRANSFER_LIMIT, DIMENSION_NO, CONNECTION_TYPE, CONNECTION_NAME;
+	PRIORITY(FluxTranslate.PRIORITY), //
+	TRANSFER(FluxTranslate.SORTING_TRANSFER), //
+	TRANSFER_LIMIT(FluxTranslate.TRANSFER_LIMIT), //
+	DIMENSION_NO(FluxTranslate.SORTING_DIMENSION), //
+	CONNECTION_TYPE(FluxTranslate.SORTING_TYPE), //
+	CONNECTION_NAME(FluxTranslate.SORTING_NAME);//
 
-	SortingType() {}
+	Localisation message;
+
+	SortingType(Localisation message) {
+		this.message = message;
+	}
 
 	public String getDisplayName() {
-		switch (this) {
-		case CONNECTION_NAME:
-			return "Connection Name";
-		case CONNECTION_TYPE:
-			return "Connection Type";
-		case DIMENSION_NO:
-			return "Dimension Number";
-		case PRIORITY:
-			return "Priority";
-		case TRANSFER:
-			return "Energy Transfer";
-		case TRANSFER_LIMIT:
-			return "Transfer Limit";
-		default:
-			break;
-		}
-		return name();
-
+		return message.t();
 	}
 
 	public void sort(List<ClientFlux> list, SortingDirection dir) {

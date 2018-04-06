@@ -1,7 +1,24 @@
 package sonar.flux.api.network;
 
+import sonar.core.translate.Localisation;
+import sonar.flux.FluxTranslate;
+
 public enum PlayerAccess {
-	OWNER, SHARED_OWNER, USER, BLOCKED, CREATIVE;
+	OWNER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
+	SHARED_OWNER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
+	USER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
+	BLOCKED(FluxTranslate.PLAYERS_NETWORK_BLOCKED), //
+	CREATIVE(FluxTranslate.PLAYERS_NETWORK_CREATIVE);
+
+	Localisation message;
+
+	PlayerAccess(Localisation message) {
+		this.message = message;
+	}
+
+	public String getDisplayName() {
+		return message.t();
+	}
 
 	public boolean canDelete() {
 		return this == OWNER || this == CREATIVE;
@@ -16,18 +33,7 @@ public enum PlayerAccess {
 	}
 
 	public String getName() {
-		switch (this) {
-		case BLOCKED:
-			return "network.player.blocked";
-		case OWNER:
-			return "network.player.owner";
-		case SHARED_OWNER:
-			return "network.player.sharedOwner";
-		case USER:
-			return "network.player.user";
-		default:
-			return "";
-		}
+		return message.t();
 	}
 
 	public PlayerAccess incrementAccess() {

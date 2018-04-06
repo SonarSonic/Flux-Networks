@@ -5,6 +5,7 @@ import static net.minecraft.client.renderer.GlStateManager.color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.client.gui.SonarButtons.ImageButton;
+import sonar.flux.FluxTranslate;
 import sonar.flux.client.tabs.GuiTabNetworkConnections;
 
 public class ConnectionSortingButton extends ImageButton {
@@ -16,7 +17,7 @@ public class ConnectionSortingButton extends ImageButton {
 	}
 
 	public void drawButtonForegroundLayer(int x, int y) {
-		gui.drawSonarCreativeTabHoveringText("Sort by: " + TextFormatting.AQUA + gui.sorting_type.getDisplayName(), x, y);
+		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_BY.t() + ": " + TextFormatting.AQUA + gui.sorting_type.getDisplayName(), x, y);
 	}
 
 	public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
