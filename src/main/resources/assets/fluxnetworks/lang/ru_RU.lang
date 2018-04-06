@@ -1,10 +1,6 @@
 itemGroup.Flux Networks=Flux Networks
 
-//machine upgrades
-upgrade.maximum=Максимум установлено
-upgrade.incompatible=Несовместимое обновление
-upgrade.accepted=Принятые обновления
-
+//blocks
 tile.FluxPlug.name=Флакс разъём
 tile.FluxPoint.name=Флакс точка
 tile.FluxStorage.name=Базовое флаксовое хранилище
@@ -12,87 +8,164 @@ tile.HerculeanFluxStorage.name=Геркулесовое флаксовое хр�
 tile.GargantuanFluxStorage.name=Гигантское флаксовое хранилище
 tile.FluxController.name=Флакс контроллер
 tile.FluxBlock.name=Флакс блок
+
+//items
 item.Flux.name=Флакс
 item.FluxCore.name=Флакс ядро
 item.FluxConfigurator.name=Флакс конфигуратор
 item.AdminConfigurator.name=Админ конфигуратор
 
+//tool tips
+flux.item.flux.tooltip=Получается путем бросания Редстоуна в огонь или лаву
+flux.item.fluxcontroller.tooltip=Manages Energy
+flux.item.fluxplug.tooltip=For adding energy to the Flux Network
+flux.item.fluxpoint.tooltip=For removing energy from the Flux Network
+flux.item.fluxstorage.tooltip=Stores energy in the Flux Network
+
+//general values
+flux.value.true=True
+flux.value.false=False
+flux.value.on=Вкл.
+flux.value.off=Выкл.
+flux.value.enabled=Enabled
+flux.value.disabled=Disabled
+
+//general translations
+flux.general.add=Добавить
+flux.general.remove=Remove
+flux.general.delete=Удалить
+flux.general.back=Назад
+flux.general.rename=Переименовать
+flux.general.name=Имя
+flux.general.color=Цвет
+flux.general.stored=Хранится
+flux.general.cancel=Cancel
+flux.general.banned=Banned
+flux.general.chunk=Chunk
+flux.general.show=Show
+flux.general.reset=Reset
+flux.general.create=Create
+flux.general.savechanges=Save Changes
+flux.general.config=Config
+flux.general.change=Change
+flux.general.rightclick=Right click to change
+flux.general.click=Click
+flux.general.above=Above
+flux.general.type=Type
+flux.general.uuid=UUID
+
+//gui tabs
 network.tab.home=Дом
 network.tab.connections=Сетевые соединения
 network.tab.networks=Выбор сети
 network.tab.statistics=Сетевая статистика
 network.tab.createnetwork=Создать новую сеть
 network.tab.players=Разрешенные игроки
-network.add=Добавить
 network.tab.editnetwork=Редактировать сеть
-network.rename=Переименовать
-network.delete=Удалить
-network.back=Назад
-network.notConnected=Не подключено
-network.protection=Защита
-network.restricted=Ограниченый
-network.private=Частный
-network.public=Публичный
+
+//INDEX TAB
+connection.config.priority=Приоритет
+connection.config.enablelimit=Enable Limit
+connection.config.transferlimit=Transfer Limit
+connection.config.nolimit=No limit
+connection.config.phantom=PHANTOM
+
+//priority mode
+network.priority.default=По умолчанию
+network.priority.largest=Самый большой сначала
+network.priority.smallest=Самый маленький сначала
+
+//CONTROLLER INDEX TAB
 network.sendMode=Режим отправки
 network.receiveMode=Режим приема
 network.transferMode=Режим передачи
 network.transmitterMode=Режим передатчика
-network.on=Вкл.
-network.off=Выкл.
-network.hotbar=Только горячая панель
-network.held=Только удерживаемый предмет
-network.default=По умолчанию
-network.notransfer=Нет передачи
+
+//transfer mode 
+network.transfer.notransfer=Нет передачи
 network.transfer.even=Равномерное распределение
 network.transfer.surge=Всплеск
 network.transfer.hyper=Гипервсплеск
 network.transfer.god=Режим бога
-network.largest=Самый большой сначала
-network.smallest=Самый маленький сначала
-network.nextColour=Следующий цвет
-network.name=Имя
-network.colour=Цвет
-network.accessSetting=Настройка доступа
-network.changeSetting=Изменить настройки
-network.change=Изменить
-network.owner=Владелец
-flux.type=Флакс тип
-flux.coords=Флакс координаты
-flux.ignorelimit=Игнорировать лимит
-point.priority=Приоритет
-point.max=Макс.
-plug.sending=Отправка
-plug.receiving=Получение
-plug.plugs=Разъёмы
-plug.points=Точки
-plug.storage=Хранилища
-plug.controllers=Контроллеры
-plug.transfer=Передача
 
-network.energy.transfer=Передача
-network.energy.maxReceived=Макс. прием
-network.energy.maxSent=Макс. передача
-network.energy.received=Получено
-network.energy.sent=Отправлено
-network.energy.stored=Хранится
+//transmitter mode
+network.transmitter.hotbar=Только горячая панель
+network.transmitter.held=Только удерживаемый предмет
+
+//NETWORK SELECTION
+network.stats.owner=Owner
+network.stats.name=Network Name
+
+//delete network tab
+network.delete.hover=Delete Network
+network.delete.confirm=Confirm deletion of
+
+//NETWORK CONNECTIONS
+network.sorting.name=Connection Name
+network.sorting.type=Connection Type
+network.sorting.dim=Dimension Number
+network.sorting.transfer=Energy Transfer
+network.sorting.clear=Clear Filter Settings
+network.sorting.showconnected=Show Connected Blocks
+network.sorting.direction=Sorting direction
+network.sorting.sortby=Sort by
+
+//chunk display options
+network.sorting.both=Unloaded & Loaded
+network.sorting.loaded=Loaded
+network.sorting.unloaded=Unloaded
+
+//NETWORK STATISTICS
+network.stats.plugs=Разъёмы
+network.stats.points=Точки
+network.stats.storage=Хранилища
+network.stats.controllers=Controllers
 network.energy.input=Вход
 network.energy.output=Выход
-network.energy.totaltransfer=Передача
 network.energy.storedchange=Изменение хранилища
-network.energy.transferlimit=Предел передачи
+network.energy.totaltransfer=Передача
+network.energy.networkbuffer=Network Buffer
+network.energy.localbuffer=Local Buffer
+
+// NETWORK EDIT/CREATE
+network.edit.changeSetting=Изменить настройки
+network.edit.nextColour=Следующий цвет
+network.edit.accessSetting=Настройка доступа
+network.edit.energytype=Energy Type
+network.edit.allowconversion=Allow Conversion
+network.edit.preview=Preview
+network.edit.color.r=R
+network.edit.color.g=G
+network.edit.color.b=B
+
+// access setting
+network.edit.restricted=Ограниченый
+network.edit.private=Частный
+network.edit.public=Публичный
 
 //errors
+network.error.none=You can't do that, but I don't know why...
+network.error.waiting=Waiting for server
+network.error.nomatches=No Matches
+network.error.nonetworks=No Available Networks
+network.error.nostatistics=No Statistics Available
+network.error.noconnections=No Connections Available
+network.error.noconnected=No Connected Network
+network.error.nonetworktoedit=No network to edit
 network.error.hasController=В этой сети уже есть контроллер
 network.error.notOwner=Только владелец может удалить сеть
 network.error.accessDenied=Доступ запрещен
 network.error.editNetwork=Вы не можете редактировать эту сеть
 network.error.networkMaxReached=У вас уже есть максимальное количество сетей.
 network.error.invalidUser=Ни один пользователь с этим именем не может быть найден
+network.error.noplayerscanbeadded=No players can be added
+network.error.unavailableinprivate=Unavailable in Private Mode
+network.error.chunkunloaded=CHUNK UNLOADED
+network.error.nopermisson=You don't have permission to access this network
 
 //players
 network.player.user=Пользователь
 network.player.owner=Владелец сети
 network.player.sharedOwner=Общий владелец
 network.player.blocked=Блокированный
-
-fluxItem.Info=Получается путем бросания Редстоуна в огонь или лаву
+network.player.creative=Creative
