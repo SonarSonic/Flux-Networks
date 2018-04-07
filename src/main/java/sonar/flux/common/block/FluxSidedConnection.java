@@ -22,21 +22,21 @@ public abstract class FluxSidedConnection extends FluxConnection {
 	@Override
 	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
 		super.onNeighborChange(world, pos, neighbor);
+		updateTransfers(world, pos, neighbor);
+	}
 
+	@Override
+	public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
+		super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
+		updateTransfers(world, observerPos, changedBlockPos);
+	}
+
+	public void updateTransfers(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile != null && !tile.getWorld().isRemote && tile instanceof TileAbstractEnergyConnector) {
 			TileAbstractEnergyConnector flux = (TileAbstractEnergyConnector) tile;
 			flux.onNeighborChange(SonarHelper.getBlockDirection(pos, neighbor));
 		}
-	}	
-	
-	@Override
-	public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
-		super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
-		onNeighborChange(world, observerPos, changedBlockPos);
-	}
-
-	public void updateTransfers(IBlockAccess world, BlockPos pos) {
 	}
 
 	public IBlockState getActualState(IBlockState state, IBlockAccess w, BlockPos pos) {

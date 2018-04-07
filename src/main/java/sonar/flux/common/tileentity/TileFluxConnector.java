@@ -40,8 +40,8 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
 				bool.add(handler.transfers.get(face)!=null);
 			}
 			connections.setObjects(bool);
+			SonarCore.sendFullSyncAroundWithRenderUpdate(this, 128);
 		}
-		SonarCore.sendFullSyncAroundWithRenderUpdate(this, 128);
 	}
 
 	@Override
