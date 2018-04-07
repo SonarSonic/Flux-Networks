@@ -68,10 +68,16 @@ public class FluxEvents {
 				newEntity.motionY = entityItem.motionY;
 				newEntity.motionZ = entityItem.motionZ;
 				newEntity.setDefaultPickupDelay();
+				newEntity.setThrower(entityItem.getThrower());
 				if (newEntity != null) {
 					event.getEntity().setDead();
 					// event.setCanceled(true) fixes duping but causes "Fetching addPacket for removed entity" warning on each Redstone/EnderEye Drop
 					event.getWorld().spawnEntity(newEntity);
+					if(entityItem.getThrower()!= null) {
+						EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUsername(entityItem.getThrower());
+						ItemTossEvent e = new ItemTossEvent(newEntity, player);
+						MinecraftForge.EVENT_BUS.post(e);
+					}
 				}
 			}
 		}
