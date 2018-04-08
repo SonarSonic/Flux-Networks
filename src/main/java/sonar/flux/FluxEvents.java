@@ -63,23 +63,17 @@ public class FluxEvents {
 		if (entity instanceof EntityItem && !(entity instanceof EntityFireItem)) {
 			EntityItem entityItem = (EntityItem) entity;
 			ItemStack stack = entityItem.getItem();
-			if (!stack.isEmpty() && stack.getItem() == Items.REDSTONE) {				
-				EntityFireItem newEntity = new EntityFireItem(event.getWorld(), entityItem.posX, entityItem.posY, entityItem.posZ, stack);
-				newEntity.setThrower(entityItem.getThrower());
-				newEntity.setDefaultPickupDelay();
-				newEntity.motionX = entityItem.motionX;
-				newEntity.motionY = entityItem.motionY;
-				newEntity.motionZ = entityItem.motionZ;	
+			if (!stack.isEmpty() && stack.getItem() == Items.REDSTONE) {
+				EntityFireItem newEntity = new EntityFireItem(entityItem);
+				entityItem.setDead();
 				
-				//cancel the event preventing the old EntityItem spawning
-				event.setCanceled(true);				
-				
-				//add entity to chunk, skipping spawnEntity avoids EntityJoinWorldEvent being called again
-		        int i = MathHelper.floor(newEntity.posX / 16.0D);
-		        int j = MathHelper.floor(newEntity.posZ / 16.0D);
+				int i = MathHelper.floor(newEntity.posX / 16.0D);
+				int j = MathHelper.floor(newEntity.posZ / 16.0D);
 				event.getWorld().getChunkFromChunkCoords(i, j).addEntity(newEntity);
 				event.getWorld().loadedEntityList.add(newEntity);
 				event.getWorld().onEntityAdded(newEntity);
+				
+				event.setCanceled(true);
 			}
 		}
 	}

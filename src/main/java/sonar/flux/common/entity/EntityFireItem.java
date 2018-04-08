@@ -3,6 +3,7 @@ package sonar.flux.common.entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import sonar.flux.FluxNetworks;
@@ -16,9 +17,10 @@ public class EntityFireItem extends EntityItem {
 		isImmuneToFire = true;
 	}
 
-	public EntityFireItem(World world, double x, double y, double z, ItemStack stack) {
-		super(world, x, y, z, stack);
-		isImmuneToFire = true;
+	public EntityFireItem(EntityItem toConvert) {
+		this(toConvert.getEntityWorld());
+		NBTTagCompound copyTag = new NBTTagCompound();
+		readFromNBT(toConvert.writeToNBT(copyTag));
 	}
 
 	public boolean isEntityInvulnerable(DamageSource source) {
