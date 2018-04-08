@@ -7,15 +7,16 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 import sonar.core.SonarCore;
-import sonar.flux.api.FluxListener;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
 import sonar.flux.network.FluxNetworkCache;
@@ -53,7 +54,7 @@ public class FluxEvents {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onEntityAdded(EntityJoinWorldEvent event) {
 		if (!FluxConfig.enableFluxRecipe || event.getWorld().isRemote) {
 			return;
@@ -62,17 +63,19 @@ public class FluxEvents {
 		if (entity instanceof EntityItem && !(entity instanceof EntityFireItem)) {
 			EntityItem entityItem = (EntityItem) entity;
 			ItemStack stack = entityItem.getItem();
-			if (!stack.isEmpty() && stack.getItem() == Items.REDSTONE) {
+			if (!stack.isEmpty() && stack.getItem() == Items.REDSTONE) {				
 				EntityFireItem newEntity = new EntityFireItem(event.getWorld(), entityItem.posX, entityItem.posY, entityItem.posZ, stack);
+				newEntity.setThrower(entityItem.getThrower());
+				newEntity.setDefaultPickupDelay();
 				newEntity.motionX = entityItem.motionX;
 				newEntity.motionY = entityItem.motionY;
-				newEntity.motionZ = entityItem.motionZ;
-				newEntity.setDefaultPickupDelay();
-				if (newEntity != null) {
-					event.getEntity().setDead();
-					// event.setCanceled(true) fixes duping but causes "Fetching addPacket for removed entity" warning on each Redstone/EnderEye Drop
-					event.getWorld().spawnEntity(newEntity);
-				}
+				newEntity.motionZ = entityItem.motionZ;						
+				event.setCanceled(true);				
+		        int i = MathHelper.floor(newEntity.posX / 16.0D);
+		        int j = MathHelper.floor(newEntity.posZ / 16.0D);
+				event.getWorld().getChunkFromChunkCoords(i, j).addEntity(newEntity);
+				event.getWorld().loadedEntityList.add(newEntity);
+				event.getWorld().onEntityAdded(newEntity);
 			}
 		}
 	}
