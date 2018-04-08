@@ -69,8 +69,12 @@ public class FluxEvents {
 				newEntity.setDefaultPickupDelay();
 				newEntity.motionX = entityItem.motionX;
 				newEntity.motionY = entityItem.motionY;
-				newEntity.motionZ = entityItem.motionZ;						
+				newEntity.motionZ = entityItem.motionZ;	
+				
+				//cancel the event preventing the old EntityItem spawning
 				event.setCanceled(true);				
+				
+				//add entity to chunk, skipping spawnEntity avoids EntityJoinWorldEvent being called again
 		        int i = MathHelper.floor(newEntity.posX / 16.0D);
 		        int j = MathHelper.floor(newEntity.posZ / 16.0D);
 				event.getWorld().getChunkFromChunkCoords(i, j).addEntity(newEntity);
