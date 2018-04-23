@@ -8,7 +8,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
-import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.IFluxCommon;

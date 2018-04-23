@@ -1,6 +1,5 @@
 package sonar.flux.api;
 
-import java.util.Comparator;
 import java.util.List;
 
 import sonar.core.helpers.SonarHelper;

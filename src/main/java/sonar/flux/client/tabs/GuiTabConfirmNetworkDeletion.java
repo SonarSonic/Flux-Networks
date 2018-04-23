@@ -1,6 +1,5 @@
 package sonar.flux.client.tabs;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.IFluxCommon;
-import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.GuiTab;
 import sonar.flux.client.LargeButton;

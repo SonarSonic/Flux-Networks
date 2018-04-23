@@ -4,7 +4,6 @@ import static net.minecraft.client.renderer.GlStateManager.color;
 
 import net.minecraft.client.Minecraft;
 import sonar.core.client.gui.SonarButtons.ImageButton;
-import sonar.core.utils.SortingDirection;
 import sonar.flux.FluxTranslate;
 import sonar.flux.client.tabs.GuiTabNetworkConnections;
 

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import akka.util.Collections;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import sonar.core.SonarCore;

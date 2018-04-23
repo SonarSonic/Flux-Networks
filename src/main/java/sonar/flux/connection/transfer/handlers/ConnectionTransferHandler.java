@@ -12,7 +12,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.energy.StoredEnergyStack;
 import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.IFluxEnergyHandler;
 import sonar.flux.api.energy.internal.IFluxTransfer;

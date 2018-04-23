@@ -2,12 +2,10 @@ package sonar.flux.energy.handlers.tiles;
 
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergySource;
 import ic2.api.energy.tile.IEnergyTile;
 import ic2.api.tile.IEnergyStorage;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import sonar.core.api.asm.EnergyHandler;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.FluxEnergyHandler;

@@ -1,14 +1,11 @@
 package sonar.flux.client;
 
 import static net.minecraft.client.renderer.GlStateManager.color;
-import static net.minecraft.client.renderer.GlStateManager.scale;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.client.gui.SonarButtons.ImageButton;
-import sonar.core.helpers.FontHelper;
 
 @SideOnly(Side.CLIENT)
 public class LargeButton extends ImageButton {

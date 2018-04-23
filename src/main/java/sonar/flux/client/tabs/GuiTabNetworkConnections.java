@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +23,9 @@ import sonar.flux.api.SortingType;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.client.AbstractGuiTab;
+import sonar.flux.client.ConnectedBlocksButton;
 import sonar.flux.client.ConnectionDirectionButton;
 import sonar.flux.client.ConnectionSortingButton;
-import sonar.flux.client.ConnectedBlocksButton;
 import sonar.flux.client.GuiTab;
 import sonar.flux.client.LargeButton;
 import sonar.flux.common.tileentity.TileFlux;

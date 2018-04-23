@@ -16,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.energy.StoredEnergyStack;
 import sonar.core.client.gui.GuiSonar;
 import sonar.core.helpers.FontHelper;
 import sonar.core.utils.CustomColour;
@@ -96,21 +95,11 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		}
 	}
 
-	public Object origin;
-
-	public void setOrigin(Object origin) {
-		this.origin = origin;
-	}
-
 	@Override
 	protected void keyTyped(char c, int i) throws IOException {
 		if (isCloseKey(i)) {
 			boolean isTyping = this.fieldList.stream().anyMatch(f -> f.isFocused());
 			if (!isTyping) {
-				if (origin != null) {
-					FMLCommonHandler.instance().showGuiScreen(origin);
-					return;
-				}
 				if (getCurrentTab() != GuiTab.INDEX) {
 					FMLCommonHandler.instance().showGuiScreen(GuiTab.INDEX.getGuiScreen(flux, tabs));
 					return;

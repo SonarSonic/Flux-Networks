@@ -1,7 +1,6 @@
 package sonar.flux.api.energy.internal;
 
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.energy.EnergyType;

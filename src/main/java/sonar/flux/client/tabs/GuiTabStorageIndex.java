@@ -1,6 +1,5 @@
 package sonar.flux.client.tabs;
 
-import java.awt.Color;
 import java.util.List;
 
 import sonar.core.helpers.FontHelper;

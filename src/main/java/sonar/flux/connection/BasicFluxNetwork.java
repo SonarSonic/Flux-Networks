@@ -13,22 +13,16 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.FunctionHelper;
 import sonar.core.helpers.ListHelper;
-import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.helpers.SonarHelper;
-import sonar.core.network.PacketTileSync;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxConfig;
-import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.ClientFlux;
@@ -44,12 +38,8 @@ import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.api.tiles.IFluxStorage;
-import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
 import sonar.flux.network.FluxNetworkCache;
-import sonar.flux.network.PacketFluxConnectionsList;
-import sonar.flux.network.PacketFluxNetworkList;
-import sonar.flux.network.PacketNetworkStatistics;
 
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
 

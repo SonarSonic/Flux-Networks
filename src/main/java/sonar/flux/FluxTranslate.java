@@ -5,8 +5,6 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.util.text.TextFormatting;
-import sonar.core.helpers.FontHelper;
 import sonar.core.translate.Localisation;
 
 public class FluxTranslate {

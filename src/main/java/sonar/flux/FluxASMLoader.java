@@ -16,6 +16,6 @@ public class FluxASMLoader {
 	}
 
 	public static List<IFluxEnergyHandler> getEnergyHandlers(@Nonnull ASMDataTable asmDataTable) {
-		return ASMLoader.getInstances(asmDataTable, FluxEnergyHandler.class, IFluxEnergyHandler.class, true, true);
+		return ASMLoader.getInstances(FluxNetworks.logger, asmDataTable, FluxEnergyHandler.class, IFluxEnergyHandler.class, true, true);
 	}
 }

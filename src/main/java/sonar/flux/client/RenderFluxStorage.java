@@ -25,7 +25,7 @@ import sonar.core.helpers.RenderHelper;
 import sonar.flux.common.tileentity.TileStorage;
 public class RenderFluxStorage extends TileEntitySpecialRenderer<TileStorage> {
 
-    //@Override
+    @Override
     public void render(TileStorage te, double x, double y, double z, float partialTicks, int destroyStage, float alpha){
 		if (te.storage.getEnergyStored() != 0 && te.storage.getMaxEnergyStored() != 0) {
 			pushMatrix();

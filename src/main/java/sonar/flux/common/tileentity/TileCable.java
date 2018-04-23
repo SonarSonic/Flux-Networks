@@ -7,7 +7,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.Optional;
-import sonar.core.api.SonarAPI;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.integration.SonarLoader;

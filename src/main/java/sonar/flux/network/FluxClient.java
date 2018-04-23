@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import sonar.core.network.SonarClient;
 import sonar.core.translate.ILocalisationHandler;
 import sonar.core.translate.Localisation;
-import sonar.flux.FluxEvents;
 import sonar.flux.FluxTranslate;
 import sonar.flux.client.RenderFluxStorage;
 import sonar.flux.common.tileentity.TileStorage;

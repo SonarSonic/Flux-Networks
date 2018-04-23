@@ -5,7 +5,6 @@ import net.darkhax.tesla.api.ITeslaProducer;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import sonar.core.api.asm.EnergyHandler;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.FluxEnergyHandler;

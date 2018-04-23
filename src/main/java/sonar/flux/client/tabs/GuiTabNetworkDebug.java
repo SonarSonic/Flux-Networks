@@ -6,14 +6,12 @@ import java.util.List;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxTranslate;
 import sonar.flux.client.AbstractGuiTab;
 import sonar.flux.client.GuiTab;
 import sonar.flux.client.LargeButton;
 import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.connection.transfer.stats.NetworkStatistics;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
 

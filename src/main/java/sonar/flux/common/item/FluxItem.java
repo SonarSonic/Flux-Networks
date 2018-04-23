@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxTranslate;
 
 public class FluxItem extends Item {
