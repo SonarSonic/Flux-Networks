@@ -17,7 +17,7 @@ public class ConnectionDirectionButton extends ImageButton {
 	}
 
 	public void drawButtonForegroundLayer(int x, int y) {
-		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_DIRECTION.t() + ": " +gui.sorting_dir.name(), x, y);
+		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_DIRECTION.t() + ": " + GuiTabNetworkConnections.sorting_dir.name(), x, y);
 	}
 
 	public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
@@ -25,7 +25,7 @@ public class ConnectionDirectionButton extends ImageButton {
 			color(1.0F, 1.0F, 1.0F, 1.0F);
 			hovered = x >= this.x && y >= this.y && x < this.x + width + 1 && y < this.y + height + 1;
 			mc.getTextureManager().bindTexture(texture);
-			drawTexturedModalRect(this.x, this.y, gui.sorting_dir == SortingDirection.UP ? textureX : textureX+17, textureY, sizeX, sizeY);
+			drawTexturedModalRect(this.x, this.y, GuiTabNetworkConnections.sorting_dir == SortingDirection.UP ? textureX : textureX+17, textureY, sizeX, sizeY);
 		}
 	}
 }

@@ -31,24 +31,16 @@ public enum SortingType {
 		final SortingDirection actual_dir = dir.switchDir();
 		switch (this) {
 		case CONNECTION_NAME:
-			list.sort((flux1, flux2) -> {
-				return SonarHelper.compareStringsWithDirection(flux1.getCustomName(), flux2.getCustomName(), actual_dir);
-			});
+			list.sort((flux1, flux2) -> SonarHelper.compareStringsWithDirection(flux1.getCustomName(), flux2.getCustomName(), actual_dir));
 			break;
 		case CONNECTION_TYPE:
-			list.sort((flux1, flux2) -> {
-				return SonarHelper.compareStringsWithDirection(flux1.getConnectionType().getRepresentiveStack().getDisplayName(), flux2.getConnectionType().getRepresentiveStack().getDisplayName(), actual_dir);
-			});
+			list.sort((flux1, flux2) -> SonarHelper.compareStringsWithDirection(flux1.getConnectionType().getRepresentiveStack().getDisplayName(), flux2.getConnectionType().getRepresentiveStack().getDisplayName(), actual_dir));
 			break;
 		case DIMENSION_NO:
-			list.sort((flux1, flux2) -> {
-				return SonarHelper.compareWithDirection(flux1.getCoords().getDimension(), flux2.getCoords().getDimension(), actual_dir);
-			});
+			list.sort((flux1, flux2) -> SonarHelper.compareWithDirection(flux1.getCoords().getDimension(), flux2.getCoords().getDimension(), actual_dir));
 			break;
 		case PRIORITY:
-			list.sort((flux1, flux2) -> {
-				return SonarHelper.compareWithDirection(flux1.getCurrentPriority(), flux2.getCurrentPriority(), actual_dir);
-			});
+			list.sort((flux1, flux2) -> SonarHelper.compareWithDirection(flux1.getCurrentPriority(), flux2.getCurrentPriority(), actual_dir));
 			break;
 		case TRANSFER:
 			list.sort((flux1, flux2) -> {
@@ -64,9 +56,7 @@ public enum SortingType {
 			});
 			break;
 		case TRANSFER_LIMIT:
-			list.sort((flux1, flux2) -> {
-				return SonarHelper.compareWithDirection(flux1.getTransferLimit(), flux2.getTransferLimit(), actual_dir);
-			});
+			list.sort((flux1, flux2) -> SonarHelper.compareWithDirection(flux1.getTransferLimit(), flux2.getTransferLimit(), actual_dir));
 			break;
 		default:
 			break;

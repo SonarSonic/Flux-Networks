@@ -137,7 +137,7 @@ public class PacketHelper {
 	public static IMessage doNetworkDeletePacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		IFluxNetwork toDelete = FluxNetworks.getServerCache().getNetwork(networkID);
-		if (!toDelete.isFakeNetwork() && toDelete instanceof IFluxNetwork) {
+		if (!toDelete.isFakeNetwork()) {
 			if (toDelete.getPlayerAccess(player).canDelete()) {
 				FluxNetworks.getServerCache().onPlayerRemoveNetwork(FluxHelper.getOwnerUUID(player), toDelete);
 			} else {
@@ -204,7 +204,7 @@ public class PacketHelper {
 		}
 		UUID newPlayer = profile.getId();
 		IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
-		if (!common.isFakeNetwork() && common instanceof IFluxNetwork) {
+		if (!common.isFakeNetwork()) {
 			if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
 				IFluxNetwork network = (IFluxNetwork) common;
 				network.addPlayerAccess(newPlayer, access);
@@ -231,7 +231,7 @@ public class PacketHelper {
 		UUID playerRemoved = packetTag.getUniqueId("playerRemoved");
 		PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
 		IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
-		if (!common.isFakeNetwork() && common instanceof IFluxNetwork) {
+		if (!common.isFakeNetwork()) {
 			if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
 				IFluxNetwork network = (IFluxNetwork) common;
 				network.removePlayerAccess(playerRemoved, access);
@@ -262,7 +262,7 @@ public class PacketHelper {
 			while(access.canDelete()){access=SonarHelper.incrementEnum(access, PlayerAccess.values());}
 			
 			IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
-			if (!common.isFakeNetwork() && common instanceof IFluxNetwork) {
+			if (!common.isFakeNetwork()) {
 				if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
 					if (!FluxHelper.getOwnerUUID(player).equals(playerChanged)) {
 						IFluxNetwork network = (IFluxNetwork) common;

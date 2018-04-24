@@ -9,6 +9,8 @@ import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.FluxEnergyHandler;
 import sonar.flux.api.energy.IFluxEnergyHandler;
 
+import javax.annotation.Nonnull;
+
 @FluxEnergyHandler(modid = "sonarcore", priority = 0)
 public class ForgeEnergyHandler implements IFluxEnergyHandler {
 
@@ -18,7 +20,7 @@ public class ForgeEnergyHandler implements IFluxEnergyHandler {
 	}
 	
 	@Override
-	public boolean canRenderConnection(TileEntity tile, EnumFacing dir) {
+	public boolean canRenderConnection(@Nonnull TileEntity tile, EnumFacing dir) {
 		return tile.hasCapability(CapabilityEnergy.ENERGY, dir);
 	}
 

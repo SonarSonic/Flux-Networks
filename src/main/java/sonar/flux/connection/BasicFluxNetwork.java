@@ -38,7 +38,6 @@ import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.api.tiles.IFluxStorage;
-import sonar.flux.connection.transfer.stats.NetworkStatistics;
 import sonar.flux.network.FluxNetworkCache;
 
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
@@ -314,7 +313,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		this.setCustomColour(network.getNetworkColour());
 		this.setNetworkName(network.getNetworkName());
 		this.players = network.getPlayers();
-		this.networkStats = (NetworkStatistics) network.getStatistics();
+		this.networkStats = network.getStatistics();
 		return this;
 	}
 
@@ -382,7 +381,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 				copy.add(fl);
 			} else {
 				TileEntity tile = fl.getCoords().getTileEntity();
-				if (tile != null && tile instanceof IFluxListenable) {
+				if (tile instanceof IFluxListenable) {
 					copy.add((IFluxListenable) tile);
 				}
 			}

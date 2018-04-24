@@ -62,7 +62,7 @@ public class PacketFluxButton extends PacketCoords {
 			Holder<IMessage> newMessage = new Holder();
 			SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
 				EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
-				if (player != null && player.getEntityWorld() != null) {
+				if (player != null) {
 					World world = player.getEntityWorld();
 					if (world.provider.getDimension() != message.dimension) {
 						MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();

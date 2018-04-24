@@ -66,8 +66,8 @@ public class FluxConfig extends FluxNetworks {
 	}
 
 	public static void finishLoading() {
-		config.addCustomCategoryComment("energy types", "'Convert' - if conversion is allowed when 'allow conversion' is toggled for the network" + config.NEW_LINE +//
-				"'Override' - for overriding the 'allow conversion' toggle (this should be used for energy types which should be treated as equal, RF/FE/TESLA)" + config.NEW_LINE);
+		config.addCustomCategoryComment("energy types", "'Convert' - if conversion is allowed when 'allow conversion' is toggled for the network" + Configuration.NEW_LINE +//
+				"'Override' - for overriding the 'allow conversion' toggle (this should be used for energy types which should be treated as equal, RF/FE/TESLA)" + Configuration.NEW_LINE);
 		
 		// toggle block/item transfer
 		for (EnergyType type : SonarCore.energyTypes.getObjects()) {

@@ -110,7 +110,7 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	}
 
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemstack) {
-		if (player != null && player instanceof EntityPlayer) {
+		if (player instanceof EntityPlayer) {
 			setPlayerUUID(((EntityPlayer) player).getGameProfile().getId());
 			updateTransfers(EnumFacing.VALUES);
 		}

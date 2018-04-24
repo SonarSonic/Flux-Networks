@@ -11,6 +11,8 @@ import sonar.flux.FluxConfig;
 import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileStorage;
 
+import javax.annotation.Nonnull;
+
 public class FluxStorage extends FluxConnection {
 
 	public FluxStorage() {
@@ -50,7 +52,7 @@ public class FluxStorage extends FluxConnection {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int i) {
+	public TileEntity createNewTileEntity(@Nonnull World world, int i) {
 		return new TileStorage.Basic();
 	}
 

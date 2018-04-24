@@ -20,11 +20,14 @@ import sonar.flux.api.configurator.IFluxConfigurable;
 import sonar.flux.client.GuiConfigurator;
 import sonar.flux.common.containers.ContainerConfigurator;
 
+import javax.annotation.Nonnull;
+
 public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStack> {
 
 	public static final String CONFIGS_TAG = "configs";
 	public static final String DISABLED_TAG = "disabled";
 
+	@Nonnull
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			TileEntity tile = world.getTileEntity(pos);
@@ -38,9 +41,7 @@ public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStac
 						FontHelper.sendMessage("Copied Configuration", world, player);
 					} else {
 						NBTTagCompound configs = stack.getOrCreateSubCompound(CONFIGS_TAG);
-						if (configs.hasNoTags()) {
-
-						} else {
+						if (!configs.hasNoTags()) {
 							NBTTagCompound disabled = stack.getOrCreateSubCompound(DISABLED_TAG);
 							if (disabled.hasNoTags()) {
 								configurable.readConfigs(configs, player);
@@ -67,8 +68,9 @@ public class FluxConfigurator extends SonarItem implements IFlexibleGui<ItemStac
 		return EnumActionResult.SUCCESS;
 	}
 
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-		ItemStack stack = hand == null ? null : player.getHeldItem(hand);
+	@Nonnull
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 		if (!world.isRemote)
 			SonarCore.instance.guiHandler.openBasicItemStack(false, stack, player, world, player.getPosition(), 0);
 		return new ActionResult(EnumActionResult.SUCCESS, stack);

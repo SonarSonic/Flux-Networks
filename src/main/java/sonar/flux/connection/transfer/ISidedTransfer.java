@@ -6,7 +6,7 @@ import sonar.flux.api.energy.internal.IFluxTransfer;
 
 public interface ISidedTransfer extends IFluxTransfer {
 
-	public EnumFacing getDirection();
+	EnumFacing getDirection();
 
-	public TileEntity getTile();
+	TileEntity getTile();
 }

@@ -85,7 +85,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		if (origin)
 			list.add(this);
 		if (transfers && isChunkLoaded())
-			handler.getTransfers().forEach(t -> list.add(t));
+			list.addAll(handler.getTransfers());
 	}
 	
 	public int getDimensionID(){
@@ -170,7 +170,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	}
 	
 	public boolean equals(Object obj){
-		if(obj!=null && obj instanceof ClientFlux){
+		if(obj instanceof ClientFlux){
 			return ((ClientFlux)obj).coords.equals(coords);
 		}
 		return false;

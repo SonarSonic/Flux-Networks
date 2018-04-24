@@ -20,6 +20,8 @@ import sonar.flux.api.ClientFlux;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
 
+import javax.annotation.Nonnull;
+
 public class NetworkData extends WorldSavedData {
 
 	public static final String IDENTIFIER = "sonar.flux.networks.configurations";
@@ -44,7 +46,7 @@ public class NetworkData extends WorldSavedData {
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@Nonnull NBTTagCompound nbt) {
 		FluxNetworkCache cache = FluxNetworks.getServerCache();
 		cache.uniqueID = nbt.getInteger(UNIQUE_ID);
 		if (nbt.hasKey(TAG_LIST)) {
@@ -74,8 +76,9 @@ public class NetworkData extends WorldSavedData {
 		}
 	}
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+	@Nonnull
+    @Override
+	public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
 		FluxNetworkCache cache = FluxNetworks.getServerCache();
 		nbt.setInteger(UNIQUE_ID, cache.uniqueID);
 		if (cache.getAllNetworks().size() > 0) {

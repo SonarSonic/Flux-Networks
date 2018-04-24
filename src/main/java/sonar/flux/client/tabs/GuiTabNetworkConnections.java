@@ -30,6 +30,8 @@ import sonar.flux.client.GuiTab;
 import sonar.flux.client.LargeButton;
 import sonar.flux.common.tileentity.TileFlux;
 
+import javax.annotation.Nonnull;
+
 public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Object> {
 
 	public static ChunkDisplayOptions chunk_display_option = ChunkDisplayOptions.BOTH;
@@ -66,7 +68,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		buttonList.add(new LargeButton(this, FluxTranslate.SORTING_CLEAR.t(), 7, getGuiLeft() + 52+16, getGuiTop() + 119, 68, 0));
 	}
 
-	public static enum ChunkDisplayOptions {
+	public enum ChunkDisplayOptions {
 		BOTH(FluxTranslate.SORTING_BOTH), //
 		LOADED(FluxTranslate.SORTING_LOADED), //
 		UNLOADED(FluxTranslate.SORTING_UNLOADED);//
@@ -104,12 +106,12 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		}
 
 		@Override
-		public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
+		public void drawButton(@Nonnull Minecraft mc, int x, int y, float partialTicks) {
 			if (this.visible) {
 				this.hovered = x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
 				GlStateManager.color(1, 1, 1, 1);
 				drawRect(this.x - 1, this.y - 1, this.x + 1 + this.width, this.y + this.height + 1, AbstractGuiTab.grey);
-				switch (gui.chunk_display_option) {
+				switch (chunk_display_option) {
 				case BOTH:
 					drawRect(this.x, this.y, this.x + this.width, this.y + this.height, AbstractGuiTab.midBlue);
 					GlStateManager.color(1, 1, 1, 1);
@@ -131,7 +133,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		}
 
 		public void drawButtonForegroundLayer(int x, int y) {
-			gui.drawSonarCreativeTabHoveringText(FluxTranslate.CHUNK.t() + ": " + gui.chunk_display_option.getDisplayName(), x, y);
+			gui.drawSonarCreativeTabHoveringText(FluxTranslate.CHUNK.t() + ": " + chunk_display_option.getDisplayName(), x, y);
 		}
 
 	}
@@ -150,7 +152,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		}
 
 		@Override
-		public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
+		public void drawButton(@Nonnull Minecraft mc, int x, int y, float partialTicks) {
 			if (this.visible) {
 				this.hovered = x >= this.x && y >= this.y && x < this.x + this.width && y < this.y + this.height;
 
@@ -159,7 +161,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 				GlStateManager.color(1, 1, 1, 1);
 				drawRect(this.x, this.y, this.x + 32, this.y + 16, Color.BLACK.getRGB());
 				gui.drawNormalItemStack(type.getRepresentiveStack(), this.x, this.y);
-				if (gui.canDisplay.get(type)) {
+				if (canDisplay.get(type)) {
 					mc.getTextureManager().bindTexture(AbstractGuiTab.small_buttons);
 					GlStateManager.color(1, 1, 1, 1);
 					this.drawTexturedModalRect(this.x + 3 + 16, this.y + 2, 130, 0, 11, 11);
@@ -168,7 +170,7 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		}
 
 		public void drawButtonForegroundLayer(int x, int y) {
-			gui.drawSonarCreativeTabHoveringText(FluxTranslate.SHOW.t() + " " + typeName + ": " + gui.canDisplay.get(type), x, y);
+			gui.drawSonarCreativeTabHoveringText(FluxTranslate.SHOW.t() + " " + typeName + ": " + canDisplay.get(type), x, y);
 		}
 
 	}

@@ -13,6 +13,8 @@ import sonar.core.helpers.SonarHelper;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.common.tileentity.energy.TileAbstractEnergyConnector;
 
+import javax.annotation.Nonnull;
+
 public abstract class FluxSidedConnection extends FluxConnection {
 
 	FluxSidedConnection() {
@@ -39,13 +41,14 @@ public abstract class FluxSidedConnection extends FluxConnection {
 		}
 	}
 
-	public IBlockState getActualState(IBlockState state, IBlockAccess w, BlockPos pos) {
+	@Nonnull
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess w, BlockPos pos) {
 		IBlockState currentState = state;
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
 		TileEntity tile = w.getTileEntity(pos);
-		if (tile != null && tile instanceof TileFlux) {
+		if (tile instanceof TileFlux) {
 			TileFlux flux = (TileFlux) tile;
 			for (PropertySonarFacing face : ConnectedTile.faces) {
 				currentState = currentState.withProperty(face, flux.connections.getObjects().get(face.facing.getIndex()));

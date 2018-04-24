@@ -61,7 +61,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		}
 		IFluxTransfer transfer = transfers.get(from);
 		TileEntity expected_source = from == null ? null : tile.getWorld().getTileEntity(tile.getPos().offset(from));
-		if (from == null || expected_source == null || (transfer != null && transfer instanceof ISidedTransfer && ((ISidedTransfer) transfer).getTile() != expected_source)) {
+		if (from == null || expected_source == null || (transfer instanceof ISidedTransfer && ((ISidedTransfer) transfer).getTile() != expected_source)) {
 			if (type.shouldSimulate()) {
 				transfer = transfers.getOrDefault(null, new PhantomTransfer(energy_type));
 			} else {
@@ -123,7 +123,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		IFluxEnergyHandler handler;
 		if (tile == null || (handler = FluxHelper.getValidHandler(tile, face.getOpposite())) == null) {
 			transfers.put(face, null);
-		} else if (transfer == null || !(transfer instanceof ConnectionTransfer) || ((ConnectionTransfer) transfer).getTile() != tile) {
+		} else if (!(transfer instanceof ConnectionTransfer) || ((ConnectionTransfer) transfer).getTile() != tile) {
 			ConnectionTransfer newTransfer = new ConnectionTransfer(this, handler, tile, face);
 			transfers.put(face, newTransfer);
 		} else if (transfer.isInvalid()) {

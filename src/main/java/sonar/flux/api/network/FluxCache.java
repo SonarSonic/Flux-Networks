@@ -46,11 +46,7 @@ public class FluxCache<T extends IFluxListenable> {
             if (controllers.size() > 1) {
                 boolean set = false;
                 for (IFluxController controller : controllers) {
-                    if (set && controller.getTransferHandler().hasTransfers()) {
-                        set = true;
-                    } else {
-                        controller.disconnect(network);
-                    }
+                    controller.disconnect(network);
                 }
             }
             if (controllers.size() > 0) {

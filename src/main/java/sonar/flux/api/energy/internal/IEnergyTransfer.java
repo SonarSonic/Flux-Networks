@@ -12,14 +12,12 @@ public interface IEnergyTransfer extends IFluxTransfer {
 	default long addToNetworkWithConvert(long add, EnergyType energyType, ActionType actionType) {
 		long convert = EnergyType.convert(add, energyType, getEnergyType());
 		long added = addToNetwork(convert, actionType);
-		long deconvert = EnergyType.convert(added, getEnergyType(), energyType);
-		return deconvert;
+		return EnergyType.convert(added, getEnergyType(), energyType);
 	}
 
 	default long removeFromNetworkWithConvert(long remove, EnergyType energyType, ActionType actionType) {
 		long convert = EnergyType.convert(remove, energyType, getEnergyType());
 		long removed = removeFromNetwork(convert, actionType);
-		long deconvert = EnergyType.convert(removed, getEnergyType(), energyType);
-		return deconvert;
+		return EnergyType.convert(removed, getEnergyType(), energyType);
 	}
 }

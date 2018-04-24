@@ -20,6 +20,8 @@ import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileCable;
 import sonar.flux.connection.FluxHelper;
 
+import javax.annotation.Nonnull;
+
 public class FluxCable extends SonarMachineBlock {
 
 	private AxisAlignedBB bounds = FULL_BLOCK_AABB;
@@ -37,14 +39,12 @@ public class FluxCable extends SonarMachineBlock {
 	public static final PropertyBool UP = PropertyBool.create("up");
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int i) {
+	public TileEntity createNewTileEntity(@Nonnull World world, int i) {
 		return new TileCable();
 	}
 
 	@Override
 	public boolean operateBlock(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, BlockInteraction interact) {
-		if (!world.isRemote) {
-		}
 		return false;
 	}
 
@@ -58,9 +58,7 @@ public class FluxCable extends SonarMachineBlock {
             if (tile instanceof IFlux || tile instanceof TileCable || (SonarLoader.rfLoaded && tile instanceof IEnergyConnection)) {
 				return true;
 			}
-			if (FluxHelper.getValidHandler(tile, dir) != null) {
-				return true;
-			}
+            return FluxHelper.getValidHandler(tile, dir) != null;
 		}
 		return false;
 	}

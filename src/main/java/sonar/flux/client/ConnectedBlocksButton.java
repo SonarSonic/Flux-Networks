@@ -16,7 +16,7 @@ public class ConnectedBlocksButton extends ImageButton {
 	}
 
 	public void drawButtonForegroundLayer(int x, int y) {
-		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_SHOW_CONNECTED.t() + ": " + gui.showConnections, x, y);
+		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_SHOW_CONNECTED.t() + ": " + GuiTabNetworkConnections.showConnections, x, y);
 	}
 
 	public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
@@ -24,7 +24,7 @@ public class ConnectedBlocksButton extends ImageButton {
 			color(1.0F, 1.0F, 1.0F, 1.0F);
 			hovered = x >= this.x && y >= this.y && x < this.x + width + 1 && y < this.y + height + 1;
 			mc.getTextureManager().bindTexture(texture);
-			drawTexturedModalRect(this.x, this.y, textureX, gui.showConnections ? textureY : textureY + 17, sizeX, sizeY);
+			drawTexturedModalRect(this.x, this.y, textureX, GuiTabNetworkConnections.showConnections ? textureY : textureY + 17, sizeX, sizeY);
 		}
 	}
 }

@@ -17,7 +17,7 @@ public class ConnectionSortingButton extends ImageButton {
 	}
 
 	public void drawButtonForegroundLayer(int x, int y) {
-		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_BY.t() + ": " + TextFormatting.AQUA + gui.sorting_type.getDisplayName(), x, y);
+		gui.drawSonarCreativeTabHoveringText(FluxTranslate.SORTING_BY.t() + ": " + TextFormatting.AQUA + GuiTabNetworkConnections.sorting_type.getDisplayName(), x, y);
 	}
 
 	public void drawButton(Minecraft mc, int x, int y, float partialTicks) {
@@ -25,7 +25,7 @@ public class ConnectionSortingButton extends ImageButton {
 			color(1.0F, 1.0F, 1.0F, 1.0F);
 			hovered = x >= this.x && y >= this.y && x < this.x + width + 1 && y < this.y + height + 1;
 			mc.getTextureManager().bindTexture(texture);
-			drawTexturedModalRect(this.x, this.y, textureX + (17 * gui.sorting_type.ordinal()), textureY, sizeX, sizeY);
+			drawTexturedModalRect(this.x, this.y, textureX + (17 * GuiTabNetworkConnections.sorting_type.ordinal()), textureY, sizeX, sizeY);
 		}
 	}
 }

@@ -18,14 +18,18 @@ import sonar.flux.client.GuiAdminConfigurator;
 import sonar.flux.common.containers.ContainerAdminConfigurator;
 import sonar.flux.network.FluxNetworkCache;
 
+import javax.annotation.Nonnull;
+
 public class AdminConfigurator extends SonarItem implements IFlexibleGui<ItemStack> {
 
+	@Nonnull
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		return EnumActionResult.SUCCESS;
 	}
 
-	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-		ItemStack stack = hand == null ? null : player.getHeldItem(hand);
+	@Nonnull
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 		if (player.isCreative()) {
 			if (!world.isRemote)
 				SonarCore.instance.guiHandler.openBasicItemStack(false, stack, player, world, player.getPosition(), 0);

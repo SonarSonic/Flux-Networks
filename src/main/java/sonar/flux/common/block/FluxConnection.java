@@ -26,6 +26,8 @@ import sonar.flux.FluxTranslate;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileFlux;
 
+import javax.annotation.Nonnull;
+
 public abstract class FluxConnection extends SonarMachineBlock {
 
 	public static final PropertyBool CONNECTED = PropertyBool.create("connected");
@@ -47,7 +49,8 @@ public abstract class FluxConnection extends SonarMachineBlock {
 		return false;
 	}
 
-	@Override
+	@Nonnull
+    @Override
 	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
 	}
@@ -66,7 +69,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 		if (heldItem.isEmpty() || !(heldItem.getItem() instanceof FluxConfigurator)) {
 			if (!world.isRemote) {
 				TileEntity target = world.getTileEntity(pos);
-				if (target != null && target instanceof TileFlux) {
+				if (target instanceof TileFlux) {
 					TileFlux flux = (TileFlux) target;
 					if (flux.canAccess(player).canEdit()) {
 						flux.openFlexibleGui(player, 0);
@@ -84,7 +87,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemstack) {
 		super.onBlockPlacedBy(world, pos, state, player, itemstack);
 		TileEntity target = world.getTileEntity(pos);
-		if (target != null && target instanceof TileFlux) {
+		if (target instanceof TileFlux) {
 			TileFlux flux = (TileFlux) target;
 			flux.onBlockPlacedBy(world, pos, state, player, itemstack);
 		}

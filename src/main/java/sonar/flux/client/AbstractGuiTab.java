@@ -11,6 +11,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -98,7 +99,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 	@Override
 	protected void keyTyped(char c, int i) throws IOException {
 		if (isCloseKey(i)) {
-			boolean isTyping = this.fieldList.stream().anyMatch(f -> f.isFocused());
+			boolean isTyping = this.fieldList.stream().anyMatch(GuiTextField::isFocused);
 			if (!isTyping) {
 				if (getCurrentTab() != GuiTab.INDEX) {
 					FMLCommonHandler.instance().showGuiScreen(GuiTab.INDEX.getGuiScreen(flux, tabs));
@@ -173,9 +174,11 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		List<String> textLines = new ArrayList<>();
 		textLines.add(TextFormatting.BOLD + flux.getCustomName());
 		if (flux.isChunkLoaded()) {
+			/*
 			if (flux.getCoords().getBlockPos().equals(this.flux.getPos())) {
-				// textLines.add(TextFormatting.GREEN + "THIS CONNECTION!");
+				 textLines.add(TextFormatting.GREEN + "THIS CONNECTION!");
 			}
+			*/
 			addTransferStrings(textLines, flux.getConnectionType(), common.getDefaultEnergyType(), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
 			textLines.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? FluxTranslate.NO_LIMIT.t() : flux.getTransferLimit()));
 			textLines.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + flux.getCurrentPriority());
@@ -217,11 +220,11 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 
 		if(type == ConnectionType.STORAGE){
 			long change = Math.abs(removed) - added;
-			if(change ==0){
+			if(change == 0){
 				string.add(FluxTranslate.CHANGE.t() + ":" + TextFormatting.GOLD + " " + FontHelper.formatOutput(energyType, change));
 			}else if(change < 0){
 				string.add(FluxTranslate.CHANGE.t() + ":" + TextFormatting.RED + " - " + FontHelper.formatOutput(energyType, Math.abs(change)));				
-			}else if(change > 0){
+			}else{
 				string.add(FluxTranslate.CHANGE.t() + ":" + TextFormatting.GREEN + " + " + FontHelper.formatOutput(energyType, change));				
 			}
 			return;

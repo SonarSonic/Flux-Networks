@@ -63,7 +63,7 @@ public class FluxPlayer implements INBTSyncable {
     }
 
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof FluxPlayer) {
+        if (obj instanceof FluxPlayer) {
             FluxPlayer player = (FluxPlayer) obj;
             return player.id.equals(this.id) && player.access.equals(access);
         }

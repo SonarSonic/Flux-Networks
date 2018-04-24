@@ -10,6 +10,8 @@ import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.FluxEnergyHandler;
 import sonar.flux.api.energy.IFluxEnergyHandler;
 
+import javax.annotation.Nonnull;
+
 @FluxEnergyHandler(modid = "tesla", priority = 2)
 public class TeslaEnergyHandler implements IFluxEnergyHandler {
 
@@ -19,7 +21,7 @@ public class TeslaEnergyHandler implements IFluxEnergyHandler {
 	}
 
 	@Override
-	public boolean canRenderConnection(TileEntity tile, EnumFacing dir) {
+	public boolean canRenderConnection(@Nonnull TileEntity tile, EnumFacing dir) {
 		return tile.hasCapability(TeslaCapabilities.CAPABILITY_CONSUMER, dir) || tile.hasCapability(TeslaCapabilities.CAPABILITY_PRODUCER, dir);
 	}
 

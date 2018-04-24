@@ -12,6 +12,8 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import sonar.core.SonarCrafting;
 import sonar.core.common.block.SonarBlockTip;
 
+import javax.annotation.Nonnull;
+
 public class FluxCrafting extends FluxNetworks {
 
 	public static class StorageCrafting extends ShapedOreRecipe {
@@ -21,8 +23,9 @@ public class FluxCrafting extends FluxNetworks {
 			setRegistryName(new ResourceLocation(modid, result.getUnlocalizedName()));
 		}
 
-		@Override
-		public ItemStack getCraftingResult(InventoryCrafting crafting) {
+		@Nonnull
+        @Override
+		public ItemStack getCraftingResult(@Nonnull InventoryCrafting crafting) {
 			int energyStored = 0;
 			for (int i = 0; i < crafting.getSizeInventory(); i++) {
 				ItemStack stack = crafting.getStackInSlot(i);
@@ -48,8 +51,9 @@ public class FluxCrafting extends FluxNetworks {
 			super(new ResourceLocation(modid, result.getUnlocalizedName() + "flint"), result, recipe);
 		}
 
-		@Override
-		public ItemStack getCraftingResult(InventoryCrafting crafting) {
+		@Nonnull
+        @Override
+		public ItemStack getCraftingResult(@Nonnull InventoryCrafting crafting) {
 			return super.getCraftingResult(crafting);
 		}
 

@@ -10,6 +10,8 @@ import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.FluxEnergyHandler;
 import sonar.flux.api.energy.IFluxEnergyHandler;
 
+import javax.annotation.Nonnull;
+
 @FluxEnergyHandler(modid = "redstoneflux", priority = 3)
 public class RedstoneFluxHandler implements IFluxEnergyHandler {
 
@@ -19,7 +21,7 @@ public class RedstoneFluxHandler implements IFluxEnergyHandler {
 	}
 
 	@Override
-	public boolean canRenderConnection(TileEntity tile, EnumFacing dir) {
+	public boolean canRenderConnection(@Nonnull TileEntity tile, EnumFacing dir) {
 		return tile instanceof IEnergyConnection;
 	}
 

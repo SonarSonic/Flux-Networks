@@ -8,6 +8,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import sonar.flux.FluxNetworks;
 
+import javax.annotation.Nonnull;
+
 public class EntityFireItem extends EntityItem {
     public boolean changed;
     public int changeTicks;
@@ -23,7 +25,7 @@ public class EntityFireItem extends EntityItem {
 		readFromNBT(toConvert.writeToNBT(copyTag));
 	}
 
-	public boolean isEntityInvulnerable(DamageSource source) {
+	public boolean isEntityInvulnerable(@Nonnull DamageSource source) {
 		if (source == DamageSource.IN_FIRE) {
 			if (!changed) {
 				//if (changeTicks >= 30) {

@@ -11,6 +11,8 @@ import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.FluxEnergyHandler;
 import sonar.flux.api.energy.IFluxEnergyHandler;
 
+import javax.annotation.Nonnull;
+
 @FluxEnergyHandler(modid = "ic2", priority = 4)
 public class EnergyUnitsHandler implements IFluxEnergyHandler {
 
@@ -20,7 +22,7 @@ public class EnergyUnitsHandler implements IFluxEnergyHandler {
 	}
 
 	@Override
-	public boolean canRenderConnection(TileEntity tile, EnumFacing dir) {
+	public boolean canRenderConnection(@Nonnull TileEntity tile, EnumFacing dir) {
 		return tile instanceof IEnergyTile || tile instanceof IEnergyStorage;
 	}
 

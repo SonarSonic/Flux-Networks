@@ -44,9 +44,7 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, IDirty
 		BasicFluxNetwork network = ((BasicFluxNetwork) this.network);
 		List<IFluxListenable> connections = network.getConnections(FluxCache.flux);
 		if (network.flux_listeners.isEmpty()) {
-			connections.forEach(flux -> {
-				flux.getTransferHandler().onEndWorldTick();
-			});
+			connections.forEach(flux -> flux.getTransferHandler().onEndWorldTick());
 		} else {
 			block_connection_count = 0;
 			total_energy_added = 0;

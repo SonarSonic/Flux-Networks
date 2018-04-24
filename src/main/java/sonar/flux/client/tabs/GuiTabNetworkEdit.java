@@ -201,7 +201,7 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 
 	@Override
 	public ResourceLocation getBackground() {
-		return this.blank_flux_gui;
+		return blank_flux_gui;
 	}
 
 	@Override

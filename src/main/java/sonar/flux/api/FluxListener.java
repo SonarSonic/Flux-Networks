@@ -81,7 +81,7 @@ public enum FluxListener {
 
 	public interface IPacketAction {
 
-		public void sendPackets(BasicFluxNetwork network, List<IFluxListenable> flux_listeners);
+		void sendPackets(BasicFluxNetwork network, List<IFluxListenable> flux_listeners);
 
 	}
 }

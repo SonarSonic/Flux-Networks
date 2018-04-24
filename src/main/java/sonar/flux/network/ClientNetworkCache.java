@@ -30,7 +30,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	public void updateNetworksFromPacket(List<? extends IFluxNetwork> networks2, boolean updateEntireList) {
 		if (updateEntireList) {
-			networks2.forEach(network -> readNetworkFromPacket(network));
+			networks2.forEach(this::readNetworkFromPacket);
 		} else {
 			Map<Integer, IFluxNetwork> newMap = new HashMap<>();
 			networks2.forEach(network -> newMap.put(network.getNetworkID(), network));
@@ -60,8 +60,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public List<IFluxNetwork> getAllNetworks() {
-		List<IFluxNetwork> available = new ArrayList<>();
-		networks.values().forEach(net -> available.add(net));
+		List<IFluxNetwork> available = new ArrayList<>(networks.values());
 		return available;
 	}
 

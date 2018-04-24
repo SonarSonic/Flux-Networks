@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import sonar.flux.api.FluxListener;
 import sonar.flux.network.FluxNetworkCache;
 
+import javax.annotation.Nonnull;
+
 public class ContainerAdminConfigurator extends Container {
 	public EntityPlayer player;
 
@@ -14,7 +16,7 @@ public class ContainerAdminConfigurator extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer player) {
+	public boolean canInteractWith(@Nonnull EntityPlayer player) {
 		return true;
 	}
 
@@ -25,7 +27,8 @@ public class ContainerAdminConfigurator extends Container {
 		}
 	}
 
-	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
+	@Nonnull
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
 		return ItemStack.EMPTY;
 	}
 

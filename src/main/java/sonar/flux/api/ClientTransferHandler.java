@@ -2,6 +2,7 @@ package sonar.flux.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -67,7 +68,7 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 				clienthandler.add_limit = base_handler.add_limit;
 				clienthandler.remove_limit = base_handler.remove_limit;
 			}
-			handler.getTransfers().stream().filter(h -> h != null).forEach(t -> clienthandler.transfers.add(ClientTransfer.getInstanceFromHandler(clienthandler, t)));
+			handler.getTransfers().stream().filter(Objects::nonNull).forEach(t -> clienthandler.transfers.add(ClientTransfer.getInstanceFromHandler(clienthandler, t)));
 		}
 		return clienthandler;
 	}

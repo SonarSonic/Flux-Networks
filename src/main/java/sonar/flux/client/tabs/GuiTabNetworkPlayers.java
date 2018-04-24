@@ -91,13 +91,13 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	public void renderGridElement(int gridID, FluxPlayer element, int x, int y, int slot) {
 		PlayerAccess access = element.getAccess();
 		boolean isOwner = common.getCachedPlayerName().equals(element.getCachedName());
-		Gui.drawRect(0, 0, 0 + 154, 0 + 12, access.canDelete() || isOwner ? Color.lightGray.getRGB() : access.canEdit() ? colours[7].getRGB() : !access.canConnect() ? colours[4].getRGB() : lightBlue);
+		Gui.drawRect(0, 0, 154, 12, access.canDelete() || isOwner ? Color.lightGray.getRGB() : access.canEdit() ? colours[7].getRGB() : !access.canConnect() ? colours[4].getRGB() : lightBlue);
 
 		bindTexture(getBackground());
 		drawTexturedModalRect(0, 0, 0, 166, 154, 12);
-		FontHelper.text(element.getCachedName(), 0 + 3, 0 + 2, Color.white.getRGB());
+		FontHelper.text(element.getCachedName(), 3, 2, Color.white.getRGB());
 		bindTexture(small_buttons);
-		drawTexturedModalRect(0 + 154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
+		drawTexturedModalRect(154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
 	}
 
 	@Override

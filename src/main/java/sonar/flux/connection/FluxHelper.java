@@ -13,8 +13,6 @@ import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.core.api.utils.ActionType;
-import sonar.core.listener.ListenerTally;
-import sonar.core.listener.PlayerListener;
 import sonar.core.utils.Pair;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
@@ -28,7 +26,6 @@ import sonar.flux.api.tiles.IFluxController.TransferMode;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.api.tiles.IFluxPoint;
-import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.FluxNetworkCache;
 
 public class FluxHelper {
@@ -73,14 +70,6 @@ public class FluxHelper {
 			break;
 		default:
 			break;
-		}
-	}
-
-	public static void sendPacket(IFluxNetwork network, TileFlux flux, ListenerTally<PlayerListener> tally) {
-		for (int i = 0; i < tally.tallies.length; i++) {
-			if (tally.tallies[i] > 0) {
-				
-			}
 		}
 	}
 

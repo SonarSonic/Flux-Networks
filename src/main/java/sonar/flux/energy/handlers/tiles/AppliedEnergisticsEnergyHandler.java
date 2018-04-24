@@ -11,6 +11,8 @@ import sonar.core.integration.AE2Helper;
 import sonar.flux.api.energy.FluxEnergyHandler;
 import sonar.flux.api.energy.IFluxEnergyHandler;
 
+import javax.annotation.Nonnull;
+
 @FluxEnergyHandler(modid = "appliedenergistics2", priority = 4)
 public class AppliedEnergisticsEnergyHandler implements IFluxEnergyHandler {
 
@@ -20,7 +22,7 @@ public class AppliedEnergisticsEnergyHandler implements IFluxEnergyHandler {
 	}
 
 	@Override
-	public boolean canRenderConnection(TileEntity tile, EnumFacing dir) {
+	public boolean canRenderConnection(@Nonnull TileEntity tile, EnumFacing dir) {
 		return canAddEnergy(tile, dir) || canRemoveEnergy(tile, dir);
 	}
 

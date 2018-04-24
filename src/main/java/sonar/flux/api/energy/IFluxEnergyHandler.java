@@ -11,21 +11,21 @@ import sonar.core.api.utils.ActionType;
 /**the handler Flux Networks uses to transfer energy*/
 public interface IFluxEnergyHandler {
 	
-	public EnergyType getEnergyType();
+	EnergyType getEnergyType();
 	
 	/**if flux networks can render the block as connected*/
-	public boolean canRenderConnection(@Nonnull TileEntity tile, @Nullable EnumFacing dir);	
+    boolean canRenderConnection(@Nonnull TileEntity tile, @Nullable EnumFacing dir);
 	
 	/**if flux networks can energy transfer in the given direction*/
-	public boolean canAddEnergy(TileEntity tile, EnumFacing dir);
+    boolean canAddEnergy(TileEntity tile, EnumFacing dir);
 	
 	/**if flux networks can energy transfer in the given direction*/
-	public boolean canRemoveEnergy(TileEntity tile, EnumFacing dir);
+    boolean canRemoveEnergy(TileEntity tile, EnumFacing dir);
 	
 	/**returns how much energy was added to the tile depending on the TransferType called, this will always be called after canAddEnergy*/
-	public long addEnergy(long add, TileEntity tile, EnumFacing dir, ActionType actionType);
+    long addEnergy(long add, TileEntity tile, EnumFacing dir, ActionType actionType);
 
 	/**returns how much energy was added to the tile depending on the TransferType called, this will always be called after canRemoveEnergy*/
-	public long removeEnergy(long remove, TileEntity tile, EnumFacing dir, ActionType actionType);
+    long removeEnergy(long remove, TileEntity tile, EnumFacing dir, ActionType actionType);
 	
 }

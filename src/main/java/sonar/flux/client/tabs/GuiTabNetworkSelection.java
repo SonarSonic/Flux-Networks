@@ -53,7 +53,7 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 		renderNetwork(element.getNetworkName(), element.getAccessType(), element.getNetworkColour().getRGB(), isSelectedNetwork(element), 0, 0);
 		// delete button
 		bindTexture(small_buttons);
-		drawTexturedModalRect(0 + 154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
+		drawTexturedModalRect(154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
 	}
 
 	@Override

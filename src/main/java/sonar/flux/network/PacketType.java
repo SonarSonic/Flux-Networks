@@ -29,6 +29,6 @@ public enum PacketType {
 	}
 
 	public interface IPacketAction {
-		public IMessage doPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag);
+		IMessage doPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag);
 	}
 }

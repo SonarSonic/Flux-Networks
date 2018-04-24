@@ -9,6 +9,8 @@ import net.minecraft.world.World;
 import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileFluxPlug;
 
+import javax.annotation.Nonnull;
+
 public class FluxPlug extends FluxSidedConnection {
 
 	public FluxPlug() {
@@ -17,7 +19,7 @@ public class FluxPlug extends FluxSidedConnection {
 	}
 	
 	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {
+	public TileEntity createNewTileEntity(@Nonnull World var1, int var2) {
 		return new TileFluxPlug();
 	}
 

@@ -25,7 +25,7 @@ public interface IFluxController extends IFluxPoint {
     	}
     }
 
-    public enum TransferMode {
+    enum TransferMode {
         DEFAULT(FluxTranslate.TRANSFER_NONE,1), //
         EVEN(FluxTranslate.TRANSFER_EVEN, 1), //
         SURGE(FluxTranslate.TRANSFER_SURGE, 1), //

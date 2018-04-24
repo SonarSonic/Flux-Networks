@@ -21,7 +21,7 @@ public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController,
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		int colour = common.getNetworkColour().getRGB();
-		IFluxController controller = (IFluxController) flux;
+		IFluxController controller = flux;
 		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.SEND_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getSendMode().getDisplayName(), 8, 66 + 18, colour);
 		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.RECEIVE_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getReceiveMode().getDisplayName(), 8, 86 + 18, colour);
 		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.TRANSFER_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getTransferMode().getDisplayName() + (controller.getTransferMode().isBanned() ? TextFormatting.RED + " " + FluxTranslate.BANNED.t() : ""), 8, 106 + 18, colour);
