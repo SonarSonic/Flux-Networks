@@ -34,7 +34,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "${minecraft_version}-${mod_version}"
 group= "sonar.flux"
-archivesBaseName = "fluxnetworks"
+archivesBaseName = "flux"
 sourceCompatibility = targetCompatibility = "1.8"
 compileJava {
     sourceCompatibility = targetCompatibility = "1.8"
@@ -50,11 +50,22 @@ minecraft {
 task deobfJar(type: Jar) { // Generate deobfuscated
     from sourceSets.main.output
     classifier = 'deobf'
+    archiveName "fluxnetworks-${minecraft_version}-${mod_version}-deobf.jar"
 }
 tasks.build.dependsOn('deobfJar')
+
 artifacts {
     archives deobfJar
     archives jar
+}
+
+jar {
+    archiveName "fluxnetworks-${minecraft_version}-${mod_version}.jar"
+}
+
+def sonarcore_local = false
+if (project.allprojects.findAll({it.name == "Sonar-Core"}).size() > 0) {
+    sonarcore_local = true
 }
 
 dependencies {
@@ -64,6 +75,11 @@ dependencies {
     compileOnly "appeng:appliedenergistics2:${ae2_version}"
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "api"
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "dev"
+    if (!sonarcore_local) {
+        //compileOnly "omtteam:omlib:${config.minecraft_version}-${config.omlib_version}:dev"
+    } else {
+        compile project(':Sonar-Core')
+    }
 }
 
 processResources
