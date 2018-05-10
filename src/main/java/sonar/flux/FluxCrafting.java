@@ -27,7 +27,7 @@ public class FluxCrafting extends FluxNetworks {
 			int energyStored = 0;
 			for (int i = 0; i < crafting.getSizeInventory(); i++) {
 				ItemStack stack = crafting.getStackInSlot(i);
-				if (stack.hasTagCompound() && stack.getItem() instanceof SonarBlockTip) {
+				if (stack != null && stack.hasTagCompound() && stack.getItem() instanceof SonarBlockTip) {
 					NBTTagCompound tag = stack.getTagCompound();
 					if (tag != null)
 						energyStored += tag.getInteger("energy");
