@@ -43,6 +43,9 @@ compileJava {
 minecraft {
     version = "${forge_version}"
     runDir = "run"
+    replace "@VERSION@", "${mod_version}"
+    replace "@MC_VERSION@", "${minecraft_version}"
+    replace "@SONAR_VERSION@", "${sonar_core_version}"
     mappings = "snapshot_20171002"
     makeObfSourceJar = false
 }
@@ -50,7 +53,7 @@ minecraft {
 task deobfJar(type: Jar) { // Generate deobfuscated
     from sourceSets.main.output
     classifier = 'deobf'
-    archiveName "fluxnetworks-${minecraft_version}-${mod_version}-deobf.jar"
+    archiveName = "fluxnetworks-${minecraft_version}-${mod_version}-deobf.jar"
 }
 tasks.build.dependsOn('deobfJar')
 
@@ -60,7 +63,7 @@ artifacts {
 }
 
 jar {
-    archiveName "fluxnetworks-${minecraft_version}-${mod_version}.jar"
+    archiveName = "fluxnetworks-${minecraft_version}-${mod_version}.jar"
 }
 
 def sonarcore_local = false
@@ -76,7 +79,7 @@ dependencies {
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "api"
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "dev"
     if (!sonarcore_local) {
-        compileOnly "sonar-core:sonarcore:${minecraft_version}:${sonar_core_version}:deobf"
+        //compileOnly "sonar-core:sonarcore:${minecraft_version}:${sonar_core_version}:deobf"
     } else {
         compile project(':Sonar-Core')
     }
@@ -86,7 +89,6 @@ processResources
 {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
-
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'                

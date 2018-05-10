@@ -49,19 +49,13 @@ import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkData;
 
-@Mod(modid = FluxNetworks.modid, name = FluxNetworks.name, acceptedMinecraftVersions = FluxNetworks.mc_versions, version = FluxNetworks.version, dependencies = "required-after:sonarcore@[" + FluxNetworks.SONAR_VERSION + ",);")
+@Mod(modid = FluxConstants.modid, name = FluxConstants.name, acceptedMinecraftVersions = FluxConstants.mc_versions, version = FluxConstants.version, dependencies = "required-after:sonarcore@[" + FluxConstants.SONAR_VERSION + ",);")
 public class FluxNetworks {
-
-	public static final String name = "FluxNetworks";
-	public static final String modid = "fluxnetworks";
-	public static final String version = "3.0.8";
-	public static final String mc_versions = "[1.12,1.12.2]";
-	public static final String SONAR_VERSION = "5.0.8";
 
 	@SidedProxy(clientSide = "sonar.flux.network.FluxClient", serverSide = "sonar.flux.network.FluxCommon")
 	public static FluxCommon proxy;
 
-	@Instance(modid)
+	@Instance(FluxConstants.modid)
 	public static FluxNetworks instance;
 
 	public FluxNetworkCache serverCache = new FluxNetworkCache();
@@ -71,7 +65,7 @@ public class FluxNetworks {
 	public static List<IFluxEnergyHandler> enabledEnergyHandlers;
 
 	public static SimpleNetworkWrapper network;
-	public static Logger logger = (Logger) LogManager.getLogger(modid);
+	public static Logger logger = (Logger) LogManager.getLogger(FluxConstants.modid);
 
 	public static Item flux, fluxCore, fluxConfigurator, adminConfigurator;
 	public static Block fluxBlock, fluxPlug, fluxPoint, fluxCable, fluxStorage, largeFluxStorage, massiveFluxStorage, fluxController;
@@ -94,37 +88,33 @@ public class FluxNetworks {
 		network = NetworkRegistry.INSTANCE.newSimpleChannel("Flux-Networks");
 
 		logger.info("Loading Blocks/Items");
-		fluxBlock = SonarRegister.addBlock(modid, tab, "FluxBlock", new Block(Material.ROCK));
+		fluxBlock = SonarRegister.addBlock(FluxConstants.modid, tab, "FluxBlock", new Block(Material.ROCK));
 
-		flux = SonarRegister.addItem(modid, tab, "Flux", new FluxItem());
-		fluxCore = SonarRegister.addItem(modid, tab, "FluxCore", new Item());
-		fluxConfigurator = SonarRegister.addItem(modid, tab, "FluxConfigurator", new FluxConfigurator());
-		adminConfigurator = SonarRegister.addItem(modid, tab, "AdminConfigurator", new AdminConfigurator());
+		flux = SonarRegister.addItem(FluxConstants.modid, tab, "Flux", new FluxItem());
+		fluxCore = SonarRegister.addItem(FluxConstants.modid, tab, "FluxCore", new Item());
+		fluxConfigurator = SonarRegister.addItem(FluxConstants.modid, tab, "FluxConfigurator", new FluxConfigurator());
+		adminConfigurator = SonarRegister.addItem(FluxConstants.modid, tab, "AdminConfigurator", new AdminConfigurator());
 
-		// fluxCable = registerBlock("FluxCable", new
-		// FluxCable().setHardness(0.4F).setResistance(20.0F));
-		// GameRegistry.registerTileEntity(TileEntityCable.class, "FluxCable");
-
-		fluxPlug = SonarRegister.addBlock(modid, tab, "FluxPlug", new FluxPlug().setHardness(0.4F).setResistance(20.0F));
+		fluxPlug = SonarRegister.addBlock(FluxConstants.modid, tab, "FluxPlug", new FluxPlug().setHardness(0.4F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileFluxPlug.class, "FluxPlug");
 
-		fluxPoint = SonarRegister.addBlock(modid, tab, "FluxPoint", new FluxPoint().setHardness(0.2F).setResistance(20.0F));
+		fluxPoint = SonarRegister.addBlock(FluxConstants.modid, tab, "FluxPoint", new FluxPoint().setHardness(0.2F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileFluxPoint.class, "FluxPoint");
 
-		fluxController = SonarRegister.addBlock(modid, tab, "FluxController", new FluxController().setHardness(0.6F).setResistance(20.0F));
+		fluxController = SonarRegister.addBlock(FluxConstants.modid, tab, "FluxController", new FluxController().setHardness(0.6F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileController.class, "FluxController");
 
-		fluxStorage = SonarRegister.addBlock(modid, tab, "FluxStorage", new FluxStorage().setHardness(0.6F).setResistance(20.0F));
+		fluxStorage = SonarRegister.addBlock(FluxConstants.modid, tab, "FluxStorage", new FluxStorage().setHardness(0.6F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileStorage.Basic.class, "FluxStorage");
 
-		largeFluxStorage = SonarRegister.addBlock(modid, tab, "HerculeanFluxStorage", new FluxStorage.Herculean().setHardness(0.6F).setResistance(20.0F));
+		largeFluxStorage = SonarRegister.addBlock(FluxConstants.modid, tab, "HerculeanFluxStorage", new FluxStorage.Herculean().setHardness(0.6F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileStorage.Herculean.class, "HerculeanFluxStorage");
 
-		massiveFluxStorage = SonarRegister.addBlock(modid, tab, "GargantuanFluxStorage", new FluxStorage.Gargantuan().setHardness(0.6F).setResistance(20.0F));
+		massiveFluxStorage = SonarRegister.addBlock(FluxConstants.modid, tab, "GargantuanFluxStorage", new FluxStorage.Gargantuan().setHardness(0.6F).setResistance(20.0F));
 		GameRegistry.registerTileEntity(TileStorage.Gargantuan.class, "GargantuanFluxStorage");
 
 		logger.info("Loading Entities");
-		EntityRegistry.registerModEntity(new ResourceLocation(modid, "Flux"), EntityFireItem.class, "Flux", 0, instance, 64, 10, true);
+		EntityRegistry.registerModEntity(new ResourceLocation(FluxConstants.modid, "Flux"), EntityFireItem.class, "Flux", 0, instance, 64, 10, true);
 
 		logger.info("Loading Recipes");
 		FluxCrafting.addRecipes();
