@@ -44,8 +44,7 @@ minecraft {
     version = "${forge_version}"
     runDir = "run"
     replace "@VERSION@", "${mod_version}"
-    replace "@MC_VERSION@", "${minecraft_version}"
-    replace "@SONAR_VERSION@", "${sonar_core_version}"
+    replace "sonarcore@[0.0.0,)", "sonarcore@[" + "${sonar_core_version}" +",)"
     mappings = "snapshot_20171002"
     makeObfSourceJar = false
 }

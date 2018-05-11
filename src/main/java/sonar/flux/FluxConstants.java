@@ -2,10 +2,9 @@ package sonar.flux;
 
 public class FluxConstants {
 
-
-    public static final String name = "FluxNetworks";
-    public static final String modid = "fluxnetworks";
-    public static final String version = "@VERSION@";
-    public static final String mc_versions = "[1.12,1.12.2]";
-    public static final String SONAR_VERSION = "@SONAR_VERSION@";
+    public static final String NAME = "FluxNetworks";
+    public static final String MODID = "fluxnetworks";
+    public static final String VERSION = "@VERSION@";
+    public static final String MC_VERSIONS = "[1.12,1.12.2]";
+    public static final String DEPENDENCIES = "required-after:sonarcore@[0.0.0,);";
 }
