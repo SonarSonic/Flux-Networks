@@ -6,7 +6,7 @@ import sonar.flux.FluxTranslate;
 public enum PlayerAccess {
 	OWNER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
 	SHARED_OWNER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
-	USER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
+	USER(FluxTranslate.PLAYERS_NETWORK_USER), //
 	BLOCKED(FluxTranslate.PLAYERS_NETWORK_BLOCKED), //
 	CREATIVE(FluxTranslate.PLAYERS_NETWORK_CREATIVE);
 

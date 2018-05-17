@@ -32,7 +32,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 
 	public SyncTagType.STRING cachedOwnerName = new SyncTagType.STRING(0), networkName = new SyncTagType.STRING(1);
 	public SyncTagType.INT networkID = new SyncTagType.INT(2);
-    public SyncEnum<AccessType> accessType = new SyncEnum<>(AccessType.values(), 3).setDefault(AccessType.PRIVATE);
+    public SyncEnum<AccessType> accessType = new SyncEnum<>(AccessType.values(), 3).setDefault(AccessType.RESTRICTED);
 	//public SyncTagType.LONG maxStored = new SyncTagType.LONG(4);
 	//public SyncTagType.LONG energyStored = new SyncTagType.LONG(5);
 	public SyncUUID ownerUUID = new SyncUUID(6);
