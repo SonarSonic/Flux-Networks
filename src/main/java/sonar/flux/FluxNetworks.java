@@ -1,10 +1,5 @@
 package sonar.flux;
 
-import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,19 +13,17 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sonar.core.SonarRegister;
-import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.flux.api.FluxAPI;
-import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.IItemEnergyHandler;
+import sonar.flux.api.energy.ITileEnergyHandler;
 import sonar.flux.common.block.FluxController;
 import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
@@ -49,6 +42,8 @@ import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.NetworkData;
 
+import java.util.List;
+
 @Mod(modid = FluxConstants.MODID, name = FluxConstants.NAME, acceptedMinecraftVersions = FluxConstants.MC_VERSIONS, version = FluxConstants.VERSION, dependencies = FluxConstants.DEPENDENCIES)
 public class FluxNetworks {
 
@@ -60,9 +55,10 @@ public class FluxNetworks {
 
 	public FluxNetworkCache serverCache = new FluxNetworkCache();
 	public ClientNetworkCache clientCache = new ClientNetworkCache();
-	public static List<ISonarEnergyContainerHandler> energyContainerHandlers;
-	public static List<IFluxEnergyHandler> loadedEnergyHandlers;
-	public static List<IFluxEnergyHandler> enabledEnergyHandlers;
+	public static List<ITileEnergyHandler> loadedTileEnergyHandlers;
+	public static List<ITileEnergyHandler> enabledTileEnergyHandlers;
+	public static List<IItemEnergyHandler> loadedItemEnergyHandlers;
+	public static List<IItemEnergyHandler> enabledItemEnergyHandlers;
 
 	public static SimpleNetworkWrapper network;
 	public static Logger logger = (Logger) LogManager.getLogger(FluxConstants.MODID);
@@ -147,8 +143,8 @@ public class FluxNetworks {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		FluxConfig.finishLoading();
-		FluxNetworks.enabledEnergyHandlers = FluxHelper.getEnergyHandlers();
-		FluxNetworks.energyContainerHandlers = FluxHelper.getEnergyContainerHandlers();
+		FluxNetworks.enabledTileEnergyHandlers = FluxHelper.getTileEnergyHandlers();
+		FluxNetworks.enabledItemEnergyHandlers = FluxHelper.getItemEnergyHandlers();
 		proxy.postInit(event);
 	}
 

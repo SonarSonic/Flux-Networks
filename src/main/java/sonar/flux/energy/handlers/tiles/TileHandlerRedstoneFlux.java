@@ -7,13 +7,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.energy.FluxEnergyHandler;
-import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.ITileEnergyHandler;
+import sonar.flux.api.energy.TileEnergyHandler;
 
 import javax.annotation.Nonnull;
 
-@FluxEnergyHandler(modid = "redstoneflux", priority = 3)
-public class RedstoneFluxHandler implements IFluxEnergyHandler {
+@TileEnergyHandler(modid = "redstoneflux", priority = 3)
+public class TileHandlerRedstoneFlux implements ITileEnergyHandler {
 
 	@Override
 	public EnergyType getEnergyType() {

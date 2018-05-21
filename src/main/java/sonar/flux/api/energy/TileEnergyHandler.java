@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface FluxEnergyHandler {
+public @interface TileEnergyHandler {
 
 	String modid();
 

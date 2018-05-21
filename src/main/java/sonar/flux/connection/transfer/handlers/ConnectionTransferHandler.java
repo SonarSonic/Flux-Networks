@@ -1,19 +1,12 @@
 package sonar.flux.connection.transfer.handlers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.ITileEnergyHandler;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
@@ -22,6 +15,12 @@ import sonar.flux.connection.transfer.ConnectionTransfer;
 import sonar.flux.connection.transfer.ISidedTransfer;
 import sonar.flux.connection.transfer.PhantomTransfer;
 import sonar.flux.connection.transfer.SidedPhantomTransfer;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 public class ConnectionTransferHandler extends FluxTransferHandler implements ITransferHandler {
 
@@ -75,7 +74,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 			}
 
 		} else if (transfer == null) {
-			IFluxEnergyHandler handler = FluxHelper.getValidHandler(expected_source, from);
+			ITileEnergyHandler handler = FluxHelper.getValidHandler(expected_source, from);
 			if (handler != null) {
 				transfer = transfers.computeIfAbsent(from, E -> new ConnectionTransfer(this, handler, expected_source, from));
 			} else {
@@ -120,7 +119,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 
 	public void setTransfer(EnumFacing face, TileEntity tile) {
 		IFluxTransfer transfer = transfers.get(face);
-		IFluxEnergyHandler handler;
+		ITileEnergyHandler handler;
 		if (tile == null || (handler = FluxHelper.getValidHandler(tile, face.getOpposite())) == null) {
 			transfers.put(face, null);
 		} else if (!(transfer instanceof ConnectionTransfer) || ((ConnectionTransfer) transfer).getTile() != tile) {

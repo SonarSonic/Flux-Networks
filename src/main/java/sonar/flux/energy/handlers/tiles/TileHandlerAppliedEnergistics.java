@@ -8,13 +8,13 @@ import net.minecraft.util.EnumFacing;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.AE2Helper;
-import sonar.flux.api.energy.FluxEnergyHandler;
-import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.ITileEnergyHandler;
+import sonar.flux.api.energy.TileEnergyHandler;
 
 import javax.annotation.Nonnull;
 
-@FluxEnergyHandler(modid = "appliedenergistics2", priority = 4)
-public class AppliedEnergisticsEnergyHandler implements IFluxEnergyHandler {
+@TileEnergyHandler(modid = "appliedenergistics2", priority = 4)
+public class TileHandlerAppliedEnergistics implements ITileEnergyHandler {
 
 	@Override
 	public EnergyType getEnergyType() {

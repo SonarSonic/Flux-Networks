@@ -5,19 +5,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.ItemStackHelper;
-import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.ITileEnergyHandler;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.energy.internal.ITransferHandler;
 
 public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTransfer, ISidedTransfer {
 
 	public final ITransferHandler transferHandler;
-	public final IFluxEnergyHandler handler;
+	public final ITileEnergyHandler handler;
 	public final TileEntity tile;
 	public final EnumFacing direction;
 	public long totalTransferMax; // may need to be changed
 
-	public ConnectionTransfer(ITransferHandler transferHandler, IFluxEnergyHandler handler, TileEntity tile, EnumFacing direction) {
+	public ConnectionTransfer(ITransferHandler transferHandler, ITileEnergyHandler handler, TileEntity tile, EnumFacing direction) {
 		super(handler.getEnergyType());
 		this.transferHandler = transferHandler;
 		this.handler = handler;

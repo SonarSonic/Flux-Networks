@@ -1,22 +1,22 @@
 package sonar.flux.connection.transfer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import sonar.core.api.SonarAPI;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.ItemStackHelper;
+import sonar.flux.api.energy.IItemEnergyHandler;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.tiles.IFluxController.TransmitterMode;
 import sonar.flux.common.tileentity.TileController;
 import sonar.flux.connection.FluxHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTransfer {
 
@@ -51,8 +51,9 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 			switch (controller.getTransmitterMode()) {
 			case HELD_ITEM:
 				ItemStack stack = player.getHeldItemMainhand();
-				if (FluxHelper.canTransferEnergy(stack) != null) {
-					receive = SonarAPI.getEnergyHelper().receiveEnergy(stack, maxTransferRF - received, actionType);
+				IItemEnergyHandler handler = FluxHelper.getValidAdditionHandler(stack);
+				if (handler != null) {
+					receive = handler.addEnergy(maxTransferRF - received, stack, actionType);
 					received += receive;
 					if (!actionType.shouldSimulate()) {
 						removedFromNetwork(receive, getEnergyType());
@@ -67,8 +68,9 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 				IInventory inv = player.inventory;
 				for (int i = 0; i < (controller.getTransmitterMode() == TransmitterMode.ON ? inv.getSizeInventory() : 9); i++) {
 					ItemStack itemStack = inv.getStackInSlot(i);
-					if (FluxHelper.canTransferEnergy(itemStack) != null) {
-						receive = SonarAPI.getEnergyHelper().receiveEnergy(itemStack, maxTransferRF - received, actionType);
+					handler = FluxHelper.getValidAdditionHandler(itemStack);
+					if (handler != null) {
+						receive = handler.addEnergy(maxTransferRF - received, itemStack, actionType);
 						received += receive;
 						if (!actionType.shouldSimulate()) {
 							removedFromNetwork(receive, getEnergyType());
@@ -86,6 +88,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 		}
 		return received;
 	}
+
 
 	@Override
 	public ItemStack getDisplayStack() {

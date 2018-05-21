@@ -1,24 +1,18 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.energy.ISonarEnergyContainerHandler;
 import sonar.core.api.utils.ActionType;
 import sonar.core.utils.Pair;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.RemovalType;
-import sonar.flux.api.energy.IFluxEnergyHandler;
+import sonar.flux.api.energy.IItemEnergyHandler;
+import sonar.flux.api.energy.ITileEnergyHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFluxController.PriorityMode;
@@ -27,6 +21,12 @@ import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.network.FluxNetworkCache;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 public class FluxHelper {
 
@@ -107,9 +107,9 @@ public class FluxHelper {
 		return tile != null && !(tile instanceof IFlux) && getValidHandler(tile, dir) != null;// || SonarLoader.rfLoaded && tile instanceof IEnergyConnection && FluxConfig.transfers.get(EnergyType.RF).a);
 	}
 
-	public static List<IFluxEnergyHandler> getEnergyHandlers() {
-		List<IFluxEnergyHandler> handlers = new ArrayList<>();
-		for (IFluxEnergyHandler handler : FluxNetworks.loadedEnergyHandlers) {
+	public static List<ITileEnergyHandler> getTileEnergyHandlers() {
+		List<ITileEnergyHandler> handlers = new ArrayList<>();
+		for (ITileEnergyHandler handler : FluxNetworks.loadedTileEnergyHandlers) {
 			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfer_types.get(handler.getEnergyType());
 			if (canTransfer!=null && canTransfer.a) {
 				handlers.add(handler);
@@ -118,23 +118,23 @@ public class FluxHelper {
 		return handlers;
 	}
 
-	public static List<ISonarEnergyContainerHandler> getEnergyContainerHandlers() {
-		List<ISonarEnergyContainerHandler> handlers = new ArrayList<>();
-		for (ISonarEnergyContainerHandler handler : SonarCore.energyContainerHandlers) {
-			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfer_types.get(handler.getProvidedType());
-			if (canTransfer!=null &&canTransfer.b) {
+	public static List<IItemEnergyHandler> getItemEnergyHandlers() {
+		List<IItemEnergyHandler> handlers = new ArrayList<>();
+		for (IItemEnergyHandler handler : FluxNetworks.loadedItemEnergyHandlers) {
+			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfer_types.get(handler.getEnergyType());
+			if (canTransfer!=null && canTransfer.a) {
 				handlers.add(handler);
 			}
 		}
 		return handlers;
 	}
 
-	public static IFluxEnergyHandler getValidHandler(TileEntity tile, EnumFacing dir) {
+	public static ITileEnergyHandler getValidHandler(TileEntity tile, EnumFacing dir) {
 		if(tile == null || tile instanceof IFlux){
 			return null;
 		}
-		List<IFluxEnergyHandler> handlers = FluxNetworks.enabledEnergyHandlers;
-		for (IFluxEnergyHandler handler : handlers) {
+		List<ITileEnergyHandler> handlers = FluxNetworks.enabledTileEnergyHandlers;
+		for (ITileEnergyHandler handler : handlers) {
 			if (handler.canRenderConnection(tile, dir)) {
 				return handler;
 			}
@@ -142,13 +142,21 @@ public class FluxHelper {
 		return null;
 	}
 
-	public static ISonarEnergyContainerHandler canTransferEnergy(ItemStack stack) {
+	public static IItemEnergyHandler getValidAdditionHandler(ItemStack stack) {
+		return getValidHandler(stack, t -> t.canAddEnergy(stack));
+	}
+
+	public static IItemEnergyHandler getValidRemovalHandler(ItemStack stack) {
+		return getValidHandler(stack, t -> t.canRemoveEnergy(stack));
+	}
+
+	public static IItemEnergyHandler getValidHandler(ItemStack stack, Predicate<IItemEnergyHandler> filter) {
 		if (stack.isEmpty()) {
 			return null;
 		}
-		List<ISonarEnergyContainerHandler> handlers = FluxNetworks.energyContainerHandlers;
-		for (ISonarEnergyContainerHandler handler : handlers) {
-			if (handler.canHandleItem(stack)) {
+		List<IItemEnergyHandler> handlers = FluxNetworks.enabledItemEnergyHandlers;
+		for (IItemEnergyHandler handler : handlers) {
+			if (filter.test(handler)) {
 				return handler;
 			}
 		}
