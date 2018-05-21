@@ -42,353 +42,355 @@ import sonar.flux.network.FluxNetworkCache;
 
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
 
-	// connections
-	public HashMap<FluxCache, List<IFluxListenable>> connections = new HashMap<>();
-	public List<FluxCache> changedTypes = Lists.newArrayList(FluxCache.types);
-	public Queue<IFluxListenable> toAdd = new ConcurrentLinkedQueue<>();
-	public Queue<IFluxListenable> toRemove = new ConcurrentLinkedQueue<>();
-	public List<IFluxListenable> flux_listeners = new ArrayList<>();
-	public List<ClientFlux> unloaded = new ArrayList<>();
-	public boolean hasConnections;
+    // connections
+    public HashMap<FluxCache, List<IFluxListenable>> connections = new HashMap<>();
+    public List<FluxCache> changedTypes = Lists.newArrayList(FluxCache.types);
+    public Queue<IFluxListenable> toAdd = new ConcurrentLinkedQueue<>();
+    public Queue<IFluxListenable> toRemove = new ConcurrentLinkedQueue<>();
+    public List<IFluxListenable> flux_listeners = new ArrayList<>();
+    public List<ClientFlux> unloaded = new ArrayList<>();
+    public boolean hasConnections;
 
-	public BasicFluxNetwork() {
-		super();
-	}
+    public BasicFluxNetwork() {
+        super();
+    }
 
-	public BasicFluxNetwork(int ID, UUID owner, String name, CustomColour colour, AccessType type, boolean disableConvert, EnergyType defaultEnergy) {
-		super(ID, owner, name, colour, type, disableConvert, defaultEnergy);
-	}
+    public BasicFluxNetwork(int ID, UUID owner, String name, CustomColour colour, AccessType type, boolean disableConvert, EnergyType defaultEnergy) {
+        super(ID, owner, name, colour, type, disableConvert, defaultEnergy);
+    }
 
-	public void addConnections() {
-		if (toAdd.isEmpty())
-			return;
-		Iterator<IFluxListenable> iterator = toAdd.iterator();
-		while (iterator.hasNext()) {
-			IFluxListenable tile = iterator.next();
-			FluxCache.getValidTypes(tile).forEach(type -> {
-				if (!getConnections(type).contains(tile) && getConnections(type).add(tile)) {
-					type.connect(this, tile);
-					markTypeDirty(type);
-				}
-			});
-			tile.connect(this);
-			iterator.remove();
-		}
-	}
+    public void addConnections() {
+        if (toAdd.isEmpty())
+            return;
+        Iterator<IFluxListenable> iterator = toAdd.iterator();
+        while (iterator.hasNext()) {
+            IFluxListenable tile = iterator.next();
+            FluxCache.getValidTypes(tile).forEach(type -> {
+                if (!getConnections(type).contains(tile) && getConnections(type).add(tile)) {
+                    type.connect(this, tile);
+                    markTypeDirty(type);
+                }
+            });
+            tile.connect(this);
+            iterator.remove();
+        }
+    }
 
-	public void removeConnections() {
-		if (toRemove.isEmpty())
-			return;
-		Iterator<IFluxListenable> iterator = toRemove.iterator();
-		while (iterator.hasNext()) {
-			IFluxListenable tile = iterator.next();
-			FluxCache.getValidTypes(tile).forEach(type -> {
-				if (((List<IFluxListenable>) getConnections(type)).removeIf(F -> F.getCoords().equals(tile.getCoords()))) {
-					type.disconnect(this, tile);
-					markTypeDirty(type);
-				}
-			});
-			iterator.remove();
-		}
-	}
+    public void removeConnections() {
+        if (toRemove.isEmpty())
+            return;
+        Iterator<IFluxListenable> iterator = toRemove.iterator();
+        while (iterator.hasNext()) {
+            IFluxListenable tile = iterator.next();
+            FluxCache.getValidTypes(tile).forEach(type -> {
+                if (((List<IFluxListenable>) getConnections(type)).removeIf(F -> F.getCoords().equals(tile.getCoords()))) {
+                    type.disconnect(this, tile);
+                    markTypeDirty(type);
+                }
+            });
+            iterator.remove();
+        }
+    }
 
-	// TODO way to quickly update priorities
-	public void markTypeDirty(FluxCache... caches) {
-		for (FluxCache cache : caches) {
-			if (!changedTypes.contains(cache)) {
-				changedTypes.add(cache);
-			}
-		}
-	}
+    // TODO way to quickly update priorities
+    public void markTypeDirty(FluxCache... caches) {
+        for (FluxCache cache : caches) {
+            if (!changedTypes.contains(cache)) {
+                changedTypes.add(cache);
+            }
+        }
+    }
 
-	public void updateTypes() {
-		if (!changedTypes.isEmpty()) {
-			changedTypes.forEach(type -> type.update(this));
-			changedTypes.clear();
-		}
-	}
+    public void updateTypes() {
+        if (!changedTypes.isEmpty()) {
+            changedTypes.forEach(type -> type.update(this));
+            changedTypes.clear();
+        }
+    }
 
-	public <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type) {
-		return connections.computeIfAbsent(type, FunctionHelper.ARRAY);
-	}
+    public <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type) {
+        return connections.computeIfAbsent(type, FunctionHelper.ARRAY);
+    }
 
-	public TransferMode getTransferMode() {
-		IFluxController controller = getController();
-		return controller != null ? controller.getTransferMode().isBanned() ? TransferMode.DEFAULT : controller.getTransferMode() : TransferMode.DEFAULT;
-	}
+    public TransferMode getTransferMode() {
+        IFluxController controller = getController();
+        return controller != null ? controller.getTransferMode().isBanned() ? TransferMode.DEFAULT : controller.getTransferMode() : TransferMode.DEFAULT;
+    }
 
-	public void onStartServerTick() {
-		addConnections();
-		removeConnections();
-		updateTypes();
-		this.networkStats.onStartServerTick();
-		List<IFluxStorage> storage = getConnections(FluxCache.storage);
-		List<IFluxPoint> points = getConnections(FluxCache.point);
-		if (!storage.isEmpty() && !points.isEmpty()) {
-			storage.forEach(s -> FluxHelper.transferEnergy(s, points, getDefaultEnergyType(), TransferMode.DEFAULT));
-		}
-	}
+    public void onStartServerTick() {
+        addConnections();
+        removeConnections();
+        updateTypes();
+        this.networkStats.onStartServerTick();
+        List<IFluxStorage> storage = getConnections(FluxCache.storage);
+        List<IFluxPoint> points = getConnections(FluxCache.point);
+        if (!storage.isEmpty() && !points.isEmpty()) {
+            storage.forEach(s -> FluxHelper.transferEnergy(s, points, getDefaultEnergyType(), TransferMode.DEFAULT));
+        }
+    }
 
-	@Override
-	public void onEndServerTick() {
-		this.networkStats.onEndWorldTick();
-		if (!this.flux_listeners.isEmpty()) {
-			sendPacketToListeners();
-		}
-	}
+    @Override
+    public void onEndServerTick() {
+        this.networkStats.onEndWorldTick();
+        if (!this.flux_listeners.isEmpty()) {
+            sendPacketToListeners();
+        }
+    }
 
-	public int listenerTicks = 0;
+    public int listenerTicks = 0;
 
-	public void sendPacketToListeners() {
-		FluxListener.SYNC_INDEX.sendPackets(this, flux_listeners);
-		FluxListener.SYNC_NETWORK_STATS.sendPackets(this, flux_listeners);
-		FluxListener.SYNC_NETWORK_CONNECTIONS.sendPackets(this, flux_listeners);
-	}
+    public void sendPacketToListeners() {
+        FluxListener.SYNC_INDEX.sendPackets(this, flux_listeners);
+        FluxListener.SYNC_NETWORK_STATS.sendPackets(this, flux_listeners);
+        FluxListener.SYNC_NETWORK_CONNECTIONS.sendPackets(this, flux_listeners);
+    }
 
-	@Override
-	public boolean hasController() {
-		return getController() != null;
-	}
+    @Override
+    public boolean hasController() {
+        return getController() != null;
+    }
 
-	@Override
-	public IFluxController getController() {
-		List<IFluxController> flux = getConnections(FluxCache.controller);
-		return !flux.isEmpty() ? flux.get(0) : null;
-	}
+    @Override
+    public IFluxController getController() {
+        List<IFluxController> flux = getConnections(FluxCache.controller);
+        return !flux.isEmpty() ? flux.get(0) : null;
+    }
 
-	@Override
-	public void setNetworkName(String name) {
-		if (name != null && !name.isEmpty())
-			networkName.setObject(name);
-	}
+    @Override
+    public void setNetworkName(String name) {
+        if (name != null && !name.isEmpty())
+            networkName.setObject(name);
+    }
 
-	@Override
-	public void setAccessType(AccessType type) {
-		if (type != null) {
-			accessType.setObject(type);
-			markDirty();
-		}
-	}
+    @Override
+    public void setAccessType(AccessType type) {
+        if (type != null) {
+            if (type.equals(AccessType.PRIVATE)) {
+                accessType.setObject(AccessType.RESTRICTED);
+            }
+            accessType.setObject(type);
+            markDirty();
+        }
+    }
 
-	@Override
-	public void setCustomColour(CustomColour colour) {
-		this.colour.setObject(colour);
-	}
+    @Override
+    public void setCustomColour(CustomColour colour) {
+        this.colour.setObject(colour);
+    }
 
-	@Override
-	public void setDisableConversion(boolean disable) {
-		this.disableConversion.setObject(disable);
-	}
+    @Override
+    public void setDisableConversion(boolean disable) {
+        this.disableConversion.setObject(disable);
+    }
 
-	@Override
-	public void setDefaultEnergyType(EnergyType type) {
-		this.defaultEnergyType.setEnergyType(type);
-	}
+    @Override
+    public void setDefaultEnergyType(EnergyType type) {
+        this.defaultEnergyType.setEnergyType(type);
+    }
 
-	public void markDirty() {
-		connectAll();
-		FluxNetworkCache.instance().onNetworksChanged();
-	}
+    public void markDirty() {
+        connectAll();
+        FluxNetworkCache.instance().onNetworksChanged();
+    }
 
-	@Override
-	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
-		List<FluxPlayer> toDelete = new ArrayList<>();
+    @Override
+    public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
+        List<FluxPlayer> toDelete = new ArrayList<>();
 
-		players.stream().filter(p -> p.getUUID().equals(playerUUID)).forEach(toDelete::add);
-		players.removeAll(toDelete);
-	}
+        players.stream().filter(p -> p.getUUID().equals(playerUUID)).forEach(toDelete::add);
+        players.removeAll(toDelete);
+    }
 
-	@Override
-	public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {
-		for (FluxPlayer player : players) {
-			if (player.getUUID().equals(playerUUID)) {
-				player.setAccess(access);
-				return;
-			}
-		}
-		FluxPlayer player = new FluxPlayer(playerUUID, access);
-		player.cachedName = SonarHelper.getProfileByUUID(playerUUID).getName();
-		players.add(player);
-	}
+    @Override
+    public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {
+        for (FluxPlayer player : players) {
+            if (player.getUUID().equals(playerUUID)) {
+                player.setAccess(access);
+                return;
+            }
+        }
+        FluxPlayer player = new FluxPlayer(playerUUID, access);
+        player.cachedName = SonarHelper.getProfileByUUID(playerUUID).getName();
+        players.add(player);
+    }
 
-	@Override
-	public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type) {
-		long used = 0;
-		List<IFluxPoint> points = getConnections(FluxCache.point);
-		for (IFluxPoint flux : points) {
-			long toTransfer = maxReceive - used;
-			if (toTransfer <= 0) {
-				break;
-			}
-			long receive = FluxHelper.removeEnergyFromNetwork(flux, energyType, toTransfer, type);
-			used += receive;
-		}
-		return used;
-	}
+    @Override
+    public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type) {
+        long used = 0;
+        List<IFluxPoint> points = getConnections(FluxCache.point);
+        for (IFluxPoint flux : points) {
+            long toTransfer = maxReceive - used;
+            if (toTransfer <= 0) {
+                break;
+            }
+            long receive = FluxHelper.removeEnergyFromNetwork(flux, energyType, toTransfer, type);
+            used += receive;
+        }
+        return used;
+    }
 
-	@Override
-	public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type) {
-		long used = 0;
-		List<IFluxPlug> plugs = getConnections(FluxCache.plug);
-		for (IFluxPlug flux : plugs) {
-			long toTransfer = maxExtract - used;
-			if (toTransfer <= 0) {
-				break;
-			}
-			used += FluxHelper.addEnergyToNetwork(flux, energyType, toTransfer, type);
-		}
-		return used;
-		// return 0;
-	}
+    @Override
+    public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type) {
+        long used = 0;
+        List<IFluxPlug> plugs = getConnections(FluxCache.plug);
+        for (IFluxPlug flux : plugs) {
+            long toTransfer = maxExtract - used;
+            if (toTransfer <= 0) {
+                break;
+            }
+            used += FluxHelper.addEnergyToNetwork(flux, energyType, toTransfer, type);
+        }
+        return used;
+        // return 0;
+    }
 
-	@Override
-	public void addConnection(IFluxListenable tile, AdditionType type) {
-		toAdd.add(tile);
-		toRemove.remove(tile); // prevents tiles being removed if it's unnecessary
-		unloaded.removeIf(flux -> flux != null && flux.coords.equals(tile.getCoords()));
-	}
+    @Override
+    public void addConnection(IFluxListenable tile, AdditionType type) {
+        toAdd.add(tile);
+        toRemove.remove(tile); // prevents tiles being removed if it's unnecessary
+        unloaded.removeIf(flux -> flux != null && flux.coords.equals(tile.getCoords()));
+    }
 
-	@Override
-	public void removeConnection(IFluxListenable tile, RemovalType type) {
-		toRemove.add(tile);
-		toAdd.remove(tile); // prevents tiles being removed if it's unnecessary
-		if (type == RemovalType.CHUNK_UNLOAD) {
-			ClientFlux flux_unload = new ClientFlux(tile);
-			flux_unload.setChunkLoaded(false);
-			unloaded.add(flux_unload);
-		}
-	}
+    @Override
+    public void removeConnection(IFluxListenable tile, RemovalType type) {
+        toRemove.add(tile);
+        toAdd.remove(tile); // prevents tiles being removed if it's unnecessary
+        if (type == RemovalType.CHUNK_UNLOAD) {
+            ClientFlux flux_unload = new ClientFlux(tile);
+            flux_unload.setChunkLoaded(false);
+            unloaded.add(flux_unload);
+        }
+    }
 
-	@Override
-	public void buildFluxConnections() {
-		List<ClientFlux> clientConnections = new ArrayList<>();
-		List<IFluxListenable> connections = getConnections(FluxCache.flux);
-		connections.forEach(flux -> clientConnections.add(new ClientFlux(flux)));
-		clientConnections.addAll(unloaded);
-		this.fluxConnections = clientConnections;
-	}
+    @Override
+    public void buildFluxConnections() {
+        List<ClientFlux> clientConnections = new ArrayList<>();
+        List<IFluxListenable> connections = getConnections(FluxCache.flux);
+        connections.forEach(flux -> clientConnections.add(new ClientFlux(flux)));
+        clientConnections.addAll(unloaded);
+        this.fluxConnections = clientConnections;
+    }
 
-	@Override
-	public void addFluxListener(IFluxListenable listener) {
-		ListHelper.addWithCheck(flux_listeners, listener);
-		for (FluxListener listen : FluxListener.values()) {
-			listen.sendPackets(this, Lists.newArrayList(listener));
-		}
-	}
+    @Override
+    public void addFluxListener(IFluxListenable listener) {
+        ListHelper.addWithCheck(flux_listeners, listener);
+        for (FluxListener listen : FluxListener.values()) {
+            listen.sendPackets(this, Lists.newArrayList(listener));
+        }
+    }
 
-	@Override
-	public void removeFluxListener(IFluxListenable listener) {
-		flux_listeners.removeIf(f -> f == listener);
-	}
+    @Override
+    public void removeFluxListener(IFluxListenable listener) {
+        flux_listeners.removeIf(f -> f == listener);
+    }
 
-	public List<IFluxListenable> getFluxListeners() {
-		return this.flux_listeners;
-	}
+    public List<IFluxListenable> getFluxListeners() {
+        return this.flux_listeners;
+    }
 
-	@Override
-	public PlayerAccess getPlayerAccess(EntityPlayer player) {
-		if (FluxHelper.isPlayerAdmin(player)) {
-			return PlayerAccess.CREATIVE;
-		}
-		UUID playerID = FluxHelper.getOwnerUUID(player);
-		if (getOwnerUUID().equals(playerID)) {
-			return PlayerAccess.OWNER;
-		}
-		if (accessType.getObject() != AccessType.PRIVATE) {
-			if (accessType.getObject() == AccessType.PUBLIC) {
-				return PlayerAccess.SHARED_OWNER;
-			}
-			for (FluxPlayer fluxPlayer : players) {
-				if (playerID.equals(fluxPlayer.getUUID())) {
-					return fluxPlayer.getAccess();
-				}
-			}
-		}
-		return PlayerAccess.BLOCKED;
-	}
+    @Override
+    public PlayerAccess getPlayerAccess(EntityPlayer player) {
+        if (FluxHelper.isPlayerAdmin(player)) {
+            return PlayerAccess.CREATIVE;
+        }
+        UUID playerID = FluxHelper.getOwnerUUID(player);
+        if (getOwnerUUID().equals(playerID)) {
+            return PlayerAccess.OWNER;
+        }
+        if (accessType.getObject() == AccessType.PUBLIC) {
+            return PlayerAccess.SHARED_OWNER;
+        }
+        for (FluxPlayer fluxPlayer : players) {
+            if (playerID.equals(fluxPlayer.getUUID())) {
+                return fluxPlayer.getAccess();
+            }
+        }
 
-	@Override
-	public IFluxNetwork updateNetworkFrom(IFluxNetwork network) {
-		this.setAccessType(network.getAccessType());
-		this.setCustomColour(network.getNetworkColour());
-		this.setNetworkName(network.getNetworkName());
-		this.players = network.getPlayers();
-		this.networkStats = network.getStatistics();
-		return this;
-	}
+        return PlayerAccess.BLOCKED;
+    }
 
-	@Override
-	public void markChanged(IDirtyPart part) {
-		this.parts.markSyncPartChanged(part);
-		// this.markDirty();
-	}
+    @Override
+    public IFluxNetwork updateNetworkFrom(IFluxNetwork network) {
+        this.setAccessType(network.getAccessType());
+        this.setCustomColour(network.getNetworkColour());
+        this.setNetworkName(network.getNetworkName());
+        this.players = network.getPlayers();
+        this.networkStats = network.getStatistics();
+        return this;
+    }
 
-	public void connectAll() {
-		forEachConnection(FluxCache.flux, flux -> flux.connect(this));
-	}
+    @Override
+    public void markChanged(IDirtyPart part) {
+        this.parts.markSyncPartChanged(part);
+        // this.markDirty();
+    }
 
-	public void disconnectAll() {
-		forEachConnection(FluxCache.flux, flux -> flux.disconnect(this));
-	}
+    public void connectAll() {
+        forEachConnection(FluxCache.flux, flux -> flux.connect(this));
+    }
 
-	public void forEachConnection(FluxCache type, Consumer<? super IFluxListenable> action) {
-		getConnections(type).forEach(action);
-	}
+    public void disconnectAll() {
+        forEachConnection(FluxCache.flux, flux -> flux.disconnect(this));
+    }
 
-	public void forEachViewer(FluxListener listener, Consumer<EntityPlayerMP> action) {
-		forEachConnection(FluxCache.flux, f -> f.getListenerList().getListeners(listener).forEach(p -> action.accept(p.player)));
-	}
+    public void forEachConnection(FluxCache type, Consumer<? super IFluxListenable> action) {
+        getConnections(type).forEach(action);
+    }
 
-	@Override
-	public void onRemoved() {
-		disconnectAll();
-		connections.clear();
-		toAdd.clear();
-		toRemove.clear();
-	}
+    public void forEachViewer(FluxListener listener, Consumer<EntityPlayerMP> action) {
+        forEachConnection(FluxCache.flux, f -> f.getListenerList().getListeners(listener).forEach(p -> action.accept(p.player)));
+    }
 
-	public void setHasConnections(boolean bool) {
-		hasConnections = bool;
-	}
+    @Override
+    public void onRemoved() {
+        disconnectAll();
+        connections.clear();
+        toAdd.clear();
+        toRemove.clear();
+    }
 
-	@Override
-	public boolean canConvert(EnergyType from, EnergyType to) {
-		return (from == to || !disabledConversion() && FluxConfig.conversion.get(from).contains(to)) || FluxConfig.conversion_override.get(from).contains(to);
-	}
+    public void setHasConnections(boolean bool) {
+        hasConnections = bool;
+    }
 
-	@Override
-	public boolean canTransfer(EnergyType type) {
-		return type == getDefaultEnergyType() || canConvert(type, getDefaultEnergyType());
-	}
+    @Override
+    public boolean canConvert(EnergyType from, EnergyType to) {
+        return (from == to || !disabledConversion() && FluxConfig.conversion.get(from).contains(to)) || FluxConfig.conversion_override.get(from).contains(to);
+    }
 
-	@Override
-	public void debugConnectedBlocks() {
-		List<IFluxListenable> flux = getConnections(FluxCache.flux);
-		flux.forEach(f -> f.getTransferHandler().updateTransfers(EnumFacing.VALUES));
-	}
+    @Override
+    public boolean canTransfer(EnergyType type) {
+        return type == getDefaultEnergyType() || canConvert(type, getDefaultEnergyType());
+    }
 
-	@Override
-	public void debugValidateFluxConnections() {
-		List<IFluxListenable> flux = Lists.newArrayList(getConnections(FluxCache.flux));
-		
-		flux.forEach(f -> removeConnection(f, RemovalType.REMOVE));
-		removeConnections();
+    @Override
+    public void debugConnectedBlocks() {
+        List<IFluxListenable> flux = getConnections(FluxCache.flux);
+        flux.forEach(f -> f.getTransferHandler().updateTransfers(EnumFacing.VALUES));
+    }
 
-		List<IFluxListenable> copy = new ArrayList<>();
-		for (IFluxListenable fl : flux) {
-			boolean match = copy.removeIf(f -> f.getCoords()!=null && f.getCoords().equals(fl.getCoords()));
-			if (!match) {
-				copy.add(fl);
-			} else {
-				TileEntity tile = fl.getCoords().getTileEntity();
-				if (tile instanceof IFluxListenable) {
-					copy.add((IFluxListenable) tile);
-				}
-			}
-		}
-		
-		copy.forEach(f -> this.addConnection(f, AdditionType.ADD));
-		addConnections();
-		buildFluxConnections();
-	}
+    @Override
+    public void debugValidateFluxConnections() {
+        List<IFluxListenable> flux = Lists.newArrayList(getConnections(FluxCache.flux));
+
+        flux.forEach(f -> removeConnection(f, RemovalType.REMOVE));
+        removeConnections();
+
+        List<IFluxListenable> copy = new ArrayList<>();
+        for (IFluxListenable fl : flux) {
+            boolean match = copy.removeIf(f -> f.getCoords() != null && f.getCoords().equals(fl.getCoords()));
+            if (!match) {
+                copy.add(fl);
+            } else {
+                TileEntity tile = fl.getCoords().getTileEntity();
+                if (tile instanceof IFluxListenable) {
+                    copy.add((IFluxListenable) tile);
+                }
+            }
+        }
+
+        copy.forEach(f -> this.addConnection(f, AdditionType.ADD));
+        addConnections();
+        buildFluxConnections();
+    }
 }

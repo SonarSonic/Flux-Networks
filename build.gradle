@@ -27,13 +27,13 @@ repositories {
     }
     flatDir {
         dirs 'libs'
-}
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "${minecraft_version}-${mod_version}"
-group= "sonar.flux"
+group = "sonar.flux"
 archivesBaseName = "flux"
 sourceCompatibility = targetCompatibility = "1.8"
 compileJava {
@@ -66,7 +66,7 @@ jar {
 }
 
 def sonarcore_local = false
-if (project.allprojects.findAll({it.name == "Sonar-Core"}).size() > 0) {
+if (project.allprojects.findAll({ it.name == "Sonar-Core" }).size() > 0) {
     sonarcore_local = true
 }
 
@@ -84,16 +84,15 @@ dependencies {
     }
 }
 
-processResources
-{
+processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'                
+        include 'mcmod.info'
 
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }        
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
 
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
