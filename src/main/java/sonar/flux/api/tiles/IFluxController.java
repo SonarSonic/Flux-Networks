@@ -52,29 +52,11 @@ public interface IFluxController extends IFluxPoint {
         }
     }
 
-    enum TransmitterMode {
-        OFF(FluxTranslate.OFF), //
-        ON(FluxTranslate.ON), //
-        HOTBAR(FluxTranslate.TRANSMITTER_HOTBAR_ONLY), //
-        HELD_ITEM(FluxTranslate.TRANSMITTER_HELD_ITEM_ONLY);//
-
-    	Localisation message;
-
-    	TransmitterMode(Localisation message) {
-    		this.message = message;
-    	}
-
-    	public String getDisplayName() {
-    		return message.t();
-    	}
-    }
 
     /***/
     PriorityMode getReceiveMode();
 
     PriorityMode getSendMode();
-
-    TransmitterMode getTransmitterMode();
 
     TransferMode getTransferMode();
 }

@@ -1,11 +1,11 @@
 package sonar.flux;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import sonar.core.translate.Localisation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FluxTranslate {
 	public static final List<Localisation> locals = new ArrayList<>();
@@ -58,6 +58,7 @@ public class FluxTranslate {
 	public static final Localisation GUI_TAB_NETWORK_CREATE = t("network.tab.createnetwork");
 	public static final Localisation GUI_TAB_DEBUG = t("network.tab.debug");
 	public static final Localisation GUI_TAB_PLAYERS = t("network.tab.players");
+	public static final Localisation GUI_TAB_WIRELESS_CHARGING = t("network.tab.wirelessCharging");
 	
 	//// INDEX TAB \\\\
 	public static final Localisation PRIORITY = t("connection.config.priority");
@@ -75,7 +76,7 @@ public class FluxTranslate {
 	public static final Localisation SEND_MODE = t("network.sendMode");
 	public static final Localisation RECEIVE_MODE = t("network.receiveMode");
 	public static final Localisation TRANSFER_MODE = t("network.transferMode");
-	public static final Localisation TRANSMITTER_MODE = t("network.transmitterMode");	
+	public static final Localisation WIRELESS_CHARGING = t("network.wirelessCharging");
 	
 	// TRANSFER MODE \\
 	public static final Localisation TRANSFER_NONE = t("network.transfer.notransfer");
@@ -85,8 +86,12 @@ public class FluxTranslate {
 	public static final Localisation TRANSFER_GOD = t("network.transfer.god");
 	
 	// TRANSMITTER MODE \\
-	public static final Localisation TRANSMITTER_HOTBAR_ONLY = t("network.transmitter.hotbar");	
-	public static final Localisation TRANSMITTER_HELD_ITEM_ONLY = t("network.transmitter.held");	
+	public static final Localisation WIRELESS_CHARGE_INVENTORY = t("network.charge.maininventory");
+	public static final Localisation WIRELESS_CHARGE_HOTBAR = t("network.charge.hotbar");
+	public static final Localisation WIRELESS_CHARGE_ARMOUR = t("network.charge.armour");
+	public static final Localisation WIRELESS_CHARGE_BAUBLES = t("network.charge.baubles");
+	public static final Localisation WIRELESS_CHARGE_LEFT_HAND = t("network.charge.lefthand");
+	public static final Localisation WIRELESS_CHARGE_RIGHT_HAND = t("network.charge.righthand");
 	
 	//// NETWORK SELECTION \\\\
 	public static final Localisation NETWORK_OWNER = t("network.stats.owner");	

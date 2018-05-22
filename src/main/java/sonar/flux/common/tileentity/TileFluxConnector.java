@@ -1,7 +1,5 @@
 package sonar.flux.common.tileentity;
 
-import java.util.ArrayList;
-
 import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
 import sonar.core.api.IFlexibleGui;
@@ -9,8 +7,14 @@ import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
 import sonar.flux.api.energy.internal.ITransferHandler;
+import sonar.flux.client.GuiTab;
+import sonar.flux.client.tabs.GuiTabFluxConnectorIndex;
 import sonar.flux.common.tileentity.energy.TileFluxTesla;
 import sonar.flux.connection.transfer.handlers.ConnectionTransferHandler;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class TileFluxConnector extends TileFluxTesla implements IFlexibleGui {
 
@@ -47,5 +51,10 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
 	@Override
 	public ITransferHandler getTransferHandler() {
 		return handler;
+	}
+
+	@Nonnull
+	public Object getIndexScreen(List<GuiTab> tabs){
+		return new GuiTabFluxConnectorIndex(this, tabs);
 	}
 }

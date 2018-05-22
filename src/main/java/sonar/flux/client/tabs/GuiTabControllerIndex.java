@@ -1,8 +1,5 @@
 package sonar.flux.client.tabs;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.SonarCore;
 import sonar.core.helpers.FontHelper;
@@ -10,6 +7,9 @@ import sonar.flux.FluxTranslate;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileController;
+
+import java.io.IOException;
+import java.util.List;
 
 public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController, Object> {
 
@@ -21,11 +21,10 @@ public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController,
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
 		int colour = common.getNetworkColour().getRGB();
-		IFluxController controller = flux;
-		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.SEND_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getSendMode().getDisplayName(), 8, 66 + 18, colour);
-		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.RECEIVE_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getReceiveMode().getDisplayName(), 8, 86 + 18, colour);
-		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.TRANSFER_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getTransferMode().getDisplayName() + (controller.getTransferMode().isBanned() ? TextFormatting.RED + " " + FluxTranslate.BANNED.t() : ""), 8, 106 + 18, colour);
-		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.TRANSMITTER_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + controller.getTransmitterMode().getDisplayName(), 8, 126 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.SEND_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + flux.getSendMode().getDisplayName(), 8, 66 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.RECEIVE_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + flux.getReceiveMode().getDisplayName(), 8, 86 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.TRANSFER_MODE.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + flux.getTransferMode().getDisplayName() + (flux.getTransferMode().isBanned() ? TextFormatting.RED + " " + FluxTranslate.BANNED.t() : ""), 8, 106 + 18, colour);
+		FontHelper.text(TextFormatting.DARK_GRAY + FluxTranslate.WIRELESS_CHARGING.t() + TextFormatting.DARK_GRAY + ": " + TextFormatting.RESET + FluxTranslate.translateToggle(flux.transmitter.getObject()), 8, 126 + 18, colour);
 	}
 
 	@Override
@@ -41,7 +40,7 @@ public class GuiTabControllerIndex extends GuiTabConnectionIndex<TileController,
 			flux.transfer.setObject(IFluxController.TransferMode.values()[flux.getTransferMode().ordinal() + 1 < IFluxController.TransferMode.values().length ? flux.getTransferMode().ordinal() + 1 : 0]);
 			SonarCore.sendPacketToServer(flux, 12);
 		} else if (x - guiLeft > 5 && x - guiLeft < 165 && y - guiTop > 126 + 18 && y - guiTop < 140 + 18) {
-			flux.transmitter.setObject(IFluxController.TransmitterMode.values()[flux.getTransmitterMode().ordinal() + 1 < IFluxController.TransmitterMode.values().length ? flux.getTransmitterMode().ordinal() + 1 : 0]);
+			flux.transmitter.setObject(!flux.transmitter.getObject());
 			SonarCore.sendPacketToServer(flux, 13);
 		}
 	}

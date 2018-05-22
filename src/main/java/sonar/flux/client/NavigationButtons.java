@@ -1,13 +1,13 @@
 package sonar.flux.client;
 
-import static net.minecraft.client.renderer.GlStateManager.color;
-import static net.minecraft.client.renderer.GlStateManager.scale;
-
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.helpers.FontHelper;
+
+import static net.minecraft.client.renderer.GlStateManager.color;
+import static net.minecraft.client.renderer.GlStateManager.scale;
 
 @SideOnly(Side.CLIENT)
 public class NavigationButtons extends ImageButton {
@@ -16,7 +16,7 @@ public class NavigationButtons extends ImageButton {
 	public GuiTab tab;
 
 	public NavigationButtons(AbstractGuiTab gui, GuiTab tab, int id, int x, int y) {
-		super(id, x, y, AbstractGuiTab.navigation, tab.texX / 2, 0, 16, 16);
+		super(id, x, y, AbstractGuiTab.navigation, tab.texX / 2, tab.texY / 2, 16, 16);
 		this.id = id;
 		this.tab = tab;
 		this.gui = gui;

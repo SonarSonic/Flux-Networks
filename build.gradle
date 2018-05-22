@@ -75,6 +75,7 @@ dependencies {
     compileOnly "mekanism:Mekanism:${mekanism_version}"
     deobfCompile "cofh:RedstoneFlux:${redstoneflux_version}"
     compileOnly "appeng:appliedenergistics2:${ae2_version}"
+    compileOnly "baubles:Baubles:${baubles_version}"
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "api"
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "dev"
     if (!sonarcore_local) {
