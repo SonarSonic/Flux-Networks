@@ -83,11 +83,11 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 		InventoryPlayer inv = player.inventory;
 		ItemStack heldItem = inv.getCurrentItem();
 
-		if(controller.hot_bar.getObject()){
-			subInventories.put(inv.mainInventory.subList(0, 9), stack -> !stack.isEmpty() && (heldItem.isEmpty() || heldItem != stack));
+		if(controller.right_hand.getObject() && !heldItem.isEmpty()){
+			subInventories.put(Lists.newArrayList(heldItem), NOT_EMPTY);
 		}
-		if(controller.main_inventory.getObject()){
-			subInventories.put(inv.mainInventory.subList(9, inv.mainInventory.size()), NOT_EMPTY);
+		if(controller.left_hand.getObject()){
+			subInventories.put(inv.offHandInventory, NOT_EMPTY);
 		}
 		if(controller.armour_slot.getObject()){
 			subInventories.put(inv.armorInventory, NOT_EMPTY);
@@ -98,11 +98,11 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 				subInventories.put(() -> new ItemHandlerIterator(handler), NOT_EMPTY);
 			}
 		}
-		if(controller.left_hand.getObject()){
-			subInventories.put(inv.offHandInventory, NOT_EMPTY);
+		if(controller.hot_bar.getObject()){
+			subInventories.put(inv.mainInventory.subList(0, 9), stack -> !stack.isEmpty() && (heldItem.isEmpty() || heldItem != stack));
 		}
-		if(controller.right_hand.getObject() && !heldItem.isEmpty()){
-			subInventories.put(Lists.newArrayList(heldItem), NOT_EMPTY);
+		if(controller.main_inventory.getObject()){
+			subInventories.put(inv.mainInventory.subList(9, inv.mainInventory.size()), NOT_EMPTY);
 		}
 		return subInventories;
 	}

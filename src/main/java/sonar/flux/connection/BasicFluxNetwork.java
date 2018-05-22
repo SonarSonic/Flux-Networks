@@ -294,10 +294,10 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		if (getOwnerUUID().equals(playerID)) {
 			return PlayerAccess.OWNER;
 		}
-		if (accessType.getObject() != AccessType.PRIVATE) {
-			if (accessType.getObject() == AccessType.PUBLIC) {
-				return PlayerAccess.SHARED_OWNER;
-			}
+		if (accessType.getObject() == AccessType.PUBLIC) {
+			return PlayerAccess.SHARED_OWNER;
+		}
+		if (accessType.getObject() == AccessType.RESTRICTED) {
 			for (FluxPlayer fluxPlayer : players) {
 				if (playerID.equals(fluxPlayer.getUUID())) {
 					return fluxPlayer.getAccess();

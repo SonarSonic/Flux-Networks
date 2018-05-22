@@ -96,7 +96,7 @@ network.charge.hotbar=Player Hot Bar (excludes Right Hand)
 network.charge.armour=Armour Inventory
 network.charge.baubles=Baubles Inventory
 network.charge.lefthand=Left Hand
-network.charge.righthande=Right Hand
+network.charge.righthand=Right Hand
 
 //NETWORK SELECTION
 network.stats.owner=Owner

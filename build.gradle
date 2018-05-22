@@ -45,7 +45,7 @@ minecraft {
     runDir = "run"
     replace "@VERSION@", "${mod_version}"
     replace "sonarcore@[0.0.0,)", "sonarcore@[" + "${sonar_core_version}" +",)"
-    mappings = "snapshot_20171002"
+    mappings = "snapshot_20171003"
     makeObfSourceJar = false
 }
 
