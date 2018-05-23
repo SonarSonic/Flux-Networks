@@ -17,6 +17,7 @@ import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,6 +60,8 @@ public class FluxNetworks {
 	public static List<ITileEnergyHandler> enabledTileEnergyHandlers;
 	public static List<IItemEnergyHandler> loadedItemEnergyHandlers;
 	public static List<IItemEnergyHandler> enabledItemEnergyHandlers;
+	public static List<Block> block_connection_blacklist;
+	public static List<Item> item_connection_blacklist;
 
 	public static SimpleNetworkWrapper network;
 	public static Logger logger = (Logger) LogManager.getLogger(FluxConstants.MODID);
@@ -143,8 +146,10 @@ public class FluxNetworks {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		FluxConfig.finishLoading();
-		FluxNetworks.enabledTileEnergyHandlers = FluxHelper.getTileEnergyHandlers();
-		FluxNetworks.enabledItemEnergyHandlers = FluxHelper.getItemEnergyHandlers();
+		enabledTileEnergyHandlers = FluxHelper.getTileEnergyHandlers();
+		enabledItemEnergyHandlers = FluxHelper.getItemEnergyHandlers();
+		block_connection_blacklist = FluxHelper.getBlackListedValues(ForgeRegistries.BLOCKS, FluxConfig.block_connection_blacklist_strings);
+		item_connection_blacklist = FluxHelper.getBlackListedValues(ForgeRegistries.ITEMS, FluxConfig.item_connection_blacklist_strings);
 		proxy.postInit(event);
 	}
 

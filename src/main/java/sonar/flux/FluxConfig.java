@@ -24,12 +24,15 @@ public class FluxConfig extends FluxNetworks {
 	public static int basicTransfer, herculeanTransfer, gargantuanTransfer;
 	public static int maximum_per_player;
 	public static int hyper = 4, god = 10;
+	public static String[] block_connection_blacklist_strings;
+	public static String[] item_connection_blacklist_strings;
 
 	public static Map<EnergyType, Pair<Boolean, Boolean>> transfer_types = new HashMap<>();
 	public static Map<EnergyType, List<EnergyType>> conversion = new HashMap<>();
 	public static Map<EnergyType, List<EnergyType>> conversion_override = new HashMap<>();
 	public static Map<EnergyType, List<EnergyType>> default_conversion_overrides = new HashMap<>();
 	public static Configuration config;
+
 	
 	static{
 		default_conversion_overrides.put(EnergyType.FE, Lists.newArrayList(EnergyType.RF, EnergyType.TESLA));
@@ -61,7 +64,19 @@ public class FluxConfig extends FluxNetworks {
 		redstone_ore_chance = config.getInt("Chance of Flux Drop (from Redstone Ore)", "flux_recipe", 50, 1, 5000, "the chance of a drop occurring (random, but roughly every 50 blocks)");
 		redstone_ore_min_drop = config.getInt("Minimum Flux Drop (from Redstone Ore)", "flux_recipe", 4, 1, 64, "the minimum Flux dropped from Redstone ore if a drop occurs");
 		redstone_ore_max_drop = config.getInt("Maximum Flux Drop (from Redstone Ore)", "flux_recipe", 16, 1, 64, "the maximum Flux dropped from Redstone Ore if a drop occurs");
+
+		block_connection_blacklist_strings = getBlackList("Block Connection Blacklist", "blacklists", new String[]{"actuallyadditions:block_phantom_energyface"}, "a blacklist for blocks which flux connections shouldn't connect to, use format 'modid:name'");
+		item_connection_blacklist_strings = getBlackList("Item Transfer Blacklist", "blacklists", new String[]{}, "a blacklist for items which the Flux Controller shouldn't transfer to, use format 'modid:name'");
+
 		config.save();
+	}
+
+	public static String[] getBlackList(String name, String category, String[] defaultValue, String comment){
+		Property prop = config.get(category, name, defaultValue);
+		prop.setLanguageKey(name);
+		prop.setValidValues(null);
+		prop.setComment(comment);
+		return prop.getStringList();
 	}
 
 	public static void finishLoading() {

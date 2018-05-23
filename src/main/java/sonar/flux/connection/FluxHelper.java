@@ -1,9 +1,14 @@
 package sonar.flux.connection;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.utils.Pair;
@@ -100,13 +105,6 @@ public class FluxHelper {
 		return from.getTransferHandler().removeFromNetwork(maxTransferRF, type, actionType);
 	}
 
-	/* @Deprecated public static long pullEnergy(IFlux from, long maxTransferRF, ActionType actionType) { long extracted = 0; maxTransferRF = Math.min(maxTransferRF, from.getCurrentTransferLimit()); if (from != null && maxTransferRF != 0) { switch (from.getConnectionType()) { case PLUG: extracted += from.getTransferHandler().addToNetwork(maxTransferRF - extracted, actionType); break; case STORAGE: break; default: break; } } return extracted; }
-	 * @Deprecated public static long pushEnergy(IFlux to, long maxTransferRF, ActionType actionType) { long received = 0; maxTransferRF = Math.min(maxTransferRF, to.getCurrentTransferLimit()); if (to != null && maxTransferRF != 0 && to.hasTransfers()) { switch (to.getConnectionType()) { case POINT: received += to.getTransferHandler().removeFromNetwork(maxTransferRF - received, actionType); break; case STORAGE: break; case CONTROLLER: break; default: break; } } return received; } */
-
-	public static boolean canConnect(TileEntity tile, EnumFacing dir) {
-		return tile != null && !(tile instanceof IFlux) && getValidHandler(tile, dir) != null;// || SonarLoader.rfLoaded && tile instanceof IEnergyConnection && FluxConfig.transfers.get(EnergyType.RF).a);
-	}
-
 	public static List<ITileEnergyHandler> getTileEnergyHandlers() {
 		List<ITileEnergyHandler> handlers = new ArrayList<>();
 		for (ITileEnergyHandler handler : FluxNetworks.loadedTileEnergyHandlers) {
@@ -130,7 +128,7 @@ public class FluxHelper {
 	}
 
 	public static ITileEnergyHandler getValidHandler(TileEntity tile, EnumFacing dir) {
-		if(tile == null || tile instanceof IFlux){
+		if(tile == null || tile instanceof IFlux || isBlackListed(tile.getBlockType())){
 			return null;
 		}
 		List<ITileEnergyHandler> handlers = FluxNetworks.enabledTileEnergyHandlers;
@@ -151,7 +149,7 @@ public class FluxHelper {
 	}
 
 	public static IItemEnergyHandler getValidHandler(ItemStack stack, Predicate<IItemEnergyHandler> filter) {
-		if (stack.isEmpty()) {
+		if (stack.isEmpty() || isBlackListed(stack.getItem())) {
 			return null;
 		}
 		List<IItemEnergyHandler> handlers = FluxNetworks.enabledItemEnergyHandlers;
@@ -161,5 +159,35 @@ public class FluxHelper {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isBlackListed(Block block){
+		return FluxNetworks.block_connection_blacklist.contains(block);
+	}
+
+	public static boolean isBlackListed(Item item){
+		return FluxNetworks.item_connection_blacklist.contains(item);
+	}
+
+	public static <T extends IForgeRegistryEntry<T>> List<T> getBlackListedValues(IForgeRegistry<T> registry, String[] strings){
+		List<T> blacklisted = new ArrayList<>();
+
+		for(String s : strings){
+			String[] split = s.split(":");
+			if(split.length != 2){
+				FluxNetworks.logger.error("BLACKLIST ERROR: " + s + " has incorrect formatting, please use 'modid:name'");
+				continue;
+			}
+			ResourceLocation loc = new ResourceLocation(split[0], split[1]);
+			T block = registry.getValue(loc);
+			if(block == null){
+				FluxNetworks.logger.info("BLACKLIST ISSUE: " + s + " no matching block/item was found");
+				continue;
+			}
+			blacklisted.add(block);
+			FluxNetworks.logger.info("BLACKLIST: " + s + " successfully black listed");
+		}
+
+		return blacklisted;
 	}
 }
