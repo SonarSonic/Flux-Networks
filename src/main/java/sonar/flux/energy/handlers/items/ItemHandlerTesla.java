@@ -7,9 +7,9 @@ import net.minecraft.item.ItemStack;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.flux.api.energy.IItemEnergyHandler;
-import sonar.flux.api.energy.TileEnergyHandler;
+import sonar.flux.api.energy.ItemEnergyHandler;
 
-@TileEnergyHandler(modid = "tesla", priority = 2)
+@ItemEnergyHandler(modid = "tesla", priority = 2)
 public class ItemHandlerTesla implements IItemEnergyHandler {
 
     @Override
