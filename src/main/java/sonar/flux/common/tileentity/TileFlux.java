@@ -89,7 +89,7 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	private int checkTicks;
 
 	//// CLIENT ONLY \\\\
-	public FluxError error = FluxError.NONE;
+	public FluxError error = null;
 	private ClientFlux client_flux;
 
 	public TileFlux(ConnectionType type) {

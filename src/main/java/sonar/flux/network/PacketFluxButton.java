@@ -1,9 +1,8 @@
 package sonar.flux.network;
 
-import javax.xml.ws.Holder;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import sonar.core.SonarCore;
 import sonar.core.network.PacketCoords;
+import sonar.flux.FluxNetworks;
 import sonar.flux.common.tileentity.TileFlux;
 
 /** FIXME, shouldn't need to have coords attached */
@@ -59,7 +59,6 @@ public class PacketFluxButton extends PacketCoords {
 
 		@Override
 		public IMessage onMessage(PacketFluxButton message, MessageContext ctx) {
-			Holder<IMessage> newMessage = new Holder();
 			SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
 				EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
 				if (player != null) {
@@ -71,11 +70,14 @@ public class PacketFluxButton extends PacketCoords {
 					TileEntity te = world.getTileEntity(message.pos);
 					if (te instanceof TileFlux) {
 						TileFlux source = (TileFlux) te;
-						newMessage.value = message.type.doPacket(source, player, message.packetTag);				
+						IMessage returnedMessage = message.type.doPacket(source, player, message.packetTag);
+						if(returnedMessage != null && player instanceof EntityPlayerMP){
+							FluxNetworks.network.sendTo(returnedMessage, (EntityPlayerMP)player);
+						}
 					}
 				}
 			});
-			return newMessage.value;
+			return null;
 		}
 	}
 }

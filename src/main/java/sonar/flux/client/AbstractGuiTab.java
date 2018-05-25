@@ -1,13 +1,5 @@
 package sonar.flux.client;
 
-import static net.minecraft.client.renderer.GlStateManager.color;
-import static net.minecraft.client.renderer.GlStateManager.scale;
-
-import java.awt.Color;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -32,6 +24,14 @@ import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
 
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static net.minecraft.client.renderer.GlStateManager.color;
+import static net.minecraft.client.renderer.GlStateManager.scale;
+
 public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 
 	public List<GuiTab> tabs;
@@ -51,7 +51,9 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 	public static final int black = FontHelper.getIntFromColor(0, 0, 0);
 
 	public int errorDisplayTicks;
-	public int errorDisplayTime = 300;
+	public long errorDisplayTime = 0;
+	public int errorDisplayTime_MS = 3000;
+
 	public boolean disabled = false;
 
 	public final T flux;
@@ -76,6 +78,21 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		}
 	}
 
+	protected void renderHoveredToolTip(int x, int y) {
+		super.renderHoveredToolTip(x, y);
+		if(flux.error != null){
+			drawHoveringText(TextFormatting.RED + flux.error.getErrorMessage(), x, y);
+			if(errorDisplayTicks == 0){
+				errorDisplayTime = System.currentTimeMillis();
+			}
+			errorDisplayTicks++;
+			if(System.currentTimeMillis() >= errorDisplayTime + errorDisplayTime_MS){
+				flux.error = null;
+				errorDisplayTicks = 0;
+			}
+		}
+	}
+
 	public int getNetworkID() {
 		return flux.getNetworkID();
 	}
@@ -93,6 +110,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 			Object screen = tab.getGuiScreen(flux, tabs);
 			FMLCommonHandler.instance().showGuiScreen(screen);
 			PacketHelper.sendPacketToServer(PacketType.GUI_STATE_CHANGE, flux, PacketHelper.createStateChangePacket(tab));
+			flux.error = null;
 		}
 	}
 

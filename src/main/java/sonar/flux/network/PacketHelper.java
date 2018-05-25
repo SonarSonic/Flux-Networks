@@ -1,10 +1,5 @@
 package sonar.flux.network;
 
-import java.util.List;
-import java.util.UUID;
-
-import com.mojang.authlib.GameProfile;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,12 +14,17 @@ import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.RemovalType;
+import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.FluxHelper;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class PacketHelper {
 
@@ -197,17 +197,11 @@ public class PacketHelper {
 		int networkID = packetTag.getInteger("networkID");
 		String playerName = packetTag.getString("playerName");
 		PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
-
-		GameProfile profile = SonarHelper.getGameProfileForUsername(playerName);
-		if (profile == null || profile.getId() == null) {
-			return new PacketFluxError(source.getPos(), FluxError.INVALID_USER);
-		}
-		UUID newPlayer = profile.getId();
 		IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!common.isFakeNetwork()) {
 			if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
 				IFluxNetwork network = (IFluxNetwork) common;
-				network.addPlayerAccess(newPlayer, access);
+				network.addPlayerAccess(playerName, access);
 				network.markDirty();
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.EDIT_NETWORK);
@@ -257,26 +251,33 @@ public class PacketHelper {
 		int networkID = packetTag.getInteger("networkID");
 		UUID playerChanged = packetTag.getUniqueId("playerChanged");
 		if (playerChanged != null) {
+			if (FluxHelper.getOwnerUUID(player).equals(playerChanged)) {
+				//don't allow editing of their own permissions.
+				return null;
+			}
 			PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
 			access = SonarHelper.incrementEnum(access, PlayerAccess.values());
-			while(access.canDelete()){access=SonarHelper.incrementEnum(access, PlayerAccess.values());}
-			
+			while (access.canDelete()) {
+				access = SonarHelper.incrementEnum(access, PlayerAccess.values());
+			}
+
 			IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
 			if (!common.isFakeNetwork()) {
 				if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
-					if (!FluxHelper.getOwnerUUID(player).equals(playerChanged)) {
-						IFluxNetwork network = (IFluxNetwork) common;
-						network.addPlayerAccess(playerChanged, access);
-						network.markDirty();
+					Optional<FluxPlayer> settings = ((IFluxNetwork) common).getValidFluxPlayer(playerChanged);
+					if (settings.isPresent()) {
+						settings.get().setAccess(access);
+						((IFluxNetwork) common).markDirty();
 					} else {
-						// FluxNetworks.network.sendTo(new PacketFluxError(flux.getPos(), FluxError.NOT_OWNER), (EntityPlayerMP) player);
+						return new PacketFluxError(source.getPos(), FluxError.INVALID_USER);
 					}
+
 				} else {
 					return new PacketFluxError(source.getPos(), FluxError.EDIT_NETWORK);
 				}
 			}
 		}
-		return new PacketFluxError(source.getPos(), FluxError.INVALID_USER);
+		return null;
 	}
 
 	//// DISCONNECT \\\\
