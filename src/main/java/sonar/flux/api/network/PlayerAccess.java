@@ -5,8 +5,8 @@ import sonar.flux.FluxTranslate;
 
 public enum PlayerAccess {
 	OWNER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
-	SHARED_OWNER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
-	USER(FluxTranslate.PLAYERS_NETWORK_OWNER), //
+	SHARED_OWNER(FluxTranslate.PLAYERS_NETWORK_SHARED_OWNER), //
+	USER(FluxTranslate.PLAYERS_NETWORK_USER), //
 	BLOCKED(FluxTranslate.PLAYERS_NETWORK_BLOCKED), //
 	CREATIVE(FluxTranslate.PLAYERS_NETWORK_CREATIVE);
 
@@ -20,16 +20,24 @@ public enum PlayerAccess {
 		return message.t();
 	}
 
+	////CAN DELETE THE NETWORK ENTIRELY \\\\
 	public boolean canDelete() {
 		return this == OWNER || this == CREATIVE;
 	}
 
+	////EDIT IMPORTANT NETWORK SETTINGS \\\\
 	public boolean canEdit() {
-		return this == OWNER || this == SHARED_OWNER || this == CREATIVE;
+		return canDelete() || this == SHARED_OWNER;
 	}
 
+	///OPEN THE GUIS OF FLUX CONNECTIONS \\\\
+	public boolean canView() {
+		return canEdit() || this == USER;
+	}
+
+	//// JOIN THE NETWORK \\\\
 	public boolean canConnect() {
-		return this == OWNER || this == SHARED_OWNER || this == USER || this == CREATIVE;
+		return this != BLOCKED;
 	}
 
 	public String getName() {

@@ -1,28 +1,24 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.RemovalType;
-import sonar.flux.api.network.FluxCache;
-import sonar.flux.api.network.FluxPlayersList;
-import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.api.network.*;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class EmptyFluxNetwork implements IFluxNetwork {
 
@@ -31,11 +27,14 @@ public class EmptyFluxNetwork implements IFluxNetwork {
     public final static CustomColour colour = new CustomColour(41, 94, 138);
 
 	@Override
-	public void onStartServerTick() {
-	}
+	public void onStartServerTick() {}
 	
 	@Override
-	public void onEndServerTick() {
+	public void onEndServerTick() {}
+
+	@Override
+	public boolean isOwner(UUID id) {
+		return false;
 	}
 
 	@Override
@@ -79,37 +78,26 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void setNetworkName(String name) {
-	}
+	public void setNetworkName(String name) {}
 
 	@Override
-	public void setAccessType(AccessType type) {
-	}
+	public void setAccessType(AccessType type) {}
 
 	@Override
-	public void setCustomColour(CustomColour colour) {
-	}
+	public void setCustomColour(CustomColour colour) {}
 
 	@Override
-    public void markDirty() {
-	}
+    public void markDirty() {}
 
 	@Override
-	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
-	}
+	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {}
 
 	@Override
-	public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {
-	}
+	public void addPlayerAccess(String usernme, PlayerAccess access) {}
 
 	@Override
-	public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType simulate) {
-		return 0;
-	}
-
-	@Override
-	public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType simulate) {
-		return 0;
+	public Optional<FluxPlayer> getValidFluxPlayer(UUID uuid) {
+		return Optional.empty();
 	}
 
 	@Override
@@ -123,12 +111,13 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-    public void addConnection(IFluxListenable flux, AdditionType type) {
-	}
+    public void addConnection(IFluxListenable flux, AdditionType type) {}
 
 	@Override
-    public void removeConnection(IFluxListenable flux, RemovalType type) {
-	}
+    public void removeConnection(IFluxListenable flux, RemovalType type) {}
+
+	@Override
+	public void changeConnection(IFluxListenable flux) {}
 
 	@Override
 	public NetworkStatistics getStatistics() {
@@ -136,13 +125,10 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void setClientConnections(List<ClientFlux> flux) {
-
-	}
+	public void setClientConnections(List<ClientFlux> flux) {}
 
 	@Override
-	public void readData(NBTTagCompound nbt, SyncType type) {
-	}
+	public void readData(NBTTagCompound nbt, SyncType type) {}
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
@@ -155,8 +141,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-	public void buildFluxConnections() {
-	}
+	public void buildFluxConnections() {}
 
 	@Override
 	public boolean isFakeNetwork() {
@@ -179,12 +164,10 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	}
 
 	@Override
-    public void onRemoved() {
-    }
+    public void onRemoved() {}
 
 	@Override
-    public void markTypeDirty(FluxCache... caches) {
-    }
+    public void markTypeDirty(FluxCache... caches) {}
 
     @Override
     public <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type) {
@@ -192,8 +175,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public void setHasConnections(boolean bool) {
-    }
+    public void setHasConnections(boolean bool) {}
 
 	@Override
 	public void addFluxListener(IFluxListenable listener) {}
@@ -203,7 +185,8 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
 	@Override
 	public boolean disabledConversion() {
-		return false;	}
+		return false;
+	}
 
 	@Override
 	public EnergyType getDefaultEnergyType() {

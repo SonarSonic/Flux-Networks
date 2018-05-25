@@ -1,8 +1,5 @@
 package sonar.flux.api.network;
 
-import java.util.List;
-import java.util.UUID;
-
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.utils.CustomColour;
@@ -10,12 +7,15 @@ import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
 
+import java.util.List;
+import java.util.UUID;
+
 /**
  * both client and server networks implement this
  */
 public interface IFluxCommon extends INBTSyncable {
 
-    
+    boolean isOwner(UUID id);
 
     /**
      * the access settings of this network

@@ -1,8 +1,5 @@
 package sonar.flux.api.network;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import sonar.core.api.nbt.INBTSyncable;
@@ -10,18 +7,11 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.ISyncableListener;
 
+import java.util.ArrayList;
+
 public class FluxPlayersList extends ArrayList<FluxPlayer> implements IDirtyPart, INBTSyncable {
 
     public boolean hasChanged = true;
-
-    public boolean containsUUID(UUID check) {
-        for (FluxPlayer player : this) {
-            if (player != null && player.id.equals(check)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public boolean containsPlayer(FluxPlayer check) {
         for (FluxPlayer player : this) {

@@ -1,7 +1,5 @@
 package sonar.flux.common.block;
 
-import java.util.List;
-
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -27,6 +25,7 @@ import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileFlux;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public abstract class FluxConnection extends SonarMachineBlock {
 
@@ -71,7 +70,7 @@ public abstract class FluxConnection extends SonarMachineBlock {
 				TileEntity target = world.getTileEntity(pos);
 				if (target instanceof TileFlux) {
 					TileFlux flux = (TileFlux) target;
-					if (flux.canAccess(player).canEdit()) {
+					if (flux.canAccess(player).canView()) {
 						flux.openFlexibleGui(player, 0);
 					} else {
 						FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + FluxTranslate.ERROR_NO_PERMISSION.t(), world, player);

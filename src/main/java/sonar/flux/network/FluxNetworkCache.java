@@ -1,12 +1,5 @@
 package sonar.flux.network;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.FunctionHelper;
@@ -19,11 +12,20 @@ import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.FluxListener;
+import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.IFluxNetworkCache;
+import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.connection.BasicFluxNetwork;
 import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
 public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<PlayerListener> {
@@ -104,7 +106,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	}
 
 	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access, boolean disableConvert, EnergyType defaultEnergy) {
-		UUID playerUUID = FluxHelper.getOwnerUUID(player);
+		UUID playerUUID = EntityPlayer.getUUID(player.getGameProfile());
 		networks.putIfAbsent(playerUUID, new ArrayList<>());
 		for (IFluxNetwork network : networks.get(playerUUID)) {
 			if (network.getNetworkName().equals(name)) {
@@ -112,8 +114,10 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 			}
 		}
 		int iD = createNewUniqueID();
-		BasicFluxNetwork network = new BasicFluxNetwork(iD, playerUUID, name, colour, access, disableConvert, defaultEnergy);
-		network.cachedOwnerName.setObject(player.getDisplayNameString());
+
+		FluxPlayer owner = FluxPlayer.createFluxPlayer(player, PlayerAccess.OWNER);
+		BasicFluxNetwork network = new BasicFluxNetwork(iD, owner.getOnlineUUID(), owner.getCachedName(), name, colour, access, disableConvert, defaultEnergy);
+		network.getPlayers().add(owner);
 
 		addNetwork(network);
 		FluxEvents.logNewNetwork(network);
@@ -121,10 +125,8 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	}
 
 	public void onPlayerRemoveNetwork(UUID uuid, IFluxNetwork remove) {
-		if (networks.get(uuid) != null) {
-			removeNetwork(remove);
-			FluxEvents.logRemoveNetwork(remove);
-		}
+		removeNetwork(remove);
+		FluxEvents.logRemoveNetwork(remove);
 	}
 	
 	public void updateNetworkListeners() {

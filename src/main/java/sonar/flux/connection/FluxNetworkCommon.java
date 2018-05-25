@@ -1,32 +1,22 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import com.google.common.collect.Lists;
-import com.mojang.authlib.GameProfile;
-
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.core.helpers.SonarHelper;
-import sonar.core.network.sync.ISyncableListener;
-import sonar.core.network.sync.SyncEnergyType;
-import sonar.core.network.sync.SyncEnum;
-import sonar.core.network.sync.SyncNBTAbstract;
-import sonar.core.network.sync.SyncTagType;
-import sonar.core.network.sync.SyncUUID;
-import sonar.core.network.sync.SyncableList;
+import sonar.core.network.sync.*;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientFlux;
-import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.FluxPlayersList;
 import sonar.flux.api.network.IFluxCommon;
-import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListener {
 
@@ -35,7 +25,7 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
     public SyncEnum<AccessType> accessType = new SyncEnum<>(AccessType.values(), 3).setDefault(AccessType.PRIVATE);
 	//public SyncTagType.LONG maxStored = new SyncTagType.LONG(4);
 	//public SyncTagType.LONG energyStored = new SyncTagType.LONG(5);
-	public SyncUUID ownerUUID = new SyncUUID(6);
+	private SyncUUID ownerUUID = new SyncUUID(6);
 	public SyncNBTAbstract<CustomColour> colour = new SyncNBTAbstract(CustomColour.class, 7);
 	public SyncTagType.BOOLEAN disableConversion = new SyncTagType.BOOLEAN(8);
 	public SyncEnergyType defaultEnergyType = new SyncEnergyType(8);
@@ -45,25 +35,34 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	public SyncableList parts = new SyncableList(this);
 
 	{
-		parts.addParts(cachedOwnerName, networkName, networkID, accessType,/* maxStored, energyStored,*/ ownerUUID, colour, disableConversion, defaultEnergyType, networkStats, players);
-		
+		parts.addParts(cachedOwnerName, networkName, networkID, accessType, ownerUUID, colour, disableConversion, defaultEnergyType, networkStats, players);
 		colour.setObject(new CustomColour(41, 94, 138));
 	}
 
 	public FluxNetworkCommon() {
 	}
 
-	public FluxNetworkCommon(int ID, UUID owner, String name, CustomColour networkColour, AccessType type, boolean disableConvert, EnergyType defaultEnergy) {
-		ownerUUID.setObject(owner);
+	public FluxNetworkCommon(int ID, UUID playerUUID, String playerName, String name, CustomColour networkColour, AccessType type, boolean disableConvert, EnergyType defaultEnergy) {
+		ownerUUID.setObject(playerUUID);
 		networkID.setObject(ID);
-		GameProfile profile = SonarHelper.getProfileByUUID(owner);
-		cachedOwnerName.setObject(profile != null ? profile.getName() : "");
+		cachedOwnerName.setObject(playerName);
 		networkName.setObject(name);
 		colour.setObject(networkColour);
 		accessType.setObject(type);
 		disableConversion.setObject(disableConvert);
 		defaultEnergyType.setEnergyType(defaultEnergy);
-        players.add(new FluxPlayer(owner, PlayerAccess.OWNER, cachedOwnerName.getObject()));
+	}
+
+	@Override
+	public boolean isOwner(UUID id){
+		if(id.equals(getOwnerUUID())){
+			return true;
+		}
+		UUID offline_id = EntityPlayer.getOfflineUUID(this.getCachedPlayerName());
+		if(id.equals(offline_id)){
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -88,10 +87,6 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 
 	@Override
 	public String getCachedPlayerName() {
-        if (cachedOwnerName.getObject() == null || cachedOwnerName.getObject().isEmpty()) {
-			GameProfile profile = SonarHelper.getProfileByUUID(ownerUUID.getUUID());
-			cachedOwnerName.setObject(profile != null ? profile.getName() : "");
-		}
 		return cachedOwnerName.getObject();
 	}
 

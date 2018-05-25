@@ -1,9 +1,5 @@
 package sonar.flux.network;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.WorldSavedData;
@@ -21,6 +17,9 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.connection.BasicFluxNetwork;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class NetworkData extends WorldSavedData {
 
@@ -61,7 +60,7 @@ public class NetworkData extends WorldSavedData {
 				AccessType type = AccessType.valueOf(tag.getString(ACCESS));
 				boolean enableConversion = tag.getBoolean(CONVERSION);
 				EnergyType energyType = SonarCore.energyTypes.getRegisteredObject(tag.getInteger(ENERGY_TYPE));
-				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, networkName, colour, type, enableConversion, energyType);
+				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, cachedPlayer, networkName, colour, type, enableConversion, energyType);
 				network.getPlayers().readData(tag.getCompoundTag(PLAYER_LIST), SyncType.SAVE);
 				NBTTagList unloaded_connections = tag.getTagList("unloaded", NBT.TAG_COMPOUND);
 				List<ClientFlux> unloaded = new ArrayList<>();

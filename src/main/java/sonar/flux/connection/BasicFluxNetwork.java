@@ -1,16 +1,6 @@
 package sonar.flux.connection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
@@ -19,15 +9,10 @@ import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.FunctionHelper;
 import sonar.core.helpers.ListHelper;
-import sonar.core.helpers.SonarHelper;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxConfig;
-import sonar.flux.api.AccessType;
-import sonar.flux.api.AdditionType;
-import sonar.flux.api.ClientFlux;
-import sonar.flux.api.FluxListener;
-import sonar.flux.api.RemovalType;
+import sonar.flux.api.*;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
@@ -37,8 +22,11 @@ import sonar.flux.api.tiles.IFluxController.TransferMode;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
 import sonar.flux.api.tiles.IFluxPoint;
-import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.network.FluxNetworkCache;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
 public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork {
 
@@ -55,8 +43,8 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		super();
 	}
 
-	public BasicFluxNetwork(int ID, UUID owner, String name, CustomColour colour, AccessType type, boolean disableConvert, EnergyType defaultEnergy) {
-		super(ID, owner, name, colour, type, disableConvert, defaultEnergy);
+	public BasicFluxNetwork(int ID, UUID playerUUID, String playerName, String networkName, CustomColour colour, AccessType type, boolean disableConvert, EnergyType defaultEnergy) {
+		super(ID, playerUUID, playerName, networkName, colour, type, disableConvert, defaultEnergy);
 	}
 
 	public void addConnections() {
@@ -191,24 +179,28 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	@Override
-	public void removePlayerAccess(UUID playerUUID, PlayerAccess access) {
+	public void removePlayerAccess(UUID uuid, PlayerAccess access){
 		List<FluxPlayer> toDelete = new ArrayList<>();
 
-		players.stream().filter(p -> p.getUUID().equals(playerUUID)).forEach(toDelete::add);
+		players.stream().filter(p -> p.getOnlineUUID().equals(uuid) || p.getOfflineUUID().equals(uuid)).forEach(toDelete::add);
 		players.removeAll(toDelete);
 	}
 
 	@Override
-	public void addPlayerAccess(UUID playerUUID, PlayerAccess access) {
+	public Optional<FluxPlayer> getValidFluxPlayer(UUID uuid){
+		return players.stream().filter(p -> p.getOnlineUUID().equals(uuid) || p.getOfflineUUID().equals(uuid)).findFirst();
+	}
+
+	@Override
+	public void addPlayerAccess(String username, PlayerAccess access){
+		FluxPlayer created = FluxPlayer.createFluxPlayer(username, access);
 		for (FluxPlayer player : players) {
-			if (player.getUUID().equals(playerUUID)) {
+			if (created.getOnlineUUID().equals(player.getOnlineUUID()) || created.getOfflineUUID().equals(player.getOfflineUUID())) {
 				player.setAccess(access);
 				return;
 			}
 		}
-		FluxPlayer player = new FluxPlayer(playerUUID, access);
-		player.cachedName = SonarHelper.getProfileByUUID(playerUUID).getName();
-		players.add(player);
+		players.add(created);
 	}
 
 	@Override
@@ -291,7 +283,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			return PlayerAccess.CREATIVE;
 		}
 		UUID playerID = FluxHelper.getOwnerUUID(player);
-		if (getOwnerUUID().equals(playerID)) {
+		if (isOwner(playerID)) {
 			return PlayerAccess.OWNER;
 		}
 		if (accessType.getObject() == AccessType.PUBLIC) {
@@ -299,7 +291,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		if (accessType.getObject() == AccessType.RESTRICTED) {
 			for (FluxPlayer fluxPlayer : players) {
-				if (playerID.equals(fluxPlayer.getUUID())) {
+				if (fluxPlayer.matches(player, playerID)) {
 					return fluxPlayer.getAccess();
 				}
 			}

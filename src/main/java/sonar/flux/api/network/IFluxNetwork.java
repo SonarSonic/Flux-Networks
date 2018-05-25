@@ -1,17 +1,17 @@
 package sonar.flux.api.network;
 
-import java.util.List;
-import java.util.UUID;
-
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.utils.ActionType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.RemovalType;
 import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * all server stored Networks will implement this
@@ -70,24 +70,14 @@ public interface IFluxNetwork extends IFluxCommon {
     /**
      * removes access to the network from the given player, points/plugs associated with them and on the network will then be blocked
      */
-    void removePlayerAccess(UUID playerUUID, PlayerAccess access);
+    void removePlayerAccess(UUID uuid, PlayerAccess access);
 
     /**
      * adds access to the network for a given player, the owner is added as default
      */
-    void addPlayerAccess(UUID playerUUID, PlayerAccess access);
+    void addPlayerAccess(String username, PlayerAccess access);
 
-    /**
-     * used for pushing energy into the network it returns the amount received
-     * @param energyType TODO
-     */
-    long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type);
-
-    /**
-     * used for pulling energy from the network it returns the amount extracted
-     * @param energyType TODO
-     */
-    long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type);
+    Optional<FluxPlayer> getValidFluxPlayer(UUID uuid);
 
     /**
      * adds a Flux Connection to the network, this could be a PLUG, POINT or STORAGE
@@ -100,6 +90,8 @@ public interface IFluxNetwork extends IFluxCommon {
      * @param type TODO
      */
     void removeConnection(IFluxListenable flux, RemovalType type);
+
+    void changeConnection(IFluxListenable flux);
 
     void buildFluxConnections();
     

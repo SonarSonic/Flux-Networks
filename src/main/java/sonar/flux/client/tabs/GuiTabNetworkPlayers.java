@@ -1,11 +1,5 @@
 package sonar.flux.client.tabs;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -23,6 +17,12 @@ import sonar.flux.client.SmallButton;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlayer> {
 
@@ -79,10 +79,10 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	public void onGridClicked(int gridID, FluxPlayer element, int x, int y, int pos, int button, boolean empty) {
 		if (element != null) {
 			if (x - getGuiLeft() > 153) {
-				if (element.access != PlayerAccess.OWNER)
-					PacketHelper.sendPacketToServer(PacketType.REMOVE_PLAYER, flux, PacketHelper.createRemovePlayerPacket(flux.getNetworkID(), element.id, PlayerAccess.USER));
+				if (element.getAccess() != PlayerAccess.OWNER)
+					PacketHelper.sendPacketToServer(PacketType.REMOVE_PLAYER, flux, PacketHelper.createRemovePlayerPacket(flux.getNetworkID(), element.getOnlineUUID(), PlayerAccess.USER));
 			} else if (button == 1) {
-				PacketHelper.sendPacketToServer(PacketType.CHANGE_PLAYER, flux, PacketHelper.createChangePlayerPacket(flux.getNetworkID(), element.id, element.access));
+				PacketHelper.sendPacketToServer(PacketType.CHANGE_PLAYER, flux, PacketHelper.createChangePlayerPacket(flux.getNetworkID(), element.getOnlineUUID(), element.getAccess()));
 			}
 		}
 	}
@@ -107,7 +107,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 		if (x > 153) {
 			strings.add(TextFormatting.RED + FluxTranslate.DELETE.t() + ": " + element.getCachedName());
 		} else {
-			strings.add(TextFormatting.AQUA + FluxTranslate.CONFIG.t() + ": " + FontHelper.translate(isOwner ? PlayerAccess.OWNER.getName() : element.access.getName()));
+			strings.add(TextFormatting.AQUA + FluxTranslate.CONFIG.t() + ": " + FontHelper.translate(isOwner ? PlayerAccess.OWNER.getName() : element.getAccess().getName()));
 			strings.add(FluxTranslate.RIGHT_CLICK_TO_CHANGE.t());
 		}
 		drawHoveringText(strings, x, y);
