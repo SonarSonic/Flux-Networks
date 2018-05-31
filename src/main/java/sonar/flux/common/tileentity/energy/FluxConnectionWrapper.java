@@ -1,6 +1,4 @@
-package sonar.flux.connection.transfer.handlers;
-
-import javax.annotation.Nullable;
+package sonar.flux.common.tileentity.energy;
 
 import net.darkhax.tesla.api.ITeslaConsumer;
 import net.darkhax.tesla.api.ITeslaProducer;
@@ -11,6 +9,8 @@ import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.flux.api.tiles.IFluxConnection;
 import sonar.flux.api.tiles.IFluxPoint;
+
+import javax.annotation.Nullable;
 
 @Optional.InterfaceList({
         @Optional.Interface(iface = "net.darkhax.tesla.api.ITeslaConsumer", modid = "tesla"),

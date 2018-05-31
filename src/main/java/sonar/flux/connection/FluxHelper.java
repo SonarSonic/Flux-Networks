@@ -63,6 +63,7 @@ public class FluxHelper {
 		return player.isCreative();
 	}
 
+	/*
 	public static void sortConnections(List<IFlux> flux, PriorityMode mode) {
 		switch (mode) {
 		case DEFAULT:
@@ -76,6 +77,18 @@ public class FluxHelper {
 		default:
 			break;
 		}
+	}
+	*/
+
+	public static long transferEnergy(long max, List<IFluxPoint> points, EnergyType type, TransferMode mode) {
+		long currentLimit = max;
+		for (IFluxPoint point : points) {
+			currentLimit -= removeEnergyFromNetwork(point, type, currentLimit, ActionType.PERFORM);
+			if (currentLimit <= 0) {
+				break;
+			}
+		}
+		return max - currentLimit;
 	}
 
 	public static long transferEnergy(IFluxPlug plug, List<IFluxPoint> points, EnergyType type, TransferMode mode) {

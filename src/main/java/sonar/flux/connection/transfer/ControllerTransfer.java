@@ -69,7 +69,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 		List<FluxPlayer> playerNames = controller.getNetwork().getPlayers();
 		List<EntityPlayer> players = new ArrayList<>();
 		for (FluxPlayer player : playerNames) {
-			Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.id);
+			Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.getOnlineUUID());
 			if (entity instanceof EntityPlayer) {
 				players.add((EntityPlayer) entity);
 			}

@@ -78,7 +78,8 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 		}
 	}
 
-	protected void renderHoveredToolTip(int x, int y) {
+	@Override
+	public void renderHoveredToolTip(int x, int y) {
 		super.renderHoveredToolTip(x, y);
 		if(flux.error != null){
 			drawHoveringText(TextFormatting.RED + flux.error.getErrorMessage(), x, y);
@@ -115,7 +116,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 	}
 
 	@Override
-	protected void keyTyped(char c, int i) throws IOException {
+	public void keyTyped(char c, int i) throws IOException {
 		if (isCloseKey(i)) {
 			boolean isTyping = this.fieldList.stream().anyMatch(GuiTextField::isFocused);
 			if (!isTyping) {

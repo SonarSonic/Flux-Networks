@@ -1,8 +1,5 @@
 package sonar.flux.api;
 
-import java.util.List;
-import java.util.UUID;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +12,9 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.EmptyFluxNetwork;
+
+import java.util.List;
+import java.util.UUID;
 
 public class ClientFlux implements IFlux, INBTSyncable {
 
@@ -142,12 +142,6 @@ public class ClientFlux implements IFlux, INBTSyncable {
 
 	@Override
 	public void disconnect(IFluxNetwork network) {}
-
-	@Override
-	public void setMaxSend(long send) {}
-
-	@Override
-	public void setMaxReceive(long receive) {}
 
 	@Override
 	public PlayerAccess canAccess(EntityPlayer player) {

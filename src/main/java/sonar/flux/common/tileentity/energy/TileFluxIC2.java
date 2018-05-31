@@ -6,19 +6,21 @@ import ic2.api.energy.tile.IEnergyAcceptor;
 import ic2.api.energy.tile.IEnergyEmitter;
 import ic2.api.energy.tile.IEnergySink;
 import ic2.api.energy.tile.IEnergySource;
-import ic2.api.energy.tile.IEnergyTile;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Optional;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.integration.EUHelper;
-@Optional.InterfaceList({ 
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "ic2"), 
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "ic2"),
-	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "ic2") })
 
-public abstract class TileFluxIC2 extends TileFluxForgeEnergy implements IEnergyTile, IEnergySink, IEnergySource {
+@Optional.InterfaceList({
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySink", modid = "ic2"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergySource", modid = "ic2"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyAcceptor", modid = "ic2"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyEmitter", modid = "ic2"),
+	@Optional.Interface(iface = "ic2.api.energy.tile.IEnergyTile", modid = "ic2")
+})
+public abstract class TileFluxIC2 extends TileFluxForgeEnergy implements IEnergySink, IEnergySource {
 
 	public TileFluxIC2(ConnectionType type) {
 		super(type);

@@ -1,6 +1,5 @@
 package sonar.flux.common.tileentity;
 
-import cofh.redstoneflux.api.IEnergyHandler;
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
@@ -14,7 +13,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.common.Optional;
 import sonar.core.SonarCore;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.common.tileentity.TileEntitySonar;
@@ -33,7 +31,6 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.*;
 import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.api.configurator.IFluxConfigurable;
-import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFluxListenable;
@@ -51,14 +48,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
-@Optional.InterfaceList({ @Optional.Interface(iface = "cofh.redstoneflux.api.IEnergyHandler", modid = "redstoneflux") })
-public abstract class TileFlux extends TileEntitySonar implements IFluxListenable, IEnergyHandler, IByteBufTile, IFluxConfigurable, IFlexibleGui {
+public abstract class TileFlux extends TileEntitySonar implements IFluxListenable, IByteBufTile, IFluxConfigurable, IFlexibleGui {
 
 	private final ConnectionType type;
 
 	public long toReceive; // is reset after each tick, the network calculates the max accept based upon priorities and sorting etc.
 	public long toSend;
-	public long[] currentTransfer = new long[6];
 
 	//// USER CONFIGURED \\\\
 	public SyncTagType.INT priority = new SyncTagType.INT(0);
@@ -251,25 +246,6 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	}
 
 	//// REDSTONE FLUX \\\\
-
-	@Override
-	@Optional.Method(modid = "redstoneflux")
-	public boolean canConnectEnergy(EnumFacing from) {
-		return true;
-	}
-
-	@Override
-	@Optional.Method(modid = "redstoneflux")
-	public int getEnergyStored(EnumFacing from) {
-		return 0;
-	}
-
-	@Override
-	@Optional.Method(modid = "redstoneflux")
-	public int getMaxEnergyStored(EnumFacing from) {
-		return Integer.MAX_VALUE;
-	}
-
 	public ClientFlux getClientFlux(){
 		if(client_flux==null){
 			client_flux = new ClientFlux(this);
@@ -326,7 +302,7 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 			break;
 		case 1:
 			priority.readFromBuf(buf);
-			getNetwork().markTypeDirty(FluxCache.flux);
+			getNetwork().changeConnection(this);
 			break;
 		case 2:
 			limit.readFromBuf(buf);
@@ -345,16 +321,6 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	@Override
 	public boolean isValid() {
 		return !isInvalid();
-	}
-
-	@Override
-	public void setMaxSend(long send) {
-		toSend = send;
-	}
-
-	@Override
-	public void setMaxReceive(long receive) {
-		toReceive = receive;
 	}
 
 	@Override

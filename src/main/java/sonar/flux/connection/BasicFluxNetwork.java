@@ -17,11 +17,8 @@ import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.api.tiles.IFluxController;
+import sonar.flux.api.tiles.*;
 import sonar.flux.api.tiles.IFluxController.TransferMode;
-import sonar.flux.api.tiles.IFluxListenable;
-import sonar.flux.api.tiles.IFluxPlug;
-import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.network.FluxNetworkCache;
 
 import java.util.*;
@@ -37,7 +34,12 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public Queue<IFluxListenable> toRemove = new ConcurrentLinkedQueue<>();
 	public List<IFluxListenable> flux_listeners = new ArrayList<>();
 	public List<ClientFlux> unloaded = new ArrayList<>();
+	public long max_remove = 0;
 	public boolean hasConnections;
+	public boolean sortConnections = true;
+
+    public List<PriorityGrouping<IFluxPlug>> sorted_plugs = new ArrayList<>();
+    public List<PriorityGrouping<IFluxPoint>> sorted_points = new ArrayList<>();
 
 	public BasicFluxNetwork() {
 		super();
@@ -80,6 +82,10 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 	}
 
+	public void markConnectionsForSorting(){
+	    this.sortConnections = true;
+    }
+
 	// TODO way to quickly update priorities
 	public void markTypeDirty(FluxCache... caches) {
 		for (FluxCache cache : caches) {
@@ -109,13 +115,59 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		addConnections();
 		removeConnections();
 		updateTypes();
+		if(sortConnections){
+		    sortConnections();
+            sortConnections = false;
+        }
 		this.networkStats.onStartServerTick();
-		List<IFluxStorage> storage = getConnections(FluxCache.storage);
-		List<IFluxPoint> points = getConnections(FluxCache.point);
-		if (!storage.isEmpty() && !points.isEmpty()) {
-			storage.forEach(s -> FluxHelper.transferEnergy(s, points, getDefaultEnergyType(), TransferMode.DEFAULT));
-		}
+
+        List<IFluxPoint> points = getConnections(FluxCache.point);
+        max_remove = 0;
+        points.forEach(p -> max_remove += p.getTransferHandler().removeFromNetwork(p.getTransferLimit(), this.getDefaultEnergyType(), ActionType.SIMULATE));
 	}
+
+
+    @Override
+    public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type) {
+        long used = 0;
+        for(PriorityGrouping<IFluxPoint> group : sorted_points) {
+            long total = 0;
+            Map<IFluxPoint, Long> transfers = new HashMap<>();
+            for(IFluxPoint point : group.getEntries()){
+                long transfer = point.getTransferHandler().removeFromNetwork(maxReceive, energyType, ActionType.SIMULATE);
+                total += transfer;
+                transfers.put(point, transfer);
+            }
+            for (Map.Entry<IFluxPoint, Long> flux : transfers.entrySet()) {
+                long toTransfer = maxReceive - used;
+                if (toTransfer <= 0) {
+                    break;
+                }
+                Math.min(flux.getValue() / total, toTransfer);
+
+                long receive = FluxHelper.removeEnergyFromNetwork(flux.getKey(), energyType, toTransfer, type);
+                used += receive;
+            }
+        }
+
+
+        return used;
+    }
+
+
+    @Override
+    public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type) {
+        long used = 0;
+        List<IFluxPlug> plugs = getConnections(FluxCache.plug);
+        for (IFluxPlug flux : plugs) {
+            long toTransfer = maxExtract - used;
+            if (toTransfer <= 0) {
+                break;
+            }
+            used += FluxHelper.addEnergyToNetwork(flux, energyType, toTransfer, type);
+        }
+        return used;
+    }
 
 	@Override
 	public void onEndServerTick() {
@@ -124,8 +176,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			sendPacketToListeners();
 		}
 	}
-
-	public int listenerTicks = 0;
 
 	public void sendPacketToListeners() {
 		FluxListener.SYNC_INDEX.sendPackets(this, flux_listeners);
@@ -204,36 +254,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	}
 
 	@Override
-	public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type) {
-		long used = 0;
-		List<IFluxPoint> points = getConnections(FluxCache.point);
-		for (IFluxPoint flux : points) {
-			long toTransfer = maxReceive - used;
-			if (toTransfer <= 0) {
-				break;
-			}
-			long receive = FluxHelper.removeEnergyFromNetwork(flux, energyType, toTransfer, type);
-			used += receive;
-		}
-		return used;
-	}
-
-	@Override
-	public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type) {
-		long used = 0;
-		List<IFluxPlug> plugs = getConnections(FluxCache.plug);
-		for (IFluxPlug flux : plugs) {
-			long toTransfer = maxExtract - used;
-			if (toTransfer <= 0) {
-				break;
-			}
-			used += FluxHelper.addEnergyToNetwork(flux, energyType, toTransfer, type);
-		}
-		return used;
-		// return 0;
-	}
-
-	@Override
 	public void addConnection(IFluxListenable tile, AdditionType type) {
 		toAdd.add(tile);
 		toRemove.remove(tile); // prevents tiles being removed if it's unnecessary
@@ -250,6 +270,22 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 			unloaded.add(flux_unload);
 		}
 	}
+
+	@Override
+	public void changeConnection(IFluxListenable flux){
+		FluxCache.getValidTypes(flux).forEach(this::markTypeDirty);
+	}
+
+    private void sortConnections(){
+        sorted_plugs.clear();
+        sorted_points.clear();
+        List<IFluxPlug> plugs = getConnections(FluxCache.plug);
+        List<IFluxPoint> points = getConnections(FluxCache.point);
+        plugs.forEach(P -> PriorityGrouping.getOrCreateGrouping(P.getCurrentPriority(), sorted_plugs).getEntries().add(P));
+        points.forEach(P -> PriorityGrouping.getOrCreateGrouping(P.getCurrentPriority(), sorted_points).getEntries().add(P));
+        sorted_plugs.sort(Comparator.comparingInt(PriorityGrouping::getPriority));
+        sorted_points.sort(Comparator.comparingInt(PriorityGrouping::getPriority));
+    }
 
 	@Override
 	public void buildFluxConnections() {
@@ -312,7 +348,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	@Override
 	public void markChanged(IDirtyPart part) {
 		this.parts.markSyncPartChanged(part);
-		// this.markDirty();
 	}
 
 	public void connectAll() {
@@ -337,6 +372,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		connections.clear();
 		toAdd.clear();
 		toRemove.clear();
+		sorted_plugs.clear();
+		sorted_points.clear();
+		max_remove = 0;
 	}
 
 	public void setHasConnections(boolean bool) {

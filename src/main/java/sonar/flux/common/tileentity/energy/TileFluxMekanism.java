@@ -24,6 +24,7 @@ public abstract class TileFluxMekanism extends TileFluxIC2 implements IStrictEne
 	}
 
     @Override
+	@Optional.Method(modid = "mekanism")
     public double pullEnergy(EnumFacing side, double maxExtract, boolean simulate) {
 		return removePhantomEnergyFromNetwork(side, Math.max((long) Math.floor(maxExtract), Long.MAX_VALUE), EnergyType.MJ, ActionType.getTypeForAction(simulate));
     }
@@ -39,4 +40,5 @@ public abstract class TileFluxMekanism extends TileFluxIC2 implements IStrictEne
     public boolean canOutputEnergy(EnumFacing dir) {
 		return getConnectionType().canRemovePhantomPower();
 	}
+
 }

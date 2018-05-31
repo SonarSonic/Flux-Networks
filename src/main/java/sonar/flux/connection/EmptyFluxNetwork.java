@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.energy.EnergyType;
+import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
@@ -212,6 +213,16 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	@Override
 	public List<IFluxListenable> getFluxListeners() {
 		return Lists.newArrayList();
+	}
+
+	@Override
+	public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type) {
+		return 0;
+	}
+
+	@Override
+	public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type) {
+		return 0;
 	}
 
 	@Override

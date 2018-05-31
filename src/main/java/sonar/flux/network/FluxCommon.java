@@ -8,10 +8,9 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import sonar.core.utils.IGuiItem;
 import sonar.flux.FluxNetworks;
 
-public class FluxCommon implements IGuiHandler {
+public class FluxCommon {
 
 	public void registerRenderThings() {}
 
@@ -29,28 +28,4 @@ public class FluxCommon implements IGuiHandler {
 	public void init(FMLInitializationEvent event) {}
 
 	public void postInit(FMLPostInitializationEvent evt) {}
-
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		ItemStack equipped = player.getHeldItemMainhand();
-		if (!equipped.isEmpty()) {
-			switch (ID) {
-			case IGuiItem.ID:
-				return ((IGuiItem) equipped.getItem()).getGuiContainer(player, equipped);
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		ItemStack equipped = player.getHeldItemMainhand();
-		if (!equipped.isEmpty()) {
-			switch (ID) {
-			case IGuiItem.ID:
-				return ((IGuiItem) equipped.getItem()).getGuiScreen(player, equipped);
-			}
-		}
-		return null;
-	}
 }

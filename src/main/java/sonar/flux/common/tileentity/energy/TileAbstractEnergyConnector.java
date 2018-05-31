@@ -1,12 +1,11 @@
 package sonar.flux.common.tileentity.energy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.util.EnumFacing;
 import sonar.flux.api.tiles.IFluxConnection;
 import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.connection.transfer.handlers.FluxConnectionWrapper;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class TileAbstractEnergyConnector extends TileFlux implements IFluxConnection {
 

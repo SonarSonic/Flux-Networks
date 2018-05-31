@@ -2,7 +2,6 @@ package sonar.flux.common.tileentity;
 
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.EnumFacing;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.network.sync.SyncEnum;
 import sonar.core.network.sync.SyncTagType;
@@ -18,8 +17,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TileController extends TileFlux implements IFlexibleGui, IFluxController {
-	public SyncEnum<PriorityMode> sendMode = new SyncEnum(PriorityMode.values(), 10);
-	public SyncEnum<PriorityMode> receiveMode = new SyncEnum(PriorityMode.values(), 11);
+	public SyncEnum<PriorityMode> sendMode = new SyncEnum(PriorityMode.values(), 10).setDefault(PriorityMode.LARGEST);
+	public SyncEnum<PriorityMode> receiveMode = new SyncEnum(PriorityMode.values(), 11).setDefault(PriorityMode.LARGEST);
 	public SyncTagType.BOOLEAN transmitter = new SyncTagType.BOOLEAN(12);
 	public SyncEnum<TransferMode> transfer = new SyncEnum(TransferMode.values(), 13);
 	public SyncTagType.BOOLEAN main_inventory = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(14).setDefault(true);
@@ -50,15 +49,6 @@ public class TileController extends TileFlux implements IFlexibleGui, IFluxContr
 	@Override
 	public TransferMode getTransferMode() {
 		return transfer.getObject();
-	}
-
-	public boolean hasTransfers() {
-		return true;
-	}
-
-	@Override
-	public boolean canConnectEnergy(EnumFacing from) {
-		return false;
 	}
 
 	@Override

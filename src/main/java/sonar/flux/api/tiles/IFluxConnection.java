@@ -10,5 +10,5 @@ public interface IFluxConnection extends IFlux {
     long addPhantomEnergyToNetwork(EnumFacing from, long max_add, EnergyType energy_type, ActionType type);
 
 	long removePhantomEnergyFromNetwork(EnumFacing from, long max_remove, EnergyType energy_type, ActionType type);
-	
+
 }

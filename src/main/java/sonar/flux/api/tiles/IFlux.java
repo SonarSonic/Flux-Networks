@@ -1,7 +1,5 @@
 package sonar.flux.api.tiles;
 
-import java.util.UUID;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -11,6 +9,8 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
+
+import java.util.UUID;
 
 /**
  * extended by IFluxPoint & IFluxPlug you must use them if you wish to send and receive energy from the network
@@ -90,17 +90,7 @@ public interface IFlux {
      * the maximum RF/t this Flux connection can receive
      */
     long getTransferLimit();
-    
 
-    /*
-    void onEnergyRemoved(EnumFacing face, long remove);
-
-    void onEnergyAdded(EnumFacing face, long added);
-    */
-
-    void setMaxSend(long send);
-
-    void setMaxReceive(long receive);
 
     /**
      * the higher the priority the sooner the Flux connection will receive power

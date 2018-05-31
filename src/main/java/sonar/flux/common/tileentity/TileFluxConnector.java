@@ -19,7 +19,7 @@ import java.util.List;
 public abstract class TileFluxConnector extends TileFluxTesla implements IFlexibleGui {
 
 	public final ConnectionTransferHandler handler = new ConnectionTransferHandler(this, this, SonarHelper.convertArray(getValidFaces()));
-	
+
 	public TileFluxConnector(ConnectionType type) {
 		super(type);
 	}

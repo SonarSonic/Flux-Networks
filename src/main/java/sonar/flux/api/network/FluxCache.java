@@ -1,17 +1,12 @@
 package sonar.flux.api.network;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
-import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.api.tiles.IFluxListenable;
-import sonar.flux.api.tiles.IFluxPlug;
-import sonar.flux.api.tiles.IFluxPoint;
-import sonar.flux.api.tiles.IFluxStorage;
+import sonar.flux.api.tiles.*;
 import sonar.flux.connection.BasicFluxNetwork;
 import sonar.flux.connection.FluxHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FluxCache<T extends IFluxListenable> {
 
@@ -27,18 +22,23 @@ public class FluxCache<T extends IFluxListenable> {
 
         public void update(BasicFluxNetwork network) {
             network.setHasConnections(!network.getConnections(this).isEmpty());
+            network.markConnectionsForSorting();
         }
 
     };
-    public static final FluxCache plug = new FluxCache(IFluxPlug.class);
-    public static final FluxCache point = new FluxCache(IFluxPoint.class);
-    public static final FluxCache storage = new FluxCache(IFluxStorage.class) {
+    public static final FluxCache plug = new FluxCache(IFluxPlug.class){
 
         public void update(BasicFluxNetwork network) {
-            controller.update(network); //update priorities
+            //network.markConnectionsForSorting();
         }
-
     };
+    public static final FluxCache point = new FluxCache(IFluxPoint.class){
+
+        public void update(BasicFluxNetwork network) {
+            //network.markConnectionsForSorting();
+        }
+    };
+    public static final FluxCache storage = new FluxCache(IFluxStorage.class);
     public static final FluxCache controller = new FluxCache(IFluxController.class) {
 
         public void update(BasicFluxNetwork network) {
@@ -49,11 +49,7 @@ public class FluxCache<T extends IFluxListenable> {
                     controller.disconnect(network);
                 }
             }
-            if (controllers.size() > 0) {
-                IFluxController controller = controllers.get(0);
-                FluxHelper.sortConnections(network.getConnections(FluxCache.plug), controller.getSendMode());
-                FluxHelper.sortConnections(network.getConnections(FluxCache.point), controller.getReceiveMode());
-            }
+           // network.markConnectionsForSorting();
         }
     };
 

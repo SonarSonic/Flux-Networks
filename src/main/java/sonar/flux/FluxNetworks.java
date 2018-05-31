@@ -131,11 +131,8 @@ public class FluxNetworks {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		logger.info("Loading Handlers");
-		NetworkRegistry.INSTANCE.registerGuiHandler(this, new FluxCommon());
-		logger.info("Loaded Handlers");
 
-		logger.info("Loading Handlers");
+		logger.info("Loading Events");
 		MinecraftForge.EVENT_BUS.register(new FluxEvents());
 		logger.info("Loaded Events");
 
