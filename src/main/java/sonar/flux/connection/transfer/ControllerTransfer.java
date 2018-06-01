@@ -9,13 +9,13 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.items.IItemHandler;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.utils.ActionType;
-import sonar.core.helpers.ItemStackHelper;
 import sonar.core.api.energy.IItemEnergyHandler;
+import sonar.core.api.utils.ActionType;
+import sonar.core.handlers.inventories.ItemStackHelper;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.common.tileentity.TileController;
-import sonar.flux.connection.FluxHelper;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -46,7 +46,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 			for(Map.Entry<Iterable<ItemStack>, Predicate<ItemStack>> inventory : inventories.entrySet()){
 				for(ItemStack stack : inventory.getKey()){
 					IItemEnergyHandler handler;
-					if(!inventory.getValue().test(stack) || (handler = FluxHelper.getValidAdditionHandler(stack)) == null) {
+					if(!inventory.getValue().test(stack) || (handler = FluxNetworks.TRANSFER_HANDLER.getItemHandler(stack)) == null) {
 						continue;
 					}
 					long receive = handler.addEnergy(maxTransferRF - received, stack, actionType);

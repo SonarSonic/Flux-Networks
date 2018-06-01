@@ -3,7 +3,7 @@ package sonar.flux.connection.transfer;
 import net.minecraft.item.ItemStack;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.core.helpers.ItemStackHelper;
+import sonar.core.handlers.inventories.ItemStackHelper;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.common.tileentity.TileStorage;
 

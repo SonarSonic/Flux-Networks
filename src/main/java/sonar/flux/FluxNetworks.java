@@ -23,8 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sonar.core.SonarRegister;
 import sonar.flux.api.FluxAPI;
-import sonar.core.api.energy.IItemEnergyHandler;
-import sonar.core.api.energy.ITileEnergyHandler;
 import sonar.flux.common.block.FluxController;
 import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
@@ -37,7 +35,8 @@ import sonar.flux.common.tileentity.TileController;
 import sonar.flux.common.tileentity.TileFluxPlug;
 import sonar.flux.common.tileentity.TileFluxPoint;
 import sonar.flux.common.tileentity.TileStorage;
-import sonar.flux.connection.FluxHelper;
+import sonar.flux.connection.FNEnergyTransferHandler;
+import sonar.flux.connection.FNEnergyTransferProxy;
 import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
@@ -56,10 +55,9 @@ public class FluxNetworks {
 
 	public FluxNetworkCache serverCache = new FluxNetworkCache();
 	public ClientNetworkCache clientCache = new ClientNetworkCache();
-	public static List<ITileEnergyHandler> enabledTileEnergyHandlers;
-	public static List<IItemEnergyHandler> enabledItemEnergyHandlers;
 	public static List<Block> block_connection_blacklist;
 	public static List<Item> item_connection_blacklist;
+	public static final FNEnergyTransferHandler TRANSFER_HANDLER = new FNEnergyTransferHandler();
 
 	public static SimpleNetworkWrapper network;
 	public static Logger logger = (Logger) LogManager.getLogger(FluxConstants.MODID);
@@ -140,10 +138,8 @@ public class FluxNetworks {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		FluxConfig.finishLoading();
-		enabledTileEnergyHandlers = FluxHelper.getTileEnergyHandlers();
-		enabledItemEnergyHandlers = FluxHelper.getItemEnergyHandlers();
-		block_connection_blacklist = FluxHelper.getBlackListedValues(ForgeRegistries.BLOCKS, FluxConfig.block_connection_blacklist_strings);
-		item_connection_blacklist = FluxHelper.getBlackListedValues(ForgeRegistries.ITEMS, FluxConfig.item_connection_blacklist_strings);
+		block_connection_blacklist = FNEnergyTransferProxy.getBlackListedValues(ForgeRegistries.BLOCKS, FluxConfig.block_connection_blacklist_strings);
+		item_connection_blacklist = FNEnergyTransferProxy.getBlackListedValues(ForgeRegistries.ITEMS, FluxConfig.item_connection_blacklist_strings);
 		proxy.postInit(event);
 	}
 

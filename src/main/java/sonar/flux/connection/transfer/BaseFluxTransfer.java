@@ -1,7 +1,6 @@
 package sonar.flux.connection.transfer;
 
 import net.minecraft.nbt.NBTTagCompound;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.flux.api.energy.internal.IFluxTransfer;
@@ -28,12 +27,12 @@ public abstract class BaseFluxTransfer implements IFluxTransfer {
 
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
-		setEnergyType(SonarCore.energyTypes.getRegisteredObject(nbt.getInteger("ET")));
+		setEnergyType(EnergyType.readFromNBT(nbt, "ET"));
 	}
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
-		nbt.setInteger("ET", SonarCore.energyTypes.getObjectID(getEnergyType().getName()));
+		EnergyType.writeToNBT(getEnergyType(), nbt, "ET");
 		return nbt;
 	}
 

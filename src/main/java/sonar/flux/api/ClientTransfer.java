@@ -3,7 +3,6 @@ package sonar.flux.api;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper.SyncType;
@@ -29,7 +28,7 @@ public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
-		energyType = SonarCore.energyTypes.getRegisteredObject(nbt.getInteger(NetworkData.ENERGY_TYPE));
+		energyType = EnergyType.readFromNBT(nbt, NetworkData.ENERGY_TYPE);
 		byte direction_byte = nbt.getByte("d");
 		direction = direction_byte == -1 ? null : EnumFacing.VALUES[direction_byte];
 		isPhantomPower = nbt.getBoolean("p");
@@ -40,7 +39,7 @@ public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
-		nbt.setInteger(NetworkData.ENERGY_TYPE, SonarCore.energyTypes.getObjectID(energyType.getName()));	
+		EnergyType.writeToNBT(energyType, nbt, NetworkData.ENERGY_TYPE);
 		nbt.setByte("d", direction == null ? -1 : (byte) direction.ordinal());
 		if (isPhantomPower)
 			nbt.setBoolean("p", isPhantomPower);

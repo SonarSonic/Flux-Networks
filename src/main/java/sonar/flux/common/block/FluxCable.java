@@ -16,9 +16,9 @@ import sonar.core.api.utils.BlockInteraction;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.integration.SonarLoader;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.common.tileentity.TileCable;
-import sonar.flux.connection.FluxHelper;
 
 import javax.annotation.Nonnull;
 
@@ -58,7 +58,7 @@ public class FluxCable extends SonarMachineBlock {
             if (tile instanceof IFlux || tile instanceof TileCable || (SonarLoader.rfLoaded && tile instanceof IEnergyConnection)) {
 				return true;
 			}
-            return FluxHelper.getValidHandler(tile, dir) != null;
+            return FluxNetworks.TRANSFER_HANDLER.getTileHandler(tile, dir) != null;
 		}
 		return false;
 	}

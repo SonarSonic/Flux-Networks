@@ -4,7 +4,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
@@ -59,7 +58,7 @@ public class NetworkData extends WorldSavedData {
 				CustomColour colour = NBTHelper.instanceNBTSyncable(CustomColour.class, tag.getCompoundTag(COLOUR));
 				AccessType type = AccessType.valueOf(tag.getString(ACCESS));
 				boolean enableConversion = tag.getBoolean(CONVERSION);
-				EnergyType energyType = SonarCore.energyTypes.getRegisteredObject(tag.getInteger(ENERGY_TYPE));
+				EnergyType energyType = EnergyType.readFromNBT(tag, ENERGY_TYPE);
 				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, cachedPlayer, networkName, colour, type, enableConversion, energyType);
 				network.getPlayers().readData(tag.getCompoundTag(PLAYER_LIST), SyncType.SAVE);
 				NBTTagList unloaded_connections = tag.getTagList("unloaded", NBT.TAG_COMPOUND);
@@ -91,7 +90,7 @@ public class NetworkData extends WorldSavedData {
 				tag.setTag(COLOUR, network.getNetworkColour().writeData(new NBTTagCompound(), SyncType.SAVE));
 				tag.setString(ACCESS, network.getAccessType().name());
 				tag.setBoolean(CONVERSION, network.disabledConversion());
-				tag.setInteger(ENERGY_TYPE, SonarCore.energyTypes.getObjectID(network.getDefaultEnergyType().getName()));		        
+				EnergyType.writeToNBT(network.getDefaultEnergyType(), tag, ENERGY_TYPE);
 				tag.setTag(PLAYER_LIST, network.getPlayers().writeData(new NBTTagCompound(), SyncType.SAVE));
 				if (network instanceof BasicFluxNetwork) {
 					NBTTagList unloaded_connections = new NBTTagList();

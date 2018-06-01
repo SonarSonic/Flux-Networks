@@ -1,24 +1,14 @@
 package sonar.flux.client.tabs;
 
-import static net.minecraft.client.renderer.GlStateManager.popMatrix;
-import static net.minecraft.client.renderer.GlStateManager.pushMatrix;
-
-import java.awt.Color;
-import java.io.IOException;
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
-//import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.helpers.FontHelper;
+import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.AccessType;
@@ -28,6 +18,15 @@ import sonar.flux.client.LargeButton;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
 import sonar.flux.network.PacketType;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.List;
+
+import static net.minecraft.client.renderer.GlStateManager.popMatrix;
+import static net.minecraft.client.renderer.GlStateManager.pushMatrix;
+
+//import org.lwjgl.opengl.GL11;
 
 public class GuiTabNetworkEdit extends AbstractGuiTab {
 
@@ -158,13 +157,7 @@ public class GuiTabNetworkEdit extends AbstractGuiTab {
 			showFullPreview = !showFullPreview;
 		}
 		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 24 && y - getGuiTop() < 52 + 24) {
-			int ordinal = SonarCore.energyTypes.getObjectID(type.getName()) + 1;
-			EnergyType type = SonarCore.energyTypes.getRegisteredObject(ordinal);
-			if (type == null) {
-				this.type = SonarCore.energyTypes.getRegisteredObject(0);
-			} else {
-				this.type = type;
-			}
+			this.type = SonarHelper.incrementEnum(this.type, EnergyType.values());
 		}
 
 	}

@@ -2,6 +2,7 @@ package sonar.flux.connection.transfer.handlers;
 
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.network.IFluxNetwork;
@@ -28,7 +29,7 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 				long add = ((IEnergyTransfer)transfer).addToNetworkWithConvert(toTransfer, energyType, actionType);				
 				added += add;
 				if (!actionType.shouldSimulate()) {
-					max_add -= EnergyType.convert(add, energyType, getNetwork().getDefaultEnergyType());
+					max_add -= FluxNetworks.TRANSFER_HANDLER.convert(add, energyType, getNetwork().getDefaultEnergyType());
 				}
 			}
 		}
@@ -44,7 +45,7 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 				long remove = ((IEnergyTransfer)transfer).removeFromNetworkWithConvert(toTransfer, energyType, actionType);				
 				removed += remove;
 				if (!actionType.shouldSimulate()) {
-					max_remove -= EnergyType.convert(remove, energyType, getNetwork().getDefaultEnergyType());
+					max_remove -= FluxNetworks.TRANSFER_HANDLER.convert(remove, energyType, getNetwork().getDefaultEnergyType());
 				}
 			}
 		}
@@ -62,10 +63,10 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 	}
 
 	public long getValidAddition(long maxReceive, EnergyType type) {
-		return Math.min(maxReceive, EnergyType.convert(getValidMaxAddition(), getNetwork().getDefaultEnergyType(), type));
+		return Math.min(maxReceive, FluxNetworks.TRANSFER_HANDLER.convert(getValidMaxAddition(), getNetwork().getDefaultEnergyType(), type));
 	}
 
 	public long getValidRemoval(long maxRemoval, EnergyType type) {
-		return Math.min(maxRemoval, EnergyType.convert(getValidMaxRemoval(), getNetwork().getDefaultEnergyType(), type));
+		return Math.min(maxRemoval, FluxNetworks.TRANSFER_HANDLER.convert(getValidMaxRemoval(), getNetwork().getDefaultEnergyType(), type));
 	}
 }

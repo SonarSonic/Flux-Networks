@@ -11,14 +11,17 @@ import sonar.core.helpers.FunctionHelper;
 import sonar.core.helpers.ListHelper;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.utils.CustomColour;
-import sonar.flux.FluxConfig;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.*;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.api.tiles.*;
+import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxController.TransferMode;
+import sonar.flux.api.tiles.IFluxListenable;
+import sonar.flux.api.tiles.IFluxPlug;
+import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.network.FluxNetworkCache;
 
 import java.util.*;
@@ -383,7 +386,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 
 	@Override
 	public boolean canConvert(EnergyType from, EnergyType to) {
-		return (from == to || !disabledConversion() && FluxConfig.conversion.get(from).contains(to)) || FluxConfig.conversion_override.get(from).contains(to);
+		return (from == to || !disabledConversion() && FluxNetworks.TRANSFER_HANDLER.getProxy().canConvert(to, from)) || FNEnergyTransferProxy.checkOverride(to, from);
 	}
 
 	@Override

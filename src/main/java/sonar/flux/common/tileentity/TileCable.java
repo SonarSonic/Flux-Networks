@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.Optional;
 import sonar.core.common.block.ConnectedTile;
 import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.integration.SonarLoader;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.connection.FluxHelper;
 
 //to be fully implemented later
 @Optional.InterfaceList({
@@ -29,7 +29,7 @@ public class TileCable extends TileEntitySonar implements IEnergyReceiver, IEner
 					sides[face.getIndex()] = true;
 					continue;
 				}
-				if (FluxHelper.getValidHandler(tile, face) != null) {
+				if (FluxNetworks.TRANSFER_HANDLER.getTileHandler(tile, face) != null) {
 					sides[face.getIndex()] = true;
 				}
 			} else {

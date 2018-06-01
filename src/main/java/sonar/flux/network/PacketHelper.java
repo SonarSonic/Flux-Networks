@@ -4,7 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.SonarHelper;
@@ -71,7 +70,7 @@ public class PacketHelper {
 		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
 		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
 		tag.setBoolean(NetworkData.CONVERSION, disableConvert);
-		tag.setInteger(NetworkData.ENERGY_TYPE, SonarCore.energyTypes.getObjectID(defaultEnergy.getName()));	
+		EnergyType.writeToNBT(defaultEnergy, tag, NetworkData.ENERGY_TYPE);
 		return tag;
 	}
 
@@ -81,7 +80,7 @@ public class PacketHelper {
 		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
 		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
 		boolean disableConversion = packetTag.getBoolean(NetworkData.CONVERSION);
-		EnergyType energyType = SonarCore.energyTypes.getRegisteredObject(packetTag.getInteger(NetworkData.ENERGY_TYPE));
+		EnergyType energyType = EnergyType.readFromNBT(packetTag, NetworkData.ENERGY_TYPE);
 
 		IFluxNetwork common = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!common.isFakeNetwork()) {
@@ -107,7 +106,7 @@ public class PacketHelper {
 		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
 		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
 		tag.setBoolean(NetworkData.CONVERSION, disableConvert);
-		tag.setInteger(NetworkData.ENERGY_TYPE, SonarCore.energyTypes.getObjectID(defaultEnergy.getName()));	
+		EnergyType.writeToNBT(defaultEnergy, tag, NetworkData.ENERGY_TYPE);
 		return tag;
 	}
 
@@ -116,7 +115,7 @@ public class PacketHelper {
 		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
 		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
 		boolean enableConversion = packetTag.getBoolean(NetworkData.CONVERSION);
-		EnergyType energyType = SonarCore.energyTypes.getRegisteredObject(packetTag.getInteger(NetworkData.ENERGY_TYPE));
+		EnergyType energyType = EnergyType.readFromNBT(packetTag, NetworkData.ENERGY_TYPE);
 		
 		if (FluxNetworks.getServerCache().hasSpaceForNetwork(player)) {
 			IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access, enableConversion, energyType);

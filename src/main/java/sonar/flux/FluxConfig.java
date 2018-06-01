@@ -3,7 +3,6 @@ package sonar.flux;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.utils.Pair;
 
@@ -26,7 +25,12 @@ public class FluxConfig extends FluxNetworks {
 	public static int hyper = 4, god = 10;
 	public static String[] block_connection_blacklist_strings;
 	public static String[] item_connection_blacklist_strings;
-
+	public static double FORGE_ENERGY_RF_CONVERSION = 1D;
+	public static double TESLA_RF_CONVERSION = 1D;
+	public static double REDSTONE_FLUX_RF_CONVERSION = 1D;
+	public static double ENERGY_UNITS_RF_CONVERSION = 0.25D;
+	public static double MINECRAFT_JOULES_RF_CONVERSION = 2.5D;
+	public static double APPLIED_ENERGISTICS_RF_CONVERSION = 0.5D;
 	public static Map<EnergyType, Pair<Boolean, Boolean>> transfer_types = new HashMap<>();
 	public static Map<EnergyType, List<EnergyType>> conversion = new HashMap<>();
 	public static Map<EnergyType, List<EnergyType>> conversion_override = new HashMap<>();
@@ -65,6 +69,13 @@ public class FluxConfig extends FluxNetworks {
 		redstone_ore_min_drop = config.getInt("Minimum Flux Drop (from Redstone Ore)", "flux_recipe", 4, 1, 64, "the minimum Flux dropped from Redstone ore if a drop occurs");
 		redstone_ore_max_drop = config.getInt("Maximum Flux Drop (from Redstone Ore)", "flux_recipe", 16, 1, 64, "the maximum Flux dropped from Redstone Ore if a drop occurs");
 
+		FORGE_ENERGY_RF_CONVERSION = config.get("energy types", "Forge Energy", 1D, "", 0, 256D).getDouble();
+		TESLA_RF_CONVERSION = config.get("energy types", "Tesla", 1D, "", 0, 256D).getDouble();
+		REDSTONE_FLUX_RF_CONVERSION = config.get("energy types", "Redstone Flux", 1D, "", 0, 256D).getDouble();
+		ENERGY_UNITS_RF_CONVERSION = config.get("energy types", "Energy Units", 0.25D, "", 0, 256D).getDouble();
+		MINECRAFT_JOULES_RF_CONVERSION = config.get("energy types", "Minecraft Joules", 2.5D, "", 0, 256D).getDouble();
+		APPLIED_ENERGISTICS_RF_CONVERSION = config.get("energy types", "Applied Energistics", 0.5D, "", 0, 256D).getDouble();
+
 		block_connection_blacklist_strings = getBlackList("Block Connection Blacklist", "blacklists", new String[]{"actuallyadditions:block_phantom_energyface"}, "a blacklist for blocks which flux connections shouldn't connect to, use format 'modid:name'");
 		item_connection_blacklist_strings = getBlackList("Item Transfer Blacklist", "blacklists", new String[]{}, "a blacklist for items which the Flux Controller shouldn't transfer to, use format 'modid:name'");
 
@@ -84,17 +95,17 @@ public class FluxConfig extends FluxNetworks {
 				"'Override' - for overriding the 'allow conversion' toggle (this should be used for energy types which should be treated as equal, RF/FE/TESLA)" + Configuration.NEW_LINE);
 		
 		// toggle block/item transfer
-		for (EnergyType type : SonarCore.energyTypes.getObjects()) {
+		for (EnergyType type : EnergyType.values()) {
 			boolean item, block;
 			block = getSimplifiedBoolean(type.getName() + " Transfer: Blocks", "energy types", true);
 			item = getSimplifiedBoolean(type.getName() + " Transfer: Items", "energy types", true);
 			transfer_types.put(type, new Pair(item, block));
 		}
-		for (EnergyType type : SonarCore.energyTypes.getObjects()) {
+		for (EnergyType type : EnergyType.values()) {
 			List<EnergyType> converts = new ArrayList<>();
 			List<EnergyType> overrides = new ArrayList<>();
 			String category = "energy types: " + type.getName() + " [" + type.getStorageSuffix() + "]";
-			for (EnergyType convert : SonarCore.energyTypes.getObjects()) {
+			for (EnergyType convert : EnergyType.values()) {
 				if (type != convert) {
 					boolean enableConvert = getSimplifiedBoolean("Convert: " + type.getStorageSuffix() + " to " + convert.getStorageSuffix(), category, true);
 					boolean overrideConvert = getSimplifiedBoolean("Override: " + type.getStorageSuffix() + " to " + convert.getStorageSuffix(), category, default_conversion_overrides.getOrDefault(type, new ArrayList()).contains(convert));
