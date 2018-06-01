@@ -51,12 +51,12 @@ public class FNEnergyTransferProxy implements IEnergyTransferProxy {
 
     @Override
     public boolean canConnectTile(TileEntity tile, EnumFacing face){
-        return FluxNetworks.block_connection_blacklist.contains(tile.getBlockType());
+        return !FluxNetworks.block_connection_blacklist.contains(tile.getBlockType());
     }
 
     @Override
     public boolean canConnectItem(ItemStack stack){
-        return FluxNetworks.item_connection_blacklist.contains(stack.getItem());
+        return !FluxNetworks.item_connection_blacklist.contains(stack.getItem());
     }
 
     @Override

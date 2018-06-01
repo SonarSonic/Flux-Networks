@@ -1,21 +1,21 @@
 package sonar.flux.common.block;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileFluxPlug;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class FluxPlug extends FluxSidedConnection {
 
 	public FluxPlug() {
 		super();
-		this.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
+		this.bounding_box = new AxisAlignedBB(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
 	}
 	
 	@Override
