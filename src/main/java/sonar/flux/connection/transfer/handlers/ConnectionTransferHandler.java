@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
-import sonar.flux.api.energy.ITileEnergyHandler;
+import sonar.core.api.energy.ITileEnergyHandler;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;

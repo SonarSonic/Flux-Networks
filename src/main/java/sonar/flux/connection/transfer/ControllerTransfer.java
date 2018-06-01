@@ -11,7 +11,7 @@ import net.minecraftforge.items.IItemHandler;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.ItemStackHelper;
-import sonar.flux.api.energy.IItemEnergyHandler;
+import sonar.core.api.energy.IItemEnergyHandler;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.common.tileentity.TileController;

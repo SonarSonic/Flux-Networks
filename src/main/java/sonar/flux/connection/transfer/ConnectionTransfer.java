@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.ItemStackHelper;
-import sonar.flux.api.energy.ITileEnergyHandler;
+import sonar.core.api.energy.ITileEnergyHandler;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.energy.internal.ITransferHandler;
 

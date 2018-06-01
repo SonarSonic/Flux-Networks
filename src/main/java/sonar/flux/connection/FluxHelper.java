@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import sonar.core.SonarCore;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.utils.Pair;
@@ -16,11 +17,10 @@ import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.RemovalType;
-import sonar.flux.api.energy.IItemEnergyHandler;
-import sonar.flux.api.energy.ITileEnergyHandler;
+import sonar.core.api.energy.IItemEnergyHandler;
+import sonar.core.api.energy.ITileEnergyHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.api.tiles.IFluxController.PriorityMode;
 import sonar.flux.api.tiles.IFluxController.TransferMode;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxPlug;
@@ -28,7 +28,6 @@ import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.network.FluxNetworkCache;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -120,7 +119,7 @@ public class FluxHelper {
 
 	public static List<ITileEnergyHandler> getTileEnergyHandlers() {
 		List<ITileEnergyHandler> handlers = new ArrayList<>();
-		for (ITileEnergyHandler handler : FluxNetworks.loadedTileEnergyHandlers) {
+		for (ITileEnergyHandler handler : SonarCore.tileEnergyHandlers) {
 			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfer_types.get(handler.getEnergyType());
 			if (canTransfer!=null && canTransfer.a) {
 				handlers.add(handler);
@@ -131,7 +130,7 @@ public class FluxHelper {
 
 	public static List<IItemEnergyHandler> getItemEnergyHandlers() {
 		List<IItemEnergyHandler> handlers = new ArrayList<>();
-		for (IItemEnergyHandler handler : FluxNetworks.loadedItemEnergyHandlers) {
+		for (IItemEnergyHandler handler : SonarCore.itemEnergyHandlers) {
 			Pair<Boolean, Boolean> canTransfer = FluxConfig.transfer_types.get(handler.getEnergyType());
 			if (canTransfer!=null && canTransfer.a) {
 				handlers.add(handler);

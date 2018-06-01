@@ -23,8 +23,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sonar.core.SonarRegister;
 import sonar.flux.api.FluxAPI;
-import sonar.flux.api.energy.IItemEnergyHandler;
-import sonar.flux.api.energy.ITileEnergyHandler;
+import sonar.core.api.energy.IItemEnergyHandler;
+import sonar.core.api.energy.ITileEnergyHandler;
 import sonar.flux.common.block.FluxController;
 import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
@@ -56,9 +56,7 @@ public class FluxNetworks {
 
 	public FluxNetworkCache serverCache = new FluxNetworkCache();
 	public ClientNetworkCache clientCache = new ClientNetworkCache();
-	public static List<ITileEnergyHandler> loadedTileEnergyHandlers;
 	public static List<ITileEnergyHandler> enabledTileEnergyHandlers;
-	public static List<IItemEnergyHandler> loadedItemEnergyHandlers;
 	public static List<IItemEnergyHandler> enabledItemEnergyHandlers;
 	public static List<Block> block_connection_blacklist;
 	public static List<Item> item_connection_blacklist;
@@ -123,8 +121,7 @@ public class FluxNetworks {
 
 		logger.info("Loading Renderers");
 		proxy.registerRenderThings();
-		
-		FluxASMLoader.load(event.getAsmData());		
+
 		proxy.preInit(event);
 		logger.info("Finished Pre-Initialization");
 	}
