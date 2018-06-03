@@ -90,7 +90,7 @@ public class TileStorage extends TileFluxConnector implements IFluxStorage {
 	@Override
 	public void markChanged(IDirtyPart part) {
 		super.markChanged(part);
-        if (this.isServer()) {
+        if (this.world != null && !world.isRemote) {
 			if (part == storage) {
 				network.markTypeDirty(FluxCache.storage);
 				updateStorage = true;
