@@ -12,6 +12,7 @@ import sonar.core.handlers.energy.IEnergyTransferProxy;
 import sonar.core.utils.Pair;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.tiles.IFlux;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class FNEnergyTransferProxy implements IEnergyTransferProxy {
 
     @Override
     public boolean canConnectTile(TileEntity tile, EnumFacing face){
-        return !FluxNetworks.block_connection_blacklist.contains(tile.getBlockType());
+        return !FluxNetworks.block_connection_blacklist.contains(tile.getBlockType()) && !(tile instanceof IFlux);
     }
 
     @Override

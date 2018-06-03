@@ -141,15 +141,16 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
                 total += transfer;
                 transfers.put(point, transfer);
             }
+            if(total <= 0){
+            	continue;
+			}
             for (Map.Entry<IFluxPoint, Long> flux : transfers.entrySet()) {
                 long toTransfer = maxReceive - used;
                 if (toTransfer <= 0) {
                     break;
                 }
-                Math.min(flux.getValue() / total, toTransfer);
-
-                long receive = FluxHelper.removeEnergyFromNetwork(flux.getKey(), energyType, toTransfer, type);
-                used += receive;
+                long allowedTransfer = Math.min((int)(flux.getValue() * ((double)flux.getValue() / total)), toTransfer);
+                used += FluxHelper.removeEnergyFromNetwork(flux.getKey(), energyType, allowedTransfer, type);
             }
         }
 

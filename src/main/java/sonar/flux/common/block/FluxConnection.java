@@ -12,10 +12,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import sonar.core.common.block.SonarBlock;
 import sonar.core.common.block.SonarMaterials;
-import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.ISpecialTooltip;
 import sonar.flux.FluxTranslate;
@@ -49,7 +49,7 @@ public abstract class FluxConnection extends SonarBlock implements ITileEntityPr
 					if (flux.canAccess(player).canView()) {
 						flux.openFlexibleGui(player, 0);
 					} else {
-						FontHelper.sendMessage(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + FluxTranslate.ERROR_NO_PERMISSION.t(), world, player);
+						player.sendMessage(new TextComponentString(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + FluxTranslate.ERROR_NO_PERMISSION.t()));
 					}
 				}
 			}
