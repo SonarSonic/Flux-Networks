@@ -1,6 +1,7 @@
 package sonar.flux.common.tileentity;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
@@ -8,6 +9,7 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
 import sonar.flux.FluxConfig;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
@@ -19,7 +21,7 @@ import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class TileStorage extends TileFluxConnector implements IFluxStorage {
+public abstract class TileStorage extends TileFluxConnector implements IFluxStorage {
 
 	public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 	public final SyncEnergyStorage storage;
@@ -30,6 +32,11 @@ public class TileStorage extends TileFluxConnector implements IFluxStorage {
 			super(FluxConfig.basicCapacity, FluxConfig.basicTransfer);
 			customName.setDefault("Basic Storage");
 		}
+
+		@Override
+		public ItemStack getDisplayStack() {
+			return new ItemStack(FluxNetworks.fluxStorage, 1);
+		}
 	}
 
 	public static class Herculean extends TileStorage {
@@ -37,12 +44,22 @@ public class TileStorage extends TileFluxConnector implements IFluxStorage {
 			super(FluxConfig.herculeanCapacity, FluxConfig.herculeanTransfer);
 			customName.setDefault("Herculean Storage");
 		}
+
+		@Override
+		public ItemStack getDisplayStack() {
+			return new ItemStack(FluxNetworks.largeFluxStorage, 1);
+		}
 	}
 
 	public static class Gargantuan extends TileStorage {
 		public Gargantuan() {
 			super(FluxConfig.gargantuanCapacity, FluxConfig.gargantuanTransfer);
 			customName.setDefault("Gargantuan Storage");
+		}
+
+		@Override
+		public ItemStack getDisplayStack() {
+			return new ItemStack(FluxNetworks.massiveFluxStorage, 1);
 		}
 	}
 

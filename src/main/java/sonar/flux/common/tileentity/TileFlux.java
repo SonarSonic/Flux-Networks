@@ -6,7 +6,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -212,12 +211,6 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	@Override
 	public IFluxNetwork getNetwork() {
 		return network;
-	}
-
-	@Override
-	public ItemStack getDisplayStack(){
-        Item item = Item.getItemFromBlock(this.getBlockType());
-		return new ItemStack(item, 1, 0);
 	}
 
 	@Override

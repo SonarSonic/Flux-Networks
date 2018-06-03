@@ -2,9 +2,11 @@ package sonar.flux.common.tileentity;
 
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.network.sync.SyncEnum;
 import sonar.core.network.sync.SyncTagType;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxController;
@@ -111,6 +113,11 @@ public class TileController extends TileFlux implements IFlexibleGui, IFluxContr
 			right_hand.readFromBuf(buf);
 			break;
 		}
+	}
+
+	@Override
+	public ItemStack getDisplayStack() {
+		return new ItemStack(FluxNetworks.fluxController, 1);
 	}
 
 	@Override
