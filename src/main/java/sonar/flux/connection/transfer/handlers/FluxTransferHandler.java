@@ -7,6 +7,7 @@ import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
+import sonar.flux.connection.BasicFluxNetwork;
 
 public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferHandler {
 
@@ -22,6 +23,11 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 	
 	@Override
 	public long addToNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
+		long added = Math.min(maxTransferRF, buffer);
+		if(!actionType.shouldSimulate() && added > 0){
+			buffer -= added;
+		}
+		/*
 		long added = 0;
 		for (IFluxTransfer transfer : getTransfers()) {
 			if (transfer != null && getNetwork().canConvert(energyType, transfer.getEnergyType()) && transfer instanceof IEnergyTransfer) {		
@@ -33,6 +39,7 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 				}
 			}
 		}
+		*/
 		return added;
 	}
 
@@ -59,7 +66,7 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 
 	@Override
 	public long getMaxAdd() {
-		return flux.getTransferLimit();
+		return Math.min(flux.getNetwork().isFakeNetwork() ? 0 : ((BasicFluxNetwork)flux.getNetwork()).max_remove, flux.getTransferLimit());
 	}
 
 	public long getValidAddition(long maxReceive, EnergyType type) {

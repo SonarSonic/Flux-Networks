@@ -86,9 +86,8 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 
 	public long addPhantomEnergyToNetwork(EnumFacing from, long maxReceive, EnergyType energy_type, ActionType type) {
 		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
-		if (transfer != null && getNetwork().canTransfer(energy_type)) {
-			// FIXME this could override priority!!!!
-			long added = flux.getNetwork().addPhantomEnergyToNetwork(getValidAddition(maxReceive, energy_type), energy_type, type);
+		if (transfer != null && getNetwork().canTransfer(energy_type) && getNetwork().canConvert(energy_type, getNetwork().getDefaultEnergyType())) {
+            long added = FluxNetworks.TRANSFER_HANDLER.convertedAction(getValidAddition(maxReceive, energy_type), energy_type, EnergyType.FE, e -> addToBuffer(e, type.shouldSimulate()));
 			if (!type.shouldSimulate()) {
 				transfer.addedToNetwork(added, energy_type);
 				max_add -= FluxNetworks.TRANSFER_HANDLER.convert(added, energy_type, getNetwork().getDefaultEnergyType());
@@ -98,6 +97,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		return 0;
 	}
 
+	/* WE ONLY SUPPORT A PUSH BASED MODEL
 	public long removePhantomEnergyFromNetwork(EnumFacing from, long maxReceive, EnergyType energy_type, ActionType type) {
 		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
 		if (transfer != null && getNetwork().canTransfer(energy_type)) {
@@ -111,6 +111,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		}
 		return 0;
 	}
+	*/
 
 	@Override
 	public List<IFluxTransfer> getTransfers() {

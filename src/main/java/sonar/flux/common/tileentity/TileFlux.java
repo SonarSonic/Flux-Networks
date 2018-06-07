@@ -39,6 +39,7 @@ import sonar.flux.common.block.FluxConnection;
 import sonar.flux.common.containers.ContainerFlux;
 import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
+import sonar.flux.connection.transfer.handlers.FluxTransferHandler;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.ListenerHelper;
 import sonar.flux.network.PacketFluxNetworkList;
@@ -253,6 +254,9 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 				client_flux = new ClientFlux(nbt.getCompoundTag("client_flux"));
 			}
 		}
+		if(type.isType(SyncType.SAVE)){
+			((FluxTransferHandler)getTransferHandler()).buffer = nbt.getLong("buf");
+		}
 		super.readData(nbt, type);
 	}
 
@@ -263,6 +267,9 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 				client_flux = new ClientFlux(this);
 				nbt.setTag("client_flux", client_flux.writeData(new NBTTagCompound(), type));
 			}
+		}
+		if(type.isType(SyncType.SAVE)){
+			nbt.setLong("buf", ((FluxTransferHandler)getTransferHandler()).buffer);
 		}
 		return super.writeData(nbt, type);
 	}

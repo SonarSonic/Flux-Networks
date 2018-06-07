@@ -2,7 +2,6 @@ package sonar.flux.api.network;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.api.utils.ActionType;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.AdditionType;
@@ -101,19 +100,6 @@ public interface IFluxNetwork extends IFluxCommon {
     void removeFluxListener(IFluxListenable listener);
 
     List<IFluxListenable> getFluxListeners();
-
-    /**
-     * used for pushing energy into the network it returns the amount received
-     * @param energyType TODO
-     */
-    long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type);
-
-    /**
-     * used for pulling energy from the network it returns the amount extracted
-     * @param energyType TODO
-     */
-    long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type);
-
 
     IFluxNetwork updateNetworkFrom(IFluxNetwork network);
 

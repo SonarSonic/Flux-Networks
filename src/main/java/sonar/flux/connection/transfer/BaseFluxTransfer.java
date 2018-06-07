@@ -10,7 +10,6 @@ public abstract class BaseFluxTransfer implements IFluxTransfer {
 	public EnergyType energy_type;
 	public long added = 0;
 	public long removed = 0;
-	// public final List<Long> old_transfers = new ArrayList<>();
 
 	public BaseFluxTransfer(EnergyType type) {
 		this.energy_type = type;

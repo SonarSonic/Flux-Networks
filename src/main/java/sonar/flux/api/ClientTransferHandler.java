@@ -1,9 +1,5 @@
 package sonar.flux.api;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +13,10 @@ import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.transfer.handlers.BaseTransferHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 
 	public IFlux flux; // CLIENTFLUX or normal flux
@@ -25,6 +25,7 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 	public long max_add;
 	public long add_limit;
 	public long remove_limit;
+	public long buffer;
 
 	public ClientTransferHandler(IFlux flux) {
 		this.flux = flux;
@@ -44,6 +45,7 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 		max_add = nbt.getLong("a");
 		add_limit = nbt.getLong("al");
 		remove_limit = nbt.getLong("rl");
+		buffer = nbt.getLong("buf");
 	}
 
 	@Override
@@ -55,6 +57,7 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 		nbt.setLong("a", max_add);
 		nbt.setLong("al", add_limit);
 		nbt.setLong("rl", remove_limit);
+		nbt.setLong("buf", buffer);
 		return nbt;
 	}
 
@@ -67,6 +70,7 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 				clienthandler.max_remove = base_handler.max_remove;
 				clienthandler.add_limit = base_handler.add_limit;
 				clienthandler.remove_limit = base_handler.remove_limit;
+				clienthandler.buffer = base_handler.buffer;
 			}
 			handler.getTransfers().stream().filter(Objects::nonNull).forEach(t -> clienthandler.transfers.add(ClientTransfer.getInstanceFromHandler(clienthandler, t)));
 		}
@@ -78,6 +82,11 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 
 	@Override
 	public void onEndWorldTick() {}
+
+	@Override
+	public long getBuffer() {
+		return buffer;
+	}
 
 	@Override
 	public long getAdded() {

@@ -199,6 +199,7 @@ public abstract class AbstractGuiTab<T extends TileFlux> extends GuiSonar {
 			}
 			*/
 			addTransferStrings(textLines, flux.getConnectionType(), common.getDefaultEnergyType(), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
+			if(flux.getTransferHandler().getBuffer() != 0) textLines.add("Internal Buffer: " + FontHelper.formatStorage(common.getDefaultEnergyType(), flux.getTransferHandler().getBuffer()));
 			textLines.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? FluxTranslate.NO_LIMIT.t() : flux.getTransferLimit()));
 			textLines.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + flux.getCurrentPriority());
 		} else {

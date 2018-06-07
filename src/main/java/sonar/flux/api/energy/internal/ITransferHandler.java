@@ -1,16 +1,18 @@
 package sonar.flux.api.energy.internal;
 
-import java.util.List;
-
 import net.minecraft.util.EnumFacing;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
+
+import java.util.List;
 
 public interface ITransferHandler {
 
 	void onStartServerTick();
 	
 	void onEndWorldTick();
+
+	long getBuffer();
 	
 	long getAdded();
 	

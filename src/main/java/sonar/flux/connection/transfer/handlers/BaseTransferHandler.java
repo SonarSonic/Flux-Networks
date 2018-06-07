@@ -9,6 +9,11 @@ public abstract class BaseTransferHandler implements ITransferHandler {
 	public long add_limit;
 	public long max_add;
 
+	//// THE BUFFER WILL ALWAYS BE STORED RELATIVE TO FE \\\\
+	public long buffer;
+	public long current_addition;
+	public long current_removal;
+
 	public abstract long getMaxRemove();
 
 	public abstract long getMaxAdd();
@@ -21,9 +26,26 @@ public abstract class BaseTransferHandler implements ITransferHandler {
 	
 	@Override
 	public void onEndWorldTick() {
-		
+
+
 	}
-	
+
+	public long addToBuffer(long add, boolean simulate){
+		long canAdd = Math.min(add, getValidMaxAddition() - getBuffer());
+		if(canAdd > 0){
+			if(!simulate){
+				buffer += canAdd;
+				max_add += canAdd;
+			}
+			return canAdd;
+		}
+		return 0;
+	}
+
+	public long getBuffer(){
+		return buffer;
+	}
+
 	public long getAdded(){
 		return add_limit - max_add;
 	}

@@ -17,11 +17,7 @@ import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.api.tiles.IFluxController.TransferMode;
-import sonar.flux.api.tiles.IFluxListenable;
-import sonar.flux.api.tiles.IFluxPlug;
-import sonar.flux.api.tiles.IFluxPoint;
+import sonar.flux.api.tiles.*;
 import sonar.flux.network.FluxNetworkCache;
 
 import java.util.*;
@@ -40,6 +36,9 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public long max_remove = 0;
 	public boolean hasConnections;
 	public boolean sortConnections = true;
+
+	//TODO network transfer limits
+	public long network_transfer_limit = Long.MAX_VALUE;
 
     public List<PriorityGrouping<IFluxPlug>> sorted_plugs = new ArrayList<>();
     public List<PriorityGrouping<IFluxPoint>> sorted_points = new ArrayList<>();
@@ -109,11 +108,6 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		return connections.computeIfAbsent(type, FunctionHelper.ARRAY);
 	}
 
-	public TransferMode getTransferMode() {
-		IFluxController controller = getController();
-		return controller != null ? controller.getTransferMode().isBanned() ? TransferMode.DEFAULT : controller.getTransferMode() : TransferMode.DEFAULT;
-	}
-
 	public void onStartServerTick() {
 		addConnections();
 		removeConnections();
@@ -123,58 +117,73 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
             sortConnections = false;
         }
 		this.networkStats.onStartServerTick();
+		max_remove = 0;
+		sorted_points.forEach(p -> p.getEntries().forEach(f -> max_remove += f.getTransferHandler().removeFromNetwork(network_transfer_limit, this.getDefaultEnergyType(), ActionType.SIMULATE)));
+		max_remove = Math.min(max_remove, network_transfer_limit);
 
-        List<IFluxPoint> points = getConnections(FluxCache.point);
-        max_remove = 0;
-        points.forEach(p -> max_remove += p.getTransferHandler().removeFromNetwork(p.getTransferLimit(), this.getDefaultEnergyType(), ActionType.SIMULATE));
 	}
 
-
-    @Override
-    public long addPhantomEnergyToNetwork(long maxReceive, EnergyType energyType, ActionType type) {
-        long used = 0;
-        for(PriorityGrouping<IFluxPoint> group : sorted_points) {
-            long total = 0;
-            Map<IFluxPoint, Long> transfers = new HashMap<>();
-            for(IFluxPoint point : group.getEntries()){
-                long transfer = point.getTransferHandler().removeFromNetwork(maxReceive, energyType, ActionType.SIMULATE);
-                total += transfer;
-                transfers.put(point, transfer);
-            }
-            if(total <= 0){
-            	continue;
+	/**pull energy into the network, you must update the group current addition before calling this*/
+	private <T extends IFlux> long pullFromGrouping(PriorityGrouping<T> group, long maxPull, EnergyType energyType, ActionType type) {
+		long actualTransfer = Math.min(group.updateTotalAddition(getDefaultEnergyType(), maxPull), maxPull);
+		if(actualTransfer <= 0){
+			return 0;
+		}
+		long pulled = 0;
+		while(pulled < actualTransfer) {
+			for (T flux : group.getEntries()) {
+				long allowedTransfer = group.getAllowedAddition(flux, actualTransfer - pulled);
+				pulled += flux.getTransferHandler().addToNetwork(allowedTransfer, energyType, type);
+				if (pulled >= actualTransfer) {
+					break;
+				}
 			}
-            for (Map.Entry<IFluxPoint, Long> flux : transfers.entrySet()) {
-                long toTransfer = maxReceive - used;
-                if (toTransfer <= 0) {
-                    break;
-                }
-                long allowedTransfer = Math.min((int)(flux.getValue() * ((double)flux.getValue() / total)), toTransfer);
-                used += FluxHelper.removeEnergyFromNetwork(flux.getKey(), energyType, allowedTransfer, type);
-            }
-        }
+		}
+		return pulled;
+	}
 
+	/**push energy out of the network, you must update the group current removal before calling this*/
+    private <T extends IFlux> long pushFromGrouping(PriorityGrouping<T> group, long maxPush, EnergyType energyType, ActionType type) {
+		long actualTransfer = Math.min(group.updateTotalRemoval(getDefaultEnergyType(), maxPush), maxPush);
+		if(actualTransfer <= 0){
+			return 0;
+		}
+		long pushed = 0;
+		while(pushed < actualTransfer) {
+			for (T flux : group.getEntries()) {
+				long allowedTransfer = group.getAllowedRemoval(flux, actualTransfer - pushed);
+				pushed += flux.getTransferHandler().removeFromNetwork(allowedTransfer, energyType, type);
 
-        return used;
-    }
-
-
-    @Override
-    public long removePhantomEnergyFromNetwork(long maxExtract, EnergyType energyType, ActionType type) {
-        long used = 0;
-        List<IFluxPlug> plugs = getConnections(FluxCache.plug);
-        for (IFluxPlug flux : plugs) {
-            long toTransfer = maxExtract - used;
-            if (toTransfer <= 0) {
-                break;
-            }
-            used += FluxHelper.addEnergyToNetwork(flux, energyType, toTransfer, type);
-        }
-        return used;
+				if (pushed >= actualTransfer) {
+					break;
+				}
+			}
+		}
+        return pushed;
     }
 
 	@Override
 	public void onEndServerTick() {
+		long total_pulled = 0;
+		for(PriorityGrouping<IFluxPlug> plugs : sorted_plugs){
+			long max_addition = pullFromGrouping(plugs, network_transfer_limit - total_pulled, getDefaultEnergyType(), ActionType.SIMULATE);
+			if(max_addition > 0){
+				long pulled = 0;
+				for(PriorityGrouping<IFluxPoint> points : sorted_points){
+					long pushed = pushFromGrouping(points, max_addition - pulled, getDefaultEnergyType(), ActionType.PERFORM);
+					if(pushed==0) continue;
+					pulled += pullFromGrouping(plugs, pushed, getDefaultEnergyType(), ActionType.PERFORM);
+					if(pulled >= max_addition){
+						break;
+					}
+				}
+				total_pulled += pulled;
+			}
+			if(total_pulled >= network_transfer_limit){
+				break;
+			}
+		}
+
 		this.networkStats.onEndWorldTick();
 		if (!this.flux_listeners.isEmpty()) {
 			sendPacketToListeners();
@@ -287,8 +296,8 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
         List<IFluxPoint> points = getConnections(FluxCache.point);
         plugs.forEach(P -> PriorityGrouping.getOrCreateGrouping(P.getCurrentPriority(), sorted_plugs).getEntries().add(P));
         points.forEach(P -> PriorityGrouping.getOrCreateGrouping(P.getCurrentPriority(), sorted_points).getEntries().add(P));
-        sorted_plugs.sort(Comparator.comparingInt(PriorityGrouping::getPriority));
-        sorted_points.sort(Comparator.comparingInt(PriorityGrouping::getPriority));
+		sorted_plugs.sort(Comparator.comparingInt(g -> -g.getPriority()));
+        sorted_points.sort(Comparator.comparingInt(g -> -g.getPriority()));
     }
 
 	@Override

@@ -15,7 +15,6 @@ public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTrans
 	public final ITileEnergyHandler handler;
 	public final TileEntity tile;
 	public final EnumFacing direction;
-	public long totalTransferMax; // may need to be changed
 
 	public ConnectionTransfer(ITransferHandler transferHandler, ITileEnergyHandler handler, TileEntity tile, EnumFacing direction) {
 		super(handler.getEnergyType());
