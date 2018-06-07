@@ -1,17 +1,17 @@
 package sonar.flux.common.block;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import sonar.core.common.block.SonarBlock;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxTranslate;
 import sonar.flux.common.tileentity.TileStorage;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 public class FluxStorage extends FluxConnection {
 
@@ -67,7 +67,8 @@ public class FluxStorage extends FluxConnection {
 	@Override
 	public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {
         list.add(FluxTranslate.FLUX_STORAGE_TOOLTIP.t());
-		int energy = tag == null ? 0 : tag.getInteger("energy");
+        NBTTagCompound subTag = stack.getSubCompound(SonarBlock.DROP_TAG_NAME);
+		int energy = subTag == null ? 0 : subTag.getInteger("energy");
 		list.add(FluxTranslate.STORED.t() + ": " + FontHelper.formatStorage(energy) + "/" + FontHelper.formatStorage(getMaxStorage()));
 	}
 }
