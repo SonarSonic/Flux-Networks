@@ -19,8 +19,7 @@ public class PacketNetworkStatistics implements IMessage {
     public NetworkStatistics stats;
     public NBTTagCompound received;
 
-    public PacketNetworkStatistics() {
-    }
+    public PacketNetworkStatistics() {}
 
     public PacketNetworkStatistics(int networkID, NetworkStatistics stats) {
         this.networkID = networkID;

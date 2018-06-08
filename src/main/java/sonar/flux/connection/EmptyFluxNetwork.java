@@ -24,7 +24,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 
 	public final static IFluxNetwork INSTANCE = new EmptyFluxNetwork();
 	public final NetworkStatistics stats = new NetworkStatistics(this);
-    public final static CustomColour colour = new CustomColour(41, 94, 138);
+    public final static CustomColour colour = new CustomColour(178, 178, 178);
 
 	@Override
 	public void onStartServerTick() {}

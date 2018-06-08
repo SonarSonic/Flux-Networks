@@ -126,6 +126,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 
 	public void onPlayerRemoveNetwork(UUID uuid, IFluxNetwork remove) {
 		removeNetwork(remove);
+		FluxNetworks.network.sendToAll(new PacketClearNetwork(remove.getNetworkID()));
 		FluxEvents.logRemoveNetwork(remove);
 	}
 	

@@ -5,6 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import sonar.core.SonarCore;
+import sonar.core.common.block.SonarBlock;
+import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncEnergyStorage;
@@ -13,8 +15,8 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
-import sonar.flux.client.GuiTab;
-import sonar.flux.client.tabs.GuiTabStorageIndex;
+import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.tabs.GuiTabStorageIndex;
 import sonar.flux.connection.transfer.StorageTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
@@ -35,7 +37,7 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 
 		@Override
 		public ItemStack getDisplayStack() {
-			return new ItemStack(FluxNetworks.fluxStorage, 1);
+			return writeStorageToDisplayStack(new ItemStack(FluxNetworks.fluxStorage, 1));
 		}
 	}
 
@@ -47,7 +49,7 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 
 		@Override
 		public ItemStack getDisplayStack() {
-			return new ItemStack(FluxNetworks.largeFluxStorage, 1);
+			return writeStorageToDisplayStack(new ItemStack(FluxNetworks.largeFluxStorage, 1));
 		}
 	}
 
@@ -59,7 +61,7 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 
 		@Override
 		public ItemStack getDisplayStack() {
-			return new ItemStack(FluxNetworks.massiveFluxStorage, 1);
+			return writeStorageToDisplayStack(new ItemStack(FluxNetworks.massiveFluxStorage, 1));
 		}
 	}
 
@@ -111,8 +113,6 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 			if (part == storage) {
 				network.markTypeDirty(FluxCache.storage);
 				updateStorage = true;
-			} else if (part == colour) {
-				SonarCore.sendPacketAround(this, 128, 11);
 			}
 		}
 	}
@@ -125,10 +125,6 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	@Override
 	public long getEnergyStored() {
 		return storage.getEnergyLevel();
-	}
-
-	public boolean hasTransfers() {
-		return true;
 	}
 
 	@Override
@@ -165,15 +161,18 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 		return nbt;
 	}
 
+	public ItemStack writeStorageToDisplayStack(ItemStack stack){
+		NBTTagCompound tag = stack.getOrCreateSubCompound(SonarBlock.DROP_TAG_NAME);
+		writeData(tag, NBTHelper.SyncType.DROP);
+		return stack;
+	}
+
 	@Override
 	public void writePacket(ByteBuf buf, int id) {
 		super.writePacket(buf, id);
 		switch (id) {
 		case 10:
 			buf.writeInt(storage.getEnergyStored());
-			break;
-		case 11:
-			colour.writeToBuf(buf);
 			break;
 		}
 	}
@@ -186,9 +185,6 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 			//FIXME - if they are in the gui, update power instantly
 			targetEnergy = buf.readInt();
 			updateStorage = true;
-			break;
-		case 11:
-			colour.readFromBuf(buf);
 			break;
 		}
 	}

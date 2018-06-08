@@ -17,7 +17,7 @@ import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.client.GuiTab;
+import sonar.flux.client.gui.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.FluxHelper;
 

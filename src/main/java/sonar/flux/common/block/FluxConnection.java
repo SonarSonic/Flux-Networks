@@ -4,16 +4,20 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.common.block.SonarBlock;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.helpers.SonarHelper;
@@ -22,6 +26,7 @@ import sonar.flux.FluxTranslate;
 import sonar.flux.common.item.FluxConfigurator;
 import sonar.flux.common.tileentity.TileFlux;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class FluxConnection extends SonarBlock implements ITileEntityProvider, ISpecialTooltip {
@@ -33,7 +38,10 @@ public abstract class FluxConnection extends SonarBlock implements ITileEntityPr
 		this.hasSpecialRenderer = true;
 	}
 
-	//public boolean dropStandard(IBlockAccess world, BlockPos pos)
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
+		super.addInformation(stack, world, tooltip, advanced);
+	}
 
 	@Override
 	public void addSpecialToolTip(ItemStack stack, World world, List<String> list, NBTTagCompound tag) {}
@@ -66,6 +74,12 @@ public abstract class FluxConnection extends SonarBlock implements ITileEntityPr
 			TileFlux flux = (TileFlux) target;
 			flux.onBlockPlacedBy(world, pos, state, player, itemstack);
 		}
+
+	}
+
+	@SideOnly(Side.CLIENT)
+	public BlockRenderLayer getBlockLayer() {
+		return BlockRenderLayer.CUTOUT;
 	}
 
 	@Override

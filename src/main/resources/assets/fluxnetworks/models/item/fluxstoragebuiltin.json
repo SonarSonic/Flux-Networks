@@ -1,0 +1,10 @@
+{
+    "forge_marker": 1,
+    "parent": "builtin/entity",
+    "transform":"forge:default-block",
+    "variants": {
+        "variant": {
+            "inventory": {}
+        }
+    }
+}

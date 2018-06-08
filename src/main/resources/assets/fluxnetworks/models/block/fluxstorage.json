@@ -3,6 +3,7 @@
         "0": "fluxnetworks:model/gray",
         "1": "fluxnetworks:model/tier1",
         "2": "fluxnetworks:model/lightBlue",
+        "colour": "fluxnetworks:model/tier1_colour",
         "particle": "fluxnetworks:model/tier1"
     },
     "elements": [
@@ -30,6 +31,19 @@
                 "west": { "texture": "#1", "uv": [ 1.0, 15.0, 15.0, 16.0 ] },
                 "up": { "texture": "#1", "uv": [ 1.0, 1.0, 15.0, 15.0 ] },
                 "down": { "texture": "#1", "uv": [ 1.0, 1.0, 15.0, 15.0 ] }
+            }
+        },
+        {
+            "name": "Base_Colour",
+            "from": [ 1.0, 1.0, 1.0 ],
+            "to": [ 15.0, 2.0, 15.0 ],
+            "faces": {
+                "north": { "texture": "#colour", "uv": [ 1.0, 0.0, 15.0, 1.0 ], "tintindex": 1 },
+                "east": { "texture": "#colour", "uv": [ 1.0, 15.0, 15.0, 16.0 ], "tintindex": 1 },
+                "south": { "texture": "#colour", "uv": [ 1.0, 0.0, 15.0, 1.0 ], "tintindex": 1 },
+                "west": { "texture": "#colour", "uv": [ 1.0, 15.0, 15.0, 16.0 ], "tintindex": 1 },
+                "up": { "texture": "#colour", "uv": [ 1.0, 1.0, 15.0, 15.0 ], "tintindex": 1 },
+                "down": { "texture": "#colour", "uv": [ 1.0, 1.0, 15.0, 15.0 ], "tintindex": 1 }
             }
         },
         {
@@ -95,6 +109,19 @@
                 "west": { "texture": "#1", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
                 "up": { "texture": "#1", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
                 "down": { "texture": "#1", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+            }
+        },
+        {
+            "name": "Top_Colour",
+            "from": [ 0.0, 15.0, 0.0 ],
+            "to": [ 16.0, 16.0, 16.0 ],
+            "faces": {
+                "north": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "east": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "south": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "west": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "up": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "tintindex": 1 },
+                "down": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "tintindex": 1 }
             }
         },
         {

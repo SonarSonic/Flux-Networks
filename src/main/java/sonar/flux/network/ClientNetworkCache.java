@@ -1,15 +1,16 @@
 package sonar.flux.network;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.IFluxNetworkCache;
+import sonar.flux.client.FluxColourHandler;
 import sonar.flux.connection.EmptyFluxNetwork;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ClientNetworkCache implements IFluxNetworkCache {
 
@@ -33,7 +34,11 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 			networks2.forEach(this::readNetworkFromPacket);
 		} else {
 			Map<Integer, IFluxNetwork> newMap = new HashMap<>();
-			networks2.forEach(network -> newMap.put(network.getNetworkID(), network));
+			networks2.forEach(network -> {
+				newMap.put(network.getNetworkID(), network);
+				FluxColourHandler.loadColourCache(network.getNetworkID(), network.getNetworkColour().getRGB());
+				FluxColourHandler.loadNameCache(network.getNetworkID(), network.getNetworkName());
+			});
 			networks = newMap;
 		}
 	}
@@ -45,6 +50,8 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 		} else {
 			storedNet.updateNetworkFrom(network); //potentially the cause of massive lag/crash when creating networks for first time
 		}
+		FluxColourHandler.loadColourCache(network.getNetworkID(), network.getNetworkColour().getRGB());
+		FluxColourHandler.loadNameCache(network.getNetworkID(), network.getNetworkName());
 	}
 
 	@Override

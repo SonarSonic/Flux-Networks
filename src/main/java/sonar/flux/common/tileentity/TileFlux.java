@@ -18,7 +18,9 @@ import sonar.core.common.tileentity.TileEntitySonar;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.listener.ListenableList;
 import sonar.core.listener.PlayerListener;
+import sonar.core.network.sync.IDirtyPart;
 import sonar.core.network.sync.SyncTagType;
+import sonar.core.network.sync.SyncTagType.BOOLEAN;
 import sonar.core.network.sync.SyncTagType.INT;
 import sonar.core.network.sync.SyncTagType.LONG;
 import sonar.core.network.sync.SyncTagType.STRING;
@@ -33,10 +35,12 @@ import sonar.flux.api.configurator.IFluxConfigurable;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFluxListenable;
-import sonar.flux.client.GuiTab;
-import sonar.flux.client.tabs.GuiTabConnectionIndex;
+import sonar.flux.client.FluxColourHandler;
+import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.tabs.GuiTabConnectionIndex;
 import sonar.flux.common.block.FluxConnection;
 import sonar.flux.common.containers.ContainerFlux;
+import sonar.flux.common.item.ItemNetworkConnector;
 import sonar.flux.connection.EmptyFluxNetwork;
 import sonar.flux.connection.FluxHelper;
 import sonar.flux.connection.transfer.handlers.FluxTransferHandler;
@@ -56,17 +60,25 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 	public long toSend;
 
 	//// USER CONFIGURED \\\\
-	public SyncTagType.INT priority = new SyncTagType.INT(0);
-	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(FluxConfig.defaultLimit);
-	public SyncTagType.BOOLEAN disableLimit = new SyncTagType.BOOLEAN(2);
-	public SyncTagType.INT networkID = (INT) new SyncTagType.INT(4).setDefault(-1);
+	public SyncTagType.INT priority = (INT) new SyncTagType.INT(0).addSyncType(SyncType.DROP);
+	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(FluxConfig.defaultLimit).addSyncType(SyncType.DROP);
+	public SyncTagType.BOOLEAN disableLimit = (BOOLEAN) new SyncTagType.BOOLEAN(2).addSyncType(SyncType.DROP);
+	public SyncTagType.INT networkID = (INT) new SyncTagType.INT(4).setDefault(-1).addSyncType(SyncType.DROP);
 	public SyncTagType.STRING customName = (STRING) new SyncTagType.STRING(6).setDefault("Flux Connection");
 
 	//// PLAYER WHO PLACED THIS CONNECTION \\\\
 	public SyncUUID playerUUID = new SyncUUID(5);
 
 	//// NETWORK COLOUR \\\\
-	public SyncTagType.INT colour = new SyncTagType.INT(7);
+	public SyncTagType.INT colour = new SyncTagType.INT(7){
+		@Override
+		public void setObject(Integer object) {
+			super.setObject(object);
+			if(world != null && world.isRemote && object != 0){
+				FluxColourHandler.loadColourCache(getNetworkID(), object);
+			}
+		}
+	};
 
 	//// PLAYERS VIEWING THE FLUX GUI \\\\
 	public ListenableList<PlayerListener> listeners = new ListenableList(this, FluxListener.values().length);
@@ -257,6 +269,13 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		if(type.isType(SyncType.SAVE)){
 			((FluxTransferHandler)getTransferHandler()).buffer = nbt.getLong("buf");
 		}
+		if(type.isType(SyncType.DROP)){
+			if(nbt.hasKey(ItemNetworkConnector.CUSTOM_NAME_TAG)) customName.setObject(nbt.getString(ItemNetworkConnector.CUSTOM_NAME_TAG));
+			if(nbt.hasKey(ItemNetworkConnector.PRIORITY_TAG)) priority.setObject(nbt.getInteger(ItemNetworkConnector.PRIORITY_TAG));
+			if(nbt.hasKey(ItemNetworkConnector.TRANSFER_LIMIT_TAG)) limit.setObject(nbt.getLong(ItemNetworkConnector.TRANSFER_LIMIT_TAG));
+			if(nbt.hasKey(ItemNetworkConnector.DISABLE_LIMIT_TAG)) disableLimit.setObject(nbt.getBoolean(ItemNetworkConnector.DISABLE_LIMIT_TAG));
+			if(nbt.hasKey(ItemNetworkConnector.NETWORK_ID_TAG)) networkID.setObject(nbt.getInteger(ItemNetworkConnector.NETWORK_ID_TAG));
+		}
 		super.readData(nbt, type);
 	}
 
@@ -271,7 +290,21 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		if(type.isType(SyncType.SAVE)){
 			nbt.setLong("buf", ((FluxTransferHandler)getTransferHandler()).buffer);
 		}
+		if(type.isType(SyncType.DROP)){
+			nbt.setString(ItemNetworkConnector.CUSTOM_NAME_TAG, customName.getObject());
+			nbt.setInteger(ItemNetworkConnector.PRIORITY_TAG, priority.getObject());
+			nbt.setLong(ItemNetworkConnector.TRANSFER_LIMIT_TAG, limit.getObject());
+			nbt.setBoolean(ItemNetworkConnector.DISABLE_LIMIT_TAG, disableLimit.getObject());
+			nbt.setInteger(ItemNetworkConnector.NETWORK_ID_TAG, networkID.getObject());
+		}
 		return super.writeData(nbt, type);
+	}
+	@Override
+	public void markChanged(IDirtyPart part) {
+		super.markChanged(part);
+		if (this.world != null && !world.isRemote && part == colour) {
+			SonarCore.sendPacketAround(this, 128, 11);
+		}
 	}
 
 	//// PACKETS \\\\\
@@ -291,6 +324,9 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		case 3:
 			customName.writeToBuf(buf);
 			break;
+		case 11:
+			colour.writeToBuf(buf);
+			break;
 		}
 	}
 
@@ -309,6 +345,9 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 			break;
 		case 3:
 			customName.readFromBuf(buf);
+			break;
+		case 11:
+			colour.readFromBuf(buf);
 			break;
 		}
 	}

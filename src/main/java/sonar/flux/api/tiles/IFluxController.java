@@ -51,12 +51,4 @@ public interface IFluxController extends IFluxPoint {
             return this == HYPER && FluxConfig.banHyper;
         }
     }
-
-
-    /***/
-    PriorityMode getReceiveMode();
-
-    PriorityMode getSendMode();
-
-    TransferMode getTransferMode();
 }

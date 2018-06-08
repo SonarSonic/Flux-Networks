@@ -7,8 +7,8 @@ import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
 import sonar.flux.api.energy.internal.ITransferHandler;
-import sonar.flux.client.GuiTab;
-import sonar.flux.client.tabs.GuiTabFluxConnectorIndex;
+import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.tabs.GuiTabFluxConnectorIndex;
 import sonar.flux.common.tileentity.energy.TileFluxTesla;
 import sonar.flux.connection.transfer.handlers.ConnectionTransferHandler;
 

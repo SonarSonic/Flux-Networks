@@ -37,7 +37,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 
 	@Override
 	public long removeFromNetwork(long maxTransferRF, ActionType actionType) {
-		if (!controller.transmitter.getObject()) {
+		if (!controller.wireless_charging.getObject()) {
 			return 0;
 		}
 		long received = 0;

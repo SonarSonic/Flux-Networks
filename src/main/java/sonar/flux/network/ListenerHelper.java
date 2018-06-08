@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.FluxListener;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.client.GuiTab;
+import sonar.flux.client.gui.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.BasicFluxNetwork;
 

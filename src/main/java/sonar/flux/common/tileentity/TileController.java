@@ -4,14 +4,12 @@ import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import sonar.core.api.IFlexibleGui;
-import sonar.core.network.sync.SyncEnum;
 import sonar.core.network.sync.SyncTagType;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
-import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.client.GuiTab;
-import sonar.flux.client.tabs.GuiTabControllerIndex;
+import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.tabs.GuiTabControllerIndex;
 import sonar.flux.connection.transfer.ControllerTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
@@ -19,10 +17,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class TileController extends TileFlux implements IFlexibleGui, IFluxController {
-	public SyncEnum<PriorityMode> sendMode = new SyncEnum(PriorityMode.values(), 10).setDefault(PriorityMode.LARGEST);
-	public SyncEnum<PriorityMode> receiveMode = new SyncEnum(PriorityMode.values(), 11).setDefault(PriorityMode.LARGEST);
-	public SyncTagType.BOOLEAN transmitter = new SyncTagType.BOOLEAN(12);
-	public SyncEnum<TransferMode> transfer = new SyncEnum(TransferMode.values(), 13);
+
+	public SyncTagType.BOOLEAN wireless_charging = new SyncTagType.BOOLEAN(12);
 	public SyncTagType.BOOLEAN main_inventory = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(14).setDefault(true);
 	public SyncTagType.BOOLEAN hot_bar = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(15).setDefault(true);
 	public SyncTagType.BOOLEAN armour_slot = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(16).setDefault(true);
@@ -34,40 +30,16 @@ public class TileController extends TileFlux implements IFlexibleGui, IFluxContr
 
 	public TileController() {
 		super(ConnectionType.CONTROLLER);
-		syncList.addParts(sendMode, receiveMode, transmitter, transfer, main_inventory, hot_bar, armour_slot, baubles_slot, left_hand, right_hand);
+		syncList.addParts(wireless_charging,  main_inventory, hot_bar, armour_slot, baubles_slot, left_hand, right_hand);
 		customName.setDefault("Flux Controller");
-	}
-
-	@Override
-	public PriorityMode getSendMode() {
-		return sendMode.getObject();
-	}
-
-	@Override
-	public PriorityMode getReceiveMode() {
-		return receiveMode.getObject();
-	}
-
-	@Override
-	public TransferMode getTransferMode() {
-		return transfer.getObject();
 	}
 
 	@Override
 	public void writePacket(ByteBuf buf, int id) {
 		super.writePacket(buf, id);
 		switch (id) {
-		case 10:
-			sendMode.writeToBuf(buf);
-			break;
-		case 11:
-			receiveMode.writeToBuf(buf);
-			break;
-		case 12:
-			transfer.writeToBuf(buf);
-			break;
 		case 13:
-			transmitter.writeToBuf(buf);
+			wireless_charging.writeToBuf(buf);
 			break;
 		case 14:
 			customName.writeToBuf(buf);
@@ -87,19 +59,8 @@ public class TileController extends TileFlux implements IFlexibleGui, IFluxContr
 	public void readPacket(ByteBuf buf, int id) {
 		super.readPacket(buf, id);
 		switch (id) {
-		case 10:
-			sendMode.readFromBuf(buf);
-			network.markTypeDirty(FluxCache.controller);
-			break;
-		case 11:
-			receiveMode.readFromBuf(buf);
-			network.markTypeDirty(FluxCache.controller);
-			break;
-		case 12:
-			transfer.readFromBuf(buf);
-			break;
 		case 13:
-			transmitter.readFromBuf(buf);
+			wireless_charging.readFromBuf(buf);
 			break;
 		case 14:
 			customName.readFromBuf(buf);
