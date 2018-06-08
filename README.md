@@ -1,7 +1,7 @@
 ### Flux Networks by Ollie Lansdell
 
 #### Reporting a bug?
- - Include versions for Forge, Sonar Core and PL2.
+ - Include versions for Forge, Sonar Core and Flux Networks.
  - Include a crash report if applicable.
  - Be patient, I don't always have the time to get to all bugs.
  
