@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 import sonar.core.api.energy.EnergyType;
+import sonar.core.helpers.ListHelper;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.utils.CustomColour;
@@ -65,7 +66,7 @@ public class NetworkData extends WorldSavedData {
 				List<ClientFlux> unloaded = new ArrayList<>();
 				for (int j = 0; j < unloaded_connections.tagCount(); j++) {
 					NBTTagCompound c = unloaded_connections.getCompoundTagAt(j);
-					unloaded.add(new ClientFlux(c));
+					ListHelper.addWithCheck(unloaded, new ClientFlux(c));
 				}
 				network.unloaded = unloaded;
 				cache.addNetwork(network);

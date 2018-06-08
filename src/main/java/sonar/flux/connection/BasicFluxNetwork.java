@@ -270,18 +270,31 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 	public void addConnection(IFluxListenable tile, AdditionType type) {
 		toAdd.add(tile);
 		toRemove.remove(tile); // prevents tiles being removed if it's unnecessary
-		unloaded.removeIf(flux -> flux != null && flux.coords.equals(tile.getCoords()));
+        removeFromUnloaded(tile);
 	}
 
 	@Override
 	public void removeConnection(IFluxListenable tile, RemovalType type) {
 		toRemove.add(tile);
-		toAdd.remove(tile); // prevents tiles being removed if it's unnecessary
+		toAdd.remove(tile); // prevents tiles being added if it's unnecessary
 		if (type == RemovalType.CHUNK_UNLOAD) {
+            addToUnloaded(tile);
+		}else{
+            removeFromUnloaded(tile);
+		}
+	}
+
+	public void addToUnloaded(IFluxListenable tile){
+    	boolean contains = unloaded.stream().anyMatch(f -> f != null && f.getCoords().equals(tile.getCoords()));
+    	if(!contains) {
 			ClientFlux flux_unload = new ClientFlux(tile);
 			flux_unload.setChunkLoaded(false);
 			unloaded.add(flux_unload);
 		}
+	}
+
+	public void removeFromUnloaded(IFluxListenable tile){
+		unloaded.removeIf(f -> f != null && f.getCoords().equals(tile.getCoords()));
 	}
 
 	@Override
