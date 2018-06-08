@@ -1,10 +1,5 @@
 {
-    "textures": {
-        "0": "fluxnetworks:model/fluxController_bottom",
-        "1": "fluxnetworks:model/flux_controller",
-        "top": "fluxnetworks:model/fluxController_top",
-        "particle": "fluxnetworks:model/fluxController_bottom"
-    },
+
     "elements": [
         {
             "name": "Base",
@@ -30,6 +25,19 @@
                 "west": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 1.0 ] },
                 "up": { "texture": "#top", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
                 "down": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+            }
+        },
+        {
+            "name": "Top_Colour",
+            "from": [ 0.0, 14.0, 0.0 ],
+            "to": [ 16.0, 15.0, 16.0 ],
+            "faces": {
+                "north": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "east": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "south": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "west": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 1.0 ], "tintindex": 1 },
+                "up": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "tintindex": 1 },
+                "down": { "texture": "#colour", "uv": [ 0.0, 0.0, 16.0, 16.0 ], "tintindex": 1 }
             }
         },
         {

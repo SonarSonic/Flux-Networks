@@ -2,8 +2,11 @@
     "forge_marker": 1,
     "defaults": {
         "model":"fluxnetworks:FluxStorage",
-        "transform":"forge:default-block"
-     },
+        "transform":"forge:default-block",
+        "textures": {
+            "colour": "fluxnetworks:model/tier1_colour"
+        }
+      },
     "variants": {
         "inventory": [{}],
          "connected":{

@@ -4,6 +4,7 @@
         "model":"fluxnetworks:FluxStorage",
         "transform":"forge:default-block",
         "textures": {
+            "colour": "fluxnetworks:model/tier3_colour",
             "1":"fluxnetworks:model/tier3",
             "particle":"fluxnetworks:model/tier3"
         }
