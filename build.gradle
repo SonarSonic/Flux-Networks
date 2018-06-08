@@ -25,14 +25,20 @@ repositories {
         name = "ic2"
         url = "http://maven.ic2.player.to/"
     }
+    maven { url "http://maven.ironhide.de/" }
     flatDir {
         dirs 'libs'
-}
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "${minecraft_version}-${mod_version}"
+if (hasProperty('appendBuildNumber')) {
+    version = version + "-" + appendBuildNumber.toString()
+} else {
+    version = version + "-inofficial"
+}
 group= "sonar.flux"
 archivesBaseName = "flux"
 sourceCompatibility = targetCompatibility = "1.8"
@@ -79,7 +85,7 @@ dependencies {
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "api"
     compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "dev"
     if (!sonarcore_local) {
-        //compileOnly "sonar-core:sonarcore:${minecraft_version}:${sonar_core_version}:deobf"
+        compileOnly "sonar-core:sonarcore:${minecraft_version}:${sonar_core_version}:deobf"
     } else {
         compile project(':Sonar-Core')
     }
@@ -97,5 +103,22 @@ processResources
 
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+publishing {
+    tasks.publish.dependsOn 'build'
+    publications {
+        mavenJava(MavenPublication) {
+            groupId config.group_prefix
+            version config.minecraft_version + "-" + project.version
+            artifactId config.mod_id
+            artifact jar
+            artifact sourceJar
+            artifact deobfJar
+        }
+    }
+    repositories {
+        mavenLocal()
     }
 }
