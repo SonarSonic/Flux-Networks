@@ -18,7 +18,10 @@ import java.util.UUID;
 public interface IFlux {
 
     enum ConnectionType {
-        POINT(FontHelper.getIntFromColor(136, 40, 40)), PLUG(FontHelper.getIntFromColor(96, 151, 50)), STORAGE(FontHelper.getIntFromColor(41, 94, 138)), CONTROLLER(FontHelper.getIntFromColor(100, 100, 120));
+        POINT(FontHelper.getIntFromColor(136, 40, 40)), //
+        PLUG(FontHelper.getIntFromColor(96, 151, 50)), //
+        STORAGE(FontHelper.getIntFromColor(41, 94, 138)), //
+        CONTROLLER(FontHelper.getIntFromColor(100, 100, 120));//
     	
     	public int gui_colour;
     	

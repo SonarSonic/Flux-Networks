@@ -26,9 +26,9 @@ public class RenderFluxStorageItem extends TileEntityItemStackRenderer {
         IBakedModel model = blockrendererdispatcher.getModelForState(FluxNetworks.fluxStorage.getDefaultState());
         GlStateManager.translate(0.5, 0.5, 0.5);
         net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(model, FluxStorageModel.CURRENT_TRANSFORM, true);
-
         Minecraft.getMinecraft().getRenderItem().renderItem(stack, model);
         GlStateManager.translate(-0.5, -0.5, -0.5);
+
         FluxStorage block = (FluxStorage) Block.getBlockFromItem(stack.getItem());
         NBTTagCompound tag = stack.getSubCompound(SonarBlock.DROP_TAG_NAME);
         if(tag != null) {

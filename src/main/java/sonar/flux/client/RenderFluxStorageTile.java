@@ -7,8 +7,6 @@ import org.lwjgl.opengl.GL11;
 import sonar.core.helpers.RenderHelper;
 import sonar.flux.common.tileentity.TileStorage;
 
-import java.awt.Color;
-
 import static net.minecraft.client.renderer.GlStateManager.*;
 public class RenderFluxStorageTile extends TileEntitySpecialRenderer<TileStorage> {
 
@@ -32,10 +30,7 @@ public class RenderFluxStorageTile extends TileEntitySpecialRenderer<TileStorage
 		float full = 1 - 0.0625F * 3;
 		float bottom = 0 + 0.0625F * 2;
 		float left = 0 + 0.0625F * 2;
-		float i = stored * full / capacity + bottom;
-
-		int clearColour = Color.WHITE.getRGB();
-		EnumFacing face = EnumFacing.SOUTH;
+		float i = Math.max(0.0625F*2.2F, (stored * full / capacity) + bottom);
 
 		float f3 = (float) (colour >> 24 & 255) / 255.0F;
 		float f = (float) (colour >> 16 & 255) / 255.0F;
@@ -44,6 +39,7 @@ public class RenderFluxStorageTile extends TileEntitySpecialRenderer<TileStorage
 		color(f, f1, f2, f3);
 
 
+		EnumFacing face = EnumFacing.SOUTH;
 		pushMatrix();
 		rotate(face.getHorizontalAngle(), 0, 1, 0);
 		translate(-face.getFrontOffsetX(), 0, 0.0626F);

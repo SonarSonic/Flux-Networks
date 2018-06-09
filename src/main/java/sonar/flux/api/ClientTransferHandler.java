@@ -11,7 +11,6 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.connection.transfer.handlers.BaseTransferHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +20,8 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 
 	public IFlux flux; // CLIENTFLUX or normal flux
 	public List<IFluxTransfer> transfers = new ArrayList<>();
-	public long max_remove;
-	public long max_add;
-	public long add_limit;
-	public long remove_limit;
+	public long removed;
+	public long added;
 	public long buffer;
 
 	public ClientTransferHandler(IFlux flux) {
@@ -41,10 +38,8 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 			trans.readData(tag, type);
 			transfers.add(trans);
 		}
-		max_remove = nbt.getLong("r");
-		max_add = nbt.getLong("a");
-		add_limit = nbt.getLong("al");
-		remove_limit = nbt.getLong("rl");
+		removed = nbt.getLong("r");
+		added = nbt.getLong("a");
 		buffer = nbt.getLong("buf");
 	}
 
@@ -53,10 +48,8 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 		NBTTagList list = new NBTTagList();
 		transfers.forEach(t -> list.appendTag(t.writeData(new NBTTagCompound(), type)));
 		nbt.setTag("transfers", list);
-		nbt.setLong("r", max_remove);
-		nbt.setLong("a", max_add);
-		nbt.setLong("al", add_limit);
-		nbt.setLong("rl", remove_limit);
+		nbt.setLong("r", removed);
+		nbt.setLong("a", added);
 		nbt.setLong("buf", buffer);
 		return nbt;
 	}
@@ -64,14 +57,9 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 	public static ClientTransferHandler getInstanceFromHandler(IFlux flux, ITransferHandler handler) {
 		ClientTransferHandler clienthandler = new ClientTransferHandler(flux);
 		if (flux.isChunkLoaded()) {
-			if (handler instanceof BaseTransferHandler) {
-				BaseTransferHandler base_handler = (BaseTransferHandler) handler;
-				clienthandler.max_add = base_handler.max_add;
-				clienthandler.max_remove = base_handler.max_remove;
-				clienthandler.add_limit = base_handler.add_limit;
-				clienthandler.remove_limit = base_handler.remove_limit;
-				clienthandler.buffer = base_handler.buffer;
-			}
+			clienthandler.added = handler.getAdded();
+			clienthandler.removed = handler.getRemoved();
+			clienthandler.buffer = handler.getBuffer();
 			handler.getTransfers().stream().filter(Objects::nonNull).forEach(t -> clienthandler.transfers.add(ClientTransfer.getInstanceFromHandler(clienthandler, t)));
 		}
 		return clienthandler;
@@ -90,12 +78,12 @@ public class ClientTransferHandler implements INBTSyncable, ITransferHandler {
 
 	@Override
 	public long getAdded() {
-		return add_limit - max_add;
+		return added;
 	}
 
 	@Override
 	public long getRemoved() {
-		return remove_limit - max_remove;
+		return removed;
 	}
 
 	@Override
