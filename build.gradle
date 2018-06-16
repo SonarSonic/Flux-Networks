@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.matthewprenger.cursegradle" version "1.0.10"
+}
+
 repositories {
     maven {
         name = "CurseForge"
@@ -37,7 +41,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 version = "${minecraft_version}-${mod_version}"
 if (hasProperty('appendBuildNumber')) {
     version = version + "-" + appendBuildNumber.toString()
-} else {
+} else if(!hasProperty('official_build')){
     version = version + "-unofficial"
 }
 group= "sonar.flux"
@@ -126,5 +130,89 @@ publishing {
     }
     repositories {
         mavenLocal()
+    }
+}
+
+
+//// DETECTING COMMIT NAME AND ACTIVATING CURSE RELEASE \\\\
+
+def commit_release_type = getCommmitReleaseType()
+
+def getCommmitReleaseType(){
+    if(project.hasProperty("curseforge_key")){
+
+        def stdout = new ByteArrayOutputStream()
+        try {
+            exec {
+                commandLine 'git', 'log', '-1', '--pretty=tformat:%s'
+                standardOutput = stdout
+            }
+        }catch(Exception e){
+            System.print("SKIPPING CURSE RELEASE - FAILED TO RETRIEVE LAST COMMIT")
+            e.printStackTrace();
+            return 'none';
+        }
+
+        String commit = stdout.toString().trim()
+
+        if(commit.startsWith("Release") || commit.startsWith("release")){
+            System.out.println("FOUND NEW RELEASE - COMMIT: " + commit);
+            return 'release'
+
+        }else if(commit.startsWith("Beta") || commit.startsWith("beta")){
+            System.out.println("FOUND NEW BETA - COMMIT: " + commit);
+            return 'beta'
+
+        }else if(commit.startsWith("Alpha") || commit.startsWith("alpha")){
+            System.out.println("FOUND NEW ALPHA - COMMIT: " + commit);
+            return 'alpha'
+        }else{
+            System.out.println("SKIPPING CURSE RELEASE - COMMIT: " + commit)
+        }
+
+    }
+
+    System.out.println("SKIPPING CURSE RELEASE - NO CURSE API KEY")
+    return 'none';
+}
+
+tasks.curseforge.enabled = project.hasProperty("curseforge_key") && !commit_release_type.equals('none')
+
+curseforge {
+
+    if(project.hasProperty("curseforge_key") && !commit_release_type.equals('none')) {
+        System.out.println("ATTEMPTING CURSE RELEASE")
+        apiKey = project.properties["curseforge_key"]
+    }
+
+    project {
+        id = curse_project_id
+
+        relations {
+            requiredLibrary 'sonar-core'
+            optionalLibrary 'tesla'
+            optionalLibrary 'industrial-craft'
+            optionalLibrary 'redstone-flux'
+            optionalLibrary 'applied-energistics-2'
+            optionalLibrary 'applied-energistics-2'
+        }
+
+        mainArtifact(jar) {
+            displayName = "Flux-Networks-${minecraft_version}-${mod_version}"
+            //throws if not release, beta or alpha
+            releaseType = !commit_release_type.equals('none') ? commit_release_type : 'release'
+            changelog = file("${projectDir}/change_log.html").text
+            changelogType = 'html'
+        }
+
+        addArtifact(sourceJar){
+            changelog = "For experienced users only"
+            releaseType = 'alpha'
+        }
+
+        addArtifact(deobfJar){
+            changelog = "For experienced users only"
+            releaseType = 'alpha'
+        }
     }
 }
