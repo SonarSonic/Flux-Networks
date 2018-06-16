@@ -90,7 +90,6 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 			long added = addToBuffer(maxReceive, energy_type, type.shouldSimulate());
             if (!type.shouldSimulate()) {
 				transfer.addedToNetwork(added, energy_type);
-				this.added += toFE(added, energy_type);
 			}
 			return added;
 		}
