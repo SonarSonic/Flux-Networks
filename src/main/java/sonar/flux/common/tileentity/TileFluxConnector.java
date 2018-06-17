@@ -1,11 +1,14 @@
 package sonar.flux.common.tileentity;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import sonar.core.SonarCore;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.client.gui.GuiTab;
 import sonar.flux.client.gui.tabs.GuiTabFluxConnectorIndex;
@@ -13,7 +16,6 @@ import sonar.flux.common.tileentity.energy.TileFluxTesla;
 import sonar.flux.connection.transfer.handlers.ConnectionTransferHandler;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class TileFluxConnector extends TileFluxTesla implements IFlexibleGui {
@@ -38,12 +40,18 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
 	@Override
 	public void updateTransfers(EnumFacing ...faces){
 		super.updateTransfers(faces);
-		if(handler.wasChanged){
-			ArrayList<Boolean> bool = new ArrayList<>();
-			for(EnumFacing face : EnumFacing.VALUES){
-				bool.add(handler.transfers.get(face)!=null);
+		boolean sendRenderUpdate = false;
+		for (EnumFacing face : faces) {
+			BlockPos adj = pos.offset(face);
+			TileEntity tile = world.getTileEntity(adj);
+			boolean original = connections.getObjects().get(face.getIndex());
+			boolean current = FluxNetworks.TRANSFER_HANDLER.canRenderConnection(tile, face.getOpposite());
+			if(original != current){
+				connections.getObjects().set(face.getIndex(), current);
+				sendRenderUpdate = true;
 			}
-			connections.setObjects(bool);
+		}
+		if(sendRenderUpdate) {
 			SonarCore.sendFullSyncAroundWithRenderUpdate(this, 128);
 		}
 	}

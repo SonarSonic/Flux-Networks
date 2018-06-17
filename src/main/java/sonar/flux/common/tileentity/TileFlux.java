@@ -57,9 +57,6 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 
 	private final ConnectionType type;
 
-	public long toReceive; // is reset after each tick, the network calculates the max accept based upon priorities and sorting etc.
-	public long toSend;
-
 	//// USER CONFIGURED \\\\
 	public SyncTagType.INT priority = (INT) new SyncTagType.INT(0).addSyncType(SyncType.DROP);
 	public SyncTagType.LONG limit = (LONG) new SyncTagType.LONG(1).setDefault(FluxConfig.defaultLimit).addSyncType(SyncType.DROP);
@@ -195,10 +192,10 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		if (isServer()) {
 			FluxHelper.addConnection(this, AdditionType.ADD);
 			updateTransfers(EnumFacing.VALUES);
-			SonarCore.sendPacketAround(this, 128, 0);
 		}
-		if (isClient())
+		if (isClient()) {
 			requestSyncPacket();
+		}
 	}
 
 	public void invalidate() {

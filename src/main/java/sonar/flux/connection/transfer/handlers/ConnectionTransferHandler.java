@@ -134,7 +134,6 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 		boolean change = false;
 		for (EnumFacing face : faces) {
 			if (validFaces.contains(face)) {
-				int index = face.getIndex();
 				BlockPos neighbour_pos = tile.getPos().offset(face);
 				TileEntity neighbour_tile = tile.getWorld().getTileEntity(neighbour_pos);
 
