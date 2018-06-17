@@ -54,7 +54,7 @@ public class FluxPlayer implements INBTSyncable {
             player.player_uuid_online = EntityPlayer.getUUID(profile);
         }else{
             player.player_uuid_online = new UUID(0,0);
-            player.player_uuid_offline = EntityPlayer.getOfflineUUID(profile.getName());
+            player.player_uuid_offline = getOfflineUUID(ePlayer);
         }
         player.player_name = profile.getName();
         player.player_access = access;
@@ -77,6 +77,17 @@ public class FluxPlayer implements INBTSyncable {
             player_uuid_offline = EntityPlayer.getOfflineUUID(player_name);
         }
         return player_uuid_offline;
+    }
+
+    /**returns offline uuid if in offline mode*/
+    public static UUID getOnlineUUID(EntityPlayer player){
+        GameProfile profile = player.getGameProfile();
+        return EntityPlayer.getUUID(profile);
+    }
+
+    public static UUID getOfflineUUID(EntityPlayer player){
+        GameProfile profile = player.getGameProfile();
+        return EntityPlayer.getOfflineUUID(profile.getName());
     }
 
     public String getCachedName() {
@@ -106,8 +117,15 @@ public class FluxPlayer implements INBTSyncable {
         return nbt;
     }
 
-    public boolean matches(EntityPlayer player, UUID profileUUID){
-        if(profileUUID.equals(getOnlineUUID()) || profileUUID.equals(getOfflineUUID())){
+    public boolean matches(EntityPlayer player){
+        if(getOnlineUUID(player).equals(getOnlineUUID())){
+            return true;
+        }
+        if(getOfflineUUID(player).equals(getOfflineUUID())){
+            UUID online = player.getGameProfile().getId();
+            if(online != null){
+                player_uuid_online = online;
+            }
             return true;
         }
         return false;
@@ -116,7 +134,7 @@ public class FluxPlayer implements INBTSyncable {
     public boolean equals(Object obj) {
         if (obj instanceof FluxPlayer) {
             FluxPlayer player = (FluxPlayer) obj;
-            return player.player_uuid_online.equals(this.player_uuid_online) && player.player_access.equals(player_access);
+            return player.player_uuid_online.equals(this.player_uuid_online) || player.getOnlineUUID().equals(getOnlineUUID()) && player.player_access.equals(player_access);
         }
         return false;
     }

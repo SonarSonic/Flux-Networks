@@ -1,5 +1,6 @@
 package sonar.flux.api.network;
 
+import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.utils.CustomColour;
@@ -15,7 +16,7 @@ import java.util.UUID;
  */
 public interface IFluxCommon extends INBTSyncable {
 
-    boolean isOwner(UUID id);
+    boolean isOwner(EntityPlayer player);
 
     /**
      * the access settings of this network

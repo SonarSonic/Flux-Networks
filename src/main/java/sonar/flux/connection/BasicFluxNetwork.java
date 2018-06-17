@@ -353,8 +353,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		if (FluxHelper.isPlayerAdmin(player)) {
 			return PlayerAccess.CREATIVE;
 		}
-		UUID playerID = FluxHelper.getOwnerUUID(player);
-		if (isOwner(playerID)) {
+		if (isOwner(player)) {
 			return PlayerAccess.OWNER;
 		}
 		if (accessType.getObject() == AccessType.PUBLIC) {
@@ -362,7 +361,7 @@ public class BasicFluxNetwork extends FluxNetworkCommon implements IFluxNetwork 
 		}
 		if (accessType.getObject() == AccessType.RESTRICTED) {
 			for (FluxPlayer fluxPlayer : players) {
-				if (fluxPlayer.matches(player, playerID)) {
+				if (fluxPlayer.matches(player)) {
 					return fluxPlayer.getAccess();
 				}
 			}

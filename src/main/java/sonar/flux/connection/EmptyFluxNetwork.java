@@ -33,7 +33,7 @@ public class EmptyFluxNetwork implements IFluxNetwork {
 	public void onEndServerTick() {}
 
 	@Override
-	public boolean isOwner(UUID id) {
+	public boolean isOwner(EntityPlayer player) {
 		return false;
 	}
 

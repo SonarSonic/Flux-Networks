@@ -19,7 +19,6 @@ import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.gui.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.connection.FluxHelper;
 
 import java.util.List;
 import java.util.Optional;
@@ -118,7 +117,7 @@ public class PacketHelper {
 		EnergyType energyType = EnergyType.readFromNBT(packetTag, NetworkData.ENERGY_TYPE);
 		
 		if (FluxNetworks.getServerCache().hasSpaceForNetwork(player)) {
-			IFluxNetwork network = FluxNetworks.getServerCache().createNetwork(player, newName, colour, access, enableConversion, energyType);
+			FluxNetworks.getServerCache().createNetwork(player, newName, colour, access, enableConversion, energyType);
 		}		
 		List<IFluxNetwork> networks = FluxNetworkCache.instance().getAllowedNetworks(player, false);
 		FluxNetworks.network.sendTo(new PacketFluxNetworkList(networks, true), (EntityPlayerMP) player);
@@ -138,7 +137,7 @@ public class PacketHelper {
 		IFluxNetwork toDelete = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!toDelete.isFakeNetwork()) {
 			if (toDelete.getPlayerAccess(player).canDelete()) {
-				FluxNetworks.getServerCache().onPlayerRemoveNetwork(FluxHelper.getOwnerUUID(player), toDelete);
+				FluxNetworks.getServerCache().onPlayerRemoveNetwork(toDelete);
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.NOT_OWNER);
 			}
@@ -250,7 +249,7 @@ public class PacketHelper {
 		int networkID = packetTag.getInteger("networkID");
 		UUID playerChanged = packetTag.getUniqueId("playerChanged");
 		if (playerChanged != null) {
-			if (FluxHelper.getOwnerUUID(player).equals(playerChanged)) {
+			if (FluxPlayer.getOnlineUUID(player).equals(playerChanged)) {
 				//don't allow editing of their own permissions.
 				return null;
 			}
@@ -290,7 +289,7 @@ public class PacketHelper {
 	public static IMessage doDisconnectPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		IFluxNetwork network = source.getNetwork();
-		if (networkID == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && source.playerUUID.getUUID().equals(FluxHelper.getOwnerUUID(player))) {
+		if (networkID == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && source.playerUUID.getUUID().equals(FluxPlayer.getOnlineUUID(player))) {
 			network.removeConnection(source, RemovalType.REMOVE);
 		}
 		return null;

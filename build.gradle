@@ -194,7 +194,7 @@ curseforge {
             optionalLibrary 'industrial-craft'
             optionalLibrary 'redstone-flux'
             optionalLibrary 'applied-energistics-2'
-            optionalLibrary 'applied-energistics-2'
+            optionalLibrary 'immersive-engineering'
         }
 
         mainArtifact(jar) {

@@ -15,7 +15,6 @@ import sonar.flux.api.tiles.IFluxPoint;
 import sonar.flux.network.FluxNetworkCache;
 
 import java.util.List;
-import java.util.UUID;
 
 public class FluxHelper {
 
@@ -38,11 +37,11 @@ public class FluxHelper {
 			}
 		}
 	}
-
+/*
 	public static UUID getOwnerUUID(EntityPlayer player) {
 		return player.getGameProfile().getId();
 	}
-
+*/
 	public static boolean isPlayerAdmin(EntityPlayer player) {
 		return player.isCreative();
 	}

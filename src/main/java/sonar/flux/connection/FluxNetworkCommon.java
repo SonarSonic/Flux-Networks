@@ -10,6 +10,7 @@ import sonar.core.network.sync.*;
 import sonar.core.utils.CustomColour;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientFlux;
+import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.FluxPlayersList;
 import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
@@ -54,12 +55,13 @@ public abstract class FluxNetworkCommon implements IFluxCommon, ISyncableListene
 	}
 
 	@Override
-	public boolean isOwner(UUID id){
-		if(id.equals(getOwnerUUID())){
+	public boolean isOwner(EntityPlayer player){
+		UUID onlineID = FluxPlayer.getOnlineUUID(player);
+		if(onlineID.equals(ownerUUID.getUUID())){
 			return true;
 		}
-		UUID offline_id = EntityPlayer.getOfflineUUID(this.getCachedPlayerName());
-		if(id.equals(offline_id)){
+		UUID offlineID = FluxPlayer.getOfflineUUID(player);
+		if(offlineID.equals(getOwnerUUID())){
 			return true;
 		}
 		return false;

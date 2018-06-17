@@ -97,10 +97,10 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	}
 
 	public boolean hasSpaceForNetwork(EntityPlayer player) {
-		if(FluxConfig.maximum_per_player==-1){
+		if(FluxConfig.maximum_per_player == -1){
 			return true;
 		}
-		UUID ownerUUID = FluxHelper.getOwnerUUID(player);
+		UUID ownerUUID = FluxPlayer.getOnlineUUID(player);
 		List<IFluxNetwork> created = networks.getOrDefault(ownerUUID, new ArrayList<>());
 		return created.size() < FluxConfig.maximum_per_player;
 	}
@@ -124,7 +124,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		return network;
 	}
 
-	public void onPlayerRemoveNetwork(UUID uuid, IFluxNetwork remove) {
+	public void onPlayerRemoveNetwork(IFluxNetwork remove) {
 		removeNetwork(remove);
 		FluxNetworks.network.sendToAll(new PacketClearNetwork(remove.getNetworkID()));
 		FluxEvents.logRemoveNetwork(remove);

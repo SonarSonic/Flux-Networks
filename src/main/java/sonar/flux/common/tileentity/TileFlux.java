@@ -32,6 +32,7 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.*;
 import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.api.configurator.IFluxConfigurable;
+import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFluxListenable;
@@ -177,7 +178,7 @@ public abstract class TileFlux extends TileEntitySonar implements IFluxListenabl
 		if (FluxHelper.isPlayerAdmin(player)) {
 			return PlayerAccess.CREATIVE;
 		}
-		if (playerUUID.getUUID() != null && playerUUID.getUUID().equals(FluxHelper.getOwnerUUID(player))) {
+		if (playerUUID.getUUID() != null && playerUUID.getUUID().equals(FluxPlayer.getOnlineUUID(player))) {
 			return PlayerAccess.OWNER;
 		}
 		return getNetwork().isFakeNetwork() ? PlayerAccess.BLOCKED : getNetwork().getPlayerAccess(player);
