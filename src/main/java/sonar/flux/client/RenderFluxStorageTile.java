@@ -24,7 +24,7 @@ public class RenderFluxStorageTile extends TileEntitySpecialRenderer<TileStorage
 		pushMatrix();
 		translate(x, y, z);
 		disableTexture2D();
-		enableAlpha();
+		//enableAlpha();
 		disableLighting();
 		tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, 1, 1, 0);
 		float full = 1 - 0.0625F * 3;
@@ -75,9 +75,10 @@ public class RenderFluxStorageTile extends TileEntitySpecialRenderer<TileStorage
 		popMatrix();
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 		enableLighting();
-		disableAlpha();
+		//disableAlpha();
 		enableTexture2D();
 		popMatrix();
+		color(1, 1, 1, 1);
 	}
 
 }

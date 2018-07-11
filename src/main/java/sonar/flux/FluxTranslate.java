@@ -141,12 +141,29 @@ public class FluxTranslate {
 	public static final Localisation COLOUR_RED_CHAR = t("network.edit.color.r");
 	public static final Localisation COLOUR_GREEN_CHAR = t("network.edit.color.g");
 	public static final Localisation COLOUR_BLUE_CHAR = t("network.edit.color.b");
-	
-	
+
 	// ACCESS SETTING \\
 	public static final Localisation ACCESS_RESTRICTED = t("network.edit.restricted");
 	public static final Localisation ACCESS_PRIVATE = t("network.edit.private");
 	public static final Localisation ACCESS_PUBLIC = t("network.edit.public");
+
+	// ACTIVATION SETTING \\
+	public static final Localisation ACTIVATION_ALWAYS = t("flux.activated.always");
+	public static final Localisation ACTIVATION_NEVER = t("flux.activated.never");
+	public static final Localisation ACTIVATION_POSITIVE_SIGNAL = t("flux.activated.possignal");
+	public static final Localisation ACTIVATION_NEGATIVE_SIGNAL = t("flux.activated.negsignal");
+	public static final Localisation ACTIVATION_CURRENT_STATE = t("flux.activated.currentstate");
+	public static final Localisation ACTIVATION_ACTIVATED = t("flux.activated.activated");
+	public static final Localisation ACTIVATION_DEACTIVATED = t("flux.activated.deactivated");
+
+	// PRIORITY SETTING \\
+	public static final Localisation PRIORITY_MODE = t("flux.priority.mode");
+	public static final Localisation PRIORITY_NORMAL = t("flux.priority.normal");
+	public static final Localisation PRIORITY_SURGE = t("flux.priority.surge");
+
+	/// DEBUG MENU \\
+	public static final Localisation DEBUG_CONNECTED_BLOCKS = t("flux.debug.cblocks");
+	public static final Localisation DEBUG_NETWORK_CONNECTIONS = t("flux.debug.nconnections");
 
 	//// NETWORK ERRORS \\\\
 	public static final Localisation ERROR_NONE_ERROR = t("network.error.none");
@@ -206,6 +223,10 @@ public class FluxTranslate {
 	
 	public static String translateBoolean(boolean bool){
 		return bool ? TRUE.t() : FALSE.t();
+	}
+
+	public static String translateActivation(boolean bool){
+		return bool ? ACTIVATION_ACTIVATED.t() : ACTIVATION_DEACTIVATED.t();
 	}
 	
 	public static String translateToggle(boolean bool){

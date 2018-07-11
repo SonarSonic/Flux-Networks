@@ -8,7 +8,7 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
 	
 	public TileFluxPoint() {
 		super(ConnectionType.POINT);
-		customName.setDefault("Flux Point");
+		customName.setValueInternal("Flux Point");
 	}
 
 	@Override

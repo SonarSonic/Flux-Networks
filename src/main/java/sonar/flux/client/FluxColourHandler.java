@@ -14,11 +14,12 @@ import net.minecraft.world.IBlockAccess;
 import sonar.core.common.block.SonarBlock;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.client.gui.GuiAbstractTab;
 import sonar.flux.common.block.FluxConnection;
 import sonar.flux.common.item.ItemNetworkConnector;
 import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.connection.NetworkSettings;
 import sonar.flux.network.PacketColourRequest;
 
 import javax.annotation.Nullable;
@@ -106,7 +107,7 @@ public class FluxColourHandler implements IBlockColor, IItemColor {
 
     @Override
     public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int tintIndex) {
-        if (tintIndex == 1) {
+        if (tintIndex == 1 && pos != null) {
             TileEntity tile = world.getTileEntity(pos);
             if (!state.getValue(FluxConnection.CONNECTED)) {
                 return NO_NETWORK_COLOUR;
@@ -130,8 +131,8 @@ public class FluxColourHandler implements IBlockColor, IItemColor {
             if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("gui_colour")) {
                 Object screen = Minecraft.getMinecraft().currentScreen;
                 if (screen instanceof GuiAbstractTab) {
-                    IFluxCommon common = ((GuiAbstractTab) screen).common;
-                    return common.isFakeNetwork() ? NO_NETWORK_COLOUR : common.getNetworkColour().getRGB();
+                    IFluxNetwork common = ((GuiAbstractTab) screen).common;
+                    return common.isFakeNetwork() ? NO_NETWORK_COLOUR : common.getSetting(NetworkSettings.NETWORK_COLOUR).getRGB();
                 }
             }
             NBTTagCompound tag = stack.getSubCompound(SonarBlock.DROP_TAG_NAME);

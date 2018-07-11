@@ -39,7 +39,7 @@ public class GuiTabFluxConnectorIndex extends GuiTabConnectionIndex<TileFluxConn
 		if (element instanceof ClientFlux) {
 			renderFlux((IFlux) element, true, 0, 0);
 		} else if (element instanceof ClientTransfer) {
-			renderFluxTransfer((ClientTransfer) element, x, y, common.getNetworkColour().getRGB());
+			renderFluxTransfer((ClientTransfer) element, x, y, getNetworkColour());
 		}
 	}
 

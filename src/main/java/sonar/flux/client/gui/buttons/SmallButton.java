@@ -12,8 +12,8 @@ public class SmallButton extends ImageButton {
 	public String name;
 	public GuiAbstractTab gui;
 
-	public SmallButton(GuiAbstractTab gui, int id, int x, int y, int texX, String name) {
-		super(id, x, y, GuiAbstractTab.small_buttons, texX / 2, 0, 11, 11);
+	public SmallButton(GuiAbstractTab gui, int id, int x, int y, int texX, int texY, String name) {
+		super(id, x, y, GuiAbstractTab.small_buttons, texX / 2, texY / 2, 11, 11);
 		this.gui = gui;
 		this.id = id;
 		this.name = name;

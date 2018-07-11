@@ -11,6 +11,7 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFlux;
+import sonar.flux.connection.NetworkSettings;
 import sonar.flux.connection.transfer.ConnectionTransfer;
 import sonar.flux.connection.transfer.ISidedTransfer;
 import sonar.flux.connection.transfer.PhantomTransfer;
@@ -85,8 +86,11 @@ public class ConnectionTransferHandler extends FluxTransferHandler implements IT
 	}
 
 	public long addPhantomEnergyToNetwork(EnumFacing from, long maxReceive, EnergyType energy_type, ActionType type) {
+		if(!flux.isActive()){
+			return 0;
+		}
 		IFluxTransfer transfer = getValidPhantomTransfer(from, energy_type, type);
-		if (transfer != null && getNetwork().canTransfer(energy_type) && getNetwork().canConvert(energy_type, getNetwork().getDefaultEnergyType())) {
+		if (transfer != null && getNetwork().canTransfer(energy_type) && getNetwork().canConvert(energy_type, getNetwork().getSetting(NetworkSettings.NETWORK_ENERGY_TYPE))) {
 			long added = addToBuffer(maxReceive, energy_type, type.shouldSimulate());
             if (!type.shouldSimulate()) {
 				transfer.addedToNetwork(added, energy_type);

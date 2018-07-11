@@ -7,7 +7,8 @@ import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.connection.BasicFluxNetwork;
+import sonar.flux.connection.FluxNetworkServer;
+import sonar.flux.connection.NetworkSettings;
 
 public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferHandler {
 
@@ -23,6 +24,9 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 	
 	@Override
 	public long addToNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
+		if(!flux.isActive()){
+			return 0;
+		}
 		long added = Math.min(getAddRate() - buffer_transfer, Math.min(toFE(maxTransferRF, energyType), buffer));
 		if(!actionType.shouldSimulate() && added > 0){
 			buffer -= added;
@@ -33,6 +37,9 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 
 	@Override
 	public long removeFromNetwork(long maxTransferRF, EnergyType energyType, ActionType actionType) {
+		if(!flux.isActive()){
+			return 0;
+		}
 		long actualMax = Math.min(maxTransferRF, getValidRemoval(maxTransferRF, energyType));
 		long removed = 0;
 		for (IFluxTransfer transfer : getTransfers()) {
@@ -41,7 +48,7 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 				long remove = ((IEnergyTransfer)transfer).removeFromNetworkWithConvert(toTransfer, energyType, actionType);
 				removed += remove;
 				if (!actionType.shouldSimulate()) {
-					this.removed += FluxNetworks.TRANSFER_HANDLER.convert(remove, energyType, getNetwork().getDefaultEnergyType());
+					this.removed += FluxNetworks.TRANSFER_HANDLER.convert(remove, energyType, getNetwork().getSetting(NetworkSettings.NETWORK_ENERGY_TYPE));
 				}
 			}
 		}
@@ -60,7 +67,7 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 
 	@Override
 	public long getBufferLimiter(){
-		return flux.getNetwork().isFakeNetwork() ? 0 : ((BasicFluxNetwork)getNetwork()).buffer_limiter;
+		return flux.getNetwork().isFakeNetwork() ? 0 : ((FluxNetworkServer)getNetwork()).buffer_limiter;
 	}
 
 }

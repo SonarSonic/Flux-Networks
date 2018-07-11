@@ -16,6 +16,7 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.common.tileentity.TileController;
+import sonar.flux.connection.NetworkSettings;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -25,7 +26,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 	public final TileController controller;
 
 	public ControllerTransfer(TileController tile) {
-		super(tile.getNetwork().getDefaultEnergyType());
+		super(tile.getNetwork().getSetting(NetworkSettings.NETWORK_ENERGY_TYPE));
 		this.controller = tile;
 	}
 
@@ -37,7 +38,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 
 	@Override
 	public long removeFromNetwork(long maxTransferRF, ActionType actionType) {
-		if (!controller.wireless_charging.getObject()) {
+		if (!controller.wireless_charging.getValue()) {
 			return 0;
 		}
 		long received = 0;
@@ -66,7 +67,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 	}
 
 	public List<EntityPlayer> getChargeablePlayers(){
-		List<FluxPlayer> playerNames = controller.getNetwork().getPlayers();
+		List<FluxPlayer> playerNames = controller.getNetwork().getSetting(NetworkSettings.NETWORK_PLAYERS);
 		List<EntityPlayer> players = new ArrayList<>();
 		for (FluxPlayer player : playerNames) {
 			Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.getOnlineUUID());
@@ -83,25 +84,25 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 		InventoryPlayer inv = player.inventory;
 		ItemStack heldItem = inv.getCurrentItem();
 
-		if(controller.right_hand.getObject() && !heldItem.isEmpty()){
+		if(controller.right_hand.getValue() && !heldItem.isEmpty()){
 			subInventories.put(Lists.newArrayList(heldItem), NOT_EMPTY);
 		}
-		if(controller.left_hand.getObject()){
+		if(controller.left_hand.getValue()){
 			subInventories.put(inv.offHandInventory, NOT_EMPTY);
 		}
-		if(controller.armour_slot.getObject()){
+		if(controller.armour_slot.getValue()){
 			subInventories.put(inv.armorInventory, NOT_EMPTY);
 		}
-		if(controller.baubles_slot.getObject() && Loader.isModLoaded("baubles")){
+		if(controller.baubles_slot.getValue() && Loader.isModLoaded("baubles")){
 			if(player.hasCapability(baubles.api.cap.BaublesCapabilities.CAPABILITY_BAUBLES, null)){
 				IItemHandler handler = player.getCapability(baubles.api.cap.BaublesCapabilities.CAPABILITY_BAUBLES, null);
 				subInventories.put(() -> new ItemHandlerIterator(handler), NOT_EMPTY);
 			}
 		}
-		if(controller.hot_bar.getObject()){
+		if(controller.hot_bar.getValue()){
 			subInventories.put(inv.mainInventory.subList(0, 9), stack -> !stack.isEmpty() && (heldItem.isEmpty() || heldItem != stack));
 		}
-		if(controller.main_inventory.getObject()){
+		if(controller.main_inventory.getValue()){
 			subInventories.put(inv.mainInventory.subList(9, inv.mainInventory.size()), NOT_EMPTY);
 		}
 		return subInventories;
@@ -137,7 +138,7 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 
 	@Override
 	public EnergyType getEnergyType() {
-		return controller.getNetwork().getDefaultEnergyType();
+		return controller.getNetwork().getSetting(NetworkSettings.NETWORK_ENERGY_TYPE);
 	}
 
 }

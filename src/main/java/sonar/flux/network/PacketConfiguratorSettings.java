@@ -15,8 +15,7 @@ public class PacketConfiguratorSettings implements IMessage {
 
     public NBTTagCompound disabledTag;
 
-    public PacketConfiguratorSettings() {
-    }
+    public PacketConfiguratorSettings() {}
 
     public PacketConfiguratorSettings(NBTTagCompound disabledTag) {
         this.disabledTag = disabledTag;
@@ -40,11 +39,7 @@ public class PacketConfiguratorSettings implements IMessage {
                 EntityPlayer player = SonarCore.proxy.getPlayerEntity(ctx);
                 ItemStack heldItem = player.getHeldItem(player.getActiveHand());
                 if (!heldItem.isEmpty() && heldItem.getItem() instanceof FluxConfigurator) {
-                    NBTTagCompound tag = heldItem.getTagCompound();
-                    if (tag == null) {
-                        heldItem.setTagCompound(tag = new NBTTagCompound());
-                    }
-                    tag.setTag(FluxConfigurator.DISABLED_TAG, message.disabledTag);
+                    heldItem.setTagInfo(FluxConfigurator.DISABLED_TAG, message.disabledTag);
                 }
             });
             return null;

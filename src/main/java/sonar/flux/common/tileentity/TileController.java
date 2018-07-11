@@ -4,7 +4,8 @@ import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import sonar.core.api.IFlexibleGui;
-import sonar.core.network.sync.SyncTagType;
+import sonar.core.sync.ISyncValue;
+import sonar.core.sync.SyncRegistry;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFluxController;
@@ -18,20 +19,19 @@ import java.util.List;
 
 public class TileController extends TileFlux implements IFlexibleGui, IFluxController {
 
-	public SyncTagType.BOOLEAN wireless_charging = new SyncTagType.BOOLEAN(12);
-	public SyncTagType.BOOLEAN main_inventory = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(14).setDefault(true);
-	public SyncTagType.BOOLEAN hot_bar = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(15).setDefault(true);
-	public SyncTagType.BOOLEAN armour_slot = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(16).setDefault(true);
-	public SyncTagType.BOOLEAN baubles_slot = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(17).setDefault(true);
-	public SyncTagType.BOOLEAN left_hand = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(18).setDefault(false);
-	public SyncTagType.BOOLEAN right_hand = (SyncTagType.BOOLEAN) new SyncTagType.BOOLEAN(19).setDefault(false);
+	public ISyncValue<Boolean> wireless_charging = SyncRegistry.createValue(Boolean.class, value_watcher, "12", false);
+	public ISyncValue<Boolean> main_inventory = SyncRegistry.createValue(Boolean.class, value_watcher, "14", true);
+	public ISyncValue<Boolean> hot_bar = SyncRegistry.createValue(Boolean.class, value_watcher, "15", true);
+	public ISyncValue<Boolean> armour_slot = SyncRegistry.createValue(Boolean.class, value_watcher, "16", true);
+	public ISyncValue<Boolean> baubles_slot = SyncRegistry.createValue(Boolean.class, value_watcher, "17", true);
+	public ISyncValue<Boolean> left_hand = SyncRegistry.createValue(Boolean.class, value_watcher, "18", false);
+	public ISyncValue<Boolean> right_hand = SyncRegistry.createValue(Boolean.class, value_watcher, "19", false);
 
 	public final SingleTransferHandler handler = new SingleTransferHandler(this, new ControllerTransfer(this));
 
 	public TileController() {
 		super(ConnectionType.CONTROLLER);
-		syncList.addParts(wireless_charging,  main_inventory, hot_bar, armour_slot, baubles_slot, left_hand, right_hand);
-		customName.setDefault("Flux Controller");
+		customName.setValueInternal("Flux Controller");
 	}
 
 	@Override
@@ -39,18 +39,18 @@ public class TileController extends TileFlux implements IFlexibleGui, IFluxContr
 		super.writePacket(buf, id);
 		switch (id) {
 		case 13:
-			wireless_charging.writeToBuf(buf);
+			wireless_charging.save(buf);
 			break;
 		case 14:
-			customName.writeToBuf(buf);
+			customName.save(buf);
 			break;
 		case 15:
-			main_inventory.writeToBuf(buf);
-			hot_bar.writeToBuf(buf);
-			armour_slot.writeToBuf(buf);
-			baubles_slot.writeToBuf(buf);
-			left_hand.writeToBuf(buf);
-			right_hand.writeToBuf(buf);
+			main_inventory.save(buf);
+			hot_bar.save(buf);
+			armour_slot.save(buf);
+			baubles_slot.save(buf);
+			left_hand.save(buf);
+			right_hand.save(buf);
 			break;
 		}
 	}
@@ -60,18 +60,18 @@ public class TileController extends TileFlux implements IFlexibleGui, IFluxContr
 		super.readPacket(buf, id);
 		switch (id) {
 		case 13:
-			wireless_charging.readFromBuf(buf);
+			wireless_charging.load(buf);
 			break;
 		case 14:
-			customName.readFromBuf(buf);
+			customName.load(buf);
 			break;
 		case 15:
-			main_inventory.readFromBuf(buf);
-			hot_bar.readFromBuf(buf);
-			armour_slot.readFromBuf(buf);
-			baubles_slot.readFromBuf(buf);
-			left_hand.readFromBuf(buf);
-			right_hand.readFromBuf(buf);
+			main_inventory.load(buf);
+			hot_bar.load(buf);
+			armour_slot.load(buf);
+			baubles_slot.load(buf);
+			left_hand.load(buf);
+			right_hand.load(buf);
 			break;
 		}
 	}

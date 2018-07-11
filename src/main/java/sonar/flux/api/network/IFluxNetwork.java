@@ -2,114 +2,80 @@ package sonar.flux.api.network;
 
 import net.minecraft.entity.player.EntityPlayer;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.utils.CustomColour;
-import sonar.flux.api.AccessType;
+import sonar.core.api.nbt.INBTSyncable;
+import sonar.core.sync.ISonarValue;
 import sonar.flux.api.AdditionType;
 import sonar.flux.api.RemovalType;
-import sonar.flux.api.tiles.IFluxController;
 import sonar.flux.api.tiles.IFluxListenable;
+import sonar.flux.connection.NetworkSettings;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
  * all server stored Networks will implement this
  */
-public interface IFluxNetwork extends IFluxCommon {
+public interface IFluxNetwork extends INBTSyncable {
 
-    /**
-     * called every tick like TileEntities, you shouldn't be calling this method
-     */
-    void onStartServerTick();
-    
-    void onEndServerTick();
+    default int getNetworkID(){
+        return getSetting(NetworkSettings.NETWORK_ID);
+    }
 
-    /**
-     * returns true if a {@link IFluxController} has been connected
-     */
-    boolean hasController();
+    <T> T getSetting(NetworkSettings<T> setting);
 
-    /**
-     * obtains the IFluxController currently connected, can be null
-     */
-    IFluxController getController();
+    <T> ISonarValue<T> getSyncSetting(NetworkSettings<T> setting);
 
-    /**
-     * sets the custom name of this network
-     */
-    void setNetworkName(String name);
+    default <T> void setSetting(NetworkSettings<T> setting, T set){
+        getSyncSetting(setting).setValue(set);
+    }
 
-    /**
-     * sets the access setting of this network
-     */
-    void setAccessType(AccessType type);
+    default <T> void setSettingInternal(NetworkSettings<T> setting, T set){
+        getSyncSetting(setting).setValueInternal(set);
+    }
 
-    /**
-     * sets the colour of this network
-     */
-    void setCustomColour(CustomColour colour);
-    
-    void setDisableConversion(boolean disable);
-    
-    void setDefaultEnergyType(EnergyType type);
+    /** called every tick like TileEntities, you shouldn't be calling this method */
+    default void onStartServerTick(){}
 
-    void markTypeDirty(FluxCache... caches);
+    /** called every tick like TileEntities, you shouldn't be calling this method */
+    default void onEndServerTick(){}
 
-    void setHasConnections(boolean bool);
+    default void onRemoved(){}
 
-    <T extends IFluxListenable> List<T> getConnections(FluxCache<T> type);
+    /** adds a Flux Connection to the network, this could be a PLUG, POINT or STORAGE */
+    default void queueConnectionAddition(IFluxListenable flux, AdditionType type){}
 
-    void markDirty();
+    /** removes a Flux Connection from the network */
+    default void queueConnectionRemoval(IFluxListenable flux, RemovalType type){}
 
-    /**
-     * checks if the given player as an access type already as
-     */
+    //<T extends IFluxListenable> List<T> getConnections(FluxCache<T> type);
+
+    boolean isOwner(EntityPlayer player);
+
+    /** checks if the given player as an access type already as */
     PlayerAccess getPlayerAccess(EntityPlayer player);
 
-    /**
-     * removes access to the network from the given player, points/plugs associated with them and on the network will then be blocked
-     */
+    /** removes access to the network from the given player,
+     * points/plugs associated with them and on the network will then be blocked */
     void removePlayerAccess(UUID uuid, PlayerAccess access);
 
-    /**
-     * adds access to the network for a given player, the owner is added as default
-     */
+    /** adds access to the network for a given player, the owner is added as default */
     void addPlayerAccess(String username, PlayerAccess access);
 
     Optional<FluxPlayer> getValidFluxPlayer(UUID uuid);
 
-    /**
-     * adds a Flux Connection to the network, this could be a PLUG, POINT or STORAGE
-     * @param type TODO
-     */
-    void addConnection(IFluxListenable flux, AdditionType type);
+    boolean isFakeNetwork();
 
-    /**
-     * removes a Flux Connection from the network
-     * @param type TODO
-     */
-    void removeConnection(IFluxListenable flux, RemovalType type);
-
-    void changeConnection(IFluxListenable flux);
-
-    void buildFluxConnections();
+    default void buildFluxConnections(){}
     
-    void addFluxListener(IFluxListenable listener);
+    default boolean canConvert(EnergyType from, EnergyType to){
+        return false;
+    }
     
-    void removeFluxListener(IFluxListenable listener);
-
-    List<IFluxListenable> getFluxListeners();
-
-    IFluxNetwork updateNetworkFrom(IFluxNetwork network);
-
-    void onRemoved();
+    default boolean canTransfer(EnergyType type){
+        return false;
+    }
     
-    boolean canConvert(EnergyType from, EnergyType to);
+    default void debugConnectedBlocks(){}
     
-    boolean canTransfer(EnergyType type);
-    
-    void debugConnectedBlocks();
-    
-    void debugValidateFluxConnections();
+    default void debugValidateFluxConnections(){}
 }

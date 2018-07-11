@@ -5,7 +5,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxTranslate;
-import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.client.gui.GuiAbstractTab;
 import sonar.flux.client.gui.GuiTab;
 import sonar.flux.client.gui.buttons.LargeButton;
@@ -16,11 +16,13 @@ import sonar.flux.network.PacketType;
 import java.io.IOException;
 import java.util.List;
 
+import static sonar.flux.connection.NetworkSettings.*;
+
 public class GuiTabConfirmNetworkDeletion extends GuiAbstractTab<TileFlux> {
 
-	public IFluxCommon toDelete;
+	public IFluxNetwork toDelete;
 
-	public GuiTabConfirmNetworkDeletion(TileFlux tile, IFluxCommon toDelete, GuiTabNetworkSelection origin, List<GuiTab> tabs) {
+	public GuiTabConfirmNetworkDeletion(TileFlux tile, IFluxNetwork toDelete, GuiTabNetworkSelection origin, List<GuiTab> tabs) {
 		super(tile, tabs);
 		this.setOrigin(origin);
 		this.toDelete = toDelete;
@@ -41,7 +43,7 @@ public class GuiTabConfirmNetworkDeletion extends GuiAbstractTab<TileFlux> {
 			FMLCommonHandler.instance().showGuiScreen(origin);
 			return;
 		case 1:
-			PacketHelper.sendPacketToServer(PacketType.DELETE_NETWORK, flux, PacketHelper.createNetworkDeletePacket(toDelete.getNetworkID()));
+			PacketHelper.sendPacketToServer(PacketType.DELETE_NETWORK, flux, PacketHelper.createNetworkDeletePacket(NETWORK_ID.getValue(toDelete)));
 			FMLCommonHandler.instance().showGuiScreen(origin);
 			return;
 		}
@@ -51,8 +53,8 @@ public class GuiTabConfirmNetworkDeletion extends GuiAbstractTab<TileFlux> {
 	@Override
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
-		renderNetwork(toDelete.getNetworkName(), toDelete.getAccessType(), toDelete.getNetworkColour().getRGB(), true, 11, 60);
-		FontHelper.textCentre(FluxTranslate.NETWORK_CONFIRM_DELETE.t(), xSize, 40, toDelete.getNetworkColour().getRGB());
+		renderNetwork(NETWORK_NAME.getValue(toDelete), NETWORK_ACCESS.getValue(toDelete), NETWORK_COLOUR.getValue(toDelete).getRGB(), true, 11, 60);
+		FontHelper.textCentre(FluxTranslate.NETWORK_CONFIRM_DELETE.t(), xSize, 40, NETWORK_COLOUR.getValue(toDelete).getRGB());
 	}
 
 	@Override

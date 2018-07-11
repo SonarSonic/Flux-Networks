@@ -6,8 +6,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.MapStorage;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -40,7 +38,6 @@ import sonar.flux.connection.FNEnergyTransferProxy;
 import sonar.flux.network.ClientNetworkCache;
 import sonar.flux.network.FluxCommon;
 import sonar.flux.network.FluxNetworkCache;
-import sonar.flux.network.NetworkData;
 
 import java.util.List;
 
@@ -53,8 +50,6 @@ public class FluxNetworks {
 	@Instance(FluxConstants.MODID)
 	public static FluxNetworks instance;
 
-	public FluxNetworkCache serverCache = new FluxNetworkCache();
-	public ClientNetworkCache clientCache = new ClientNetworkCache();
 	public static List<Block> block_connection_blacklist;
 	public static List<Item> item_connection_blacklist;
 	public static final FNEnergyTransferHandler TRANSFER_HANDLER = new FNEnergyTransferHandler();
@@ -116,7 +111,6 @@ public class FluxNetworks {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-
 		logger.info("Loading Events");
 		MinecraftForge.EVENT_BUS.register(new FluxEvents());
 		logger.info("Loaded Events");
@@ -134,26 +128,19 @@ public class FluxNetworks {
 	}
 
     @EventHandler
-    public void onServerStarting(FMLServerStartingEvent event) {
-        MapStorage storage = DimensionManager.getWorld(0).getMapStorage();
-        if(storage.getOrLoadData(NetworkData.class, NetworkData.IDENTIFIER) == null) {
-            storage.setData(NetworkData.IDENTIFIER, new NetworkData());
-        }
-    }
+    public void onServerStarting(FMLServerStartingEvent event) {}
     
 	@EventHandler
 	public void onServerStopped(FMLServerStoppedEvent event) {
-		serverCache.clearNetworks();
-		clientCache.clearNetworks();
 		proxy.shutdown(event);
 		logger.info("Cleared Network Caches");
 	}
 
 	public static ClientNetworkCache getClientCache() {
-		return FluxNetworks.instance.clientCache;
+		return FluxNetworks.proxy.clientCache;
 	}
 
 	public static FluxNetworkCache getServerCache() {
-		return FluxNetworks.instance.serverCache;
+		return FluxNetworks.proxy.serverCache;
 	}
 }

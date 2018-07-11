@@ -23,7 +23,7 @@ public class FluxHelper {
 		if (flux.getNetworkID() != -1) {
 			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
 			if (!network.isFakeNetwork()) {
-				network.addConnection(flux, type);
+				network.queueConnectionAddition(flux, type);
 			}
 		}
 	}
@@ -33,7 +33,7 @@ public class FluxHelper {
 		if (flux.getNetworkID() != -1) {
 			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
 			if (!network.isFakeNetwork()) {
-				network.removeConnection(flux, type);
+				network.queueConnectionRemoval(flux, type);
 			}
 		}
 	}

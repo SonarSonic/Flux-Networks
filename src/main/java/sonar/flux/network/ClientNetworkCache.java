@@ -1,11 +1,15 @@
 package sonar.flux.network;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import sonar.core.helpers.NBTHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.IFluxNetworkCache;
 import sonar.flux.client.FluxColourHandler;
-import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.connection.FluxNetworkClient;
+import sonar.flux.connection.FluxNetworkInvalid;
+import sonar.flux.connection.NetworkSettings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,35 +27,25 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 	@Override
 	public IFluxNetwork getNetwork(int iD) {
 		IFluxNetwork network = networks.get(iD);
-		if (network!=null && !network.isFakeNetwork()) {
+		if (network != null && !network.isFakeNetwork()) {
 			return network;
 		}
-		return EmptyFluxNetwork.INSTANCE;
+		return FluxNetworkInvalid.INVALID;
 	}
 
-	public void updateNetworksFromPacket(List<? extends IFluxNetwork> networks2, boolean updateEntireList) {
-		if (updateEntireList) {
-			networks2.forEach(this::readNetworkFromPacket);
-		} else {
-			Map<Integer, IFluxNetwork> newMap = new HashMap<>();
-			networks2.forEach(network -> {
-				newMap.put(network.getNetworkID(), network);
-				FluxColourHandler.loadColourCache(network.getNetworkID(), network.getNetworkColour().getRGB());
-				FluxColourHandler.loadNameCache(network.getNetworkID(), network.getNetworkName());
-			});
-			networks = newMap;
-		}
-	}
-
-	public void readNetworkFromPacket(IFluxNetwork network) {
-		IFluxNetwork storedNet = getNetwork(network.getNetworkID());
-		if (storedNet == null || storedNet.isFakeNetwork()) {
-			networks.put(network.getNetworkID(), network);
-		} else {
-			storedNet.updateNetworkFrom(network); //potentially the cause of massive lag/crash when creating networks for first time
-		}
-		FluxColourHandler.loadColourCache(network.getNetworkID(), network.getNetworkColour().getRGB());
-		FluxColourHandler.loadNameCache(network.getNetworkID(), network.getNetworkName());
+	public void updateNetworksFromPacket(Map<Integer, NBTTagCompound> network_updates, NBTHelper.SyncType type){
+		network_updates.forEach((I, NBT) ->{
+			IFluxNetwork network = getNetwork(I);
+			if(network.isFakeNetwork() && type.isType(NBTHelper.SyncType.SAVE)){
+				network = new FluxNetworkClient();
+				network.readData(NBT, type);
+				networks.put(network.getNetworkID(), network);
+			}else{
+				network.readData(NBT, type);
+			}
+			FluxColourHandler.loadColourCache(network.getNetworkID(), network.getSetting(NetworkSettings.NETWORK_COLOUR).getRGB());
+			FluxColourHandler.loadNameCache(network.getNetworkID(), network.getSetting(NetworkSettings.NETWORK_NAME));
+		});
 	}
 
 	@Override
@@ -67,8 +61,7 @@ public class ClientNetworkCache implements IFluxNetworkCache {
 
 	@Override
 	public List<IFluxNetwork> getAllNetworks() {
-		List<IFluxNetwork> available = new ArrayList<>(networks.values());
-		return available;
+		return new ArrayList<>(networks.values());
 	}
 
 	public static ClientNetworkCache instance() {

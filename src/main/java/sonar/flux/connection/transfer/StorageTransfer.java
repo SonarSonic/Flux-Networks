@@ -6,13 +6,14 @@ import sonar.core.api.utils.ActionType;
 import sonar.core.handlers.inventories.ItemStackHelper;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.common.tileentity.TileStorage;
+import sonar.flux.connection.NetworkSettings;
 
 public class StorageTransfer extends BaseFluxTransfer implements IEnergyTransfer {
 	
 	public final TileStorage tile;
 	
 	public StorageTransfer(TileStorage tile) {
-		super(tile.getNetwork().getDefaultEnergyType());
+		super(tile.getNetwork().getSetting(NetworkSettings.NETWORK_ENERGY_TYPE));
 		this.tile = tile;
 	}
 
@@ -41,7 +42,7 @@ public class StorageTransfer extends BaseFluxTransfer implements IEnergyTransfer
 
 	@Override
 	public EnergyType getEnergyType() {
-		return tile.getNetwork().getDefaultEnergyType();
+		return tile.getNetwork().getSetting(NetworkSettings.NETWORK_ENERGY_TYPE);
 	}
 	
 }

@@ -8,6 +8,7 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -55,6 +56,7 @@ public class FluxClient extends FluxCommon implements ILocalisationHandler {
 	public void shutdown(FMLServerStoppedEvent event) {
 		super.shutdown(event);
 		FluxColourHandler.reset();
+		clientCache.clearNetworks();
 	}
 
 	@Override
@@ -69,6 +71,12 @@ public class FluxClient extends FluxCommon implements ILocalisationHandler {
 		FluxColourHandler.colourCache.put(networkID, FluxColourHandler.NO_NETWORK_COLOUR);
 		FluxColourHandler.nameCache.put(networkID, "NONE");
 
+	}
+
+	@Override
+	public void preInit(FMLPreInitializationEvent event) {
+		super.preInit(event);
+		clientCache = new ClientNetworkCache();
 	}
 
 	@Override

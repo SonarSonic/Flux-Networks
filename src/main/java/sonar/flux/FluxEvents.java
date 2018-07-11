@@ -1,7 +1,5 @@
 package sonar.flux;
 
-import java.util.List;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -19,7 +17,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import sonar.core.SonarCore;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.entity.EntityFireItem;
+import sonar.flux.connection.NetworkSettings;
 import sonar.flux.network.FluxNetworkCache;
+
+import java.util.List;
 
 public class FluxEvents {
 
@@ -31,17 +32,17 @@ public class FluxEvents {
 		FluxNetworkCache cache = FluxNetworks.getServerCache();
 		List<IFluxNetwork> networks = cache.getAllNetworks();
 		if (event.phase == Phase.START) {
+			FluxNetworks.proxy.runnables.forEach(Runnable::run);
+			FluxNetworks.proxy.runnables.clear();
 			for (IFluxNetwork network : networks) {
 				network.onStartServerTick();
 			}
 		}
 		if (event.phase == Phase.END) {
-
 			for (IFluxNetwork network : networks) {
 				network.onEndServerTick();
 			}
 		}
-
 	}
 
 	@SubscribeEvent
@@ -79,14 +80,14 @@ public class FluxEvents {
 	}
 
 	public static void logNewNetwork(IFluxNetwork network) {
-		FluxNetworks.logger.info("[NEW NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was created by " + network.getCachedPlayerName());
+		FluxNetworks.logger.info("[NEW NETWORK] '" + network.getSetting(NetworkSettings.NETWORK_NAME) + "' with ID '" + network.getNetworkID() + "' was created by " + network.getSetting(NetworkSettings.NETWORK_CACHED_NAME) + "( " + network.getSetting(NetworkSettings.NETWORK_OWNER) + " )");
 	}
 
 	public static void logRemoveNetwork(IFluxNetwork network) {
-		FluxNetworks.logger.info("[DELETE NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' was removed by " + network.getCachedPlayerName());
+		FluxNetworks.logger.info("[DELETE NETWORK] '" + network.getSetting(NetworkSettings.NETWORK_NAME) + "' with ID '" + network.getNetworkID() + "' was removed by " + network.getSetting(NetworkSettings.NETWORK_CACHED_NAME));
 	}
 
 	public static void logLoadedNetwork(IFluxNetwork network) {
-		FluxNetworks.logger.info("[LOADED NETWORK] '" + network.getNetworkName() + "' with ID '" + network.getNetworkID() + "' with owner " + network.getCachedPlayerName());
+		FluxNetworks.logger.info("[LOADED NETWORK] '" + network.getSetting(NetworkSettings.NETWORK_NAME) + "' with ID '" + network.getNetworkID() + "' with owner " + network.getSetting(NetworkSettings.NETWORK_CACHED_NAME));
 	}
 }

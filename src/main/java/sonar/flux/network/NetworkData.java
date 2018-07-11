@@ -4,22 +4,21 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
-import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.ListHelper;
-import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.core.utils.CustomColour;
+import sonar.core.sync.ISonarValue;
 import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientFlux;
+import sonar.flux.api.NetworkFluxFolder;
+import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.connection.BasicFluxNetwork;
+import sonar.flux.connection.FluxNetworkServer;
+import sonar.flux.connection.NetworkSettings;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class NetworkData extends WorldSavedData {
 
@@ -35,6 +34,8 @@ public class NetworkData extends WorldSavedData {
 	public static String CONVERSION = "convert";
 	public static String ENERGY_TYPE = "energy_type";
 	public static String PLAYER_LIST = "playerList";
+	public static String UNLOADED_CONNECTIONS = "unloaded";
+	public static String FOLDERS = "network_folders";
 
 	public NetworkData(String name) {
 		super(name);
@@ -51,24 +52,15 @@ public class NetworkData extends WorldSavedData {
 		if (nbt.hasKey(TAG_LIST)) {
 			NBTTagList list = nbt.getTagList(TAG_LIST, NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i++) {
+
 				NBTTagCompound tag = list.getCompoundTagAt(i);
-				int networkID = tag.getInteger(NETWORK_ID);
-				String networkName = tag.getString(NETWORK_NAME);
-				UUID ownerUUID = tag.getUniqueId(OWNER_UUID);
-				String cachedPlayer = tag.getString(CACHE_PLAYER);
-				CustomColour colour = NBTHelper.instanceNBTSyncable(CustomColour.class, tag.getCompoundTag(COLOUR));
-				AccessType type = AccessType.valueOf(tag.getString(ACCESS));
-				boolean enableConversion = tag.getBoolean(CONVERSION);
-				EnergyType energyType = EnergyType.readFromNBT(tag, ENERGY_TYPE);
-				BasicFluxNetwork network = new BasicFluxNetwork(networkID, ownerUUID, cachedPlayer, networkName, colour, type, enableConversion, energyType);
-				network.getPlayers().readData(tag.getCompoundTag(PLAYER_LIST), SyncType.SAVE);
-				NBTTagList unloaded_connections = tag.getTagList("unloaded", NBT.TAG_COMPOUND);
-				List<ClientFlux> unloaded = new ArrayList<>();
-				for (int j = 0; j < unloaded_connections.tagCount(); j++) {
-					NBTTagCompound c = unloaded_connections.getCompoundTagAt(j);
-					ListHelper.addWithCheck(unloaded, new ClientFlux(c));
-				}
-				network.unloaded = unloaded;
+				FluxNetworkServer network = new FluxNetworkServer();
+				network.readData(tag, SyncType.SAVE);
+
+				readPlayers(network, tag);
+				readFolders(network, tag);
+				readConnections(network.getSyncSetting(NetworkSettings.UNLOADED_CONNECTIONS), NetworkData.UNLOADED_CONNECTIONS, network, tag);
+
 				cache.addNetwork(network);
 				FluxEvents.logLoadedNetwork(network);
 			}
@@ -83,27 +75,84 @@ public class NetworkData extends WorldSavedData {
 		if (cache.getAllNetworks().size() > 0) {
 			NBTTagList list = new NBTTagList();
 			for (IFluxNetwork network : FluxNetworks.getServerCache().getAllNetworks()) {
+
 				NBTTagCompound tag = new NBTTagCompound();
-				tag.setInteger(NETWORK_ID, network.getNetworkID());
-				tag.setUniqueId(OWNER_UUID, network.getOwnerUUID());
-				tag.setString(CACHE_PLAYER, network.getCachedPlayerName());
-				tag.setString(NETWORK_NAME, network.getNetworkName());
-				tag.setTag(COLOUR, network.getNetworkColour().writeData(new NBTTagCompound(), SyncType.SAVE));
-				tag.setString(ACCESS, network.getAccessType().name());
-				tag.setBoolean(CONVERSION, network.disabledConversion());
-				EnergyType.writeToNBT(network.getDefaultEnergyType(), tag, ENERGY_TYPE);
-				tag.setTag(PLAYER_LIST, network.getPlayers().writeData(new NBTTagCompound(), SyncType.SAVE));
-				if (network instanceof BasicFluxNetwork) {
-					NBTTagList unloaded_connections = new NBTTagList();
-					((BasicFluxNetwork) network).unloaded.forEach(flux -> unloaded_connections.appendTag(flux.writeData(new NBTTagCompound(), SyncType.SAVE)));
-					tag.setTag("unloaded", unloaded_connections);
-				}
+				network.writeData(tag, SyncType.SAVE);
+
+				writePlayers(network, tag);
+				writeFolders(network, tag);
+				writeConnections(network.getSyncSetting(NetworkSettings.UNLOADED_CONNECTIONS), NetworkData.UNLOADED_CONNECTIONS, network, tag);
+
 				list.appendTag(tag);
 			}
 			nbt.setTag(TAG_LIST, list);
 			FluxNetworks.logger.debug("ALL " + list.tagCount() + " Networks were saved successfully");
 		}
 		return nbt;
+	}
+
+	public static void readPlayers(IFluxNetwork network, @Nonnull NBTTagCompound tag) {
+		if(tag.hasKey(PLAYER_LIST)) {
+			List<FluxPlayer> players = new ArrayList<>();
+			NBTTagList player_list = tag.getTagList(PLAYER_LIST, NBT.TAG_COMPOUND);
+			for (int j = 0; j < player_list.tagCount(); j++) {
+				NBTTagCompound c = player_list.getCompoundTagAt(j);
+				players.add(new FluxPlayer(c));
+			}
+			network.setSettingInternal(NetworkSettings.NETWORK_PLAYERS, players);
+		}
+	}
+
+	public static NBTTagCompound writePlayers(IFluxNetwork network, @Nonnull NBTTagCompound tag) {
+		List<FluxPlayer> players = network.getSetting(NetworkSettings.NETWORK_PLAYERS);
+		if(!players.isEmpty()) {
+			NBTTagList player_list = new NBTTagList();
+			players.forEach(player -> player_list.appendTag(player.writeData(new NBTTagCompound(), SyncType.SAVE)));
+			tag.setTag(PLAYER_LIST, player_list);
+		}
+		return tag;
+	}
+
+	public static void readFolders(IFluxNetwork network, @Nonnull NBTTagCompound tag) {
+		if(tag.hasKey(FOLDERS)) {
+			NBTTagList folder_tag_list = tag.getTagList(FOLDERS, NBT.TAG_COMPOUND);
+			List<NetworkFluxFolder> folders = new ArrayList<>();
+			for (int j = 0; j < folder_tag_list.tagCount(); j++) {
+				folders.add(new NetworkFluxFolder(folder_tag_list.getCompoundTagAt(j)));
+			}
+			network.getSyncSetting(NetworkSettings.NETWORK_FOLDERS).setValueInternal(folders);
+		}
+	}
+
+	public static NBTTagCompound writeFolders(IFluxNetwork network, @Nonnull NBTTagCompound tag) {
+		List<NetworkFluxFolder> folders = network.getSetting(NetworkSettings.NETWORK_FOLDERS);
+		if(!folders.isEmpty()){
+			NBTTagList folders_tag_list = new NBTTagList();
+			folders.forEach(folder -> folders_tag_list.appendTag(folder.writeData(new NBTTagCompound(), SyncType.SAVE)));
+			tag.setTag(FOLDERS, folders_tag_list);
+		}
+		return tag;
+	}
+
+	public static void readConnections(ISonarValue<List<ClientFlux>> value, String key, IFluxNetwork network, @Nonnull NBTTagCompound tag) {
+		if(tag.hasKey(key)) {
+			List<ClientFlux> loaded = new ArrayList<>();
+			NBTTagList connections = tag.getTagList(key, NBT.TAG_COMPOUND);
+			for (int j = 0; j < connections.tagCount(); j++) {
+				NBTTagCompound c = connections.getCompoundTagAt(j);
+				ListHelper.addWithCheck(loaded, new ClientFlux(c));
+			}
+			value.setValueInternal(loaded);
+		}
+	}
+	public static NBTTagCompound writeConnections(ISonarValue<List<ClientFlux>> value, String key, IFluxNetwork network, @Nonnull NBTTagCompound tag) {
+		List<ClientFlux> loaded = value.getValue();
+		if(!loaded.isEmpty()) {
+			NBTTagList connections = new NBTTagList();
+			loaded.forEach(flux -> connections.appendTag(flux.writeData(new NBTTagCompound(), SyncType.SAVE)));
+			tag.setTag(key, connections);
+		}
+		return tag;
 	}
 
 	public boolean isDirty() {

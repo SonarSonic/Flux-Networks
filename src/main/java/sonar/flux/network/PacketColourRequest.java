@@ -6,6 +6,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.connection.NetworkSettings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +38,6 @@ public class PacketColourRequest implements IMessage {
         requests.forEach(buf::writeInt);
     }
 
-
     public static class Handler implements IMessageHandler<PacketColourRequest, IMessage> {
 
         @Override
@@ -46,7 +46,7 @@ public class PacketColourRequest implements IMessage {
             if(!message.requests.isEmpty()){
                 for(int id : message.requests){
                     IFluxNetwork network = FluxNetworkCache.instance().getNetwork(id);
-                    cache.put(id, new Tuple<>(network.getNetworkColour().getRGB(), network.isFakeNetwork() ? "NONE": network.getNetworkName()));
+                    cache.put(id, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOUR).getRGB(), network.isFakeNetwork() ? "NONE": network.getSetting(NetworkSettings.NETWORK_NAME)));
                     return new PacketColourCache(cache);
                 }
             }

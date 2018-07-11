@@ -10,7 +10,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import sonar.core.SonarCore;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.flux.FluxNetworks;
-import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.connection.NetworkSettings;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
 
 public class PacketNetworkStatistics implements IMessage {
@@ -21,9 +22,9 @@ public class PacketNetworkStatistics implements IMessage {
 
     public PacketNetworkStatistics() {}
 
-    public PacketNetworkStatistics(int networkID, NetworkStatistics stats) {
-        this.networkID = networkID;
-        this.stats = stats;
+    public PacketNetworkStatistics(IFluxNetwork network) {
+        this.networkID = network.getSetting(NetworkSettings.NETWORK_ID);
+        this.stats = network.getSetting(NetworkSettings.NETWORK_STATISTICS);
     }
 
     @Override
@@ -44,10 +45,9 @@ public class PacketNetworkStatistics implements IMessage {
         public IMessage onMessage(PacketNetworkStatistics message, MessageContext ctx) {
             if (ctx.side == Side.CLIENT) {
                 SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
-                    String playerName = SonarCore.proxy.getPlayerEntity(ctx).getName();
-                    IFluxCommon common = FluxNetworks.getClientCache().getNetwork(message.networkID);
+                    IFluxNetwork common = FluxNetworks.getClientCache().getNetwork(message.networkID);
                     if (!common.isFakeNetwork()) {
-                        common.getStatistics().readData(message.received, SyncType.SAVE);
+                        common.getSetting(NetworkSettings.NETWORK_STATISTICS).readData(message.received, SyncType.SAVE);
                     }
                 });
             }

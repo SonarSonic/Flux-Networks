@@ -13,9 +13,9 @@ import sonar.core.SonarCore;
 import sonar.core.api.IFlexibleGui;
 import sonar.core.common.item.SonarItem;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.api.FluxListener;
 import sonar.flux.client.gui.GuiAdminConfigurator;
 import sonar.flux.common.containers.ContainerAdminConfigurator;
+import sonar.flux.connection.FluxListener;
 import sonar.flux.network.FluxNetworkCache;
 
 import javax.annotation.Nonnull;

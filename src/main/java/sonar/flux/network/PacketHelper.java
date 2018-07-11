@@ -1,7 +1,6 @@
 package sonar.flux.network;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import sonar.core.api.energy.EnergyType;
@@ -14,13 +13,13 @@ import sonar.flux.api.AdditionType;
 import sonar.flux.api.FluxError;
 import sonar.flux.api.RemovalType;
 import sonar.flux.api.network.FluxPlayer;
-import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.client.gui.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.connection.NetworkSettings;
 
-import java.util.List;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,8 +50,8 @@ public class PacketHelper {
 		IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!network.isFakeNetwork()) {
 			if (network.getPlayerAccess(player).canConnect()) {
-				source.getNetwork().removeConnection(source, RemovalType.REMOVE);
-				network.addConnection(source, AdditionType.ADD);
+				source.getNetwork().queueConnectionRemoval(source, RemovalType.REMOVE);
+				network.queueConnectionAddition(source, AdditionType.ADD);
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.ACCESS_DENIED);
 			}
@@ -62,13 +61,13 @@ public class PacketHelper {
 
 	//// EDIT NETWORK \\\\
 
-	public static NBTTagCompound createNetworkEditPacket(int networkID, String networkName, CustomColour networkColour, AccessType accessType, boolean disableConvert, EnergyType defaultEnergy) {
+	public static NBTTagCompound createNetworkEditPacket(int networkID, String networkName, CustomColour networkColour, AccessType accessType, boolean enableConvert, EnergyType defaultEnergy) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setInteger(NetworkData.NETWORK_ID, networkID);
 		tag.setString(NetworkData.NETWORK_NAME, networkName);
 		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
 		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
-		tag.setBoolean(NetworkData.CONVERSION, disableConvert);
+		tag.setBoolean(NetworkData.CONVERSION, enableConvert);
 		EnergyType.writeToNBT(defaultEnergy, tag, NetworkData.ENERGY_TYPE);
 		return tag;
 	}
@@ -78,18 +77,17 @@ public class PacketHelper {
 		String newName = packetTag.getString(NetworkData.NETWORK_NAME);
 		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
 		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
-		boolean disableConversion = packetTag.getBoolean(NetworkData.CONVERSION);
+		boolean enableConvert = packetTag.getBoolean(NetworkData.CONVERSION);
 		EnergyType energyType = EnergyType.readFromNBT(packetTag, NetworkData.ENERGY_TYPE);
 
 		IFluxNetwork common = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!common.isFakeNetwork()) {
 			if (common.getPlayerAccess(player).canEdit()) {
-				common.setNetworkName(newName);
-				common.setAccessType(access);
-				common.setCustomColour(colour);
-				common.setDisableConversion(disableConversion);
-				common.setDefaultEnergyType(energyType);
-				common.markDirty();
+				common.setSetting(NetworkSettings.NETWORK_NAME, newName);
+				common.setSetting(NetworkSettings.NETWORK_ACCESS, access);
+				common.setSetting(NetworkSettings.NETWORK_COLOUR, colour);
+				common.setSetting(NetworkSettings.NETWORK_CONVERSION, enableConvert);
+				common.setSetting(NetworkSettings.NETWORK_ENERGY_TYPE, energyType);
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.EDIT_NETWORK);
 			}
@@ -99,12 +97,12 @@ public class PacketHelper {
 
 	//// CREATE NETWORK \\\\
 
-	public static NBTTagCompound createNetworkCreationPacket(String networkName, CustomColour networkColour, AccessType accessType, boolean disableConvert, EnergyType defaultEnergy) {
+	public static NBTTagCompound createNetworkCreationPacket(String networkName, CustomColour networkColour, AccessType accessType, boolean enableConvert, EnergyType defaultEnergy) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setString(NetworkData.NETWORK_NAME, networkName);
 		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
 		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
-		tag.setBoolean(NetworkData.CONVERSION, disableConvert);
+		tag.setBoolean(NetworkData.CONVERSION, enableConvert);
 		EnergyType.writeToNBT(defaultEnergy, tag, NetworkData.ENERGY_TYPE);
 		return tag;
 	}
@@ -113,14 +111,12 @@ public class PacketHelper {
 		String newName = packetTag.getString(NetworkData.NETWORK_NAME);
 		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
 		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
-		boolean enableConversion = packetTag.getBoolean(NetworkData.CONVERSION);
+		boolean enableConvert = packetTag.getBoolean(NetworkData.CONVERSION);
 		EnergyType energyType = EnergyType.readFromNBT(packetTag, NetworkData.ENERGY_TYPE);
 		
 		if (FluxNetworks.getServerCache().hasSpaceForNetwork(player)) {
-			FluxNetworks.getServerCache().createNetwork(player, newName, colour, access, enableConversion, energyType);
-		}		
-		List<IFluxNetwork> networks = FluxNetworkCache.instance().getAllowedNetworks(player, false);
-		FluxNetworks.network.sendTo(new PacketFluxNetworkList(networks, true), (EntityPlayerMP) player);
+			FluxNetworks.getServerCache().createNetwork(player, newName, colour, access, enableConvert, energyType);
+		}
 		return null;
 	}
 
@@ -156,7 +152,7 @@ public class PacketHelper {
 	public static IMessage doSetPriorityPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int priority = packetTag.getInteger("priority");
 		if (source.canAccess(player).canEdit()) {
-			source.priority.setObject(priority);
+			source.priority.setValue(priority);
 		} else {
 			return new PacketFluxError(source.getPos(), FluxError.ACCESS_DENIED);
 		}
@@ -174,7 +170,7 @@ public class PacketHelper {
 	public static IMessage doSetTransferLimitPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		long priority = packetTag.getLong("transferLimit");
 		if (source.canAccess(player).canEdit()) {
-			source.limit.setObject(priority);
+			source.limit.setValue(priority);
 		} else {
 			return new PacketFluxError(source.getPos(), FluxError.ACCESS_DENIED);
 		}
@@ -195,12 +191,10 @@ public class PacketHelper {
 		int networkID = packetTag.getInteger("networkID");
 		String playerName = packetTag.getString("playerName");
 		PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
-		IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
-		if (!common.isFakeNetwork()) {
-			if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
-				IFluxNetwork network = (IFluxNetwork) common;
+		IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(networkID);
+		if (!network.isFakeNetwork()) {
+			if (network.getPlayerAccess(player).canEdit()) {
 				network.addPlayerAccess(playerName, access);
-				network.markDirty();
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.EDIT_NETWORK);
 			}
@@ -222,12 +216,10 @@ public class PacketHelper {
 		int networkID = packetTag.getInteger("networkID");
 		UUID playerRemoved = packetTag.getUniqueId("playerRemoved");
 		PlayerAccess access = PlayerAccess.values()[packetTag.getInteger("playerAccess")];
-		IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
-		if (!common.isFakeNetwork()) {
-			if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
-				IFluxNetwork network = (IFluxNetwork) common;
+		IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(networkID);
+		if (!network.isFakeNetwork()) {
+			if (network.getPlayerAccess(player).canEdit()) {
 				network.removePlayerAccess(playerRemoved, access);
-				network.markDirty();
 			} else {
 				return new PacketFluxError(source.getPos(), FluxError.EDIT_NETWORK);
 			}
@@ -259,13 +251,13 @@ public class PacketHelper {
 				access = SonarHelper.incrementEnum(access, PlayerAccess.values());
 			}
 
-			IFluxCommon common = FluxNetworks.getServerCache().getNetwork(networkID);
-			if (!common.isFakeNetwork()) {
-				if (((IFluxNetwork) common).getPlayerAccess(player).canEdit()) {
-					Optional<FluxPlayer> settings = ((IFluxNetwork) common).getValidFluxPlayer(playerChanged);
+			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(networkID);
+			if (!network.isFakeNetwork()) {
+				if (network.getPlayerAccess(player).canEdit()) {
+					Optional<FluxPlayer> settings = network.getValidFluxPlayer(playerChanged);
 					if (settings.isPresent()) {
 						settings.get().setAccess(access);
-						((IFluxNetwork) common).markDirty();
+						network.getSyncSetting(NetworkSettings.NETWORK_PLAYERS).setDirty(true);
 					} else {
 						return new PacketFluxError(source.getPos(), FluxError.INVALID_USER);
 					}
@@ -289,23 +281,30 @@ public class PacketHelper {
 	public static IMessage doDisconnectPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
 		int networkID = packetTag.getInteger("networkID");
 		IFluxNetwork network = source.getNetwork();
-		if (networkID == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && source.playerUUID.getUUID().equals(FluxPlayer.getOnlineUUID(player))) {
-			network.removeConnection(source, RemovalType.REMOVE);
+		if (networkID == network.getNetworkID() && network.getPlayerAccess(player).canConnect() && source.playerUUID.getValue().equals(FluxPlayer.getOnlineUUID(player))) {
+			network.queueConnectionRemoval(source, RemovalType.REMOVE);
 		}
 		return null;
 	}
 
 	//// TAB CHANGE \\\\
 
-	public static NBTTagCompound createStateChangePacket(GuiTab tab) {
+	public static NBTTagCompound createStateChangePacket(GuiTab oldTab, @Nullable GuiTab newTab) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("guiType", tab.ordinal());
+		tag.setInteger("oldTab", oldTab.ordinal());
+		if(newTab != null) {
+			tag.setInteger("newTab", newTab.ordinal());
+		}
 		return tag;
 	}
 
 	public static IMessage doStateChangePacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
-		GuiTab tab = GuiTab.values()[packetTag.getInteger("guiType")];
-		ListenerHelper.onPlayerOpenTab(source, player, tab);		
+		GuiTab oldTab = GuiTab.values()[packetTag.getInteger("oldTab")];
+		ListenerHelper.onPlayerCloseTab(source, player, oldTab);
+		if(packetTag.hasKey("newTab")) {
+			GuiTab newTab = GuiTab.values()[packetTag.getInteger("newTab")];
+			ListenerHelper.onPlayerOpenTab(source, player, newTab);
+		}
 		return null;
 	}
 

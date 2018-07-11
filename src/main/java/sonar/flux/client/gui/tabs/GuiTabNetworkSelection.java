@@ -6,7 +6,7 @@ import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
-import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.client.gui.GuiTab;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.PacketHelper;
@@ -16,7 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxCommon> {
+import static sonar.flux.connection.NetworkSettings.*;
+
+public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxNetwork> {
 
 	public GuiTabNetworkSelection(TileFlux tile, List tabs) {
 		super(tile, tabs);
@@ -37,7 +39,7 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 	}
 
 	@Override
-	public void onGridClicked(int gridID, IFluxCommon element, int x, int y, int pos, int button, boolean empty) {
+	public void onGridClicked(int gridID, IFluxNetwork element, int x, int y, int pos, int button, boolean empty) {
 		if (element != null) {
 			if (x - getGuiLeft() > 153) {
 				FMLCommonHandler.instance().showGuiScreen(new GuiTabConfirmNetworkDeletion(flux, element, this, tabs));
@@ -49,21 +51,21 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 	}
 
 	@Override
-	public void renderGridElement(int gridID, IFluxCommon element, int x, int y, int slot) {
-		renderNetwork(element.getNetworkName(), element.getAccessType(), element.getNetworkColour().getRGB(), isSelectedNetwork(element), 0, 0);
+	public void renderGridElement(int gridID, IFluxNetwork element, int x, int y, int slot) {
+		renderNetwork(NETWORK_NAME.getValue(element), NETWORK_ACCESS.getValue(element), NETWORK_COLOUR.getValue(element).getRGB(), isSelectedNetwork(element), 0, 0);
 		// delete button
 		bindTexture(small_buttons);
-		drawTexturedModalRect(154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
+		drawTexturedModalRect(154 - 12, 0, 48, 12, 10 + 1, 10 + 1);
 	}
 
 	@Override
-	public void renderElementToolTip(int gridID, IFluxCommon element, int x, int y) {
+	public void renderElementToolTip(int gridID, IFluxNetwork element, int x, int y) {
 		List<String> strings = new ArrayList<>();
 		if (x > 153) {
-			strings.add(TextFormatting.RED + FluxTranslate.DELETE.t() + ": " + element.getNetworkName());
+			strings.add(TextFormatting.RED + FluxTranslate.DELETE.t() + ": " + NETWORK_NAME.getValue(element));
 		} else {
-			strings.add(FluxTranslate.NETWORK_OWNER.t() + ": " + TextFormatting.AQUA + element.getCachedPlayerName());
-			strings.add(FluxTranslate.ACCESS_SETTING.t() + ": " + TextFormatting.AQUA + element.getAccessType().getDisplayName());
+			strings.add(FluxTranslate.NETWORK_OWNER.t() + ": " + TextFormatting.AQUA + NETWORK_CACHED_NAME.getValue(element));
+			strings.add(FluxTranslate.ACCESS_SETTING.t() + ": " + TextFormatting.AQUA + NETWORK_ACCESS.getValue(element).getDisplayName());
 		}
 		drawHoveringText(strings, x, y);
 	}
@@ -73,7 +75,7 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxC
 		return FluxNetworks.getClientCache().getAllNetworks();
 	}
 
-	public boolean isSelectedNetwork(IFluxCommon network) {
+	public boolean isSelectedNetwork(IFluxNetwork network) {
 		return network.getNetworkID() == getNetworkID();
 	}
 

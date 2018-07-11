@@ -8,12 +8,11 @@ import sonar.core.SonarCore;
 import sonar.core.common.block.SonarBlock;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.core.network.sync.IDirtyPart;
-import sonar.core.network.sync.SyncEnergyStorage;
+import sonar.core.sync.ISonarValue;
+import sonar.core.sync.SyncValueEnergyStorage;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
-import sonar.flux.api.network.FluxCache;
 import sonar.flux.api.tiles.IFluxStorage;
 import sonar.flux.client.gui.GuiTab;
 import sonar.flux.client.gui.tabs.GuiTabStorageIndex;
@@ -26,13 +25,13 @@ import java.util.List;
 public abstract class TileStorage extends TileFluxConnector implements IFluxStorage {
 
 	public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
-	public final SyncEnergyStorage storage;
+	public final SyncValueEnergyStorage storage = new SyncValueEnergyStorage(value_watcher);
 	public int maxTransfer;
 
 	public static class Basic extends TileStorage {
 		public Basic() {
 			super(FluxConfig.basicCapacity, FluxConfig.basicTransfer);
-			customName.setDefault("Basic Storage");
+			customName.setValueInternal("Basic Storage");
 		}
 
 		@Override
@@ -44,7 +43,7 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	public static class Herculean extends TileStorage {
 		public Herculean() {
 			super(FluxConfig.herculeanCapacity, FluxConfig.herculeanTransfer);
-			customName.setDefault("Herculean Storage");
+			customName.setValueInternal("Herculean Storage");
 		}
 
 		@Override
@@ -56,7 +55,7 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	public static class Gargantuan extends TileStorage {
 		public Gargantuan() {
 			super(FluxConfig.gargantuanCapacity, FluxConfig.gargantuanTransfer);
-			customName.setDefault("Gargantuan Storage");
+			customName.setValueInternal("Gargantuan Storage");
 		}
 
 		@Override
@@ -68,8 +67,8 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	public TileStorage(int capacity, int transfer) {
 		super(ConnectionType.STORAGE);
 		maxTransfer = transfer;
-		storage = new SyncEnergyStorage(capacity, maxTransfer);
-		syncList.addPart(storage);
+		storage.setCapacity(capacity);
+		storage.setMaxTransfer(transfer);
 	}
 
 	public long lastStorageUpdate;
@@ -77,8 +76,8 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	public int targetEnergy;
 
 	public void update() {
-		super.update();		
-		if (isServer()) {
+		super.update();
+		if (!world.isRemote) {
 			if (updateStorage && lastStorageUpdate == 0) {
 				lastStorageUpdate = getWorld().getWorldTime(); //stops it jumping on first receive
 			} else if (updateStorage && getWorld().getWorldTime() > lastStorageUpdate + 20) {
@@ -107,24 +106,21 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	}
 
 	@Override
-	public void markChanged(IDirtyPart part) {
-		super.markChanged(part);
-        if (this.world != null && !world.isRemote) {
-			if (part == storage) {
-				network.markTypeDirty(FluxCache.storage);
-				updateStorage = true;
-			}
+	public void onInternalValueChanged(ISonarValue value){
+		super.onInternalValueChanged(value);
+		if (world != null && !world.isRemote && storage == value) {
+			updateStorage = true;
 		}
 	}
 
 	@Override
 	public long getMaxEnergyStored() {
-		return storage.getFullCapacity();
+		return storage.getMaxEnergyStored();
 	}
 
 	@Override
 	public long getEnergyStored() {
-		return storage.getEnergyLevel();
+		return storage.getEnergyStored();
 	}
 
 	@Override
@@ -149,13 +145,13 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 
 	public void readData(NBTTagCompound nbt, SyncType type) {
 		super.readData(nbt, type);
-		if (type.isType(SyncType.DROP))
+		if (type.isType(SyncType.DROP, SyncType.SPECIAL))
 			this.storage.setEnergyStored(nbt.getInteger("energy"));
 	}
 
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
 		super.writeData(nbt, type);
-		if (type.isType(SyncType.DROP)) {
+		if (type.isType(SyncType.DROP, SyncType.SPECIAL)) {
 			nbt.setInteger("energy", this.storage.getEnergyStored());
 		}
 		return nbt;
@@ -184,7 +180,7 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 		case 10:
 			//FIXME - if they are in the gui, update power instantly
 			targetEnergy = buf.readInt();
-			updateStorage = true;
+			updateStorage = targetEnergy != storage.getEnergyStored();
 			break;
 		}
 	}

@@ -5,14 +5,20 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.connection.NetworkSettings;
 
-public class PacketClearNetwork implements IMessage {
+public class PacketNetworkDeleted implements IMessage {
 
     public int networkID;
 
-    public PacketClearNetwork(){}
+    public PacketNetworkDeleted(){}
 
-    public PacketClearNetwork(int networkID){
+    public PacketNetworkDeleted(IFluxNetwork network){
+        this.networkID = network.getSetting(NetworkSettings.NETWORK_ID);
+    }
+
+    public PacketNetworkDeleted(int networkID){
         this.networkID = networkID;
     }
 
@@ -26,10 +32,10 @@ public class PacketClearNetwork implements IMessage {
         buf.writeInt(networkID);
     }
 
-    public static class Handler implements IMessageHandler<PacketClearNetwork, IMessage> {
+    public static class Handler implements IMessageHandler<PacketNetworkDeleted, IMessage> {
 
         @Override
-        public IMessage onMessage(PacketClearNetwork message, MessageContext ctx) {
+        public IMessage onMessage(PacketNetworkDeleted message, MessageContext ctx) {
             FluxNetworks.proxy.clearNetwork(message.networkID);
             return null;
         }

@@ -18,7 +18,7 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.ClientTransfer;
-import sonar.flux.api.network.IFluxCommon;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.client.gui.buttons.NavigationButtons;
@@ -34,6 +34,8 @@ import java.util.List;
 
 import static net.minecraft.client.renderer.GlStateManager.color;
 import static net.minecraft.client.renderer.GlStateManager.scale;
+import static sonar.flux.connection.NetworkSettings.NETWORK_COLOUR;
+import static sonar.flux.connection.NetworkSettings.NETWORK_ENERGY_TYPE;
 
 public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 
@@ -60,7 +62,7 @@ public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 	public boolean disabled = false;
 
 	public final T flux;
-	public IFluxCommon common;
+	public IFluxNetwork common;
 
 	public GuiAbstractTab(T tile, List<GuiTab> tabs) {
 		super(new ContainerFlux(Minecraft.getMinecraft().player, tile));
@@ -113,7 +115,7 @@ public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 		if (tab != getCurrentTab()) {
 			Object screen = tab.getGuiScreen(flux, tabs);
 			FMLCommonHandler.instance().showGuiScreen(screen);
-			PacketHelper.sendPacketToServer(PacketType.GUI_STATE_CHANGE, flux, PacketHelper.createStateChangePacket(tab));
+			PacketHelper.sendPacketToServer(PacketType.GUI_STATE_CHANGE, flux, PacketHelper.createStateChangePacket(getCurrentTab(), tab));
 			flux.error = null;
 		}
 	}
@@ -124,9 +126,11 @@ public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 			boolean isTyping = this.fieldList.stream().anyMatch(GuiTextField::isFocused);
 			if (!isTyping) {
 				if (getCurrentTab() != GuiTab.INDEX) {
-					FMLCommonHandler.instance().showGuiScreen(GuiTab.INDEX.getGuiScreen(flux, tabs));
+					switchTab(GuiTab.INDEX);
 					return;
 				}
+				//trigger close tab actions
+				PacketHelper.sendPacketToServer(PacketType.GUI_STATE_CHANGE, flux, PacketHelper.createStateChangePacket(getCurrentTab(), null));
 			}
 		}
 		super.keyTyped(c, i);
@@ -134,6 +138,10 @@ public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 
 	public FontRenderer getFontRenderer() {
 		return this.fontRenderer;
+	}
+
+	public int getNetworkColour(){
+		return NETWORK_COLOUR.getValue(common).getRGB();
 	}
 
 	//// RENDER METHODs \\\\
@@ -172,7 +180,7 @@ public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 	}
 
 	public void renderFlux(IFlux flux, boolean isSelected, int x, int y) {
-		int rgb = this.getCurrentTab() == GuiTab.INDEX ? common.getNetworkColour().getRGB() : flux.getConnectionType().gui_colour;
+		int rgb = this.getCurrentTab() == GuiTab.INDEX ? NETWORK_COLOUR.getValue(common).getRGB() : flux.getConnectionType().gui_colour;
 		color(1.0F, 1.0F, 1.0F, 1.0F);
 		drawRect(x, y, x + 154, y + 18, rgb);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(scroller_flux_gui);
@@ -189,7 +197,7 @@ public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 		drawNormalItemStack(displayStack, x + 2, y + 1);
 		if (this.getCurrentTab() == GuiTab.INDEX) {
 			List<String> textLines = new ArrayList<>();
-			addTransferStrings(textLines, flux.getConnectionType(), common.getDefaultEnergyType(), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
+			addTransferStrings(textLines, flux.getConnectionType(), NETWORK_ENERGY_TYPE.getValue(common), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
 			FontHelper.text(textLines.get(0), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : Color.WHITE.getRGB());
 		} else {
 			FontHelper.text(flux.getCustomName(), 24, 5, !flux.isChunkLoaded() ? FontHelper.getIntFromColor(180, 40, 40) : isSelected ? flux.getConnectionType().gui_colour : Color.WHITE.getRGB());
@@ -205,10 +213,10 @@ public abstract class GuiAbstractTab<T extends TileFlux> extends GuiSonar {
 				 textLines.add(TextFormatting.GREEN + "THIS CONNECTION!");
 			}
 			*/
-			addTransferStrings(textLines, flux.getConnectionType(), common.getDefaultEnergyType(), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
-			if(flux.getTransferHandler().getBuffer() != 0) textLines.add("Internal Buffer: " + FontHelper.formatStorage(common.getDefaultEnergyType(), flux.getTransferHandler().getBuffer()));
+			addTransferStrings(textLines, flux.getConnectionType(), NETWORK_ENERGY_TYPE.getValue(common), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
+			if(flux.getTransferHandler().getBuffer() != 0) textLines.add("Internal Buffer: " + FontHelper.formatStorage(NETWORK_ENERGY_TYPE.getValue(common), flux.getTransferHandler().getBuffer()));
 			textLines.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? FluxTranslate.NO_LIMIT.t() : flux.getTransferLimit()));
-			textLines.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + flux.getCurrentPriority());
+			textLines.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getCurrentPriority() == Integer.MAX_VALUE ? FluxTranslate.PRIORITY_SURGE : flux.getCurrentPriority()));
 		} else {
 			textLines.add(TextFormatting.DARK_RED + FluxTranslate.ERROR_CHUNK_UNLOADED.t());
 		}

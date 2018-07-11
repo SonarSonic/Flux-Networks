@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static sonar.flux.connection.NetworkSettings.NETWORK_CACHED_NAME;
+import static sonar.flux.connection.NetworkSettings.NETWORK_PLAYERS;
+
 public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlayer> {
 
 	public SonarTextField playerName;
@@ -36,8 +39,8 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	@Override
 	public void initGui() {
 		super.initGui();
-		int networkColour = common.getNetworkColour().getRGB();
-		buttonList.add(new SmallButton(this, 1, getGuiLeft() + 150, getGuiTop() + 138, 136, FluxTranslate.ADD.t()));
+		int networkColour = getNetworkColour();
+		buttonList.add(new SmallButton(this, 1, getGuiLeft() + 150, getGuiTop() + 138, 24*3, 24, FluxTranslate.ADD.t()));
 		playerName = new SonarTextField(1, getFontRenderer(), 14, 138, 130, 12).setBoxOutlineColour(networkColour);
 		playerName.setMaxStringLength(24);
 		playerName.setText("");
@@ -90,20 +93,20 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	@Override
 	public void renderGridElement(int gridID, FluxPlayer element, int x, int y, int slot) {
 		PlayerAccess access = element.getAccess();
-		boolean isOwner = common.getCachedPlayerName().equals(element.getCachedName());
+		boolean isOwner = NETWORK_CACHED_NAME.getValue(common).equals(element.getCachedName());
 		Gui.drawRect(0, 0, 154, 12, access.canDelete() || isOwner ? Color.lightGray.getRGB() : access.canEdit() ? colours[7].getRGB() : !access.canConnect() ? colours[4].getRGB() : lightBlue);
 
 		bindTexture(getBackground());
 		drawTexturedModalRect(0, 0, 0, 166, 154, 12);
 		FontHelper.text(element.getCachedName(), 3, 2, Color.white.getRGB());
 		bindTexture(small_buttons);
-		drawTexturedModalRect(154 - 12, 0, 112 / 2, 0, 10 + 1, 10 + 1);
+		drawTexturedModalRect(154 - 12, 0, 48, 12, 10 + 1, 10 + 1);
 	}
 
 	@Override
 	public void renderElementToolTip(int gridID, FluxPlayer element, int x, int y) {
 		List<String> strings = new ArrayList<>();
-		boolean isOwner = common.getCachedPlayerName().equals(element.getCachedName());
+		boolean isOwner = NETWORK_CACHED_NAME.getValue(common).equals(element.getCachedName());
 		if (x > 153) {
 			strings.add(TextFormatting.RED + FluxTranslate.DELETE.t() + ": " + element.getCachedName());
 		} else {
@@ -126,7 +129,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	@Override
 	public List getGridList(int gridID) {
 		this.common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
-		return common.getPlayers();
+		return NETWORK_PLAYERS.getValue(common);
 	}
 
 	@Override

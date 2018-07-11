@@ -3,10 +3,10 @@ package sonar.flux.client.gui;
 import com.google.common.collect.Lists;
 import sonar.core.translate.Localisation;
 import sonar.flux.FluxTranslate;
-import sonar.flux.api.FluxListener;
 import sonar.flux.client.gui.tabs.*;
 import sonar.flux.common.tileentity.TileController;
 import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.connection.FluxListener;
 
 import java.util.ArrayList;
 import java.util.List;

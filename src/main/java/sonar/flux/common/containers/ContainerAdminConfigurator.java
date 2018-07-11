@@ -3,7 +3,7 @@ package sonar.flux.common.containers;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import sonar.flux.api.FluxListener;
+import sonar.flux.connection.FluxListener;
 import sonar.flux.network.FluxNetworkCache;
 
 import javax.annotation.Nonnull;

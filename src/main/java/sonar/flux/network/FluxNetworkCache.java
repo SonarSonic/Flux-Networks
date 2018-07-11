@@ -1,101 +1,126 @@
 package sonar.flux.network;
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraftforge.common.DimensionManager;
 import sonar.core.api.energy.EnergyType;
-import sonar.core.helpers.FunctionHelper;
+import sonar.core.helpers.NBTHelper;
 import sonar.core.listener.ISonarListenable;
 import sonar.core.listener.ListenableList;
 import sonar.core.listener.PlayerListener;
 import sonar.core.utils.CustomColour;
+import sonar.core.utils.SimpleObservableList;
 import sonar.flux.FluxConfig;
 import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
-import sonar.flux.api.FluxListener;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.IFluxNetworkCache;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.connection.BasicFluxNetwork;
-import sonar.flux.connection.EmptyFluxNetwork;
-import sonar.flux.connection.FluxHelper;
+import sonar.flux.connection.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.Nullable;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /** all the flux networks are created/stored/deleted here, an instance is found via the FluxAPI */
-public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<PlayerListener> {
-	
-	public ListenableList<PlayerListener> listeners = new ListenableList<>(this, FluxListener.values().length);
-	public ConcurrentHashMap<UUID, List<IFluxNetwork>> networks = new ConcurrentHashMap<>();
+public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<PlayerListener>, SimpleObservableList.IListWatcher<IFluxNetwork> {
 
 	public int uniqueID = 1;
+	private Map<UUID, List<IFluxNetwork>> networks = new HashMap<>();
+	private static boolean INIT = false;
 
 	public static FluxNetworkCache instance() {
+		if(!INIT){
+			///SERVER SIDE ONLY
+			MapStorage storage = DimensionManager.getWorld(0).getMapStorage();
+			if(storage.getOrLoadData(NetworkData.class, NetworkData.IDENTIFIER) == null) {
+				storage.setData(NetworkData.IDENTIFIER, new NetworkData());
+			}
+			INIT = true;
+		}
 		return FluxNetworks.getServerCache();
 	}
 
 	public void clearNetworks() {
 		networks.clear();
 		uniqueID = 1;
+		INIT = false;
 	}
 
-	public int createNewUniqueID() {
+	private int createNewUniqueID() {
 		return uniqueID++;
 	}
 
-	/** goes through every network, if the predicate is true it will return the network, if false it will continue */
-	public IFluxNetwork forEachNetwork(Predicate<IFluxNetwork> found) {
+	/** returns the first network for which the predicate is true */
+	public IFluxNetwork getNetwork(Predicate<IFluxNetwork> found) {
 		for (Entry<UUID, List<IFluxNetwork>> entry : networks.entrySet()) {
-			for (IFluxNetwork common : entry.getValue()) {
-				if (found.test(common)) {
-					return common;
-				}
+			Optional<IFluxNetwork> network = entry.getValue().stream().filter(found).findFirst();
+			if(network.isPresent()){
+				return network.get();
 			}
 		}
-		return EmptyFluxNetwork.INSTANCE;
+		return FluxNetworkInvalid.INVALID;
 	}
 
+	/** adds all networks for which the predicate is true to a new array list */
+	public List<IFluxNetwork> getNetworks(Predicate<IFluxNetwork> found) {
+		List<IFluxNetwork> list = new ArrayList<>();
+		networks.values().forEach(NETWORKS -> NETWORKS.stream().filter(found).forEach(list::add));
+		return list;
+	}
+
+	/** iterates every network connected */
+	public void forEachNetwork(Consumer<IFluxNetwork> action){
+		networks.values().forEach(l -> l.forEach(action));
+	}
+
+	/** returns a list of networks the player is allowed to connect to */
+	public List<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
+		return getNetworks(network -> admin || network.getPlayerAccess(player).canConnect());
+	}
+
+	/** gets a network with a specified unique id */
 	public IFluxNetwork getNetwork(int iD) {
-		return forEachNetwork(n -> !n.isFakeNetwork() && iD == n.getNetworkID());
+		return getNetwork(n -> !n.isFakeNetwork() && iD == n.getSetting(NetworkSettings.NETWORK_ID));
 	}
 
+	/** gets a list of all networks currently loaded */
 	public List<IFluxNetwork> getAllNetworks() {
 		List<IFluxNetwork> available = new ArrayList<>();
 		networks.values().forEach(available::addAll);
 		return available;
 	}
 
-	public List<IFluxNetwork> getAllowedNetworks(EntityPlayer player, boolean admin) {
-		List<IFluxNetwork> available = new ArrayList<>();
-		forEachNetwork(network -> {
-			if (admin || network.getPlayerAccess(player).canConnect())
-				available.add(network);
-			return false;
-		});
-
-		return available;
+	/** creates a new observable list, adding this Network Cache as a viewer allowing the monitoring of network changes */
+	public List<IFluxNetwork> instanceNetworkList(){
+		SimpleObservableList<IFluxNetwork> list = new SimpleObservableList<>();
+		list.addWatcher(this);
+		return list;
 	}
 
-	public void addNetwork(IFluxNetwork network) {
-		if (network.getOwnerUUID() != null) {
-			networks.computeIfAbsent(network.getOwnerUUID(), FunctionHelper.ARRAY).add(network);
-			onNetworksChanged();
+	/** adds the given network to the cache */
+	protected void addNetwork(IFluxNetwork network) {
+		UUID owner = network.getSetting(NetworkSettings.NETWORK_OWNER);
+		if (owner != null) {
+			networks.computeIfAbsent(owner, (UUID) -> instanceNetworkList()).add(network);
 		}
 	}
 
-	public void removeNetwork(IFluxNetwork common) {
-		if (common.getOwnerUUID() != null && networks.get(common.getOwnerUUID()) != null) {
-			common.onRemoved();
-			networks.get(common.getOwnerUUID()).remove(common);
-			onNetworksChanged();
+	/** removes the given network from the cache */
+	protected void removeNetwork(IFluxNetwork common) {
+		UUID owner = common.getSetting(NetworkSettings.NETWORK_OWNER);
+		common.onRemoved();
+		if (owner != null && networks.get(owner) != null) {
+			networks.get(owner).remove(common);
 		}
 	}
 
+	/** checks the player hasn't reached their maximum network limit */
 	public boolean hasSpaceForNetwork(EntityPlayer player) {
 		if(FluxConfig.maximum_per_player == -1){
 			return true;
@@ -107,17 +132,13 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 
 	public IFluxNetwork createNetwork(EntityPlayer player, String name, CustomColour colour, AccessType access, boolean disableConvert, EnergyType defaultEnergy) {
 		UUID playerUUID = EntityPlayer.getUUID(player.getGameProfile());
-		networks.putIfAbsent(playerUUID, new ArrayList<>());
-		for (IFluxNetwork network : networks.get(playerUUID)) {
-			if (network.getNetworkName().equals(name)) {
-				return network;
-			}
-		}
+		networks.computeIfAbsent(playerUUID, (UUID) -> instanceNetworkList());
+
 		int iD = createNewUniqueID();
 
 		FluxPlayer owner = FluxPlayer.createFluxPlayer(player, PlayerAccess.OWNER);
-		BasicFluxNetwork network = new BasicFluxNetwork(iD, owner.getOnlineUUID(), owner.getCachedName(), name, colour, access, disableConvert, defaultEnergy);
-		network.getPlayers().add(owner);
+		FluxNetworkServer network = new FluxNetworkServer(iD, owner.getOnlineUUID(), owner.getCachedName(), name, colour, access, disableConvert, defaultEnergy);
+		network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(owner);
 
 		addNetwork(network);
 		FluxEvents.logNewNetwork(network);
@@ -126,15 +147,50 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 
 	public void onPlayerRemoveNetwork(IFluxNetwork remove) {
 		removeNetwork(remove);
-		FluxNetworks.network.sendToAll(new PacketClearNetwork(remove.getNetworkID()));
 		FluxEvents.logRemoveNetwork(remove);
 	}
-	
+
+	public void onSettingsChanged(IFluxNetwork network) { //only called when saved settings are changed.
+		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
+		PacketFluxNetworkUpdate packet = new PacketFluxNetworkUpdate(Lists.newArrayList(network), NBTHelper.SyncType.SAVE, false);
+		players.forEach(listener -> {if (network.getPlayerAccess(listener.player).canConnect())FluxNetworks.network.sendTo(packet, listener.player);});
+	}
+
+
+	@Override
+	public void onElementAdded(@Nullable IFluxNetwork added) {
+		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
+		PacketFluxNetworkUpdate packet = new PacketFluxNetworkUpdate(Lists.newArrayList(added), NBTHelper.SyncType.SAVE, false);
+		players.forEach(listener -> {if (added.getPlayerAccess(listener.player).canConnect())FluxNetworks.network.sendTo(packet, listener.player);});
+	}
+
+	@Override
+	public void onElementRemoved(@Nullable IFluxNetwork remove) {
+		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
+		PacketNetworkDeleted packet = new PacketNetworkDeleted(remove);
+		players.forEach(listener -> FluxNetworks.network.sendTo(packet, listener.player));
+		updateNetworkListeners();
+	}
+
+	@Override
+	public void onListChanged() {
+		updateNetworkListeners();
+	}
+
+	//// LISTENERS \\\\
+
+	private ListenableList<PlayerListener> listeners = new ListenableList<>(this, FluxListener.values().length);
+
+	@Override
+	public ListenableList<PlayerListener> getListenerList() {
+		return listeners;
+	}
+
 	public void updateNetworkListeners() {
 		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
 		players.forEach(listener -> {
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, FluxHelper.isPlayerAdmin(listener.player));
-			FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), listener.player);
+			FluxNetworks.network.sendTo(new PacketFluxNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
 		});
 	}
 
@@ -142,22 +198,12 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		List<PlayerListener> players = listeners.getListeners(FluxListener.ADMIN);
 		players.forEach(listener -> {
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, true);
-			FluxNetworks.network.sendTo(new PacketFluxNetworkList(toSend, false), listener.player);
+			FluxNetworks.network.sendTo(new PacketFluxNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
 		});
-	}
-	
-	public void onNetworksChanged(){
-		updateNetworkListeners();
-		ListenerHelper.onNetworkListChanged();
 	}
 
 	@Override
 	public boolean isValid() {
 		return true;
-	}
-
-	@Override
-	public ListenableList<PlayerListener> getListenerList() {
-		return listeners;
 	}
 }

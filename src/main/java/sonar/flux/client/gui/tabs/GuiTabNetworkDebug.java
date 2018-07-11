@@ -15,6 +15,8 @@ import sonar.flux.network.PacketType;
 import java.io.IOException;
 import java.util.List;
 
+import static sonar.flux.connection.NetworkSettings.*;
+
 public class GuiTabNetworkDebug extends GuiAbstractTab {
 
 	public GuiTabNetworkDebug(TileFlux tile, List tabs) {
@@ -23,18 +25,17 @@ public class GuiTabNetworkDebug extends GuiAbstractTab {
 
 	public void initGui() {
 		super.initGui();
-		this.buttonList.add(new LargeButton(this, "Debug Connected Blocks", 0, getGuiLeft() + 12, getGuiTop() + 30, 0, 34));
-		this.buttonList.add(new LargeButton(this, "Debug Network Connections", 1, getGuiLeft() + 12, getGuiTop() + 60, 0, 0));
+		this.buttonList.add(new LargeButton(this, FluxTranslate.DEBUG_CONNECTED_BLOCKS.t(), 0, getGuiLeft() + 12, getGuiTop() + 30, 0, 34));
+		this.buttonList.add(new LargeButton(this, FluxTranslate.DEBUG_NETWORK_CONNECTIONS.t(), 1, getGuiLeft() + 12, getGuiTop() + 60, 0, 0));
 	}
 
 	@Override
 	public void drawGuiContainerForegroundLayer(int x, int y) {
 		super.drawGuiContainerForegroundLayer(x, y);
-		int rgb = common.getNetworkColour().getRGB();
 		if (common.isFakeNetwork()) {
 			renderNavigationPrompt(FluxTranslate.ERROR_NO_CONNECTED_NETWORK.t(), FluxTranslate.GUI_TAB_NETWORK_SELECTION.t());
 		} else {
-			renderNetwork(common.getNetworkName(), common.getAccessType(), common.getNetworkColour().getRGB(), true, 11, 8);
+			renderNetwork(NETWORK_NAME.getValue(common), NETWORK_ACCESS.getValue(common), NETWORK_COLOUR.getValue(common).getRGB(), true, 11, 8);
 		}
 		GlStateManager.scale(0.75, 0.75, 0.75);
 		FontHelper.text("Reconnects all blocks attached", (int)(36 * (1 / 0.75)), (int)(32 * (1 / 0.75)), grey);

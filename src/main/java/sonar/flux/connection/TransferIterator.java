@@ -52,6 +52,9 @@ public class TransferIterator<T extends IFlux> {
     }
 
     public boolean canTransfer(){
+        if(!current_flux.isActive()){
+            return false;
+        }
         switch(transferType){
             case 0:
                 return current_flux.getTransferHandler().addToNetwork(current_flux.getTransferLimit(), energyType, ActionType.SIMULATE) > 0;

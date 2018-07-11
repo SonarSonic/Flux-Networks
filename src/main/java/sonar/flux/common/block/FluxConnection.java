@@ -1,5 +1,6 @@
 package sonar.flux.common.block;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.common.block.SonarBlock;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.helpers.SonarHelper;
+import sonar.core.network.FlexibleGuiHandler;
 import sonar.core.utils.ISpecialTooltip;
 import sonar.flux.FluxTranslate;
 import sonar.flux.common.item.FluxConfigurator;
@@ -55,9 +57,9 @@ public abstract class FluxConnection extends SonarBlock implements ITileEntityPr
 				if (target instanceof TileFlux) {
 					TileFlux flux = (TileFlux) target;
 					if (flux.canAccess(player).canView()) {
-						flux.openFlexibleGui(player, 0);
+						FlexibleGuiHandler.instance().openBasicTile(player, flux, 0);
 					} else {
-						player.sendMessage(new TextComponentString(SonarHelper.getProfileByUUID(flux.playerUUID.getUUID()).getName() + " : " + FluxTranslate.ERROR_NO_PERMISSION.t()));
+						player.sendMessage(new TextComponentString(SonarHelper.getProfileByUUID(flux.playerUUID.getValue()).getName() + " : " + FluxTranslate.ERROR_NO_PERMISSION.t()));
 					}
 				}
 			}
@@ -74,7 +76,30 @@ public abstract class FluxConnection extends SonarBlock implements ITileEntityPr
 			TileFlux flux = (TileFlux) target;
 			flux.onBlockPlacedBy(world, pos, state, player, itemstack);
 		}
+	}
 
+	@Override
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos){
+		super.neighborChanged(state, world, pos, block, fromPos);
+		if (!world.isRemote){
+			updateRedstonePower(world, pos);
+		}
+	}
+
+	@Override
+	public void onBlockAdded(World world, BlockPos pos, IBlockState state){
+		super.onBlockAdded(world, pos, state);
+		if (!world.isRemote) {
+			updateRedstonePower(world, pos);
+		}
+	}
+
+	private void updateRedstonePower(World world, BlockPos pos){
+		TileEntity target = world.getTileEntity(pos);
+		if (target instanceof TileFlux) {
+			TileFlux flux = (TileFlux) target;
+			flux.updateRedstonePower();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

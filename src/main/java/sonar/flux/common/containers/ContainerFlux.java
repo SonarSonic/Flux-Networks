@@ -1,11 +1,11 @@
 package sonar.flux.common.containers;
 
 import net.minecraft.entity.player.EntityPlayer;
-import sonar.core.handlers.inventories.containers.ContainerSync;
+import sonar.core.common.tile.ContainerSyncable;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.ListenerHelper;
 
-public class ContainerFlux extends ContainerSync {
+public class ContainerFlux extends ContainerSyncable {
 	public TileFlux entity;
 	public EntityPlayer player;
 
@@ -15,18 +15,10 @@ public class ContainerFlux extends ContainerSync {
 		this.player = player;
 	}
 
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-	}
-
-	@Override
-	public boolean canInteractWith(EntityPlayer player) {
-		return true;
-	}
-
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
-		ListenerHelper.onPlayerCloseTileGui(entity, player);
+		if(!entity.getWorld().isRemote) {
+			ListenerHelper.onPlayerCloseTileGui(entity, player);
+		}
 	}
 }

@@ -11,7 +11,7 @@ import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.connection.EmptyFluxNetwork;
+import sonar.flux.connection.FluxNetworkInvalid;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +22,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	public ConnectionType connection_type;
 	public boolean isChunkLoaded = true;
 	public int priority;
+	public int folder_id;
 	public long limit;
 	public String customName;
 	public ItemStack stack;
@@ -31,20 +32,23 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		this.coords = flux.getCoords();
 		this.connection_type = flux.getConnectionType();
 		this.priority = flux.getCurrentPriority();
+		this.folder_id = flux.getFolderID();
 		this.limit = flux.getTransferLimit();
 		this.customName = flux.getCustomName();
 		this.handler = ClientTransferHandler.getInstanceFromHandler(flux, flux.getTransferHandler());
 		this.stack = flux.getDisplayStack();
 	}
 
-	public ClientFlux(BlockCoords coords, ConnectionType type, int priority, long limit, String customName, ClientTransferHandler handler, ItemStack stack) {
+	public ClientFlux(BlockCoords coords, ConnectionType type, int priority, int folder_id, long limit, String customName, ClientTransferHandler handler, ItemStack stack) {
 		this.coords = coords;
 		this.connection_type = type;
 		this.priority = priority;
+		this.folder_id = folder_id;
 		this.limit = limit;
 		this.customName = customName;
 		this.handler = handler;
 		this.stack = stack;
+
 	}
 
 	public ClientFlux(NBTTagCompound tag) {
@@ -60,6 +64,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		coords = BlockCoords.readFromNBT(nbt);
 		connection_type = ConnectionType.values()[nbt.getInteger("type")];
 		priority = nbt.getInteger("priority");
+		folder_id = nbt.getInteger("folder_id");
 		limit = nbt.getLong("limit");
 		customName = nbt.getString("name");
 		handler = new ClientTransferHandler(this);
@@ -73,6 +78,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		BlockCoords.writeToNBT(nbt, coords);
 		nbt.setInteger("type", connection_type.ordinal());
 		nbt.setInteger("priority", priority);
+		nbt.setInteger("folder_id", folder_id);
 		nbt.setLong("limit", limit);
 		nbt.setString("name", customName);
 		nbt.setTag("handler", handler.writeData(new NBTTagCompound(), type));
@@ -104,7 +110,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 
 	@Override
 	public IFluxNetwork getNetwork() {
-		return EmptyFluxNetwork.INSTANCE;
+		return FluxNetworkInvalid.INVALID;
 	}
 
 	@Override
@@ -120,6 +126,11 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	@Override
 	public int getCurrentPriority() {
 		return priority;
+	}
+
+	@Override
+	public int getFolderID() {
+		return folder_id;
 	}
 
 	@Override
@@ -156,6 +167,11 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	@Override
 	public boolean isChunkLoaded() {
 		return isChunkLoaded;
+	}
+
+	@Override
+	public boolean isActive() {
+		return false; //TODO ?
 	}
 
 	@Override

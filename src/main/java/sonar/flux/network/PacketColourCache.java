@@ -43,7 +43,6 @@ public class PacketColourCache implements IMessage {
         });
     }
 
-
     public static class Handler implements IMessageHandler<PacketColourCache, IMessage> {
 
         @Override

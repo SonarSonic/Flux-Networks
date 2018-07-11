@@ -1,5 +1,6 @@
 package sonar.flux.client.gui;
 
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import sonar.core.client.gui.GuiSelectionGrid;
@@ -10,6 +11,8 @@ import sonar.flux.common.containers.ContainerAdminConfigurator;
 import sonar.flux.network.ClientNetworkCache;
 
 import java.util.List;
+
+import static sonar.flux.connection.NetworkSettings.*;
 
 public class GuiAdminConfigurator extends GuiSelectionGrid<IFluxNetwork> {
 
@@ -27,18 +30,17 @@ public class GuiAdminConfigurator extends GuiSelectionGrid<IFluxNetwork> {
 	}
 
 	@Override
-	public void onGridClicked(IFluxNetwork element, int x, int y, int pos, int button, boolean empty) {
-
-	}
+	public void onGridClicked(IFluxNetwork element, int x, int y, int pos, int button, boolean empty) {}
 
 	@Override
 	public void renderGridElement(IFluxNetwork element, int x, int y, int slot) {
 		this.bindTexture(bars);
 		this.drawTexturedModalRect(xPos+ x, yPos+y*eHeight, 0, 0, 250, 32);
-		FontHelper.text(element.getNetworkName(), xPos+ x + 4, yPos+y*eHeight +6, element.getNetworkColour().getRGB());
-		FontHelper.text(FluxTranslate.NETWORK_OWNER.t() + ": " + element.getCachedPlayerName(), xPos+ x + 4, yPos+y*eHeight +18, 0);
-		FontHelper.text("" + element.getAccessType(), xPos+ x + 4 + 200, yPos+y*eHeight +6, 0);
-		FontHelper.text(FluxTranslate.UUID.t() + ": " + element.getNetworkID(), xPos+ x + 4 + 200, yPos+y*eHeight +18, 0);
+		FontHelper.text(NETWORK_NAME.getValue(element), xPos+ x + 4, yPos+y*eHeight +6, NETWORK_COLOUR.getValue(element).getRGB());
+		FontHelper.text(FluxTranslate.NETWORK_OWNER.t() + ": " + NETWORK_CACHED_NAME.getValue(element), xPos+ x + 4, yPos+y*eHeight +18, 0);
+		FontHelper.text("" + NETWORK_ACCESS.getValue(element), xPos+ x + 4 + 200, yPos+y*eHeight +6, 0);
+		FontHelper.text(FluxTranslate.UUID.t() + ": " + NETWORK_ID.getValue(element), xPos+ x + 4 + 200, yPos+y*eHeight +18, 0);
+		RenderHelper.disableStandardItemLighting();
 	}
 
 	@Override

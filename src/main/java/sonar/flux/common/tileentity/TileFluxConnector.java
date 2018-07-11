@@ -28,7 +28,7 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
 	
 	@Override
 	public long addPhantomEnergyToNetwork(EnumFacing from, long max_add, EnergyType energy_type, ActionType type) {
-		return getConnectionType().canAddPhantomPower() ? handler.addPhantomEnergyToNetwork(from, max_add, energy_type, type) : 0;
+		return isActive() && getConnectionType().canAddPhantomPower() ? handler.addPhantomEnergyToNetwork(from, max_add, energy_type, type) : 0;
     }
 
 	@Override
@@ -44,10 +44,10 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
 		for (EnumFacing face : faces) {
 			BlockPos adj = pos.offset(face);
 			TileEntity tile = world.getTileEntity(adj);
-			boolean original = connections.getObjects().get(face.getIndex());
+			boolean original = connections.getValue().get(face.getIndex());
 			boolean current = FluxNetworks.TRANSFER_HANDLER.canRenderConnection(tile, face.getOpposite());
 			if(original != current){
-				connections.getObjects().set(face.getIndex(), current);
+				connections.getValue().set(face.getIndex(), current);
 				sendRenderUpdate = true;
 			}
 		}

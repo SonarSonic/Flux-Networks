@@ -1,22 +1,20 @@
 package sonar.flux.connection.transfer.stats;
 
-import java.util.List;
-
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.nbt.INBTSyncable;
 import sonar.core.helpers.NBTHelper.SyncType;
-import sonar.core.network.sync.DirtyPart;
-import sonar.core.network.sync.IDirtyPart;
 import sonar.flux.api.network.FluxCache;
-import sonar.flux.api.network.IFluxCommon;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.api.tiles.IFluxStorage;
-import sonar.flux.connection.BasicFluxNetwork;
+import sonar.flux.connection.FluxNetworkBase;
+import sonar.flux.connection.FluxNetworkServer;
 import sonar.flux.connection.transfer.handlers.ConnectionTransferHandler;
 
-public class NetworkStatistics extends DirtyPart implements INBTSyncable, IDirtyPart {
+import java.util.List;
 
-	public final IFluxCommon network;
+public class NetworkStatistics implements INBTSyncable {
+
+	public final FluxNetworkBase network;
 	public long network_energy;
 	public long network_energy_change;
 	public long network_energy_capacity;
@@ -30,18 +28,18 @@ public class NetworkStatistics extends DirtyPart implements INBTSyncable, IDirty
 	public int flux_storage_count;
 	public int flux_controller_count;
 
-	public NetworkStatistics(IFluxCommon network) {
+	public NetworkStatistics(FluxNetworkBase network) {
 		this.network = network;
 	}
 
 	public void onStartServerTick() {
-		BasicFluxNetwork network = ((BasicFluxNetwork) this.network);
+		FluxNetworkServer network = ((FluxNetworkServer) this.network);
 		List<IFluxListenable> connections = network.getConnections(FluxCache.flux);
 		connections.forEach(flux -> flux.getTransferHandler().onStartServerTick());
 	}
 
 	public void onEndWorldTick() {
-		BasicFluxNetwork network = ((BasicFluxNetwork) this.network);
+		FluxNetworkServer network = ((FluxNetworkServer) this.network);
 		List<IFluxListenable> connections = network.getConnections(FluxCache.flux);
 		if (network.flux_listeners.isEmpty()) {
 			connections.forEach(flux -> flux.getTransferHandler().onEndWorldTick());

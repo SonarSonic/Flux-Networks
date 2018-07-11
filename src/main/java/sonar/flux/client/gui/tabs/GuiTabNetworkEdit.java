@@ -25,6 +25,7 @@ import java.util.List;
 
 import static net.minecraft.client.renderer.GlStateManager.popMatrix;
 import static net.minecraft.client.renderer.GlStateManager.pushMatrix;
+import static sonar.flux.connection.NetworkSettings.*;
 
 //import org.lwjgl.opengl.GL11;
 
@@ -34,7 +35,7 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 	public int currentColour;
 	public AccessType currentAccess = AccessType.PRIVATE;
 	public boolean previewSelected = true, showFullPreview = true;
-	public boolean disableConversion = false;
+	public boolean enableConversion = true;
 	public EnergyType type = EnergyType.FE;
 
 	public GuiTabNetworkEdit(TileFlux tile, List<GuiTab> tabs) {
@@ -50,12 +51,12 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 			buttonList.add(new LargeButton(this, FluxTranslate.CREATE.t(), 6, getGuiLeft() + 105, getGuiTop() + 134, 51, 0));
 		} else {
 			if (!common.isFakeNetwork()) {
-				initEditFields(common.getNetworkName(), common.getNetworkColour());
+				initEditFields(NETWORK_NAME.getValue(common), NETWORK_COLOUR.getValue(common));
 				buttonList.add(new LargeButton(this, FluxTranslate.RESET.t(), 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
 				buttonList.add(new LargeButton(this, FluxTranslate.SAVE_CHANGE.t(), 6, getGuiLeft() + 105, getGuiTop() + 134, 17, 0));
-				currentAccess = common.getAccessType();
-				disableConversion = common.disabledConversion();
-				type = common.getDefaultEnergyType();
+				currentAccess = NETWORK_ACCESS.getValue(common);
+				enableConversion = NETWORK_CONVERSION.getValue(common);
+				type = NETWORK_ENERGY_TYPE.getValue(common);
 			} else {
 				disabled = true;
 			}
@@ -82,7 +83,7 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 			Gui.drawRect(55, 63 + 32, 165, 68 + 32 + 4, colour.getRGB());
 
 			FontHelper.text(FluxTranslate.ACCESS_SETTING.t() + ": " + TextFormatting.AQUA + currentAccess.getDisplayName(), 8, 40, 0);
-			FontHelper.text(FluxTranslate.ALLOW_CONVERSION.t() + ": " + TextFormatting.AQUA + FluxTranslate.translateBoolean(!disableConversion), 8, 52, 0);
+			FontHelper.text(FluxTranslate.ALLOW_CONVERSION.t() + ": " + TextFormatting.AQUA + FluxTranslate.translateBoolean(enableConversion), 8, 52, 0);
 			FontHelper.text(FluxTranslate.ENERGY_TYPE.t() + ": " + TextFormatting.AQUA + type.getName(), 8, 64, 0);
 			FontHelper.text(FluxTranslate.PREVIEW.t() + ": ", 8, 96, 0);
 			String networkName = name.getText().isEmpty() ? FluxTranslate.NETWORK_NAME.t() : name.getText();
@@ -96,7 +97,7 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 				drawHoveringText(FluxTranslate.CHANGE_SETTING.t(), x - getGuiLeft(), y - getGuiTop());
 			}
 			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 12 && y - getGuiTop() < 52 + 12) {
-				drawHoveringText(FluxTranslate.ALLOW_CONVERSION.t() + ": " + FluxTranslate.translateBoolean(!disableConversion), x - getGuiLeft(), y - getGuiTop());
+				drawHoveringText(FluxTranslate.ALLOW_CONVERSION.t() + ": " + FluxTranslate.translateBoolean(enableConversion), x - getGuiLeft(), y - getGuiTop());
 			}
 			if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 24 && y - getGuiTop() < 52 + 24) {
 				drawHoveringText(FluxTranslate.ENERGY_TYPE.t() + ": " + type.getName(), x - getGuiLeft(), y - getGuiTop());
@@ -116,9 +117,9 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 			if (!name.getText().isEmpty()) {
 
 				if (getCurrentTab() == GuiTab.NETWORK_CREATE) {
-					PacketHelper.sendPacketToServer(PacketType.CREATE_NETWORK, flux, PacketHelper.createNetworkCreationPacket(name.getText(), getCurrentColour(), currentAccess, disableConversion, type));
+					PacketHelper.sendPacketToServer(PacketType.CREATE_NETWORK, flux, PacketHelper.createNetworkCreationPacket(name.getText(), getCurrentColour(), currentAccess, enableConversion, type));
 				} else {
-					PacketHelper.sendPacketToServer(PacketType.EDIT_NETWORK, flux, PacketHelper.createNetworkEditPacket(getNetworkID(), name.getText(), getCurrentColour(), currentAccess, disableConversion, type));
+					PacketHelper.sendPacketToServer(PacketType.EDIT_NETWORK, flux, PacketHelper.createNetworkEditPacket(getNetworkID(), name.getText(), getCurrentColour(), currentAccess, enableConversion, type));
 				}
 
 				switchTab(GuiTab.NETWORK_SELECTION);
@@ -151,7 +152,7 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 		}
 
 		if (x - getGuiLeft() > 5 && x - getGuiLeft() < 165 && y - getGuiTop() > 38 + 12 && y - getGuiTop() < 52 + 12) {
-			disableConversion = !disableConversion;
+			enableConversion = !enableConversion;
 		}
 		if (x - getGuiLeft() > 11 && x - getGuiLeft() < 165 && y - getGuiTop() > 108 && y - getGuiTop() < 134) {
 			showFullPreview = !showFullPreview;

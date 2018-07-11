@@ -100,7 +100,11 @@ public interface IFlux {
      */
     int getCurrentPriority();
 
+    int getFolderID();
+
     boolean isChunkLoaded();
+
+    boolean isActive();
     
     /**
      * the custom name is assigned by the user, this allows easier identification of various Flux connections.
