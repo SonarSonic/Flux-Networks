@@ -1,6 +1,6 @@
 itemGroup.Flux Networks=Flux Networks
 
-//Блоки
+//blocks
 tile.FluxPlug.name=Флакс разъём
 tile.FluxPoint.name=Флакс точка
 tile.FluxStorage.name=Базовое флаксовое хранилище
@@ -9,20 +9,20 @@ tile.GargantuanFluxStorage.name=Гигантское флаксовое хран
 tile.FluxController.name=Флакс контроллер
 tile.FluxBlock.name=Флакс блок
 
-//Предметы
+//items
 item.Flux.name=Флакс
 item.FluxCore.name=Флакс ядро
 item.FluxConfigurator.name=Флакс конфигуратор
 item.AdminConfigurator.name=Админ конфигуратор
 
-//Всплывающие подсказки
+//tool tips
 flux.item.flux.tooltip=Получается путем бросания редстоуна в огонь или лаву
 flux.item.fluxcontroller.tooltip=Управляет энергией
 flux.item.fluxplug.tooltip=Добавляет энергию во флаксовую сеть
 flux.item.fluxpoint.tooltip=Извлекает энергию из флаксовой сети
 flux.item.fluxstorage.tooltip=Хранит энергию во флаксовой сети
 
-//Общие значения
+//general values
 flux.value.true=Да
 flux.value.false=Нет
 flux.value.on=Вкл.
@@ -30,7 +30,7 @@ flux.value.off=Выкл.
 flux.value.enabled=Включено
 flux.value.disabled=Отключено
 
-//Общие переводы
+//general translations
 flux.general.add=Добавить
 flux.general.remove=Удалить
 flux.general.delete=Удалить
@@ -54,7 +54,7 @@ flux.general.above=Выше
 flux.general.type=Тип
 flux.general.uuid=UUID
 
-//Вкладки интерфейса
+//gui tabs
 network.tab.home=Дом
 network.tab.connections=Сетевые соединения
 network.tab.networks=Выбор сети
@@ -63,45 +63,50 @@ network.tab.createnetwork=Создать новую сеть
 network.tab.players=Разрешенные игроки
 network.tab.editnetwork=Редактировать сеть
 network.tab.debug=Отладка сети
+network.tab.wirelessCharging=Настройка беспроводной зарядки
 
-//Вкладка индекс
+//INDEX TAB 
 connection.config.priority=Приоритет
 connection.config.enablelimit=Включить предел
 connection.config.transferlimit=Предел передачи
 connection.config.nolimit=Без предела
 connection.config.phantom=ФАНТОМ
 
-//режим приоритета
+//priority mode
 network.priority.default=По умолчанию
 network.priority.largest=Сначала крупнейший
 network.priority.smallest=Сначала наименьший
 
-//Вкладка индекс контроллера
+//CONTROLLER INDEX TAB
 network.sendMode=Режим отправки
 network.receiveMode=Режим приема
 network.transferMode=Режим передачи
 network.transmitterMode=Режим передатчика
 
-//Режим передачи
+//transfer mode 
 network.transfer.notransfer=Нет передачи
 network.transfer.even=Равномерное распределение
 network.transfer.surge=Всплеск
 network.transfer.hyper=Гипервсплеск
 network.transfer.god=Режим бога
 
-//режим передатчика
-network.transmitter.hotbar=Только горячая панель
-network.transmitter.held=Только удерживаемый предмет
+//transmitter mode
+network.charge.maininventory=Инвентарь игрока
+network.charge.hotbar=Только горячая панель (исключает правую руку)
+network.charge.armour=Инвентарь брони
+network.charge.baubles=Инвентарь Baubles
+network.charge.lefthand=Левая рука
+network.charge.righthand=Правая рука
 
-//Выбор сети
+//NETWORK SELECTION
 network.stats.owner=Владелец
 network.stats.name=Имя сети
 
-//Вкладка удалить сеть
+//delete network tab
 network.delete.hover=Удалить сеть
 network.delete.confirm=Подтвердить удаление
 
-//Сетевые подключения
+//NETWORK CONNECTIONS
 network.sorting.name=Имя соединения
 network.sorting.type=Тип соединения
 network.sorting.dim=Номер измерения
@@ -111,12 +116,12 @@ network.sorting.showconnected=Показать подключенные блок
 network.sorting.direction=Направление сортировки
 network.sorting.sortby=Сортировать по
 
-//Параметры отображения чанка
+//chunk display options
 network.sorting.both=Выгружено & Загружено
 network.sorting.loaded=Загружено
 network.sorting.unloaded=Выгружено
 
-//Сетевая статистика
+//NETWORK STATISTICS
 network.stats.plugs=Разъёмы
 network.stats.points=Точки
 network.stats.storage=Хранилища
@@ -128,7 +133,7 @@ network.energy.totaltransfer=Передача
 network.energy.networkbuffer=Сетевой буфер
 network.energy.localbuffer=Локальный буфер
 
-//Сеть редактирование/создание
+// NETWORK EDIT/CREATE
 network.edit.changeSetting=Изменить настройки
 network.edit.nextColour=Следующий цвет
 network.edit.accessSetting=Настройки доступа
@@ -139,12 +144,31 @@ network.edit.color.r=К
 network.edit.color.g=З
 network.edit.color.b=С
 
-//Настройка доступа
+// access setting
 network.edit.restricted=Ограниченный
 network.edit.private=Частный
 network.edit.public=Публичный
 
-//Ошибки
+// ACTIVATION SETTING \\
+flux.activated.always=Всегда активно
+flux.activated.never=Никогда не активно
+flux.activated.possignal=Активно с сигналом красного камня
+flux.activated.negsignal=Активно без сигнала красного камня
+
+flux.activated.currentstate=Текущее состояние
+flux.activated.activated=Активированный
+flux.activated.deactivated=Деактивированный
+
+// PRIORITY SETTING \\
+flux.priority.mode=Режим приоритета
+flux.priority.normal=Нормально
+flux.priority.surge=Всплеск
+
+// DEBUG MENU \\
+flux.debug.cblocks=Отладка подключенных блоков
+flux.debug.nconnections=Отладка сетевых подключений
+
+//errors
 network.error.none=Вы не можете этого сделать, но я не знаю, почему...
 network.error.waiting=Ожидание сервера
 network.error.nomatches=Нет совпадений
@@ -164,7 +188,7 @@ network.error.unavailableinprivate=Недоступно в частном реж
 network.error.chunkunloaded=ЧАНК ВЫГРУЖЕН
 network.error.nopermisson=У вас нет разрешения на доступ к этой сети
 
-//Игроки
+//players
 network.player.user=Пользователь
 network.player.owner=Владелец сети
 network.player.sharedowner=Общий владелец
