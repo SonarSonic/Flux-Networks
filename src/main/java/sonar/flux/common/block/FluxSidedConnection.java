@@ -51,7 +51,7 @@ public abstract class FluxSidedConnection extends FluxConnection {
 		if (tile instanceof TileFlux) {
 			TileFlux flux = (TileFlux) tile;
 			for (PropertySonarFacing face : ConnectedTile.faces) {
-				currentState = currentState.withProperty(face, flux.connections.getValue().get(face.facing.getIndex()));
+				currentState = currentState.withProperty(face, flux.connections.getValue()[face.facing.getIndex()] == 1);
 			}
 		}
 		return currentState;

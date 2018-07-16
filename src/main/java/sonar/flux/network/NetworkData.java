@@ -97,7 +97,7 @@ public class NetworkData extends WorldSavedData {
 			NBTTagList player_list = tag.getTagList(PLAYER_LIST, NBT.TAG_COMPOUND);
 			for (int j = 0; j < player_list.tagCount(); j++) {
 				NBTTagCompound c = player_list.getCompoundTagAt(j);
-				players.add(new FluxPlayer(c));
+				ListHelper.addWithCheck(players, new FluxPlayer(c));
 			}
 			network.setSettingInternal(NetworkSettings.NETWORK_PLAYERS, players);
 		}

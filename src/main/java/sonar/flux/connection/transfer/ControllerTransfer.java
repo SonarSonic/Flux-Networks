@@ -15,6 +15,7 @@ import sonar.core.handlers.inventories.ItemStackHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.IEnergyTransfer;
 import sonar.flux.api.network.FluxPlayer;
+import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.common.tileentity.TileController;
 import sonar.flux.connection.NetworkSettings;
 
@@ -68,6 +69,14 @@ public class ControllerTransfer extends BaseFluxTransfer implements IEnergyTrans
 
 	public List<EntityPlayer> getChargeablePlayers(){
 		List<FluxPlayer> playerNames = controller.getNetwork().getSetting(NetworkSettings.NETWORK_PLAYERS);
+
+		if(playerNames.isEmpty()){ //recover flux owner, remove this in later versions????
+			Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(controller.getNetwork().getSetting(NetworkSettings.NETWORK_OWNER));
+			if (entity instanceof EntityPlayer) {
+				controller.getNetwork().getSetting(NetworkSettings.NETWORK_PLAYERS).add(FluxPlayer.createFluxPlayer((EntityPlayer)entity, PlayerAccess.OWNER));
+			}
+		}
+
 		List<EntityPlayer> players = new ArrayList<>();
 		for (FluxPlayer player : playerNames) {
 			Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(player.getOnlineUUID());

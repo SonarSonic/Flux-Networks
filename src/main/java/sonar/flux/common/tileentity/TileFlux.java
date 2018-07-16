@@ -61,7 +61,7 @@ public abstract class TileFlux extends TileEntitySyncable implements IFluxListen
 	public ISyncValue<String> customName = SyncRegistry.createValue(String.class, value_watcher, "6", "Flux Connection");
 	public ISyncValue<Integer> colour = SyncRegistry.createValue(Integer.class, value_watcher, "7", FluxNetworkInvalid.INVALID.getSetting(NetworkSettings.NETWORK_COLOUR).getRGB());
 
-	public ISyncValue<List<Boolean>> connections = SyncRegistry.createListValue(Boolean.class, value_watcher, "8", Lists.newArrayList(false, false, false, false, false, false));
+	public ISyncValue<int[]> connections = SyncRegistry.createValue(int[].class, value_watcher, "connect", new int[]{0,0,0,0,0,0});
 	public ISyncValue<EnumActivationType> activation_type = SyncRegistry.createValue(EnumActivationType.class, value_watcher, "activation_type", EnumActivationType.ACTIVATED);
 	public ISyncValue<EnumPriorityType> priority_type = SyncRegistry.createValue(EnumPriorityType.class, value_watcher, "priority_type", EnumPriorityType.NORMAL);
 	public ISyncValue<Boolean> redstone_power = SyncRegistry.createValue(Boolean.class, value_watcher, "rpower", false);
@@ -191,33 +191,32 @@ public abstract class TileFlux extends TileEntitySyncable implements IFluxListen
 	//// TILE ENTITY EVENTS \\\\
 
 	public boolean LOADED = false;
-	public boolean CONNECTED = false;
 
 	@Override
 	public void update(){
 		super.update();
-		if (!this.getWorld().isRemote && LOADED && !CONNECTED) {
+		if (!world.isRemote && !LOADED) {
 			FluxHelper.addConnection(this, AdditionType.ADD);
 			updateTransfers(EnumFacing.VALUES);
-			CONNECTED = true;
+			LOADED = true;
 		}
 	}
 
 	@Override
-	public void validate() {
-		super.validate();
-		if (!this.getWorld().isRemote) {
-			LOADED = true;
+	public void onChunkUnload() {
+		super.onChunkUnload();
+		if (!world.isRemote && LOADED) {
+			FluxHelper.removeConnection(this, RemovalType.CHUNK_UNLOAD);
+			LOADED = false;
 		}
 	}
 
 	@Override
 	public void invalidate() {
 		super.invalidate();
-		if (!this.getWorld().isRemote && LOADED) {
+		if (!world.isRemote && LOADED) {
 			FluxHelper.removeConnection(this, RemovalType.REMOVE);
 			LOADED = false;
-			CONNECTED = false;
 		}
 	}
 
