@@ -1,0 +1,196 @@
+itemGroup.Flux Networks=Flux Networks
+
+//blocks
+tile.FluxPlug.name=Plugue de Flux
+tile.FluxPoint.name=Ponto de Flux
+tile.FluxStorage.name=Armazenamento de Flux Básico
+tile.HerculeanFluxStorage.name=Armazenamento de Flux Hercúleo
+tile.GargantuanFluxStorage.name=Armazenamento de Flux Colossal
+tile.FluxController.name=Controlador de Flux
+tile.FluxBlock.name=Bloco de Flux
+
+//items
+item.Flux.name=Flux
+item.FluxCore.name=Núcleo de Flux
+item.FluxConfigurator.name=Configurador de Flux
+item.AdminConfigurator.name=Configurador Admin
+
+//tool tips
+flux.item.flux.tooltip=É obtido jogando Redstone no fogo ou na lava
+flux.item.fluxcontroller.tooltip=Gerencia Energia
+flux.item.fluxplug.tooltip=Para adicionar energia na Rede de Flux
+flux.item.fluxpoint.tooltip=Para remover energia da Rede de Flux
+flux.item.fluxstorage.tooltip=Armazena energia na Rede de Flux
+
+//general values
+flux.value.true=Sim
+flux.value.false=Não
+flux.value.on=Ligado
+flux.value.off=Desligado
+flux.value.enabled=Ativado
+flux.value.disabled=Desativado
+
+//general translations
+flux.general.add=Adicionar
+flux.general.remove=Remover
+flux.general.delete=Excluir
+flux.general.back=Voltar
+flux.general.rename=Renomear
+flux.general.name=Nome
+flux.general.color=Cor
+flux.general.stored=Armazenado
+flux.general.cancel=Cancelar
+flux.general.banned=Banido
+flux.general.chunk=Chunk
+flux.general.show=Mostrar
+flux.general.reset=Resetar
+flux.general.create=Criar
+flux.general.savechanges=Salvar Alterações
+flux.general.config=Configurar
+flux.general.change=Alterar
+flux.general.rightclick=Clique direito para alterar
+flux.general.click=Clicar
+flux.general.above=Acima
+flux.general.type=Tipo
+flux.general.uuid=UUID
+
+//gui tabs
+network.tab.home=Principal
+network.tab.connections=Conexões de Rede
+network.tab.networks=Seleção de Rede
+network.tab.statistics=Estatísticas da Rede
+network.tab.createnetwork=Criar uma Nova Rede
+network.tab.players=Jogadores Permitidos
+network.tab.editnetwork=Editar Rede
+network.tab.debug=Rede de Depuração
+network.tab.wirelessCharging=Configurar Carregamento Sem Fio
+
+//INDEX TAB 
+connection.config.priority=Priorid.
+connection.config.enablelimit=Ativar Limite
+connection.config.transferlimit=Limite-Transf.
+connection.config.nolimit=Sem limites
+connection.config.phantom=FANTASMA
+
+//priority mode
+network.priority.default=Padrão
+network.priority.largest=Pelo Maior
+network.priority.smallest=Pelo Menor
+
+//CONTROLLER INDEX TAB
+network.sendMode=Modo Enviar
+network.receiveMode=Modo Receber
+network.transferMode=Modo Transferir
+network.wirelessCharging=Carregamento Sem Fio
+
+//transfer mode 
+network.transfer.notransfer=Sem Transferência
+network.transfer.even=Distribuição Uniforme
+network.transfer.surge=Sobrecarga
+network.transfer.hyper=Hiper-Sobrecarga
+network.transfer.god=Modo-Deus
+
+//transmitter mode
+network.charge.maininventory=Inventário do Jogador
+network.charge.hotbar=Hotbar do Jogador (exceto Mão Principal)
+network.charge.armour=Inventário de Armadura
+network.charge.baubles=Inventário das Baubles
+network.charge.lefthand=Mão Secundária
+network.charge.righthand=Mão Principal
+
+//NETWORK SELECTION
+network.stats.owner=Proprietário
+network.stats.name=Nome da Rede
+
+//delete network tab
+network.delete.hover=Excluir Rede
+network.delete.confirm=Confirmar exclusão de
+
+//NETWORK CONNECTIONS
+network.sorting.name=Nome da Conexão
+network.sorting.type=Tipo de Conexão
+network.sorting.dim=Número de Dimensão
+network.sorting.transfer=Transferência de Energia
+network.sorting.clear=Limpar Configurações de Filtro
+network.sorting.showconnected=Mostrar Blocos Conectados
+network.sorting.direction=Sentido de Ordenação
+network.sorting.sortby=Ordenar por
+
+//chunk display options
+network.sorting.both=Descarregado e Carregado
+network.sorting.loaded=Carregado
+network.sorting.unloaded=Descarregado
+
+//NETWORK STATISTICS
+network.stats.plugs=Plugues
+network.stats.points=Pontos
+network.stats.storage=Armazenamentos
+network.stats.controllers=Controladores
+network.energy.input=Entrada
+network.energy.output=Saída
+network.energy.storedchange=Alteração de Armazenamento
+network.energy.totaltransfer=Transferência
+network.energy.networkbuffer=Buffer de Rede
+network.energy.localbuffer=Buffer Local
+
+// NETWORK EDIT/CREATE
+network.edit.changeSetting=Alterar Configuração
+network.edit.nextColour=Próxima Cor
+network.edit.accessSetting=Configuração de Acesso
+network.edit.energytype=Tipo de Energia
+network.edit.allowconversion=Permitir Conversão
+network.edit.preview=Prévia
+network.edit.color.r=R
+network.edit.color.g=G
+network.edit.color.b=B
+
+// access setting
+network.edit.restricted=Restrito
+network.edit.private=Privado
+network.edit.public=Publico
+
+// ACTIVATION SETTING \\
+flux.activated.always=Sempre Ativo
+flux.activated.never=Nunca Ativo
+flux.activated.possignal=Ativar Com Sinal de Redstone
+flux.activated.negsignal=Ativar Sem Sinal de Redstone
+
+flux.activated.currentstate=Estado Atual
+flux.activated.activated=Ativado
+flux.activated.deactivated=Desativado
+
+// PRIORITY SETTING \\
+flux.priority.mode=Modo de Prioridade
+flux.priority.normal=Normal
+flux.priority.surge=Sobrecarga
+
+// DEBUG MENU \\
+flux.debug.cblocks=Depurar Blocos Conectados
+flux.debug.nconnections=Depurar Conexões de Rede
+
+//errors
+network.error.none=Você não pode fazer isso, mas não sei o porque...
+network.error.waiting=Esperando pelo servidor
+network.error.nomatches=Nenhum Resultado
+network.error.nonetworks=Nenhuma Rede Disponível
+network.error.nostatistics=Nenhuma Estatística Disponível
+network.error.noconnections=Nenhuma Conexão Disponível
+network.error.noconnected=Nenhuma Rede Conectada
+network.error.nonetworktoedit=Nenhuma rede para editar
+network.error.hasController=Esta rede já tem um controlador
+network.error.notOwner=Somente o dono pode excluir esta rede
+network.error.accessDenied=Acesso Negado
+network.error.editNetwork=Você não tem permissão para editar esta rede
+network.error.networkMaxReached=Você já tem o número máximo de redes.
+network.error.invalidUser=Nenhum usuário com esse nome pôde ser encontrado
+network.error.noplayerscanbeadded=Nenhum jogador pode ser adicionado
+network.error.unavailableinprivate=Indisponível no Modo Privado
+network.error.chunkunloaded=CHUNK DESCARREGADO
+network.error.nopermisson=Você não tem permissão para acessar esta rede
+
+//players
+network.player.user=Usuário
+network.player.owner=Dono da Rede
+network.player.sharedowner=Dono Compartilhado
+network.player.blocked=Bloqueado
+network.player.creative=Criativo
