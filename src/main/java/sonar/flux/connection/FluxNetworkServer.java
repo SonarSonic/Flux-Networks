@@ -60,6 +60,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 			FluxCache.getValidTypes(tile).forEach(type -> ListHelper.addWithCheck(getConnections(type), tile));
 			MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(tile, this));
 			iterator.remove();
+			sortConnections = true;
 		}
 	}
 
@@ -72,6 +73,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 			FluxCache.getValidTypes(tile).forEach(type -> ((List<IFluxListenable>)getConnections(type)).removeIf(F -> F.getCoords().equals(tile.getCoords())));
 			MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Disconnected(tile, this));
 			iterator.remove();
+			sortConnections = true;
 		}
 	}
 
@@ -80,12 +82,6 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 	}
 
 	public void onStartServerTick() {
-		addConnections();
-		removeConnections();
-		if(sortConnections){
-		    sortConnections();
-            sortConnections = false;
-        }
 		this.network_stats.getValue().onStartServerTick();
 	}
 
@@ -94,6 +90,12 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 
     @Override
     public void onEndServerTick() {
+		addConnections();
+		removeConnections();
+		if(sortConnections){
+			sortConnections();
+			sortConnections = false;
+		}
 		buffer_limiter = 0;
 		sorted_points.forEach(g -> g.getEntries().forEach(p -> buffer_limiter += p.getTransferHandler().removeFromNetwork(p.getTransferLimit(), network_energy_type.getValue(), ActionType.SIMULATE)));
 
