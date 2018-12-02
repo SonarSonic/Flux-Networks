@@ -189,12 +189,12 @@ curseforge {
         id = curse_project_id
 
         relations {
-            requiredLibrary 'sonar-core'
-            optionalLibrary 'tesla'
-            optionalLibrary 'industrial-craft'
-            optionalLibrary 'redstone-flux'
-            optionalLibrary 'applied-energistics-2'
-            optionalLibrary 'immersive-engineering'
+            requiredDependency 'sonar-core'
+            optionalDependency 'tesla'
+            optionalDependency 'industrial-craft'
+            optionalDependency 'redstone-flux'
+            optionalDependency 'applied-energistics-2'
+            optionalDependency 'immersive-engineering'
         }
 
         mainArtifact(jar) {
