@@ -2,7 +2,9 @@ package sonar.flux.network;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import sonar.core.helpers.ListHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
@@ -17,10 +19,14 @@ import sonar.flux.connection.FluxNetworkServer;
 import sonar.flux.connection.NetworkSettings;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class NetworkData extends WorldSavedData {
+public class FluxNetworkData extends WorldSavedData {
+
+	private static FluxNetworkData data;
+
+	public Map<UUID, List<IFluxNetwork>> networks = new HashMap<>();
+	public int uniqueID = 1;
 
 	public static final String IDENTIFIER = "sonar.flux.networks.configurations";
 	public static String TAG_LIST = "networks";
@@ -37,18 +43,66 @@ public class NetworkData extends WorldSavedData {
 	public static String UNLOADED_CONNECTIONS = "unloaded";
 	public static String FOLDERS = "network_folders";
 
-	public NetworkData(String name) {
+	public FluxNetworkData(String name) {
 		super(name);
 	}
 
-	public NetworkData() {
+	public FluxNetworkData() {
 		this(IDENTIFIER);
+	}
+
+
+	//// INSTANCE METHODS \\\\
+
+	public static FluxNetworkData get() {
+		if(data == null){
+			World world = DimensionManager.getWorld(0);
+			WorldSavedData savedData = world.loadData(FluxNetworkData.class, FluxNetworkData.IDENTIFIER);
+			if(savedData == null){
+				FluxNetworks.logger.info("No FluxNetworkData found");
+				FluxNetworkData newData = new FluxNetworkData(IDENTIFIER);
+				world.setData(IDENTIFIER, newData);
+				data = newData;
+			}else{
+				data = (FluxNetworkData) savedData;
+				FluxNetworks.logger.info("FluxNetworkData has been successfully loaded");
+			}
+		}
+		return data;
+	}
+
+	public static void clear() {
+		if (data != null) {
+			data = null;
+			FluxNetworks.logger.info("FluxNetworkData has been unloaded");
+		}
+	}
+
+	public boolean isDirty() {
+		return true;
+	}
+
+
+	//// LOAD / SAVE METHODS \\\\\
+
+	public void addNetwork(IFluxNetwork network) {
+		UUID owner = network.getSetting(NetworkSettings.NETWORK_OWNER);
+		if (owner != null) {
+			networks.computeIfAbsent(owner, (UUID) -> FluxNetworkCache.instance().instanceNetworkList()).add(network);
+		}
+	}
+
+	public void removeNetwork(IFluxNetwork common) {
+		UUID owner = common.getSetting(NetworkSettings.NETWORK_OWNER);
+		common.onRemoved();
+		if (owner != null && networks.get(owner) != null) {
+			networks.get(owner).remove(common);
+		}
 	}
 
 	@Override
 	public void readFromNBT(@Nonnull NBTTagCompound nbt) {
-		FluxNetworkCache cache = FluxNetworks.getServerCache();
-		cache.uniqueID = nbt.getInteger(UNIQUE_ID);
+		uniqueID = nbt.getInteger(UNIQUE_ID);
 		if (nbt.hasKey(TAG_LIST)) {
 			NBTTagList list = nbt.getTagList(TAG_LIST, NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i++) {
@@ -59,9 +113,9 @@ public class NetworkData extends WorldSavedData {
 
 				readPlayers(network, tag);
 				readFolders(network, tag);
-				readConnections(network.getSyncSetting(NetworkSettings.UNLOADED_CONNECTIONS), NetworkData.UNLOADED_CONNECTIONS, network, tag);
+				readConnections(network.getSyncSetting(NetworkSettings.UNLOADED_CONNECTIONS), FluxNetworkData.UNLOADED_CONNECTIONS, network, tag);
 
-				cache.addNetwork(network);
+				addNetwork(network);
 				FluxEvents.logLoadedNetwork(network);
 			}
 		}
@@ -70,9 +124,8 @@ public class NetworkData extends WorldSavedData {
 	@Nonnull
     @Override
 	public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
-		FluxNetworkCache cache = FluxNetworks.getServerCache();
-		nbt.setInteger(UNIQUE_ID, cache.uniqueID);
-		if (cache.getAllNetworks().size() > 0) {
+		nbt.setInteger(UNIQUE_ID, uniqueID);
+		if (networks.size() > 0) {
 			NBTTagList list = new NBTTagList();
 			for (IFluxNetwork network : FluxNetworks.getServerCache().getAllNetworks()) {
 
@@ -81,7 +134,7 @@ public class NetworkData extends WorldSavedData {
 
 				writePlayers(network, tag);
 				writeFolders(network, tag);
-				writeConnections(network.getSyncSetting(NetworkSettings.UNLOADED_CONNECTIONS), NetworkData.UNLOADED_CONNECTIONS, network, tag);
+				writeConnections(network.getSyncSetting(NetworkSettings.UNLOADED_CONNECTIONS), FluxNetworkData.UNLOADED_CONNECTIONS, network, tag);
 
 				list.appendTag(tag);
 			}
@@ -90,6 +143,8 @@ public class NetworkData extends WorldSavedData {
 		}
 		return nbt;
 	}
+
+	//// LOAD / SAVE HELPERS \\\\
 
 	public static void readPlayers(IFluxNetwork network, @Nonnull NBTTagCompound tag) {
 		if(tag.hasKey(PLAYER_LIST)) {
@@ -153,9 +208,5 @@ public class NetworkData extends WorldSavedData {
 			tag.setTag(key, connections);
 		}
 		return tag;
-	}
-
-	public boolean isDirty() {
-		return true;
 	}
 }

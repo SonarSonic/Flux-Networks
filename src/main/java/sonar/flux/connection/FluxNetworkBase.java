@@ -16,7 +16,7 @@ import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
-import sonar.flux.network.NetworkData;
+import sonar.flux.network.FluxNetworkData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +25,14 @@ import java.util.UUID;
 public abstract class FluxNetworkBase extends ValueWatcher implements IFluxNetwork {
 
     //// SYNCED VALUES \\\\
-    public ISyncValue<Integer> network_id = SyncRegistry.createValue(Integer.class, this, NetworkData.NETWORK_ID);
-    public ISyncValue<String> network_name = SyncRegistry.createValue(String.class, this, NetworkData.NETWORK_NAME);
-    public ISyncValue<AccessType> network_access = SyncRegistry.createValue(AccessType.class, this, NetworkData.ACCESS);
-    public ISyncValue<CustomColour> network_colour = SyncRegistry.createValue(CustomColour.class, this, NetworkData.COLOUR);
-    public ISyncValue<UUID> network_owner = SyncRegistry.createValue(UUID.class, this, NetworkData.OWNER_UUID);
-    public ISyncValue<Boolean> network_conversion = SyncRegistry.createValue(Boolean.class, this, NetworkData.CONVERSION);
-    public ISyncValue<EnergyType> network_energy_type = SyncRegistry.createValue(EnergyType.class, this, NetworkData.ENERGY_TYPE);
-    public ISyncValue<String> cached_player_name = SyncRegistry.createValue(String.class, this, NetworkData.CACHE_PLAYER);
+    public ISyncValue<Integer> network_id = SyncRegistry.createValue(Integer.class, this, FluxNetworkData.NETWORK_ID);
+    public ISyncValue<String> network_name = SyncRegistry.createValue(String.class, this, FluxNetworkData.NETWORK_NAME);
+    public ISyncValue<AccessType> network_access = SyncRegistry.createValue(AccessType.class, this, FluxNetworkData.ACCESS);
+    public ISyncValue<CustomColour> network_colour = SyncRegistry.createValue(CustomColour.class, this, FluxNetworkData.COLOUR);
+    public ISyncValue<UUID> network_owner = SyncRegistry.createValue(UUID.class, this, FluxNetworkData.OWNER_UUID);
+    public ISyncValue<Boolean> network_conversion = SyncRegistry.createValue(Boolean.class, this, FluxNetworkData.CONVERSION);
+    public ISyncValue<EnergyType> network_energy_type = SyncRegistry.createValue(EnergyType.class, this, FluxNetworkData.ENERGY_TYPE);
+    public ISyncValue<String> cached_player_name = SyncRegistry.createValue(String.class, this, FluxNetworkData.CACHE_PLAYER);
 
     //// SIMPLE VALUES \\\\
     public ISonarValue<List<FluxPlayer>> network_players = SyncRegistry.createSonarControlledList(FluxPlayer.class, this, new ArrayList<>());
@@ -107,9 +107,9 @@ public abstract class FluxNetworkBase extends ValueWatcher implements IFluxNetwo
             }
         });
         if(type.isType(NBTHelper.SyncType.PACKET, NBTHelper.SyncType.SPECIAL)){
-            NetworkData.readPlayers(this, nbt);
-            NetworkData.readConnections(client_connections, "client_c", this, nbt);
-            NetworkData.readFolders(this, nbt);
+            FluxNetworkData.readPlayers(this, nbt);
+            FluxNetworkData.readConnections(client_connections, "client_c", this, nbt);
+            FluxNetworkData.readFolders(this, nbt);
         }
     }
 
@@ -121,13 +121,13 @@ public abstract class FluxNetworkBase extends ValueWatcher implements IFluxNetwo
         });
         if(type.isType(NBTHelper.SyncType.PACKET, NBTHelper.SyncType.SPECIAL)){
             if(network_players.isDirty() || type.isType(NBTHelper.SyncType.PACKET)) {
-                NetworkData.writePlayers(this, nbt);
+                FluxNetworkData.writePlayers(this, nbt);
             }
             if(client_connections.isDirty() || type.isType(NBTHelper.SyncType.PACKET)) {
-                NetworkData.writeConnections(client_connections, "client_c", this, nbt);
+                FluxNetworkData.writeConnections(client_connections, "client_c", this, nbt);
             }
             if(network_folders.isDirty() || type.isType(NBTHelper.SyncType.PACKET)) {
-                NetworkData.writeFolders(this, nbt);
+                FluxNetworkData.writeFolders(this, nbt);
             }
         }
 

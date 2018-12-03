@@ -10,7 +10,7 @@ import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.connection.transfer.BaseFluxTransfer;
 import sonar.flux.connection.transfer.ISidedTransfer;
 import sonar.flux.connection.transfer.PhantomTransfer;
-import sonar.flux.network.NetworkData;
+import sonar.flux.network.FluxNetworkData;
 
 public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
@@ -28,7 +28,7 @@ public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
 	@Override
 	public void readData(NBTTagCompound nbt, SyncType type) {
-		energyType = EnergyType.readFromNBT(nbt, NetworkData.ENERGY_TYPE);
+		energyType = EnergyType.readFromNBT(nbt, FluxNetworkData.ENERGY_TYPE);
 		byte direction_byte = nbt.getByte("d");
 		direction = direction_byte == -1 ? null : EnumFacing.VALUES[direction_byte];
 		isPhantomPower = nbt.getBoolean("p");
@@ -39,7 +39,7 @@ public class ClientTransfer implements INBTSyncable, IFluxTransfer {
 
 	@Override
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
-		EnergyType.writeToNBT(energyType, nbt, NetworkData.ENERGY_TYPE);
+		EnergyType.writeToNBT(energyType, nbt, FluxNetworkData.ENERGY_TYPE);
 		nbt.setByte("d", direction == null ? -1 : (byte) direction.ordinal());
 		if (isPhantomPower)
 			nbt.setBoolean("p", isPhantomPower);

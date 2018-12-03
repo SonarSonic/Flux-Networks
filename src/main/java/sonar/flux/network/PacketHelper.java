@@ -63,22 +63,22 @@ public class PacketHelper {
 
 	public static NBTTagCompound createNetworkEditPacket(int networkID, String networkName, CustomColour networkColour, AccessType accessType, boolean enableConvert, EnergyType defaultEnergy) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger(NetworkData.NETWORK_ID, networkID);
-		tag.setString(NetworkData.NETWORK_NAME, networkName);
-		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
-		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
-		tag.setBoolean(NetworkData.CONVERSION, enableConvert);
-		EnergyType.writeToNBT(defaultEnergy, tag, NetworkData.ENERGY_TYPE);
+		tag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
+		tag.setString(FluxNetworkData.NETWORK_NAME, networkName);
+		tag.setInteger(FluxNetworkData.COLOUR, networkColour.getRGB());
+		tag.setInteger(FluxNetworkData.ACCESS, accessType.ordinal());
+		tag.setBoolean(FluxNetworkData.CONVERSION, enableConvert);
+		EnergyType.writeToNBT(defaultEnergy, tag, FluxNetworkData.ENERGY_TYPE);
 		return tag;
 	}
 
 	public static IMessage doNetworkEditPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
-		int networkID = packetTag.getInteger(NetworkData.NETWORK_ID);
-		String newName = packetTag.getString(NetworkData.NETWORK_NAME);
-		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
-		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
-		boolean enableConvert = packetTag.getBoolean(NetworkData.CONVERSION);
-		EnergyType energyType = EnergyType.readFromNBT(packetTag, NetworkData.ENERGY_TYPE);
+		int networkID = packetTag.getInteger(FluxNetworkData.NETWORK_ID);
+		String newName = packetTag.getString(FluxNetworkData.NETWORK_NAME);
+		CustomColour colour = new CustomColour(packetTag.getInteger(FluxNetworkData.COLOUR));
+		AccessType access = AccessType.values()[packetTag.getInteger(FluxNetworkData.ACCESS)];
+		boolean enableConvert = packetTag.getBoolean(FluxNetworkData.CONVERSION);
+		EnergyType energyType = EnergyType.readFromNBT(packetTag, FluxNetworkData.ENERGY_TYPE);
 
 		IFluxNetwork common = FluxNetworks.getServerCache().getNetwork(networkID);
 		if (!common.isFakeNetwork()) {
@@ -99,20 +99,20 @@ public class PacketHelper {
 
 	public static NBTTagCompound createNetworkCreationPacket(String networkName, CustomColour networkColour, AccessType accessType, boolean enableConvert, EnergyType defaultEnergy) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setString(NetworkData.NETWORK_NAME, networkName);
-		tag.setInteger(NetworkData.COLOUR, networkColour.getRGB());
-		tag.setInteger(NetworkData.ACCESS, accessType.ordinal());
-		tag.setBoolean(NetworkData.CONVERSION, enableConvert);
-		EnergyType.writeToNBT(defaultEnergy, tag, NetworkData.ENERGY_TYPE);
+		tag.setString(FluxNetworkData.NETWORK_NAME, networkName);
+		tag.setInteger(FluxNetworkData.COLOUR, networkColour.getRGB());
+		tag.setInteger(FluxNetworkData.ACCESS, accessType.ordinal());
+		tag.setBoolean(FluxNetworkData.CONVERSION, enableConvert);
+		EnergyType.writeToNBT(defaultEnergy, tag, FluxNetworkData.ENERGY_TYPE);
 		return tag;
 	}
 
 	public static IMessage doNetworkCreationPacket(TileFlux source, EntityPlayer player, NBTTagCompound packetTag) {
-		String newName = packetTag.getString(NetworkData.NETWORK_NAME);
-		CustomColour colour = new CustomColour(packetTag.getInteger(NetworkData.COLOUR));
-		AccessType access = AccessType.values()[packetTag.getInteger(NetworkData.ACCESS)];
-		boolean enableConvert = packetTag.getBoolean(NetworkData.CONVERSION);
-		EnergyType energyType = EnergyType.readFromNBT(packetTag, NetworkData.ENERGY_TYPE);
+		String newName = packetTag.getString(FluxNetworkData.NETWORK_NAME);
+		CustomColour colour = new CustomColour(packetTag.getInteger(FluxNetworkData.COLOUR));
+		AccessType access = AccessType.values()[packetTag.getInteger(FluxNetworkData.ACCESS)];
+		boolean enableConvert = packetTag.getBoolean(FluxNetworkData.CONVERSION);
+		EnergyType energyType = EnergyType.readFromNBT(packetTag, FluxNetworkData.ENERGY_TYPE);
 		
 		if (FluxNetworks.getServerCache().hasSpaceForNetwork(player)) {
 			FluxNetworks.getServerCache().createNetwork(player, newName, colour, access, enableConvert, energyType);
