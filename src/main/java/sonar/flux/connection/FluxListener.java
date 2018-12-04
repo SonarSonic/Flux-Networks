@@ -132,7 +132,7 @@ public enum FluxListener {
 
 	public static void doPlayerListSync(FluxNetworkServer network){
 		if(network.network_players.isDirty()) {
-			network.flux_listeners.forEach(flux -> flux.getListenerList().getListeners(FluxListener.SYNC_INDEX).forEach(p -> {
+			network.flux_listeners.forEach(flux -> flux.getListenerList().getListeners(FluxListener.SYNC_PLAYERS).forEach(p -> {
 				FluxNetworks.network.sendTo(new PacketFluxNetworkUpdate(Lists.newArrayList(network), SyncType.SPECIAL, false), p.player);
 			}));
 		}

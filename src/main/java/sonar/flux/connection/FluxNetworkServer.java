@@ -70,7 +70,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 		Iterator<IFluxListenable> iterator = toRemove.iterator();
 		while (iterator.hasNext()) {
 			IFluxListenable tile = iterator.next();
-			FluxCache.getValidTypes(tile).forEach(type -> ((List<IFluxListenable>)getConnections(type)).removeIf(F -> F.getCoords().equals(tile.getCoords())));
+			FluxCache.getValidTypes(tile).forEach(type -> ((List<IFluxListenable>)getConnections(type)).removeIf(F -> F == tile));
 			MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Disconnected(tile, this));
 			iterator.remove();
 			sortConnections = true;

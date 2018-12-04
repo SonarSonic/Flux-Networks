@@ -15,6 +15,7 @@ public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTrans
 	public final ITileEnergyHandler handler;
 	public final TileEntity tile;
 	public final EnumFacing direction;
+	public final ItemStack displayStack;
 
 	public ConnectionTransfer(ITransferHandler transferHandler, ITileEnergyHandler handler, TileEntity tile, EnumFacing direction) {
 		super(handler.getEnergyType());
@@ -22,6 +23,7 @@ public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTrans
 		this.handler = handler;
 		this.tile = tile;
 		this.direction = direction;
+		this.displayStack = ItemStackHelper.getBlockItem(tile.getWorld(), tile.getPos());
 	}
 
 	@Override
@@ -68,6 +70,6 @@ public class ConnectionTransfer extends BaseFluxTransfer implements IEnergyTrans
 
 	@Override
 	public ItemStack getDisplayStack() {
-		return ItemStackHelper.getBlockItem(tile.getWorld(), tile.getPos());
+		return displayStack;
 	}
 }

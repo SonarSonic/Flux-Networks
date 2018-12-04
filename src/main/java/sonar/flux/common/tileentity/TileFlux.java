@@ -146,11 +146,12 @@ public abstract class TileFlux extends TileEntitySyncable implements IFluxListen
 
 	/** changes the block state of the Flux Connection to reflect if it is connected or not */
 	public void setAndSendConnectionState(boolean bool) {
-		World world = getWorld();
-		IBlockState state = getWorld().getBlockState(getPos());
-		if (state.getBlock() instanceof FluxConnection) { // sanity check
-			world.setBlockState(getPos(), state.withProperty(FluxConnection.CONNECTED, bool), 2);
-
+		if (world.isBlockLoaded(this.getPos())) {
+			World world = getWorld();
+			IBlockState state = getWorld().getBlockState(getPos());
+			if (state.getBlock() instanceof FluxConnection) { // sanity check
+				world.setBlockState(getPos(), state.withProperty(FluxConnection.CONNECTED, bool), 2);
+			}
 		}
 	}
 
