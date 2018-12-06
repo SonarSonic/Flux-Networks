@@ -5,22 +5,21 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxTranslate;
-import sonar.flux.client.gui.GuiAbstractTab;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.client.gui.buttons.LargeButton;
-import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.network.PacketHelper;
-import sonar.flux.network.PacketType;
+import sonar.flux.network.PacketGeneralHelper;
+import sonar.flux.network.PacketGeneralType;
 
 import java.io.IOException;
 import java.util.List;
 
 import static sonar.flux.connection.NetworkSettings.*;
 
-public class GuiTabNetworkDebug extends GuiAbstractTab {
+public class GuiTabNetworkDebug extends GuiTabAbstract {
 
-	public GuiTabNetworkDebug(TileFlux tile, List tabs) {
-		super(tile, tabs);
+	public GuiTabNetworkDebug(List tabs) {
+		super(tabs);
 	}
 
 	public void initGui() {
@@ -52,17 +51,17 @@ public class GuiTabNetworkDebug extends GuiAbstractTab {
 		super.actionPerformed(button);
 		switch (button.id) {
 		case 0:
-			PacketHelper.sendPacketToServer(PacketType.DEBUG_CONNECTED_BLOCKS, flux, PacketHelper.createResetConnectedBlocksPacket());
+			PacketGeneralHelper.sendPacketToServer(PacketGeneralType.DEBUG_CONNECTED_BLOCKS, PacketGeneralHelper.createResetConnectedBlocksPacket(getNetworkID()));
 			break;
 		case 1:
-			PacketHelper.sendPacketToServer(PacketType.DEBUG_FLUX_CONNECTIONS, flux, PacketHelper.createValidateConnectionsPacket());
+			PacketGeneralHelper.sendPacketToServer(PacketGeneralType.DEBUG_FLUX_CONNECTIONS, PacketGeneralHelper.createValidateConnectionsPacket(getNetworkID()));
 			break;
 		}
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.DEBUG;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.DEBUG;
 	}
 
 	@Override

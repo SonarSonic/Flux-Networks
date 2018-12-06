@@ -1,4 +1,4 @@
-package sonar.flux.client.gui.tabs;
+package sonar.flux.client.gui;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.GlStateManager;
@@ -6,8 +6,6 @@ import net.minecraft.util.ResourceLocation;
 import sonar.core.client.gui.IGridGui;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
-import sonar.flux.client.gui.GuiAbstractTab;
-import sonar.flux.common.tileentity.TileFlux;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public abstract class GuiTabSelectionGrid<T extends TileFlux, G> extends GuiAbstractTab<T> implements IGridGui<G> {
+public abstract class GuiTabAbstractGrid<G> extends GuiTabAbstract implements IGridGui<G> {
 
 	public Map<SelectionGrid, SonarScroller> grids = new HashMap<>();
 
-	public GuiTabSelectionGrid(T tile, List tabs) {
-		super(tile, tabs);
+	public GuiTabAbstractGrid(List<EnumGuiTab> tabs) {
+		super(tabs);
 	}
 
 	public abstract List getGridList(int gridID);

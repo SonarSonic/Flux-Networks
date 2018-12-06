@@ -14,8 +14,8 @@ import sonar.flux.FluxConfig;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFluxStorage;
-import sonar.flux.client.gui.GuiTab;
-import sonar.flux.client.gui.tabs.GuiTabStorageIndex;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.tabs.GuiTabIndexStorage;
 import sonar.flux.connection.transfer.StorageTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
@@ -191,7 +191,7 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	}
 
 	@Nonnull
-	public Object getIndexScreen(List<GuiTab> tabs){
-		return new GuiTabStorageIndex(this, tabs);
+	public Object getIndexScreen(List<EnumGuiTab> tabs){
+		return new GuiTabIndexStorage(tabs);
 	}
 }

@@ -21,18 +21,18 @@ import sonar.flux.common.tileentity.TileFlux;
 /**
  * FIXME, shouldn't need to have coords attached
  */
-public class PacketFluxButton extends PacketCoords {
+public class PacketTile extends PacketCoords {
 
-    public PacketType type;
+    public PacketTileType type;
     public NBTTagCompound packetTag;
     public int dimension;
 
-    public PacketFluxButton() {}
+    public PacketTile() {}
 
     /**
      * must be used if the TYPE isn't local
      */
-    public PacketFluxButton(PacketType type, BlockPos pos, NBTTagCompound packetTag, int dimension) {
+    public PacketTile(PacketTileType type, BlockPos pos, NBTTagCompound packetTag, int dimension) {
         super(pos);
         this.type = type;
         this.packetTag = packetTag;
@@ -42,7 +42,7 @@ public class PacketFluxButton extends PacketCoords {
     @Override
     public void fromBytes(ByteBuf buf) {
         super.fromBytes(buf);
-        type = PacketType.values()[buf.readInt()];
+        type = PacketTileType.values()[buf.readInt()];
         dimension = buf.readInt();
         packetTag = ByteBufUtils.readTag(buf);
     }
@@ -55,10 +55,10 @@ public class PacketFluxButton extends PacketCoords {
         ByteBufUtils.writeTag(buf, packetTag);
     }
 
-    public static class Handler implements IMessageHandler<PacketFluxButton, IMessage> {
+    public static class Handler implements IMessageHandler<PacketTile, IMessage> {
 
         @Override
-        public IMessage onMessage(PacketFluxButton message, MessageContext ctx) {
+        public IMessage onMessage(PacketTile message, MessageContext ctx) {
             SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
                 // some actions like marking settings dirty will be wiped if not triggered at the start of the tick.
                 FluxNetworks.proxy.scheduleRunnable(() -> {

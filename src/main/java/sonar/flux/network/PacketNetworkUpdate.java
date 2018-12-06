@@ -17,15 +17,15 @@ import java.util.List;
 import java.util.Map;
 
 //TODO make a single packet version for updates
-public class PacketFluxNetworkUpdate implements IMessage{
+public class PacketNetworkUpdate implements IMessage{
 
 	public SyncType type;
 	public boolean wipe;
 	public Map<Integer, NBTTagCompound> network_updates = new HashMap<>();
 
-	public PacketFluxNetworkUpdate() {}
+	public PacketNetworkUpdate() {}
 
-	public PacketFluxNetworkUpdate(List<IFluxNetwork> toSend, SyncType type, boolean wipe) {
+	public PacketNetworkUpdate(List<IFluxNetwork> toSend, SyncType type, boolean wipe) {
 		this.type = type;
 		this.wipe = wipe;
 		toSend.forEach(network -> {
@@ -58,10 +58,10 @@ public class PacketFluxNetworkUpdate implements IMessage{
 		});
 	}
 
-	public static class Handler implements IMessageHandler<PacketFluxNetworkUpdate, IMessage> {
+	public static class Handler implements IMessageHandler<PacketNetworkUpdate, IMessage> {
 
 		@Override
-		public IMessage onMessage(PacketFluxNetworkUpdate message, MessageContext ctx) {
+		public IMessage onMessage(PacketNetworkUpdate message, MessageContext ctx) {
 			if (ctx.side == Side.CLIENT) {
 				SonarCore.proxy.getThreadListener(ctx.side).addScheduledTask(() -> {
 					if(message.wipe)

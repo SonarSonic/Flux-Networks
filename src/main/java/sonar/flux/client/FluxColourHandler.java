@@ -14,8 +14,9 @@ import net.minecraft.world.IBlockAccess;
 import sonar.core.common.block.SonarBlock;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.IFluxItemGui;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.client.gui.GuiAbstractTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.common.block.FluxConnection;
 import sonar.flux.common.item.ItemNetworkConnector;
 import sonar.flux.common.tileentity.TileFlux;
@@ -130,8 +131,8 @@ public class FluxColourHandler implements IBlockColor, IItemColor {
         if (tintIndex == 1) {
             if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("gui_colour")) {
                 Object screen = Minecraft.getMinecraft().currentScreen;
-                if (screen instanceof GuiAbstractTab) {
-                    IFluxNetwork common = ((GuiAbstractTab) screen).common;
+                if (screen instanceof GuiTabAbstract) {
+                    IFluxNetwork common = ((GuiTabAbstract) screen).common;
                     return common.isFakeNetwork() ? NO_NETWORK_COLOUR : common.getSetting(NetworkSettings.NETWORK_COLOUR).getRGB();
                 }
             }
@@ -140,6 +141,14 @@ public class FluxColourHandler implements IBlockColor, IItemColor {
                 return FluxColourHandler.getOrRequestNetworkColour(tag.getInteger(ItemNetworkConnector.NETWORK_ID_TAG));
             }
             return NO_NETWORK_COLOUR;
+        }
+        return -1;
+    }
+
+    public static int itemViewerMultiplier(ItemStack stack, int tintIndex) {
+        if (tintIndex == 1 && stack.getItem() instanceof IFluxItemGui) {
+            int networkID = ((IFluxItemGui)stack.getItem()).getViewingNetworkID(stack);
+            return FluxColourHandler.getOrRequestNetworkColour(networkID);
         }
         return -1;
     }

@@ -6,24 +6,23 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.client.gui.GuiAbstractTab;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.client.gui.buttons.LargeButton;
-import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.network.PacketHelper;
-import sonar.flux.network.PacketType;
+import sonar.flux.network.PacketGeneralHelper;
+import sonar.flux.network.PacketGeneralType;
 
 import java.io.IOException;
 import java.util.List;
 
 import static sonar.flux.connection.NetworkSettings.*;
 
-public class GuiTabConfirmNetworkDeletion extends GuiAbstractTab<TileFlux> {
+public class GuiTabConfirmNetworkDeletion extends GuiTabAbstract {
 
 	public IFluxNetwork toDelete;
 
-	public GuiTabConfirmNetworkDeletion(TileFlux tile, IFluxNetwork toDelete, GuiTabNetworkSelection origin, List<GuiTab> tabs) {
-		super(tile, tabs);
+	public GuiTabConfirmNetworkDeletion(GuiTabNetworkSelection origin, List<EnumGuiTab> tabs, IFluxNetwork toDelete) {
+		super(tabs);
 		this.setOrigin(origin);
 		this.toDelete = toDelete;
 	}
@@ -43,7 +42,7 @@ public class GuiTabConfirmNetworkDeletion extends GuiAbstractTab<TileFlux> {
 			FMLCommonHandler.instance().showGuiScreen(origin);
 			return;
 		case 1:
-			PacketHelper.sendPacketToServer(PacketType.DELETE_NETWORK, flux, PacketHelper.createNetworkDeletePacket(NETWORK_ID.getValue(toDelete)));
+			PacketGeneralHelper.sendPacketToServer(PacketGeneralType.DELETE_NETWORK, PacketGeneralHelper.createNetworkDeletePacket(NETWORK_ID.getValue(toDelete)));
 			FMLCommonHandler.instance().showGuiScreen(origin);
 			return;
 		}
@@ -58,8 +57,8 @@ public class GuiTabConfirmNetworkDeletion extends GuiAbstractTab<TileFlux> {
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.NETWORK_SELECTION;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.NETWORK_SELECTION;
 	}
 
 	@Override

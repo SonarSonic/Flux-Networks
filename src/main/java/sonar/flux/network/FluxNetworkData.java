@@ -27,10 +27,12 @@ public class FluxNetworkData extends WorldSavedData {
 
 	public Map<UUID, List<IFluxNetwork>> networks = new HashMap<>();
 	public int uniqueID = 1;
+	public int stack_unique_id = 0;
 
 	public static final String IDENTIFIER = "sonar.flux.networks.configurations";
 	public static String TAG_LIST = "networks";
 	public static String UNIQUE_ID = "uniqueID";
+	public static String UNIQUE_STACK_ID = "stackID";
 	public static String NETWORK_ID = "id";
 	public static String COLOUR = "colour";
 	public static String OWNER_UUID = "ownerUUID";
@@ -103,6 +105,7 @@ public class FluxNetworkData extends WorldSavedData {
 	@Override
 	public void readFromNBT(@Nonnull NBTTagCompound nbt) {
 		uniqueID = nbt.getInteger(UNIQUE_ID);
+		stack_unique_id = nbt.getInteger(UNIQUE_STACK_ID);
 		if (nbt.hasKey(TAG_LIST)) {
 			NBTTagList list = nbt.getTagList(TAG_LIST, NBT.TAG_COMPOUND);
 			for (int i = 0; i < list.tagCount(); i++) {
@@ -125,6 +128,7 @@ public class FluxNetworkData extends WorldSavedData {
     @Override
 	public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbt) {
 		nbt.setInteger(UNIQUE_ID, uniqueID);
+		nbt.setInteger(UNIQUE_STACK_ID, stack_unique_id);
 		if (networks.size() > 0) {
 			NBTTagList list = new NBTTagList();
 			for (IFluxNetwork network : FluxNetworks.getServerCache().getAllNetworks()) {

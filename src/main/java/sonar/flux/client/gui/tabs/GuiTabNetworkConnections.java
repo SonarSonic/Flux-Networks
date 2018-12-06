@@ -18,12 +18,12 @@ import sonar.flux.api.NetworkFluxFolder;
 import sonar.flux.api.SortingType;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstractGrid;
 import sonar.flux.client.gui.buttons.ConnectedBlocksButton;
 import sonar.flux.client.gui.buttons.ConnectionDirectionButton;
 import sonar.flux.client.gui.buttons.ConnectionSortingButton;
 import sonar.flux.client.gui.buttons.LargeButton;
-import sonar.flux.common.tileentity.TileFlux;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -34,7 +34,7 @@ import java.util.List;
 import static sonar.flux.connection.NetworkSettings.CLIENT_CONNECTIONS;
 import static sonar.flux.connection.NetworkSettings.NETWORK_FOLDERS;
 
-public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Object> {
+public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 
 	public static ChunkDisplayOptions chunk_display_option = ChunkDisplayOptions.BOTH;
 	public static Map<ConnectionType, Boolean> canDisplay = new HashMap<>();
@@ -53,8 +53,8 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		}
 	}
 
-	public GuiTabNetworkConnections(TileFlux tile, List tabs) {
-		super(tile, tabs);
+	public GuiTabNetworkConnections(List tabs) {
+		super(tabs);
 	}
 
 	@Override
@@ -120,8 +120,6 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 		if (getGridList(0).isEmpty()) {
 			if (common.isFakeNetwork()) {
 				renderNavigationPrompt(FluxTranslate.ERROR_NO_CONNECTIONS.t(), FluxTranslate.GUI_TAB_NETWORK_SELECTION.t());
-			} else if (CLIENT_CONNECTIONS.getValue(common).isEmpty()) {
-				FontHelper.textCentre(FluxTranslate.ERROR_WAITING_FOR_SERVER.t(), xSize, 10, Color.GRAY.getRGB());
 			} else {
 				FontHelper.textCentre(FluxTranslate.ERROR_NO_MATCHES.t(), xSize, 14, Color.GRAY.getRGB());
 			}
@@ -218,8 +216,8 @@ public class GuiTabNetworkConnections extends GuiTabSelectionGrid<TileFlux, Obje
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.CONNECTIONS;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.CONNECTIONS;
 	}
 
 	//// BUTTONS \\\\

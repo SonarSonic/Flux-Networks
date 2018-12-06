@@ -12,11 +12,11 @@ import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.PlayerAccess;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstractGrid;
 import sonar.flux.client.gui.buttons.SmallButton;
-import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.network.PacketHelper;
-import sonar.flux.network.PacketType;
+import sonar.flux.network.PacketGeneralHelper;
+import sonar.flux.network.PacketGeneralType;
 
 import java.awt.*;
 import java.io.IOException;
@@ -27,13 +27,12 @@ import java.util.Map;
 import static sonar.flux.connection.NetworkSettings.NETWORK_CACHED_NAME;
 import static sonar.flux.connection.NetworkSettings.NETWORK_PLAYERS;
 
-public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlayer> {
+public class GuiTabNetworkPlayers extends GuiTabAbstractGrid<FluxPlayer> {
 
 	public SonarTextField playerName;
-	// public FluxPlayer selectedPlayer;
 
-	public GuiTabNetworkPlayers(TileFlux tile, List tabs) {
-		super(tile, tabs);
+	public GuiTabNetworkPlayers(List<EnumGuiTab> tabs) {
+		super(tabs);
 	}
 
 	@Override
@@ -71,7 +70,7 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 		switch (button.id) {
 		case 1:
 			if (!playerName.getText().isEmpty()) {
-				PacketHelper.sendPacketToServer(PacketType.ADD_PLAYER, flux, PacketHelper.createAddPlayerPacket(flux.getNetworkID(), playerName.getText(), PlayerAccess.USER));
+				PacketGeneralHelper.sendPacketToServer(PacketGeneralType.ADD_PLAYER, PacketGeneralHelper.createAddPlayerPacket(getNetworkID(), playerName.getText(), PlayerAccess.USER));
 				return;
 			}
 			break;
@@ -83,9 +82,9 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 		if (element != null) {
 			if (x - getGuiLeft() > 153) {
 				if (element.getAccess() != PlayerAccess.OWNER)
-					PacketHelper.sendPacketToServer(PacketType.REMOVE_PLAYER, flux, PacketHelper.createRemovePlayerPacket(flux.getNetworkID(), element.getOnlineUUID(), PlayerAccess.USER));
+					PacketGeneralHelper.sendPacketToServer(PacketGeneralType.REMOVE_PLAYER, PacketGeneralHelper.createRemovePlayerPacket(getNetworkID(), element.getOnlineUUID(), PlayerAccess.USER));
 			} else if (button == 1) {
-				PacketHelper.sendPacketToServer(PacketType.CHANGE_PLAYER, flux, PacketHelper.createChangePlayerPacket(flux.getNetworkID(), element.getOnlineUUID(), element.getAccess()));
+				PacketGeneralHelper.sendPacketToServer(PacketGeneralType.CHANGE_PLAYER, PacketGeneralHelper.createChangePlayerPacket(getNetworkID(), element.getOnlineUUID(), element.getAccess()));
 			}
 		}
 	}
@@ -133,8 +132,8 @@ public class GuiTabNetworkPlayers extends GuiTabSelectionGrid<TileFlux, FluxPlay
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.PLAYERS;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.PLAYERS;
 	}
 
 }

@@ -6,7 +6,7 @@ import sonar.flux.api.tiles.IFlux;
 
 public interface IFluxConfigurable extends IFlux {
 
-    NBTTagCompound addConfigs(NBTTagCompound config, EntityPlayer player);
+    NBTTagCompound copyConfiguration(NBTTagCompound config, NBTTagCompound disabled, EntityPlayer player);
 
-    void readConfigs(NBTTagCompound config, EntityPlayer player);
+    void pasteConfiguration(NBTTagCompound config, NBTTagCompound disabled, EntityPlayer player);
 }

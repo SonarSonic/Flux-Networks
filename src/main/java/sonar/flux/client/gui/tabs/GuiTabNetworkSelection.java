@@ -1,16 +1,20 @@
 package sonar.flux.client.gui.tabs;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
+import sonar.flux.api.IFluxItemGui;
 import sonar.flux.api.network.IFluxNetwork;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstractGrid;
 import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.network.PacketHelper;
-import sonar.flux.network.PacketType;
+import sonar.flux.network.PacketFluxItemNetwork;
+import sonar.flux.network.PacketTileHelper;
+import sonar.flux.network.PacketTileType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +22,10 @@ import java.util.Map;
 
 import static sonar.flux.connection.NetworkSettings.*;
 
-public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxNetwork> {
+public class GuiTabNetworkSelection extends GuiTabAbstractGrid<IFluxNetwork> {
 
-	public GuiTabNetworkSelection(TileFlux tile, List tabs) {
-		super(tile, tabs);
+	public GuiTabNetworkSelection(List<EnumGuiTab> tabs) {
+		super(tabs);
 	}
 
 	@Override
@@ -42,10 +46,17 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxN
 	public void onGridClicked(int gridID, IFluxNetwork element, int x, int y, int pos, int button, boolean empty) {
 		if (element != null) {
 			if (x - getGuiLeft() > 153) {
-				FMLCommonHandler.instance().showGuiScreen(new GuiTabConfirmNetworkDeletion(flux, element, this, tabs));
-				return;
+				FMLCommonHandler.instance().showGuiScreen(new GuiTabConfirmNetworkDeletion(this, tabs, element));
 			} else if(!isSelectedNetwork(element)){
-				PacketHelper.sendPacketToServer(PacketType.SET_NETWORK, flux, PacketHelper.createNetworkSetPacket(element.getNetworkID()));
+				TileFlux flux = FluxNetworks.proxy.getFluxTile();
+				if(flux != null) {
+					PacketTileHelper.sendPacketToServer(PacketTileType.SET_NETWORK, flux, PacketTileHelper.createNetworkSetPacket(element.getNetworkID()));
+				}
+				ItemStack stack = FluxNetworks.proxy.getFluxStack();
+				if(stack != null && stack.getItem() instanceof IFluxItemGui){
+					FluxNetworks.network.sendToServer(new PacketFluxItemNetwork(element.getNetworkID()));
+					//stack.getOrCreateSubCompound().setInteger("id", element.getNetworkID());
+				}
 			}
 		}
 	}
@@ -80,8 +91,8 @@ public class GuiTabNetworkSelection extends GuiTabSelectionGrid<TileFlux, IFluxN
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.NETWORK_SELECTION;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.NETWORK_SELECTION;
 	}
 
 }

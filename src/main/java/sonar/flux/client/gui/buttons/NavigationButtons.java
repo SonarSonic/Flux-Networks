@@ -5,8 +5,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.core.helpers.FontHelper;
-import sonar.flux.client.gui.GuiAbstractTab;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 
 import static net.minecraft.client.renderer.GlStateManager.color;
 import static net.minecraft.client.renderer.GlStateManager.scale;
@@ -14,11 +14,11 @@ import static net.minecraft.client.renderer.GlStateManager.scale;
 @SideOnly(Side.CLIENT)
 public class NavigationButtons extends ImageButton {
 	public int id;
-	public GuiAbstractTab gui;
-	public GuiTab tab;
+	public GuiTabAbstract gui;
+	public EnumGuiTab tab;
 
-	public NavigationButtons(GuiAbstractTab gui, GuiTab tab, int id, int x, int y) {
-		super(id, x, y, GuiAbstractTab.navigation, tab.texX / 2, tab.texY / 2, 16, 16);
+	public NavigationButtons(GuiTabAbstract gui, EnumGuiTab tab, int id, int x, int y) {
+		super(id, x, y, GuiTabAbstract.navigation, tab.texX / 2, tab.texY / 2, 16, 16);
 		this.id = id;
 		this.tab = tab;
 		this.gui = gui;

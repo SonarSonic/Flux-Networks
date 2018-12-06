@@ -10,8 +10,8 @@ import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.SonarHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
-import sonar.flux.client.gui.GuiTab;
-import sonar.flux.client.gui.tabs.GuiTabFluxConnectorIndex;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.tabs.GuiTabIndexFluxConnector;
 import sonar.flux.common.tileentity.energy.TileFluxTesla;
 import sonar.flux.connection.transfer.handlers.ConnectionTransferHandler;
 
@@ -63,7 +63,7 @@ public abstract class TileFluxConnector extends TileFluxTesla implements IFlexib
 	}
 
 	@Nonnull
-	public Object getIndexScreen(List<GuiTab> tabs){
-		return new GuiTabFluxConnectorIndex(this, tabs);
+	public Object getIndexScreen(List<EnumGuiTab> tabs){
+		return new GuiTabIndexFluxConnector(tabs);
 	}
 }

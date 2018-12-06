@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.EnumPriorityType;
-import sonar.flux.client.gui.GuiAbstractTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -13,7 +13,7 @@ public class PriorityButton extends SmallButton {
 
 	public Supplier<EnumPriorityType> priorityType;
 
-	public PriorityButton(GuiAbstractTab gui, int id, int x, int y, Supplier<EnumPriorityType> priorityType, String name) {
+	public PriorityButton(GuiTabAbstract gui, int id, int x, int y, Supplier<EnumPriorityType> priorityType, String name) {
 		super(gui, id, x, y, 120, 0, name);
 		this.priorityType = priorityType;
 	}

@@ -1,17 +1,19 @@
 package sonar.flux.client.gui;
 
 import com.google.common.collect.Lists;
+import net.minecraft.item.ItemStack;
 import sonar.core.translate.Localisation;
+import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
+import sonar.flux.api.IFluxItemGui;
 import sonar.flux.client.gui.tabs.*;
-import sonar.flux.common.tileentity.TileController;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.connection.FluxListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public enum GuiTab {
+public enum EnumGuiTab {
 	INDEX(FluxTranslate.GUI_TAB_INDEX, Lists.newArrayList(FluxListener.SYNC_INDEX, FluxListener.SYNC_NETWORK_STATS), 0, 0),//
 	NETWORK_SELECTION(FluxTranslate.GUI_TAB_NETWORK_SELECTION, Lists.newArrayList(FluxListener.SYNC_NETWORK_LIST), 128, 0),//
 	CONNECTIONS(FluxTranslate.GUI_TAB_CONNECTIONS, Lists.newArrayList(FluxListener.SYNC_NETWORK_CONNECTIONS), 64, 0),//
@@ -26,7 +28,7 @@ public enum GuiTab {
 	public List<FluxListener> types;
 	public int texX, texY;
 	
-	GuiTab(Localisation name, List<FluxListener> types, int texX, int texY){
+	EnumGuiTab(Localisation name, List<FluxListener> types, int texX, int texY){
 		this.name = name;
 		this.types = types;
 		this.texX = texX;
@@ -41,26 +43,33 @@ public enum GuiTab {
 		return types;
 	}
 	
-	public Object getGuiScreen(TileFlux flux, List<GuiTab> tabs){
+	public Object getGuiScreen(List<EnumGuiTab> tabs){
 		switch(this){
-		case CONNECTIONS:
-			return new GuiTabNetworkConnections(flux, tabs);
 		case INDEX:
-			return flux.getIndexScreen(tabs);
+			ItemStack stack = FluxNetworks.proxy.getFluxStack();
+			TileFlux tile = FluxNetworks.proxy.getFluxTile();
+			if(tile != null){
+				return tile.getIndexScreen(tabs);
+			}else if(stack != null && stack.getItem() instanceof IFluxItemGui){
+				return ((IFluxItemGui)stack.getItem()).getIndexScreen(stack, tabs);
+			}
+			return null;
+		case CONNECTIONS:
+			return new GuiTabNetworkConnections(tabs);
 		case NETWORK_CREATE:
-			return new GuiTabNetworkCreate(flux, tabs);
+			return new GuiTabNetworkCreate(tabs);
 		case NETWORK_EDIT:
-			return new GuiTabNetworkEdit(flux, tabs);
+			return new GuiTabNetworkEdit(tabs);
 		case NETWORK_SELECTION:
-			return new GuiTabNetworkSelection(flux, tabs);
+			return new GuiTabNetworkSelection(tabs);
 		case NETWORK_STATISTICS:
-			return new GuiTabNetworkStatistics(flux, tabs);
+			return new GuiTabNetworkStatistics(tabs);
 		case PLAYERS:
-			return new GuiTabNetworkPlayers(flux, tabs);
+			return new GuiTabNetworkPlayers(tabs);
 		case DEBUG:
-			return new GuiTabNetworkDebug(flux, tabs);
+			return new GuiTabNetworkDebug(tabs);
 		case WIRELESS_CHARGING:
-			return new GuiTabWirelessCharging((TileController) flux, tabs);
+			return new GuiTabWirelessCharging(tabs);
 		}
 		return null;	
 	}

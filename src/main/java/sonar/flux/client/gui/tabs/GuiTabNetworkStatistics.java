@@ -4,19 +4,18 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxTranslate;
-import sonar.flux.client.gui.GuiAbstractTab;
-import sonar.flux.client.gui.GuiTab;
-import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.connection.transfer.stats.NetworkStatistics;
 
 import java.util.List;
 
 import static sonar.flux.connection.NetworkSettings.*;
 
-public class GuiTabNetworkStatistics extends GuiAbstractTab {
+public class GuiTabNetworkStatistics extends GuiTabAbstract {
 
-	public GuiTabNetworkStatistics(TileFlux tile, List tabs) {
-		super(tile, tabs);
+	public GuiTabNetworkStatistics(List tabs) {
+		super(tabs);
 	}
 
 	@Override
@@ -44,8 +43,8 @@ public class GuiTabNetworkStatistics extends GuiAbstractTab {
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.NETWORK_STATISTICS;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.NETWORK_STATISTICS;
 	}
 
 	@Override

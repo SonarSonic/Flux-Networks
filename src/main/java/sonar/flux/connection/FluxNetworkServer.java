@@ -9,6 +9,8 @@ import sonar.core.api.energy.EnergyType;
 import sonar.core.api.utils.ActionType;
 import sonar.core.helpers.FunctionHelper;
 import sonar.core.helpers.ListHelper;
+import sonar.core.listener.ListenerList;
+import sonar.core.listener.PlayerListener;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.*;
@@ -33,7 +35,8 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 	public HashMap<FluxCache, List<IFluxListenable>> connections = new HashMap<>();
 	public Queue<IFluxListenable> toAdd = new ConcurrentLinkedQueue<>();
 	public Queue<IFluxListenable> toRemove = new ConcurrentLinkedQueue<>();
-	public List<IFluxListenable> flux_listeners = new ArrayList<>();
+	public List<IFluxListenable> flux_tile_listeners = new ArrayList<>();
+	public Map<Integer, ListenerList<PlayerListener>> flux_stack_listeners = new HashMap<>();
 	public boolean sortConnections = true;
 	public long buffer_limiter = 0;
 
@@ -121,7 +124,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 			}
 		}
         this.network_stats.getValue().onEndWorldTick();
-        if (!this.flux_listeners.isEmpty()) {
+        if (!this.flux_tile_listeners.isEmpty()) {
             sendPacketToListeners();
         }
         if(isDirty()) {
@@ -153,7 +156,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 
 	public void sendPacketToListeners() {
 		for (FluxListener type : FluxListener.values()) {
-			type.sync(this);
+			type.syncPacket.sync(this);
 		}
 	}
 
@@ -296,5 +299,14 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 		copy.forEach(f -> this.queueConnectionAddition(f, AdditionType.ADD));
 		addConnections();
 		buildFluxConnections();
+	}
+
+	public boolean hasGuiListeners(){
+    	return !flux_tile_listeners.isEmpty() || !flux_stack_listeners.isEmpty();
+	}
+
+	public void forEachListener(FluxListener listener, Consumer<PlayerListener> action){
+		flux_tile_listeners.forEach(flux -> flux.getListenerList().getListeners(listener).forEach(action));
+		flux_stack_listeners.values().forEach(list -> list.getListeners(listener).forEach(action));
 	}
 }

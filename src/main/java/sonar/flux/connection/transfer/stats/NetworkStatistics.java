@@ -41,9 +41,7 @@ public class NetworkStatistics implements INBTSyncable {
 	public void onEndWorldTick() {
 		FluxNetworkServer network = ((FluxNetworkServer) this.network);
 		List<IFluxListenable> connections = network.getConnections(FluxCache.flux);
-		if (network.flux_listeners.isEmpty()) {
-			connections.forEach(flux -> flux.getTransferHandler().onEndWorldTick());
-		} else {
+		if (network.hasGuiListeners()) {
 			block_connection_count = 0;
 			total_energy_added = 0;
 			total_energy_removed = 0;
@@ -76,6 +74,8 @@ public class NetworkStatistics implements INBTSyncable {
 			//storages implements IFluxPlug and Point, so need to be removed from this count
 			flux_plug_count -= flux_storage_count;
 			flux_point_count -= (flux_storage_count + flux_controller_count);
+		}else{
+			connections.forEach(flux -> flux.getTransferHandler().onEndWorldTick());
 		}
 	}
 

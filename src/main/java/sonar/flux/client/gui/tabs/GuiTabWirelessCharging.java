@@ -10,9 +10,10 @@ import sonar.core.SonarCore;
 import sonar.core.client.gui.SonarButtons;
 import sonar.core.sync.ISonarValue;
 import sonar.core.sync.SyncValueHandler;
+import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
-import sonar.flux.client.gui.GuiAbstractTab;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.common.tileentity.TileController;
 
 import java.io.IOException;
@@ -21,12 +22,14 @@ import java.util.function.Function;
 
 import static net.minecraft.client.renderer.GlStateManager.color;
 
-public class GuiTabWirelessCharging extends GuiAbstractTab<TileController> {
+public class GuiTabWirelessCharging extends GuiTabAbstract {
 
     public static final ResourceLocation inventory_configuration = new ResourceLocation("fluxnetworks:textures/gui/inventory_configuration.png");
+    public TileController controller;
 
-    public GuiTabWirelessCharging(TileController tile, List<GuiTab> tabs) {
-        super(tile, tabs);
+    public GuiTabWirelessCharging(List<EnumGuiTab> tabs) {
+        super(tabs);
+        controller = (TileController) FluxNetworks.proxy.getFluxTile();
     }
 
     @Override
@@ -44,8 +47,8 @@ public class GuiTabWirelessCharging extends GuiAbstractTab<TileController> {
     public void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
         if(button instanceof InventoryConfigButton){
-            SyncValueHandler.invertBoolean(((InventoryConfigButton) button).value.apply(flux));
-            SonarCore.sendPacketToServer(flux, 15);
+            SyncValueHandler.invertBoolean(((InventoryConfigButton) button).value.apply(controller));
+            SonarCore.sendPacketToServer(controller, 15);
         }
     }
 
@@ -66,7 +69,7 @@ public class GuiTabWirelessCharging extends GuiAbstractTab<TileController> {
 
         public void drawButtonForegroundLayer(int x, int y) {
             if (!hover.isEmpty()) {
-                gui.drawSonarCreativeTabHoveringText(hover + ": " + FluxTranslate.translateBoolean(value.apply(gui.flux).getValue()), x, y);
+                gui.drawSonarCreativeTabHoveringText(hover + ": " + FluxTranslate.translateBoolean(value.apply(gui.controller).getValue()), x, y);
             }
         }
 
@@ -76,15 +79,15 @@ public class GuiTabWirelessCharging extends GuiAbstractTab<TileController> {
                 hovered = x >= this.x && y >= this.y && x < this.x + width + 1 && y < this.y + height + 1;
                 mc.getTextureManager().bindTexture(texture);
                 GlStateManager.scale(2, 2, 2);
-                drawTexturedModalRect(this.x/2, this.y/2, textureX, value.apply(gui.flux).getValue() ? textureY + sizeY/2 : textureY, sizeX/2, sizeY/2);
+                drawTexturedModalRect(this.x/2, this.y/2, textureX, value.apply(gui.controller).getValue() ? textureY + sizeY/2 : textureY, sizeX/2, sizeY/2);
                 GlStateManager.scale(0.5, 0.5, 0.5);
             }
         }
     }
 
     @Override
-    public GuiTab getCurrentTab() {
-        return GuiTab.WIRELESS_CHARGING;
+    public EnumGuiTab getCurrentTab() {
+        return EnumGuiTab.WIRELESS_CHARGING;
     }
 
     @Override

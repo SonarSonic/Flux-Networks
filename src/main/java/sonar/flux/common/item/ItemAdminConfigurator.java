@@ -20,7 +20,7 @@ import sonar.flux.network.FluxNetworkCache;
 
 import javax.annotation.Nonnull;
 
-public class AdminConfigurator extends SonarItem implements IFlexibleGui<ItemStack> {
+public class ItemAdminConfigurator extends SonarItem implements IFlexibleGui<ItemStack> {
 
 	@Nonnull
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {

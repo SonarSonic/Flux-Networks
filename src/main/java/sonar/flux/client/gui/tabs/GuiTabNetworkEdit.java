@@ -12,12 +12,11 @@ import sonar.core.helpers.SonarHelper;
 import sonar.core.utils.CustomColour;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.AccessType;
-import sonar.flux.client.gui.GuiAbstractTab;
-import sonar.flux.client.gui.GuiTab;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.client.gui.buttons.LargeButton;
-import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.network.PacketHelper;
-import sonar.flux.network.PacketType;
+import sonar.flux.network.PacketGeneralHelper;
+import sonar.flux.network.PacketGeneralType;
 
 import java.awt.*;
 import java.io.IOException;
@@ -27,9 +26,7 @@ import static net.minecraft.client.renderer.GlStateManager.popMatrix;
 import static net.minecraft.client.renderer.GlStateManager.pushMatrix;
 import static sonar.flux.connection.NetworkSettings.*;
 
-//import org.lwjgl.opengl.GL11;
-
-public class GuiTabNetworkEdit extends GuiAbstractTab {
+public class GuiTabNetworkEdit extends GuiTabAbstract {
 
 	public SonarTextField name, r, g, b;
 	public int currentColour;
@@ -38,14 +35,14 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 	public boolean enableConversion = true;
 	public EnergyType type = EnergyType.FE;
 
-	public GuiTabNetworkEdit(TileFlux tile, List<GuiTab> tabs) {
-		super(tile, tabs);
+	public GuiTabNetworkEdit(List<EnumGuiTab> tabs) {
+		super(tabs);
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
-		if (getCurrentTab() == GuiTab.NETWORK_CREATE) {
+		if (getCurrentTab() == EnumGuiTab.NETWORK_CREATE) {
 			initEditFields(mc.player.getName() + "'s" + " Network", colours[currentColour]);
 			buttonList.add(new LargeButton(this, FluxTranslate.RESET.t(), 5, getGuiLeft() + 55, getGuiTop() + 134, 68, 0));
 			buttonList.add(new LargeButton(this, FluxTranslate.CREATE.t(), 6, getGuiLeft() + 105, getGuiTop() + 134, 51, 0));
@@ -116,13 +113,13 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 		case 6:
 			if (!name.getText().isEmpty()) {
 
-				if (getCurrentTab() == GuiTab.NETWORK_CREATE) {
-					PacketHelper.sendPacketToServer(PacketType.CREATE_NETWORK, flux, PacketHelper.createNetworkCreationPacket(name.getText(), getCurrentColour(), currentAccess, enableConversion, type));
+				if (getCurrentTab() == EnumGuiTab.NETWORK_CREATE) {
+					PacketGeneralHelper.sendPacketToServer(PacketGeneralType.CREATE_NETWORK, PacketGeneralHelper.createNetworkCreationPacket(name.getText(), getCurrentColour(), currentAccess, enableConversion, type));
 				} else {
-					PacketHelper.sendPacketToServer(PacketType.EDIT_NETWORK, flux, PacketHelper.createNetworkEditPacket(getNetworkID(), name.getText(), getCurrentColour(), currentAccess, enableConversion, type));
+					PacketGeneralHelper.sendPacketToServer(PacketGeneralType.EDIT_NETWORK, PacketGeneralHelper.createNetworkEditPacket(getNetworkID(), name.getText(), getCurrentColour(), currentAccess, enableConversion, type));
 				}
 
-				switchTab(GuiTab.NETWORK_SELECTION);
+				switchTab(EnumGuiTab.NETWORK_SELECTION);
 				resetCreateTab();
 				return;
 			}
@@ -139,10 +136,10 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 		}
 		if (x - getGuiLeft() > 55 && x - getGuiLeft() < 165 && y - getGuiTop() > 63 + 32 && y - getGuiTop() < 68 + 32 + 4) {
 			currentColour++;
-			if (currentColour >= GuiAbstractTab.colours.length) {
+			if (currentColour >= GuiTabAbstract.colours.length) {
 				currentColour = 0;
 			}
-			CustomColour colour = GuiAbstractTab.colours[currentColour];
+			CustomColour colour = GuiTabAbstract.colours[currentColour];
 			r.setText(String.valueOf(colour.red));
 			g.setText(String.valueOf(colour.green));
 			b.setText(String.valueOf(colour.blue));
@@ -199,8 +196,8 @@ public class GuiTabNetworkEdit extends GuiAbstractTab {
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.NETWORK_EDIT;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.NETWORK_EDIT;
 	}
 
 }

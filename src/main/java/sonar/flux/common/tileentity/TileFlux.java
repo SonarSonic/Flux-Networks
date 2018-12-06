@@ -23,19 +23,20 @@ import sonar.core.sync.ISonarValue;
 import sonar.core.sync.ISyncValue;
 import sonar.core.sync.SyncRegistry;
 import sonar.flux.FluxConfig;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.*;
-import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.api.configurator.IFluxConfigurable;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
 import sonar.flux.api.tiles.IFluxListenable;
 import sonar.flux.client.FluxColourHandler;
-import sonar.flux.client.gui.GuiTab;
-import sonar.flux.client.gui.tabs.GuiTabConnectionIndex;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.tabs.GuiTabIndexConnection;
 import sonar.flux.common.block.FluxConnection;
-import sonar.flux.common.containers.ContainerFlux;
+import sonar.flux.common.containers.ContainerFluxTile;
 import sonar.flux.common.events.FluxConnectionEvent;
+import sonar.flux.common.item.ItemConfigurator;
 import sonar.flux.common.item.ItemNetworkConnector;
 import sonar.flux.connection.FluxHelper;
 import sonar.flux.connection.FluxListener;
@@ -76,7 +77,6 @@ public abstract class TileFlux extends TileEntitySyncable implements IFluxListen
 	public IFluxNetwork network = FluxNetworkInvalid.INVALID;
 
 	//// CLIENT ONLY \\\\
-	public FluxError error = null;
 	private ClientFlux client_flux;
 
 	public TileFlux(ConnectionType type) {
@@ -429,66 +429,40 @@ public abstract class TileFlux extends TileEntitySyncable implements IFluxListen
 	//// Flux Configurator \\\\
 
 	@Override
-	public NBTTagCompound addConfigs(NBTTagCompound config, EntityPlayer player) {
-		if (!this.getNetwork().isFakeNetwork() && network.getNetworkID() != -1) {
-			config.setInteger(FluxConfigurationType.NETWORK.getNBTName(), getNetwork().getNetworkID());
-		}
-		config.setInteger(FluxConfigurationType.PRIORITY.getNBTName(), priority.getValue());
-		config.setLong(FluxConfigurationType.TRANSFER.getNBTName(), limit.getValue());
-		config.setBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName(), disableLimit.getValue());
-		return config;
+	public NBTTagCompound copyConfiguration(NBTTagCompound config, NBTTagCompound disabled, EntityPlayer player) {
+		return ItemConfigurator.copyConfiguration(this, config, disabled, player);
 	}
 
 	@Override
-	public void readConfigs(NBTTagCompound config, EntityPlayer player) {
-		if (config.hasKey(FluxConfigurationType.NETWORK.getNBTName())) {
-			int storedID = config.getInteger(FluxConfigurationType.NETWORK.getNBTName());
-			if (storedID != -1) {
-				FluxHelper.removeConnection(this, null);
-				this.networkID.setValue(storedID);
-				FluxHelper.addConnection(this, null);
-			}
-		}
-		if (config.hasKey(FluxConfigurationType.PRIORITY.getNBTName())) {
-			this.priority.setValue(config.getInteger(FluxConfigurationType.PRIORITY.getNBTName()));
-			markSettingChanged(ConnectionSettings.PRIORITY);
-		}
-		if (config.hasKey(FluxConfigurationType.TRANSFER.getNBTName())) {
-			this.limit.setValue(config.getLong(FluxConfigurationType.TRANSFER.getNBTName()));
-			markSettingChanged(ConnectionSettings.TRANSFER_LIMIT);
-		}
-		if (config.hasKey(FluxConfigurationType.DISABLE_LIMIT.getNBTName())) {
-			this.disableLimit.setValue(config.getBoolean(FluxConfigurationType.DISABLE_LIMIT.getNBTName()));
-			markSettingChanged(ConnectionSettings.TRANSFER_LIMIT);
-		}
+	public void pasteConfiguration(NBTTagCompound config, NBTTagCompound disabled, EntityPlayer player) {
+		ItemConfigurator.pasteConfiguration(this, config, disabled, player);
 	}
+
+	//// GUI \\\\
 
 	@Override
 	public void onGuiOpened(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
 		ListenerHelper.onPlayerOpenTileGui(this, player);
-		ListenerHelper.onPlayerOpenTab(this, player, GuiTab.INDEX);
-
-		//List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(player, false);
-		//ListHelper.addWithCheck(toSend, network);
-		//FluxNetworks.network.sendTo(new PacketFluxNetworkUpdate(toSend, SyncType.SAVE, true), (EntityPlayerMP) player);
+		ListenerHelper.onPlayerOpenTileTab(this, player, EnumGuiTab.INDEX);
 	}
 
 	@Override
 	public Object getServerElement(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
-		return new ContainerFlux(player, this);
+		return new ContainerFluxTile(player, this);
 	}
 
 	@Override
 	public Object getClientElement(Object obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
-		return GuiTab.INDEX.getGuiScreen(this, getTabs());
+		FluxNetworks.proxy.setFluxTile(this);
+		return EnumGuiTab.INDEX.getGuiScreen(getTabs());
 	}
 
-	public List<GuiTab> getTabs(){
-		return Lists.newArrayList(GuiTab.INDEX, GuiTab.NETWORK_SELECTION, GuiTab.CONNECTIONS, GuiTab.NETWORK_STATISTICS, GuiTab.PLAYERS, GuiTab.DEBUG, GuiTab.NETWORK_EDIT, GuiTab.NETWORK_CREATE);
+	public List<EnumGuiTab> getTabs(){
+		return Lists.newArrayList(EnumGuiTab.INDEX, EnumGuiTab.NETWORK_SELECTION, EnumGuiTab.CONNECTIONS, EnumGuiTab.NETWORK_STATISTICS, EnumGuiTab.PLAYERS, EnumGuiTab.DEBUG, EnumGuiTab.NETWORK_EDIT, EnumGuiTab.NETWORK_CREATE);
 	}
 
 	@Nonnull
-	public Object getIndexScreen(List<GuiTab> tabs){
-		return new GuiTabConnectionIndex<>(this, tabs);
+	public Object getIndexScreen(List<EnumGuiTab> tabs){
+		return new GuiTabIndexConnection<>(tabs);
 	}
 }

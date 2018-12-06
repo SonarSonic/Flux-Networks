@@ -1,19 +1,18 @@
 package sonar.flux.client.gui.tabs;
 
-import sonar.flux.client.gui.GuiTab;
-import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.client.gui.EnumGuiTab;
 
 import java.util.List;
 
 public class GuiTabNetworkCreate extends GuiTabNetworkEdit {
 
-	public GuiTabNetworkCreate(TileFlux tile, List<GuiTab> tabs) {
-		super(tile, tabs);
+	public GuiTabNetworkCreate(List<EnumGuiTab> tabs) {
+		super(tabs);
 	}
 
 	@Override
-	public GuiTab getCurrentTab() {
-		return GuiTab.NETWORK_CREATE;
+	public EnumGuiTab getCurrentTab() {
+		return EnumGuiTab.NETWORK_CREATE;
 	}
 
 }

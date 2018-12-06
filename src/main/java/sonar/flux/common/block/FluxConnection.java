@@ -25,7 +25,7 @@ import sonar.core.helpers.SonarHelper;
 import sonar.core.network.FlexibleGuiHandler;
 import sonar.core.utils.ISpecialTooltip;
 import sonar.flux.FluxTranslate;
-import sonar.flux.common.item.FluxConfigurator;
+import sonar.flux.common.item.ItemConfigurator;
 import sonar.flux.common.tileentity.TileFlux;
 
 import javax.annotation.Nullable;
@@ -51,7 +51,7 @@ public abstract class FluxConnection extends SonarBlock implements ITileEntityPr
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		ItemStack heldItem = hand == null ? ItemStack.EMPTY : player.getHeldItem(hand);
-		if (heldItem.isEmpty() || !(heldItem.getItem() instanceof FluxConfigurator)) {
+		if (heldItem.isEmpty() || !(heldItem.getItem() instanceof ItemConfigurator)) {
 			if (!world.isRemote) {
 				TileEntity target = world.getTileEntity(pos);
 				if (target instanceof TileFlux) {

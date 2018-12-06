@@ -3,6 +3,7 @@ package sonar.flux.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -17,12 +18,15 @@ import sonar.core.translate.ILocalisationHandler;
 import sonar.core.translate.Localisation;
 import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
+import sonar.flux.api.FluxError;
 import sonar.flux.client.FluxColourHandler;
 import sonar.flux.client.FluxStorageModel;
 import sonar.flux.client.RenderFluxStorageItem;
 import sonar.flux.client.RenderFluxStorageTile;
+import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.common.tileentity.TileStorage;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -40,11 +44,13 @@ public class FluxClient extends FluxCommon implements ILocalisationHandler {
 	@SubscribeEvent
 	public void initBlockColours(ColorHandlerEvent.Block event){
 		event.getBlockColors().registerBlockColorHandler(FluxColourHandler.INSTANCE, FluxNetworks.fluxPlug, FluxNetworks.fluxPoint, FluxNetworks.fluxController, FluxNetworks.fluxStorage, FluxNetworks.largeFluxStorage, FluxNetworks.massiveFluxStorage);
+
 	}
 
 	@SubscribeEvent
 	public void initItemColours(ColorHandlerEvent.Item event){
 		event.getItemColors().registerItemColorHandler(FluxColourHandler.INSTANCE, FluxNetworks.fluxPlug, FluxNetworks.fluxPoint, FluxNetworks.fluxController, FluxNetworks.fluxStorage, FluxNetworks.largeFluxStorage, FluxNetworks.massiveFluxStorage);
+		event.getItemColors().registerItemColorHandler(FluxColourHandler::itemViewerMultiplier, FluxNetworks.fluxConfigurator);
 	}
 
 	@SubscribeEvent
@@ -92,5 +98,40 @@ public class FluxClient extends FluxCommon implements ILocalisationHandler {
 	public List<Localisation> getLocalisations(List<Localisation> current) {
 		current.addAll(FluxTranslate.locals);
 		return current;
+	}
+
+	private FluxError error;
+
+	public void setFluxError(FluxError error){
+		this.error = error;
+	}
+
+	@Nullable
+	public FluxError getFluxError(){
+		return error;
+	}
+
+
+	private TileFlux flux;
+
+	public void setFluxTile(TileFlux flux){
+		this.flux = flux;
+	}
+
+	@Nullable
+	public TileFlux getFluxTile(){
+		return flux;
+	}
+
+
+	private ItemStack flux_stack;
+
+	public void setFluxStack(ItemStack flux_stack){
+		this.flux_stack = flux_stack;
+	}
+
+	@Nullable
+	public ItemStack getFluxStack(){
+		return flux_stack;
 	}
 }

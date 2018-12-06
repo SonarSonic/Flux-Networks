@@ -3,7 +3,7 @@ package sonar.flux.client.gui.buttons;
 import net.minecraft.client.Minecraft;
 import sonar.core.client.gui.SonarButtons.ImageButton;
 import sonar.flux.FluxTranslate;
-import sonar.flux.client.gui.GuiAbstractTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.client.gui.tabs.GuiTabNetworkConnections;
 
 import static net.minecraft.client.renderer.GlStateManager.color;
@@ -12,7 +12,7 @@ public class ConnectedBlocksButton extends ImageButton {
 	public GuiTabNetworkConnections gui;
 
 	public ConnectedBlocksButton(GuiTabNetworkConnections gui, int id, int x, int y) {
-		super(id, x, y, GuiAbstractTab.large_buttons, 0, 34, 17, 17);
+		super(id, x, y, GuiTabAbstract.large_buttons, 0, 34, 17, 17);
 		this.gui = gui;
 	}
 

@@ -2,10 +2,13 @@ package sonar.flux.network;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.listener.ISonarListenable;
 import sonar.core.listener.ListenableList;
+import sonar.core.listener.ListenerList;
 import sonar.core.listener.PlayerListener;
 import sonar.core.utils.CustomColour;
 import sonar.core.utils.SimpleObservableList;
@@ -34,6 +37,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 
 	public void clearNetworks() {
 		FluxNetworkData.clear();
+		stack_listeners.clear();
 	}
 
 	private int createNewUniqueID() {
@@ -124,7 +128,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 
 	public void onSettingsChanged(IFluxNetwork network) { //only called when saved settings are changed.
 		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
-		PacketFluxNetworkUpdate packet = new PacketFluxNetworkUpdate(Lists.newArrayList(network), NBTHelper.SyncType.SAVE, false);
+		PacketNetworkUpdate packet = new PacketNetworkUpdate(Lists.newArrayList(network), NBTHelper.SyncType.SAVE, false);
 		players.forEach(listener -> {if (network.getPlayerAccess(listener.player).canConnect())FluxNetworks.network.sendTo(packet, listener.player);});
 	}
 
@@ -132,7 +136,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	@Override
 	public void onElementAdded(@Nullable IFluxNetwork added) {
 		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
-		PacketFluxNetworkUpdate packet = new PacketFluxNetworkUpdate(Lists.newArrayList(added), NBTHelper.SyncType.SAVE, false);
+		PacketNetworkUpdate packet = new PacketNetworkUpdate(Lists.newArrayList(added), NBTHelper.SyncType.SAVE, false);
 		players.forEach(listener -> {if (added.getPlayerAccess(listener.player).canConnect())FluxNetworks.network.sendTo(packet, listener.player);});
 	}
 
@@ -152,6 +156,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	//// LISTENERS \\\\
 
 	private ListenableList<PlayerListener> listeners = new ListenableList<>(this, FluxListener.values().length);
+	public Map<Integer, ListenerList<PlayerListener>> stack_listeners = new HashMap<>();
 
 	@Override
 	public ListenableList<PlayerListener> getListenerList() {
@@ -162,7 +167,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
 		players.forEach(listener -> {
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, FluxHelper.isPlayerAdmin(listener.player));
-			FluxNetworks.network.sendTo(new PacketFluxNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
+			FluxNetworks.network.sendTo(new PacketNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
 		});
 	}
 
@@ -170,8 +175,24 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		List<PlayerListener> players = listeners.getListeners(FluxListener.ADMIN);
 		players.forEach(listener -> {
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, true);
-			FluxNetworks.network.sendTo(new PacketFluxNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
+			FluxNetworks.network.sendTo(new PacketNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
 		});
+	}
+
+	public ListenerList<PlayerListener> getOrCreateStackListeners(ItemStack stack){
+		int id = getOrCreateUniqueID(stack);
+		return stack_listeners.computeIfAbsent(id, I -> new ListenerList<>(FluxListener.values().length));
+	}
+
+	public int getOrCreateUniqueID(ItemStack stack){
+		NBTTagCompound tag = stack.getOrCreateSubCompound("uuid");
+		if(tag.hasKey("id")){
+			return tag.getInteger("id");
+		}else {
+			int newID = FluxNetworkData.get().stack_unique_id++;
+			tag.setInteger("id", newID);
+			return newID;
+		}
 	}
 
 	@Override

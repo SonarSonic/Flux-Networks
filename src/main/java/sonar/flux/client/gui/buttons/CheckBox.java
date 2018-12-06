@@ -3,7 +3,7 @@ package sonar.flux.client.gui.buttons;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 import sonar.flux.FluxTranslate;
-import sonar.flux.client.gui.GuiAbstractTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 
 import java.awt.*;
 import java.util.function.Supplier;
@@ -12,7 +12,7 @@ public class CheckBox extends SmallButton {
 
 	public Supplier<Boolean> isChecked;
 
-	public CheckBox(GuiAbstractTab gui, int id, int x, int y, Supplier<Boolean> isChecked, String name) {
+	public CheckBox(GuiTabAbstract gui, int id, int x, int y, Supplier<Boolean> isChecked, String name) {
 		super(gui, id, x, y, 48, 24, name);
 		this.isChecked = isChecked;
 	}

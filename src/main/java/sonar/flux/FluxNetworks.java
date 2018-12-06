@@ -25,8 +25,8 @@ import sonar.flux.common.block.FluxPlug;
 import sonar.flux.common.block.FluxPoint;
 import sonar.flux.common.block.FluxStorage;
 import sonar.flux.common.entity.EntityFireItem;
-import sonar.flux.common.item.AdminConfigurator;
-import sonar.flux.common.item.FluxConfigurator;
+import sonar.flux.common.item.ItemAdminConfigurator;
+import sonar.flux.common.item.ItemConfigurator;
 import sonar.flux.common.item.ItemFlux;
 import sonar.flux.common.item.ItemNetworkConnector;
 import sonar.flux.common.tileentity.TileController;
@@ -82,8 +82,8 @@ public class FluxNetworks {
 
 		flux = SonarRegister.addItem(FluxConstants.MODID, tab, "Flux", new ItemFlux());
 		fluxCore = SonarRegister.addItem(FluxConstants.MODID, tab, "FluxCore", new Item());
-		fluxConfigurator = SonarRegister.addItem(FluxConstants.MODID, tab, "FluxConfigurator", new FluxConfigurator());
-		adminConfigurator = SonarRegister.addItem(FluxConstants.MODID, tab, "AdminConfigurator", new AdminConfigurator());
+		fluxConfigurator = SonarRegister.addItem(FluxConstants.MODID, tab, "FluxConfigurator", new ItemConfigurator());
+		adminConfigurator = SonarRegister.addItem(FluxConstants.MODID, tab, "AdminConfigurator", new ItemAdminConfigurator());
 
 		fluxPlug = SonarRegister.addBlock(FluxConstants.MODID, tab, new ItemNetworkConnector.FluxConnectorRegistry(new FluxPlug().setHardness(0.4F).setResistance(20.0F), "FluxPlug", TileFluxPlug.class));
 		fluxPoint = SonarRegister.addBlock(FluxConstants.MODID, tab, new ItemNetworkConnector.FluxConnectorRegistry(new FluxPoint().setHardness(0.4F).setResistance(20.0F), "FluxPoint", TileFluxPoint.class));

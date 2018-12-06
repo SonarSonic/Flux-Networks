@@ -9,8 +9,8 @@ import sonar.core.sync.SyncRegistry;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.tiles.IFluxController;
-import sonar.flux.client.gui.GuiTab;
-import sonar.flux.client.gui.tabs.GuiTabControllerIndex;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.tabs.GuiTabIndexController;
 import sonar.flux.connection.transfer.ControllerTransfer;
 import sonar.flux.connection.transfer.handlers.SingleTransferHandler;
 
@@ -87,13 +87,13 @@ public class TileController extends TileFlux implements IFlexibleGui, IFluxContr
 	}
 
 	@Override
-	public List<GuiTab> getTabs(){
-		return Lists.newArrayList(GuiTab.INDEX, GuiTab.WIRELESS_CHARGING, GuiTab.NETWORK_SELECTION, GuiTab.CONNECTIONS, GuiTab.NETWORK_STATISTICS, GuiTab.PLAYERS, GuiTab.DEBUG, GuiTab.NETWORK_EDIT, GuiTab.NETWORK_CREATE);
+	public List<EnumGuiTab> getTabs(){
+		return Lists.newArrayList(EnumGuiTab.INDEX, EnumGuiTab.WIRELESS_CHARGING, EnumGuiTab.NETWORK_SELECTION, EnumGuiTab.CONNECTIONS, EnumGuiTab.NETWORK_STATISTICS, EnumGuiTab.PLAYERS, EnumGuiTab.DEBUG, EnumGuiTab.NETWORK_EDIT, EnumGuiTab.NETWORK_CREATE);
 	}
 
 	@Override
 	@Nonnull
-	public Object getIndexScreen(List<GuiTab> tabs){
-		return new GuiTabControllerIndex(this, tabs);
+	public Object getIndexScreen(List<EnumGuiTab> tabs){
+		return new GuiTabIndexController(tabs);
 	}
 }

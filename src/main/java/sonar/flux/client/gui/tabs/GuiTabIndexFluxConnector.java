@@ -2,21 +2,25 @@ package sonar.flux.client.gui.tabs;
 
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
+import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.ClientTransfer;
 import sonar.flux.api.energy.internal.IFluxTransfer;
 import sonar.flux.api.tiles.IFlux;
-import sonar.flux.client.gui.GuiTab;
-import sonar.flux.common.tileentity.TileFluxConnector;
+import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.common.tileentity.TileFlux;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GuiTabFluxConnectorIndex extends GuiTabConnectionIndex<TileFluxConnector, Object> {
+public class GuiTabIndexFluxConnector extends GuiTabIndexConnection<Object> {
 
-	public GuiTabFluxConnectorIndex(TileFluxConnector tile, List<GuiTab> tabs) {
-		super(tile, tabs);
+	public TileFlux flux;
+
+	public GuiTabIndexFluxConnector(List<EnumGuiTab> tabs) {
+		super(tabs);
+		flux = FluxNetworks.proxy.getFluxTile();
 	}
 
 	public void addGrids(Map<SelectionGrid, SonarScroller> grids) {
