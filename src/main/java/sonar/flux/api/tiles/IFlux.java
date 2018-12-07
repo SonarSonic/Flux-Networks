@@ -6,6 +6,8 @@ import net.minecraft.world.World;
 import sonar.core.api.utils.BlockCoords;
 import sonar.core.helpers.FontHelper;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.EnumActivationType;
+import sonar.flux.api.EnumPriorityType;
 import sonar.flux.api.energy.internal.ITransferHandler;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.PlayerAccess;
@@ -89,12 +91,17 @@ public interface IFlux {
      */
     ConnectionType getConnectionType();
 
+    long getTransferLimit();
     /**
      * the maximum RF/t this Flux connection can receive
      */
-    long getTransferLimit();
+    long getCurrentLimit();
 
+    boolean getDisableLimit();
 
+    EnumActivationType getActivationType();
+
+    EnumPriorityType getPriorityType();
     /**
      * the higher the priority the sooner the Flux connection will receive power
      */

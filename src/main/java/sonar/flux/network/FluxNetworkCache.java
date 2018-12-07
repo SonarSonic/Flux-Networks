@@ -5,6 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.api.energy.EnergyType;
+import sonar.core.helpers.FunctionHelper;
+import sonar.core.helpers.ListHelper;
 import sonar.core.helpers.NBTHelper;
 import sonar.core.listener.ISonarListenable;
 import sonar.core.listener.ListenableList;
@@ -13,13 +15,13 @@ import sonar.core.listener.PlayerListener;
 import sonar.core.utils.CustomColour;
 import sonar.core.utils.SimpleObservableList;
 import sonar.flux.FluxConfig;
-import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.AccessType;
 import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.IFluxNetworkCache;
 import sonar.flux.api.network.PlayerAccess;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.connection.*;
 
 import javax.annotation.Nullable;
@@ -38,6 +40,8 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	public void clearNetworks() {
 		FluxNetworkData.clear();
 		stack_listeners.clear();
+		disconnected_tiles.clear();
+		disconnected_tiles_changed = false;
 	}
 
 	private int createNewUniqueID() {
@@ -117,13 +121,13 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(owner);
 
 		FluxNetworkData.get().addNetwork(network);
-		FluxEvents.logNewNetwork(network);
+		FluxNetworks.proxy.logNewNetwork(network);
 		return network;
 	}
 
 	public void onPlayerRemoveNetwork(IFluxNetwork remove) {
 		FluxNetworkData.get().removeNetwork(remove);
-		FluxEvents.logRemoveNetwork(remove);
+		FluxNetworks.proxy.logRemoveNetwork(remove);
 	}
 
 	public void onSettingsChanged(IFluxNetwork network) { //only called when saved settings are changed.
@@ -131,7 +135,6 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		PacketNetworkUpdate packet = new PacketNetworkUpdate(Lists.newArrayList(network), NBTHelper.SyncType.SAVE, false);
 		players.forEach(listener -> {if (network.getPlayerAccess(listener.player).canConnect())FluxNetworks.network.sendTo(packet, listener.player);});
 	}
-
 
 	@Override
 	public void onElementAdded(@Nullable IFluxNetwork added) {
@@ -146,17 +149,30 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 		PacketNetworkDeleted packet = new PacketNetworkDeleted(remove);
 		players.forEach(listener -> FluxNetworks.network.sendTo(packet, listener.player));
 		updateNetworkListeners();
+		updateAdminListeners();
 	}
 
 	@Override
 	public void onListChanged() {
 		updateNetworkListeners();
+		updateAdminListeners();
 	}
 
 	//// LISTENERS \\\\
 
 	private ListenableList<PlayerListener> listeners = new ListenableList<>(this, FluxListener.values().length);
 	public Map<Integer, ListenerList<PlayerListener>> stack_listeners = new HashMap<>();
+
+	public Map<UUID, List<IFlux>> disconnected_tiles = new HashMap<>();
+	public boolean disconnected_tiles_changed = false;
+
+	public void onStartServerTick(){}
+
+	public void onEndServerTick(){
+		if(disconnected_tiles_changed){
+			disconnected_tiles_changed = false;
+		}
+	}
 
 	@Override
 	public ListenableList<PlayerListener> getListenerList() {
@@ -165,6 +181,7 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 
 	public void updateNetworkListeners() {
 		List<PlayerListener> players = listeners.getListeners(FluxListener.SYNC_NETWORK_LIST);
+		stack_listeners.values().forEach(list -> ListHelper.addWithCheck(players, list.getListeners(FluxListener.SYNC_NETWORK_LIST)));
 		players.forEach(listener -> {
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, FluxHelper.isPlayerAdmin(listener.player));
 			FluxNetworks.network.sendTo(new PacketNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
@@ -172,11 +189,38 @@ public class FluxNetworkCache implements IFluxNetworkCache, ISonarListenable<Pla
 	}
 
 	public void updateAdminListeners() {
-		List<PlayerListener> players = listeners.getListeners(FluxListener.ADMIN);
+		List<PlayerListener> players = new ArrayList<>();
+		stack_listeners.values().forEach(list -> ListHelper.addWithCheck(players, list.getListeners(FluxListener.ADMIN)));
 		players.forEach(listener -> {
 			List<IFluxNetwork> toSend = FluxNetworkCache.instance().getAllowedNetworks(listener.player, true);
 			FluxNetworks.network.sendTo(new PacketNetworkUpdate(toSend, NBTHelper.SyncType.SAVE, true), listener.player);
 		});
+	}
+
+	public void onTileConnected(IFlux flux){
+		if(disconnected_tiles.get(flux.getConnectionOwner()) != null) {
+			FluxNetworkCache.instance().disconnected_tiles.get(flux.getConnectionOwner()).remove(flux);
+			FluxNetworkCache.instance().onDisconnectedTilesChanged();
+		}
+	}
+
+	public void onTileDisconnected(IFlux flux){
+		FluxNetworkCache.instance().disconnected_tiles.computeIfAbsent(flux.getConnectionOwner(), FunctionHelper.ARRAY);
+		if(!FluxNetworkCache.instance().disconnected_tiles.get(flux.getConnectionOwner()).contains(flux)) {
+			FluxNetworkCache.instance().disconnected_tiles.get(flux.getConnectionOwner()).add(flux);
+			FluxNetworkCache.instance().onDisconnectedTilesChanged();
+		}
+	}
+
+	public void onTileRemoved(IFlux flux){
+		if(disconnected_tiles.get(flux.getConnectionOwner()) != null) {
+			FluxNetworkCache.instance().disconnected_tiles.get(flux.getConnectionOwner()).remove(flux);
+			FluxNetworkCache.instance().onDisconnectedTilesChanged();
+		}
+	}
+
+	public void onDisconnectedTilesChanged(){
+		disconnected_tiles_changed = true;
 	}
 
 	public ListenerList<PlayerListener> getOrCreateStackListeners(ItemStack stack){

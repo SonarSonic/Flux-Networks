@@ -21,34 +21,46 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	public BlockCoords coords;
 	public ConnectionType connection_type;
 	public boolean isChunkLoaded = true;
+	public int network_id;
 	public int priority;
 	public int folder_id;
 	public long limit;
 	public String customName;
 	public ItemStack stack;
+	public boolean disableLimit;
+	public EnumActivationType activation_type;
+	public EnumPriorityType priority_type;
+
 	public ClientTransferHandler handler;
 
 	public ClientFlux(IFlux flux) {
 		this.coords = flux.getCoords();
 		this.connection_type = flux.getConnectionType();
+		this.network_id = flux.getNetworkID();
 		this.priority = flux.getCurrentPriority();
 		this.folder_id = flux.getFolderID();
 		this.limit = flux.getTransferLimit();
 		this.customName = flux.getCustomName();
 		this.handler = ClientTransferHandler.getInstanceFromHandler(flux, flux.getTransferHandler());
 		this.stack = flux.getDisplayStack();
+		this.disableLimit = flux.getDisableLimit();
+		this.activation_type = flux.getActivationType();
+		this.priority_type = flux.getPriorityType();
 	}
 
-	public ClientFlux(BlockCoords coords, ConnectionType type, int priority, int folder_id, long limit, String customName, ClientTransferHandler handler, ItemStack stack) {
+	public ClientFlux(BlockCoords coords, ConnectionType type, int network_id, int priority, int folder_id, long limit, String customName, boolean disableLimit, EnumActivationType activation_type, EnumPriorityType priority_type, ClientTransferHandler handler, ItemStack stack) {
 		this.coords = coords;
 		this.connection_type = type;
+		this.network_id = network_id;
 		this.priority = priority;
 		this.folder_id = folder_id;
 		this.limit = limit;
 		this.customName = customName;
 		this.handler = handler;
 		this.stack = stack;
-
+		this.disableLimit = disableLimit;
+		this.activation_type = activation_type;
+		this.priority_type = priority_type;
 	}
 
 	public ClientFlux(NBTTagCompound tag) {
@@ -63,6 +75,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	public void readData(NBTTagCompound nbt, SyncType type) {
 		coords = BlockCoords.readFromNBT(nbt);
 		connection_type = ConnectionType.values()[nbt.getInteger("type")];
+		network_id = nbt.getInteger("n_id");
 		priority = nbt.getInteger("priority");
 		folder_id = nbt.getInteger("folder_id");
 		limit = nbt.getLong("limit");
@@ -70,6 +83,10 @@ public class ClientFlux implements IFlux, INBTSyncable {
 		handler = new ClientTransferHandler(this);
 		handler.readData(nbt.getCompoundTag("handler"), type);
 		isChunkLoaded = nbt.getBoolean("isChunkLoaded");
+		disableLimit = nbt.getBoolean("dLimit");
+		activation_type = EnumActivationType.values()[nbt.getInteger("a_type")];
+		priority_type = EnumPriorityType.values()[nbt.getInteger("p_type")];
+
 		stack = new ItemStack(nbt);
 	}
 
@@ -77,12 +94,17 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	public NBTTagCompound writeData(NBTTagCompound nbt, SyncType type) {
 		BlockCoords.writeToNBT(nbt, coords);
 		nbt.setInteger("type", connection_type.ordinal());
+		nbt.setInteger("n_id", network_id);
 		nbt.setInteger("priority", priority);
 		nbt.setInteger("folder_id", folder_id);
 		nbt.setLong("limit", limit);
 		nbt.setString("name", customName);
 		nbt.setTag("handler", handler.writeData(new NBTTagCompound(), type));
 		nbt.setBoolean("isChunkLoaded", isChunkLoaded);
+		nbt.setBoolean("dLimit", disableLimit);
+		nbt.setInteger("a_type", activation_type.ordinal());
+		nbt.setInteger("p_type", priority_type.ordinal());
+
 		stack.writeToNBT(nbt);
 		return nbt;
 	}
@@ -124,6 +146,26 @@ public class ClientFlux implements IFlux, INBTSyncable {
 	}
 
 	@Override
+	public long getCurrentLimit() {
+		return limit;//if we are mirroring the server this should be disableLimit ? Long.MAX_VALUE : limit;
+	}
+
+	@Override
+	public boolean getDisableLimit() {
+		return disableLimit;
+	}
+
+	@Override
+	public EnumActivationType getActivationType() {
+		return activation_type;
+	}
+
+	@Override
+	public EnumPriorityType getPriorityType() {
+		return priority_type;
+	}
+
+	@Override
 	public int getCurrentPriority() {
 		return priority;
 	}
@@ -145,7 +187,7 @@ public class ClientFlux implements IFlux, INBTSyncable {
 
 	@Override
 	public int getNetworkID() {
-		return -1;
+		return network_id;
 	}
 
 	@Override

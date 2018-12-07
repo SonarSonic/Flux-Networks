@@ -9,7 +9,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 import sonar.core.helpers.ListHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.sync.ISonarValue;
-import sonar.flux.FluxEvents;
 import sonar.flux.FluxNetworks;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.NetworkFluxFolder;
@@ -119,7 +118,7 @@ public class FluxNetworkData extends WorldSavedData {
 				readConnections(network.getSyncSetting(NetworkSettings.UNLOADED_CONNECTIONS), FluxNetworkData.UNLOADED_CONNECTIONS, network, tag);
 
 				addNetwork(network);
-				FluxEvents.logLoadedNetwork(network);
+				FluxNetworks.proxy.logLoadedNetwork(network);
 			}
 		}
 	}
@@ -206,11 +205,11 @@ public class FluxNetworkData extends WorldSavedData {
 	}
 	public static NBTTagCompound writeConnections(ISonarValue<List<ClientFlux>> value, String key, IFluxNetwork network, @Nonnull NBTTagCompound tag) {
 		List<ClientFlux> loaded = value.getValue();
-		if(!loaded.isEmpty()) {
+		//if(!loaded.isEmpty()) {
 			NBTTagList connections = new NBTTagList();
 			loaded.forEach(flux -> connections.appendTag(flux.writeData(new NBTTagCompound(), SyncType.SAVE)));
 			tag.setTag(key, connections);
-		}
+		//}
 		return tag;
 	}
 }

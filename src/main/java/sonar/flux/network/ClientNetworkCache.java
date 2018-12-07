@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.helpers.NBTHelper;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.ClientFlux;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.api.network.IFluxNetworkCache;
 import sonar.flux.client.FluxColourHandler;
@@ -19,9 +20,11 @@ import java.util.Map;
 public class ClientNetworkCache implements IFluxNetworkCache {
 
 	public Map<Integer, IFluxNetwork> networks = new HashMap<>();
+	public List<ClientFlux> disconnected_tiles = new ArrayList<>();
 
 	public void clearNetworks() {
 		networks.clear();
+		disconnected_tiles.clear();
 	}
 
 	@Override

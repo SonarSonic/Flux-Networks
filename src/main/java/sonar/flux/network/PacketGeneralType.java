@@ -13,7 +13,8 @@ public enum PacketGeneralType {
 	CHANGE_PLAYER(PacketGeneralHelper::doChangePlayerPacket), //
 	DEBUG_CONNECTED_BLOCKS(PacketGeneralHelper::doResetConnectedBlocksPacket), //
 	DEBUG_FLUX_CONNECTIONS(PacketGeneralHelper::doValidateConnectionsPacket),
-	GUI_STATE_CHANGE(PacketGeneralHelper::doStateChangePacket);
+	GUI_STATE_CHANGE(PacketGeneralHelper::doStateChangePacket),
+	SWITCH_OWNERSHIP(PacketGeneralHelper::doChangeNetworkOwner);
 	public IPacketAction action;
 
 	PacketGeneralType(IPacketAction action) {

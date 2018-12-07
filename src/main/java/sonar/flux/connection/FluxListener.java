@@ -10,16 +10,22 @@ import sonar.core.helpers.NBTHelper;
 import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.network.PacketTileSync;
 import sonar.flux.FluxNetworks;
+import sonar.flux.api.ClientFlux;
+import sonar.flux.api.network.FluxPlayer;
 import sonar.flux.api.network.IFluxNetwork;
+import sonar.flux.api.tiles.IFlux;
 import sonar.flux.network.FluxNetworkCache;
+import sonar.flux.network.PacketDisconnectedTiles;
 import sonar.flux.network.PacketNetworkStatistics;
 import sonar.flux.network.PacketNetworkUpdate;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public enum FluxListener {
 
-	ADMIN((network, player) -> {}, (network, player) -> {}, (network) -> {}),
+	ADMIN(FluxListener::doAdminOpen, FluxListener::doAdminClose, (network) -> {}),
 	// sync main flux properties
 	SYNC_INDEX(FluxListener::doIndexOpen, (network, player) -> {}, FluxListener::doIndexSync),
 	// sync current networks statistics
@@ -29,7 +35,9 @@ public enum FluxListener {
 	// sync network stats
 	SYNC_NETWORK_STATS(FluxListener::doNetworkStatsOpen, (network, player) -> {}, FluxListener::doNetworkStatsSync),
 	// sync all connected players
-	SYNC_PLAYERS(FluxListener::doPlayerListOpen, (network, player) -> {}, FluxListener::doPlayerListSync);
+	SYNC_PLAYERS(FluxListener::doPlayerListOpen, (network, player) -> {}, FluxListener::doPlayerListSync),
+	// sync all connected players
+	SYNC_DISCONNECTED_CONNECTIONS(FluxListener::doDisconnectedTilesOpen, (network, player) -> {}, FluxListener::doDisconnectedTilesSync);
 	
 	public IListenerAction openPacket;
 	public IListenerAction closePacket; // NECESSARY ? CURRENTLY UNUSED & UNCALLED
@@ -51,6 +59,19 @@ public enum FluxListener {
 
 	public void sync(FluxNetworkServer network){
 		syncPacket.sync(network);
+	}
+
+
+
+	public static void doAdminOpen(IFluxNetwork network, EntityPlayerMP player){
+		FluxNetworkCache.instance().updateAdminListeners();
+		//FluxNetworkCache.instance().getListenerList().addListener(player, FluxListener.ADMIN);
+	}
+
+
+
+	public static void doAdminClose(IFluxNetwork network, EntityPlayerMP player){
+		//FluxNetworkCache.instance().getListenerList().addListener(player, FluxListener.ADMIN);
 	}
 
 	public static void doIndexOpen(IFluxNetwork network, EntityPlayerMP player){
@@ -99,8 +120,12 @@ public enum FluxListener {
 	}
 
 	public static void doConnectionsListSync(FluxNetworkServer network){
+		if(FluxNetworkCache.instance().disconnected_tiles_changed){
+			network.client_connections.setDirty(true);
+			network.buildFluxConnections();
+		}
 		if(network.client_connections.isDirty()) {
-			network.forEachListener(FluxListener.SYNC_INDEX, p -> {
+			network.forEachListener(FluxListener.SYNC_NETWORK_CONNECTIONS, p -> {
 				FluxNetworks.network.sendTo(new PacketNetworkUpdate(Lists.newArrayList(network), SyncType.SPECIAL, false), p.player);
 			});
 		}
@@ -127,6 +152,24 @@ public enum FluxListener {
 		if(network.network_players.isDirty()) {
 			network.forEachListener(FluxListener.SYNC_PLAYERS, p -> {
 				FluxNetworks.network.sendTo(new PacketNetworkUpdate(Lists.newArrayList(network), SyncType.SPECIAL, false), p.player);
+			});
+		}
+	}
+
+	public static void doDisconnectedTilesOpen(IFluxNetwork network, EntityPlayerMP player){
+		UUID uuid = FluxPlayer.getOnlineUUID(player);
+		List<IFlux> tiles = FluxNetworkCache.instance().disconnected_tiles.get(uuid);
+		List<ClientFlux> client_flux = new ArrayList<>();
+		if(tiles != null && !tiles.isEmpty()) {
+			tiles.forEach(f -> client_flux.add(new ClientFlux(f)));
+		}
+		FluxNetworks.network.sendTo(new PacketDisconnectedTiles(client_flux), player);
+	}
+
+	public static void doDisconnectedTilesSync(FluxNetworkServer network){
+		if(FluxNetworkCache.instance().disconnected_tiles_changed) {
+			network.forEachListener(FluxListener.SYNC_DISCONNECTED_CONNECTIONS, p -> {
+				doDisconnectedTilesOpen(network, p.player);
 			});
 		}
 	}

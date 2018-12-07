@@ -1,8 +1,12 @@
 package sonar.flux.network;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerProfileCache;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import sonar.core.api.energy.EnergyType;
 import sonar.core.helpers.SonarHelper;
@@ -104,6 +108,42 @@ public class PacketGeneralHelper {
                 FluxNetworks.getServerCache().onPlayerRemoveNetwork(toDelete);
             } else {
                 return new PacketError(FluxError.NOT_OWNER);
+            }
+        }
+        return null;
+    }
+
+    //// CHANGE NETWORK OWNER \\\\
+
+    public static NBTTagCompound createChangeNetworkOwner(int networkID, String name) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
+        tag.setString("owner", name);
+        return tag;
+    }
+
+    public static IMessage doChangeNetworkOwner(EntityPlayer player, NBTTagCompound packetTag) {
+        int networkID = packetTag.getInteger(FluxNetworkData.NETWORK_ID);
+        String owner = packetTag.getString("owner");
+        IFluxNetwork toEdit = FluxNetworks.getServerCache().getNetwork(networkID);
+        if (!toEdit.isFakeNetwork()) {
+            if (toEdit.getPlayerAccess(player).canDelete()) {
+                MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+                PlayerProfileCache cache = server.getPlayerProfileCache();
+                GameProfile profile = cache.getGameProfileForUsername(owner);
+                if(profile != null){
+                    FluxNetworkData.get().networks.get(toEdit.getSyncSetting(NetworkSettings.NETWORK_OWNER).getValue()).remove(toEdit);
+                    toEdit.getSyncSetting(NetworkSettings.NETWORK_PLAYERS).getValue().removeIf(p -> p.getAccess() == PlayerAccess.OWNER);
+                    toEdit.getSyncSetting(NetworkSettings.NETWORK_PLAYERS).getValue().add(FluxPlayer.createFluxPlayer(owner, PlayerAccess.OWNER));
+                    toEdit.getSyncSetting(NetworkSettings.NETWORK_OWNER).setValue(profile.getId());
+                    toEdit.getSyncSetting(NetworkSettings.NETWORK_CACHED_NAME).setValue(owner);
+
+                    FluxNetworkData.get().networks.computeIfAbsent(profile.getId(), (id) -> FluxNetworkCache.instance().instanceNetworkList());
+                    FluxNetworkData.get().networks.get(profile.getId()).add(toEdit);
+
+                }
+            } else {
+                return new PacketError(FluxError.ACCESS_DENIED);
             }
         }
         return null;
@@ -277,6 +317,5 @@ public class PacketGeneralHelper {
         }
         return null;
     }
-
 
 }

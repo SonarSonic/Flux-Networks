@@ -134,13 +134,13 @@ public abstract class TileFlux extends TileEntitySyncable implements IFluxListen
 
 	@Override
 	public void disconnect(IFluxNetwork network) {
-		if (network.getNetworkID() == this.networkID.getValue()) {
+		if (network.getNetworkID() == this.networkID.getValue()) { //changed networks
 			IFluxNetwork oldNetwork = this.network;
 			this.network = FluxNetworkInvalid.INVALID;
 			this.networkID.setValue(-1);
 			colour.setValue(network.getSetting(NetworkSettings.NETWORK_COLOUR).getRGB());
 			setAndSendConnectionState(false);
-			ListenerHelper.onNetworkChanged(this, oldNetwork, network);
+			ListenerHelper.onNetworkChanged(this, oldNetwork, this.network);
 		}
 	}
 
@@ -249,8 +249,28 @@ public abstract class TileFlux extends TileEntitySyncable implements IFluxListen
 	}
 
 	@Override
-	public long getTransferLimit() {
+	public long getCurrentLimit() {
 		return disableLimit.getValue() ? Long.MAX_VALUE : limit.getValue();
+	}
+
+	@Override
+	public long getTransferLimit(){
+		return limit.getValue();
+	}
+
+	@Override
+	public boolean getDisableLimit(){
+		return disableLimit.getValue();
+	}
+
+	@Override
+	public EnumActivationType getActivationType(){
+		return activation_type.getValue();
+	}
+
+	@Override
+	public EnumPriorityType getPriorityType(){
+		return priority_type.getValue();
 	}
 
 	@Override

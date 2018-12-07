@@ -3,11 +3,10 @@ package sonar.flux.api.configurator;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.core.translate.Localisation;
 import sonar.flux.FluxTranslate;
-import sonar.flux.api.ConnectionSettings;
-import sonar.flux.api.EnumActivationType;
-import sonar.flux.api.EnumPriorityType;
+import sonar.flux.api.*;
+import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.common.tileentity.TileFlux;
-import sonar.flux.connection.FluxHelper;
+import sonar.flux.network.FluxNetworkCache;
 
 public class FluxConfigurationType {
     public static FluxConfigurationType NETWORK = new FluxConfigurationType(0,"network", FluxTranslate.NETWORK_NAME, FluxConfigurationType::copyNetwork, FluxConfigurationType::pasteNetwork);
@@ -48,9 +47,9 @@ public class FluxConfigurationType {
     public static void pasteNetwork(NBTTagCompound nbt, String key, TileFlux tile){
         int storedID = nbt.getInteger(key);
         if (storedID != -1) {
-            FluxHelper.removeConnection(tile, null);
-            tile.networkID.setValue(storedID);
-            FluxHelper.addConnection(tile, null);
+            IFluxNetwork newNetwork = FluxNetworkCache.instance().getNetwork(storedID);
+            tile.getNetwork().queueConnectionRemoval(tile, RemovalType.REMOVE);
+            newNetwork.queueConnectionAddition(tile, AdditionType.ADD);
         }
     }
 

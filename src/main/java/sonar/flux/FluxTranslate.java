@@ -107,9 +107,13 @@ public class FluxTranslate {
 	public static final Localisation SORTING_DIMENSION = t("network.sorting.dim");	
 	public static final Localisation SORTING_TRANSFER = t("network.sorting.transfer");	
 	public static final Localisation SORTING_CLEAR = t("network.sorting.clear");	
-	public static final Localisation SORTING_SHOW_CONNECTED = t("network.sorting.showconnected");	
+	public static final Localisation SORTING_SHOW_CONNECTED = t("network.sorting.showconnected");
+	public static final Localisation SORTING_CONNECTED_TILES = t("network.sorting.connectedtiles");
+	public static final Localisation SORTING_DISCONNECTED_TILES = t("network.sorting.disconnectedtiles");
 	public static final Localisation SORTING_DIRECTION = t("network.sorting.direction");	
-	public static final Localisation SORTING_BY = t("network.sorting.sortby");	
+	public static final Localisation SORTING_BY = t("network.sorting.sortby");
+	public static final Localisation CONNECT_SELECTED = t("network.sorting.connectselected");
+	public static final Localisation DISCONNECT_SELECTED = t("network.sorting.disconnectselected");
 	
 	// CHUNK DISPLAY OPTIONS \\	
 	public static final Localisation SORTING_BOTH = t("network.sorting.both");	
@@ -191,7 +195,10 @@ public class FluxTranslate {
 	public static final Localisation PLAYERS_NETWORK_SHARED_OWNER = t("network.player.sharedowner");
 	public static final Localisation PLAYERS_NETWORK_BLOCKED = t("network.player.blocked");
 	public static final Localisation PLAYERS_NETWORK_CREATIVE = t("network.player.creative");
-	
+
+	//// ADMIN OPTIONS \\\\
+	public static final Localisation TRANSFER_OWNERSHIP = t("network.admin.transferowner");
+	public static final Localisation TRANSFER_OWNERSHIP_CONFIRM = t("network.admin.transferowner.confirm");
 	
 	String text;
 

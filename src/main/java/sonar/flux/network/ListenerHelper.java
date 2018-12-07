@@ -119,6 +119,12 @@ public class ListenerHelper {
 
 	public static void onNetworkChanged(TileFlux flux, IFluxNetwork old, IFluxNetwork network) {
 		Preconditions.checkState(!flux.getWorld().isRemote);
+		if(network.isFakeNetwork()){
+			FluxNetworkCache.instance().onTileDisconnected(flux);
+		}else{
+			FluxNetworkCache.instance().onTileConnected(flux);
+		}
+
 		if (flux.getListenerList().hasListeners()) {
 			MinecraftForge.EVENT_BUS.post(new FluxTileListenerEvent.RemoveConnectionListener(flux, old));
 			MinecraftForge.EVENT_BUS.post(new FluxTileListenerEvent.AddConnectionListener(flux, network));

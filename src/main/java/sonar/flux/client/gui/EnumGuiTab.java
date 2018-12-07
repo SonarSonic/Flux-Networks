@@ -16,13 +16,16 @@ import java.util.List;
 public enum EnumGuiTab {
 	INDEX(FluxTranslate.GUI_TAB_INDEX, Lists.newArrayList(FluxListener.SYNC_INDEX, FluxListener.SYNC_NETWORK_STATS), 0, 0),//
 	NETWORK_SELECTION(FluxTranslate.GUI_TAB_NETWORK_SELECTION, Lists.newArrayList(FluxListener.SYNC_NETWORK_LIST), 128, 0),//
-	CONNECTIONS(FluxTranslate.GUI_TAB_CONNECTIONS, Lists.newArrayList(FluxListener.SYNC_NETWORK_CONNECTIONS), 64, 0),//
+	CONNECTIONS(FluxTranslate.GUI_TAB_CONNECTIONS, Lists.newArrayList(FluxListener.SYNC_NETWORK_CONNECTIONS, FluxListener.SYNC_DISCONNECTED_CONNECTIONS), 64, 0),//
 	NETWORK_STATISTICS(FluxTranslate.GUI_TAB_STATISTICS, Lists.newArrayList(FluxListener.SYNC_NETWORK_STATS), 192, 0),//
 	NETWORK_EDIT(FluxTranslate.GUI_TAB_NETWORK_EDIT, Lists.newArrayList(FluxListener.SYNC_INDEX), 256, 0),//
 	PLAYERS(FluxTranslate.GUI_TAB_PLAYERS, Lists.newArrayList(FluxListener.SYNC_PLAYERS, FluxListener.SYNC_NETWORK_CONNECTIONS), 386, 0),//
 	NETWORK_CREATE(FluxTranslate.GUI_TAB_NETWORK_CREATE, Lists.newArrayList(FluxListener.SYNC_INDEX), 320, 0),//
 	DEBUG(FluxTranslate.GUI_TAB_DEBUG, new ArrayList<>(), 450, 0),
-	WIRELESS_CHARGING(FluxTranslate.GUI_TAB_WIRELESS_CHARGING, new ArrayList<>(), 0, 128);
+	WIRELESS_CHARGING(FluxTranslate.GUI_TAB_WIRELESS_CHARGING, new ArrayList<>(), 0, 128),
+
+	//// ADMIN \\\\
+	ADMIN_NETWORK_SELECTION(FluxTranslate.GUI_TAB_NETWORK_SELECTION, Lists.newArrayList(FluxListener.ADMIN), 128, 0);//
 
 	public Localisation name;
 	public List<FluxListener> types;
@@ -70,6 +73,8 @@ public enum EnumGuiTab {
 			return new GuiTabNetworkDebug(tabs);
 		case WIRELESS_CHARGING:
 			return new GuiTabWirelessCharging(tabs);
+		case ADMIN_NETWORK_SELECTION:
+			return new GuiTabNetworkAdminSelection(tabs);
 		}
 		return null;	
 	}

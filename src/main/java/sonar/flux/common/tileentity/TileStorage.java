@@ -124,8 +124,8 @@ public abstract class TileStorage extends TileFluxConnector implements IFluxStor
 	}
 
 	@Override
-	public long getTransferLimit() {
-		return Math.min(super.getTransferLimit(), storage.getMaxExtract());
+	public long getCurrentLimit() {
+		return Math.min(super.getCurrentLimit(), storage.getMaxExtract());
 	}
 
 	@Override

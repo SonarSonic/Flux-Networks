@@ -1,6 +1,5 @@
 package sonar.flux.common.item;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,19 +14,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import sonar.core.SonarCore;
-import sonar.core.common.item.SonarItem;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
-import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
-import sonar.flux.api.IFluxItemGui;
 import sonar.flux.api.configurator.FluxConfigurationType;
 import sonar.flux.api.configurator.IFluxConfigurable;
 import sonar.flux.api.network.IFluxNetwork;
 import sonar.flux.client.FluxColourHandler;
 import sonar.flux.client.gui.EnumGuiTab;
 import sonar.flux.client.gui.tabs.GuiTabIndexConfigurator;
-import sonar.flux.common.containers.ContainerFluxItem;
 import sonar.flux.common.tileentity.TileFlux;
 import sonar.flux.network.FluxNetworkCache;
 import sonar.flux.network.ListenerHelper;
@@ -35,7 +30,7 @@ import sonar.flux.network.ListenerHelper;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ItemConfigurator extends SonarItem implements IFluxItemGui {
+public class ItemConfigurator extends ItemAbstractGui {
 
 	public static final String CONFIGS_TAG = "configs";
 	public static final String DISABLED_TAG = "disabled";
@@ -47,8 +42,8 @@ public class ItemConfigurator extends SonarItem implements IFluxItemGui {
 		}
 		TileEntity tile = world.getTileEntity(pos);
 		if (!(tile instanceof IFluxConfigurable)) {
-			FontHelper.sendMessage("INVALID BLOCK", world, player);
-			return EnumActionResult.FAIL;
+			SonarCore.instance.guiHandler.openBasicItemStack(false, player.getHeldItem(hand), player, world, player.getPosition(), 0);
+			return EnumActionResult.SUCCESS;
 		}
 		IFluxConfigurable configurable = (IFluxConfigurable) tile;
 		if (!configurable.canAccess(player).canEdit()) {
@@ -129,31 +124,9 @@ public class ItemConfigurator extends SonarItem implements IFluxItemGui {
 		IFluxNetwork network = FluxNetworkCache.instance().getNetwork(networkID);
 		ListenerHelper.onViewingNetworkChanged(stack, old, network);
 	}
-
-	@Override
-	public void onGuiOpened(ItemStack obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
-		ListenerHelper.onPlayerOpenItemGui(obj, player);
-		ListenerHelper.onPlayerOpenItemTab(obj, player, EnumGuiTab.INDEX);
-	}
-
-	@Override
-	public Object getServerElement(ItemStack obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
-		return new ContainerFluxItem(player, obj);
-	}
-
-	@Override
-	public Object getClientElement(ItemStack obj, int id, World world, EntityPlayer player, NBTTagCompound tag) {
-		FluxNetworks.proxy.setFluxStack(obj);
-		return EnumGuiTab.INDEX.getGuiScreen(Lists.newArrayList(getTabs()));
-	}
-
 	@Nonnull
 	@Override
 	public Object getIndexScreen(ItemStack stack, List<EnumGuiTab> tabs) {
 		return new GuiTabIndexConfigurator(tabs);
-	}
-
-	public List<EnumGuiTab> getTabs(){
-		return Lists.newArrayList(EnumGuiTab.INDEX, EnumGuiTab.NETWORK_SELECTION, EnumGuiTab.CONNECTIONS, EnumGuiTab.NETWORK_STATISTICS, EnumGuiTab.PLAYERS, EnumGuiTab.DEBUG, EnumGuiTab.NETWORK_EDIT, EnumGuiTab.NETWORK_CREATE);
 	}
 }

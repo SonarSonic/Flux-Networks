@@ -18,6 +18,7 @@ import sonar.core.translate.ILocalisationHandler;
 import sonar.core.translate.Localisation;
 import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
+import sonar.flux.api.ClientFlux;
 import sonar.flux.api.FluxError;
 import sonar.flux.client.FluxColourHandler;
 import sonar.flux.client.FluxStorageModel;
@@ -133,5 +134,15 @@ public class FluxClient extends FluxCommon implements ILocalisationHandler {
 	@Nullable
 	public ItemStack getFluxStack(){
 		return flux_stack;
+	}
+
+	private List<ClientFlux> tiles;
+
+	public void setEditingFluxTile(List<ClientFlux> tiles){
+		this.tiles = tiles;
+	}
+
+	public List<ClientFlux> getEditingFluxTile(){
+		return tiles;
 	}
 }

@@ -57,9 +57,9 @@ public class TransferIterator<T extends IFlux> {
         }
         switch(transferType){
             case 0:
-                return current_flux.getTransferHandler().addToNetwork(current_flux.getTransferLimit(), energyType, ActionType.SIMULATE) > 0;
+                return current_flux.getTransferHandler().addToNetwork(current_flux.getCurrentLimit(), energyType, ActionType.SIMULATE) > 0;
             case 1:
-                return current_flux.getTransferHandler().removeFromNetwork(current_flux.getTransferLimit(), energyType, ActionType.SIMULATE) > 0;
+                return current_flux.getTransferHandler().removeFromNetwork(current_flux.getCurrentLimit(), energyType, ActionType.SIMULATE) > 0;
             default:
                 return false;
         }

@@ -1,12 +1,12 @@
 package sonar.flux.api;
 
-import java.util.List;
-
 import sonar.core.helpers.SonarHelper;
 import sonar.core.translate.Localisation;
 import sonar.core.utils.SortingDirection;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
+
+import java.util.List;
 
 public enum SortingType {
 
@@ -56,7 +56,7 @@ public enum SortingType {
 			});
 			break;
 		case TRANSFER_LIMIT:
-			list.sort((flux1, flux2) -> SonarHelper.compareWithDirection(flux1.getTransferLimit(), flux2.getTransferLimit(), actual_dir));
+			list.sort((flux1, flux2) -> SonarHelper.compareWithDirection(flux1.getCurrentLimit(), flux2.getCurrentLimit(), actual_dir));
 			break;
 		default:
 			break;

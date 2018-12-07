@@ -72,6 +72,15 @@ public abstract class GuiTabAbstract extends GuiSonar {
 		this.common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
 	}
 
+
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		super.drawScreen(mouseX, mouseY, partialTicks);
+		if(this.getNetworkID() != common.getNetworkID()){
+			this.common = FluxNetworks.getClientCache().getNetwork(getNetworkID());
+		}
+	}
+
 	public abstract EnumGuiTab getCurrentTab();
 
 	public int getNetworkID(){
@@ -125,6 +134,10 @@ public abstract class GuiTabAbstract extends GuiSonar {
 		if (isCloseKey(i)) {
 			boolean isTyping = this.fieldList.stream().anyMatch(GuiTextField::isFocused);
 			if (!isTyping) {
+				if (origin != null) {
+					FMLCommonHandler.instance().showGuiScreen(origin);
+					return;
+				}
 				if (getCurrentTab() != EnumGuiTab.INDEX) {
 					switchTab(EnumGuiTab.INDEX);
 					return;
@@ -218,9 +231,11 @@ public abstract class GuiTabAbstract extends GuiSonar {
 			drawTexturedModalRect(x, y, 0, 226, 154, 18);
 		}
 		ItemStack displayStack = flux.getDisplayStack();
-		NBTTagCompound colourTag = displayStack.hasTagCompound() ? displayStack.getTagCompound() : new NBTTagCompound();
-		colourTag.setBoolean("gui_colour", true);
-		displayStack.setTagCompound(colourTag);
+		if(flux.getNetworkID() != -1) {
+			NBTTagCompound colourTag = displayStack.hasTagCompound() ? displayStack.getTagCompound() : new NBTTagCompound();
+			colourTag.setBoolean("gui_colour", true);
+			displayStack.setTagCompound(colourTag);
+		}
 		drawNormalItemStack(displayStack, x + 2, y + 1);
 		if (this.getCurrentTab() == EnumGuiTab.INDEX) {
 			List<String> textLines = new ArrayList<>();
@@ -242,7 +257,7 @@ public abstract class GuiTabAbstract extends GuiSonar {
 			*/
 			addTransferStrings(textLines, flux.getConnectionType(), NETWORK_ENERGY_TYPE.getValue(common), flux.getTransferHandler().getAdded(), flux.getTransferHandler().getRemoved());
 			if(flux.getTransferHandler().getBuffer() != 0) textLines.add("Internal Buffer: " + FontHelper.formatStorage(NETWORK_ENERGY_TYPE.getValue(common), flux.getTransferHandler().getBuffer()));
-			textLines.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getTransferLimit() == Long.MAX_VALUE ? FluxTranslate.NO_LIMIT.t() : flux.getTransferLimit()));
+			textLines.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getCurrentLimit() == Long.MAX_VALUE ? FluxTranslate.NO_LIMIT.t() : flux.getCurrentLimit()));
 			textLines.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getCurrentPriority() == Integer.MAX_VALUE ? FluxTranslate.PRIORITY_SURGE : flux.getCurrentPriority()));
 		} else {
 			textLines.add(TextFormatting.DARK_RED + FluxTranslate.ERROR_CHUNK_UNLOADED.t());

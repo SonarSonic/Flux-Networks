@@ -73,7 +73,7 @@ public class GuiTabIndexConfigurator extends GuiTabAbstract {
         buttonList.add(new ConfiguratorSettingButton(this, 10, getGuiLeft() + 8, getGuiTop() + 28, 147, 12, colour, "Network: ", common.isFakeNetwork() ? "NONE" :common.getSyncSetting(NetworkSettings.NETWORK_NAME).getValue()));
         buttonList.add(new ConfiguratorSettingButton(this, 11, getGuiLeft() + 8, getGuiTop() + 46, 147, 12, colour, "Redstone: ", activationType.comment.t()));
         buttonList.add(new ConfiguratorSettingButton(this, 13, getGuiLeft() + 8, getGuiTop() + 82, 147, 12, colour, FluxTranslate.PRIORITY_MODE.t() + ": ", priorityType.comment.t()));
-        buttonList.add(new ConfiguratorSettingButton(this, 15, getGuiLeft() + 8, getGuiTop() + 118, 147, 12, colour, FluxTranslate.ENABLE_LIMIT.t() + ": ", "" + enable_limit));
+        buttonList.add(new ConfiguratorSettingButton(this, 15, getGuiLeft() + 8, getGuiTop() + 118, 147, 12, colour, FluxTranslate.ENABLE_LIMIT.t() + ": ", "" + !enable_limit));
 
         priority_field = FluxTextField.create(FluxTranslate.PRIORITY.t() + ": ", 12, getFontRenderer(), 8, 64, 147, 12).setBoxOutlineColour(colour).setDigitsOnly(true);
         priority_field.setMaxStringLength(8);
@@ -86,9 +86,6 @@ public class GuiTabIndexConfigurator extends GuiTabAbstract {
 
 
         fieldList.addAll(Lists.newArrayList(priority_field, limit_field));
-        //buttonList.add(new CheckBox(this, 3, getGuiLeft() + 156, getGuiTop() + 64, () -> !flux.disableLimit.getValue(), FluxTranslate.ENABLE_LIMIT.t()));
-        //buttonList.add(new RedstoneSignalButton( this, 4, getGuiLeft() + 156, getGuiTop() + 28, () -> flux.activation_type.getValue(), ""));
-        //buttonList.add(new PriorityButton(this, 5, getGuiLeft() + 156, getGuiTop() + 46, () -> flux.priority_type.getValue(), ""));
     }
 
     public void actionPerformed(GuiButton button) throws IOException {
@@ -101,6 +98,7 @@ public class GuiTabIndexConfigurator extends GuiTabAbstract {
 
             switch(button.id){
                 case 10://network
+                    switchTab(EnumGuiTab.NETWORK_SELECTION);
                     break;
                 case 11:
                     activationType = SonarHelper.incrementEnum(activationType, EnumActivationType.values());
@@ -125,7 +123,6 @@ public class GuiTabIndexConfigurator extends GuiTabAbstract {
     @Override
     public void drawGuiContainerForegroundLayer(int x, int y) {
         super.drawGuiContainerForegroundLayer(x, y);
-        int colour = NETWORK_COLOUR.getValue(common).getRGB();
         renderNetwork(NETWORK_NAME.getValue(common), NETWORK_ACCESS.getValue(common), NETWORK_COLOUR.getValue(common).getRGB(), true, 11, 8);
     }
 
@@ -159,7 +156,7 @@ public class GuiTabIndexConfigurator extends GuiTabAbstract {
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(keyCode)) {
+        if (isCloseKey(keyCode)) {
             sendGuiStackToServer();
         }
         super.keyTyped(typedChar, keyCode);

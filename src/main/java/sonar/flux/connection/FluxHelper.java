@@ -24,24 +24,27 @@ public class FluxHelper {
 			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
 			if (!network.isFakeNetwork()) {
 				network.queueConnectionAddition(flux, type);
+				return;
 			}
 		}
+		FluxNetworkCache.instance().onTileDisconnected(flux);
 	}
 
 	public static void removeConnection(IFluxListenable flux, RemovalType type) {
 		FluxNetworkCache.instance().getListenerList().removeSubListenable(flux);
+		if(type != RemovalType.REMOVE){
+			FluxNetworkCache.instance().onTileRemoved(flux);
+		}
 		if (flux.getNetworkID() != -1) {
 			IFluxNetwork network = FluxNetworks.getServerCache().getNetwork(flux.getNetworkID());
 			if (!network.isFakeNetwork()) {
 				network.queueConnectionRemoval(flux, type);
+				return;
 			}
 		}
+
 	}
-/*
-	public static UUID getOwnerUUID(EntityPlayer player) {
-		return player.getGameProfile().getId();
-	}
-*/
+
 	public static boolean isPlayerAdmin(EntityPlayer player) {
 		return player.isCreative();
 	}

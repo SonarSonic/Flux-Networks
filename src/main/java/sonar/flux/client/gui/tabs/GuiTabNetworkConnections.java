@@ -5,34 +5,35 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.widgets.SonarScroller;
 import sonar.core.helpers.FontHelper;
 import sonar.core.helpers.SonarHelper;
 import sonar.core.translate.Localisation;
 import sonar.core.utils.SortingDirection;
+import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
 import sonar.flux.api.ClientFlux;
 import sonar.flux.api.ClientTransfer;
-import sonar.flux.api.NetworkFluxFolder;
 import sonar.flux.api.SortingType;
 import sonar.flux.api.tiles.IFlux;
 import sonar.flux.api.tiles.IFlux.ConnectionType;
 import sonar.flux.client.gui.EnumGuiTab;
 import sonar.flux.client.gui.GuiTabAbstractGrid;
-import sonar.flux.client.gui.buttons.ConnectedBlocksButton;
-import sonar.flux.client.gui.buttons.ConnectionDirectionButton;
-import sonar.flux.client.gui.buttons.ConnectionSortingButton;
-import sonar.flux.client.gui.buttons.LargeButton;
+import sonar.flux.client.gui.buttons.*;
+import sonar.flux.network.ClientNetworkCache;
+import sonar.flux.network.PacketEditedTiles;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static sonar.flux.connection.NetworkSettings.CLIENT_CONNECTIONS;
-import static sonar.flux.connection.NetworkSettings.NETWORK_FOLDERS;
 
 public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 
@@ -41,6 +42,7 @@ public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 	public static SortingType sorting_type = SortingType.PRIORITY;
 	public static SortingDirection sorting_dir = SortingDirection.UP;
 	public static boolean showConnections = false;
+	public static boolean show_disconnected = false;
 	public SonarScroller connection_grid_scroller;
 	public SelectionGrid connection_grid;
 	public List<ClientFlux> selected = new ArrayList<>();
@@ -64,45 +66,44 @@ public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 		buttonList.add(new ConnectionTypeButton(this, 1, ConnectionType.POINT, FluxTranslate.POINTS.t(), getGuiLeft() + 52, getGuiTop() + 142));
 		buttonList.add(new ConnectionTypeButton(this, 2, ConnectionType.STORAGE, FluxTranslate.STORAGE.t(), getGuiLeft() + 92, getGuiTop() + 142));
 		buttonList.add(new ConnectionTypeButton(this, 3, ConnectionType.CONTROLLER, FluxTranslate.CONTROLLERS.t(), getGuiLeft() + 132, getGuiTop() + 142));
-		buttonList.add(new ChunkLoadedButton(this, 4, getGuiLeft() + 92, getGuiTop() + 120));
+		buttonList.add(new ChunkLoadedButton(this, 4, getGuiLeft() + 132, getGuiTop() + 119, 32, 15));
 		buttonList.add(new ConnectionSortingButton(this, 5, getGuiLeft() + 11, getGuiTop() + 119));
 		buttonList.add(new ConnectionDirectionButton(this, 6, getGuiLeft() + 28, getGuiTop() + 119));
-		buttonList.add(new ConnectedBlocksButton(this, 6, getGuiLeft() + 51, getGuiTop() + 119));
-		buttonList.add(new LargeButton(this, FluxTranslate.SORTING_CLEAR.t(), 7, getGuiLeft() + 68, getGuiTop() + 119, 68, 0));
+		buttonList.add(new ConnectedBlocksButton(this, 7, getGuiLeft() + 51, getGuiTop() + 119));
+		buttonList.add(new LargeButton(this, FluxTranslate.SORTING_CLEAR.t(), 8, getGuiLeft() + 68, getGuiTop() + 119, 68, 0));
+
+		buttonList.add(new ConnectedTilesButton(this, 9, getGuiLeft() + 91, getGuiTop() + 119));
+		buttonList.add(new ConnectNetworkButton(this, 10, getGuiLeft() + 108, getGuiTop() + 119));
 	}
 
 	@Override
 	public void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
+
 		if (button instanceof ConnectionTypeButton) {
 			ConnectionType type = ((ConnectionTypeButton) button).type;
 			canDisplay.put(type, !canDisplay.get(type));
 			connection_grid_scroller.currentScroll = 0;
 			return;
 		}
-		if (button instanceof ChunkLoadedButton) {
-			chunk_display_option = SonarHelper.incrementEnum(chunk_display_option, ChunkDisplayOptions.values());
-			connection_grid_scroller.currentScroll = 0;
-			return;
-		}
-		if (button instanceof ConnectionSortingButton) {
-			sorting_type = SonarHelper.incrementEnum(sorting_type, SortingType.values());
-			connection_grid_scroller.currentScroll = 0;
-			return;
-		}
-		if (button instanceof ConnectionDirectionButton) {
-			sorting_dir = SonarHelper.incrementEnum(sorting_dir, SortingDirection.values());
-			connection_grid_scroller.currentScroll = 0;
-			return;
-		}
-		if(button instanceof ConnectedBlocksButton){
-			showConnections = !showConnections;
-			connection_grid_scroller.currentScroll = 0;
-			return;
-		}
-		if(button instanceof LargeButton){
-			switch(button.id){
+		switch(button.id){
+			case 4:
+				chunk_display_option = SonarHelper.incrementEnum(chunk_display_option, ChunkDisplayOptions.values());
+				connection_grid_scroller.currentScroll = 0;
+				break;
+			case 5:
+				sorting_type = SonarHelper.incrementEnum(sorting_type, SortingType.values());
+				connection_grid_scroller.currentScroll = 0;
+				break;
+			case 6:
+				sorting_dir = SonarHelper.incrementEnum(sorting_dir, SortingDirection.values());
+				connection_grid_scroller.currentScroll = 0;
+				break;
 			case 7:
+				showConnections = !showConnections;
+				connection_grid_scroller.currentScroll = 0;
+				break;
+			case 8:
 				chunk_display_option = ChunkDisplayOptions.BOTH;
 				showConnections = false;
 				canDisplay = new HashMap<>();
@@ -110,7 +111,19 @@ public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 					canDisplay.put(type, true);
 				}
 				break;
-			}
+			case 9:
+				show_disconnected = !show_disconnected;
+				selected.clear();
+				break;
+			case 10:
+				if(show_disconnected){
+					selected.forEach(f -> f.network_id = getNetworkID());
+				}else{
+					selected.forEach(f -> f.network_id = -1);
+				}
+				FluxNetworks.network.sendToServer(new PacketEditedTiles(selected));
+
+				break;
 		}
 	}
 
@@ -135,10 +148,14 @@ public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 	@Override
 	public void onGridClicked(int gridID, Object element, int x, int y, int pos, int button, boolean empty) {
 		if (element instanceof ClientFlux) {
-			if (selected.contains(element)) {
-				selected.remove(element);
-			} else {
-				selected.add((ClientFlux) element);
+			if(button == 1){
+				FMLCommonHandler.instance().showGuiScreen(new GuiTabIndexSingleEditing<>(this, (ClientFlux)element, tabs));
+			}else {
+				if (selected.contains(element)) {
+					selected.remove(element);
+				} else {
+					selected.add((ClientFlux) element);
+				}
 			}
 		}
 	}
@@ -168,18 +185,24 @@ public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 	@Override
 	public List getGridList(int gridID) {
 
+		List list = new ArrayList<>();
 		//// ADD VALID CONNECTIONS \\\\
 		List<ClientFlux> gridList = new ArrayList<>();
-		for (ClientFlux c : CLIENT_CONNECTIONS.getValue(common)) {
-			if (chunk_display_option.canDisplay(c) && canDisplay.get(c.getConnectionType())) {
-				c.addToGuiList(gridList, true, false);
+		if(!show_disconnected) {
+			for (ClientFlux c : CLIENT_CONNECTIONS.getValue(common)) {
+				if (chunk_display_option.canDisplay(c) && canDisplay.get(c.getConnectionType())) {
+					c.addToGuiList(gridList, true, false);
+				}
 			}
+		}else{
+			ClientNetworkCache.instance().disconnected_tiles.forEach(f -> f.addToGuiList(gridList, true, false));
 		}
+
 		sorting_type.sort(gridList, sorting_dir);
 
 
 		//// SORTING FOLDERS \\\\
-		List list = new ArrayList<>();
+		/*
 		List<NetworkFluxFolder> folders = NETWORK_FOLDERS.getValue(common);
 		folders.sort((folder1, folder2) -> SonarHelper.compareStringsWithDirection(folder1.name, folder2.name, SortingDirection.DOWN));
 
@@ -196,6 +219,7 @@ public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 				}
 			}
 		}
+		*/
 		list.addAll(gridList);
 
 		//// ADD CONNECTIONS TO THE LIST \\\\
@@ -254,8 +278,8 @@ public class GuiTabNetworkConnections extends GuiTabAbstractGrid<Object> {
 
 		public GuiTabNetworkConnections gui;
 
-		protected ChunkLoadedButton(GuiTabNetworkConnections gui, int id, int x, int y) {
-			super(id, x, y, 72, 15, "");
+		protected ChunkLoadedButton(GuiTabNetworkConnections gui, int id, int x, int y, int width, int height) {
+			super(id, x, y, width, height, "");
 			this.gui = gui;
 		}
 

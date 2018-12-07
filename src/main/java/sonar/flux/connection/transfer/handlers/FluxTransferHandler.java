@@ -57,12 +57,12 @@ public abstract class FluxTransferHandler<T extends IFlux> extends BaseTransferH
 
 	@Override
 	public long getAddRate() {
-		return flux.getNetwork().isFakeNetwork() ? 0 : flux.getTransferLimit();
+		return flux.getNetwork().isFakeNetwork() ? 0 : flux.getCurrentLimit();
 	}
 
 	@Override
 	public long getRemoveRate() {
-		return flux.getTransferLimit();
+		return flux.getCurrentLimit();
 	}
 
 	@Override

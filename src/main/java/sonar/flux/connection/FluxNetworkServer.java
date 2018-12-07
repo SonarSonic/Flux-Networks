@@ -100,7 +100,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 			sortConnections = false;
 		}
 		buffer_limiter = 0;
-		sorted_points.forEach(g -> g.getEntries().forEach(p -> buffer_limiter += p.getTransferHandler().removeFromNetwork(p.getTransferLimit(), network_energy_type.getValue(), ActionType.SIMULATE)));
+		sorted_points.forEach(g -> g.getEntries().forEach(p -> buffer_limiter += p.getTransferHandler().removeFromNetwork(p.getCurrentLimit(), network_energy_type.getValue(), ActionType.SIMULATE)));
 
 		////we iterate through points as this causes less overhead, as any point transfer involves interactions with other tiles
 		if(!sorted_plugs.isEmpty() && !sorted_points.isEmpty()) {
@@ -111,7 +111,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 				while (PLUG_ITERATOR.hasNext()) {
 					IFluxPlug plug = PLUG_ITERATOR.getCurrentFlux();
 					if (plug.getConnectionType() != point.getConnectionType()) { // storages are both points and plugs
-						long max_pull = plug.getTransferHandler().addToNetwork(plug.getTransferLimit(), network_energy_type.getValue(), ActionType.SIMULATE);
+						long max_pull = plug.getTransferHandler().addToNetwork(plug.getCurrentLimit(), network_energy_type.getValue(), ActionType.SIMULATE);
 						long max_push = point.getTransferHandler().removeFromNetwork(max_pull, network_energy_type.getValue(), ActionType.SIMULATE);
 						if (max_push > 0) {
 							long pulled = plug.getTransferHandler().addToNetwork(max_push, network_energy_type.getValue(), ActionType.PERFORM);
@@ -124,7 +124,7 @@ public class FluxNetworkServer extends FluxNetworkBase implements IFluxNetwork {
 			}
 		}
         this.network_stats.getValue().onEndWorldTick();
-        if (!this.flux_tile_listeners.isEmpty()) {
+        if (hasGuiListeners()) {
             sendPacketToListeners();
         }
         if(isDirty()) {

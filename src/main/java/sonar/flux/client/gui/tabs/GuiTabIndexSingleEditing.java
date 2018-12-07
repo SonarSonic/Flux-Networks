@@ -3,20 +3,23 @@ package sonar.flux.client.gui.tabs;
 import com.google.common.collect.Lists;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
-import sonar.core.SonarCore;
 import sonar.core.client.gui.SelectionGrid;
 import sonar.core.client.gui.SonarTextField;
 import sonar.core.client.gui.widgets.SonarScroller;
-import sonar.core.sync.SyncValueHandler;
+import sonar.core.helpers.SonarHelper;
 import sonar.flux.FluxNetworks;
 import sonar.flux.FluxTranslate;
+import sonar.flux.api.ClientFlux;
+import sonar.flux.api.EnumActivationType;
+import sonar.flux.api.EnumPriorityType;
 import sonar.flux.client.gui.EnumGuiTab;
+import sonar.flux.client.gui.GuiTabAbstract;
 import sonar.flux.client.gui.GuiTabAbstractGrid;
 import sonar.flux.client.gui.buttons.CheckBox;
 import sonar.flux.client.gui.buttons.FluxTextField;
 import sonar.flux.client.gui.buttons.PriorityButton;
 import sonar.flux.client.gui.buttons.RedstoneSignalButton;
-import sonar.flux.common.tileentity.TileFlux;
+import sonar.flux.network.PacketEditedTiles;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,15 +28,16 @@ import java.util.Map;
 
 import static sonar.flux.connection.NetworkSettings.*;
 
-public class GuiTabIndexConnection<G> extends GuiTabAbstractGrid<G> {
+public class GuiTabIndexSingleEditing<G> extends GuiTabAbstractGrid<G> {
 
-    public TileFlux flux;
+    public ClientFlux flux;
 
     public SonarTextField fluxName, priority, limit;
-        
-	public GuiTabIndexConnection(List<EnumGuiTab> tabs) {
+
+	public GuiTabIndexSingleEditing(GuiTabAbstract origin, ClientFlux flux, List<EnumGuiTab> tabs) {
 		super(tabs);
-        flux = FluxNetworks.proxy.getFluxTile();
+        this.flux = flux;
+        this.setOrigin(origin);
 	}
 	
     @Override
@@ -42,21 +46,20 @@ public class GuiTabIndexConnection<G> extends GuiTabAbstractGrid<G> {
         int networkColour = NETWORK_COLOUR.getValue(common).getRGB();
         priority = FluxTextField.create(FluxTranslate.PRIORITY.t() + ": ", 0, getFontRenderer(), 8, 46, 147, 12).setBoxOutlineColour(networkColour).setDigitsOnly(true);
         priority.setMaxStringLength(8);
-        priority.setText(String.valueOf(flux.priority.getValue()));
+        priority.setText(String.valueOf(flux.priority));
 
         limit = FluxTextField.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", 1, getFontRenderer(), 8, 46+18, 147, 12).setBoxOutlineColour(networkColour).setDigitsOnly(true);
         limit.setMaxStringLength(8);
-        limit.setText(String.valueOf(flux.limit.getValue()));
+        limit.setText(String.valueOf(flux.limit));
 
         fluxName = FluxTextField.create(FluxTranslate.NAME.t() + ": ", 2, getFontRenderer(), 8, 28, 147, 12).setBoxOutlineColour(networkColour);
         fluxName.setMaxStringLength(24);
         fluxName.setText(flux.getCustomName());
            
         fieldList.addAll(Lists.newArrayList(priority, limit, fluxName));
-        buttonList.add(new CheckBox(this, 3, getGuiLeft() + 156, getGuiTop() + 64, () -> !flux.disableLimit.getValue(), FluxTranslate.ENABLE_LIMIT.t()));
-        buttonList.add(new RedstoneSignalButton( this, 4, getGuiLeft() + 156, getGuiTop() + 28, () -> flux.activation_type.getValue(), ""));
-        buttonList.add(new PriorityButton(this, 5, getGuiLeft() + 156, getGuiTop() + 46, () -> flux.priority_type.getValue(), ""));
-
+        buttonList.add(new CheckBox(this, 3, getGuiLeft() + 156, getGuiTop() + 64, () -> !flux.disableLimit, FluxTranslate.ENABLE_LIMIT.t()));
+        buttonList.add(new RedstoneSignalButton( this, 4, getGuiLeft() + 156, getGuiTop() + 28, () -> flux.activation_type, ""));
+        buttonList.add(new PriorityButton(this, 5, getGuiLeft() + 156, getGuiTop() + 46, () -> flux.priority_type, ""));
     }
 
     @Override
@@ -73,18 +76,15 @@ public class GuiTabIndexConnection<G> extends GuiTabAbstractGrid<G> {
             return;
         }
         if(button.id == 3){
-            SyncValueHandler.invertBoolean(flux.disableLimit);
-            SonarCore.sendPacketToServer(flux, -1);
+            flux.disableLimit = !flux.disableLimit;
             return;
         }
         if(button.id == 4){
-            SyncValueHandler.incrementEnum(flux.activation_type);
-            SonarCore.sendPacketToServer(flux, 12);
+            flux.activation_type = SonarHelper.incrementEnum(flux.activation_type, EnumActivationType.values());
             return;
         }
         if(button.id == 5){
-            SyncValueHandler.incrementEnum(flux.priority_type);
-            SonarCore.sendPacketToServer(flux, 16);
+            flux.priority_type = SonarHelper.incrementEnum(flux.priority_type, EnumPriorityType.values());
             return;
         }
     }
@@ -101,15 +101,21 @@ public class GuiTabIndexConnection<G> extends GuiTabAbstractGrid<G> {
     public void onTextFieldChanged(SonarTextField field) {
     	super.onTextFieldChanged(field);
         if (field == priority) {
-            flux.priority.setValueInternal(priority.getIntegerFromText());
-            SonarCore.sendPacketToServer(flux, 1);
+            flux.priority = priority.getIntegerFromText();
         } else if (field == limit) {
-            flux.limit.setValueInternal(limit.getLongFromText());
-            SonarCore.sendPacketToServer(flux, 2);
+            flux.limit = limit.getLongFromText();
         } else if (field == fluxName) {
-            flux.customName.setValueInternal(fluxName.getText());
-            SonarCore.sendPacketToServer(flux, 3);
+            flux.customName = fluxName.getText();
         }
+    }
+
+
+    @Override
+    public void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (isCloseKey(keyCode)) {
+            FluxNetworks.network.sendToServer(new PacketEditedTiles(Lists.newArrayList(flux)));
+        }
+        super.keyTyped(typedChar, keyCode);
     }
 
 	@Override
@@ -119,7 +125,7 @@ public class GuiTabIndexConnection<G> extends GuiTabAbstractGrid<G> {
 
 	@Override
 	public EnumGuiTab getCurrentTab() {
-		return EnumGuiTab.INDEX;
+		return EnumGuiTab.CONNECTIONS;
 	}
 
 	//// GRIDS \\\\

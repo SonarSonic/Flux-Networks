@@ -64,7 +64,7 @@ public class FluxCrafting extends FluxNetworks {
 		// RecipeSorter.register("fluxnetworks:storage",
 		// FluxCrafting.StorageCrafting.class, RecipeSorter.Category.SHAPED,
 		// "after:forge:shapedore");
-		SonarCrafting.addShaped(FluxConstants.MODID, group, new ItemStack(fluxConfigurator, 1), " CP", " OC", "O  ", 'C', fluxCore, 'P', Items.ENDER_PEARL, 'O', Blocks.OBSIDIAN);
+		SonarCrafting.addShaped(FluxConstants.MODID, group, new ItemStack(fluxConfigurator, 1), " CP", " OC", "O  ", 'C', flux, 'P', Items.ENDER_PEARL, 'O', Blocks.OBSIDIAN);
 		SonarCrafting.addShaped(FluxConstants.MODID, group, new ItemStack(fluxBlock, 1), "ACA", "CAC", "ACA", 'A', flux, 'C', fluxCore);
 		SonarCrafting.addShaped(FluxConstants.MODID, group, new ItemStack(fluxCore, 4), "GCG", "CAC", "GCG", 'C', Blocks.OBSIDIAN, 'G', flux, 'A', Items.ENDER_EYE);
 		SonarCrafting.addShaped(FluxConstants.MODID, group, new ItemStack(fluxController, 1), "BCB", "R R", "BBB", 'C', fluxCore, 'B', fluxBlock, 'R', flux);

@@ -111,10 +111,6 @@ public class FluxNetworks {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		logger.info("Loading Events");
-		MinecraftForge.EVENT_BUS.register(new FluxEvents());
-		logger.info("Loaded Events");
-
 		proxy.init(event);
 		logger.info("Finished Initialization");
 	}
