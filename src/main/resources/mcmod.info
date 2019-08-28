@@ -1,14 +1,16 @@
 [
 {
-"modid": "fluxnetworks",
-"name": "Flux Networks",
-"description": "Create Wireless Energy Networks",
-"version": "${version}",
-"mcversion": "${mcversion}",
-"updateUrl": "http://minecraft.curseforge.com/projects/flux-networks/files/latest",
-"authors": ["Ollie Lansdell"],
-"credits": "Created by Ollie Lansdell",
-"logoFile": "",
-"screenshots": []
+  "modid": "fluxnetworksx",
+  "name": "Flux Networks",
+  "description": "Wireless Energy Transportation.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BloCamLimb"],
+  "credits": "Original by Ollie Lansdell, Refactored by BloCamLimb",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
 }
 ]

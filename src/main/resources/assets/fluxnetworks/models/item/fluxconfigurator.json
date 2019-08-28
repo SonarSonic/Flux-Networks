@@ -1,7 +1,0 @@
-{
-  "parent":"item/generated",
-  "textures": {
-    "layer0":"fluxnetworks:items/flux_configurator_layer0",
-    "layer1":"fluxnetworks:items/flux_configurator_layer1"
-  }
-}

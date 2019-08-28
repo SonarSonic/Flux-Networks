@@ -1,218 +1,49 @@
 buildscript {
     repositories {
         jcenter()
-        maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
-        }
-
+        maven { url = "https://files.minecraftforge.net/maven" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
-
-plugins {
-    id "com.matthewprenger.cursegradle" version "1.1.0"
-}
-
-repositories {
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-    maven {
-        name = "CoFH Maven"
-        url = "http://maven.covers1624.net"
-    }
-    maven {
-        name = "ic2"
-        url = "http://maven.ic2.player.to/"
-    }
-    maven { url = "http://maven.ironhide.de/" }
-    flatDir {
-        dirs 'libs'
-    }
-}
-
-apply plugin: 'maven-publish'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${minecraft_version}-${mod_version}"
-if (hasProperty('appendBuildNumber')) {
-    version = version + "-" + appendBuildNumber.toString()
-} else if(!hasProperty('official_build')){
-    version = version + "-unofficial"
-}
-group= "sonar.flux"
-archivesBaseName = "flux"
-sourceCompatibility = targetCompatibility = "1.8"
+version = "${minecraft_version}-4.0.3-r19"
+group = "fluxnetworks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "fluxnetworks"
+
 compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
+    sourceCompatibility = targetCompatibility = '1.8'
 }
 
 minecraft {
-    version = "${forge_version}"
+    version = "1.12.2-14.23.5.2838"
     runDir = "run"
-    replace "@VERSION@", "${mod_version}"
-    replace "sonarcore@[0.0.0,)", "sonarcore@[" + "${sonar_core_version}" +",)"
     mappings = "snapshot_20171003"
-    makeObfSourceJar = true
-}
-
-task deobfJar(type: Jar) { // Generate deobfuscated
-    from sourceSets.main.output
-    classifier = 'deobf'
-    archiveName = "fluxnetworks-${version}-deobf.jar"
-}
-tasks.build.dependsOn('deobfJar')
-
-artifacts {
-    archives deobfJar
-    archives sourceJar
-    archives jar
-}
-
-jar {
-    archiveName = "fluxnetworks-${version}.jar"
-}
-
-sourceJar {
-    archiveName = "fluxnetworks-${version}-sources.jar"
-}
-
-def sonarcore_local = false
-if (project.allprojects.findAll({it.name == "Sonar-Core"}).size() > 0) {
-    sonarcore_local = true
 }
 
 dependencies {
-    compileOnly "tesla:Tesla:${tesla_version}"
-    compileOnly "mekanism:Mekanism:${mekanism_version}"
-    deobfCompile "cofh:RedstoneFlux:${redstoneflux_version}"
-    compileOnly "appeng:appliedenergistics2:${ae2_version}"
-    compileOnly "baubles:Baubles:${baubles_version}"
-    compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "api"
-    compile group: "net.industrial-craft", name: "industrialcraft-2", version: "2.8.75-ex112", classifier: "dev"
-    if (!sonarcore_local) {
-        compileOnly "sonar:sonarcore:${minecraft_version}-${sonar_core_version}-${sonar_core_build_version}:deobf"
-    } else {
-        compile project(':Sonar-Core')
-    }
+
 }
 
-processResources
-{
+processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
+
         expand 'version':project.version, 'mcversion':project.minecraft.version
-    }        
+    }
 
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 }
 
-publishing {
-    tasks.publish.dependsOn 'build'
-    publications {
-        mavenJava(MavenPublication) {
-            groupId group_prefix
-            version version
-            artifactId "fluxnetworks"
-            artifact jar
-            artifact sourceJar
-            artifact deobfJar
-        }
-    }
-    repositories {
-        mavenLocal()
-    }
-}
-
-
-//// DETECTING COMMIT NAME AND ACTIVATING CURSE RELEASE \\\\
-
-def commit_release_type = getCommmitReleaseType()
-
-def getCommmitReleaseType(){
-    if(project.hasProperty("curseforge_key")){
-
-        def stdout = new ByteArrayOutputStream()
-        try {
-            exec {
-                commandLine 'git', 'log', '-1', '--pretty=tformat:%s'
-                standardOutput = stdout
-            }
-        }catch(Exception e){
-            System.print("SKIPPING CURSE RELEASE - FAILED TO RETRIEVE LAST COMMIT")
-            e.printStackTrace();
-            return 'none';
-        }
-
-        String commit = stdout.toString().trim()
-
-        if(commit.startsWith("Release") || commit.startsWith("release")){
-            System.out.println("FOUND NEW RELEASE - COMMIT: " + commit);
-            return 'release'
-
-        }else if(commit.startsWith("Beta") || commit.startsWith("beta")){
-            System.out.println("FOUND NEW BETA - COMMIT: " + commit);
-            return 'beta'
-
-        }else if(commit.startsWith("Alpha") || commit.startsWith("alpha")){
-            System.out.println("FOUND NEW ALPHA - COMMIT: " + commit);
-            return 'alpha'
-        }else{
-            System.out.println("SKIPPING CURSE RELEASE - COMMIT: " + commit)
-        }
-
-    }
-
-    System.out.println("SKIPPING CURSE RELEASE - NO CURSE API KEY")
-    return 'none';
-}
-
-tasks.curseforge.enabled = project.hasProperty("curseforge_key") && !commit_release_type.equals('none')
-
-curseforge {
-
-    if(project.hasProperty("curseforge_key") && !commit_release_type.equals('none')) {
-        System.out.println("ATTEMPTING CURSE RELEASE")
-        apiKey = project.properties["curseforge_key"]
-    }
-
-    project {
-        id = curse_project_id
-
-        relations {
-            requiredDependency 'sonar-core'
-            optionalDependency 'tesla'
-            optionalDependency 'industrial-craft'
-            optionalDependency 'redstone-flux'
-            optionalDependency 'applied-energistics-2'
-            optionalDependency 'immersive-engineering'
-        }
-
-        mainArtifact(jar) {
-            displayName = "Flux-Networks-${minecraft_version}-${mod_version}"
-            //throws if not release, beta or alpha
-            releaseType = !commit_release_type.equals('none') ? commit_release_type : 'release'
-            changelog = file("${projectDir}/change_log.html").text
-            changelogType = 'html'
-        }
-
-        addArtifact(sourceJar){
-            changelog = "For experienced users only"
-            releaseType = 'alpha'
-        }
-
-        addArtifact(deobfJar){
-            changelog = "For experienced users only"
-            releaseType = 'alpha'
-        }
-    }
-}
+//sourceSets {
+//    main {
+//        output.resourcesDir = java.outputDir
+//    }
+//}
