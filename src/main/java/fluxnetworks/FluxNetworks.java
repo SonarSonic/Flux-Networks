@@ -1,0 +1,48 @@
+package fluxnetworks;
+
+import fluxnetworks.common.CommonProxy;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+@Mod(modid = FluxNetworks.MODID, name = FluxNetworks.NAME, version = FluxNetworks.VERSION, acceptedMinecraftVersions = "[1.12.2]")
+public class FluxNetworks {
+
+    public static final String MODID = "fluxnetworksx";
+    public static final String NAME = "Flux Networks";
+    public static final String VERSION = "1.12.2-4.0.3";
+
+    @Mod.Instance(MODID)
+    public static FluxNetworks instance;
+
+    public static Logger logger = LogManager.getLogger("FluxNetworks");
+
+    @SidedProxy(clientSide = "fluxnetworks.client.ClientProxy", serverSide = "fluxnetworks.common.CommonProxy")
+    public static CommonProxy proxy;
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        proxy.preInit(event);
+    }
+
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        proxy.init(event);
+    }
+
+    @Mod.EventHandler
+    public void onServerStarted(FMLServerStartedEvent event) {
+        proxy.onServerStarted();
+    }
+
+    @Mod.EventHandler
+    public void onServerStopped(FMLServerStoppedEvent event) {
+        proxy.onServerStopped();
+    }
+}

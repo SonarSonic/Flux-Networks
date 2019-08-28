@@ -1,0 +1,29 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"fluxnetworksx:fluxcontroller",
+        "transform":"forge:default-block",
+        "textures": {
+          "0": "fluxnetworksx:model/fluxcontroller_bottom",
+          "1": "fluxnetworksx:model/flux_controller",
+          "colour" : "fluxnetworksx:model/fluxcontroller_colour",
+          "top": "fluxnetworksx:model/fluxcontroller_off",
+          "particle": "fluxnetworksx:model/fluxcontroller_bottom"
+        }
+      },
+    "variants": {
+        "inventory": [{}],
+        "connected":{
+            "true":{
+                 "textures": {                 
+                    "top":"fluxnetworksx:model/fluxcontroller_on"
+                  }
+            },
+            "false":{
+                 "textures": {                 
+                    "top":"fluxnetworksx:model/fluxcontroller_off"
+                  }                
+            }
+         }        
+    }
+}

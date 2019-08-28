@@ -1,0 +1,68 @@
+package fluxnetworks.common.connection;
+
+import fluxnetworks.api.tileentity.IFluxConnector;
+
+import java.util.Iterator;
+import java.util.List;
+
+public class TransferIterator<T extends IFluxConnector> {
+
+    private Iterator<PriorityGroup<T>> groupIterator;
+    private PriorityGroup<T> currentGroup;
+
+    private Iterator<T> fluxIterator;
+    private T currentFlux;
+
+    private boolean isPoint;
+    public boolean finish = false;
+
+    public void update(List<PriorityGroup<T>> list, boolean isPoint) {
+        groupIterator = list.iterator();
+        currentGroup = null;
+        fluxIterator = null;
+        currentFlux = null;
+        this.isPoint = isPoint;
+        finish = false;
+        incrementGroup();
+    }
+
+    public boolean incrementGroup() {
+        if(groupIterator.hasNext()) {
+            currentGroup = groupIterator.next();
+            fluxIterator = currentGroup.connectors.iterator();
+            return incrementFlux();
+        }
+        finish = true;
+        return false;
+    }
+
+    public boolean incrementFlux() {
+        if(fluxIterator.hasNext()) {
+            currentFlux = fluxIterator.next();
+            return needTransfer() || incrementFlux();
+        }
+        return incrementGroup();
+    }
+
+    public boolean needTransfer() {
+        if(!currentFlux.isActive()) {
+            return false;
+        }
+        if(isPoint) {
+            return currentFlux.getTransferHandler().getRequest() > 0;
+        } else {
+            return currentFlux.getTransferHandler().getBuffer() > 0;
+        }
+    }
+
+    public T getCurrentFlux() {
+        return currentFlux;
+    }
+
+    public boolean hasNext() {
+        if(finish) {
+            return false;
+        }
+        return needTransfer() || incrementFlux();
+    }
+}
