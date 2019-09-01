@@ -18,19 +18,6 @@ public abstract class TileFluxConnector extends TileGTEnergy {
     }
 
     @Override
-    public NBTTagCompound writeCustomNBT(NBTTagCompound tag) {
-        super.writeCustomNBT(tag);
-        tag.setLong("buffer", handler.getBuffer());
-        return tag;
-    }
-
-    @Override
-    public void readCustomNBT(NBTTagCompound tag) {
-        super.readCustomNBT(tag);
-        handler.setBuffer(tag.getLong("buffer"));
-    }
-
-    @Override
     public void updateTransfers(EnumFacing... facings) {
         super.updateTransfers(facings);
         boolean sendUpdate = false;

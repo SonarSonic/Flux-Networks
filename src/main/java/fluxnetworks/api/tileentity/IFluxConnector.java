@@ -1,8 +1,13 @@
 package fluxnetworks.api.tileentity;
 
+import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
+import fluxnetworks.common.core.FluxGuiStack;
+import fluxnetworks.common.core.FluxUtils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -45,6 +50,8 @@ public interface IFluxConnector {
 
     ConnectionType getConnectionType();
 
+    boolean canAccess(EntityPlayer player);
+
     long getCurrentLimit();
 
     boolean isActive();
@@ -59,5 +66,24 @@ public interface IFluxConnector {
 
     World getDimension();
 
-    ItemStack getDisplayStack();
+    Coord4D getCoords();
+
+    int getFolderID();
+
+    String getCustomName();
+
+    boolean getDisableLimit();
+
+    boolean getSurgeMode();
+
+    default ItemStack getDisplayStack() {
+        switch (getConnectionType()) {
+            case POINT:
+                return FluxGuiStack.FLUX_POINT;
+            case PLUG:
+                return FluxGuiStack.FLUX_PLUG;
+            default:
+                return ItemStack.EMPTY;
+        }
+    }
 }

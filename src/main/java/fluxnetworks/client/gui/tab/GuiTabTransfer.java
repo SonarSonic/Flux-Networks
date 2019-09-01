@@ -1,23 +1,20 @@
 package fluxnetworks.client.gui.tab;
 
-import fluxnetworks.client.gui.GuiCore;
-import fluxnetworks.client.gui.GuiTabCore;
+import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.button.NavigationButton;
-import fluxnetworks.client.gui.button.NormalButton;
-import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.PacketGeneral;
-import fluxnetworks.common.network.PacketGeneralHandler;
-import fluxnetworks.common.network.PacketGeneralType;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import java.io.IOException;
 
 public class GuiTabTransfer extends GuiTabCore {
 
     public GuiTabTransfer(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
+    }
+
+    @Override
+    protected void drawForegroundLayer(int mouseX, int mouseY) {
+        super.drawForegroundLayer(mouseX, mouseY);
+        fontRenderer.drawString("WIP", 20, 30, 0xffffff);
     }
 
     @Override

@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = FluxNetworks.MODID, name = FluxNetworks.NAME, version = FluxNetworks.VERSION, acceptedMinecraftVersions = "[1.12.2]")
 public class FluxNetworks {
 
-    public static final String MODID = "fluxnetworksx";
+    public static final String MODID = "fluxnetworks";
     public static final String NAME = "Flux Networks";
-    public static final String VERSION = "1.12.2-4.0.3";
+    public static final String VERSION = "4.0.5";
 
     @Mod.Instance(MODID)
     public static FluxNetworks instance;

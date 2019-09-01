@@ -1,7 +1,11 @@
 package fluxnetworks.client.gui.button;
 
+import fluxnetworks.client.gui.basic.GuiButtonCore;
 import net.minecraft.client.Minecraft;
 
+/**
+ * A clickable button
+ */
 public class NormalButton extends GuiButtonCore {
 
     public int color = 0xffb4b4b4;

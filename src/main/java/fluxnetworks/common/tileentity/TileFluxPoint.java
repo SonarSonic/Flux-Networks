@@ -15,9 +15,4 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
         return ConnectionType.POINT;
     }
 
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(RegistryBlocks.FLUX_POINT);
-    }
-
 }

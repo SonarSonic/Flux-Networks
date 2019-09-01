@@ -2,13 +2,14 @@ package fluxnetworks.common.connection;
 
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import fluxnetworks.api.network.IFluxTransfer;
+import fluxnetworks.api.network.ISidedTransfer;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public class ConnectionTransfer implements IFluxTransfer {
+public class ConnectionTransfer implements IFluxTransfer, ISidedTransfer {
 
     public final ITransferHandler transferHandler;
     public final ITileEnergyHandler energyHandler;
@@ -33,8 +34,7 @@ public class ConnectionTransfer implements IFluxTransfer {
      * @return
      */
     @Override
-    public long addToNetwork(long amount) {
-
+    public long addToNetwork(long amount, boolean simulate) {
         return 0;
     }
 

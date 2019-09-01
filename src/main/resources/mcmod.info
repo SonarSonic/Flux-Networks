@@ -1,8 +1,8 @@
 [
 {
-  "modid": "fluxnetworksx",
+  "modid": "fluxnetworks",
   "name": "Flux Networks",
-  "description": "Wireless Energy Transportation.",
+  "description": "Wireless Energy Networks.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",

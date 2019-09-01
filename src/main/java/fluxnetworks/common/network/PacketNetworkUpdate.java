@@ -2,7 +2,7 @@ package fluxnetworks.common.network;
 
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.core.SyncType;
+import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,11 +32,11 @@ public class PacketNetworkUpdate implements IMessageHandler<PacketNetworkUpdate.
     public static class NetworkUpdateMessage implements IMessage {
 
         public Map<Integer, NBTTagCompound> updatedNetworks = new HashMap<>();
-        public SyncType type;
+        public NBTType type;
 
         public NetworkUpdateMessage() {}
 
-        public NetworkUpdateMessage(List<IFluxNetwork> toSend, SyncType type) {
+        public NetworkUpdateMessage(List<IFluxNetwork> toSend, NBTType type) {
             this.type = type;
             toSend.forEach(n -> {
                 NBTTagCompound tag = new NBTTagCompound();
@@ -50,7 +50,7 @@ public class PacketNetworkUpdate implements IMessageHandler<PacketNetworkUpdate.
 
         @Override
         public void fromBytes(ByteBuf buf) {
-            type = SyncType.values()[buf.readInt()];
+            type = NBTType.values()[buf.readInt()];
             int size = buf.readInt();
             for(int i = 0; i < size; i++) {
                 updatedNetworks.put(buf.readInt(), ByteBufUtils.readTag(buf));

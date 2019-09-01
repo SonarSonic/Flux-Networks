@@ -6,7 +6,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public enum PacketGeneralType {
     CREATE_NETWORK(PacketGeneralHandler::handleCreateNetworkPacket),
-    DELETE_NETWORK(PacketGeneralHandler::handleDeleteNetworkPacket);
+    EDIT_NETWORK(PacketGeneralHandler::handleNetworkEditPacket),
+    DELETE_NETWORK(PacketGeneralHandler::handleDeleteNetworkPacket),
+    ADD_MEMBER(PacketGeneralHandler::handleAddMemberPacket),
+    REMOVE_MEMBER(PacketGeneralHandler::handleRemoveMemberPacket),
+    CHANGE_PERMISSION(PacketGeneralHandler::handleChangePermissionPacket);
 
     public IPacketGeneralHandler handler;
 

@@ -15,9 +15,4 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
         return ConnectionType.PLUG;
     }
 
-    @Override
-    public ItemStack getDisplayStack() {
-        return new ItemStack(RegistryBlocks.FLUX_PLUG);
-    }
-
 }

@@ -2,6 +2,8 @@ package fluxnetworks.common.block;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.common.connection.NetworkMember;
+import fluxnetworks.common.core.FluxUtils;
+import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -33,9 +35,9 @@ public abstract class BlockFluxCore extends BlockCore {
     public AxisAlignedBB bounding = FULL_BLOCK_AABB;
 
     public BlockFluxCore(String name) {
-        super(name, Material.ROCK, true);
+        super(name, FluxUtils.MACHINE, true);
         setHardness(0.2f);
-        setResistance(9999999);
+        setResistance(1000000);
     }
 
     @Override
@@ -48,11 +50,11 @@ public abstract class BlockFluxCore extends BlockCore {
 
         if (tileEntity instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tileEntity;
-            if(fluxCore.canAccess(playerIn)) {
-                playerIn.openGui(FluxNetworks.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            if(fluxCore.playerUsing.size() > 0) {
+                playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + "" + TextFormatting.BOLD + "Access denied: Another player is using"), true);
                 return true;
-            } else if(fluxCore.playerUsing.size() > 0) {
-                playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + "" + TextFormatting.BOLD + "Access denied: Others are using"), true);
+            } else if(fluxCore.canAccess(playerIn)) {
+                playerIn.openGui(FluxNetworks.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
                 return true;
             }
         }
@@ -71,6 +73,13 @@ public abstract class BlockFluxCore extends BlockCore {
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if(!worldIn.isRemote) {
             readDataFromStack(stack, pos, worldIn);
+            TileEntity tileEntity = worldIn.getTileEntity(pos);
+            if (tileEntity instanceof TileFluxCore) {
+                TileFluxCore fluxCore = (TileFluxCore) tileEntity;
+                if(placer instanceof EntityPlayer) {
+                    fluxCore.playerUUID = EntityPlayer.getUUID(((EntityPlayer) placer).getGameProfile());
+                }
+            }
         }
     }
 
@@ -112,8 +121,8 @@ public abstract class BlockFluxCore extends BlockCore {
         TileEntity tile = world.getTileEntity(pos);
         if(tile instanceof TileFluxCore) {
             TileFluxCore t = (TileFluxCore) tile;
-            NBTTagCompound tag = stack.getOrCreateSubCompound("fluxData");
-            t.writeCustomNBT(tag);
+            NBTTagCompound tag = stack.getOrCreateSubCompound(FluxUtils.FLUX_DATA);
+            t.writeCustomNBT(tag, NBTType.DROP);
         }
     }
 
@@ -121,8 +130,9 @@ public abstract class BlockFluxCore extends BlockCore {
         TileEntity tile = world.getTileEntity(pos);
         if(tile instanceof TileFluxCore && stack.hasTagCompound()) {
             TileFluxCore t = (TileFluxCore) tile;
-            NBTTagCompound tag = stack.getSubCompound("fluxData");
-            t.readCustomNBT(tag);
+            NBTTagCompound tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
+            if(tag != null)
+                t.readCustomNBT(tag, NBTType.DROP);
         }
     }
 

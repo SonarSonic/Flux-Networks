@@ -3,7 +3,8 @@ package fluxnetworks.client.gui.tab;
 import com.google.common.collect.Lists;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
-import fluxnetworks.client.gui.GuiTabCore;
+import fluxnetworks.client.gui.basic.GuiTabCore;
+import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.*;
 import fluxnetworks.common.network.PacketGeneralHandler;
 import fluxnetworks.common.tileentity.TileFluxCore;
@@ -26,10 +27,10 @@ public class GuiTabCreate extends GuiTabCore {
 
     public SecurityType securityType = SecurityType.PUBLIC;
     public EnergyType energyType = EnergyType.RF;
-    public boolean allowConversion = true;
+    //public boolean allowConversion = true;
     public ColorButton color;
-    public GuiTextBox name;
-    public GuiTextBox password;
+    public TextboxButton name;
+    public TextboxButton password;
 
     public GuiTabCreate(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
@@ -74,11 +75,11 @@ public class GuiTabCreate extends GuiTabCore {
         }
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7).setMain());
 
-        name = GuiTextBox.create("", 1, fontRenderer, 42, 28, 118, 12);
+        name = TextboxButton.create("", 1, fontRenderer, 42, 28, 118, 12);
         name.setMaxStringLength(24);
         name.setText(mc.player.getName() + "'s Network");
 
-        password = GuiTextBox.create("", 2, fontRenderer, 52, 63, 106, 12).setTextInvisible();
+        password = TextboxButton.create("", 2, fontRenderer, 52, 63, 106, 12).setTextInvisible();
         password.setMaxStringLength(16);
         password.setVisible(false);
 
@@ -143,7 +144,7 @@ public class GuiTabCreate extends GuiTabCore {
             }
         }
 
-        for(GuiTextBox text : textBoxes) {
+        for(TextboxButton text : textBoxes) {
             if(text.isFocused()) {
                 text.textboxKeyTyped(c, k);
             }

@@ -1,10 +1,11 @@
 package fluxnetworks.common.connection;
 
-import fluxnetworks.api.MemberPermission;
+import fluxnetworks.FluxConfig;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.common.core.SyncType;
+import fluxnetworks.common.core.NBTType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -23,16 +24,15 @@ public class FluxNetworkCache {
     }
 
     public boolean hasSpaceLeft(EntityPlayer player) {
-        //TODO config
         UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
         List<IFluxNetwork> created = getAllNetworks().stream().filter(s -> s.getSetting(NetworkSettings.NETWORK_OWNER).equals(uuid)).collect(Collectors.toList());
-        return created.size() < 10;
+        return created.size() < FluxConfig.maximumPerPlayer;
     }
 
     public IFluxNetwork createdNetwork(EntityPlayer player, String name, int color, SecurityType securityType, EnergyType energyType, String password) {
         UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 
-        NetworkMember owner = NetworkMember.createNetworkMember(player, MemberPermission.OWNER);
+        NetworkMember owner = NetworkMember.createNetworkMember(player, AccessPermission.OWNER);
         FluxNetworkServer network = new FluxNetworkServer(createUid(), name, securityType, color, uuid, energyType, password);
         network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(owner);
 
@@ -41,10 +41,10 @@ public class FluxNetworkCache {
     }
 
     private int createUid() {
-        return FluxNetworkData.get().uid++;
+        return FluxNetworkData.get().uniqueID++;
     }
 
-    public void updateClientFromPacket(Map<Integer, NBTTagCompound> serverSideNetworks, SyncType type) {
+    public void updateClientFromPacket(Map<Integer, NBTTagCompound> serverSideNetworks, NBTType type) {
         serverSideNetworks.forEach((i, n) -> {
             IFluxNetwork network = getNetwork(i);
             if(!network.isInvalid()) {

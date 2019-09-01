@@ -1,10 +1,16 @@
 package fluxnetworks.common.core;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.EnergyType;
+import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.connection.FluxNetworkCache;
+import fluxnetworks.common.connection.FluxNetworkServer;
 import fluxnetworks.common.registry.RegistryBlocks;
+import fluxnetworks.common.tileentity.TileFluxCore;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,22 +22,16 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
 import java.util.Collection;
+import java.util.UUID;
 
 public class FluxUtils {
 
-    public static ItemStack FLUX_PLUG;
-    public static ItemStack FLUX_POINT;
+    public static String FLUX_DATA = "FluxData";
+    public static String GUI_COLOR = "GuiColor";
 
-    static {
-        NBTTagCompound tag = new NBTTagCompound();
-        tag.setBoolean("GuiColor", true);
-        ItemStack stack1 = new ItemStack(RegistryBlocks.FLUX_PLUG);
-        ItemStack stack2 = new ItemStack(RegistryBlocks.FLUX_POINT);
-        stack1.setTagCompound(tag);
-        stack2.setTagCompound(tag);
-        FLUX_PLUG = stack1;
-        FLUX_POINT = stack2;
-    }
+    public static UUID UUID_DEFAULT = new UUID(-1, -1);
+
+    public static Material MACHINE = new Material(MapColor.BLACK);
 
     public static <E extends Enum> E incrementEnum(E enumObj, E[] values) {
         int ordinal = enumObj.ordinal() + 1;
@@ -117,14 +117,18 @@ public class FluxUtils {
     }
 
 
-    public static void addConnection(IFluxConnector fluxConnector) {
+    public static boolean addConnection(IFluxConnector fluxConnector) {
         if(fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.instance.getNetwork(fluxConnector.getNetworkID());
             if(network != null) {
+                if(fluxConnector.getConnectionType().isController() && ((FluxNetworkServer) network).getConnections(FluxType.controller).size() > 0) {
+                    return false;
+                }
                 network.queueConnectionAddition(fluxConnector);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public static void removeConnection(IFluxConnector fluxConnector, boolean isChunkUnload) {
@@ -196,6 +200,14 @@ public class FluxUtils {
             return format(in / 4, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
         }
         return format(in, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
+    }
+
+    public static boolean checkPassword(String str) {
+        for(int i = 0; i < str.length(); i++) {
+            if(!Character.isLetterOrDigit(str.charAt(i)))
+                return false;
+        }
+        return true;
     }
 
 }
