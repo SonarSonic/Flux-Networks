@@ -1,14 +1,21 @@
 package fluxnetworks.common.network;
 
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.connection.FluxNetworkData;
+import fluxnetworks.common.connection.NetworkMember;
+import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class PacketGeneralHandler {
 
@@ -28,11 +35,47 @@ public class PacketGeneralHandler {
         SecurityType security = SecurityType.values()[nbtTag.getInteger(FluxNetworkData.SECURITY_TYPE)];
         EnergyType energy = EnergyType.values()[nbtTag.getInteger(FluxNetworkData.ENERGY_TYPE)];
         String password = nbtTag.getString(FluxNetworkData.NETWORK_PASSWORD);
-
+        if(!FluxUtils.checkPassword(password)) {
+            return new PacketFeedback.FeedbackMessage(FeedbackInfo.ILLEGAL_PASSWORD);
+        }
         if(FluxNetworkCache.instance.hasSpaceLeft(player)) {
             FluxNetworkCache.instance.createdNetwork(player, name, color, security, energy, password);
+            return null;
         }
+        return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_SPACE);
+    }
 
+    public static NBTTagCompound getNetworkEditPacket(int networkID, String networkName, SecurityType security, EnergyType energy, String password) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
+        tag.setString(FluxNetworkData.NETWORK_NAME, networkName);
+        tag.setInteger(FluxNetworkData.SECURITY_TYPE, security.ordinal());
+        tag.setInteger(FluxNetworkData.ENERGY_TYPE, energy.ordinal());
+        tag.setString(FluxNetworkData.NETWORK_PASSWORD, password);
+        return tag;
+    }
+
+    public static IMessage handleNetworkEditPacket(EntityPlayer player, NBTTagCompound tag) {
+        int networkID =tag.getInteger(FluxNetworkData.NETWORK_ID);
+        String newName = tag.getString(FluxNetworkData.NETWORK_NAME);
+        SecurityType security = SecurityType.values()[tag.getInteger(FluxNetworkData.SECURITY_TYPE)];
+        EnergyType energy = EnergyType.values()[tag.getInteger(FluxNetworkData.ENERGY_TYPE)];
+        String password = tag.getString(FluxNetworkData.NETWORK_PASSWORD);
+        if(!FluxUtils.checkPassword(password)) {
+            return new PacketFeedback.FeedbackMessage(FeedbackInfo.ILLEGAL_PASSWORD);
+        }
+        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+        if (!network.isInvalid()) {
+            if (network.getMemberPermission(player).canEdit()) {
+                network.setSetting(NetworkSettings.NETWORK_NAME, newName);
+                network.setSetting(NetworkSettings.NETWORK_SECURITY, security);
+                network.setSetting(NetworkSettings.NETWORK_ENERGY, energy);
+                network.setSetting(NetworkSettings.NETWORK_PASSWORD, password);
+                return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
+            } else {
+                return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
+            }
+        }
         return null;
     }
 
@@ -48,8 +91,90 @@ public class PacketGeneralHandler {
         if(!toDelete.isInvalid()) {
             if(toDelete.getMemberPermission(player).canDelete()) {
                 FluxNetworkData.get().removeNetwork(toDelete);
+                return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
             } else {
                 return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_OWNER);
+            }
+        }
+        return null;
+    }
+
+    public static NBTTagCompound getAddMemberPacket(int networkID, String playerName) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("networkID", networkID);
+        tag.setString("playerName", playerName);
+        return tag;
+    }
+
+    public static IMessage handleAddMemberPacket(EntityPlayer player, NBTTagCompound packetTag) {
+        int networkID = packetTag.getInteger("networkID");
+        String playerName = packetTag.getString("playerName");
+
+        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+        if (!network.isInvalid()) {
+            if (network.getMemberPermission(player).canEdit()) {
+                network.addNewMember(playerName);
+            } else {
+                return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
+            }
+        }
+        return null;
+    }
+
+    public static NBTTagCompound getRemoveMemberPacket(int networkID, UUID playerRemoved) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("networkID", networkID);
+        tag.setUniqueId("playerRemoved", playerRemoved);
+        return tag;
+    }
+
+    public static IMessage handleRemoveMemberPacket(EntityPlayer player, NBTTagCompound packetTag) {
+        int networkID = packetTag.getInteger("networkID");
+        UUID playerRemoved = packetTag.getUniqueId("playerRemoved");
+
+        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+        if (!network.isInvalid()) {
+            if (network.getMemberPermission(player).canEdit()) {
+                network.removeMember(playerRemoved);
+            } else {
+                return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
+            }
+        }
+        return null;
+    }
+
+    public static NBTTagCompound getChangePermissionPacket(int networkID, UUID playerChanged) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setInteger("networkID", networkID);
+        tag.setUniqueId("playerChanged", playerChanged);
+        return tag;
+    }
+
+    public static IMessage handleChangePermissionPacket(EntityPlayer player, NBTTagCompound packetTag) {
+        int networkID = packetTag.getInteger("networkID");
+        UUID playerChanged = packetTag.getUniqueId("playerChanged");
+        if (playerChanged != null) {
+            if (EntityPlayer.getUUID(player.getGameProfile()).equals(playerChanged)) {
+                //don't allow editing of their own permissions.
+                return null;
+            }
+
+            IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+            if (!network.isInvalid()) {
+                if (network.getMemberPermission(player).canEdit()) {
+                    Optional<NetworkMember> settings = network.getValidMember(playerChanged);
+                    if (settings.isPresent()) {
+                        NetworkMember p = settings.get();
+                        if(!p.getPermission().canDelete()) {
+                            p.setPermission(p.getPermission() == AccessPermission.USER ? AccessPermission.ADMIN : AccessPermission.USER);
+                            return null;
+                        }
+                    }
+                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);
+
+                } else {
+                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
+                }
             }
         }
         return null;

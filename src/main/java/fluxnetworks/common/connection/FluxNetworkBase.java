@@ -3,10 +3,11 @@ package fluxnetworks.common.connection;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.network.ILiteConnector;
+import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tileentity.ILiteConnector;
 import fluxnetworks.common.core.CustomValue;
 import fluxnetworks.common.core.ICustomValue;
-import fluxnetworks.common.core.SyncType;
+import fluxnetworks.common.core.NBTType;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.*;
@@ -21,7 +22,9 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<Integer> network_color = new CustomValue<>();
     public ICustomValue<EnergyType> network_energy = new CustomValue<>();
 
-    public ICustomValue<List<ILiteConnector>> client_connectors = new CustomValue<>(new ArrayList<>());
+    public ICustomValue<List<ILiteConnector>> network_connections = new CustomValue<>(new ArrayList<>()); // Realtime, not savable
+
+    public ICustomValue<List<ILiteConnector>> unloaded_connectors = new CustomValue<>(new ArrayList<>());
     public ICustomValue<List<NetworkMember>> network_players = new CustomValue<>(new ArrayList<>());
 
     public FluxNetworkBase() {}
@@ -33,11 +36,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         network_color.setValue(color);
         network_owner.setValue(owner);
         network_energy.setValue(energy);
-        if(security.isEncrypted()) {
-            network_password.setValue(password);
-        } else {
-            network_password.setValue(""); // prevent password input by mistake
-        }
+        network_password.setValue(password);
     }
 
     @Override
@@ -51,7 +50,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     }
 
     @Override
-    public void readNetworkNBT(NBTTagCompound nbt, SyncType type) {
+    public void readNetworkNBT(NBTTagCompound nbt, NBTType type) {
         network_id.setValue(nbt.getInteger(FluxNetworkData.NETWORK_ID));
         network_name.setValue(nbt.getString(FluxNetworkData.NETWORK_NAME));
         network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
@@ -60,13 +59,16 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         network_color.setValue(nbt.getInteger(FluxNetworkData.NETWORK_COLOR));
         network_energy.setValue(EnergyType.values()[nbt.getInteger(FluxNetworkData.ENERGY_TYPE)]);
 
-        if(type == SyncType.ALL || type == SyncType.PLAYERS) {
+        if(type == NBTType.ALL || type == NBTType.PLAYERS) {
             FluxNetworkData.readPlayers(this, nbt);
+        }
+        if(type == NBTType.ALL || type == NBTType.CONNECTIONS) {
+            FluxNetworkData.readConnections(this, nbt);
         }
     }
 
     @Override
-    public NBTTagCompound writeNetworkNBT(NBTTagCompound nbt, SyncType type) {
+    public NBTTagCompound writeNetworkNBT(NBTTagCompound nbt, NBTType type) {
         nbt.setInteger(FluxNetworkData.NETWORK_ID, network_id.getValue());
         nbt.setString(FluxNetworkData.NETWORK_NAME, network_name.getValue());
         nbt.setUniqueId(FluxNetworkData.OWNER_UUID, network_owner.getValue());
@@ -75,8 +77,11 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         nbt.setInteger(FluxNetworkData.NETWORK_COLOR, network_color.getValue());
         nbt.setInteger(FluxNetworkData.ENERGY_TYPE, network_energy.getValue().ordinal());
 
-        if(type == SyncType.ALL || type == SyncType.PLAYERS) {
+        if(type == NBTType.ALL || type == NBTType.PLAYERS) {
             FluxNetworkData.writePlayers(this, nbt);
+        }
+        if(type == NBTType.ALL || type == NBTType.CONNECTIONS) {
+            FluxNetworkData.writeConnections(this, nbt);
         }
 
         return nbt;

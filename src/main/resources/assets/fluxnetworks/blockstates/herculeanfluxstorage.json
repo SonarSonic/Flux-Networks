@@ -1,0 +1,27 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model":"fluxnetworks:fluxstorage",
+        "transform":"forge:default-block",
+        "textures": {
+            "colour": "fluxnetworks:model/tier2_colour",
+            "1":"fluxnetworks:model/tier2",
+            "particle":"fluxnetworks:model/tier2"
+        }
+     },
+    "variants": {
+        "inventory": [{}],
+         "connected":{
+            "true":{
+                 "textures": {                 
+                    "1":"fluxnetworks:model/tier2"
+                  }
+            },
+            "false":{
+                 "textures": {                 
+                    "1":"fluxnetworks:model/tier2_off"
+                  }                
+            }
+         }
+    }
+}

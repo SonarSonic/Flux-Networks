@@ -1,0 +1,9 @@
+itemGroup.fluxnetworks=Flux Networks
+
+tile.fluxnetworks.fluxblock.name=Flux Block
+tile.fluxnetworks.fluxcontroller.name=Flux Controller
+tile.fluxnetworks.fluxpoint.name=Flux Point
+tile.fluxnetworks.fluxplug.name=Flux Plug
+
+item.fluxnetworks.flux.name=Flux
+item.fluxnetworks.fluxcore.name=Flux Core

@@ -8,9 +8,10 @@ import fluxnetworks.common.handler.energy.ForgeEnergyHandler;
 import fluxnetworks.common.handler.energy.GTEnergyHandler;
 import fluxnetworks.common.handler.energy.ICEnergyHandler;
 import fluxnetworks.common.handler.energy.RedstoneFluxHandler;
-import fluxnetworks.common.tileentity.TileController;
+import fluxnetworks.common.tileentity.TileFluxController;
 import fluxnetworks.common.tileentity.TileFluxPlug;
 import fluxnetworks.common.tileentity.TileFluxPoint;
+import fluxnetworks.common.tileentity.TileFluxStorage;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -25,9 +26,12 @@ public class TileEntityHandler {
     public static List<ITileEnergyHandler> tileEnergyHandlers = Lists.newArrayList();
 
     public static void registerTileEntity() {
-        GameRegistry.registerTileEntity(TileController.class, new ResourceLocation(FluxNetworks.MODID, "controller"));
-        GameRegistry.registerTileEntity(TileFluxPoint.class, new ResourceLocation(FluxNetworks.MODID, "fluxPoint"));
-        GameRegistry.registerTileEntity(TileFluxPlug.class, new ResourceLocation(FluxNetworks.MODID, "fluxPlug"));
+        GameRegistry.registerTileEntity(TileFluxController.class, new ResourceLocation(FluxNetworks.MODID, "FluxController"));
+        GameRegistry.registerTileEntity(TileFluxPoint.class, new ResourceLocation(FluxNetworks.MODID, "FluxPoint"));
+        GameRegistry.registerTileEntity(TileFluxPlug.class, new ResourceLocation(FluxNetworks.MODID, "FluxPlug"));
+        GameRegistry.registerTileEntity(TileFluxStorage.class, new ResourceLocation(FluxNetworks.MODID, "FluxStorage"));
+        GameRegistry.registerTileEntity(TileFluxStorage.Herculean.class, new ResourceLocation(FluxNetworks.MODID, "HerculeanFluxStorage"));
+        GameRegistry.registerTileEntity(TileFluxStorage.Gargantuan.class, new ResourceLocation(FluxNetworks.MODID, "GargantuanFluxStorage"));
     }
 
     public static void registerEnergyHandler() {

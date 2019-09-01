@@ -8,7 +8,7 @@ public interface IFluxTransfer {
 
     void onServerStartTick();
 
-    long addToNetwork(long amount);
+    long addToNetwork(long amount, boolean simulate);
 
     long removeFromNetwork(long amount, boolean simulate);
 
@@ -17,8 +17,6 @@ public interface IFluxTransfer {
     void removedFromNetwork(long amount);
 
     TileEntity getTile();
-
-    EnumFacing getSide();
 
     ItemStack getDisplayStack();
 

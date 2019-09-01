@@ -1,9 +1,7 @@
 package fluxnetworks.common.connection;
 
-import fluxnetworks.api.MemberPermission;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
-import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.UUID;
 

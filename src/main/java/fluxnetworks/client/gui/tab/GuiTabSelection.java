@@ -3,10 +3,10 @@ package fluxnetworks.client.gui.tab;
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.client.gui.GuiCore;
-import fluxnetworks.client.gui.GuiTabPages;
+import fluxnetworks.client.gui.basic.GuiCore;
+import fluxnetworks.client.gui.basic.GuiTabPages;
+import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.*;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.connection.NetworkSettings;
@@ -29,7 +29,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
     private List<NormalButton> popButtons = Lists.newArrayList();
 
-    public GuiTextBox password;
+    public TextboxButton password;
     public IFluxNetwork popSelect;
 
     private int timer2;
@@ -134,7 +134,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         popButtons.add(new NormalButton("Cancel", 24, 86, 30, 12, 11));
         popButtons.add(new NormalButton("Connect", 120, 86, 30, 12, 12));
 
-        password = GuiTextBox.create("", 5, fontRenderer, 70, 66, 81, 12);
+        password = TextboxButton.create("", 5, fontRenderer, 70, 66, 81, 12);
         password.setTextInvisible();
         password.setMaxStringLength(16);
 
@@ -222,7 +222,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
                 backToMain();
             }
         }
-        for(GuiTextBox text : popBoxes) {
+        for(TextboxButton text : popBoxes) {
             if(text.isFocused()) {
                 text.textboxKeyTyped(c, k);
             }

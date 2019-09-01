@@ -1,10 +1,13 @@
 package fluxnetworks.client;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.client.gui.GuiFluxCore;
+import fluxnetworks.FluxNetworks;
+import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.common.block.BlockFluxCore;
+import fluxnetworks.common.connection.FluxNetworkData;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.item.ItemFluxConnector;
 import fluxnetworks.common.network.PacketColorRequest;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import fluxnetworks.common.core.FluxUtils;
@@ -126,16 +129,16 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     @Override
     public int colorMultiplier(ItemStack stack, int tintIndex) {
         if (tintIndex == 1) {
-            if (stack.hasTagCompound() && stack.getTagCompound().getBoolean("GuiColor")) {
+            if (stack.hasTagCompound() && stack.getTagCompound().getBoolean(FluxUtils.GUI_COLOR)) {
                 Gui screen = Minecraft.getMinecraft().currentScreen;
                 if (screen instanceof GuiFluxCore) {
                     GuiFluxCore guiFluxCore = (GuiFluxCore) screen;
                     return guiFluxCore.network.isInvalid() ? NO_NETWORK_COLOR : guiFluxCore.network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
                 }
             }
-            NBTTagCompound tag = stack.getSubCompound("fluxData");
+            NBTTagCompound tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
             if (tag != null) {
-                return getOrRequestNetworkColor(tag.getInteger("NetworkID"));
+                return getOrRequestNetworkColor(tag.getInteger(FluxNetworkData.NETWORK_ID));
             }
             return NO_NETWORK_COLOR;
         }

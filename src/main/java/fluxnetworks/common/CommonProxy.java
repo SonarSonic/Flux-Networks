@@ -1,6 +1,7 @@
 package fluxnetworks.common;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
@@ -8,8 +9,11 @@ import fluxnetworks.common.event.FluxConnectionEvent;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;
+import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
 import fluxnetworks.common.registry.RegistryRecipes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -22,6 +26,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -39,6 +44,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(this);
         PacketHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
+        FluxConfig.init(event.getModConfigurationDirectory());
     }
 
     public void init(FMLInitializationEvent event) {
@@ -57,7 +63,7 @@ public class CommonProxy {
 
         @Override
         public ItemStack getTabIconItem() {
-            return new ItemStack(RegistryItems.FLUX_CORE);
+            return new ItemStack(RegistryBlocks.FLUX_PLUG);
         }
     };
 
@@ -68,6 +74,9 @@ public class CommonProxy {
     @SubscribeEvent
     public void onPlayerInteract(PlayerInteractEvent.LeftClickBlock event) {
         if(event.getSide().isServer()) {
+            if(!FluxConfig.enableFluxRecipe) {
+                return;
+            }
             World world = event.getWorld();
             BlockPos pos = event.getPos();
             /*if(world.getBlockState(pos).getBlock().equals(Blocks.BEDROCK)) {

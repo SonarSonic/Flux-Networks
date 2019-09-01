@@ -1,11 +1,15 @@
 package fluxnetworks.api.network;
 
-import fluxnetworks.api.MemberPermission;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.connection.NetworkSettings;
-import fluxnetworks.common.core.SyncType;
+import fluxnetworks.common.core.NBTType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public interface IFluxNetwork {
 
@@ -27,9 +31,15 @@ public interface IFluxNetwork {
 
     default void onRemoved() {}
 
-    default MemberPermission getMemberPermission(EntityPlayer player) {
-        return MemberPermission.NONE;
+    default AccessPermission getMemberPermission(EntityPlayer player) {
+        return AccessPermission.NONE;
     }
+
+    default void addNewMember(String name) {}
+
+    default void removeMember(UUID uuid) {}
+
+    default Optional<NetworkMember> getValidMember(UUID player) {return Optional.empty();}
 
     default void queueConnectionAddition(IFluxConnector flux) {}
 
@@ -37,8 +47,8 @@ public interface IFluxNetwork {
 
     default boolean isInvalid() {return false;}
 
-    void readNetworkNBT(NBTTagCompound nbt, SyncType type);
+    void readNetworkNBT(NBTTagCompound nbt, NBTType type);
 
-    NBTTagCompound writeNetworkNBT(NBTTagCompound nbt, SyncType type);
+    NBTTagCompound writeNetworkNBT(NBTTagCompound nbt, NBTType type);
 
 }

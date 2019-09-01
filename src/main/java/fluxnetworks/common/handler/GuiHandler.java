@@ -1,6 +1,6 @@
 package fluxnetworks.common.handler;
 
-import fluxnetworks.client.gui.main.GuiFluxHome;
+import fluxnetworks.client.gui.GuiFluxHome;
 import fluxnetworks.common.core.ContainerCore;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;

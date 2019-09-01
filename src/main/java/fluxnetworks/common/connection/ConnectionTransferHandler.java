@@ -84,15 +84,4 @@ public class ConnectionTransferHandler extends FluxTransferHandler {
         return 0;
     }
 
-    /**
-     * Send data to client tile entity for gui, this is always last tick energy change.
-     */
-    public NBTTagCompound writeNetworkedNBT(NBTTagCompound tag) {
-        tag.setLong("71", change);
-        return tag;
-    }
-
-    public void readNetworkedNBT(NBTTagCompound tag) {
-        change = tag.getLong("71");
-    }
 }

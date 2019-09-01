@@ -1,9 +1,11 @@
 package fluxnetworks.common.connection;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.IFluxTransfer;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxConnector;
+import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class FluxTransferHandler<T extends IFluxConnector> implements ITransferHandler {
 
@@ -84,6 +86,7 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
     @Override
     public void onServerStartTick() {
         change = added - removed;
+        request = 0;
         added = 0;
         removed = 0;
     }
@@ -154,5 +157,17 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
 
     private long getValidRemoval(long toRemove) {
         return Math.min(getMaxRemoval(), toRemove);
+    }
+
+    /**
+     * Send data to client tile entity for gui, this is always last tick energy change.
+     */
+    public NBTTagCompound writeNetworkedNBT(NBTTagCompound tag) {
+        tag.setLong("71", change);
+        return tag;
+    }
+
+    public void readNetworkedNBT(NBTTagCompound tag) {
+        change = tag.getLong("71");
     }
 }

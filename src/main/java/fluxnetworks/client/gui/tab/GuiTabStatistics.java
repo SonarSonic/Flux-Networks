@@ -1,7 +1,6 @@
 package fluxnetworks.client.gui.tab;
 
-import fluxnetworks.client.gui.GuiCore;
-import fluxnetworks.client.gui.GuiTabCore;
+import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +9,13 @@ public class GuiTabStatistics extends GuiTabCore {
 
     public GuiTabStatistics(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
+    }
+
+    @Override
+    protected void drawForegroundLayer(int mouseX, int mouseY) {
+        super.drawForegroundLayer(mouseX, mouseY);
+        fontRenderer.drawString("WIP, the original seems no much useful as well", 20, 30, 0xffffff);
+        fontRenderer.drawString("There will be a graphic display future", 20, 50, 0xffffff);
     }
 
     @Override

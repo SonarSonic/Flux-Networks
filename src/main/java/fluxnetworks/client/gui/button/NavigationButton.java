@@ -1,19 +1,19 @@
 package fluxnetworks.client.gui.button;
 
-import fluxnetworks.FluxNetworks;
-import fluxnetworks.client.gui.main.GuiFluxHome;
+import fluxnetworks.client.gui.basic.GuiCore;
+import fluxnetworks.client.gui.basic.GuiButtonCore;
+import fluxnetworks.client.gui.GuiFluxHome;
 import fluxnetworks.client.gui.tab.*;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class NavigationButton extends GuiButtonCore {
 
-    private static final ResourceLocation TEXTURES = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/navigation_button.png");
+
 
     public int buttonNavigationId;
     public boolean isCurrentTab = false;
@@ -30,7 +30,7 @@ public class NavigationButton extends GuiButtonCore {
         GlStateManager.enableAlpha();
         GlStateManager.enableBlend();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0f);
-        mc.getTextureManager().bindTexture(TEXTURES);
+        mc.getTextureManager().bindTexture(GuiCore.BUTTONS);
         drawTexturedModalRect(x, y, 16 * buttonNavigationId, 16 * getCorrectHoverState(mc, mouseX, mouseY), 16, 16);
 
         if(isMouseHovered(mc, mouseX, mouseY)) {
@@ -89,7 +89,7 @@ public class NavigationButton extends GuiButtonCore {
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabTransfer(player, tileEntity));
                 break;
             case 3:
-                FMLCommonHandler.instance().showGuiScreen(new GuiTabConnection(player, tileEntity));
+                FMLCommonHandler.instance().showGuiScreen(new GuiTabConnections(player, tileEntity));
                 break;
             case 4:
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabStatistics(player, tileEntity));

@@ -1,6 +1,7 @@
 package fluxnetworks.client.gui.button;
 
 import fluxnetworks.api.NetworkColor;
+import fluxnetworks.client.gui.basic.GuiButtonCore;
 import net.minecraft.client.Minecraft;
 
 public class ColorButton extends GuiButtonCore {
