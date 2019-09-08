@@ -102,7 +102,7 @@ public abstract class BlockFluxCore extends BlockCore {
             if(tileFluxCore.canAccess(player)) {
                 ItemStack stack = new ItemStack(this, 1, damageDropped(state));
                 writeDataToStack(stack, pos, world);
-                EntityItem entityItem = new EntityItem(world, player.posX, player.posY, player.posZ, stack);
+                EntityItem entityItem = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
                 world.setBlockToAir(pos);
                 world.spawnEntity(entityItem);
                 return true;
