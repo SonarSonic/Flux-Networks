@@ -6,13 +6,21 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.common.crafting.IRecipeFactory;
+import net.minecraftforge.common.crafting.IShapedRecipe;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RegistryRecipes {
 
@@ -25,30 +33,22 @@ public class RegistryRecipes {
         addShapedRecipe(new ItemStack(RegistryBlocks.FLUX_CONTROLLER, 1), "BCB", "R R", "BBB", 'C', RegistryItems.FLUX_CORE, 'B', RegistryBlocks.FLUX_BLOCK, 'R', RegistryItems.FLUX);
         addShapedRecipe(new ItemStack(RegistryBlocks.FLUX_POINT, 1), " C ", "CBC", " C ", 'C', RegistryItems.FLUX_CORE, 'B', Blocks.REDSTONE_BLOCK);
         addShapedRecipe(new ItemStack(RegistryBlocks.FLUX_PLUG, 1), " C ", "CBC", " C ", 'C', RegistryItems.FLUX_CORE, 'B', RegistryBlocks.FLUX_BLOCK);
-        addShapedRecipe(new ItemStack(RegistryBlocks.FLUX_STORAGE_1, 1), "BBB", "G G", "BBB", 'B', RegistryBlocks.FLUX_BLOCK, 'G', "paneGlassColorless");
-        addShapedRecipe(new ItemStack(RegistryBlocks.FLUX_STORAGE_2, 1), "BBB", "G G", "BBB", 'B', RegistryBlocks.FLUX_STORAGE_1, 'G', "paneGlassColorless");
-        addShapedRecipe(new ItemStack(RegistryBlocks.FLUX_STORAGE_3, 1), "BBB", "G G", "BBB", 'B', RegistryBlocks.FLUX_STORAGE_2, 'G', "paneGlassColorless");
+    }
+
+    public static void registerStorageRecipes(IForgeRegistry<IRecipe> registry){
+        registry.register(new FluxStorageRecipe(group, new ItemStack(RegistryBlocks.FLUX_STORAGE_1, 1), "BBB", "G G", "BBB", 'B', RegistryBlocks.FLUX_BLOCK, 'G', "paneGlassColorless"));
+        registry.register(new FluxStorageRecipe(group, new ItemStack(RegistryBlocks.FLUX_STORAGE_2, 1), "BBB", "G G", "BBB", 'B', RegistryBlocks.FLUX_STORAGE_1, 'G', "paneGlassColorless"));
+        registry.register(new FluxStorageRecipe(group, new ItemStack(RegistryBlocks.FLUX_STORAGE_3, 1), "BBB", "G G", "BBB", 'B', RegistryBlocks.FLUX_STORAGE_2, 'G', "paneGlassColorless"));
     }
 
     public static void addShapedRecipe(@Nonnull ItemStack result, @Nonnull Object... input) {
         GameRegistry.addShapedRecipe(new ResourceLocation(FluxNetworks.MODID, result.getUnlocalizedName()), group, result, input);
     }
 
-    /*public static void addStorageRecipe(ItemStack result, Object... input) {
-        if (!result.isEmpty() && input != null) {
-            try {
-                StorageCrafting storageRecipe = new StorageCrafting(result, input);
-                ForgeRegistries.RECIPES.register(storageRecipe);
-            } catch (Exception e) {
+    public static class FluxStorageRecipe extends ShapedOreRecipe {
 
-            }
-        }
-    }
-
-    public static class StorageCrafting extends ShapedOreRecipe {
-
-        public StorageCrafting(ItemStack result, Object... recipe) {
-            super(new ResourceLocation(FluxNetworks.MODID, result.getUnlocalizedName()), result, recipe);
+        public FluxStorageRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+            super(group, result, recipe);
             setRegistryName(new ResourceLocation(FluxNetworks.MODID, result.getUnlocalizedName()));
         }
 
@@ -58,16 +58,18 @@ public class RegistryRecipes {
             int energyStored = 0;
             for (int i = 0; i < crafting.getSizeInventory(); i++) {
                 ItemStack stack = crafting.getStackInSlot(i);
-                if (stack.hasTagCompound()) {
-                    NBTTagCompound tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
-                    if (tag != null)
-                        energyStored += tag.getInteger("energy");
+                NBTTagCompound flux_tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
+                if(flux_tag != null){
+                    energyStored += flux_tag.getInteger("energy");
                 }
             }
-            ItemStack stack = output.copy();
-            NBTTagCompound newTag = stack.getOrCreateSubCompound(FluxUtils.FLUX_DATA);
-            newTag.setInteger("energy", energyStored);
-            return stack;
+            if(energyStored > 0){
+                ItemStack stack = output.copy();
+                NBTTagCompound flux_tag = stack.getOrCreateSubCompound(FluxUtils.FLUX_DATA);
+                flux_tag.setInteger("energy", energyStored);
+                return stack;
+            }
+            return super.getCraftingResult(crafting);
         }
-    }*/
+    }
 }
