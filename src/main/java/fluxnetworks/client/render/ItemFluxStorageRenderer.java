@@ -1,19 +1,15 @@
 package fluxnetworks.client.render;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.client.FluxColorHandler;
 import fluxnetworks.common.block.BlockFluxStorage;
-import fluxnetworks.common.connection.FluxNetworkData;
+import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.item.ItemFluxConnector;
-import fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 

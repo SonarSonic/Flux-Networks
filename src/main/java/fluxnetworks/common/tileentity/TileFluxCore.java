@@ -1,32 +1,30 @@
 package fluxnetworks.common.tileentity;
 
-import com.google.common.collect.Lists;
 import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxNetworks;
+import fluxnetworks.api.AccessPermission;
+import fluxnetworks.api.Capabilities;
 import fluxnetworks.api.Coord4D;
-import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
+import fluxnetworks.api.tileentity.IFluxConfigurable;
 import fluxnetworks.api.tileentity.ITileByteBuf;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.connection.*;
 import fluxnetworks.common.core.NBTType;
-import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.data.FluxChunkManager;
+import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.item.ItemFluxConnector;
-import fluxnetworks.common.network.NetworkFolder;
-import fluxnetworks.common.network.PacketNetworkUpdate;
+import fluxnetworks.common.connection.NetworkFolder;
 import fluxnetworks.common.core.FluxUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
@@ -34,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.UUID;
 
-public abstract class TileFluxCore extends TileEntity implements IFluxConnector, ITickable, ITileByteBuf {
+public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickable, ITileByteBuf {
 
     public HashSet<EntityPlayer> playerUsing = new HashSet<>();
 
@@ -53,15 +51,20 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public boolean connected = false;
     public byte[] connections = new byte[]{0,0,0,0,0,0};
 
+    public boolean chunkLoading = false;
+
     protected IFluxNetwork network = FluxNetworkInvalid.instance;
 
-    public boolean load = false;
+    protected boolean load = false;
 
     @Override
     public void invalidate() {
         super.invalidate();
         if(!world.isRemote && load) {
             FluxUtils.removeConnection(this, false);
+            if(chunkLoading) {
+                FluxChunkManager.releaseChunk(world, new ChunkPos(pos));
+            }
             load = false;
         }
     }
@@ -78,13 +81,16 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public void update() {
         if(!world.isRemote) {
-            if(playerUsing.size() > 0)
+            if(playerUsing.size() > 0) {
                 sendPackets();
+            }
             if(!load) {
                 if(!FluxUtils.addConnection(this)) {
                     networkID = -1;
+                    color = -1;
                 }
                 updateTransfers(EnumFacing.VALUES);
+                sendPackets();
                 load = true;
             }
         }
@@ -176,6 +182,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                 tag.setByte('c' + String.valueOf(i), connections[i]);
             }
             tag.setLong("buf", ((FluxTransferHandler) getTransferHandler()).buffer);
+            tag.setBoolean("l", chunkLoading);
         }
         if(type == NBTType.UPDATE) {
             getTransferHandler().writeNetworkedNBT(tag);
@@ -210,6 +217,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                 connections[i] = tag.getByte('c' + String.valueOf(i));
             }
             ((FluxTransferHandler) getTransferHandler()).buffer = tag.getLong("buf");
+            chunkLoading = tag.getBoolean("l");
         }
         if(type == NBTType.UPDATE) {
             getTransferHandler().readNetworkedNBT(tag);
@@ -299,6 +307,16 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     @Override
+    public NBTTagCompound copyConfiguration(NBTTagCompound config) {
+        return FluxUtils.copyConfiguration(this, config);
+    }
+
+    @Override
+    public void pasteConfiguration(NBTTagCompound config) {
+        FluxUtils.pasteConfiguration(this, config);
+    }
+
+    @Override
     public World getDimension() {
         return world;
     }
@@ -320,11 +338,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public void open(EntityPlayer player) {
         playerUsing.add(player);
         if(!world.isRemote) {
-            PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(getNetwork()), NBTType.ALL), (EntityPlayerMP) player);
-            if(!network.isInvalid()) {
-                FluxNetworkServer server = ((FluxNetworkServer) network);
-                server.getConnections(FluxType.storage).forEach(f -> server.markLiteSettingChanged((IFluxConnector) f));
-            }
+            //PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(getNetwork()), NBTType.ALL), (EntityPlayerMP) player);
             sendPackets();
         }
     }

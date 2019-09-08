@@ -14,7 +14,7 @@ public class FluxConnectionEvent extends Event {
         this.flux = flux;
     }
 
-    public static class Connected extends FluxConnectionEvent{
+    public static class Connected extends FluxConnectionEvent {
 
         public final IFluxNetwork network;
 
@@ -24,7 +24,7 @@ public class FluxConnectionEvent extends Event {
         }
     }
 
-    public static class Disconnected extends FluxConnectionEvent{
+    public static class Disconnected extends FluxConnectionEvent {
 
         public final IFluxNetwork network;
 
@@ -34,7 +34,7 @@ public class FluxConnectionEvent extends Event {
         }
     }
 
-    public static class SettingChanged extends FluxConnectionEvent{
+    public static class SettingChanged extends FluxConnectionEvent {
 
         public final ConnectionSetting setting;
 

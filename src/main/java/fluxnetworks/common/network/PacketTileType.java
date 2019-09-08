@@ -6,7 +6,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public enum PacketTileType {
-    SET_NETWORK(PacketTileHandler::handleSetNetworkPacket);
+    SET_NETWORK(PacketTileHandler::handleSetNetworkPacket),
+    CHUNK_LOADING(PacketTileHandler::handleChunkLoadPacket);
 
     public IPacketTileHandler handler;
 

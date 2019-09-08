@@ -1,5 +1,6 @@
 package fluxnetworks.common.tileentity.energy;
 
+import fluxnetworks.FluxNetworks;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
@@ -55,7 +56,7 @@ public abstract class TileIC2Energy extends TileRedstoneFlux implements IEnergyS
     @Override
     @Optional.Method(modid = "ic2")
     public double getDemandedEnergy() {
-        return addPhantomEnergyToNetwork(null, (long) EnergyNet.instance.getPowerFromTier(getSinkTier()) * 4, true);
+        return Integer.MAX_VALUE;
     }
 
     @Override
@@ -67,19 +68,19 @@ public abstract class TileIC2Energy extends TileRedstoneFlux implements IEnergyS
     @Override
     @Optional.Method(modid = "ic2")
     public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing side) {
-        return getConnectionType() == ConnectionType.PLUG;
+        return getConnectionType().canAddEnergy();
     }
 
     @Override
     @Optional.Method(modid = "ic2")
     public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
-        return amount - addPhantomEnergyToNetwork(directionFrom, (long) amount * 4, false);
+        return amount - addPhantomEnergyToNetwork(directionFrom.getOpposite(), (long) amount * 4, false) / 4D;
     }
 
     @Override
     @Optional.Method(modid = "ic2")
     public boolean emitsEnergyTo(IEnergyAcceptor receiver, EnumFacing side) {
-        return getConnectionType() == ConnectionType.POINT;
+        return getConnectionType().canRemoveEnergy();
     }
 
     @Override

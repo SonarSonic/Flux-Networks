@@ -1,5 +1,6 @@
 package fluxnetworks.common.block;
 
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.common.tileentity.TileFluxController;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -20,6 +21,7 @@ public class BlockFluxController extends BlockFluxCore {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
+        tooltip.add(FluxTranslate.FLUX_CONTROLLER_TOOLTIP);
     }
 
     @Nullable

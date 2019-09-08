@@ -2,7 +2,7 @@ package fluxnetworks.common.item;
 
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.client.FluxColorHandler;
-import fluxnetworks.common.connection.FluxNetworkData;
+import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
@@ -48,7 +48,7 @@ public class ItemFluxConnector extends ItemBlock {
             tooltip.add("Transfer Limit: " + TextFormatting.WHITE + FluxUtils.format(tag.getLong(LIMIT), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.RF.getStorageSuffix()));
             tooltip.add("Priority: " + TextFormatting.WHITE + tag.getInteger(PRIORITY));
             if(tag.hasKey("energy")) {
-                tooltip.add("Energy Stored: " + TextFormatting.WHITE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF / " + NumberFormat.getInstance().format(tag.getInteger("maxEnergy")) + "RF");
+                tooltip.add("Energy Stored: " + TextFormatting.WHITE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF");
             } else {
                 tooltip.add("Internal Buffer: " + TextFormatting.WHITE + FluxUtils.format(tag.getLong("buffer"), FluxUtils.TypeNumberFormat.COMMAS, "RF"));
             }

@@ -12,13 +12,17 @@ import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class GuiCore extends GuiContainer {
 
@@ -100,6 +104,9 @@ public abstract class GuiCore extends GuiContainer {
         for(NavigationButton button : navigationButtons) {
             button.drawButton(mc, mouseX, mouseY);
         }
+        for(SlidedSwitchButton button : switches) {
+            button.updatePosition(partialTicks * 4);
+        }
     }
 
     private void drawFluxDefaultBackground() {
@@ -130,14 +137,6 @@ public abstract class GuiCore extends GuiContainer {
     }
 
     protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(mouseButton == 0) {
-            for(NavigationButton button : navigationButtons) {
-                if(button.isMouseHovered(mc, mouseX, mouseY)) {
-                    button.switchTab(button.buttonNavigationId, player, tileEntity);
-                    mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
-                }
-            }
-        }
         for(TextboxButton text : textBoxes) {
             if(text.getVisible() == true && text.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton)) {
                 text.setFocused(true);
@@ -221,6 +220,25 @@ public abstract class GuiCore extends GuiContainer {
         drawRect(x - 1, y + height, x + width + 1, y + height + 1, color);
         drawRect(x - 1, y, x, y + height, color);
         drawRect(x + width, y, x + width + 1, y + height, color);
+    }
+
+    public void drawRectWithBackground(int x, int y, int height, int width, int frameColor, int backColor) {
+        drawRect(x - 1, y - 1, x + width + 1, y, frameColor);
+        drawRect(x - 1, y + height, x + width + 1, y + height + 1, frameColor);
+        //drawRect(x - 1, y, x, y + height, frameColor);
+        //drawRect(x + width, y, x + width + 1, y + height, frameColor);
+        drawRect(x, y, x + width, y + height, backColor);
+    }
+
+    protected void drawHoverTooltip(List<String> strings, int x, int y) {
+        AtomicInteger maxLength = new AtomicInteger();
+        strings.forEach(a -> maxLength.set(Math.max(fontRenderer.getStringWidth(a), maxLength.get())));
+        drawRectWithBackground(x, y, strings.size() * 9 + 3, maxLength.get() + 4, 0x90ffffff, 0x90000000);
+        int i = 0;
+        for(String s : strings) {
+            fontRenderer.drawString(s, x + 2, y + 2 + 9 * i, 0xffffff);
+            i++;
+        }
     }
 
 }

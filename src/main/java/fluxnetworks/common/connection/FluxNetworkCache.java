@@ -6,6 +6,7 @@ import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.core.NBTType;
+import fluxnetworks.common.data.FluxNetworkData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -33,17 +34,18 @@ public class FluxNetworkCache {
         UUID uuid = EntityPlayer.getUUID(player.getGameProfile());
 
         NetworkMember owner = NetworkMember.createNetworkMember(player, AccessPermission.OWNER);
-        FluxNetworkServer network = new FluxNetworkServer(createUid(), name, securityType, color, uuid, energyType, password);
+        FluxNetworkServer network = new FluxNetworkServer(getUniqueID(), name, securityType, color, uuid, energyType, password);
         network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(owner);
 
         FluxNetworkData.get().addNetwork(network);
         return network;
     }
 
-    private int createUid() {
+    private int getUniqueID() {
         return FluxNetworkData.get().uniqueID++;
     }
 
+    @Deprecated
     public void updateClientFromPacket(Map<Integer, NBTTagCompound> serverSideNetworks, NBTType type) {
         serverSideNetworks.forEach((i, n) -> {
             IFluxNetwork network = getNetwork(i);

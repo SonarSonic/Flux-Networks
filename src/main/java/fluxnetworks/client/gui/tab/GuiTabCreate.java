@@ -1,6 +1,8 @@
 package fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.FluxNetworks;
+import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.client.gui.basic.GuiTabCore;
@@ -49,6 +51,7 @@ public class GuiTabCreate extends GuiTabCore {
         fontRenderer.drawString("Color:", 14, 97, 0x606060);
 
         renderNetwork(name.getText(), color.color.color, 20, 129);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
     }
 
     @Override
@@ -79,7 +82,8 @@ public class GuiTabCreate extends GuiTabCore {
         name.setMaxStringLength(24);
         name.setText(mc.player.getName() + "'s Network");
 
-        password = TextboxButton.create("", 2, fontRenderer, 52, 63, 106, 12).setTextInvisible();
+        int l = fontRenderer.getStringWidth("Password");
+        password = TextboxButton.create("", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
         password.setMaxStringLength(16);
         password.setVisible(false);
 
@@ -128,8 +132,9 @@ public class GuiTabCreate extends GuiTabCore {
             for(NormalButton button : buttons) {
                 if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
                     if(button.id == 3) {
+                        if(securityType.isEncrypted() && password.getText().isEmpty())
+                            continue;
                         PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CREATE_NETWORK, PacketGeneralHandler.getCreateNetworkPacket(name.getText(), color.color.color, securityType, energyType, password.getText())));
-                        FMLCommonHandler.instance().showGuiScreen(new GuiTabSelection(player, tileEntity));
                     }
                 }
             }
@@ -159,5 +164,9 @@ public class GuiTabCreate extends GuiTabCore {
     @Override
     public void updateScreen() {
         super.updateScreen();
+        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
+            FMLCommonHandler.instance().showGuiScreen(new GuiTabSelection(player, tileEntity));
+            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+        }
     }
 }

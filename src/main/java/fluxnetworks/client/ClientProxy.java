@@ -87,4 +87,9 @@ public class ClientProxy extends CommonProxy {
     public void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache) {
         FluxColorHandler.receiveCache(cache);
     }
+
+    @Override
+    public void clearColorCache(int id) {
+        FluxColorHandler.clearCertain(id);
+    }
 }

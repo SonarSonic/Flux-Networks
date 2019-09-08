@@ -5,7 +5,11 @@ import net.minecraft.tileentity.TileEntity;
 
 public class Coord4D {
 
-    int x, y, z, dimension;
+    private int x, y, z, dimension;
+
+    public Coord4D(NBTTagCompound tag) {
+        read(tag);
+    }
 
     public Coord4D(TileEntity tile) {
         x = tile.getPos().getX();
@@ -27,5 +31,18 @@ public class Coord4D {
         y = tag.getInteger("y");
         z = tag.getInteger("z");
         dimension = tag.getInteger("dimension");
+    }
+
+    public String getStringInfo() {
+        return "X: " + x + " Y: " + y + " Z: " + z + " Dim: " + dimension;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Coord4D)) {
+            return false;
+        }
+        Coord4D c = (Coord4D) obj;
+        return x == c.x && y == c.y && z == c.z && dimension == c.dimension;
     }
 }

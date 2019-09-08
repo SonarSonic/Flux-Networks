@@ -1,5 +1,6 @@
 package fluxnetworks.client.gui.button;
 
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.client.gui.basic.GuiCore;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.GuiFluxHome;
@@ -12,8 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class NavigationButton extends GuiButtonCore {
-
-
 
     public int buttonNavigationId;
     public boolean isCurrentTab = false;
@@ -57,21 +56,21 @@ public class NavigationButton extends GuiButtonCore {
 
         switch(id) {
             case 0:
-                return "Home";
+                return FluxTranslate.TAB_HOME;
             case 1:
-                return "Network Selection";
+                return FluxTranslate.TAB_SELECTION;
             case 2:
-                return "Network Transfers";
+                return FluxTranslate.TAB_TRANSFER;
             case 3:
-                return "Network Connections";
+                return FluxTranslate.TAB_CONNECTION;
             case 4:
-                return "Network Statistics";
+                return FluxTranslate.TAB_STATISTICS;
             case 5:
-                return "Network Members";
+                return FluxTranslate.TAB_MEMBER;
             case 6:
-                return "Network Settings";
+                return FluxTranslate.TAB_SETTING;
             case 7:
-                return "Create New Network";
+                return FluxTranslate.TAB_CREATE;
         }
         return "";
     }

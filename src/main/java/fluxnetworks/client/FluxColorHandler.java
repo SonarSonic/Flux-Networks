@@ -1,13 +1,11 @@
 package fluxnetworks.client;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.common.block.BlockFluxCore;
-import fluxnetworks.common.connection.FluxNetworkData;
+import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.item.ItemFluxConnector;
 import fluxnetworks.common.network.PacketColorRequest;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import fluxnetworks.common.core.FluxUtils;
@@ -61,6 +59,11 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
         if(id != -1 && !requests.contains(id) && !sent_requests.contains(id)){
             requests.add(id);
         }
+    }
+
+    public static void clearCertain(int id) {
+        colorCache.remove(id);
+        nameCache.remove(id);
     }
 
     public static int getOrRequestNetworkColor(int id) {

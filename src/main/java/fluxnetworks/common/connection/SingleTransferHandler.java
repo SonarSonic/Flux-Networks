@@ -20,6 +20,12 @@ public class SingleTransferHandler extends FluxTransferHandler<IFluxEnergy> {
     }
 
     @Override
+    public void onServerStartTick() {
+        super.onServerStartTick();
+        transfer.onServerStartTick();
+    }
+
+    @Override
     public long addToNetwork(long maxAmount, boolean simulate) {
         if(!fluxConnector.isActive()) {
             return 0;

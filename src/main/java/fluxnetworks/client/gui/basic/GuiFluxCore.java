@@ -1,21 +1,30 @@
 package fluxnetworks.client.gui.basic;
 
-import fluxnetworks.FluxNetworks;
+import com.google.common.collect.Lists;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.common.connection.ConnectionTransferHandler;
+import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.connection.FluxNetworkData;
 import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.registry.RegistrySounds;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import fluxnetworks.common.core.FluxUtils;
+import fluxnetworks.common.tileentity.TileFluxStorage;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+
+import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class GuiFluxCore extends GuiCore {
 
@@ -39,6 +48,19 @@ public abstract class GuiFluxCore extends GuiCore {
     @Override
     protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+    }
+
+    @Override
+    protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseMainClicked(mouseX, mouseY, mouseButton);
+        if(mouseButton == 0) {
+            for(NavigationButton button : navigationButtons) {
+                if(button.isMouseHovered(mc, mouseX, mouseY)) {
+                    button.switchTab(button.buttonNavigationId, player, tileEntity);
+                    mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
+                }
+            }
+        }
     }
 
     public void renderNetwork(String name, int color, int x, int y) {
@@ -88,6 +110,31 @@ public abstract class GuiFluxCore extends GuiCore {
         GlStateManager.disableDepth();
     }
 
+    public List<String> getFluxInfo(IFluxConnector flux) {
+        List<String> list = Lists.newArrayList();
+        list.add(TextFormatting.BOLD + flux.getCustomName());
+        NBTTagCompound tag = flux.getDisplayStack().getSubCompound(FluxUtils.FLUX_DATA);
+        if(flux.isChunkLoaded()) {
+            list.add(getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getTransferHandler().getChange()));
+            if(flux.getConnectionType() == IFluxConnector.ConnectionType.STORAGE) {
+                list.add("Energy Stored: " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferHandler().getBuffer()) + "RF");
+            } else {
+                list.add("Internal Buffer: " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferHandler().getBuffer()) + "RF");
+            }
+        } else if(tag != null) {
+            list.add(TextFormatting.RED + "Chunk Unloaded");
+            if(tag.hasKey("energy")) {
+                list.add("Energy Stored: " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF");
+            } else {
+                list.add("Internal Buffer: " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getLong("buffer")) + "RF");
+            }
+        }
+        list.add("Transfer Limit: " + TextFormatting.GREEN + (flux.getDisableLimit() ? "Unlimited" : flux.getCurrentLimit()));
+        list.add("Priority: " + TextFormatting.GREEN + (flux.getSurgeMode() ? "Surge" : flux.getConnectionType() == IFluxConnector.ConnectionType.STORAGE ? flux.getPriority() + TileFluxStorage.C : flux.getPriority()));
+        list.add(TextFormatting.ITALIC + flux.getCoords().getStringInfo());
+        return list;
+    }
+
     public String getTransferInfo(IFluxConnector.ConnectionType type, EnergyType energyType, long change) {
         if(type.canAddEnergy()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
@@ -97,7 +144,7 @@ public abstract class GuiFluxCore extends GuiCore {
                 return "Input: " + TextFormatting.GREEN + "+" + b;
             }
         }
-        if(type.canRemoveEnergy()) {
+        if(type.canRemoveEnergy() || type.isController()) {
             String b = FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if(change == 0) {
                 return "Output: " + TextFormatting.GOLD + b;
