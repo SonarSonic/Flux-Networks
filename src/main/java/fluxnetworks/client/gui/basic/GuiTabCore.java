@@ -18,10 +18,11 @@ public abstract class GuiTabCore extends GuiFluxCore {
     @Override
     protected void keyTypedMain(char c, int k) throws IOException {
         super.keyTypedMain(c, k);
-        if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k))
-        {
-            FMLCommonHandler.instance().showGuiScreen(new GuiFluxHome(player, tileEntity));
-            mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
+        if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
+            if(!textBoxes.stream().anyMatch(GuiTextField::isFocused)) {
+                FMLCommonHandler.instance().showGuiScreen(new GuiFluxHome(player, tileEntity));
+                mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
+            }
         }
     }
 }

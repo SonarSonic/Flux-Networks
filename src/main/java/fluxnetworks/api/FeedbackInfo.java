@@ -9,6 +9,8 @@ public enum FeedbackInfo {
     HAS_CONTROLLER("The network already has a controller"),
     INVALID_USER("Invalid user selected"),
     ILLEGAL_PASSWORD("Wrong password format, must be digit or letter"),
+    HAS_LOADER("This chunk already has a chunk loader"),
+    BANNED_LOADING("Chunk loading was banned from the server"),
     PASSWORD_REQUIRE(""),
     SUCCESS("");
 

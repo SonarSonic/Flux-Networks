@@ -1,5 +1,6 @@
 package fluxnetworks.client.gui;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.client.gui.basic.GuiTextField;
@@ -9,9 +10,10 @@ import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.ConnectionTransferHandler;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.PacketByteBuf;
+import fluxnetworks.common.network.*;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
 
@@ -22,6 +24,8 @@ public class GuiFluxHome extends GuiFluxCore {
 
     public TextboxButton fluxName, priority, limit;
 
+    public SlidedSwitchButton chunkLoad;
+
     public GuiFluxHome(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
     }
@@ -30,11 +34,8 @@ public class GuiFluxHome extends GuiFluxCore {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
-        if(tileEntity.getConnectionType().isController()) {
-            fontRenderer.drawString("Wireless charging is WIP", 30, 100, 0xffffff);
-        } else {
-            renderTransfer(tileEntity.getTransferHandler(), 0xffffff, 30, 90);
-        }
+        renderTransfer(tileEntity.getTransferHandler(), 0xffffff, 30, 90);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class GuiFluxHome extends GuiFluxCore {
 
         priority = TextboxButton.create("Priority: ", 1, fontRenderer, 16, 45, 144, 12).setDigitalOnly();
         priority.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
-        priority.setMaxStringLength(8);
+        priority.setMaxStringLength(6);
         priority.setText(String.valueOf(tileEntity.priority));
 
         limit = TextboxButton.create("Transfer Limit: ", 2, fontRenderer, 16, 62, 144, 12).setDigitalOnly();
@@ -69,6 +70,11 @@ public class GuiFluxHome extends GuiFluxCore {
         if(tileEntity.getConnectionType() != IFluxConnector.ConnectionType.STORAGE) {
             switches.add(new SlidedSwitchButton(80, 120, 1, guiLeft, guiTop, "Surge Mode: ", tileEntity.surgeMode));
             switches.add(new SlidedSwitchButton(100, 132, 2, guiLeft, guiTop, "Enable Limit: ", !tileEntity.disableLimit));
+            chunkLoad = new SlidedSwitchButton(120, 144, 3, guiLeft, guiTop, "Chunk Loading: ", tileEntity.chunkLoading);
+            switches.add(chunkLoad);
+        }
+        if(tileEntity.getConnectionType().isController() && !network.isInvalid()) {
+            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, "Wireless Charging: ", network.getSetting(NetworkSettings.NETWORK_WIRELESS)));
         }
 
         textBoxes.add(fluxName);
@@ -85,7 +91,13 @@ public class GuiFluxHome extends GuiFluxCore {
             tileEntity.priority = priority.getIntegerFromText();
             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 2));
         } else if(text == limit) {
-            tileEntity.limit = limit.getIntegerFromText();
+            if(!(tileEntity.getConnectionType() == IFluxConnector.ConnectionType.STORAGE)) {
+                tileEntity.limit = limit.getIntegerFromText();
+            } else {
+                // Flux Storage can't change limit
+                limit.setText(String.valueOf(tileEntity.getCurrentLimit()));
+                tileEntity.limit = tileEntity.getCurrentLimit();
+            }
             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 3));
         }
     }
@@ -97,16 +109,32 @@ public class GuiFluxHome extends GuiFluxCore {
             for(SlidedSwitchButton s : switches) {
                 if(s.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
                     s.switchButton();
-                    if(s.id == 1) {
-                        tileEntity.surgeMode = s.slideControl;
-                        PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 4));
-                    }
-                    if(s.id == 2) {
-                        tileEntity.disableLimit = !s.slideControl;
-                        PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 5));
+                    switch (s.id) {
+                        case 1:
+                            tileEntity.surgeMode = s.slideControl;
+                            PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 4));
+                            break;
+                        case 2:
+                            tileEntity.disableLimit = !s.slideControl;
+                            PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 5));
+                            break;
+                        case 3:
+                            PacketHandler.network.sendToServer(new PacketTile.TileMessage(PacketTileType.CHUNK_LOADING, PacketTileHandler.getChunkLoadPacket(s.slideControl), tileEntity.getPos(), tileEntity.getWorld().provider.getDimension()));
+                            break;
+                        case 4:
+                            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_WIRELESS, PacketGeneralHandler.getChangeWirelessPacket(network.getNetworkID(), s.slideControl)));
+                            break;
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if(chunkLoad != null) {
+            chunkLoad.slideControl = tileEntity.chunkLoading;
         }
     }
 

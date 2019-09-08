@@ -5,7 +5,11 @@ import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
+import fluxnetworks.common.capabilities.DefaultSuperAdmin;
+import fluxnetworks.common.core.EntityFireItem;
+import fluxnetworks.common.data.FluxChunkManager;
 import fluxnetworks.common.event.FluxConnectionEvent;
+import fluxnetworks.common.handler.CapabilityHandler;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;
@@ -21,18 +25,23 @@ import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -40,15 +49,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommonProxy {
 
+    public boolean baublesLoaded;
+
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
         PacketHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
         FluxConfig.init(event.getModConfigurationDirectory());
+        EntityRegistry.registerModEntity(new ResourceLocation(FluxNetworks.MODID, "Flux"), EntityFireItem.class, "Flux", 0, FluxNetworks.instance, 64, 10, true);
+        baublesLoaded = Loader.isModLoaded("baubles");
     }
 
     public void init(FMLInitializationEvent event) {
         RegistryRecipes.registerRecipes();
+        DefaultSuperAdmin.register();
+    }
+
+    public void postInit(FMLPostInitializationEvent event) {
+        ForgeChunkManager.setForcedChunkLoadingCallback(FluxNetworks.instance, FluxChunkManager::callback);
+        MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
     }
 
     public void onServerStarted() {
@@ -57,6 +76,7 @@ public class CommonProxy {
 
     public void onServerStopped() {
         FluxNetworkCache.instance.clearNetworks();
+        FluxChunkManager.clear();
     }
 
     public static CreativeTabs creativeTabs = new CreativeTabs(FluxNetworks.MODID) {
@@ -165,4 +185,6 @@ public class CommonProxy {
     public void setFeedback(FeedbackInfo info) {}
 
     public void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache) {}
+
+    public void clearColorCache(int id) {}
 }

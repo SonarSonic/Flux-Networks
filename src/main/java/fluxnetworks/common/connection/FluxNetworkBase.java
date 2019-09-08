@@ -1,13 +1,14 @@
 package fluxnetworks.common.connection;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.api.tileentity.ILiteConnector;
 import fluxnetworks.common.core.CustomValue;
 import fluxnetworks.common.core.ICustomValue;
 import fluxnetworks.common.core.NBTType;
+import fluxnetworks.common.data.FluxNetworkData;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.*;
@@ -21,9 +22,9 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<String> network_password = new CustomValue<>();
     public ICustomValue<Integer> network_color = new CustomValue<>();
     public ICustomValue<EnergyType> network_energy = new CustomValue<>();
+    public ICustomValue<Boolean> network_wireless = new CustomValue<>(false);
 
-    public ICustomValue<List<ILiteConnector>> network_connections = new CustomValue<>(new ArrayList<>()); // Realtime, not savable
-
+    public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
     public ICustomValue<List<ILiteConnector>> unloaded_connectors = new CustomValue<>(new ArrayList<>());
     public ICustomValue<List<NetworkMember>> network_players = new CustomValue<>(new ArrayList<>());
 
@@ -58,6 +59,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         network_password.setValue(nbt.getString(FluxNetworkData.NETWORK_PASSWORD));
         network_color.setValue(nbt.getInteger(FluxNetworkData.NETWORK_COLOR));
         network_energy.setValue(EnergyType.values()[nbt.getInteger(FluxNetworkData.ENERGY_TYPE)]);
+        network_wireless.setValue(nbt.getBoolean(FluxNetworkData.WIRELESS_MODE));
 
         if(type == NBTType.ALL || type == NBTType.PLAYERS) {
             FluxNetworkData.readPlayers(this, nbt);
@@ -76,6 +78,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         nbt.setString(FluxNetworkData.NETWORK_PASSWORD, network_password.getValue());
         nbt.setInteger(FluxNetworkData.NETWORK_COLOR, network_color.getValue());
         nbt.setInteger(FluxNetworkData.ENERGY_TYPE, network_energy.getValue().ordinal());
+        nbt.setBoolean(FluxNetworkData.WIRELESS_MODE, network_wireless.getValue());
 
         if(type == NBTType.ALL || type == NBTType.PLAYERS) {
             FluxNetworkData.writePlayers(this, nbt);

@@ -1,5 +1,6 @@
 package fluxnetworks.common.handler.energy;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import ic2.api.energy.EnergyNet;
 import ic2.api.energy.tile.IEnergySink;
@@ -10,7 +11,7 @@ import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
 
-public class ICEnergyHandler implements ITileEnergyHandler {
+public class IC2EnergyHandler implements ITileEnergyHandler {
 
     @Override
     public boolean canRenderConnection(@Nonnull TileEntity tile, EnumFacing side) {

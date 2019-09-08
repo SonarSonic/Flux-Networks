@@ -1,9 +1,11 @@
 package fluxnetworks.common.block;
 
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.core.NBTType;
+import fluxnetworks.common.item.ItemConfigurator;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -43,15 +45,20 @@ public abstract class BlockFluxCore extends BlockCore {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-        if(worldIn.isRemote)
+        if(worldIn.isRemote) {
             return true;
+        }
+
+        if(playerIn.getHeldItem(hand).getItem() instanceof ItemConfigurator) {
+            return false;
+        }
 
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
         if (tileEntity instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tileEntity;
             if(fluxCore.playerUsing.size() > 0) {
-                playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + "" + TextFormatting.BOLD + "Access denied: Another player is using"), true);
+                playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.ACCESS_OCCUPY), true);
                 return true;
             } else if(fluxCore.canAccess(playerIn)) {
                 playerIn.openGui(FluxNetworks.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
@@ -59,7 +66,7 @@ public abstract class BlockFluxCore extends BlockCore {
             }
         }
 
-        playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + "" + TextFormatting.BOLD + "Access denied: No permission"), true);
+        playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.ACCESS_DENIED), true);
 
         return true;
     }
@@ -101,7 +108,7 @@ public abstract class BlockFluxCore extends BlockCore {
                 return true;
             }
         }
-        player.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + "" + TextFormatting.BOLD + "Removal denied: No permission"), true);
+        player.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.REMOVAL_DENIED), true);
         return false;
     }
 

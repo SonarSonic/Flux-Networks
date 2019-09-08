@@ -15,7 +15,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
     public boolean slideControl = false;
 
     // control movement
-    protected int center;
+    protected float center;
 
     private int guiLeft, guiTop;
 
@@ -32,7 +32,6 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-        updatePosition();
         GlStateManager.pushMatrix();
         GlStateManager.enableAlpha();
         GlStateManager.enableBlend();
@@ -46,7 +45,8 @@ public class SlidedSwitchButton extends GuiButtonCore {
         mc.getTextureManager().bindTexture(GuiCore.BUTTONS);
 
         // Green background
-        drawTexturedModalRect(x, y, 32, 32, center * 2, 8);
+        //drawTexturedModalRect(x, y, 32, 32, center * 2, 8);
+        drawTexturedRectangular(x, y, 32, 32, center * 2, 8);
 
         // Circular
         drawTexturedModalRect(x + center, y, 16 * s, 40, 8, 8);
@@ -65,14 +65,19 @@ public class SlidedSwitchButton extends GuiButtonCore {
         slideControl = !slideControl;
     }
 
-    // Actually depend on FPS.
-    private void updatePosition() {
+    public void updatePosition(float par) {
         if(slideControl) {
-            if(center < 8) {
-                center++;
+            if(center <= 8 - par) {
+                center += par;
+            } else {
+                center = 8;
             }
-        } else if(center > 0) {
-            center--;
+        } else {
+            if(center >= par) {
+                center -= par;
+            } else {
+                center = 0;
+            }
         }
     }
 }

@@ -1,12 +1,10 @@
 package fluxnetworks.common.tileentity;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxEnergy;
 import fluxnetworks.api.tileentity.IFluxStorage;
-import fluxnetworks.common.connection.ConnectionTransferHandler;
-import fluxnetworks.common.connection.FluxNetworkData;
+import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.connection.SingleTransferHandler;
 import fluxnetworks.common.connection.StorageTransfer;
 import fluxnetworks.common.core.FluxUtils;
@@ -14,19 +12,25 @@ import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import scala.Int;
 
 public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy {
 
     public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 
+    public static final int C = 1000000;
+
     public int energyStored;
     public int maxEnergyStorage;
     public int maxTransferRate;
+
+    public ItemStack stack = ItemStack.EMPTY;
 
     public TileFluxStorage() {
         this(FluxConfig.basicCapacity, FluxConfig.basicTransfer);
         customName = "Basic Storage";
         limit = FluxConfig.basicTransfer;
+        stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_1);
     }
 
     private TileFluxStorage(int maxEnergyStorage, int maxTransferRate) {
@@ -40,11 +44,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
             super(FluxConfig.herculeanCapacity, FluxConfig.herculeanTransfer);
             customName = "Herculean Storage";
             limit = FluxConfig.herculeanTransfer;
-        }
-
-        @Override
-        public ItemStack getDisplayStack() {
-            return writeStorageToDisplayStack(new ItemStack(RegistryBlocks.FLUX_STORAGE_2));
+            stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_2);
         }
     }
 
@@ -54,11 +54,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
             super(FluxConfig.gargantuanCapacity, FluxConfig.gargantuanTransfer);
             customName = "Gargantuan Storage";
             limit = FluxConfig.gargantuanTransfer;
-        }
-
-        @Override
-        public ItemStack getDisplayStack() {
-            return writeStorageToDisplayStack(new ItemStack(RegistryBlocks.FLUX_STORAGE_3));
+            stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_3);
         }
     }
 
@@ -76,10 +72,6 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     public NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type) {
         super.writeCustomNBT(tag, type);
         tag.setInteger("energy", energyStored);
-        // Only for Tooltip
-        if(type == NBTType.DROP) {
-            tag.setInteger("maxEnergy", maxEnergyStorage);
-        }
         return tag;
     }
 
@@ -113,7 +105,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
 
     @Override
     public int getPriority() {
-        return -1000;
+        return priority - C;
     }
 
     @Override
@@ -138,6 +130,6 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
 
     @Override
     public ItemStack getDisplayStack() {
-        return writeStorageToDisplayStack(new ItemStack(RegistryBlocks.FLUX_STORAGE_1));
+        return writeStorageToDisplayStack(stack);
     }
 }

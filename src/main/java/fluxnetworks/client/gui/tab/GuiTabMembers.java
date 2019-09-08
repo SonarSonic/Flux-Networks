@@ -30,9 +30,9 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         super(player, tileEntity);
         gridStartX = 16;
         gridStartY = 18;
-        gridHeight = 13;
+        gridHeight = 14;
         gridPerPage = 10;
-        elementHeight = 10;
+        elementHeight = 11;
         elementWidth = 143;
     }
 
@@ -73,9 +73,14 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     public void renderElement(NetworkMember element, int x, int y) {
         drawColorRect(x, y, elementHeight, elementWidth, element.getPermission().color | 0xcc000000);
-        fontRenderer.drawString(element.getCachedName(), x + 3, y, 0xffffff);
+        fontRenderer.drawString(element.getCachedName(), x + 3, y + 1, 0xffffff);
         String p = element.getPermission().name;
-        fontRenderer.drawString(p, x + 140 - fontRenderer.getStringWidth(p), y, element.getPermission().color);
+        fontRenderer.drawString(p, x + 140 - fontRenderer.getStringWidth(p), y + 1, element.getPermission().color);
+    }
+
+    @Override
+    public void renderElementTooltip(NetworkMember element, int mouseX, int mouseY) {
+
     }
 
     @Override
@@ -83,7 +88,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
         for(NormalButton button : buttons) {
             if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
-                if(button.id == 1) {
+                if(button.id == 1 && !player.getText().isEmpty()) {
                     PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.ADD_MEMBER, PacketGeneralHandler.getAddMemberPacket(network.getNetworkID(), player.getText())));
                     player.setText("");
                 }
@@ -95,12 +100,14 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void updateScreen() {
         super.updateScreen();
         if(timer == 0) {
-            List<NetworkMember> a = network.getSetting(NetworkSettings.NETWORK_PLAYERS);
-            a.sort(Comparator.comparing(NetworkMember::getPermission));
-            refreshPages(a);
+            refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
         }
         timer++;
         timer %= 10;
     }
 
+    @Override
+    protected void sortGrids(SortType sortType) {
+        elements.sort(Comparator.comparing(NetworkMember::getPermission));
+    }
 }

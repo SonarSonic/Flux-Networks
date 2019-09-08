@@ -18,10 +18,10 @@ import java.util.UUID;
 public interface IFluxConnector {
 
     enum ConnectionType {
+        CONTROLLER,
         POINT,
         PLUG,
-        STORAGE,
-        CONTROLLER;
+        STORAGE;
 
         ConnectionType() {
 
@@ -82,6 +82,8 @@ public interface IFluxConnector {
                 return FluxGuiStack.FLUX_POINT;
             case PLUG:
                 return FluxGuiStack.FLUX_PLUG;
+            case CONTROLLER:
+                return FluxGuiStack.FLUX_CONTROLLER;
             default:
                 return ItemStack.EMPTY;
         }

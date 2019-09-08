@@ -1,13 +1,15 @@
-package fluxnetworks.common.connection;
+package fluxnetworks.common.data;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.ILiteConnector;
+import fluxnetworks.common.connection.*;
 import fluxnetworks.common.core.NBTType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
@@ -27,6 +29,7 @@ public class FluxNetworkData extends WorldSavedData {
     private static FluxNetworkData data;
 
     public static String NETWORKS = "networks";
+    public static String LOADED_CHUNKS = "loadedChunks";
     public static String UNIQUE_ID = "uniqueID";
 
     public static String NETWORK_ID = "networkID";
@@ -36,6 +39,7 @@ public class FluxNetworkData extends WorldSavedData {
     public static String SECURITY_TYPE = "networkSecurity";
     public static String ENERGY_TYPE = "networkEnergy";
     public static String OWNER_UUID = "ownerUUID";
+    public static String WIRELESS_MODE = "wirelessMode";
 
     public static String PLAYER_LIST = "playerList";
     public static String NETWORK_FOLDERS = "folders";
@@ -47,6 +51,7 @@ public class FluxNetworkData extends WorldSavedData {
     public static String OLD_NETWORK_ACCESS = "access";
 
     public Map<Integer, IFluxNetwork> networks = new HashMap<>();
+    public Map<Integer, List<ChunkPos>> loadedChunks = new HashMap<>();
 
     public int uniqueID = 1;
 
@@ -129,11 +134,13 @@ public class FluxNetworkData extends WorldSavedData {
                 addNetwork(network);
             }
         }
+        readChunks(nbt);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setInteger(UNIQUE_ID, uniqueID);
+
         NBTTagList list = new NBTTagList();
         for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
             NBTTagCompound tag = new NBTTagCompound();
@@ -141,6 +148,10 @@ public class FluxNetworkData extends WorldSavedData {
             list.appendTag(tag);
         }
         compound.setTag(NETWORKS, list);
+
+        NBTTagCompound tag = new NBTTagCompound();
+        loadedChunks.forEach((dim, pos) -> writeChunks(dim, pos, tag));
+        compound.setTag(LOADED_CHUNKS, tag);
         return compound;
     }
 
@@ -183,12 +194,37 @@ public class FluxNetworkData extends WorldSavedData {
         List<ILiteConnector> a = network.getSetting(NetworkSettings.UNLOADED_CONNECTORS);
         if(!a.isEmpty()) {
             NBTTagList list = new NBTTagList();
-            a.forEach(s -> {
-                if(s.isDirty()) {
-                    list.appendTag(s.writeNetworkData(new NBTTagCompound()));
-                }
-            });
+            a.forEach(s -> list.appendTag(s.writeNetworkData(new NBTTagCompound())));
             nbt.setTag(UNLOADED_CONNECTIONS, list);
+        }
+        return nbt;
+    }
+
+    private void readChunks(NBTTagCompound nbt) {
+        if(!nbt.hasKey(LOADED_CHUNKS)) {
+            return;
+        }
+        NBTTagCompound tags = nbt.getCompoundTag(LOADED_CHUNKS);
+        for(String key : tags.getKeySet()) {
+            NBTTagList list = tags.getTagList(key, Constants.NBT.TAG_COMPOUND);
+            List<ChunkPos> pos = loadedChunks.computeIfAbsent(Integer.valueOf(key), l -> new ArrayList<>());
+            for (int i = 0; i < list.tagCount(); i++) {
+                NBTTagCompound tag = list.getCompoundTagAt(i);
+                pos.add(new ChunkPos(tag.getInteger("x"), tag.getInteger("z")));
+            }
+        }
+    }
+
+    private NBTTagCompound writeChunks(int dim, List<ChunkPos> pos, NBTTagCompound nbt) {
+        if(!pos.isEmpty()) {
+            NBTTagList list = new NBTTagList();
+            pos.forEach(p -> {
+                NBTTagCompound t = new NBTTagCompound();
+                t.setInteger("x", p.x);
+                t.setInteger("z", p.z);
+                list.appendTag(t);
+            });
+            nbt.setTag(String.valueOf(dim), list);
         }
         return nbt;
     }
@@ -204,6 +240,7 @@ public class FluxNetworkData extends WorldSavedData {
         network.network_password.setValue(String.valueOf((int) (Math.random() * 1000000)));
         network.network_energy.setValue(EnergyType.RF);
         FluxNetworkData.readPlayers(network, nbt);
+        FluxNetworkData.readConnections(network, nbt);
     }
 
 }

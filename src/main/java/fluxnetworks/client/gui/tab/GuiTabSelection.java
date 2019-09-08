@@ -129,6 +129,11 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         GlStateManager.popMatrix();
     }
 
+    @Override
+    public void renderElementTooltip(IFluxNetwork element, int mouseX, int mouseY) {
+
+    }
+
     private void initPopGui() {
         popButtons.clear();
         popButtons.add(new NormalButton("Cancel", 24, 86, 30, 12, 11));

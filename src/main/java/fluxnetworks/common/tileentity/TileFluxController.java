@@ -2,13 +2,16 @@ package fluxnetworks.common.tileentity;
 
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxController;
+import fluxnetworks.api.tileentity.IFluxEnergy;
 import fluxnetworks.common.connection.ConnectionTransferHandler;
+import fluxnetworks.common.connection.ControllerTransfer;
+import fluxnetworks.common.connection.SingleTransferHandler;
 import fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;
 
-public class TileFluxController extends TileFluxCore implements IFluxController {
+public class TileFluxController extends TileFluxCore implements IFluxController, IFluxEnergy {
 
-    public final ConnectionTransferHandler handler = new ConnectionTransferHandler(this, this);
+    public final SingleTransferHandler handler = new SingleTransferHandler(this, new ControllerTransfer(this));
 
     public TileFluxController() {
         customName = "Flux Controller";
@@ -24,4 +27,18 @@ public class TileFluxController extends TileFluxCore implements IFluxController 
         return handler;
     }
 
+    @Override
+    public long addEnergy(long amount, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public long removeEnergy(long amount, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public long getEnergy() {
+        return 0;
+    }
 }

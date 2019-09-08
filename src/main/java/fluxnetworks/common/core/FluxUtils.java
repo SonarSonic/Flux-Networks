@@ -2,6 +2,7 @@ package fluxnetworks.common.core;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.EnergyType;
+import fluxnetworks.api.FluxConfigurationType;
 import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConnector;
@@ -26,8 +27,9 @@ import java.util.UUID;
 
 public class FluxUtils {
 
-    public static String FLUX_DATA = "FluxData";
-    public static String GUI_COLOR = "GuiColor";
+    public static final String FLUX_DATA = "FluxData";
+    public static final String GUI_COLOR = "GuiColor";
+    public static final String CONFIGS_TAG = "Configs";
 
     public static UUID UUID_DEFAULT = new UUID(-1, -1);
 
@@ -120,8 +122,8 @@ public class FluxUtils {
     public static boolean addConnection(IFluxConnector fluxConnector) {
         if(fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.instance.getNetwork(fluxConnector.getNetworkID());
-            if(network != null) {
-                if(fluxConnector.getConnectionType().isController() && ((FluxNetworkServer) network).getConnections(FluxType.controller).size() > 0) {
+            if(!network.isInvalid()) {
+                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxType.controller).size() > 0) {
                     return false;
                 }
                 network.queueConnectionAddition(fluxConnector);
@@ -134,7 +136,7 @@ public class FluxUtils {
     public static void removeConnection(IFluxConnector fluxConnector, boolean isChunkUnload) {
         if(fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.instance.getNetwork(fluxConnector.getNetworkID());
-            if(network != null) {
+            if(!network.isInvalid()) {
                 network.queueConnectionRemoval(fluxConnector, isChunkUnload);
                 return;
             }
@@ -208,6 +210,28 @@ public class FluxUtils {
                 return false;
         }
         return true;
+    }
+
+    public static NBTTagCompound copyConfiguration(TileFluxCore flux, NBTTagCompound config) {
+        for(FluxConfigurationType type : FluxConfigurationType.VALUES){
+            type.copy.copyFromTile(config, type.getNBTName(), flux);
+        }
+        return config;
+    }
+
+    public static void pasteConfiguration(TileFluxCore flux, NBTTagCompound config) {
+        if(flux.getConnectionType() == IFluxConnector.ConnectionType.STORAGE) {
+            FluxConfigurationType type = FluxConfigurationType.NETWORK;
+            if(config.hasKey(type.getNBTName())) {
+                type.paste.pasteToTile(config, type.getNBTName(), flux);
+            }
+            return;
+        }
+        for(FluxConfigurationType type : FluxConfigurationType.VALUES){
+            if(config.hasKey(type.getNBTName())) {
+                type.paste.pasteToTile(config, type.getNBTName(), flux);
+            }
+        }
     }
 
 }

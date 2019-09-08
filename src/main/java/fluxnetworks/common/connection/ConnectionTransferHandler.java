@@ -1,6 +1,7 @@
 package fluxnetworks.common.connection;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import fluxnetworks.api.network.IFluxTransfer;
 import fluxnetworks.api.tileentity.IFluxConnector;

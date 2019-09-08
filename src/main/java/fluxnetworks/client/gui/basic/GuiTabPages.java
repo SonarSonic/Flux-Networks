@@ -24,7 +24,16 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         super.drawForegroundLayer(mouseX, mouseY);
         int i = 0;
         for(T s : current) {
-            renderElement(s, gridStartX, gridStartY + gridHeight * i);
+            int y = (gridStartY + gridHeight * i);
+            renderElement(s, gridStartX, y);
+            i++;
+        }
+        i = 0;
+        for(T s : current) {
+            int y = (gridStartY + gridHeight * i);
+            if(mouseX >= gridStartX + guiLeft && mouseY >= y + guiTop && mouseX < (gridStartX + elementWidth) + guiLeft && mouseY < y + elementHeight + guiTop) {
+                renderElementTooltip(s, mouseX - guiLeft, mouseY - guiTop);
+            }
             i++;
         }
         if(pages > 1) {
@@ -41,6 +50,12 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
                 }
             }
         }
+        /*int p = (mouseY - gridStartY) / gridHeight;
+        if(mouseX >= gridStartX && mouseX < (gridStartX + elementWidth) && mouseY < (p * gridHeight + elementHeight)) {
+            if(current.get(p) != null) {
+                return (T) current.get(p);
+            }
+        }*/
         return null;
     }
 
@@ -74,6 +89,8 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     }
 
     public abstract void renderElement(T element, int x, int y);
+
+    public abstract void renderElementTooltip(T element, int mouseX, int mouseY);
 
     protected void refreshPages(List<T> elements) {
         this.elements = elements;

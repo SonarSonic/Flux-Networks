@@ -1,4 +1,4 @@
-package fluxnetworks.common.network;
+package fluxnetworks.common.connection;
 
 public class NetworkFolder {
 

@@ -22,10 +22,10 @@ public class RenderUtils {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder vertexbuffer = tessellator.getBuffer();
         vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
-        vertexbuffer.pos((double) left, (double) bottom, 0.0D).endVertex();
-        vertexbuffer.pos((double) right, (double) bottom, 0.0D).endVertex();
-        vertexbuffer.pos((double) right, (double) top, 0.0D).endVertex();
-        vertexbuffer.pos((double) left, (double) top, 0.0D).endVertex();
+        vertexbuffer.pos(left, bottom, 0.0D).endVertex();
+        vertexbuffer.pos(right, bottom, 0.0D).endVertex();
+        vertexbuffer.pos(right, top, 0.0D).endVertex();
+        vertexbuffer.pos(left, top, 0.0D).endVertex();
         tessellator.draw();
     }
 }

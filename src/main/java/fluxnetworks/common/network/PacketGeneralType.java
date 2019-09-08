@@ -10,7 +10,8 @@ public enum PacketGeneralType {
     DELETE_NETWORK(PacketGeneralHandler::handleDeleteNetworkPacket),
     ADD_MEMBER(PacketGeneralHandler::handleAddMemberPacket),
     REMOVE_MEMBER(PacketGeneralHandler::handleRemoveMemberPacket),
-    CHANGE_PERMISSION(PacketGeneralHandler::handleChangePermissionPacket);
+    CHANGE_PERMISSION(PacketGeneralHandler::handleChangePermissionPacket),
+    CHANGE_WIRELESS(PacketGeneralHandler::handleChangeWirelessPacket);
 
     public IPacketGeneralHandler handler;
 

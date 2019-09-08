@@ -4,6 +4,35 @@ tile.fluxnetworks.fluxblock.name=Flux Block
 tile.fluxnetworks.fluxcontroller.name=Flux Controller
 tile.fluxnetworks.fluxpoint.name=Flux Point
 tile.fluxnetworks.fluxplug.name=Flux Plug
+tile.fluxnetworks.fluxstorage.name=Basic Flux Storage
+tile.fluxnetworks.herculeanfluxstorage.name=Herculean Flux Storage
+tile.fluxnetworks.gargantuanfluxstorage.name=Gargantuan Flux Storage
 
 item.fluxnetworks.flux.name=Flux
 item.fluxnetworks.fluxcore.name=Flux Core
+item.fluxnetworks.fluxconfigurator.name=Flux Configurator
+item.fluxnetworks.adminconfigurator.name=Admin Configurator
+
+tooltip.fluxnetworks.flux=Obtained by compressing redstones with bedrock and obisidian
+tooltip.fluxnetworks.fluxcontroller=Manages network and wireless charging
+tooltip.fluxnetworks.fluxplug=For adding energy to the flux network
+tooltip.fluxnetworks.fluxpoint=For removing energy from the flux network
+tooltip.fluxnetworks.fluxstorage=Stores energy in the flux network
+
+info.fluxnetworks.tab.home=Home
+info.fluxnetworks.tab.selection=Network Selection
+info.fluxnetworks.tab.transfer=Network Transfers
+info.fluxnetworks.tab.connection=Network Connections
+info.fluxnetworks.tab.statistics=Network Statistics
+info.fluxnetworks.tab.member=Network Members
+info.fluxnetworks.tab.setting=Network Settings
+info.fluxnetworks.tab.create=Create New Network
+
+info.fluxnetworks.superadmin.on=You are now a network super admin
+info.fluxnetworks.superadmin.off=You are no longer a network super admin
+
+info.fluxnetworks.network.name=Network Name
+
+info.fluxnetworks.denied.access=Access denied: No permission
+info.fluxnetworks.denied.occupy=Access denied: Another player is using
+info.fluxnetworks.denied.removal=Removal denied: No permission

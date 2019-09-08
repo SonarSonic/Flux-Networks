@@ -2,6 +2,7 @@ package fluxnetworks.common.block;
 
 import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.client.render.ItemFluxStorageRenderer;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.tileentity.TileFluxStorage;
@@ -75,7 +76,7 @@ public class BlockFluxStorage extends BlockFluxCore {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP);
     }
 
     @Override

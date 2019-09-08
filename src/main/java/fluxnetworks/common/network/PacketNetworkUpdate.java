@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class PacketNetworkUpdate implements IMessageHandler<PacketNetworkUpdate.NetworkUpdateMessage, IMessage> {
 
     @Override
