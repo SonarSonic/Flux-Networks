@@ -1,8 +1,5 @@
 # Flux Network Refactored
 
-## Introduction
-This mod is originally created by Ollie Lansdell and I rewrite the code both for less tps lag and GTCE support. And this mod doesn't require SonarCore now. All models and textures was created by Ollie Lansdell except GUI part which were remade by me. The transfer part is working now but GUI still in development. IC2 and Tesla are no longer support. Use mekanism cables for IC2.  
-
 For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug], I will update the mod by weeks.
 
 ### Comparison
