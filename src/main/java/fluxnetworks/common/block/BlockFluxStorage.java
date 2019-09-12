@@ -14,6 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -80,6 +82,7 @@ public class BlockFluxStorage extends BlockFluxCore {
     }
 
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         Item.getItemFromBlock(this).setTileEntityItemStackRenderer(ItemFluxStorageRenderer.INSTANCE);
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(FluxNetworks.MODID + ':' + "fluxstoragebuiltin", "inventory"));

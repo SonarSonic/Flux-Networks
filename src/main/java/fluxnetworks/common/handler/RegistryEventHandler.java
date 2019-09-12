@@ -8,7 +8,6 @@ import fluxnetworks.common.registry.RegistryItems;
 import fluxnetworks.common.registry.RegistryRecipes;
 import fluxnetworks.common.registry.RegistrySounds;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.SoundEvent;

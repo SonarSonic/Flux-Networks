@@ -2,7 +2,6 @@ package fluxnetworks.common.handler;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.common.network.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -27,7 +26,7 @@ public class PacketHandler {
     }
 
     public static EntityPlayer getPlayer(MessageContext ctx) {
-        return ctx.side.isServer() ? ctx.getServerHandler().player : Minecraft.getMinecraft().player;
+        return FluxNetworks.proxy.getPlayer(ctx);
     }
 
     public static void handlePacket(Runnable runnable, INetHandler netHandler) {

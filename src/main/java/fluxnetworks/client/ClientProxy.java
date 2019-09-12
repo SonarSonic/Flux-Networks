@@ -1,14 +1,14 @@
 package fluxnetworks.client;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.render.FluxStorageModel;
-import fluxnetworks.client.render.ItemFluxStorageRenderer;
 import fluxnetworks.client.render.TileFluxStorageRenderer;
 import fluxnetworks.common.CommonProxy;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.tileentity.TileFluxStorage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -18,6 +18,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import java.util.Map;
 
@@ -91,5 +92,10 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void clearColorCache(int id) {
         FluxColorHandler.clearCertain(id);
+    }
+
+    @Override
+    public EntityPlayer getPlayer(MessageContext ctx) {
+        return ctx.side.isServer() ? super.getPlayer(ctx) : Minecraft.getMinecraft().player;
     }
 }

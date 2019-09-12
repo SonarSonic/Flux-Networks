@@ -16,10 +16,9 @@ import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
 import fluxnetworks.common.registry.RegistryRecipes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -41,6 +40,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import java.util.List;
@@ -187,4 +187,8 @@ public class CommonProxy {
     public void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache) {}
 
     public void clearColorCache(int id) {}
+
+    public EntityPlayer getPlayer(MessageContext ctx) {
+        return ctx.getServerHandler().player;
+    }
 }
