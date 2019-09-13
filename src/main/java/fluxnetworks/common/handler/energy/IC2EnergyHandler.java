@@ -34,18 +34,18 @@ public class IC2EnergyHandler implements ITileEnergyHandler {
             IEnergyStorage sink = (IEnergyStorage) tile;
             int before = sink.getStored();
             if (!simulate) {
-                return sink.addEnergy((int) Math.min(sink.getCapacity() - before, amount / 4)) * 4;
+                return sink.addEnergy((int) Math.min(sink.getCapacity() - before, amount >> 2)) << 2;
             } else {
-                return Math.min(sink.getCapacity() - before, amount / 4) * 4;
+                return Math.min(sink.getCapacity() - before, amount >> 2) << 2;
             }
         } else if (tile instanceof IEnergySink) {
             IEnergySink sink = (IEnergySink) tile;
             double voltage = EnergyNet.instance.getPowerFromTier(sink.getSinkTier());
-            double a = Math.min(amount / 4, voltage);
+            double a = Math.min(amount >> 2, voltage);
             if (simulate) {
-                return (long) Math.min(a, sink.getDemandedEnergy()) * 4;
+                return (long) Math.min(a, sink.getDemandedEnergy()) << 2;
             } else {
-                return (long) Math.floor(a - sink.injectEnergy(side, a, voltage)) * 4;
+                return (long) Math.floor(a - sink.injectEnergy(side, a, voltage)) << 2;
             }
         }
         return 0;

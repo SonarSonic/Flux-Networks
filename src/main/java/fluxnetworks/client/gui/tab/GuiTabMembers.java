@@ -1,16 +1,19 @@
 package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.NormalButton;
 import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketGeneral;
 import fluxnetworks.common.network.PacketGeneralHandler;
 import fluxnetworks.common.network.PacketGeneralType;
+import fluxnetworks.common.network.PacketUpdateRequest;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
@@ -34,12 +37,17 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         gridPerPage = 10;
         elementHeight = 11;
         elementWidth = 143;
+        PacketHandler.network.sendToServer(new PacketUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
     }
 
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 162, 0xffffff);
+        if(networkValid) {
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 162, 0xffffff);
+        } else {
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
+        }
     }
 
     @Override
@@ -51,12 +59,15 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(5).setMain();
 
-        buttons.add(new NormalButton("+", 152, 150, 12, 12, 1));
+        if(networkValid) {
 
-        player = TextboxButton.create("", 1, fontRenderer, 14, 150, 130, 12);
-        player.setMaxStringLength(32);
+            buttons.add(new NormalButton("+", 152, 150, 12, 12, 1));
 
-        textBoxes.add(player);
+            player = TextboxButton.create(this, "", 1, fontRenderer, 14, 150, 130, 12);
+            player.setMaxStringLength(32);
+
+            textBoxes.add(player);
+        }
 
         super.initGui();
     }
@@ -103,11 +114,11 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
         }
         timer++;
-        timer %= 10;
+        timer %= 2;
     }
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(NetworkMember::getPermission));
+        elements.sort(Comparator.comparing(NetworkMember::getPermission).thenComparing(NetworkMember::getCachedName));
     }
 }

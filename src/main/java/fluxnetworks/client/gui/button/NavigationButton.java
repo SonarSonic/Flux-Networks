@@ -60,7 +60,7 @@ public class NavigationButton extends GuiButtonCore {
             case 1:
                 return FluxTranslate.TAB_SELECTION;
             case 2:
-                return FluxTranslate.TAB_TRANSFER;
+                return FluxTranslate.TAB_WIRELESS;
             case 3:
                 return FluxTranslate.TAB_CONNECTION;
             case 4:
@@ -85,7 +85,7 @@ public class NavigationButton extends GuiButtonCore {
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabSelection(player, tileEntity));
                 break;
             case 2:
-                FMLCommonHandler.instance().showGuiScreen(new GuiTabTransfer(player, tileEntity));
+                FMLCommonHandler.instance().showGuiScreen(new GuiTabWireless(player, tileEntity));
                 break;
             case 3:
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabConnections(player, tileEntity));

@@ -5,20 +5,20 @@ import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxEnergy;
 import fluxnetworks.api.tileentity.IFluxStorage;
 import fluxnetworks.common.data.FluxNetworkData;
-import fluxnetworks.common.connection.SingleTransferHandler;
-import fluxnetworks.common.connection.StorageTransfer;
+import fluxnetworks.common.connection.handler.SingleTransferHandler;
+import fluxnetworks.common.connection.transfer.StorageTransfer;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import scala.Int;
 
 public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy {
 
     public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 
     public static final int C = 1000000;
+    public static final int D = -1;
 
     public int energyStored;
     public int maxEnergyStorage;
@@ -105,7 +105,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
 
     @Override
     public int getPriority() {
-        return priority - C;
+        return Math.min(priority - C, D);
     }
 
     @Override
@@ -117,11 +117,11 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     public ItemStack writeStorageToDisplayStack(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
 
-        NBTTagCompound stag = new NBTTagCompound();
-        stag.setInteger("energy", energyStored);
-        stag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
+        NBTTagCompound subTag = new NBTTagCompound();
+        subTag.setInteger("energy", energyStored);
+        subTag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
 
-        tag.setTag(FluxUtils.FLUX_DATA, stag);
+        tag.setTag(FluxUtils.FLUX_DATA, subTag);
         tag.setBoolean(FluxUtils.GUI_COLOR, true);
 
         stack.setTagCompound(tag);

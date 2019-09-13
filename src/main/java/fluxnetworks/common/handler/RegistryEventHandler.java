@@ -37,7 +37,7 @@ public class RegistryEventHandler {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
 
-        RegistryRecipes.registerStorageRecipes(event.getRegistry());
+        RegistryRecipes.registerRecipes(event.getRegistry());
     }
 
     @SubscribeEvent

@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class CapabilityHandler {
 
-    public static final ResourceLocation SUPER_ADMIN = new ResourceLocation(FluxNetworks.MODID, "SuperAdmin");
+    private static final ResourceLocation SUPER_ADMIN = new ResourceLocation(FluxNetworks.MODID, "SuperAdmin");
 
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent<Entity> event) {

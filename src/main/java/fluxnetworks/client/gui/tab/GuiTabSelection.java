@@ -27,8 +27,6 @@ import java.util.List;
 
 public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
-    private List<NormalButton> popButtons = Lists.newArrayList();
-
     public TextboxButton password;
     public IFluxNetwork popSelect;
 
@@ -66,9 +64,6 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     @Override
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         super.drawPopupForegroundLayer(mouseX, mouseY);
-        for(NormalButton button : popButtons) {
-            button.drawButton(mc, mouseX, mouseY, guiLeft, guiTop);
-        }
         if(popSelect != null) {
             drawCenteredString(fontRenderer, "Connecting to " + popSelect.getSetting(NetworkSettings.NETWORK_NAME), 89, 50, 0xffffff);
         }
@@ -139,7 +134,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         popButtons.add(new NormalButton("Cancel", 24, 86, 30, 12, 11));
         popButtons.add(new NormalButton("Connect", 120, 86, 30, 12, 12));
 
-        password = TextboxButton.create("", 5, fontRenderer, 70, 66, 81, 12);
+        password = TextboxButton.create(this, "", 5, fontRenderer, 70, 66, 81, 12);
         password.setTextInvisible();
         password.setMaxStringLength(16);
 
@@ -184,7 +179,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     public void updateScreen() {
         super.updateScreen();
         if(timer2 == 0) {
-            refreshPages(FluxNetworkCache.instance.getAllNetworks());
+            refreshPages(FluxNetworkCache.instance.getAllClientNetworks());
         }
         if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
             backToMain();
@@ -196,13 +191,6 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         }
         timer2++;
         timer2 %= 10;
-    }
-
-    private void backToMain() {
-        main = true;
-        popButtons.clear();
-        popBoxes.clear();
-        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
     }
 
     @Override
@@ -222,16 +210,6 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     @Override
     protected void keyTypedPop(char c, int k) throws IOException {
         super.keyTypedPop(c, k);
-        if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
-            if(!popBoxes.stream().anyMatch(GuiTextField::isFocused)) {
-                backToMain();
-            }
-        }
-        for(TextboxButton text : popBoxes) {
-            if(text.isFocused()) {
-                text.textboxKeyTyped(c, k);
-            }
-        }
     }
 
     @Override

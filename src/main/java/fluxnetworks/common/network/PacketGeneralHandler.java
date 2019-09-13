@@ -1,5 +1,6 @@
 package fluxnetworks.common.network;
 
+import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.FeedbackInfo;
@@ -8,15 +9,15 @@ import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.client.FluxColorHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;
+import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.core.FluxUtils;
+import fluxnetworks.common.handler.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import java.util.List;
@@ -76,13 +77,17 @@ public class PacketGeneralHandler {
         if (!network.isInvalid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 network.setSetting(NetworkSettings.NETWORK_NAME, newName);
-                network.setSetting(NetworkSettings.NETWORK_COLOR, color);
+                if(network.getSetting(NetworkSettings.NETWORK_COLOR) != color) {
+                    network.setSetting(NetworkSettings.NETWORK_COLOR, color);
+                    @SuppressWarnings("unchecked")
+                    List<IFluxConnector> list = network.getConnections(FluxType.flux);
+                    list.forEach(fluxConnector -> fluxConnector.connect(network)); // update color data
+                    FluxNetworks.proxy.clearColorCache(networkID);
+                }
                 network.setSetting(NetworkSettings.NETWORK_SECURITY, security);
                 network.setSetting(NetworkSettings.NETWORK_ENERGY, energy);
                 network.setSetting(NetworkSettings.NETWORK_PASSWORD, password);
-                List<IFluxConnector> list = network.getConnections(FluxType.flux);
-                list.forEach(fluxConnector -> fluxConnector.connect(network)); // reconnect
-                FluxNetworks.proxy.clearColorCache(networkID);
+                PacketHandler.network.sendToAll(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
                 return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
             } else {
                 return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
@@ -126,6 +131,7 @@ public class PacketGeneralHandler {
         if (!network.isInvalid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 network.addNewMember(playerName);
+                return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
             } else {
                 return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
             }
@@ -148,6 +154,7 @@ public class PacketGeneralHandler {
         if (!network.isInvalid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 network.removeMember(playerRemoved);
+                return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
             } else {
                 return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
             }
@@ -179,7 +186,7 @@ public class PacketGeneralHandler {
                         NetworkMember p = settings.get();
                         if(!p.getPermission().canDelete()) {
                             p.setPermission(p.getPermission() == AccessPermission.USER ? AccessPermission.ADMIN : AccessPermission.USER);
-                            return null;
+                            return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                         }
                     }
                     return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);

@@ -1,13 +1,13 @@
 package fluxnetworks.client.gui;
 
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.client.gui.button.TextboxButton;
-import fluxnetworks.common.connection.ConnectionTransferHandler;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.*;
@@ -36,6 +36,15 @@ public class GuiFluxHome extends GuiFluxCore {
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
         renderTransfer(tileEntity.getTransferHandler(), 0xffffff, 30, 90);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
+
+        if(!tileEntity.getConnectionType().isStorage()) {
+            fontRenderer.drawString(FluxTranslate.SURGE_MODE, 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT, 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.CHUNK_LOADING, 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        }
+        if(tileEntity.getConnectionType().isController() && networkValid) {
+            fontRenderer.drawString(FluxTranslate.WIRELESS_CHARGING, 20, 156, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        }
     }
 
     @Override
@@ -46,19 +55,20 @@ public class GuiFluxHome extends GuiFluxCore {
     @Override
     public void initGui() {
         super.initGui();
-        fluxName = TextboxButton.create("Name: ", 0, fontRenderer, 16, 28, 144, 12);
-        fluxName.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
+        int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
+        fluxName = TextboxButton.create(this, FluxTranslate.NAME + ": ", 0, fontRenderer, 16, 28, 144, 12).setOutlineColor(color);
+        //fluxName.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
         fluxName.setMaxStringLength(24);
         fluxName.setText(tileEntity.getCustomName());
 
-        priority = TextboxButton.create("Priority: ", 1, fontRenderer, 16, 45, 144, 12).setDigitalOnly();
-        priority.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
-        priority.setMaxStringLength(6);
+        priority = TextboxButton.create(this, FluxTranslate.PRIORITY + ": ", 1, fontRenderer, 16, 45, 144, 12).setOutlineColor(color).setDigitsOnly();
+        //priority.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
+        priority.setMaxStringLength(5);
         priority.setText(String.valueOf(tileEntity.priority));
 
-        limit = TextboxButton.create("Transfer Limit: ", 2, fontRenderer, 16, 62, 144, 12).setDigitalOnly();
-        limit.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
-        limit.setMaxStringLength(8);
+        limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT + ": ", 2, fontRenderer, 16, 62, 144, 12).setOutlineColor(color).setDigitsOnly();
+        //limit.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
+        limit.setMaxStringLength(9);
         limit.setText(String.valueOf(tileEntity.limit));
 
         for(int i = 0; i < 7; i++) {
@@ -67,14 +77,14 @@ public class GuiFluxHome extends GuiFluxCore {
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(0).setMain();
 
-        if(tileEntity.getConnectionType() != IFluxConnector.ConnectionType.STORAGE) {
-            switches.add(new SlidedSwitchButton(80, 120, 1, guiLeft, guiTop, "Surge Mode: ", tileEntity.surgeMode));
-            switches.add(new SlidedSwitchButton(100, 132, 2, guiLeft, guiTop, "Enable Limit: ", !tileEntity.disableLimit));
-            chunkLoad = new SlidedSwitchButton(120, 144, 3, guiLeft, guiTop, "Chunk Loading: ", tileEntity.chunkLoading);
+        if(!tileEntity.getConnectionType().isStorage()) {
+            switches.add(new SlidedSwitchButton(140, 120, 1, guiLeft, guiTop, tileEntity.surgeMode));
+            switches.add(new SlidedSwitchButton(140, 132, 2, guiLeft, guiTop, tileEntity.disableLimit));
+            chunkLoad = new SlidedSwitchButton(140, 144, 3, guiLeft, guiTop, tileEntity.chunkLoading);
             switches.add(chunkLoad);
         }
-        if(tileEntity.getConnectionType().isController() && !network.isInvalid()) {
-            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, "Wireless Charging: ", network.getSetting(NetworkSettings.NETWORK_WIRELESS)));
+        if(tileEntity.getConnectionType().isController() && networkValid) {
+            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, network.getSetting(NetworkSettings.NETWORK_WIRELESS)));
         }
 
         textBoxes.add(fluxName);
@@ -88,16 +98,15 @@ public class GuiFluxHome extends GuiFluxCore {
             tileEntity.customName = fluxName.getText();
             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 1));
         } else if(text == priority) {
-            tileEntity.priority = priority.getIntegerFromText();
+            tileEntity.priority = priority.getIntegerFromText(false);
             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 2));
         } else if(text == limit) {
-            if(!(tileEntity.getConnectionType() == IFluxConnector.ConnectionType.STORAGE)) {
-                tileEntity.limit = limit.getIntegerFromText();
+            if(!tileEntity.getConnectionType().isStorage()) {
+                tileEntity.limit = limit.getLongFromText(true);
             } else {
-                // Flux Storage can't change limit
-                limit.setText(String.valueOf(tileEntity.getCurrentLimit()));
                 tileEntity.limit = tileEntity.getCurrentLimit();
             }
+            limit.setText(String.valueOf(tileEntity.limit));
             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 3));
         }
     }
@@ -115,7 +124,7 @@ public class GuiFluxHome extends GuiFluxCore {
                             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 4));
                             break;
                         case 2:
-                            tileEntity.disableLimit = !s.slideControl;
+                            tileEntity.disableLimit = s.slideControl;
                             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 5));
                             break;
                         case 3:
@@ -142,7 +151,7 @@ public class GuiFluxHome extends GuiFluxCore {
     protected void keyTypedMain(char c, int k) throws IOException {
         super.keyTypedMain(c, k);
         if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
-            if(!textBoxes.stream().anyMatch(GuiTextField::isFocused)) {
+            if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
                 mc.player.closeScreen();
             }
         }

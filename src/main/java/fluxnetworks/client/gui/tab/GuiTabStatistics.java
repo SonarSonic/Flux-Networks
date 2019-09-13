@@ -10,7 +10,7 @@ import net.minecraft.util.text.TextFormatting;
 
 public class GuiTabStatistics extends GuiTabCore {
 
-    public NetworkStatistics stat = network.getSetting(NetworkSettings.NETWORK_STATISTICS);
+    public NetworkStatistics stats = network.getSetting(NetworkSettings.NETWORK_STATISTICS);
 
     public GuiTabStatistics(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
@@ -20,10 +20,10 @@ public class GuiTabStatistics extends GuiTabCore {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
-        fontRenderer.drawString(TextFormatting.GRAY + "Plugs: " + TextFormatting.RESET + stat.fluxPlugCount, 12, 28, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        fontRenderer.drawString(TextFormatting.GRAY + "Points: " + TextFormatting.RESET + stat.fluxPointCount, 12, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        fontRenderer.drawString(TextFormatting.GRAY + "Storages: " + TextFormatting.RESET + stat.fluxStorageCount, 12, 52, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        fontRenderer.drawString(TextFormatting.GRAY + "Controllers: " + TextFormatting.RESET + stat.fluxControllerCount, 12, 64, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(TextFormatting.GRAY + "Plugs: " + TextFormatting.RESET + stats.fluxPlugCount, 12, 28, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(TextFormatting.GRAY + "Points: " + TextFormatting.RESET + stats.fluxPointCount, 12, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(TextFormatting.GRAY + "Storages: " + TextFormatting.RESET + stats.fluxStorageCount, 12, 52, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(TextFormatting.GRAY + "Controllers: " + TextFormatting.RESET + stats.fluxControllerCount, 12, 64, network.getSetting(NetworkSettings.NETWORK_COLOR));
     }
 
     @Override

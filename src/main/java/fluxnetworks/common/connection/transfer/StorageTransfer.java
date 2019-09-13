@@ -1,4 +1,4 @@
-package fluxnetworks.common.connection;
+package fluxnetworks.common.connection.transfer;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.network.IFluxTransfer;

@@ -4,7 +4,7 @@ import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.api.tileentity.ILiteConnector;
+import fluxnetworks.common.core.NBTType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,10 +12,7 @@ import net.minecraft.world.World;
 
 import java.util.UUID;
 
-/**
- * For unloaded connectors.
- */
-public class FluxLiteConnector implements ILiteConnector {
+public class FluxLiteConnector implements IFluxConnector {
 
     public int networkID;
     public int priority;
@@ -27,6 +24,9 @@ public class FluxLiteConnector implements ILiteConnector {
     public String customName;
     public boolean surgeMode;
     public boolean disableLimit;
+    public boolean isChunkLoaded;
+    public long buffer;
+    public long change;
     public ItemStack stack;
 
     public FluxLiteConnector(IFluxConnector tile) {
@@ -40,28 +40,35 @@ public class FluxLiteConnector implements ILiteConnector {
         this.customName = tile.getCustomName();
         this.surgeMode = tile.getSurgeMode();
         this.disableLimit = tile.getDisableLimit();
+        this.isChunkLoaded = tile.isChunkLoaded();
+        this.buffer = tile.getTransferHandler().getBuffer();
+        this.change = tile.getTransferHandler().getChange();
         this.stack = tile.getDisplayStack();
     }
 
-    public FluxLiteConnector(int networkID, int priority, UUID playerUUID, IFluxConnector.ConnectionType connectionType, long limit, Coord4D coord4D, int folderID, String customName, boolean surgeMode, boolean disableLimit, ItemStack stack) {
-        this.networkID = networkID;
-        this.priority = priority;
-        this.playerUUID = playerUUID;
-        this.connectionType = connectionType;
-        this.limit = limit;
-        this.coord4D = coord4D;
-        this.folderID = folderID;
-        this.customName = customName;
-        this.surgeMode = surgeMode;
-        this.disableLimit = disableLimit;
-        this.stack = stack;
-    }
-
     public FluxLiteConnector(NBTTagCompound tag) {
-        readNetworkData(tag);
+        readCustomNBT(tag, NBTType.ALL_SAVE);
     }
 
-    public NBTTagCompound writeNetworkData(NBTTagCompound tag) {
+    public static NBTTagCompound writeCustomNBT(IFluxConnector tile, NBTTagCompound tag) {
+        tile.getCoords().write(tag);
+        tag.setInteger("type", tile.getConnectionType().ordinal());
+        tag.setInteger("n_id", tile.getNetworkID());
+        tag.setInteger("priority", tile.getPriority());
+        tag.setInteger("folder_id", tile.getFolderID());
+        tag.setLong("limit", tile.getCurrentLimit());
+        tag.setString("name", tile.getCustomName());
+        tag.setBoolean("dLimit", tile.getDisableLimit());
+        tag.setBoolean("surge", tile.getSurgeMode());
+        tag.setBoolean("isChunkLoaded", tile.isChunkLoaded());
+        tag.setLong("buffer", tile.getBuffer());
+        tag.setLong("change", tile.getChange());
+        tile.getDisplayStack().writeToNBT(tag);
+        return tag;
+    }
+
+    @Override
+    public NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type) {
         coord4D.write(tag);
         tag.setInteger("type", connectionType.ordinal());
         tag.setInteger("n_id", networkID);
@@ -71,11 +78,15 @@ public class FluxLiteConnector implements ILiteConnector {
         tag.setString("name", customName);
         tag.setBoolean("dLimit", disableLimit);
         tag.setBoolean("surge", surgeMode);
+        tag.setBoolean("isChunkLoaded", isChunkLoaded);
+        tag.setLong("buffer", buffer);
+        tag.setLong("change", change);
         stack.writeToNBT(tag);
         return tag;
     }
 
-    public void readNetworkData(NBTTagCompound tag) {
+    @Override
+    public void readCustomNBT(NBTTagCompound tag, NBTType type) {
         coord4D = new Coord4D(tag);
         connectionType = IFluxConnector.ConnectionType.values()[tag.getInteger("type")];
         networkID = tag.getInteger("n_id");
@@ -85,6 +96,9 @@ public class FluxLiteConnector implements ILiteConnector {
         customName = tag.getString("name");
         disableLimit = tag.getBoolean("dLimit");
         surgeMode = tag.getBoolean("surge");
+        isChunkLoaded = tag.getBoolean("isChunkLoaded");
+        buffer = tag.getLong("buffer");
+        change = tag.getLong("change");
         stack = new ItemStack(tag);
     }
 
@@ -120,7 +134,7 @@ public class FluxLiteConnector implements ILiteConnector {
 
     @Override
     public boolean isChunkLoaded() {
-        return false;
+        return isChunkLoaded;
     }
 
     @Override
@@ -181,5 +195,20 @@ public class FluxLiteConnector implements ILiteConnector {
     @Override
     public ItemStack getDisplayStack() {
         return stack;
+    }
+
+    @Override
+    public long getBuffer() {
+        return buffer;
+    }
+
+    @Override
+    public long getChange() {
+        return change;
+    }
+
+    @Override
+    public void setChunkLoaded(boolean chunkLoaded) {
+        isChunkLoaded = chunkLoaded;
     }
 }

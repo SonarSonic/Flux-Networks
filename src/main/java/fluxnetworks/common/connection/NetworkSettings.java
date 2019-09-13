@@ -3,7 +3,6 @@ package fluxnetworks.common.connection;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.api.tileentity.ILiteConnector;
 import fluxnetworks.common.core.ICustomValue;
 
 import java.util.List;
@@ -18,10 +17,10 @@ public class NetworkSettings<T> {
     public static final NetworkSettings<Integer> NETWORK_COLOR = new NetworkSettings<>(s -> s.network_color);
     public static final NetworkSettings<UUID> NETWORK_OWNER = new NetworkSettings<>(s -> s.network_owner);
     public static final NetworkSettings<EnergyType> NETWORK_ENERGY = new NetworkSettings<>(s -> s.network_energy);
-    public static final NetworkSettings<Boolean> NETWORK_WIRELESS = new NetworkSettings<>(s -> s.network_wireless);
+    public static final NetworkSettings<Integer> NETWORK_WIRELESS = new NetworkSettings<>(s -> s.network_wireless);
     public static final NetworkSettings<NetworkStatistics> NETWORK_STATISTICS = new NetworkSettings<>(s -> s.network_stats);
     public static final NetworkSettings<List<NetworkMember>> NETWORK_PLAYERS = new NetworkSettings<>(s -> s.network_players);
-    public static final NetworkSettings<List<ILiteConnector>> UNLOADED_CONNECTORS = new NetworkSettings<>(s -> s.unloaded_connectors);
+    public static final NetworkSettings<List<IFluxConnector>> ALL_CONNECTORS = new NetworkSettings<>(s -> s.all_connectors);
 
     public ISettingGetter<T> value;
 

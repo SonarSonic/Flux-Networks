@@ -3,11 +3,8 @@ package fluxnetworks.common.tileentity;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxController;
 import fluxnetworks.api.tileentity.IFluxEnergy;
-import fluxnetworks.common.connection.ConnectionTransferHandler;
-import fluxnetworks.common.connection.ControllerTransfer;
-import fluxnetworks.common.connection.SingleTransferHandler;
-import fluxnetworks.common.registry.RegistryBlocks;
-import net.minecraft.item.ItemStack;
+import fluxnetworks.common.connection.transfer.ControllerTransfer;
+import fluxnetworks.common.connection.handler.SingleTransferHandler;
 
 public class TileFluxController extends TileFluxCore implements IFluxController, IFluxEnergy {
 

@@ -1,10 +1,9 @@
 package fluxnetworks.common.tileentity;
 
 import fluxnetworks.api.network.ITransferHandler;
-import fluxnetworks.common.connection.ConnectionTransferHandler;
+import fluxnetworks.common.connection.handler.ConnectionTransferHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
 import fluxnetworks.common.tileentity.energy.TileGTEnergy;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 

@@ -16,15 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Deprecated
 public class PacketNetworkUpdate implements IMessageHandler<PacketNetworkUpdate.NetworkUpdateMessage, IMessage> {
 
     @Override
     public IMessage onMessage(NetworkUpdateMessage message, MessageContext ctx) {
         if(ctx.side == Side.CLIENT) {
-            PacketHandler.handlePacket(() -> {
-                FluxNetworkCache.instance.updateClientFromPacket(message.updatedNetworks, message.type);
-            }, ctx.netHandler);
+            PacketHandler.handlePacket(() -> FluxNetworkCache.instance.updateClientFromPacket(message.updatedNetworks, message.type), ctx.netHandler);
         }
 
         return null;
@@ -46,7 +43,6 @@ public class PacketNetworkUpdate implements IMessageHandler<PacketNetworkUpdate.
                     updatedNetworks.put(n.getNetworkID(), tag);
                 }
             });
-
         }
 
         @Override

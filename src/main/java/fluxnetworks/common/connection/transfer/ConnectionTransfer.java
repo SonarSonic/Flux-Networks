@@ -1,4 +1,4 @@
-package fluxnetworks.common.connection;
+package fluxnetworks.common.connection.transfer;
 
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import fluxnetworks.api.network.IFluxTransfer;

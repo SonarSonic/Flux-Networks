@@ -1,16 +1,20 @@
 package fluxnetworks.common.data;
 
+import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.ILiteConnector;
+import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.connection.*;
 import fluxnetworks.common.core.NBTType;
+import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.network.PacketNetworkUpdate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
@@ -20,7 +24,7 @@ import java.io.File;
 import java.util.*;
 
 /**
- * Save network data to local.
+ * Save network data to local. Only on server side
  */
 public class FluxNetworkData extends WorldSavedData {
 
@@ -51,7 +55,7 @@ public class FluxNetworkData extends WorldSavedData {
     public static String OLD_NETWORK_ACCESS = "access";
 
     public Map<Integer, IFluxNetwork> networks = new HashMap<>();
-    public Map<Integer, List<ChunkPos>> loadedChunks = new HashMap<>();
+    public Map<Integer, List<ChunkPos>> loadedChunks = new HashMap<>(); // Forced Chunks
 
     public int uniqueID = 1;
 
@@ -78,44 +82,34 @@ public class FluxNetworkData extends WorldSavedData {
     public static FluxNetworkData get() {
         if(data == null) {
             World world = DimensionManager.getWorld(0);
-            // Emm... tastes good
             File oldFile = new File(world.getSaveHandler().getWorldDirectory(), "data/sonar.flux.networks.configurations.dat");
-            if(oldFile.exists()) {
+            if (oldFile.exists()) {
                 oldFile.renameTo(new File(oldFile.getParent(), FluxNetworkData.NETWORK_DATA + ".dat"));
                 FluxNetworks.logger.info("Old FluxNetworkData found");
             }
-            WorldSavedData savedData = world.loadData(FluxNetworkData.class, FluxNetworkData.NETWORK_DATA);
-            if (savedData == null) {
-                FluxNetworks.logger.info("No FluxNetworkData found");
-                FluxNetworkData newData = new FluxNetworkData(NETWORK_DATA);
-                world.setData(NETWORK_DATA, newData);
-                data = newData;
-            } else {
-                data = (FluxNetworkData) savedData;
-                FluxNetworks.logger.info("FluxNetworkData has been successfully loaded");
-            }
-        }
-        /*World world = DimensionManager.getWorld(0);
-        MapStorage mapStorage = world.getMapStorage();
-        FluxNetworkData data = (FluxNetworkData) mapStorage.getOrLoadData(FluxNetworkData.class, NETWORK_DATA);
+            MapStorage mapStorage = world.getMapStorage();
+            FluxNetworkData savedData = (FluxNetworkData) mapStorage.getOrLoadData(FluxNetworkData.class, NETWORK_DATA);
 
-        if(data == null) {
-            data = new FluxNetworkData(NETWORK_DATA);
-            mapStorage.setData(NETWORK_DATA, data);
-            data.markDirty();
-            FluxNetworks.logger.info("A new data has created.");
+            if (savedData == null) {
+                savedData = new FluxNetworkData(NETWORK_DATA);
+                mapStorage.setData(NETWORK_DATA, savedData);
+                FluxNetworks.logger.info("No FluxNetworkData found");
+            }
+            data = savedData;
+            FluxNetworks.logger.info("FluxNetworkData has been successfully loaded");
         }
-        FluxNetworks.logger.info("World data loaded");*/
         return data;
     }
 
     public void addNetwork(IFluxNetwork network) {
         networks.putIfAbsent(network.getNetworkID(), network);
+        PacketHandler.network.sendToAll(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
     }
 
     public void removeNetwork(IFluxNetwork network) {
         network.onRemoved();
         networks.remove(network.getNetworkID());
+        PacketHandler.network.sendToAll(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_CLEAR));
     }
 
     @Override
@@ -129,12 +123,13 @@ public class FluxNetworkData extends WorldSavedData {
                 if(tag.hasKey(OLD_NETWORK_ID)) {
                     readOldData(network, tag);
                 } else {
-                    network.readNetworkNBT(tag, NBTType.ALL);
+                    network.readNetworkNBT(tag, NBTType.ALL_SAVE);
                 }
                 addNetwork(network);
             }
         }
         readChunks(nbt);
+        data = this;
     }
 
     @Override
@@ -144,7 +139,7 @@ public class FluxNetworkData extends WorldSavedData {
         NBTTagList list = new NBTTagList();
         for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
             NBTTagCompound tag = new NBTTagCompound();
-            network.writeNetworkNBT(tag, NBTType.ALL);
+            network.writeNetworkNBT(tag, NBTType.ALL_SAVE);
             list.appendTag(tag);
         }
         compound.setTag(NETWORKS, list);
@@ -182,19 +177,45 @@ public class FluxNetworkData extends WorldSavedData {
         if(!nbt.hasKey(UNLOADED_CONNECTIONS)) {
             return;
         }
-        List<ILiteConnector> a = new ArrayList<>();
+        List<IFluxConnector> a = new ArrayList<>();
         NBTTagList list = nbt.getTagList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++) {
             a.add(new FluxLiteConnector(list.getCompoundTagAt(i)));
         }
-        network.setSetting(NetworkSettings.UNLOADED_CONNECTORS, a);
+        network.getSetting(NetworkSettings.ALL_CONNECTORS).addAll(a);
     }
 
     public static NBTTagCompound writeConnections(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
-        List<ILiteConnector> a = network.getSetting(NetworkSettings.UNLOADED_CONNECTORS);
+        List<IFluxConnector> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
         if(!a.isEmpty()) {
             NBTTagList list = new NBTTagList();
-            a.forEach(s -> list.appendTag(s.writeNetworkData(new NBTTagCompound())));
+            a.forEach(s -> {
+                if(!s.isChunkLoaded()) {
+                    list.appendTag(s.writeCustomNBT(new NBTTagCompound(), NBTType.DEFAULT));
+                }
+            });
+            nbt.setTag(UNLOADED_CONNECTIONS, list);
+        }
+        return nbt;
+    }
+
+    public static void readAllConnections(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
+        if(!nbt.hasKey(UNLOADED_CONNECTIONS)) {
+            return;
+        }
+        List<IFluxConnector> a = new ArrayList<>();
+        NBTTagList list = nbt.getTagList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.tagCount(); i++) {
+            a.add(new FluxLiteConnector(list.getCompoundTagAt(i)));
+        }
+        network.setSetting(NetworkSettings.ALL_CONNECTORS, a);
+    }
+
+    public static NBTTagCompound writeAllConnections(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
+        List<IFluxConnector> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
+        if(!a.isEmpty()) {
+            NBTTagList list = new NBTTagList();
+            a.forEach(s -> list.appendTag(s.writeCustomNBT(new NBTTagCompound(), NBTType.DEFAULT)));
             nbt.setTag(UNLOADED_CONNECTIONS, list);
         }
         return nbt;

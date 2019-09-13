@@ -19,13 +19,12 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
     private int guiLeft, guiTop;
 
-    public SlidedSwitchButton(int x, int y, int id, int guiLeft, int guiTop, String text, boolean defaultControl) {
+    public SlidedSwitchButton(int x, int y, int id, int guiLeft, int guiTop, boolean defaultControl) {
         super(x, y, 16, 8, id);
         if(defaultControl) {
             slideControl = true;
             center = 8;
         }
-        this.text = text;
         this.guiLeft = guiLeft;
         this.guiTop = guiTop;
     }
@@ -40,7 +39,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
         int s = getState(mc, mouseX, mouseY);
 
-        mc.fontRenderer.drawString(text, x - mc.fontRenderer.getStringWidth(text), y, 0xffffff);
+        //mc.fontRenderer.drawString(text, x - mc.fontRenderer.getStringWidth(text), y, 0xffffff);
 
         mc.getTextureManager().bindTexture(GuiCore.BUTTONS);
 

@@ -1,6 +1,7 @@
 package fluxnetworks.common.block;
 
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.common.CommonProxy;
 import fluxnetworks.common.item.ItemFluxConnector;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
@@ -17,16 +18,16 @@ public class BlockCore extends Block {
         setRegistryName(name.toLowerCase());
         RegistryBlocks.BLOCKS.add(this);
         RegistryItems.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
-        setCreativeTab(FluxNetworks.proxy.creativeTabs);
+        setCreativeTab(CommonProxy.creativeTabs);
     }
 
-    public BlockCore(String name, Material materialIn, boolean s) {
+    public BlockCore(String name, Material materialIn, boolean special) {
         super(materialIn);
         setUnlocalizedName(FluxNetworks.MODID + "." + name.toLowerCase());
         setRegistryName(name.toLowerCase());
         RegistryBlocks.BLOCKS.add(this);
         RegistryItems.ITEMS.add(new ItemFluxConnector(this).setRegistryName(this.getRegistryName()));
-        setCreativeTab(FluxNetworks.proxy.creativeTabs);
+        setCreativeTab(CommonProxy.creativeTabs);
     }
 
     public void registerModels() {

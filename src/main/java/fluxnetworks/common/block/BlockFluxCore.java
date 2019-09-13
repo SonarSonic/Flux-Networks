@@ -2,12 +2,10 @@ package fluxnetworks.common.block;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
-import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.item.ItemConfigurator;
 import fluxnetworks.common.tileentity.TileFluxCore;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -23,11 +21,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 public abstract class BlockFluxCore extends BlockCore {
@@ -38,8 +37,8 @@ public abstract class BlockFluxCore extends BlockCore {
 
     public BlockFluxCore(String name) {
         super(name, FluxUtils.MACHINE, true);
-        setHardness(0.2f);
-        setResistance(1000000);
+        setHardness(0.3f);
+        setResistance(1000000.0f);
     }
 
     @Override
@@ -58,7 +57,10 @@ public abstract class BlockFluxCore extends BlockCore {
         if (tileEntity instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tileEntity;
             if(fluxCore.playerUsing.size() > 0) {
-                playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.ACCESS_OCCUPY), true);
+                TextComponentTranslation textComponents = new TextComponentTranslation(FluxTranslate.ACCESS_OCCUPY_KEY);
+                textComponents.getStyle().setBold(true);
+                textComponents.getStyle().setColor(TextFormatting.DARK_RED);
+                playerIn.sendStatusMessage(textComponents, true);
                 return true;
             } else if(fluxCore.canAccess(playerIn)) {
                 playerIn.openGui(FluxNetworks.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
@@ -66,7 +68,10 @@ public abstract class BlockFluxCore extends BlockCore {
             }
         }
 
-        playerIn.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.ACCESS_DENIED), true);
+        TextComponentTranslation textComponents = new TextComponentTranslation(FluxTranslate.ACCESS_DENIED_KEY);
+        textComponents.getStyle().setBold(true);
+        textComponents.getStyle().setColor(TextFormatting.DARK_RED);
+        playerIn.sendStatusMessage(textComponents, true);
 
         return true;
     }
@@ -97,18 +102,30 @@ public abstract class BlockFluxCore extends BlockCore {
         }
 
         TileEntity tile = world.getTileEntity(pos);
+
         if (tile instanceof TileFluxCore) {
             TileFluxCore tileFluxCore = (TileFluxCore) tile;
             if(tileFluxCore.canAccess(player)) {
                 ItemStack stack = new ItemStack(this, 1, damageDropped(state));
                 writeDataToStack(stack, pos, world);
-                EntityItem entityItem = new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+
+                float motion = 0.7F;
+                double motionX = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;
+                double motionY = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;
+                double motionZ = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;
+
+                EntityItem entityItem = new EntityItem(world, pos.getX() + motionX, pos.getY() + motionY, pos.getZ() + motionZ, stack);
+
                 world.setBlockToAir(pos);
                 world.spawnEntity(entityItem);
                 return true;
             }
         }
-        player.sendStatusMessage(new TextComponentString(TextFormatting.DARK_RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.REMOVAL_DENIED), true);
+
+        TextComponentTranslation textComponents = new TextComponentTranslation(FluxTranslate.REMOVAL_DENIED_KEY);
+        textComponents.getStyle().setBold(true);
+        textComponents.getStyle().setColor(TextFormatting.DARK_RED);
+        player.sendStatusMessage(textComponents, true);
         return false;
     }
 
@@ -129,7 +146,7 @@ public abstract class BlockFluxCore extends BlockCore {
         if(tile instanceof TileFluxCore) {
             TileFluxCore t = (TileFluxCore) tile;
             NBTTagCompound tag = stack.getOrCreateSubCompound(FluxUtils.FLUX_DATA);
-            t.writeCustomNBT(tag, NBTType.DROP);
+            t.writeCustomNBT(tag, NBTType.TILE_DROP);
         }
     }
 
@@ -138,8 +155,9 @@ public abstract class BlockFluxCore extends BlockCore {
         if(tile instanceof TileFluxCore && stack.hasTagCompound()) {
             TileFluxCore t = (TileFluxCore) tile;
             NBTTagCompound tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
-            if(tag != null)
-                t.readCustomNBT(tag, NBTType.DROP);
+            if(tag != null) {
+                t.readCustomNBT(tag, NBTType.TILE_DROP);
+            }
         }
     }
 
@@ -148,21 +166,25 @@ public abstract class BlockFluxCore extends BlockCore {
         return true;
     }
 
+    @Nonnull
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return bounding;
     }
 
+    @Nonnull
     @Override
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, CONNECTED);
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState().withProperty(CONNECTED, meta == 1);

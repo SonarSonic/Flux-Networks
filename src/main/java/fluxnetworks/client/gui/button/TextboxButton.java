@@ -1,36 +1,56 @@
 package fluxnetworks.client.gui.button;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.client.gui.basic.GuiTextField;
+import fluxnetworks.client.gui.basic.ITextBoxButton;
 import net.minecraft.client.gui.FontRenderer;
 
-/**
- * Extended vanilla
- */
 public class TextboxButton extends GuiTextField {
 
-    public String extraText;
-    public int textWidth;
-    protected boolean digitsOnly;
+    private String origin;
+    private String extraText;
+    private int textWidth;
+    private boolean digitsOnly;
+    private boolean hexOnly;
+    private ITextBoxButton gui;
 
-    protected int outlineColor = 0xffb4b4b4, boxColor = 0x20000000;
+    private int outlineColor = 0xffb4b4b4;
+    private static final int boxColor = 0x20000000;
 
-    public TextboxButton(String text, int componentId, FontRenderer fontRenderer, int x, int y, int par5Width, int par6Height, int width) {
+    public TextboxButton(ITextBoxButton gui, String text, int componentId, FontRenderer fontRenderer, int x, int y, int par5Width, int par6Height, int width) {
         super(componentId, fontRenderer, x + width, y, par5Width - width, par6Height);
         this.extraText = text;
         this.fontRenderer = fontRenderer;
-        textWidth = width;
+        this.textWidth = width;
+        this.gui = gui;
     }
 
-    public static TextboxButton create(String text, int id, FontRenderer fontRenderer, int x, int y, int width, int height) {
-        return new TextboxButton(text, id, fontRenderer, x, y, width, height, fontRenderer.getStringWidth(text));
+    public static TextboxButton create(ITextBoxButton gui, String text, int id, FontRenderer fontRenderer, int x, int y, int width, int height) {
+        return new TextboxButton(gui, text, id, fontRenderer, x, y, width, height, fontRenderer.getStringWidth(text));
     }
 
-    public int getIntegerFromText() {
-        return Integer.valueOf(getText().isEmpty() ? "0" : getText());
+    public int getIntegerFromText(boolean nonNegative) {
+        /*if(getText().isEmpty()) {
+            return 0;
+        }*/
+        if(nonNegative) {
+            return Math.max(Integer.parseInt(getText()), 0);
+        }
+        return Integer.parseInt(getText());
     }
 
-    public long getLongFromText() {
-        return Long.valueOf(getText().isEmpty() ? "0" : getText());
+    public long getLongFromText(boolean nonNegative) {
+        /*if(getText().isEmpty()) {
+            return 0;
+        }*/
+        if(nonNegative) {
+            return Math.max(Long.parseLong(getText()), 0);
+        }
+        return Long.parseLong(getText());
+    }
+
+    public int getIntegerFromHex() {
+        return Integer.parseInt(getText(), 16);
     }
 
     @Override
@@ -54,7 +74,7 @@ public class TextboxButton extends GuiTextField {
         y -= (this.height - 8) / 2;
     }
 
-    @Override
+    /*@Override
     public boolean textboxKeyTyped(char c, int i) {
         if (digitsOnly) {
             switch (c) {
@@ -77,6 +97,66 @@ public class TextboxButton extends GuiTextField {
             return Character.isDigit(c) && super.textboxKeyTyped(c, i);
         }
         return super.textboxKeyTyped(c, i);
+    }*/
+
+    @Override
+    public void writeText(String textToWrite) {
+        if(digitsOnly) {
+            for(int i = 0; i < textToWrite.length(); i++) {
+                char c = textToWrite.charAt(i);
+                if(!Character.isDigit(c)) {
+                    if(getText().isEmpty()) {
+                        if(c != '-') {
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+            }
+        }
+        if(hexOnly) {
+            for(int i = 0; i < textToWrite.length(); i++) {
+                char c = textToWrite.charAt(i);
+                if(c == '-') {
+                    return;
+                }
+            }
+            String origin = getText();
+            super.writeText(textToWrite);
+            try {
+                Integer.parseInt(getText(), 16);
+            } catch (final NumberFormatException ignored) {
+                setText(origin);
+            }
+            return;
+        }
+        super.writeText(textToWrite);
+    }
+
+    /**
+     * Better than Sonar Sonic's
+     */
+    @Override
+    public void switchFocused(boolean isFocusedIn) {
+        if(digitsOnly) {
+            if(isFocusedIn) {
+                origin = getText();
+            } else {
+                if(getText().isEmpty() || getText().equals("-")) {
+                    setText("0");
+                    return;
+                }
+                try {
+                    Long.parseLong(getText());
+                } catch (final NumberFormatException ignored) {
+                    setText(origin);
+                }
+            }
+        }
+        if(!isFocusedIn) {
+            gui.onTextBoxChanged(this);
+        }
     }
 
     public TextboxButton setOutlineColor(int color) {
@@ -89,8 +169,13 @@ public class TextboxButton extends GuiTextField {
         return this;
     }
 
-    public TextboxButton setDigitalOnly() {
+    public TextboxButton setDigitsOnly() {
         digitsOnly = true;
+        return this;
+    }
+
+    public TextboxButton setHexOnly() {
+        hexOnly = true;
         return this;
     }
 

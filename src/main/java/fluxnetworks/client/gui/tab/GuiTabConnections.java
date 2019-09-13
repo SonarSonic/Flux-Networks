@@ -1,28 +1,31 @@
 package fluxnetworks.client.gui.tab;
 
+import com.google.common.collect.Lists;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.api.tileentity.ILiteConnector;
-import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.button.NavigationButton;
-import fluxnetworks.common.connection.FluxNetworkServer;
 import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.core.NBTType;
+import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.network.PacketConnectionRequest;
+import fluxnetworks.common.network.PacketNetworkUpdate;
+import fluxnetworks.common.network.PacketUpdateRequest;
 import fluxnetworks.common.tileentity.TileFluxCore;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
-    private int timer;
+    public List<IFluxConnector> batchConnections = new ArrayList<>();
+
+    private int timer = 2;
 
     public GuiTabConnections(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
@@ -32,6 +35,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         gridPerPage = 7;
         elementHeight = 16;
         elementWidth = 144;
+        PacketHandler.network.sendToServer(new PacketUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_CONNECTIONS));
     }
 
     @Override
@@ -40,9 +44,11 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-
+    protected void drawForegroundLayer(int mouseX, int mouseY) {
+        super.drawForegroundLayer(mouseX, mouseY);
+        if(!networkValid) {
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
+        }
     }
 
     @Override
@@ -70,7 +76,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         if(element.isChunkLoaded()) {
             fontRenderer.drawString(element.getCustomName(), x + 20, y + 1, 0xffffff);
             GlStateManager.scale(0.625, 0.625, 0.625);
-            fontRenderer.drawString(getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getTransferHandler().getChange()), (int) ((x + 20) * 1.6), (int) ((y + 10) * 1.6), 0xffffff);
+            fontRenderer.drawString(getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 20) * 1.6), (int) ((y + 10) * 1.6), 0xffffff);
             GlStateManager.scale(1.6, 1.6, 1.6);
         } else {
             fontRenderer.drawString(element.getCustomName(), x + 20, y + 4, 0x808080);
@@ -87,11 +93,11 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     @Override
     public void updateScreen() {
-        if(timer == 0) {
-            List<IFluxConnector> list = new ArrayList<>();
-            list.addAll(network.getConnections(FluxType.flux));
-            list.addAll(network.getSetting(NetworkSettings.UNLOADED_CONNECTORS));
-            refreshPages(list);
+        if(timer == 3) {
+            refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
+        }
+        if(timer % 4 == 0) {
+            PacketHandler.network.sendToServer(new PacketConnectionRequest.ConnectionRequestMessage(network.getNetworkID(), current.stream().map(IFluxConnector::getCoords).collect(Collectors.toList())));
         }
         timer++;
         timer %= 100;
@@ -99,7 +105,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(IFluxConnector::isChunkLoaded).reversed().thenComparing(IFluxConnector::getConnectionType).thenComparing(IFluxConnector::getPriority));
+        elements.sort(Comparator.comparing(IFluxConnector::isChunkLoaded).reversed().thenComparing(IFluxConnector::getConnectionType).thenComparing(p -> -p.getPriority()));
         refreshCurrentPage();
     }
 }

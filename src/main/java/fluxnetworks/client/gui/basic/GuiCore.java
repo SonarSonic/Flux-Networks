@@ -24,9 +24,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class GuiCore extends GuiContainer {
+public abstract class GuiCore extends GuiContainer implements ITextBoxButton {
 
-    public static final ResourceLocation BACKGROUND = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/gui_default_flux.png");
+    public static final ResourceLocation BACKGROUND = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/gui_default_background.png");
+    public static final ResourceLocation FRAME = new ResourceLocation(FluxNetworks.MODID, ":textures/gui/gui_default_frame.png");
     public static final ResourceLocation GUI_BAR = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/gui_bar.png");
     public static final ResourceLocation BUTTONS = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/gui_button.png");
 
@@ -109,9 +110,8 @@ public abstract class GuiCore extends GuiContainer {
         }
     }
 
-    private void drawFluxDefaultBackground() {
-        mc.getTextureManager().bindTexture(BACKGROUND);
-        this.drawTexturedModalRect(width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
+    protected void drawFluxDefaultBackground() {
+
     }
 
     @Override
@@ -128,6 +128,10 @@ public abstract class GuiCore extends GuiContainer {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
+        for(TextboxButton text : textBoxes) {
+            text.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
+        }
+
         if(main) {
             mouseMainClicked(mouseX, mouseY, mouseButton);
         } else {
@@ -137,19 +141,11 @@ public abstract class GuiCore extends GuiContainer {
     }
 
     protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        for(TextboxButton text : textBoxes) {
-            if(text.getVisible() == true && text.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton)) {
-                text.setFocused(true);
-            }
-        }
+
     }
 
     protected void mousePopupClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        for(TextboxButton text : popBoxes) {
-            if(text.getVisible() == true && text.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton)) {
-                text.setFocused(true);
-            }
-        }
+
     }
 
     @Override
@@ -181,16 +177,11 @@ public abstract class GuiCore extends GuiContainer {
         for(TextboxButton text : textBoxes) {
             if(text.isFocused()) {
                 text.textboxKeyTyped(c, k);
-                onTextBoxChanged(text);
             }
         }
     }
 
     protected void keyTypedPop(char c, int k) throws IOException {
-
-    }
-
-    public void onTextBoxChanged(TextboxButton text) {
 
     }
 
@@ -233,7 +224,7 @@ public abstract class GuiCore extends GuiContainer {
     protected void drawHoverTooltip(List<String> strings, int x, int y) {
         AtomicInteger maxLength = new AtomicInteger();
         strings.forEach(a -> maxLength.set(Math.max(fontRenderer.getStringWidth(a), maxLength.get())));
-        drawRectWithBackground(x, y, strings.size() * 9 + 3, maxLength.get() + 4, 0x90ffffff, 0x90000000);
+        drawRectWithBackground(x, y, strings.size() * 9 + 3, maxLength.get() + 4, 0x80ffffff, 0xc0000000);
         int i = 0;
         for(String s : strings) {
             fontRenderer.drawString(s, x + 2, y + 2 + 9 * i, 0xffffff);

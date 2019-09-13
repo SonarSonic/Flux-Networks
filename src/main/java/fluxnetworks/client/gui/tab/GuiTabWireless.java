@@ -2,19 +2,28 @@ package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.button.NavigationButton;
+import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class GuiTabTransfer extends GuiTabCore {
+public class GuiTabWireless extends GuiTabCore {
 
-    public GuiTabTransfer(EntityPlayer player, TileFluxCore tileEntity) {
+    public int enableWireless, rightHand, leftHand, hotBar, armorSlot, baublesSlot;
+
+    public GuiTabWireless(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
+        int a = network.getSetting(NetworkSettings.NETWORK_WIRELESS);
+        enableWireless = a & 1;
+        rightHand = a >> 1 & 1;
+        leftHand = a >> 2 & 1;
+        hotBar = a >> 3 & 1;
+        armorSlot = a >> 4 & 1;
+        baublesSlot = a >> 5 & 1;
     }
 
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
-        fontRenderer.drawString("WIP", 20, 30, 0xffffff);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package fluxnetworks.api;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -18,6 +19,10 @@ public class Coord4D {
         dimension = tile.getWorld().provider.getDimension();
     }
 
+    public Coord4D(ByteBuf buf) {
+        read(buf);
+    }
+
     public NBTTagCompound write(NBTTagCompound tag) {
         tag.setInteger("x", x);
         tag.setInteger("y", y);
@@ -31,6 +36,20 @@ public class Coord4D {
         y = tag.getInteger("y");
         z = tag.getInteger("z");
         dimension = tag.getInteger("dimension");
+    }
+
+    public void write(ByteBuf buf) {
+        buf.writeInt(x);
+        buf.writeInt(y);
+        buf.writeInt(z);
+        buf.writeInt(dimension);
+    }
+
+    public void read(ByteBuf buf) {
+        x = buf.readInt();
+        y = buf.readInt();
+        z = buf.readInt();
+        dimension = buf.readInt();
     }
 
     public String getStringInfo() {

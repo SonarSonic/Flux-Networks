@@ -1,6 +1,5 @@
 package fluxnetworks.common.tileentity.energy;
 
-import fluxnetworks.common.connection.ConnectionTransferHandler;
 import fluxnetworks.common.core.GTEnergyWrapper;
 import gregtech.api.capability.GregtechCapabilities;
 import net.minecraft.util.EnumFacing;

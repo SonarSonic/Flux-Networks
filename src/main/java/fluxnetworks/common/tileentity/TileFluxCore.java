@@ -1,8 +1,6 @@
 package fluxnetworks.common.tileentity;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.Capabilities;
 import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConfigurable;
@@ -129,12 +127,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(pos, -1, writeCustomNBT(new NBTTagCompound(), NBTType.UPDATE));
+        return new SPacketUpdateTileEntity(pos, -1, writeCustomNBT(new NBTTagCompound(), NBTType.TILE_UPDATE));
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readCustomNBT(pkt.getNbtCompound(), NBTType.UPDATE);
+        readCustomNBT(pkt.getNbtCompound(), NBTType.TILE_UPDATE);
         world.markBlockRangeForRenderUpdate(pos, pos);
     }
 
@@ -156,18 +154,18 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        writeCustomNBT(compound, NBTType.SAVE);
+        writeCustomNBT(compound, NBTType.ALL_SAVE);
         return compound;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        readCustomNBT(compound, NBTType.SAVE);
+        readCustomNBT(compound, NBTType.ALL_SAVE);
     }
 
     public NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type) {
-        if(type == NBTType.SAVE || type == NBTType.UPDATE) {
+        if(type == NBTType.ALL_SAVE || type == NBTType.TILE_UPDATE) {
             tag.setInteger("0", priority);
             tag.setLong("1", limit);
             tag.setBoolean("2", disableLimit);
@@ -184,10 +182,10 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             tag.setLong("buf", ((FluxTransferHandler) getTransferHandler()).buffer);
             tag.setBoolean("l", chunkLoading);
         }
-        if(type == NBTType.UPDATE) {
+        if(type == NBTType.TILE_UPDATE) {
             getTransferHandler().writeNetworkedNBT(tag);
         }
-        if(type == NBTType.DROP) {
+        if(type == NBTType.TILE_DROP) {
             tag.setLong("buffer", ((FluxTransferHandler) getTransferHandler()).buffer);
             tag.setInteger(ItemFluxConnector.PRIORITY, priority);
             tag.setLong(ItemFluxConnector.LIMIT, limit);
@@ -202,7 +200,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     public void readCustomNBT(NBTTagCompound tag, NBTType type) {
-        if(type == NBTType.SAVE || type == NBTType.UPDATE) {
+        if(type == NBTType.ALL_SAVE || type == NBTType.TILE_UPDATE) {
             priority = tag.getInteger("0");
             limit = tag.getLong("1");
             disableLimit = tag.getBoolean("2");
@@ -219,17 +217,19 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             ((FluxTransferHandler) getTransferHandler()).buffer = tag.getLong("buf");
             chunkLoading = tag.getBoolean("l");
         }
-        if(type == NBTType.UPDATE) {
+        if(type == NBTType.TILE_UPDATE) {
             getTransferHandler().readNetworkedNBT(tag);
         }
-        if(type == NBTType.DROP) {
+        if(type == NBTType.TILE_DROP) {
             ((FluxTransferHandler) getTransferHandler()).buffer = tag.getLong("buffer");
             priority = tag.getInteger(ItemFluxConnector.PRIORITY);
-            limit = tag.getLong(ItemFluxConnector.LIMIT);
+            long l;
+            limit = (l = tag.getLong(ItemFluxConnector.LIMIT)) > 0 ? l : limit;
             disableLimit = tag.getBoolean(ItemFluxConnector.DISABLE_LIMIT);
             surgeMode = tag.getBoolean(ItemFluxConnector.SURGE_MODE);
             networkID = tag.getInteger(FluxNetworkData.NETWORK_ID);
-            customName = tag.getString(ItemFluxConnector.CUSTOM_NAME);
+            String name;
+            customName = (name = tag.getString(ItemFluxConnector.CUSTOM_NAME)).isEmpty() ? customName : name;
             folderID = tag.getInteger(NetworkFolder.FOLDER_ID);
         }
     }
@@ -336,15 +336,16 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     public void open(EntityPlayer player) {
-        playerUsing.add(player);
         if(!world.isRemote) {
-            //PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(getNetwork()), NBTType.ALL), (EntityPlayerMP) player);
+            playerUsing.add(player);
             sendPackets();
         }
     }
 
     public void close(EntityPlayer player) {
-        playerUsing.remove(player);
+        if(!world.isRemote) {
+            playerUsing.remove(player);
+        }
     }
 
     @Override

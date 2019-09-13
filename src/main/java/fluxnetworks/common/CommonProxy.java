@@ -7,18 +7,22 @@ import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.capabilities.DefaultSuperAdmin;
 import fluxnetworks.common.core.EntityFireItem;
+import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.data.FluxChunkManager;
 import fluxnetworks.common.event.FluxConnectionEvent;
 import fluxnetworks.common.handler.CapabilityHandler;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;
+import fluxnetworks.common.network.PacketNetworkUpdate;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
-import fluxnetworks.common.registry.RegistryRecipes;
+import mekanism.api.MekanismAPI;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -30,15 +34,16 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -57,12 +62,13 @@ public class CommonProxy {
         TileEntityHandler.registerEnergyHandler();
         FluxConfig.init(event.getModConfigurationDirectory());
         EntityRegistry.registerModEntity(new ResourceLocation(FluxNetworks.MODID, "Flux"), EntityFireItem.class, "Flux", 0, FluxNetworks.instance, 64, 10, true);
-        baublesLoaded = Loader.isModLoaded("baubles");
+        MekanismAPI.addBoxBlacklistMod(FluxNetworks.MODID);
+        this.baublesLoaded = Loader.isModLoaded("baubles");
     }
 
     public void init(FMLInitializationEvent event) {
-        RegistryRecipes.registerRecipes();
         DefaultSuperAdmin.register();
+        FMLInterModComms.sendMessage("carryon", "blacklistBlock",  FluxNetworks.MODID + ":*");
     }
 
     public void postInit(FMLPostInitializationEvent event) {
@@ -135,7 +141,7 @@ public class CommonProxy {
                 if (s.isEmpty())
                     return;
                 ItemStack stack = new ItemStack(RegistryItems.FLUX, count.getAndIncrement());
-                s.forEach(e -> e.setDead());
+                s.forEach(Entity::setDead);
                 world.setBlockToAir(pos);
                 world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
                 world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
@@ -161,6 +167,14 @@ public class CommonProxy {
             for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
                 network.onEndServerTick();
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerJoined(PlayerEvent.PlayerLoggedInEvent event) {
+        EntityPlayer player = event.player;
+        if(!player.world.isRemote) {
+            PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(FluxNetworkCache.instance.getAllNetworks(), NBTType.NETWORK_GENERAL), (EntityPlayerMP) player);
         }
     }
 

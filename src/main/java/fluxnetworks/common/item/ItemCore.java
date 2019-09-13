@@ -1,6 +1,7 @@
 package fluxnetworks.common.item;
 
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.common.CommonProxy;
 import fluxnetworks.common.registry.RegistryItems;
 import net.minecraft.item.Item;
 
@@ -10,7 +11,7 @@ public class ItemCore extends Item {
 
         setUnlocalizedName(FluxNetworks.MODID + "." + name.toLowerCase());
         setRegistryName(name.toLowerCase());
-        setCreativeTab(FluxNetworks.proxy.creativeTabs);
+        setCreativeTab(CommonProxy.creativeTabs);
         RegistryItems.ITEMS.add(this);
     }
 

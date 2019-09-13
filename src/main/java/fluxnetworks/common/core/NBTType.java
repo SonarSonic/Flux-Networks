@@ -2,10 +2,12 @@ package fluxnetworks.common.core;
 
 public enum NBTType {
     DEFAULT,
-    PLAYERS,
-    CONNECTIONS,
-    ALL,
-    DROP,
-    UPDATE,
-    SAVE
+    TILE_SAVE,
+    TILE_DROP,
+    TILE_UPDATE,
+    ALL_SAVE,
+    NETWORK_CLEAR,
+    NETWORK_GENERAL,
+    NETWORK_CONNECTIONS,
+    NETWORK_PLAYERS
 }

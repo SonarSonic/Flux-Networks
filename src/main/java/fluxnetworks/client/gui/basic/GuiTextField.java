@@ -36,7 +36,7 @@ public abstract class GuiTextField extends Gui {
     /** if true the textbox can lose focus by clicking elsewhere on the screen */
     private boolean canLoseFocus = true;
     /** If this value is true along with isEnabled, keyTyped will process the keys. */
-    private boolean isFocused;
+    protected boolean isFocused;
     /** If this value is true along with isFocused, keyTyped will process the keys. */
     private boolean isEnabled = true;
     /** The current character index that should be used as start of the rendered text. */
@@ -724,19 +724,21 @@ public abstract class GuiTextField extends Gui {
     /**
      * Sets focus to this gui element
      */
-    public void setFocused(boolean isFocusedIn)
-    {
-        if (isFocusedIn && !this.isFocused)
-        {
-            this.cursorCounter = 0;
-        }
-
-        this.isFocused = isFocusedIn;
-
-        if (Minecraft.getMinecraft().currentScreen != null)
-        {
+    public void setFocused(boolean isFocusedIn) {
+        if (Minecraft.getMinecraft().currentScreen != null) {
             Minecraft.getMinecraft().currentScreen.setFocused(isFocusedIn);
         }
+        if (isFocusedIn && !this.isFocused) {
+            this.cursorCounter = 0;
+        }
+        if(isFocusedIn != isFocused) {
+            switchFocused(isFocusedIn);
+        }
+        this.isFocused = isFocusedIn;
+    }
+
+    protected void switchFocused(boolean b) {
+
     }
 
     /**

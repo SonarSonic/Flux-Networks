@@ -19,6 +19,7 @@ public class CapabilitySAProvider implements ICapabilitySerializable {
         return capability == Capabilities.SUPER_ADMIN;
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {

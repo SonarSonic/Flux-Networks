@@ -1,9 +1,11 @@
-package fluxnetworks.common.connection;
+package fluxnetworks.common.connection.transfer;
 
 import baubles.api.cap.BaublesCapabilities;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.network.IFluxTransfer;
+import fluxnetworks.common.connection.NetworkMember;
+import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.handler.ItemEnergyHandler;
 import fluxnetworks.common.tileentity.TileFluxController;
 import net.minecraft.entity.Entity;

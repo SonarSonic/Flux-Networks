@@ -62,7 +62,7 @@ public abstract class TileIC2Energy extends TileRedstoneFlux implements IEnergyS
     @Override
     @Optional.Method(modid = "ic2")
     public int getSinkTier() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -96,7 +96,7 @@ public abstract class TileIC2Energy extends TileRedstoneFlux implements IEnergyS
     @Override
     @Optional.Method(modid = "ic2")
     public int getSourceTier() {
-        return 4;
+        return 5;
     }
 
 }

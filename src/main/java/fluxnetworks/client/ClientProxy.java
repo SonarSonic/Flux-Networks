@@ -1,9 +1,12 @@
 package fluxnetworks.client;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.render.FluxStorageModel;
+import fluxnetworks.client.render.ItemFluxStorageRenderer;
 import fluxnetworks.client.render.TileFluxStorageRenderer;
 import fluxnetworks.common.CommonProxy;
+import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.tileentity.TileFluxStorage;
 import net.minecraft.client.Minecraft;
@@ -38,6 +41,7 @@ public class ClientProxy extends CommonProxy {
     public void onServerStopped() {
         super.onServerStopped();
         FluxColorHandler.reset();
+        FluxNetworkCache.instance.clearNetworks();
     }
 
     @Override
@@ -98,4 +102,5 @@ public class ClientProxy extends CommonProxy {
     public EntityPlayer getPlayer(MessageContext ctx) {
         return ctx.side.isServer() ? super.getPlayer(ctx) : Minecraft.getMinecraft().player;
     }
+
 }

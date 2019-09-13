@@ -14,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -37,7 +38,10 @@ public class ItemAdminConfigurator extends ItemConfigurator {
                 ISuperAdmin sa = playerIn.getCapability(Capabilities.SUPER_ADMIN, null);
                 if (sa != null) {
                     sa.changePermission();
-                    playerIn.sendStatusMessage(new TextComponentString(sa.getPermission() ? TextFormatting.DARK_PURPLE + FluxTranslate.SA_ON : FluxTranslate.SA_OFF), true);
+                    TextComponentTranslation textComponents = new TextComponentTranslation(sa.getPermission() ? FluxTranslate.SA_ON_KEY : FluxTranslate.SA_OFF_KEY);
+                    if(sa.getPermission())
+                        textComponents.getStyle().setColor(TextFormatting.DARK_PURPLE);
+                    playerIn.sendStatusMessage(textComponents, true);
                 }
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);

@@ -5,8 +5,10 @@ import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.common.core.FluxGuiStack;
 import fluxnetworks.common.core.FluxUtils;
+import fluxnetworks.common.core.NBTType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -38,7 +40,15 @@ public interface IFluxConnector {
         public boolean isController() {
             return this == CONTROLLER;
         }
+
+        public boolean isStorage() {
+            return this == STORAGE;
+        }
     }
+
+    NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type);
+
+    void readCustomNBT(NBTTagCompound tag, NBTType type);
 
     int getNetworkID();
 
@@ -75,6 +85,16 @@ public interface IFluxConnector {
     boolean getDisableLimit();
 
     boolean getSurgeMode();
+
+    default long getBuffer() {
+        return getTransferHandler().getBuffer();
+    }
+
+    default long getChange() {
+        return getTransferHandler().getChange();
+    }
+
+    default void setChunkLoaded(boolean chunkLoaded) {}
 
     default ItemStack getDisplayStack() {
         switch (getConnectionType()) {

@@ -2,6 +2,7 @@ package fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.NetworkColor;
@@ -46,7 +47,7 @@ public class GuiTabSettings extends GuiTabCore {
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
-        if(!network.isInvalid()) {
+        if(networkValid) {
             drawCenteredString(fontRenderer, "Network Settings", 89, 10, 0xb4b4b4);
             fontRenderer.drawString("Name:", 14, 30, 0x606060);
             fontRenderer.drawString("Security Setting: " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
@@ -56,6 +57,8 @@ public class GuiTabSettings extends GuiTabCore {
             fontRenderer.drawString("Color:", 14, 97, 0x606060);
 
             drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 156, 0xffffff);
+        } else {
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
         }
     }
 
@@ -82,13 +85,13 @@ public class GuiTabSettings extends GuiTabCore {
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(6).setMain();
 
-        if(!network.isInvalid()) {
-            name = TextboxButton.create("", 1, fontRenderer, 42, 28, 118, 12);
+        if(networkValid) {
+            name = TextboxButton.create(this, "", 1, fontRenderer, 42, 28, 118, 12);
             name.setMaxStringLength(24);
             name.setText(network.getNetworkName());
 
             int l = fontRenderer.getStringWidth("Password");
-            password = TextboxButton.create("", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
+            password = TextboxButton.create(this, "", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
             password.setText(network.getSetting(NetworkSettings.NETWORK_PASSWORD));
             password.setMaxStringLength(16);
             password.setVisible(network.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted());
@@ -97,18 +100,26 @@ public class GuiTabSettings extends GuiTabCore {
             buttons.add(new NormalButton("Delete", 100, 140, 36, 12, 4));
 
             int x = 0, y = 0;
+            boolean colorSet = false;
             for (NetworkColor color : NetworkColor.values()) {
-                ColorButton b = new ColorButton(width / 2 - 40 + x * 16, height / 2 + 13 + y * 16, color);
+                ColorButton b = new ColorButton(width / 2 - 40 + x * 16, height / 2 + 13 + y * 16, color.color);
                 colorButtons.add(b);
-                if (color.color == network.getSetting(NetworkSettings.NETWORK_COLOR)) {
+                if(!colorSet && color.color == network.getSetting(NetworkSettings.NETWORK_COLOR)) {
                     this.color = b;
                     this.color.selected = true;
+                    colorSet = true;
                 }
                 x++;
                 if (x == 7) {
                     x = 0;
                     y++;
                 }
+            }
+            if(!colorSet) {
+                ColorButton c = new ColorButton(width / 2 - 56, height / 2 + 29, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                colorButtons.add(c);
+                this.color = c;
+                this.color.selected = true;
             }
 
             textBoxes.add(name);
@@ -120,7 +131,7 @@ public class GuiTabSettings extends GuiTabCore {
     @Override
     protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
-        if(!network.isInvalid()) {
+        if(networkValid) {
             if (mouseButton == 0) {
                 if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
                     securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
@@ -147,7 +158,7 @@ public class GuiTabSettings extends GuiTabCore {
                         if (button.id == 3) {
                             if(securityType.isEncrypted() && password.getText().isEmpty())
                                 continue;
-                            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.EDIT_NETWORK, PacketGeneralHandler.getNetworkEditPacket(network.getNetworkID(), name.getText(), color.color.color, securityType, energyType, password.getText())));
+                            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.EDIT_NETWORK, PacketGeneralHandler.getNetworkEditPacket(network.getNetworkID(), name.getText(), color.color, securityType, energyType, password.getText())));
                         }
                     }
                 }

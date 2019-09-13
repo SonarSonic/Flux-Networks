@@ -6,11 +6,15 @@ import net.minecraft.client.Minecraft;
 
 public class ColorButton extends GuiButtonCore {
 
-    public NetworkColor color;
+    public int color;
     public boolean selected;
 
-    public ColorButton(int x, int y, NetworkColor color) {
-        super(x, y, 12, 12, 0);
+    public ColorButton(int x, int y, int color) {
+        this(x, y, color, 0);
+    }
+
+    public ColorButton(int x, int y, int color, int id) {
+        super(x, y, 12, 12, id);
         this.color = color;
     }
 
@@ -23,7 +27,7 @@ public class ColorButton extends GuiButtonCore {
             drawRect(x - 1, y, x, y + height, 0xffffffff);
             drawRect(x + width, y, x + width + 1, y + height, 0xffffffff);
         }
-        drawRect(x ,y , x + width, y + height, color.getColor() + 0xaa000000);
+        drawRect(x ,y , x + width, y + height, color + 0xaa000000);
 
     }
 }

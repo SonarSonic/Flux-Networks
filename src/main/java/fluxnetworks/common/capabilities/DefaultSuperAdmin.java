@@ -6,7 +6,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 
 public class DefaultSuperAdmin implements ISuperAdmin {
 
-    public boolean SA = false;
+    private boolean SA = false;
 
     @Override
     public void changePermission() {

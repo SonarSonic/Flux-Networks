@@ -1,10 +1,10 @@
 package fluxnetworks.common.connection;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
+import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.ILiteConnector;
+import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.core.CustomValue;
 import fluxnetworks.common.core.ICustomValue;
 import fluxnetworks.common.core.NBTType;
@@ -22,10 +22,10 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<String> network_password = new CustomValue<>();
     public ICustomValue<Integer> network_color = new CustomValue<>();
     public ICustomValue<EnergyType> network_energy = new CustomValue<>();
-    public ICustomValue<Boolean> network_wireless = new CustomValue<>(false);
+    public ICustomValue<Integer> network_wireless = new CustomValue<>();
 
     public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
-    public ICustomValue<List<ILiteConnector>> unloaded_connectors = new CustomValue<>(new ArrayList<>());
+    public ICustomValue<List<IFluxConnector>> all_connectors = new CustomValue<>(new ArrayList<>());
     public ICustomValue<List<NetworkMember>> network_players = new CustomValue<>(new ArrayList<>());
 
     public FluxNetworkBase() {}
@@ -52,39 +52,59 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
 
     @Override
     public void readNetworkNBT(NBTTagCompound nbt, NBTType type) {
-        network_id.setValue(nbt.getInteger(FluxNetworkData.NETWORK_ID));
-        network_name.setValue(nbt.getString(FluxNetworkData.NETWORK_NAME));
-        network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
-        network_security.setValue(SecurityType.values()[nbt.getInteger(FluxNetworkData.SECURITY_TYPE)]);
-        network_password.setValue(nbt.getString(FluxNetworkData.NETWORK_PASSWORD));
-        network_color.setValue(nbt.getInteger(FluxNetworkData.NETWORK_COLOR));
-        network_energy.setValue(EnergyType.values()[nbt.getInteger(FluxNetworkData.ENERGY_TYPE)]);
-        network_wireless.setValue(nbt.getBoolean(FluxNetworkData.WIRELESS_MODE));
+        if(type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
+            network_id.setValue(nbt.getInteger(FluxNetworkData.NETWORK_ID));
+            network_name.setValue(nbt.getString(FluxNetworkData.NETWORK_NAME));
+            network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
+            network_security.setValue(SecurityType.values()[nbt.getInteger(FluxNetworkData.SECURITY_TYPE)]);
+            network_password.setValue(nbt.getString(FluxNetworkData.NETWORK_PASSWORD));
+            network_color.setValue(nbt.getInteger(FluxNetworkData.NETWORK_COLOR));
+            network_energy.setValue(EnergyType.values()[nbt.getInteger(FluxNetworkData.ENERGY_TYPE)]);
+            network_wireless.setValue(nbt.getInteger(FluxNetworkData.WIRELESS_MODE));
 
-        if(type == NBTType.ALL || type == NBTType.PLAYERS) {
+            if(type == NBTType.ALL_SAVE) {
+                FluxNetworkData.readPlayers(this, nbt);
+                FluxNetworkData.readConnections(this, nbt);
+            }
+        }
+
+        if(type == NBTType.NETWORK_PLAYERS) {
             FluxNetworkData.readPlayers(this, nbt);
         }
-        if(type == NBTType.ALL || type == NBTType.CONNECTIONS) {
-            FluxNetworkData.readConnections(this, nbt);
+
+        if(type == NBTType.NETWORK_CONNECTIONS) {
+            FluxNetworkData.readAllConnections(this, nbt);
         }
     }
 
     @Override
     public NBTTagCompound writeNetworkNBT(NBTTagCompound nbt, NBTType type) {
-        nbt.setInteger(FluxNetworkData.NETWORK_ID, network_id.getValue());
-        nbt.setString(FluxNetworkData.NETWORK_NAME, network_name.getValue());
-        nbt.setUniqueId(FluxNetworkData.OWNER_UUID, network_owner.getValue());
-        nbt.setInteger(FluxNetworkData.SECURITY_TYPE, network_security.getValue().ordinal());
-        nbt.setString(FluxNetworkData.NETWORK_PASSWORD, network_password.getValue());
-        nbt.setInteger(FluxNetworkData.NETWORK_COLOR, network_color.getValue());
-        nbt.setInteger(FluxNetworkData.ENERGY_TYPE, network_energy.getValue().ordinal());
-        nbt.setBoolean(FluxNetworkData.WIRELESS_MODE, network_wireless.getValue());
+        if(type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
+            nbt.setInteger(FluxNetworkData.NETWORK_ID, network_id.getValue());
+            nbt.setString(FluxNetworkData.NETWORK_NAME, network_name.getValue());
+            nbt.setUniqueId(FluxNetworkData.OWNER_UUID, network_owner.getValue());
+            nbt.setInteger(FluxNetworkData.SECURITY_TYPE, network_security.getValue().ordinal());
+            nbt.setString(FluxNetworkData.NETWORK_PASSWORD, network_password.getValue());
+            nbt.setInteger(FluxNetworkData.NETWORK_COLOR, network_color.getValue());
+            nbt.setInteger(FluxNetworkData.ENERGY_TYPE, network_energy.getValue().ordinal());
+            nbt.setInteger(FluxNetworkData.WIRELESS_MODE, network_wireless.getValue());
 
-        if(type == NBTType.ALL || type == NBTType.PLAYERS) {
+            if(type == NBTType.ALL_SAVE) {
+                FluxNetworkData.writePlayers(this, nbt);
+                FluxNetworkData.writeConnections(this, nbt);
+            }
+        }
+
+        if(type == NBTType.NETWORK_PLAYERS) {
             FluxNetworkData.writePlayers(this, nbt);
         }
-        if(type == NBTType.ALL || type == NBTType.CONNECTIONS) {
-            FluxNetworkData.writeConnections(this, nbt);
+
+        if(type == NBTType.NETWORK_CONNECTIONS) {
+            all_connectors.getValue().removeIf(IFluxConnector::isChunkLoaded);
+            @SuppressWarnings("unchecked")
+            List<IFluxConnector> connectors = getConnections(FluxType.flux);
+            connectors.forEach(f -> all_connectors.getValue().add(new FluxLiteConnector(f)));
+            FluxNetworkData.writeAllConnections(this, nbt);
         }
 
         return nbt;

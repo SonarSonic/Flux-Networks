@@ -1,6 +1,5 @@
 package fluxnetworks.common.item;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.FluxConfigurationType;
 import fluxnetworks.client.FluxColorHandler;
@@ -41,7 +40,7 @@ public class ItemConfigurator extends ItemCore {
         if (tile instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tile;
             if(!fluxCore.canAccess(player)) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.ACCESS_DENIED), true);
+                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.ACCESS_DENIED_KEY), true);
                 return EnumActionResult.FAIL;
             }
             ItemStack stack = player.getHeldItem(hand);

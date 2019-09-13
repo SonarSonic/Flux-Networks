@@ -8,13 +8,11 @@ import fluxnetworks.api.EnergyType;
 import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.*;
-import fluxnetworks.common.network.PacketGeneralHandler;
+import fluxnetworks.common.network.*;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import fluxnetworks.api.NetworkColor;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.PacketGeneral;
-import fluxnetworks.common.network.PacketGeneralType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
@@ -33,6 +31,7 @@ public class GuiTabCreate extends GuiTabCore {
     public ColorButton color;
     public TextboxButton name;
     public TextboxButton password;
+    public TextboxButton customColor;
 
     public GuiTabCreate(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
@@ -50,8 +49,15 @@ public class GuiTabCreate extends GuiTabCore {
         fontRenderer.drawString("Energy Type: " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
         fontRenderer.drawString("Color:", 14, 97, 0x606060);
 
-        renderNetwork(name.getText(), color.color.color, 20, 129);
+        renderNetwork(name.getText(), color.color, 20, 129);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
+    }
+
+    @Override
+    protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
+        super.drawPopupForegroundLayer(mouseX, mouseY);
+        drawCenteredString(fontRenderer, "Custom Color", 89, 48, 0xffffff);
+        fontRenderer.drawString("Color:", 44, 66, 0xb4b4b4);
     }
 
     @Override
@@ -64,9 +70,11 @@ public class GuiTabCreate extends GuiTabCore {
 
     @Override
     public void setWorldAndResolution(Minecraft mc, int width, int height) {
-
         colorButtons.clear();
         super.setWorldAndResolution(mc, width, height);
+        if(!main) {
+            initPopGui();
+        }
     }
 
     @Override
@@ -78,18 +86,18 @@ public class GuiTabCreate extends GuiTabCore {
         }
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7).setMain());
 
-        name = TextboxButton.create("", 1, fontRenderer, 42, 28, 118, 12);
+        name = TextboxButton.create(this, "", 1, fontRenderer, 42, 28, 118, 12);
         name.setMaxStringLength(24);
         name.setText(mc.player.getName() + "'s Network");
 
         int l = fontRenderer.getStringWidth("Password");
-        password = TextboxButton.create("", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
+        password = TextboxButton.create(this, "", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
         password.setMaxStringLength(16);
         password.setVisible(false);
 
         int x = 0, y = 0;
         for(NetworkColor color : NetworkColor.values()) {
-            colorButtons.add(new ColorButton(width / 2 - 40 + x * 16, height / 2 + 13 + y * 16, color));
+            colorButtons.add(new ColorButton(width / 2 - 40 + x * 16, height / 2 + 13 + y * 16, color.color));
             x++;
             if(x == 7) {
                 x = 0;
@@ -108,33 +116,38 @@ public class GuiTabCreate extends GuiTabCore {
     @Override
     protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
-        if(mouseButton == 0) {
-            if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
-                securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
-                password.setText("");
-                password.setVisible(!password.getVisible());
-            }
+        if(mouseButton == 0 || mouseButton == 1) {
+            if(mouseButton == 0) {
+                if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
+                    securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
+                    password.setText("");
+                    password.setVisible(!password.getVisible());
+                }
             /*if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 62 && mouseY < getGuiTop() + 74) {
                 allowConversion = !allowConversion;
             }*/
-            if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() + 88) {
-                energyType = FluxUtils.incrementEnum(energyType, EnergyType.values());
-            }
+                if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() + 88) {
+                    energyType = FluxUtils.incrementEnum(energyType, EnergyType.values());
+                }
 
+                for (NormalButton button : buttons) {
+                    if (button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+                        if (button.id == 3) {
+                            if (securityType.isEncrypted() && password.getText().isEmpty())
+                                continue;
+                            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CREATE_NETWORK, PacketGeneralHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
+                        }
+                    }
+                }
+            }
             for(ColorButton button : colorButtons) {
                 if(button.isMouseHovered(mc, mouseX, mouseY)) {
                     color.selected = false;
                     color = button;
                     color.selected = true;
-                }
-            }
-
-            for(NormalButton button : buttons) {
-                if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
-                    if(button.id == 3) {
-                        if(securityType.isEncrypted() && password.getText().isEmpty())
-                            continue;
-                        PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CREATE_NETWORK, PacketGeneralHandler.getCreateNetworkPacket(name.getText(), color.color.color, securityType, energyType, password.getText())));
+                    if(mouseButton == 1) {
+                        main = false;
+                        initPopGui();
                     }
                 }
             }
@@ -142,9 +155,32 @@ public class GuiTabCreate extends GuiTabCore {
     }
 
     @Override
+    protected void mousePopupClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mousePopupClicked(mouseX, mouseY, mouseButton);
+        if(mouseButton == 0) {
+            for(NormalButton button : popButtons) {
+                if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+                    if(button.id == 11) {
+                        main = true;
+                    }
+                    if(button.id == 12) {
+                        if(customColor.getText().length() == 6) {
+                            color.color = customColor.getIntegerFromHex();
+                            main = true;
+                        }
+                    }
+                }
+            }
+            if(main) {
+                backToMain();
+            }
+        }
+    }
+
+    @Override
     protected void keyTypedMain(char c, int k) throws IOException {
         if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
-            if(!textBoxes.stream().anyMatch(GuiTextField::isFocused)) {
+            if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
                 mc.player.closeScreen();
             }
         }
@@ -161,6 +197,18 @@ public class GuiTabCreate extends GuiTabCore {
         super.keyTypedPop(c, k);
     }
 
+    private void initPopGui() {
+        popButtons.clear();
+        popButtons.add(new NormalButton("Cancel", 40, 86, 36, 12, 11));
+        popButtons.add(new NormalButton("Apply", 100, 86, 36, 12, 12));
+
+        customColor = TextboxButton.create(this, "", 7, fontRenderer, 80, 64, 48, 12).setHexOnly();
+        customColor.setMaxStringLength(6);
+        customColor.setText(Integer.toHexString(color.color));
+
+        popBoxes.add(customColor);
+    }
+
     @Override
     public void updateScreen() {
         super.updateScreen();
@@ -169,4 +217,5 @@ public class GuiTabCreate extends GuiTabCore {
             FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
         }
     }
+
 }
