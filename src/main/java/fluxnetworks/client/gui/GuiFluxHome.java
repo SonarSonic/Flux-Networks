@@ -83,9 +83,6 @@ public class GuiFluxHome extends GuiFluxCore {
             chunkLoad = new SlidedSwitchButton(140, 144, 3, guiLeft, guiTop, tileEntity.chunkLoading);
             switches.add(chunkLoad);
         }
-        if(tileEntity.getConnectionType().isController() && networkValid) {
-            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, network.getSetting(NetworkSettings.NETWORK_WIRELESS)));
-        }
 
         textBoxes.add(fluxName);
         textBoxes.add(priority);

@@ -1,5 +1,6 @@
 # Flux Network Refactored
 
+## Introduction
 For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug], I will update the mod by weeks.
 
 ### Comparison

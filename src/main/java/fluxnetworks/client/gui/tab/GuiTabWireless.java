@@ -2,6 +2,7 @@ package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.button.NavigationButton;
+import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +36,8 @@ public class GuiTabWireless extends GuiTabCore {
         }
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(2).setMain();
+
+        switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, enableWireless != 0));
 
     }
 
