@@ -32,7 +32,6 @@ info.fluxnetworks.sa.on=You are now a network super admin
 info.fluxnetworks.sa.off=You are no longer a network super admin
 
 info.fluxnetworks.network.name=Network Name
-info.fluxnetworks.network.wireless=Wireless Charging
 
 info.fluxnetworks.denied.access=Access denied: No permission
 info.fluxnetworks.denied.occupy=Access denied: Another player is using
@@ -50,3 +49,4 @@ info.fluxnetworks.flux.disablelimit=Disable Limit
 info.fluxnetworks.flux.chunkloading=Chunk Loading
 info.fluxnetworks.flux.name=Name
 info.fluxnetworks.flux.transferlimit=Transfer Limit
+info.fluxnetworks.flux.wireless=Enable Wireless
