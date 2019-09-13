@@ -46,13 +46,16 @@ public class TileEntityHandler {
         tileEnergyHandlers.add(ForgeEnergyHandler.INSTANCE);
         ItemEnergyHandler.itemEnergyHandlers.add(ForgeEnergyHandler.INSTANCE);
         if(Loader.isModLoaded("gregtech")) {
-            tileEnergyHandlers.add(new GTEnergyHandler());
+            tileEnergyHandlers.add(GTEnergyHandler.INSTANCE);
+            ItemEnergyHandler.itemEnergyHandlers.add(GTEnergyHandler.INSTANCE);
         }
         if(Loader.isModLoaded("redstoneflux")) {
-            tileEnergyHandlers.add(new RedstoneFluxHandler());
+            tileEnergyHandlers.add(RedstoneFluxHandler.INSTANCE);
+            ItemEnergyHandler.itemEnergyHandlers.add(RedstoneFluxHandler.INSTANCE);
         }
         if(Loader.isModLoaded("ic2")) {
-            tileEnergyHandlers.add(new IC2EnergyHandler());
+            tileEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
+            ItemEnergyHandler.itemEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
         }
     }
 

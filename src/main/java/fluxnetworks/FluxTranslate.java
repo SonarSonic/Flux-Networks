@@ -34,7 +34,6 @@ public class FluxTranslate {
     public static final String TAB_CREATE = i("tab.create");
 
     public static final String NETWORK_NAME = i("network.name");
-    public static final String WIRELESS_CHARGING = i("network.wireless");
 
     public static final String CLICK = i("click");
     public static final String ABOVE = i("above");
@@ -48,6 +47,8 @@ public class FluxTranslate {
     public static final String TRANSFER_LIMIT = i("flux.transferlimit");
     public static final String DISABLE_LIMIT = i("flux.disablelimit");
     public static final String CHUNK_LOADING = i("flux.chunkloading");
+    public static final String ENABLE_WIRELESS = i("flux.wireless");
+
 
     /** Server Only (Translation key) **/
     public static final String ACCESS_DENIED_KEY = INFO + FluxNetworks.MODID + ".denied.access";

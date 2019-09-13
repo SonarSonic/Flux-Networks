@@ -1,6 +1,7 @@
 package fluxnetworks.common.connection.transfer;
 
 import baubles.api.cap.BaublesCapabilities;
+import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.network.IFluxTransfer;
@@ -45,12 +46,18 @@ public class ControllerTransfer implements IFluxTransfer {
 
     @Override
     public long removeFromNetwork(long amount, boolean simulate) {
-        if(!tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS)) {
+        if(timer % 4 != 0) {
+            return 0;
+        }
+        if((tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS) & 1) == 0) {
             return 0;
         }
         long received = 0;
         CYCLE:
         for(EntityPlayer player : players) {
+            if(player == null || player.isDead) {
+                continue;
+            }
             Map<Iterable<ItemStack>, Predicate<ItemStack>> inventories = getSubInventories(new HashMap<>(), player);
             for(Map.Entry<Iterable<ItemStack>, Predicate<ItemStack>> inventory : inventories.entrySet()){
                 for(ItemStack stack : inventory.getKey()){
@@ -85,17 +92,30 @@ public class ControllerTransfer implements IFluxTransfer {
 
     public Map<Iterable<ItemStack>, Predicate<ItemStack>> getSubInventories(Map<Iterable<ItemStack>, Predicate<ItemStack>> subInventories, EntityPlayer player) {
         InventoryPlayer inv = player.inventory;
+        ItemStack heldItem = inv.getCurrentItem();
 
-        subInventories.put(inv.mainInventory.subList(0, 9), stack -> !stack.isEmpty());
-        subInventories.put(inv.offHandInventory, NOT_EMPTY);
-        subInventories.put(inv.armorInventory, NOT_EMPTY);
-
-        if(FluxNetworks.proxy.baublesLoaded) {
-            if(player.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)){
-                IItemHandler handler = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
-                subInventories.put(() -> new ItemHandlerIterator(handler), NOT_EMPTY);
+        int wireless = tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS);
+        if((wireless >> 1 & 1) == 1) {
+            subInventories.put(Lists.newArrayList(heldItem), NOT_EMPTY);
+        }
+        if((wireless >> 2 & 1) == 1) {
+            subInventories.put(inv.offHandInventory, NOT_EMPTY);
+        }
+        if((wireless >> 3 & 1) == 1) {
+            subInventories.put(inv.mainInventory.subList(0, 9), stack -> !stack.isEmpty() && (heldItem.isEmpty() || heldItem != stack));
+        }
+        if((wireless >> 4 & 1) == 1) {
+            subInventories.put(inv.armorInventory, NOT_EMPTY);
+        }
+        if((wireless >> 5 & 1) == 1) {
+            if(FluxNetworks.proxy.baublesLoaded) {
+                if(player.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)){
+                    IItemHandler handler = player.getCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null);
+                    subInventories.put(() -> new ItemHandlerIterator(handler), NOT_EMPTY);
+                }
             }
         }
+
         return subInventories;
     }
 

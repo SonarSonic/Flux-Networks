@@ -199,16 +199,16 @@ public class PacketGeneralHandler {
         return null;
     }
 
-    public static NBTTagCompound getChangeWirelessPacket(int networkID, boolean change) {
+    public static NBTTagCompound getChangeWirelessPacket(int networkID, int wirelessMode) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
-        tag.setBoolean(FluxNetworkData.WIRELESS_MODE, change);
+        tag.setInteger(FluxNetworkData.WIRELESS_MODE, wirelessMode);
         return tag;
     }
 
     public static IMessage handleChangeWirelessPacket(EntityPlayer player, NBTTagCompound packetTag) {
         int networkID = packetTag.getInteger(FluxNetworkData.NETWORK_ID);
-        boolean wireless = packetTag.getBoolean(FluxNetworkData.WIRELESS_MODE);
+        int wireless = packetTag.getInteger(FluxNetworkData.WIRELESS_MODE);
         IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
         if (!network.isInvalid()) {
             if(network.getMemberPermission(player).canEdit()) {

@@ -26,10 +26,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class GuiCore extends GuiContainer implements ITextBoxButton {
 
-    public static final ResourceLocation BACKGROUND = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/gui_default_background.png");
-    public static final ResourceLocation FRAME = new ResourceLocation(FluxNetworks.MODID, ":textures/gui/gui_default_frame.png");
-    public static final ResourceLocation GUI_BAR = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/gui_bar.png");
-    public static final ResourceLocation BUTTONS = new ResourceLocation(FluxNetworks.MODID + ":textures/gui/gui_button.png");
+    public static final ResourceLocation BACKGROUND = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_default_background.png");
+    public static final ResourceLocation FRAME = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_default_frame.png");
+    public static final ResourceLocation GUI_BAR = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_bar.png");
+    public static final ResourceLocation INVENTORY = new ResourceLocation(FluxNetworks.MODID, "textures/gui/inventory_configuration.png");
+    public static final ResourceLocation BUTTONS = new ResourceLocation(FluxNetworks.MODID , "textures/gui/gui_button.png");
 
     protected List<NormalButton> buttons = Lists.newArrayList();
     protected List<NavigationButton> navigationButtons = Lists.newArrayList();

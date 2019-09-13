@@ -25,7 +25,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     public List<IFluxConnector> batchConnections = new ArrayList<>();
 
-    private int timer = 2;
+    private int timer = 3;
 
     public GuiTabConnections(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
@@ -93,10 +93,10 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     @Override
     public void updateScreen() {
-        if(timer == 3) {
+        if(timer == 4) {
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
         }
-        if(timer % 4 == 0) {
+        if(timer % 5 == 0) {
             PacketHandler.network.sendToServer(new PacketConnectionRequest.ConnectionRequestMessage(network.getNetworkID(), current.stream().map(IFluxConnector::getCoords).collect(Collectors.toList())));
         }
         timer++;

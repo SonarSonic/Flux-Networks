@@ -9,6 +9,7 @@ import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.*;
 import fluxnetworks.common.tileentity.TileFluxCore;
@@ -26,6 +27,8 @@ public class GuiFluxHome extends GuiFluxCore {
 
     public SlidedSwitchButton chunkLoad;
 
+    private int timer;
+
     public GuiFluxHome(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
     }
@@ -41,9 +44,6 @@ public class GuiFluxHome extends GuiFluxCore {
             fontRenderer.drawString(FluxTranslate.SURGE_MODE, 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT, 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(FluxTranslate.CHUNK_LOADING, 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        }
-        if(tileEntity.getConnectionType().isController() && networkValid) {
-            fontRenderer.drawString(FluxTranslate.WIRELESS_CHARGING, 20, 156, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
     }
 
@@ -127,9 +127,6 @@ public class GuiFluxHome extends GuiFluxCore {
                         case 3:
                             PacketHandler.network.sendToServer(new PacketTile.TileMessage(PacketTileType.CHUNK_LOADING, PacketTileHandler.getChunkLoadPacket(s.slideControl), tileEntity.getPos(), tileEntity.getWorld().provider.getDimension()));
                             break;
-                        case 4:
-                            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_WIRELESS, PacketGeneralHandler.getChangeWirelessPacket(network.getNetworkID(), s.slideControl)));
-                            break;
                     }
                 }
             }
@@ -139,9 +136,16 @@ public class GuiFluxHome extends GuiFluxCore {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(chunkLoad != null) {
-            chunkLoad.slideControl = tileEntity.chunkLoading;
+        if(timer == 0) {
+            PacketHandler.network.sendToServer(new PacketUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_GENERAL));
         }
+        if(timer % 4 == 0) {
+            if (chunkLoad != null) {
+                chunkLoad.slideControl = tileEntity.chunkLoading;
+            }
+        }
+        timer++;
+        timer %= 100;
     }
 
     @Override

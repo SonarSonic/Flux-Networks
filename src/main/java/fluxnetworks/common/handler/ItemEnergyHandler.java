@@ -1,5 +1,6 @@
 package fluxnetworks.common.handler;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import net.minecraft.item.ItemStack;
 
