@@ -22,7 +22,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<String> network_password = new CustomValue<>();
     public ICustomValue<Integer> network_color = new CustomValue<>();
     public ICustomValue<EnergyType> network_energy = new CustomValue<>();
-    public ICustomValue<Integer> network_wireless = new CustomValue<>();
+    public ICustomValue<Integer> network_wireless = new CustomValue<>(0);
 
     public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
     public ICustomValue<List<IFluxConnector>> all_connectors = new CustomValue<>(new ArrayList<>());

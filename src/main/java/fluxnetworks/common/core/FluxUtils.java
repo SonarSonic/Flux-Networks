@@ -6,8 +6,12 @@ import fluxnetworks.api.FluxConfigurationType;
 import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.client.gui.button.SlidedSwitchButton;
+import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.connection.FluxNetworkServer;
+import fluxnetworks.common.item.ItemAdminConfigurator;
+import fluxnetworks.common.item.ItemFluxConnector;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.block.material.MapColor;
@@ -232,6 +236,17 @@ public class FluxUtils {
                 type.paste.pasteToTile(config, type.getNBTName(), flux);
             }
         }
+    }
+
+    public static NBTTagCompound getBatchEditingTag(TextboxButton a, TextboxButton b, TextboxButton c, SlidedSwitchButton d, SlidedSwitchButton e, SlidedSwitchButton f) {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString(ItemFluxConnector.CUSTOM_NAME, a.getText());
+        tag.setInteger(ItemFluxConnector.PRIORITY, b.getIntegerFromText(false));
+        tag.setLong(ItemFluxConnector.LIMIT, c.getLongFromText(true));
+        tag.setBoolean(ItemFluxConnector.SURGE_MODE, d.slideControl);
+        tag.setBoolean(ItemFluxConnector.DISABLE_LIMIT, e.slideControl);
+        tag.setBoolean("chunkLoad", f.slideControl);
+        return tag;
     }
 
 }

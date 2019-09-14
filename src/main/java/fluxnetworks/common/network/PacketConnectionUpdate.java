@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketNetworkConnection implements IMessageHandler<PacketNetworkConnection.NetworkConnectionMessage, IMessage> {
+public class PacketConnectionUpdate implements IMessageHandler<PacketConnectionUpdate.NetworkConnectionMessage, IMessage> {
 
     @Override
     public IMessage onMessage(NetworkConnectionMessage message, MessageContext ctx) {

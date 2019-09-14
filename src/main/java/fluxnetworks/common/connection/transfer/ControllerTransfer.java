@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 public class ControllerTransfer implements IFluxTransfer {
 
     public final TileFluxController tile;
-    public List<EntityPlayer> players = new ArrayList<>();
+    private List<EntityPlayer> players = new ArrayList<>();
     private int timer;
 
     public ControllerTransfer(TileFluxController tile) {
@@ -76,7 +76,7 @@ public class ControllerTransfer implements IFluxTransfer {
         return received;
     }
 
-    public void updatePlayers() {
+    private void updatePlayers() {
         List<NetworkMember> m = tile.getNetwork().getSetting(NetworkSettings.NETWORK_PLAYERS);
         List<EntityPlayer> players = new ArrayList<>();
         for(NetworkMember p : m) {
@@ -88,9 +88,9 @@ public class ControllerTransfer implements IFluxTransfer {
         this.players = players;
     }
 
-    public static final Predicate<ItemStack> NOT_EMPTY = STACK -> !STACK.isEmpty();
+    private static final Predicate<ItemStack> NOT_EMPTY = STACK -> !STACK.isEmpty();
 
-    public Map<Iterable<ItemStack>, Predicate<ItemStack>> getSubInventories(Map<Iterable<ItemStack>, Predicate<ItemStack>> subInventories, EntityPlayer player) {
+    private Map<Iterable<ItemStack>, Predicate<ItemStack>> getSubInventories(Map<Iterable<ItemStack>, Predicate<ItemStack>> subInventories, EntityPlayer player) {
         InventoryPlayer inv = player.inventory;
         ItemStack heldItem = inv.getCurrentItem();
 

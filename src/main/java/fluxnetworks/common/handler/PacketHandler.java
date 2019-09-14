@@ -2,7 +2,6 @@ package fluxnetworks.common.handler;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.common.network.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -24,9 +23,10 @@ public class PacketHandler {
         network.registerMessage(PacketFeedback.class, PacketFeedback.FeedbackMessage.class, 6, Side.CLIENT);
         network.registerMessage(PacketColorRequest.class, PacketColorRequest.ColorRequestMessage.class, 7, Side.SERVER);
         network.registerMessage(PacketColorCache.class, PacketColorCache.ColorCacheMessage.class, 8, Side.CLIENT);
-        network.registerMessage(PacketUpdateRequest.class, PacketUpdateRequest.UpdateRequestMessage.class, 9, Side.SERVER);
-        network.registerMessage(PacketNetworkConnection.class, PacketNetworkConnection.NetworkConnectionMessage.class, 10, Side.CLIENT);
-        network.registerMessage(PacketConnectionRequest.class, PacketConnectionRequest.ConnectionRequestMessage.class, 11, Side.SERVER);
+        network.registerMessage(PacketNetworkUpdateRequest.class, PacketNetworkUpdateRequest.UpdateRequestMessage.class, 9, Side.SERVER);
+        network.registerMessage(PacketConnectionUpdate.class, PacketConnectionUpdate.NetworkConnectionMessage.class, 10, Side.CLIENT);
+        network.registerMessage(PacketConnectionUpdateRequest.class, PacketConnectionUpdateRequest.ConnectionRequestMessage.class, 11, Side.SERVER);
+        network.registerMessage(PacketBatchEditing.class, PacketBatchEditing.BatchEditingMessage.class, 12, Side.SERVER);
     }
 
     public static EntityPlayer getPlayer(MessageContext ctx) {

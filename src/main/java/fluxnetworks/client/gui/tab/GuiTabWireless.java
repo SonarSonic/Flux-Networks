@@ -2,6 +2,7 @@ package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.button.InventoryButton;
 import fluxnetworks.client.gui.button.NavigationButton;
@@ -26,29 +27,32 @@ public class GuiTabWireless extends GuiTabCore {
 
     public int enableWireless, rightHand, leftHand, hotBar, armorSlot, baublesSlot;
 
+    public NormalButton apply;
+
     public GuiTabWireless(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
-        int a = network.getSetting(NetworkSettings.NETWORK_WIRELESS);
-        enableWireless = a & 1;
-        rightHand = a >> 1 & 1;
-        leftHand = a >> 2 & 1;
-        hotBar = a >> 3 & 1;
-        armorSlot = a >> 4 & 1;
-        baublesSlot = a >> 5 & 1;
+        if(networkValid) {
+            int a = network.getSetting(NetworkSettings.NETWORK_WIRELESS);
+            enableWireless = a & 1;
+            rightHand = a >> 1 & 1;
+            leftHand = a >> 2 & 1;
+            hotBar = a >> 3 & 1;
+            armorSlot = a >> 4 & 1;
+            baublesSlot = a >> 5 & 1;
+        }
     }
 
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
+        for(InventoryButton button : inventoryButtonList) {
+            button.drawButton(mc, mouseX, mouseY);
+        }
         if(networkValid) {
             drawCenteredString(fontRenderer, FluxTranslate.TAB_WIRELESS, 89, 12, 0xb4b4b4);
             fontRenderer.drawString(FluxTranslate.ENABLE_WIRELESS, 20, 156, network.getSetting(NetworkSettings.NETWORK_COLOR));
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
-        }
-
-        for(InventoryButton button : inventoryButtonList) {
-            button.drawButton(mc, mouseX, mouseY);
         }
     }
 
@@ -68,11 +72,12 @@ public class GuiTabWireless extends GuiTabCore {
             inventoryButtonList.add(new InventoryButton(24, 32, 0, 80, 52, 16, guiLeft, guiTop, 0, armorSlot != 0, "Armor Slots"));
             inventoryButtonList.add(new InventoryButton(100, 32, 0, 80, 52, 16, guiLeft, guiTop, 1, baublesSlot != 0, "Baubles Slots"));
             inventoryButtonList.add(new InventoryButton(32, 56, 0, 0, 112, 40, guiLeft, guiTop, 2, false, "Main Inventory"));
-            inventoryButtonList.add(new InventoryButton(32, 104, 112, 0, 112, 16, guiLeft, guiTop, 3, hotBar != 0, "HotBar"));
+            inventoryButtonList.add(new InventoryButton(32, 104, 112, 0, 112, 16, guiLeft, guiTop, 3, hotBar != 0, "Hotbar Slots"));
             inventoryButtonList.add(new InventoryButton(136, 128, 52, 80, 16, 16, guiLeft, guiTop, 4, rightHand != 0, "Right Hand"));
             inventoryButtonList.add(new InventoryButton(24, 128, 52, 80, 16, 16, guiLeft, guiTop, 5, leftHand != 0, "Left Hand"));
 
-            buttons.add(new NormalButton("Apply", 73, 130, 32, 12, 0));
+            apply = new NormalButton("Apply", 73, 130, 32, 12, 0).setUnclickable();
+            buttons.add(apply);
         }
     }
 
@@ -107,13 +112,15 @@ public class GuiTabWireless extends GuiTabCore {
                             button.selected = !button.selected;
                             break;
                     }
+                    apply.clickable = true;
                 }
             }
             for(NormalButton button : buttons) {
-                if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+                if(button.clickable && button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
                     if(button.id == 0) {
                         int wireless = enableWireless | rightHand << 1 | leftHand << 2 | hotBar << 3 | armorSlot << 4 | baublesSlot << 5;
                         PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_WIRELESS, PacketGeneralHandler.getChangeWirelessPacket(network.getNetworkID(), wireless)));
+                        button.clickable = false;
                     }
                 }
             }
@@ -122,8 +129,6 @@ public class GuiTabWireless extends GuiTabCore {
                     s.switchButton();
                     if(s.id == 4) {
                         enableWireless = enableWireless == 0 ? 1 : 0;
-                        int wireless = enableWireless | rightHand << 1 | leftHand << 2 | hotBar << 3 | armorSlot << 4 | baublesSlot << 5;
-                        PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_WIRELESS, PacketGeneralHandler.getChangeWirelessPacket(network.getNetworkID(), wireless)));
                     }
                 }
             }

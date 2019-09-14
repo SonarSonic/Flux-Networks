@@ -221,13 +221,15 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             getTransferHandler().readNetworkedNBT(tag);
         }
         if(type == NBTType.TILE_DROP) {
-            ((FluxTransferHandler) getTransferHandler()).buffer = tag.getLong("buffer");
+            long k;
+            ((FluxTransferHandler) getTransferHandler()).buffer = (k = tag.getLong("buffer")) > 0 ? k : ((FluxTransferHandler) getTransferHandler()).buffer;
             priority = tag.getInteger(ItemFluxConnector.PRIORITY);
             long l;
             limit = (l = tag.getLong(ItemFluxConnector.LIMIT)) > 0 ? l : limit;
             disableLimit = tag.getBoolean(ItemFluxConnector.DISABLE_LIMIT);
             surgeMode = tag.getBoolean(ItemFluxConnector.SURGE_MODE);
-            networkID = tag.getInteger(FluxNetworkData.NETWORK_ID);
+            int i;
+            networkID = (i = tag.getInteger(FluxNetworkData.NETWORK_ID)) > 0 ? i : networkID;
             String name;
             customName = (name = tag.getString(ItemFluxConnector.CUSTOM_NAME)).isEmpty() ? customName : name;
             folderID = tag.getInteger(NetworkFolder.FOLDER_ID);
@@ -361,6 +363,11 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public boolean isActive() {
         return true;
+    }
+
+    @Override
+    public boolean isForcedLoading() {
+        return chunkLoading;
     }
 
     @Override

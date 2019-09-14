@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -231,6 +232,12 @@ public abstract class GuiCore extends GuiContainer implements ITextBoxButton {
             fontRenderer.drawString(s, x + 2, y + 2 + 9 * i, 0xffffff);
             i++;
         }
+    }
+
+    protected void drawHoverTooltip(String text, int x, int y) {
+        int maxLength = fontRenderer.getStringWidth(text);
+        drawRect(x, y, x + maxLength + 4, y + 12, 0x80000000);
+        fontRenderer.drawString(text, x + 2, y + 2, Color.GREEN.getRGB());
     }
 
 }

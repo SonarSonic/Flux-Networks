@@ -32,7 +32,7 @@ public class InventoryButton extends GuiButtonCore {
         drawTexturedRectangular(x, y, texX, texY + height * (selected ? 1 : 0), width, height);
 
         if(b) {
-            mc.fontRenderer.drawString(text, x + (width - mc.fontRenderer.getStringWidth(text)) / 2, y - 10, 0xFFFFFF);
+            mc.fontRenderer.drawString(text, x + (width - mc.fontRenderer.getStringWidth(text)) / 2 + 1, y - 9, 0xFFFFFF);
         }
 
         GlStateManager.popMatrix();

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketUpdateRequest implements IMessageHandler<PacketUpdateRequest.UpdateRequestMessage, IMessage> {
+public class PacketNetworkUpdateRequest implements IMessageHandler<PacketNetworkUpdateRequest.UpdateRequestMessage, IMessage> {
 
     @Override
     public IMessage onMessage(UpdateRequestMessage message, MessageContext ctx) {

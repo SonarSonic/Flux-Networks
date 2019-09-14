@@ -2,7 +2,6 @@ package fluxnetworks.client.gui;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.NavigationButton;
@@ -137,7 +136,7 @@ public class GuiFluxHome extends GuiFluxCore {
     public void updateScreen() {
         super.updateScreen();
         if(timer == 0) {
-            PacketHandler.network.sendToServer(new PacketUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_GENERAL));
+            PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_GENERAL));
         }
         if(timer % 4 == 0) {
             if (chunkLoad != null) {

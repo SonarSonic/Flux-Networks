@@ -25,13 +25,13 @@ public class GuiTabCreate extends GuiTabCore {
 
     private List<ColorButton> colorButtons = Lists.newArrayList();
 
-    public SecurityType securityType = SecurityType.PUBLIC;
+    public SecurityType securityType = SecurityType.ENCRYPTED;
     public EnergyType energyType = EnergyType.RF;
-    //public boolean allowConversion = true;
     public ColorButton color;
     public TextboxButton name;
     public TextboxButton password;
     public TextboxButton customColor;
+    public NormalButton apply, create;
 
     public GuiTabCreate(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
@@ -55,9 +55,9 @@ public class GuiTabCreate extends GuiTabCore {
 
     @Override
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
+        drawRectWithBackground(30, 44, 60, 118, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
         drawCenteredString(fontRenderer, "Custom Color", 89, 48, 0xffffff);
-        fontRenderer.drawString("Color:", 44, 66, 0xb4b4b4);
     }
 
     @Override
@@ -86,14 +86,14 @@ public class GuiTabCreate extends GuiTabCore {
         }
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7).setMain());
 
-        name = TextboxButton.create(this, "", 1, fontRenderer, 42, 28, 118, 12);
+        int l = fontRenderer.getStringWidth("Name");
+        name = TextboxButton.create(this, "", 1, fontRenderer, 20 + l, 28, 140 - l, 12);
         name.setMaxStringLength(24);
         name.setText(mc.player.getName() + "'s Network");
 
-        int l = fontRenderer.getStringWidth("Password");
+        l = fontRenderer.getStringWidth("Password");
         password = TextboxButton.create(this, "", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
         password.setMaxStringLength(16);
-        password.setVisible(false);
 
         int x = 0, y = 0;
         for(NetworkColor color : NetworkColor.values()) {
@@ -107,7 +107,8 @@ public class GuiTabCreate extends GuiTabCore {
         color = colorButtons.get(0);
         color.selected = true;
 
-        buttons.add(new NormalButton("Create", 70, 150, 36, 12, 3));
+        create = new NormalButton("Create", 70, 150, 36, 12, 3).setUnclickable();
+        buttons.add(create);
 
         textBoxes.add(name);
         textBoxes.add(password);
@@ -122,19 +123,15 @@ public class GuiTabCreate extends GuiTabCore {
                     securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
                     password.setText("");
                     password.setVisible(!password.getVisible());
+                    create.clickable = !securityType.isEncrypted();
                 }
-            /*if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 62 && mouseY < getGuiTop() + 74) {
-                allowConversion = !allowConversion;
-            }*/
                 if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() + 88) {
                     energyType = FluxUtils.incrementEnum(energyType, EnergyType.values());
                 }
 
                 for (NormalButton button : buttons) {
-                    if (button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+                    if (button.clickable && button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
                         if (button.id == 3) {
-                            if (securityType.isEncrypted() && password.getText().isEmpty())
-                                continue;
                             PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CREATE_NETWORK, PacketGeneralHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
                         }
                     }
@@ -164,10 +161,8 @@ public class GuiTabCreate extends GuiTabCore {
                         main = true;
                     }
                     if(button.id == 12) {
-                        if(customColor.getText().length() == 6) {
-                            color.color = customColor.getIntegerFromHex();
-                            main = true;
-                        }
+                        color.color = customColor.getIntegerFromHex();
+                        main = true;
                     }
                 }
             }
@@ -178,31 +173,43 @@ public class GuiTabCreate extends GuiTabCore {
     }
 
     @Override
-    protected void keyTypedMain(char c, int k) throws IOException {
+    protected void keyTypedMain(char c, int k) {
         if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
             if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
                 mc.player.closeScreen();
             }
         }
-
         for(TextboxButton text : textBoxes) {
             if(text.isFocused()) {
                 text.textboxKeyTyped(c, k);
+                create.clickable = (!securityType.isEncrypted() || password.getText().length() != 0) && name.getText().length() !=0;
             }
         }
     }
 
     @Override
-    protected void keyTypedPop(char c, int k) throws IOException {
-        super.keyTypedPop(c, k);
+    protected void keyTypedPop(char c, int k) {
+        if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
+            if(popBoxes.stream().noneMatch(GuiTextField::isFocused)) {
+                backToMain();
+            }
+        }
+        for(TextboxButton text : popBoxes) {
+            if(text.isFocused()) {
+                text.textboxKeyTyped(c, k);
+                apply.clickable = text.getText().length() == 6;
+            }
+        }
     }
 
     private void initPopGui() {
+        popBoxes.clear();
         popButtons.clear();
         popButtons.add(new NormalButton("Cancel", 40, 86, 36, 12, 11));
-        popButtons.add(new NormalButton("Apply", 100, 86, 36, 12, 12));
+        apply = new NormalButton("Apply", 100, 86, 36, 12, 12);
+        popButtons.add(apply);
 
-        customColor = TextboxButton.create(this, "", 7, fontRenderer, 80, 64, 48, 12).setHexOnly();
+        customColor = TextboxButton.create(this, "0x", 7, fontRenderer, 57, 64, 64, 12).setHexOnly();
         customColor.setMaxStringLength(6);
         customColor.setText(Integer.toHexString(color.color));
 

@@ -17,6 +17,7 @@ import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.handler.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -88,7 +89,7 @@ public class PacketGeneralHandler {
                 network.setSetting(NetworkSettings.NETWORK_ENERGY, energy);
                 network.setSetting(NetworkSettings.NETWORK_PASSWORD, password);
                 PacketHandler.network.sendToAll(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
-                return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
+                return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS_2);
             } else {
                 return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
             }
@@ -213,6 +214,8 @@ public class PacketGeneralHandler {
         if (!network.isInvalid()) {
             if(network.getMemberPermission(player).canEdit()) {
                 network.setSetting(NetworkSettings.NETWORK_WIRELESS, wireless);
+                PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_GENERAL), (EntityPlayerMP) player);
+                return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
             } else {
                 return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
             }

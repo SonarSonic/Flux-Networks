@@ -25,6 +25,7 @@ public class FluxLiteConnector implements IFluxConnector {
     public boolean surgeMode;
     public boolean disableLimit;
     public boolean isChunkLoaded;
+    public boolean chunkLoading;
     public long buffer;
     public long change;
     public ItemStack stack;
@@ -43,6 +44,7 @@ public class FluxLiteConnector implements IFluxConnector {
         this.isChunkLoaded = tile.isChunkLoaded();
         this.buffer = tile.getTransferHandler().getBuffer();
         this.change = tile.getTransferHandler().getChange();
+        this.chunkLoading = tile.isForcedLoading();
         this.stack = tile.getDisplayStack();
     }
 
@@ -63,6 +65,7 @@ public class FluxLiteConnector implements IFluxConnector {
         tag.setBoolean("isChunkLoaded", tile.isChunkLoaded());
         tag.setLong("buffer", tile.getBuffer());
         tag.setLong("change", tile.getChange());
+        tag.setBoolean("forcedChunk", tile.isForcedLoading());
         tile.getDisplayStack().writeToNBT(tag);
         return tag;
     }
@@ -81,6 +84,7 @@ public class FluxLiteConnector implements IFluxConnector {
         tag.setBoolean("isChunkLoaded", isChunkLoaded);
         tag.setLong("buffer", buffer);
         tag.setLong("change", change);
+        tag.setBoolean("forcedChunk", chunkLoading);
         stack.writeToNBT(tag);
         return tag;
     }
@@ -99,6 +103,7 @@ public class FluxLiteConnector implements IFluxConnector {
         isChunkLoaded = tag.getBoolean("isChunkLoaded");
         buffer = tag.getLong("buffer");
         change = tag.getLong("change");
+        chunkLoading = tag.getBoolean("forcedChunk");
         stack = new ItemStack(tag);
     }
 
@@ -135,6 +140,11 @@ public class FluxLiteConnector implements IFluxConnector {
     @Override
     public boolean isChunkLoaded() {
         return isChunkLoaded;
+    }
+
+    @Override
+    public boolean isForcedLoading() {
+        return chunkLoading;
     }
 
     @Override

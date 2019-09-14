@@ -147,6 +147,9 @@ public abstract class GuiFluxCore extends GuiCore {
         list.add(TextFormatting.BOLD + flux.getCustomName());
         NBTTagCompound tag = flux.getDisplayStack().getSubCompound(FluxUtils.FLUX_DATA);
         if(flux.isChunkLoaded()) {
+            if(flux.isForcedLoading()) {
+                list.add(TextFormatting.AQUA + "Forced Loading");
+            }
             list.add(getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
             if(flux.getConnectionType() == IFluxConnector.ConnectionType.STORAGE) {
                 list.add("Energy Stored: " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");

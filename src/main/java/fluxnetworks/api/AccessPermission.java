@@ -1,11 +1,13 @@
 package fluxnetworks.api;
 
+import net.minecraft.util.text.TextFormatting;
+
 public enum AccessPermission {
-    OWNER("Owner", 0xffcc00),
-    ADMIN("Admin", 0x66cc00),
-    USER("User", 0x6699ff),
-    NONE("Blocked", 0xa9a9a9),
-    SUPER_ADMIN("Super Admin", 0x4b0082);
+    OWNER(TextFormatting.GOLD + "Owner", 0xffaa00),
+    ADMIN(TextFormatting.GREEN + "Admin", 0x66cc00),
+    USER(TextFormatting.BLUE + "User", 0x6699ff),
+    NONE(TextFormatting.GRAY + "Blocked", 0xa9a9a9),
+    SUPER_ADMIN(TextFormatting.DARK_PURPLE + "Super Admin", 0x4b0082);
 
     public String name;
     public int color;

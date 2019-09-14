@@ -12,7 +12,8 @@ public enum FeedbackInfo {
     HAS_LOADER("This chunk already has a chunk loader"),
     BANNED_LOADING("Chunk loading was banned from the server"),
     PASSWORD_REQUIRE(""),
-    SUCCESS("");
+    SUCCESS(""),
+    SUCCESS_2("");
 
     public String info;
 

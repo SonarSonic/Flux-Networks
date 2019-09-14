@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PacketConnectionRequest implements IMessageHandler<PacketConnectionRequest.ConnectionRequestMessage, IMessage> {
+public class PacketConnectionUpdateRequest implements IMessageHandler<PacketConnectionUpdateRequest.ConnectionRequestMessage, IMessage> {
 
     @Override
     public IMessage onMessage(ConnectionRequestMessage message, MessageContext ctx) {
@@ -27,10 +27,10 @@ public class PacketConnectionRequest implements IMessageHandler<PacketConnection
             List<NBTTagCompound> tags = new ArrayList<>();
             //noinspection unchecked
             List<IFluxConnector> onlineConnectors = network.getConnections(FluxType.flux);
-            message.coords.forEach(c -> {
-                onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> tags.add(FluxLiteConnector.writeCustomNBT(f, new NBTTagCompound())));
-            });
-            return new PacketNetworkConnection.NetworkConnectionMessage(message.networkID, tags);
+            message.coords.forEach(c ->
+                    onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst()
+                            .ifPresent(f -> tags.add(FluxLiteConnector.writeCustomNBT(f, new NBTTagCompound()))));
+            return new PacketConnectionUpdate.NetworkConnectionMessage(message.networkID, tags);
         }
         return null;
     }

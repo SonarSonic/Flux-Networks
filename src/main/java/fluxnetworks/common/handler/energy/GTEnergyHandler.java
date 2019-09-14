@@ -1,6 +1,5 @@
 package fluxnetworks.common.handler.energy;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import gregtech.api.capability.GregtechCapabilities;
@@ -73,12 +72,12 @@ public class GTEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
     @Override
     public long addEnergy(long amount, ItemStack stack, boolean simulate) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        return electricItem.charge(amount >> 2, 8, false, simulate) << 2;
+        return electricItem.charge(amount >> 2, electricItem.getTier(), false, simulate) << 2;
     }
 
     @Override
     public long removeEnergy(long amount, ItemStack stack) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        return electricItem.discharge(amount >> 2, 8, false, true, false) << 2;
+        return electricItem.discharge(amount >> 2, electricItem.getTier(), false, true, false) << 2;
     }
 }

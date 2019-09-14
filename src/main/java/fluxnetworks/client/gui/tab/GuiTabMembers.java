@@ -13,15 +13,16 @@ import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketGeneral;
 import fluxnetworks.common.network.PacketGeneralHandler;
 import fluxnetworks.common.network.PacketGeneralType;
-import fluxnetworks.common.network.PacketUpdateRequest;
+import fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import fluxnetworks.common.tileentity.TileFluxCore;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
@@ -34,10 +35,10 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         gridStartX = 16;
         gridStartY = 18;
         gridHeight = 14;
-        gridPerPage = 10;
+        gridPerPage = 9;
         elementHeight = 11;
         elementWidth = 143;
-        PacketHandler.network.sendToServer(new PacketUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
+        PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
     }
 
     @Override
@@ -86,12 +87,19 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         drawColorRect(x, y, elementHeight, elementWidth, element.getPermission().color | 0xcc000000);
         fontRenderer.drawString(element.getCachedName(), x + 3, y + 1, 0xffffff);
         String p = element.getPermission().name;
-        fontRenderer.drawString(p, x + 140 - fontRenderer.getStringWidth(p), y + 1, element.getPermission().color);
+        fontRenderer.drawString(p, x + 140 - fontRenderer.getStringWidth(p), y + 1, 0xffffff);
     }
 
     @Override
     public void renderElementTooltip(NetworkMember element, int mouseX, int mouseY) {
-
+        GlStateManager.pushMatrix();
+        List<String> strings = new ArrayList<>();
+        strings.add(TextFormatting.GRAY + "Player Name: " + TextFormatting.AQUA + element.getCachedName());
+        strings.add(TextFormatting.GRAY + "Access Permission: " + TextFormatting.RESET + element.getPermission().name);
+        //strings.add(TextFormatting.GRAY + "UUID: " + TextFormatting.RESET + element.getPlayerUUID().toString());
+        strings.add(TextFormatting.WHITE + "L/R Change/Remove");
+        drawHoverTooltip(strings, mouseX + 4, mouseY - 8);
+        GlStateManager.popMatrix();
     }
 
     @Override

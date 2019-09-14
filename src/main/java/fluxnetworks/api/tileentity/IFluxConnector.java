@@ -68,6 +68,8 @@ public interface IFluxConnector {
 
     boolean isChunkLoaded();
 
+    boolean isForcedLoading();
+
     void connect(IFluxNetwork network);
 
     void disconnect(IFluxNetwork network);
