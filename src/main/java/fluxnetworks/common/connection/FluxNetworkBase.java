@@ -75,6 +75,9 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         if(type == NBTType.NETWORK_CONNECTIONS) {
             FluxNetworkData.readAllConnections(this, nbt);
         }
+        if(type == NBTType.NETWORK_STATISTICS) {
+            network_stats.getValue().readNBT(nbt);
+        }
     }
 
     @Override
@@ -105,6 +108,9 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
             List<IFluxConnector> connectors = getConnections(FluxType.flux);
             connectors.forEach(f -> all_connectors.getValue().add(new FluxLiteConnector(f)));
             FluxNetworkData.writeAllConnections(this, nbt);
+        }
+        if(type == NBTType.NETWORK_STATISTICS) {
+            network_stats.getValue().writeNBT(nbt);
         }
 
         return nbt;

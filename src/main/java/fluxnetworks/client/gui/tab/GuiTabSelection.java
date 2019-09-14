@@ -2,6 +2,7 @@ package fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.client.gui.basic.GuiCore;
@@ -45,11 +46,15 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
-        String amount = "Total: " + elements.size();
-        fontRenderer.drawString(amount, 154 - fontRenderer.getStringWidth(amount), 10, 0xffffff);
-        fontRenderer.drawString("Sort by: " + TextFormatting.AQUA + sortType.name, 20, 10, 0xffffff);
-        if(main) {
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
+        if(elements.size() == 0) {
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_NETWORK.t(), FluxTranslate.TAB_SELECTION.t());
+        } else {
+            String amount = FluxTranslate.TOTAL.t() + ": " + elements.size();
+            fontRenderer.drawString(amount, 154 - fontRenderer.getStringWidth(amount), 10, 0xffffff);
+            fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.name, 20, 10, 0xffffff);
+            if (main) {
+                drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
+            }
         }
     }
 
@@ -65,11 +70,11 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         super.drawPopupForegroundLayer(mouseX, mouseY);
         if(popSelect != null) {
-            drawCenteredString(fontRenderer, "Connecting to " + popSelect.getSetting(NetworkSettings.NETWORK_NAME), 89, 50, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.CONNECTING_TO.t() + " " + popSelect.getSetting(NetworkSettings.NETWORK_NAME), 89, 50, 0xffffff);
         }
-        drawCenteredString(fontRenderer, "Password:", 40, 68, 0xffffff);
+        drawCenteredString(fontRenderer, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
 
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 110, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 110, 0xffffff);
     }
 
     @Override
@@ -131,8 +136,8 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
     private void initPopGui() {
         popButtons.clear();
-        popButtons.add(new NormalButton("Cancel", 24, 86, 30, 12, 11));
-        popButtons.add(new NormalButton("Connect", 120, 86, 30, 12, 12));
+        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 24, 86, 30, 12, 11));
+        popButtons.add(new NormalButton(FluxTranslate.CONNECT.t(), 120, 86, 30, 12, 12));
 
         password = TextboxButton.create(this, "", 5, fontRenderer, 70, 66, 81, 12);
         password.setTextInvisible();

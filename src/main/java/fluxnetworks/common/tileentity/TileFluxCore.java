@@ -1,6 +1,7 @@
 package fluxnetworks.common.tileentity;
 
 import fluxnetworks.FluxConfig;
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConfigurable;
@@ -146,7 +147,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         readFromNBT(tag);
     }
 
-    protected void sendPackets() {
+    public void sendPackets() {
         IBlockState state = world.getBlockState(pos);
         world.notifyBlockUpdate(pos, state, state, 3);
     }
@@ -373,6 +374,16 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public long getCurrentLimit() {
         return disableLimit ? Long.MAX_VALUE : limit;
+    }
+
+    @Override
+    public int getActualPriority() {
+        return priority;
+    }
+
+    @Override
+    public long getActualLimit() {
+        return limit;
     }
 
     @Override

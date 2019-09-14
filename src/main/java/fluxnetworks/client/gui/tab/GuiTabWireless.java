@@ -49,10 +49,10 @@ public class GuiTabWireless extends GuiTabCore {
             button.drawButton(mc, mouseX, mouseY);
         }
         if(networkValid) {
-            drawCenteredString(fontRenderer, FluxTranslate.TAB_WIRELESS, 89, 12, 0xb4b4b4);
-            fontRenderer.drawString(FluxTranslate.ENABLE_WIRELESS, 20, 156, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            drawCenteredString(fontRenderer, FluxTranslate.TAB_WIRELESS.t(), 89, 12, 0xb4b4b4);
+            fontRenderer.drawString(FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, network.getSetting(NetworkSettings.NETWORK_COLOR));
         } else {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
 
@@ -69,14 +69,14 @@ public class GuiTabWireless extends GuiTabCore {
         if(networkValid) {
             switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, enableWireless != 0));
 
-            inventoryButtonList.add(new InventoryButton(24, 32, 0, 80, 52, 16, guiLeft, guiTop, 0, armorSlot != 0, "Armor Slots"));
-            inventoryButtonList.add(new InventoryButton(100, 32, 0, 80, 52, 16, guiLeft, guiTop, 1, baublesSlot != 0, "Baubles Slots"));
-            inventoryButtonList.add(new InventoryButton(32, 56, 0, 0, 112, 40, guiLeft, guiTop, 2, false, "Main Inventory"));
-            inventoryButtonList.add(new InventoryButton(32, 104, 112, 0, 112, 16, guiLeft, guiTop, 3, hotBar != 0, "Hotbar Slots"));
-            inventoryButtonList.add(new InventoryButton(136, 128, 52, 80, 16, 16, guiLeft, guiTop, 4, rightHand != 0, "Right Hand"));
-            inventoryButtonList.add(new InventoryButton(24, 128, 52, 80, 16, 16, guiLeft, guiTop, 5, leftHand != 0, "Left Hand"));
+            inventoryButtonList.add(new InventoryButton(24, 32, 0, 80, 52, 16, guiLeft, guiTop, 0, armorSlot != 0, FluxTranslate.ARMOR.t()));
+            inventoryButtonList.add(new InventoryButton(100, 32, 0, 80, 52, 16, guiLeft, guiTop, 1, baublesSlot != 0, FluxTranslate.BAUBLES.t()));
+            inventoryButtonList.add(new InventoryButton(32, 56, 0, 0, 112, 40, guiLeft, guiTop, 2, false, FluxTranslate.INVENTORY.t()));
+            inventoryButtonList.add(new InventoryButton(32, 104, 112, 0, 112, 16, guiLeft, guiTop, 3, hotBar != 0, FluxTranslate.HOT_BAR.t()));
+            inventoryButtonList.add(new InventoryButton(136, 128, 52, 80, 16, 16, guiLeft, guiTop, 4, rightHand != 0, FluxTranslate.RIGHT_HAND.t()));
+            inventoryButtonList.add(new InventoryButton(24, 128, 52, 80, 16, 16, guiLeft, guiTop, 5, leftHand != 0, FluxTranslate.LEFT_HAND.t()));
 
-            apply = new NormalButton("Apply", 73, 130, 32, 12, 0).setUnclickable();
+            apply = new NormalButton(FluxTranslate.APPLY.t(), 73, 130, 32, 12, 0).setUnclickable();
             buttons.add(apply);
         }
     }

@@ -1,35 +1,35 @@
-itemGroup.fluxnetworks=Flux Networks
+itemGroup.fluxnetworks=通量网络
 
-tile.fluxnetworks.fluxblock.name=Flux Block
-tile.fluxnetworks.fluxcontroller.name=Flux Controller
-tile.fluxnetworks.fluxpoint.name=Flux Point
-tile.fluxnetworks.fluxplug.name=Flux Plug
-tile.fluxnetworks.fluxstorage.name=Basic Flux Storage
-tile.fluxnetworks.herculeanfluxstorage.name=Herculean Flux Storage
-tile.fluxnetworks.gargantuanfluxstorage.name=Gargantuan Flux Storage
+tile.fluxnetworks.fluxblock.name=能量块
+tile.fluxnetworks.fluxcontroller.name=能量网络控制器
+tile.fluxnetworks.fluxpoint.name=能量网络接出点
+tile.fluxnetworks.fluxplug.name=能量网络接入点
+tile.fluxnetworks.fluxstorage.name=基础能量存储槽
+tile.fluxnetworks.herculeanfluxstorage.name=大型能量存储槽
+tile.fluxnetworks.gargantuanfluxstorage.name=超大型能量存储槽
 
-item.fluxnetworks.flux.name=Flux
-item.fluxnetworks.fluxcore.name=Flux Core
-item.fluxnetworks.fluxconfigurator.name=Flux Configurator
-item.fluxnetworks.adminconfigurator.name=Admin Configurator
+item.fluxnetworks.flux.name=能量尘
+item.fluxnetworks.fluxcore.name=能量核心
+item.fluxnetworks.fluxconfigurator.name=能量网络配置器
+item.fluxnetworks.adminconfigurator.name=管理员网络配置器
 
-tooltip.fluxnetworks.flux=Obtained by compressing redstones with bedrock and obisidian
-tooltip.fluxnetworks.fluxcontroller=Manages network and wireless charging
-tooltip.fluxnetworks.fluxplug=For adding energy to the flux network
-tooltip.fluxnetworks.fluxpoint=For removing energy from the flux network
-tooltip.fluxnetworks.fluxstorage=Stores energy in the flux network
+tooltip.fluxnetworks.flux=通过用基岩与黑曜石压缩红石获得
+tooltip.fluxnetworks.fluxcontroller=管理网络与无线充能
+tooltip.fluxnetworks.fluxplug=用于向能量网络添加能量
+tooltip.fluxnetworks.fluxpoint=用于从能量网络移除能量
+tooltip.fluxnetworks.fluxstorage=在能量网络中存储能量
 
-info.fluxnetworks.tab.home=Home
-info.fluxnetworks.tab.selection=Network Selection
-info.fluxnetworks.tab.wireless=Wireless Charging
-info.fluxnetworks.tab.connection=Network Connections
-info.fluxnetworks.tab.statistics=Network Statistics
-info.fluxnetworks.tab.member=Network Members
-info.fluxnetworks.tab.setting=Network Settings
-info.fluxnetworks.tab.create=Create New Network
+info.fluxnetworks.tab.home=主页
+info.fluxnetworks.tab.selection=网络选择
+info.fluxnetworks.tab.wireless=无线充能
+info.fluxnetworks.tab.connection=网络连接点
+info.fluxnetworks.tab.statistics=网络统计
+info.fluxnetworks.tab.member=网络成员
+info.fluxnetworks.tab.setting=网络设置
+info.fluxnetworks.tab.create=创建新网络
 
-info.fluxnetworks.superadmin.on=You are now a network super admin
-info.fluxnetworks.superadmin.off=You are no longer a network super admin
+info.fluxnetworks.superadmin.on=你已成为超级网络管理员
+info.fluxnetworks.superadmin.off=你不再是超级网络管理员
 
 info.fluxnetworks.network.name=Name
 info.fluxnetworks.network.fullname=Network Name

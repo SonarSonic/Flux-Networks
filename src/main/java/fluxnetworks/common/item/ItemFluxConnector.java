@@ -1,5 +1,6 @@
 package fluxnetworks.common.item;
 
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.client.FluxColorHandler;
 import fluxnetworks.common.data.FluxNetworkData;
@@ -44,13 +45,13 @@ public class ItemFluxConnector extends ItemBlock {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         NBTTagCompound tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
         if(tag != null) {
-            tooltip.add("Network Name: " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInteger(FluxNetworkData.NETWORK_ID)));
-            tooltip.add("Transfer Limit: " + TextFormatting.WHITE + FluxUtils.format(tag.getLong(LIMIT), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.RF.getStorageSuffix()));
-            tooltip.add("Priority: " + TextFormatting.WHITE + tag.getInteger(PRIORITY));
+            tooltip.add(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInteger(FluxNetworkData.NETWORK_ID)));
+            tooltip.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.WHITE + FluxUtils.format(tag.getLong(LIMIT), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.RF.getStorageSuffix()));
+            tooltip.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.WHITE + tag.getInteger(PRIORITY));
             if(tag.hasKey("energy")) {
-                tooltip.add("Energy Stored: " + TextFormatting.WHITE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF");
+                tooltip.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.WHITE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF");
             } else {
-                tooltip.add("Internal Buffer: " + TextFormatting.WHITE + FluxUtils.format(tag.getLong("buffer"), FluxUtils.TypeNumberFormat.COMMAS, "RF"));
+                tooltip.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.WHITE + FluxUtils.format(tag.getLong("buffer"), FluxUtils.TypeNumberFormat.COMMAS, "RF"));
             }
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);

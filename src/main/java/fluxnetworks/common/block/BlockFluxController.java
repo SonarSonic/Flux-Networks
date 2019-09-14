@@ -21,7 +21,7 @@ public class BlockFluxController extends BlockFluxCore {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        tooltip.add(FluxTranslate.FLUX_CONTROLLER_TOOLTIP);
+        tooltip.add(FluxTranslate.FLUX_CONTROLLER_TOOLTIP.t());
     }
 
     @Nullable

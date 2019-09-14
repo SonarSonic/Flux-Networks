@@ -56,21 +56,21 @@ public class NavigationButton extends GuiButtonCore {
 
         switch(id) {
             case 0:
-                return FluxTranslate.TAB_HOME;
+                return FluxTranslate.TAB_HOME.t();
             case 1:
-                return FluxTranslate.TAB_SELECTION;
+                return FluxTranslate.TAB_SELECTION.t();
             case 2:
-                return FluxTranslate.TAB_WIRELESS;
+                return FluxTranslate.TAB_WIRELESS.t();
             case 3:
-                return FluxTranslate.TAB_CONNECTION;
+                return FluxTranslate.TAB_CONNECTION.t();
             case 4:
-                return FluxTranslate.TAB_STATISTICS;
+                return FluxTranslate.TAB_STATISTICS.t();
             case 5:
-                return FluxTranslate.TAB_MEMBER;
+                return FluxTranslate.TAB_MEMBER.t();
             case 6:
-                return FluxTranslate.TAB_SETTING;
+                return FluxTranslate.TAB_SETTING.t();
             case 7:
-                return FluxTranslate.TAB_CREATE;
+                return FluxTranslate.TAB_CREATE.t();
         }
         return "";
     }

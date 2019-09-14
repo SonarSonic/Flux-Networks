@@ -1,6 +1,5 @@
 package fluxnetworks.common.event;
 
-import fluxnetworks.api.ConnectionSetting;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -32,16 +31,5 @@ public class FluxConnectionEvent extends Event {
             super(flux);
             this.network = network;
         }
-    }
-
-    public static class SettingChanged extends FluxConnectionEvent {
-
-        public final ConnectionSetting setting;
-
-        public SettingChanged(IFluxConnector flux, ConnectionSetting setting) {
-            super(flux);
-            this.setting = setting;
-        }
-
     }
 }

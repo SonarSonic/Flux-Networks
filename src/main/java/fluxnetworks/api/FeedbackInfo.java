@@ -1,28 +1,35 @@
 package fluxnetworks.api;
 
+import fluxnetworks.FluxTranslate;
+import fluxnetworks.common.core.Localization;
+
 public enum FeedbackInfo {
-    NONE(""),
-    REJECT("The remote server rejected your request"),
-    NO_OWNER("You aren't the owner of the network"),
-    NO_ADMIN("You aren't the admin of the network"),
-    NO_SPACE("You can't create more networks"),
-    HAS_CONTROLLER("The network already has a controller"),
-    INVALID_USER("Invalid user selected"),
-    ILLEGAL_PASSWORD("Wrong password format, must be digit or letter"),
-    HAS_LOADER("This chunk already has a chunk loader"),
-    BANNED_LOADING("Chunk loading was banned from the server"),
-    PASSWORD_REQUIRE(""),
-    SUCCESS(""),
-    SUCCESS_2("");
+    NONE(FluxTranslate.EMPTY),
+    REJECT(FluxTranslate.REJECT),
+    NO_OWNER(FluxTranslate.NO_OWNER),
+    NO_ADMIN(FluxTranslate.NO_ADMIN),
+    NO_SPACE(FluxTranslate.NO_SPACE),
+    HAS_CONTROLLER(FluxTranslate.HAS_CONTROLLER),
+    INVALID_USER(FluxTranslate.INVALID_USER),
+    ILLEGAL_PASSWORD(FluxTranslate.ILLEGAL_PASSWORD),
+    HAS_LOADER(FluxTranslate.HAS_LOADER),
+    BANNED_LOADING(FluxTranslate.BANNED_LOADING),
+    PASSWORD_REQUIRE(FluxTranslate.EMPTY),
+    SUCCESS(FluxTranslate.EMPTY),
+    SUCCESS_2(FluxTranslate.EMPTY); // Sometimes we need another success to compare to the first one
 
-    public String info;
+    private Localization localization;
 
-    FeedbackInfo(String info) {
-        this.info = info;
+    FeedbackInfo(Localization localization) {
+        this.localization = localization;
     }
 
     public boolean hasFeedback() {
         return this != NONE;
+    }
+
+    public String getInfo() {
+        return localization.t();
     }
 
 }

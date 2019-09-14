@@ -45,9 +45,9 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         if(networkValid) {
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 162, 0xffffff);
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 162, 0xffffff);
         } else {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
 
@@ -86,7 +86,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void renderElement(NetworkMember element, int x, int y) {
         drawColorRect(x, y, elementHeight, elementWidth, element.getPermission().color | 0xcc000000);
         fontRenderer.drawString(element.getCachedName(), x + 3, y + 1, 0xffffff);
-        String p = element.getPermission().name;
+        String p = element.getPermission().getName();
         fontRenderer.drawString(p, x + 140 - fontRenderer.getStringWidth(p), y + 1, 0xffffff);
     }
 
@@ -94,8 +94,8 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void renderElementTooltip(NetworkMember element, int mouseX, int mouseY) {
         GlStateManager.pushMatrix();
         List<String> strings = new ArrayList<>();
-        strings.add(TextFormatting.GRAY + "Player Name: " + TextFormatting.AQUA + element.getCachedName());
-        strings.add(TextFormatting.GRAY + "Access Permission: " + TextFormatting.RESET + element.getPermission().name);
+        strings.add(TextFormatting.AQUA + element.getCachedName());
+        strings.add(TextFormatting.RESET + element.getPermission().getName());
         //strings.add(TextFormatting.GRAY + "UUID: " + TextFormatting.RESET + element.getPlayerUUID().toString());
         strings.add(TextFormatting.WHITE + "L/R Change/Remove");
         drawHoverTooltip(strings, mouseX + 4, mouseY - 8);

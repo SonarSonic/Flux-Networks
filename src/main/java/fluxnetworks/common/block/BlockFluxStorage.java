@@ -78,7 +78,7 @@ public class BlockFluxStorage extends BlockFluxCore {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP);
+        tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP.t());
     }
 
     @Override

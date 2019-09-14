@@ -15,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -40,7 +41,10 @@ public class ItemConfigurator extends ItemCore {
         if (tile instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tile;
             if(!fluxCore.canAccess(player)) {
-                player.sendStatusMessage(new TextComponentString(TextFormatting.RED + FluxTranslate.EMPTY + TextFormatting.BOLD + FluxTranslate.ACCESS_DENIED_KEY), true);
+                TextComponentTranslation textComponents = new TextComponentTranslation(FluxTranslate.ACCESS_DENIED_KEY);
+                textComponents.getStyle().setBold(true);
+                textComponents.getStyle().setColor(TextFormatting.DARK_RED);
+                player.sendStatusMessage(textComponents, true);
                 return EnumActionResult.FAIL;
             }
             ItemStack stack = player.getHeldItem(hand);

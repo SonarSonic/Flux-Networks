@@ -1,6 +1,7 @@
 package fluxnetworks.common.tileentity;
 
 import fluxnetworks.FluxConfig;
+import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxEnergy;
 import fluxnetworks.api.tileentity.IFluxStorage;

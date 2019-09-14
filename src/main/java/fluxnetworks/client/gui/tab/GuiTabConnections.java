@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,12 +94,12 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         super.drawForegroundLayer(mouseX, mouseY);
         if(networkValid) {
             if(batchConnections.size() > 0) {
-                fontRenderer.drawString("Selected: " + TextFormatting.AQUA + batchConnections.size(), 20, 10, 0xffffff);
+                fontRenderer.drawString(FluxTranslate.SELECTED.t() + ": " + TextFormatting.AQUA + batchConnections.size(), 20, 10, 0xffffff);
             } else {
-                fontRenderer.drawString("Sort by: " + TextFormatting.AQUA + "Smart", 20, 10, 0xffffff);
+                fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 20, 10, 0xffffff);
             }
         } else {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
 
@@ -113,18 +114,18 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             button.drawButton(mc, mouseX, mouseY);
         }
         if(!batchMode) {
-            drawCenteredString(fontRenderer, "Single Editing Mode", 89, 17, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.SINGLE_EDIT.t(), 89, 17, 0xffffff);
             drawCenteredString(fontRenderer, singleConnection.getCoords().getStringInfo(), 89, 122, 0xffffff);
         } else {
-            drawCenteredString(fontRenderer, "Batch Editing Mode", 89, 17, 0xffffff);
-            drawCenteredString(fontRenderer, "Editing " + batchConnections.size() + " Connections", 89, 122, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.BATCH_EDIT.t(), 89, 17, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.EDITING.t() + " " + batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 89, 122, 0xffffff);
         }
         if(batchMode || !singleConnection.getConnectionType().isStorage()) {
-            fontRenderer.drawString(FluxTranslate.SURGE_MODE, 20, 82, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT, 20, 94, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(FluxTranslate.CHUNK_LOADING, 20, 106, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 82, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 94, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 106, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
     }
 
     @Override
@@ -145,12 +146,14 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(3).setMain();
 
-        clear = new BatchEditButton(118, 8, guiLeft, guiTop, 0, "Clear").setUnclickable();
-        edit = new BatchEditButton(132, 8, guiLeft, guiTop, 1, "Edit").setUnclickable();
-        disconnect = new BatchEditButton(146, 8, guiLeft, guiTop, 2, "Disconnect").setUnclickable();
-        editButtons.add(clear);
-        editButtons.add(edit);
-        editButtons.add(disconnect);
+        if(networkValid) {
+            clear = new BatchEditButton(118, 8, guiLeft, guiTop, 0, FluxTranslate.BATCH_CLEAR_BUTTON.t()).setUnclickable();
+            edit = new BatchEditButton(132, 8, guiLeft, guiTop, 1, FluxTranslate.BATCH_EDIT_BUTTON.t()).setUnclickable();
+            disconnect = new BatchEditButton(146, 8, guiLeft, guiTop, 2, FluxTranslate.BATCH_DISCONNECT_BUTTON.t()).setUnclickable();
+            editButtons.add(clear);
+            editButtons.add(edit);
+            editButtons.add(disconnect);
+        }
     }
 
     public void initPopGui() {
@@ -159,18 +162,18 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         popSwitches.clear();
         toggleButtons.clear();
 
-        popButtons.add(new NormalButton("Cancel", 40, 140, 36, 12, 11));
-        apply = new NormalButton("Apply", 100, 140, 36, 12, 12).setUnclickable();
+        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 40, 140, 36, 12, 11));
+        apply = new NormalButton(FluxTranslate.APPLY.t(), 100, 140, 36, 12, 12).setUnclickable();
         popButtons.add(apply);
 
         int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
-        fluxName = TextboxButton.create(this, FluxTranslate.NAME + ": ", 0, fontRenderer, 20, 30, 136, 12).setOutlineColor(color);
+        fluxName = TextboxButton.create(this, FluxTranslate.NAME.t() + ": ", 0, fontRenderer, 20, 30, 136, 12).setOutlineColor(color);
         fluxName.setMaxStringLength(24);
 
-        priority = TextboxButton.create(this, FluxTranslate.PRIORITY + ": ", 1, fontRenderer, 20, 47, 136, 12).setOutlineColor(color).setDigitsOnly();
+        priority = TextboxButton.create(this, FluxTranslate.PRIORITY.t() + ": ", 1, fontRenderer, 20, 47, 136, 12).setOutlineColor(color).setDigitsOnly();
         priority.setMaxStringLength(5);
 
-        limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT + ": ", 2, fontRenderer, 20, 64, 136, 12).setOutlineColor(color).setDigitsOnly();
+        limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT.t() + ": ", 2, fontRenderer, 20, 64, 136, 12).setOutlineColor(color).setDigitsOnly();
         limit.setMaxStringLength(9);
 
         if(!batchMode) {
@@ -178,7 +181,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             priority.setText(String.valueOf(singleConnection.getPriority()));
             limit.setText(String.valueOf(singleConnection.getCurrentLimit()));
 
-            if(!tileEntity.getConnectionType().isStorage()) {
+            if(!singleConnection.getConnectionType().isStorage()) {
                 surge = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, singleConnection.getSurgeMode());
                 unlimited = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, singleConnection.getDisableLimit());
                 chunkLoad = new SlidedSwitchButton(140, 106, 3, guiLeft, guiTop, singleConnection.isForcedLoading());
@@ -236,15 +239,15 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             if (batchConnections.contains(element)) {
                 drawRect(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
                 drawRect(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
-                drawColorRect(x, y, elementHeight, elementWidth, network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
+                drawColorRect(x, y, elementHeight, elementWidth, element.getConnectionType().color | 0xff000000);
             } else {
                 drawRect(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xaa606060);
                 drawRect(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xaa606060);
-                drawColorRect(x, y, elementHeight, elementWidth, network.getSetting(NetworkSettings.NETWORK_COLOR) | 0x60000000);
+                drawColorRect(x, y, elementHeight, elementWidth, element.getConnectionType().color | 0x60000000);
                 fontColor = 0xd0d0d0;
             }
         } else {
-            drawColorRect(x, y, elementHeight, elementWidth, network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
+            drawColorRect(x, y, elementHeight, elementWidth, element.getConnectionType().color | 0xff000000);
         }
         renderItemStack(element.getDisplayStack(), x, y);
         if(element.isChunkLoaded()) {
@@ -376,6 +379,18 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             edit.clickable = false;
             disconnect.clickable = false;
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
+        }
+        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS_2) {
+            backToMain();
+            elements.removeAll(batchConnections);
+            batchConnections.clear();
+            clear.clickable = false;
+            edit.clickable = false;
+            disconnect.clickable = false;
+            refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
+            if(elements.stream().noneMatch(f -> f.getCoords().equals(tileEntity.getCoords()))) {
+                FMLCommonHandler.instance().showGuiScreen(new GuiTabSelection(player, tileEntity));
+            }
         }
     }
 

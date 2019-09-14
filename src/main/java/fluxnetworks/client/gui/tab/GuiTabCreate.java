@@ -2,6 +2,7 @@ package fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.EnergyType;
@@ -41,23 +42,23 @@ public class GuiTabCreate extends GuiTabCore {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
 
-        drawCenteredString(fontRenderer, "Create New Network", 89, 10, 0xb4b4b4);
-        fontRenderer.drawString("Name:", 14, 30, 0x606060);
-        fontRenderer.drawString("Security Setting: " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
+        drawCenteredString(fontRenderer, FluxTranslate.TAB_CREATE.t(), 89, 10, 0xb4b4b4);
+        fontRenderer.drawString(FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
+        fontRenderer.drawString(FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
         if(securityType == SecurityType.ENCRYPTED)
-            fontRenderer.drawString("Password: ", 14, 64, 0x606060);
-        fontRenderer.drawString("Energy Type: " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
-        fontRenderer.drawString("Color:", 14, 97, 0x606060);
+            fontRenderer.drawString(FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 64, 0x606060);
+        fontRenderer.drawString(FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
+        fontRenderer.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
 
         renderNetwork(name.getText(), color.color, 20, 129);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
     }
 
     @Override
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         drawRectWithBackground(30, 44, 60, 118, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, "Custom Color", 89, 48, 0xffffff);
+        drawCenteredString(fontRenderer, FluxTranslate.CUSTOM_COLOR.t(), 89, 48, 0xffffff);
     }
 
     @Override
@@ -86,12 +87,12 @@ public class GuiTabCreate extends GuiTabCore {
         }
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7).setMain());
 
-        int l = fontRenderer.getStringWidth("Name");
+        int l = fontRenderer.getStringWidth(FluxTranslate.NETWORK_NAME.t());
         name = TextboxButton.create(this, "", 1, fontRenderer, 20 + l, 28, 140 - l, 12);
         name.setMaxStringLength(24);
         name.setText(mc.player.getName() + "'s Network");
 
-        l = fontRenderer.getStringWidth("Password");
+        l = fontRenderer.getStringWidth(FluxTranslate.NETWORK_PASSWORD.t());
         password = TextboxButton.create(this, "", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
         password.setMaxStringLength(16);
 
@@ -107,7 +108,7 @@ public class GuiTabCreate extends GuiTabCore {
         color = colorButtons.get(0);
         color.selected = true;
 
-        create = new NormalButton("Create", 70, 150, 36, 12, 3).setUnclickable();
+        create = new NormalButton(FluxTranslate.CREATE.t(), 70, 150, 36, 12, 3).setUnclickable();
         buttons.add(create);
 
         textBoxes.add(name);
@@ -205,8 +206,8 @@ public class GuiTabCreate extends GuiTabCore {
     private void initPopGui() {
         popBoxes.clear();
         popButtons.clear();
-        popButtons.add(new NormalButton("Cancel", 40, 86, 36, 12, 11));
-        apply = new NormalButton("Apply", 100, 86, 36, 12, 12);
+        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 40, 86, 36, 12, 11));
+        apply = new NormalButton(FluxTranslate.APPLY.t(), 100, 86, 36, 12, 12);
         popButtons.add(apply);
 
         customColor = TextboxButton.create(this, "0x", 7, fontRenderer, 57, 64, 64, 12).setHexOnly();

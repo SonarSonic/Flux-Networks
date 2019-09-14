@@ -1,17 +1,20 @@
 package fluxnetworks.api;
 
+import fluxnetworks.FluxTranslate;
+import fluxnetworks.common.core.Localization;
+
 public enum SecurityType {
-    PUBLIC("Public"),
-    ENCRYPTED("Encrypted");
+    PUBLIC(FluxTranslate.PUBLIC),
+    ENCRYPTED(FluxTranslate.ENCRYPTED);
 
-    private String name;
+    private Localization localization;
 
-    SecurityType(String name) {
-        this.name = name;
+    SecurityType(Localization localization) {
+        this.localization = localization;
     }
 
     public String getName() {
-        return name;
+        return localization.t();
     }
 
     public boolean isEncrypted() {

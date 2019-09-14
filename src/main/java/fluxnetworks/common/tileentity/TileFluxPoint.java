@@ -1,8 +1,7 @@
 package fluxnetworks.common.tileentity;
 
+import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.tileentity.IFluxPoint;
-import fluxnetworks.common.registry.RegistryBlocks;
-import net.minecraft.item.ItemStack;
 
 public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
 

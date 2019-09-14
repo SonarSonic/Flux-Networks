@@ -1,6 +1,7 @@
 package fluxnetworks.common.network;
 
 import fluxnetworks.FluxConfig;
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.FluxType;
@@ -52,12 +53,16 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                     PacketHandler.handlePacket(() -> message.coord4DS.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
                         if(disconnect) {
                             FluxUtils.removeConnection(f, false);
+                            f.disconnect(network);
                         } else {
                             if(editName) {
                                 f.customName = name;
                             }
                             if(editPriority) {
                                 f.priority = priority;
+                            }
+                            if(f.getConnectionType().isStorage()) {
+                                return;
                             }
                             if(editLimit) {
                                 f.limit = limit;
@@ -69,7 +74,7 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                                 f.disableLimit = unlimited;
                             }
                             if(editChunkLoad) {
-                                if(FluxConfig.enableChunkLoading) {
+                                if (FluxConfig.enableChunkLoading) {
                                     if (load) {
                                         boolean p = FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
                                         f.chunkLoading = p;
@@ -81,9 +86,10 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                                     f.chunkLoading = false;
                                 }
                             }
+                            f.sendPackets();
                         }
                     })), ctx.netHandler);
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
+                    return disconnect ? new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS_2) : new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
                 } else {
                     return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
                 }

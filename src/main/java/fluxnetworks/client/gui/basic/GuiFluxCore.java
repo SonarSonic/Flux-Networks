@@ -2,6 +2,7 @@ package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
@@ -21,11 +22,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static net.minecraft.client.renderer.GlStateManager.scale;
@@ -119,7 +117,7 @@ public abstract class GuiFluxCore extends GuiCore {
         GlStateManager.color(1.0f, 1.0f, 1.0f);
 
         fontRenderer.drawString(getTransferInfo(tileEntity.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), handler.getChange()), x, y, color);
-        fontRenderer.drawString("Buffer: " + TextFormatting.BLUE + FluxUtils.format(handler.getBuffer(), FluxUtils.TypeNumberFormat.COMMAS, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
+        fontRenderer.drawString(FluxTranslate.BUFFER.t() + ": " + TextFormatting.BLUE + FluxUtils.format(handler.getBuffer(), FluxUtils.TypeNumberFormat.COMMAS, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
 
         renderItemStack(tileEntity.getDisplayStack(), x - 20, y + 1);
 
@@ -148,56 +146,56 @@ public abstract class GuiFluxCore extends GuiCore {
         NBTTagCompound tag = flux.getDisplayStack().getSubCompound(FluxUtils.FLUX_DATA);
         if(flux.isChunkLoaded()) {
             if(flux.isForcedLoading()) {
-                list.add(TextFormatting.AQUA + "Forced Loading");
+                list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
             list.add(getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
-            if(flux.getConnectionType() == IFluxConnector.ConnectionType.STORAGE) {
-                list.add("Energy Stored: " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+            if(flux.getConnectionType() == ConnectionType.STORAGE) {
+                list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
             } else {
-                list.add("Internal Buffer: " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
             }
         } else {
-            list.add(TextFormatting.RED + "Chunk Unloaded");
+            list.add(TextFormatting.RED + FluxTranslate.CHUNK_UNLOADED.t());
             if(tag != null) {
                 if (tag.hasKey("energy")) {
-                    list.add("Energy Stored: " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF");
+                    list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF");
                 } else {
-                    list.add("Internal Buffer: " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getLong("buffer")) + "RF");
+                    list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getLong("buffer")) + "RF");
                 }
             }
         }
 
-        list.add("Transfer Limit: " + TextFormatting.GREEN + (flux.getDisableLimit() ? "Unlimited" : flux.getCurrentLimit()));
-        list.add("Priority: " + TextFormatting.GREEN + (flux.getSurgeMode() ? "Surge" : flux.getConnectionType() == IFluxConnector.ConnectionType.STORAGE ? flux.getPriority() + TileFluxStorage.C : flux.getPriority()));
+        list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getCurrentLimit()));
+        list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getPriority()));
         list.add(TextFormatting.ITALIC + flux.getCoords().getStringInfo());
         return list;
     }
 
-    protected String getTransferInfo(IFluxConnector.ConnectionType type, EnergyType energyType, long change) {
+    protected String getTransferInfo(ConnectionType type, EnergyType energyType, long change) {
         if(type.canAddEnergy()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if(change == 0) {
-                return "Input: " + TextFormatting.GOLD + b;
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + b;
             } else {
-                return "Input: " + TextFormatting.GREEN + "+" + b;
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + b;
             }
         }
         if(type.canRemoveEnergy() || type.isController()) {
             String b = FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if(change == 0) {
-                return "Output: " + TextFormatting.GOLD + b;
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
             } else {
-                return "Output: " + TextFormatting.RED + "-" + b;
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + "-" + b;
             }
         }
         // Storage are inverted
-        if(type == IFluxConnector.ConnectionType.STORAGE) {
+        if(type == ConnectionType.STORAGE) {
             if(change == 0) {
-                return "Change: " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else if(change > 0) {
-                return "Change: " + TextFormatting.RED + "-" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + "-" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             } else {
-                return "Change: " + TextFormatting.GREEN + "+" + FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             }
         }
         return "";
@@ -207,7 +205,7 @@ public abstract class GuiFluxCore extends GuiCore {
         GlStateManager.pushMatrix();
         drawCenteredString(fontRenderer, error, xSize / 2, 16, 0x808080);
         GlStateManager.scale(0.625, 0.625, 0.625);
-        drawCenteredString(fontRenderer, FluxTranslate.CLICK + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE, (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
+        drawCenteredString(fontRenderer, FluxTranslate.CLICK.t() + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE.t(), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
         GlStateManager.scale(1.6, 1.6, 1.6);
         GlStateManager.popMatrix();
     }

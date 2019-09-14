@@ -1,24 +1,28 @@
 package fluxnetworks.api;
 
+import fluxnetworks.FluxTranslate;
+import fluxnetworks.common.core.Localization;
 import net.minecraft.util.text.TextFormatting;
 
 public enum AccessPermission {
-    OWNER(TextFormatting.GOLD + "Owner", 0xffaa00),
-    ADMIN(TextFormatting.GREEN + "Admin", 0x66cc00),
-    USER(TextFormatting.BLUE + "User", 0x6699ff),
-    NONE(TextFormatting.GRAY + "Blocked", 0xa9a9a9),
-    SUPER_ADMIN(TextFormatting.DARK_PURPLE + "Super Admin", 0x4b0082);
+    OWNER(FluxTranslate.OWNER, 0xffaa00, TextFormatting.GOLD),
+    ADMIN(FluxTranslate.ADMIN, 0x66cc00, TextFormatting.GREEN),
+    USER(FluxTranslate.USER, 0x6699ff, TextFormatting.BLUE),
+    NONE(FluxTranslate.BLOCKED, 0xa9a9a9, TextFormatting.GRAY),
+    SUPER_ADMIN(FluxTranslate.SUPER_ADMIN, 0x4b0082, TextFormatting.DARK_PURPLE);
 
-    public String name;
+    public Localization localization;
     public int color;
+    public TextFormatting formatting;
 
-    AccessPermission(String name, int color) {
-        this.name = name;
+    AccessPermission(Localization localization, int color, TextFormatting formatting) {
+        this.localization = localization;
         this.color = color;
+        this.formatting = formatting;
     }
 
     public String getName() {
-        return name;
+        return formatting + localization.t();
     }
 
     public int getColor() {

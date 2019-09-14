@@ -1,6 +1,6 @@
 package fluxnetworks.common.core;
 
-import fluxnetworks.FluxNetworks;
+import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.FluxConfigurationType;
 import fluxnetworks.api.network.FluxType;
@@ -9,10 +9,7 @@ import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.connection.FluxNetworkServer;
-import fluxnetworks.common.item.ItemAdminConfigurator;
 import fluxnetworks.common.item.ItemFluxConnector;
-import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -224,7 +221,7 @@ public class FluxUtils {
     }
 
     public static void pasteConfiguration(TileFluxCore flux, NBTTagCompound config) {
-        if(flux.getConnectionType() == IFluxConnector.ConnectionType.STORAGE) {
+        if(flux.getConnectionType() == ConnectionType.STORAGE) {
             FluxConfigurationType type = FluxConfigurationType.NETWORK;
             if(config.hasKey(type.getNBTName())) {
                 type.paste.pasteToTile(config, type.getNBTName(), flux);

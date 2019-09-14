@@ -16,6 +16,6 @@ public class ItemFlux extends ItemCore {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(FluxTranslate.FLUX_TOOLTIP);
+        tooltip.add(FluxTranslate.FLUX_TOOLTIP.t());
     }
 }

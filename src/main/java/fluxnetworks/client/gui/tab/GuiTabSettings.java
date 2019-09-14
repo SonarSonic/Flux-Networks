@@ -58,22 +58,22 @@ public class GuiTabSettings extends GuiTabCore {
         if(networkValid) {
             if(mouseX > 30 + guiLeft && mouseX < 66 + guiLeft && mouseY > 140 + guiTop && mouseY < 152 + guiTop) {
                 if(delete.clickable) {
-                    drawCenteredString(fontRenderer, TextFormatting.BOLD + "Delete Network", 48, 128, 0xff0000);
+                    drawCenteredString(fontRenderer, TextFormatting.BOLD + FluxTranslate.DELETE_NETWORK.t(), 48, 128, 0xff0000);
                 } else {
-                    drawCenteredString(fontRenderer, "Double LShift", 48, 128, 0xffffff);
+                    drawCenteredString(fontRenderer, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
                 }
             }
-            drawCenteredString(fontRenderer, "Network Settings", 89, 10, 0xb4b4b4);
-            fontRenderer.drawString("Name:", 14, 30, 0x606060);
-            fontRenderer.drawString("Security Setting: " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
+            drawCenteredString(fontRenderer, FluxTranslate.TAB_SETTING.t(), 89, 10, 0xb4b4b4);
+            fontRenderer.drawString(FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
+            fontRenderer.drawString(FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
             if (securityType == SecurityType.ENCRYPTED)
-                fontRenderer.drawString("Password: ", 14, 64, 0x606060);
-            fontRenderer.drawString("Energy Type: " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
-            fontRenderer.drawString("Color:", 14, 97, 0x606060);
+                fontRenderer.drawString(FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 64, 0x606060);
+            fontRenderer.drawString(FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
+            fontRenderer.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
 
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 156, 0xffffff);
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 156, 0xffffff);
         } else {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED, FluxTranslate.TAB_SELECTION);
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
 
@@ -81,7 +81,7 @@ public class GuiTabSettings extends GuiTabCore {
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         drawRectWithBackground(30, 44, 60, 118, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, "Custom Color", 89, 48, 0xffffff);
+        drawCenteredString(fontRenderer, FluxTranslate.CUSTOM_COLOR.t(), 89, 48, 0xffffff);
     }
 
     @Override
@@ -111,19 +111,19 @@ public class GuiTabSettings extends GuiTabCore {
         navigationButtons.get(6).setMain();
 
         if(networkValid) {
-            int l = fontRenderer.getStringWidth("Name");
+            int l = fontRenderer.getStringWidth(FluxTranslate.NETWORK_NAME.t());
             name = TextboxButton.create(this, "", 1, fontRenderer, 20 + l, 28, 140 - l, 12);
             name.setMaxStringLength(24);
             name.setText(network.getNetworkName());
 
-            l = fontRenderer.getStringWidth("Password");
+            l = fontRenderer.getStringWidth(FluxTranslate.NETWORK_PASSWORD.t());
             password = TextboxButton.create(this, "", 2, fontRenderer, 20 + l, 62, 140 - l, 12).setTextInvisible();
             password.setText(network.getSetting(NetworkSettings.NETWORK_PASSWORD));
             password.setMaxStringLength(16);
             password.setVisible(network.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted());
 
-            apply = new NormalButton("Apply", 112, 140, 36, 12, 3).setUnclickable();
-            delete = new NormalButton("Delete", 30, 140, 36, 12, 4).setUnclickable();
+            apply = new NormalButton(FluxTranslate.APPLY.t(), 112, 140, 36, 12, 3).setUnclickable();
+            delete = new NormalButton(FluxTranslate.DELETE.t(), 30, 140, 36, 12, 4).setUnclickable();
             buttons.add(apply);
             buttons.add(delete);
 
@@ -264,8 +264,8 @@ public class GuiTabSettings extends GuiTabCore {
     private void initPopGui() {
         popBoxes.clear();
         popButtons.clear();
-        popButtons.add(new NormalButton("Cancel", 40, 86, 36, 12, 11));
-        colorApply = new NormalButton("Apply", 100, 86, 36, 12, 12);
+        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 40, 86, 36, 12, 11));
+        colorApply = new NormalButton(FluxTranslate.APPLY.t(), 100, 86, 36, 12, 12);
         popButtons.add(colorApply);
 
         customColor = TextboxButton.create(this, "0x", 7, fontRenderer, 57, 64, 64, 12).setHexOnly();

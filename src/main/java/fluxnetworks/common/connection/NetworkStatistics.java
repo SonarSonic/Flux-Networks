@@ -2,6 +2,7 @@ package fluxnetworks.common.connection;
 
 import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class NetworkStatistics {
 
@@ -32,5 +33,20 @@ public class NetworkStatistics {
         fluxStorageCount = network.getConnections(FluxType.storage).size();
         fluxPlugCount = network.getConnections(FluxType.plug).size() - fluxStorageCount;
         fluxPointCount = network.getConnections(FluxType.point).size() - fluxStorageCount - fluxControllerCount;
+    }
+
+    public NBTTagCompound writeNBT(NBTTagCompound tag) {
+        tag.setInteger("i1", fluxPlugCount);
+        tag.setInteger("i2", fluxPointCount);
+        tag.setInteger("i3", fluxControllerCount);
+        tag.setInteger("i4", fluxStorageCount);
+        return tag;
+    }
+
+    public void readNBT(NBTTagCompound tag) {
+        fluxPlugCount = tag.getInteger("i1");
+        fluxPointCount = tag.getInteger("i2");
+        fluxControllerCount = tag.getInteger("i3");
+        fluxStorageCount = tag.getInteger("i4");
     }
 }

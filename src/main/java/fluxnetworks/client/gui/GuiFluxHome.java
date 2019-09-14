@@ -24,7 +24,7 @@ public class GuiFluxHome extends GuiFluxCore {
 
     public TextboxButton fluxName, priority, limit;
 
-    public SlidedSwitchButton chunkLoad;
+    public SlidedSwitchButton surge, disableLimit, chunkLoad;
 
     private int timer;
 
@@ -37,12 +37,12 @@ public class GuiFluxHome extends GuiFluxCore {
         super.drawForegroundLayer(mouseX, mouseY);
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
         renderTransfer(tileEntity.getTransferHandler(), 0xffffff, 30, 90);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().info, 89, 150, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
 
         if(!tileEntity.getConnectionType().isStorage()) {
-            fontRenderer.drawString(FluxTranslate.SURGE_MODE, 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT, 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(FluxTranslate.CHUNK_LOADING, 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            fontRenderer.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
     }
 
@@ -55,17 +55,17 @@ public class GuiFluxHome extends GuiFluxCore {
     public void initGui() {
         super.initGui();
         int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
-        fluxName = TextboxButton.create(this, FluxTranslate.NAME + ": ", 0, fontRenderer, 16, 28, 144, 12).setOutlineColor(color);
+        fluxName = TextboxButton.create(this, FluxTranslate.NAME.t() + ": ", 0, fontRenderer, 16, 28, 144, 12).setOutlineColor(color);
         //fluxName.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
         fluxName.setMaxStringLength(24);
         fluxName.setText(tileEntity.getCustomName());
 
-        priority = TextboxButton.create(this, FluxTranslate.PRIORITY + ": ", 1, fontRenderer, 16, 45, 144, 12).setOutlineColor(color).setDigitsOnly();
+        priority = TextboxButton.create(this, FluxTranslate.PRIORITY.t() + ": ", 1, fontRenderer, 16, 45, 144, 12).setOutlineColor(color).setDigitsOnly();
         //priority.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
         priority.setMaxStringLength(5);
         priority.setText(String.valueOf(tileEntity.priority));
 
-        limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT + ": ", 2, fontRenderer, 16, 62, 144, 12).setOutlineColor(color).setDigitsOnly();
+        limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT.t() + ": ", 2, fontRenderer, 16, 62, 144, 12).setOutlineColor(color).setDigitsOnly();
         //limit.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
         limit.setMaxStringLength(9);
         limit.setText(String.valueOf(tileEntity.limit));
@@ -77,9 +77,11 @@ public class GuiFluxHome extends GuiFluxCore {
         navigationButtons.get(0).setMain();
 
         if(!tileEntity.getConnectionType().isStorage()) {
-            switches.add(new SlidedSwitchButton(140, 120, 1, guiLeft, guiTop, tileEntity.surgeMode));
-            switches.add(new SlidedSwitchButton(140, 132, 2, guiLeft, guiTop, tileEntity.disableLimit));
+            surge = new SlidedSwitchButton(140, 120, 1, guiLeft, guiTop, tileEntity.surgeMode);
+            disableLimit = new SlidedSwitchButton(140, 132, 2, guiLeft, guiTop, tileEntity.disableLimit);
             chunkLoad = new SlidedSwitchButton(140, 144, 3, guiLeft, guiTop, tileEntity.chunkLoading);
+            switches.add(surge);
+            switches.add(disableLimit);
             switches.add(chunkLoad);
         }
 
@@ -141,6 +143,12 @@ public class GuiFluxHome extends GuiFluxCore {
         if(timer % 4 == 0) {
             if (chunkLoad != null) {
                 chunkLoad.slideControl = tileEntity.chunkLoading;
+            }
+            if(surge != null) {
+                surge.slideControl = tileEntity.surgeMode;
+            }
+            if(disableLimit != null) {
+                disableLimit.slideControl = tileEntity.disableLimit;
             }
         }
         timer++;

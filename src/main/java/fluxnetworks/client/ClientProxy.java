@@ -1,16 +1,20 @@
 package fluxnetworks.client;
 
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.render.FluxStorageModel;
 import fluxnetworks.client.render.ItemFluxStorageRenderer;
 import fluxnetworks.client.render.TileFluxStorageRenderer;
 import fluxnetworks.common.CommonProxy;
 import fluxnetworks.common.connection.FluxNetworkCache;
+import fluxnetworks.common.handler.LocalizationHandler;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.tileentity.TileFluxStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.Tuple;
@@ -18,6 +22,7 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -27,6 +32,7 @@ import java.util.Map;
 
 public class ClientProxy extends CommonProxy {
 
+    private LocalizationHandler localizationHandler = new LocalizationHandler();
     private FeedbackInfo feedbackInfo = FeedbackInfo.NONE;
     private int feedbackTimer = 0;
 
@@ -35,6 +41,17 @@ public class ClientProxy extends CommonProxy {
         super.preInit(event);
         ClientRegistry.bindTileEntitySpecialRenderer(TileFluxStorage.class, new TileFluxStorageRenderer());
         ModelLoaderRegistry.registerLoader(FluxStorageModel.INSTANCE);
+        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        if (manager instanceof SimpleReloadableResourceManager) {
+            SimpleReloadableResourceManager resources = (SimpleReloadableResourceManager) manager;
+            resources.registerReloadListener(localizationHandler);
+        }
+    }
+
+    @Override
+    public void init(FMLInitializationEvent event) {
+        super.init(event);
+        localizationHandler.add(FluxTranslate.INSTANCE);
     }
 
     @Override

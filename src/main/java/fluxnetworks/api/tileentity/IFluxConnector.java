@@ -1,15 +1,14 @@
 package fluxnetworks.api.tileentity;
 
+import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.common.core.FluxGuiStack;
-import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.core.NBTType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -19,33 +18,6 @@ import java.util.UUID;
  */
 public interface IFluxConnector {
 
-    enum ConnectionType {
-        CONTROLLER,
-        POINT,
-        PLUG,
-        STORAGE;
-
-        ConnectionType() {
-
-        }
-
-        public boolean canAddEnergy() {
-            return this == PLUG;
-        }
-
-        public boolean canRemoveEnergy() {
-            return this == POINT;
-        }
-
-        public boolean isController() {
-            return this == CONTROLLER;
-        }
-
-        public boolean isStorage() {
-            return this == STORAGE;
-        }
-    }
-
     NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type);
 
     void readCustomNBT(NBTTagCompound tag, NBTType type);
@@ -53,6 +25,8 @@ public interface IFluxConnector {
     int getNetworkID();
 
     int getPriority();
+
+    int getActualPriority(); // ignore surge
 
     IFluxNetwork getNetwork();
 
@@ -63,6 +37,8 @@ public interface IFluxConnector {
     boolean canAccess(EntityPlayer player);
 
     long getCurrentLimit();
+
+    long getActualLimit(); // ignore disable limit
 
     boolean isActive();
 

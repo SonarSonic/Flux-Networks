@@ -21,7 +21,7 @@ public class BlockFluxPlug extends BlockSidedConnection {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        tooltip.add(FluxTranslate.FLUX_PLUG_TOOLTIP);
+        tooltip.add(FluxTranslate.FLUX_PLUG_TOOLTIP.t());
     }
 
     @Nullable
