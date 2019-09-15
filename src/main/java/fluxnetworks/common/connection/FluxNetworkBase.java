@@ -112,6 +112,9 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         if(type == NBTType.NETWORK_STATISTICS) {
             network_stats.getValue().writeNBT(nbt);
         }
+        if(type == NBTType.NETWORK_CLEAR) {
+            nbt.setBoolean("clear", true); // Nothing
+        }
 
         return nbt;
     }

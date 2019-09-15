@@ -9,10 +9,12 @@ public class FluxConfig {
     public static Configuration config;
 
     public static final String GENERAL = "general";
+    public static final String CLIENT = "client";
     public static final String ENERGY = "energy";
     public static final String NETWORKS = "networks";
 
-    public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin, enableGuiSoundEffects;
+    public static boolean enableButtonSound;
+    public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer;
 
@@ -38,6 +40,7 @@ public class FluxConfig {
 
         enableFluxRecipe = config.getBoolean("Enable Flux Recipe", GENERAL, true, "Enables redstones being compressed with the bedrock and obsidian to get flux");
         enableChunkLoading = config.getBoolean("Allow Flux Chunk Loading", GENERAL, true, "Allows flux connectors to work as chunk loaders");
-        enableGuiSoundEffects = config.getBoolean("GUI Sound Effects", GENERAL, true, "Enable GUI Sound Effects");
+
+        enableButtonSound = config.getBoolean("Enable GUI Button Sound", CLIENT, true, "Enable navigation buttons sound when pressing it");
     }
 }

@@ -3,27 +3,21 @@ package fluxnetworks.client;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.FluxConfigurationType;
 import fluxnetworks.client.render.FluxStorageModel;
 import fluxnetworks.client.render.ItemFluxStorageRenderer;
 import fluxnetworks.client.render.TileFluxStorageRenderer;
 import fluxnetworks.common.CommonProxy;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.handler.LocalizationHandler;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
 import fluxnetworks.common.tileentity.TileFluxStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -66,9 +60,8 @@ public class ClientProxy extends CommonProxy {
     public void onServerStopped() {
         super.onServerStopped();
         FluxColorHandler.reset();
-        FluxNetworkCache.instance.clearNetworks();
+        FluxNetworkCache.instance.clearClientCache();
     }
-
     @Override
     public void registerItemModel(Item item, int meta, String variant) {
         ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(item.getRegistryName(), variant));

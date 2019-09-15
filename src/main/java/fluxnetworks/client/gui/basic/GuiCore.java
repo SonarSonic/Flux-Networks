@@ -1,8 +1,8 @@
 package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.client.gui.button.TextboxButton;
@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
@@ -207,12 +206,7 @@ public abstract class GuiCore extends GuiContainer implements ITextBoxButton {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-    }
-
-    public void triggerSoundEffect(SoundEvent soundEvent, float f){
-        if(FluxConfig.enableGuiSoundEffects) {
-            mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(soundEvent, f));
-        }
+        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
     }
 
     public void drawColorRect(int x, int y, int height, int width, int color) {

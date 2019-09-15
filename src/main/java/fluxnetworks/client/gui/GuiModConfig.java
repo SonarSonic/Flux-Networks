@@ -19,6 +19,7 @@ public class GuiModConfig extends GuiConfig {
     private static List<IConfigElement> getConfigElements() {
         List<IConfigElement> list = new ArrayList<>();
         list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.GENERAL)));
+        list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.CLIENT)));
         list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.NETWORKS)));
         list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.ENERGY)));
         return list;

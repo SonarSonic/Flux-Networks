@@ -240,9 +240,9 @@ public class FluxUtils {
         tag.setString(ItemFluxConnector.CUSTOM_NAME, a.getText());
         tag.setInteger(ItemFluxConnector.PRIORITY, b.getIntegerFromText(false));
         tag.setLong(ItemFluxConnector.LIMIT, c.getLongFromText(true));
-        tag.setBoolean(ItemFluxConnector.SURGE_MODE, d.slideControl);
-        tag.setBoolean(ItemFluxConnector.DISABLE_LIMIT, e.slideControl);
-        tag.setBoolean("chunkLoad", f.slideControl);
+        tag.setBoolean(ItemFluxConnector.SURGE_MODE, d != null && d.slideControl);
+        tag.setBoolean(ItemFluxConnector.DISABLE_LIMIT, e != null && e.slideControl);
+        tag.setBoolean("chunkLoad", f != null && f.slideControl);
         return tag;
     }
 

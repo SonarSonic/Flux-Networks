@@ -3,7 +3,6 @@ package fluxnetworks.common.item;
 import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.FluxConfigurationType;
 import fluxnetworks.client.FluxColorHandler;
-import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +20,8 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static fluxnetworks.common.core.FluxUtils.CONFIGS_TAG;
 
 public class ItemConfigurator extends ItemCore {
 
@@ -49,10 +50,10 @@ public class ItemConfigurator extends ItemCore {
             }
             ItemStack stack = player.getHeldItem(hand);
             if(player.isSneaking()) {
-                stack.setTagInfo(FluxUtils.CONFIGS_TAG, fluxCore.copyConfiguration(new NBTTagCompound()));
+                stack.setTagInfo(CONFIGS_TAG, fluxCore.copyConfiguration(new NBTTagCompound()));
                 player.sendMessage(new TextComponentString("Copied Configuration"));
             } else {
-                NBTTagCompound configs = stack.getOrCreateSubCompound(FluxUtils.CONFIGS_TAG);
+                NBTTagCompound configs = stack.getOrCreateSubCompound(CONFIGS_TAG);
                 if (!configs.hasNoTags()) {
                     fluxCore.pasteConfiguration(configs);
                     player.sendMessage(new TextComponentString("Pasted Configuration"));
@@ -65,10 +66,11 @@ public class ItemConfigurator extends ItemCore {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        NBTTagCompound tag = stack.getSubCompound(FluxUtils.CONFIGS_TAG);
+        NBTTagCompound tag = stack.getSubCompound(CONFIGS_TAG);
         if(tag != null) {
             tooltip.add(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInteger(FluxConfigurationType.NETWORK.getNBTName())));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
+
 }

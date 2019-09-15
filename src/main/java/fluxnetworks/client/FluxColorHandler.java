@@ -149,8 +149,8 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
         return -1;
     }
 
-    public static int colorMultiplierForConfigurator(ItemStack stack, int i) {
-        if (i == 1) {
+    public static int colorMultiplierForConfigurator(ItemStack stack, int tintIndex) {
+        if (tintIndex == 1) {
             NBTTagCompound tag = stack.getSubCompound(FluxUtils.CONFIGS_TAG);
             if (tag != null) {
                 return getOrRequestNetworkColor(tag.getInteger(FluxConfigurationType.NETWORK.getNBTName()));

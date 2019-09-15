@@ -28,6 +28,9 @@ public class FluxNetworkCache {
 
     public void clearNetworks() {
         FluxNetworkData.clear();
+    }
+
+    public void clearClientCache() {
         networks.clear();
     }
 
@@ -59,6 +62,12 @@ public class FluxNetworkCache {
     public void updateClientFromPacket(Map<Integer, NBTTagCompound> serverSideNetworks, NBTType type) {
         serverSideNetworks.forEach((i, n) -> {
             IFluxNetwork network = networks.get(i);
+            if(type == NBTType.NETWORK_CLEAR) {
+                if(network != null) {
+                    networks.remove(i);
+                    return;
+                }
+            }
             if(network == null) {
                 network = new FluxLiteNetwork();
                 network.readNetworkNBT(n, type);
@@ -67,10 +76,6 @@ public class FluxNetworkCache {
                 network.readNetworkNBT(n, type);
             }
         });
-    }
-
-    public void clearClientNetworksFromPacket(List<Integer> clearedNetworks){
-        clearedNetworks.forEach(i -> networks.remove(i));
     }
 
     public void updateClientConnections(int networkID, List<NBTTagCompound> tags) {

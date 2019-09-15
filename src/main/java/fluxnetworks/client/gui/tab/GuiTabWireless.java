@@ -16,6 +16,7 @@ import fluxnetworks.common.network.PacketGeneralType;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class GuiTabWireless extends GuiTabCore {
         if(networkValid) {
             drawCenteredString(fontRenderer, FluxTranslate.TAB_WIRELESS.t(), 89, 12, 0xb4b4b4);
             fontRenderer.drawString(FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 146, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -120,7 +122,6 @@ public class GuiTabWireless extends GuiTabCore {
                     if(button.id == 0) {
                         int wireless = enableWireless | rightHand << 1 | leftHand << 2 | hotBar << 3 | armorSlot << 4 | baublesSlot << 5;
                         PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_WIRELESS, PacketGeneralHandler.getChangeWirelessPacket(network.getNetworkID(), wireless)));
-                        button.clickable = false;
                     }
                 }
             }
@@ -133,6 +134,15 @@ public class GuiTabWireless extends GuiTabCore {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
+            apply.clickable = false;
+            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
         }
     }
 

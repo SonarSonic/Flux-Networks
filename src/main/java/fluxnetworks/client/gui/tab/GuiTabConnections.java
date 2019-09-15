@@ -98,6 +98,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             } else {
                 fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 20, 10, 0xffffff);
             }
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 165, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -125,7 +126,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 94, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 106, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 155, 0xffffff);
     }
 
     @Override
@@ -167,14 +168,25 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         popButtons.add(apply);
 
         int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
-        fluxName = TextboxButton.create(this, FluxTranslate.NAME.t() + ": ", 0, fontRenderer, 20, 30, 136, 12).setOutlineColor(color);
-        fluxName.setMaxStringLength(24);
+        if(batchMode) {
+            fluxName = TextboxButton.create(this, FluxTranslate.NAME.t() + ": ", 0, fontRenderer, 20, 30, 136, 12).setOutlineColor(color);
+            fluxName.setMaxStringLength(24);
 
-        priority = TextboxButton.create(this, FluxTranslate.PRIORITY.t() + ": ", 1, fontRenderer, 20, 47, 136, 12).setOutlineColor(color).setDigitsOnly();
-        priority.setMaxStringLength(5);
+            priority = TextboxButton.create(this, FluxTranslate.PRIORITY.t() + ": ", 1, fontRenderer, 20, 47, 136, 12).setOutlineColor(color).setDigitsOnly();
+            priority.setMaxStringLength(5);
 
-        limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT.t() + ": ", 2, fontRenderer, 20, 64, 136, 12).setOutlineColor(color).setDigitsOnly();
-        limit.setMaxStringLength(9);
+            limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT.t() + ": ", 2, fontRenderer, 20, 64, 136, 12).setOutlineColor(color).setDigitsOnly();
+            limit.setMaxStringLength(9);
+        } else {
+            fluxName = TextboxButton.create(this, FluxTranslate.NAME.t() + ": ", 0, fontRenderer, 18, 30, 140, 12).setOutlineColor(color);
+            fluxName.setMaxStringLength(24);
+
+            priority = TextboxButton.create(this, FluxTranslate.PRIORITY.t() + ": ", 1, fontRenderer, 18, 47, 140, 12).setOutlineColor(color).setDigitsOnly();
+            priority.setMaxStringLength(5);
+
+            limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT.t() + ": ", 2, fontRenderer, 18, 64, 140, 12).setOutlineColor(color).setDigitsOnly();
+            limit.setMaxStringLength(9);
+        }
 
         if(!batchMode) {
             fluxName.setText(singleConnection.getCustomName());
@@ -396,7 +408,11 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(IFluxConnector::isChunkLoaded).reversed().thenComparing(IFluxConnector::getConnectionType).thenComparing(p -> -p.getPriority()));
+        elements.sort(Comparator.comparing(IFluxConnector::isChunkLoaded).reversed().
+                thenComparing(f -> f.getConnectionType().isStorage()).
+                thenComparing(f -> f.getConnectionType().canAddEnergy()).
+                thenComparing(f -> f.getConnectionType().canRemoveEnergy()).
+                thenComparing(p -> -p.getPriority()));
         refreshCurrentPage();
     }
 }

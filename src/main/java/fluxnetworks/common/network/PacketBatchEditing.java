@@ -61,10 +61,11 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                             if(editPriority) {
                                 f.priority = priority;
                             }
-                            if(f.getConnectionType().isStorage()) {
-                                return;
-                            }
                             if(editLimit) {
+                                if(f.getConnectionType().isStorage()) {
+                                    f.limit = f.getCurrentLimit(); // Always max transfer
+                                    return; // Following settings are disabled for storage
+                                }
                                 f.limit = limit;
                             }
                             if(editSurge) {
@@ -76,8 +77,8 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                             if(editChunkLoad) {
                                 if (FluxConfig.enableChunkLoading) {
                                     if (load) {
-                                        boolean p = FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
-                                        f.chunkLoading = p;
+                                        FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
+                                        f.chunkLoading = true;
                                     } else {
                                         FluxChunkManager.releaseChunk(f.getWorld(), new ChunkPos(f.getPos()));
                                         f.chunkLoading = false;

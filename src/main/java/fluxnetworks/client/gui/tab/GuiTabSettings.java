@@ -1,6 +1,7 @@
 package fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.EnergyType;
@@ -226,7 +227,8 @@ public class GuiTabSettings extends GuiTabCore {
         if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
             if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
                 FMLCommonHandler.instance().showGuiScreen(new GuiFluxHome(player, tileEntity));
-                triggerSoundEffect(RegistrySounds.BUTTON_CLICK, 1.0F);
+                if(FluxConfig.enableButtonSound)
+                    mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
             }
         }
         for(TextboxButton text : textBoxes) {

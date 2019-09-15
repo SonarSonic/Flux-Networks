@@ -88,9 +88,9 @@ info.fluxnetworks.gui.total=Total
 info.fluxnetworks.gui.deletenetwork=Delete Network
 info.fluxnetworks.gui.doubleshift=Double LShift
 
-info.fluxnetworks.button.batchclear=Clear
-info.fluxnetworks.button.batchedit=Edit
-info.fluxnetworks.button.batchdisconnect=Disconnect
+info.fluxnetworks.button.batchclear=Clear Selected
+info.fluxnetworks.button.batchedit=Edit Selected
+info.fluxnetworks.button.batchdisconnect=Disconnect Selected
 info.fluxnetworks.button.apply=Apply
 info.fluxnetworks.button.cancel=Cancel
 info.fluxnetworks.button.create=Create

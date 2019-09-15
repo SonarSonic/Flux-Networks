@@ -1,6 +1,7 @@
 package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.gui.GuiFluxHome;
@@ -37,7 +38,9 @@ public abstract class GuiTabCore extends GuiFluxCore {
         if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
             if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
                 FMLCommonHandler.instance().showGuiScreen(new GuiFluxHome(player, tileEntity));
-                triggerSoundEffect(RegistrySounds.BUTTON_CLICK, 1.0F);
+                FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+                if(FluxConfig.enableButtonSound)
+                    mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
             }
         }
     }
