@@ -41,15 +41,18 @@ public class GTEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
     @Override
     public long addEnergy(long amount, TileEntity tile, EnumFacing side, boolean simulate) {
         IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side);
-        if(simulate) {
-            return container.getEnergyCanBeInserted() << 2;
-        }
+        /*if(simulate) {
+            return container.getEnergyCanBeInserted() << 2; //TODO
+        }*/
         long eu = amount >> 2;
         if(eu == 0) {
             return 0;
         }
         long voltage = Math.min(container.getInputVoltage(), eu);
         long energy = voltage * container.acceptEnergyFromNetwork(side, voltage, eu / voltage);
+        if(simulate) {
+            container.removeEnergy(energy);
+        }
         return energy << 2;
     }
 

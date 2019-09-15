@@ -1,6 +1,7 @@
 package fluxnetworks.common.connection;
 
 import fluxnetworks.FluxConfig;
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Capabilities;
 import fluxnetworks.api.SecurityType;
@@ -119,6 +120,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
                             point.getTransferHandler().removeFromNetwork(actualRemoved, false, false);
                             if(point.getTransferHandler().getRequest() <= 0) {
                                 continue CYCLE;
+                            } else {
+                                plugTransferIterator.incrementFlux();
                             }
                         } else {
                             // EU received 4RF at least, prevent dead loop
