@@ -27,6 +27,7 @@ public class PacketHandler {
         network.registerMessage(PacketConnectionUpdate.class, PacketConnectionUpdate.NetworkConnectionMessage.class, 10, Side.CLIENT);
         network.registerMessage(PacketConnectionUpdateRequest.class, PacketConnectionUpdateRequest.ConnectionRequestMessage.class, 11, Side.SERVER);
         network.registerMessage(PacketBatchEditing.class, PacketBatchEditing.BatchEditingMessage.class, 12, Side.SERVER);
+        network.registerMessage(PacketNetworkClear.class, PacketNetworkClear.NetworkClearMessage.class, 13, Side.CLIENT);
     }
 
     public static EntityPlayer getPlayer(MessageContext ctx) {

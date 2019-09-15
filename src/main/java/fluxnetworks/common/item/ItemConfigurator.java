@@ -67,7 +67,7 @@ public class ItemConfigurator extends ItemCore {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         NBTTagCompound tag = stack.getSubCompound(FluxUtils.CONFIGS_TAG);
         if(tag != null) {
-            tooltip.add(FluxTranslate.NETWORK_NAME + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInteger(FluxConfigurationType.NETWORK.getNBTName())));
+            tooltip.add(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInteger(FluxConfigurationType.NETWORK.getNBTName())));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }

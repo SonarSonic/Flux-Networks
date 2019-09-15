@@ -62,7 +62,7 @@ public abstract class GuiFluxCore extends GuiCore {
             for(NavigationButton button : navigationButtons) {
                 if(button.isMouseHovered(mc, mouseX, mouseY)) {
                     button.switchTab(button.buttonNavigationId, player, tileEntity);
-                    mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
+                    triggerSoundEffect(RegistrySounds.BUTTON_CLICK, 1.0F);
                 }
             }
         }
@@ -118,9 +118,7 @@ public abstract class GuiFluxCore extends GuiCore {
 
         fontRenderer.drawString(getTransferInfo(tileEntity.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), handler.getChange()), x, y, color);
         fontRenderer.drawString(FluxTranslate.BUFFER.t() + ": " + TextFormatting.BLUE + FluxUtils.format(handler.getBuffer(), FluxUtils.TypeNumberFormat.COMMAS, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
-
         renderItemStack(tileEntity.getDisplayStack(), x - 20, y + 1);
-
         GlStateManager.popMatrix();
     }
 
@@ -130,7 +128,7 @@ public abstract class GuiFluxCore extends GuiCore {
         this.zLevel = 200.0F;
         this.itemRender.zLevel = 200.0F;
 
-        RenderHelper.enableStandardItemLighting();
+        RenderHelper.enableGUIStandardItemLighting();
         itemRender.renderItemAndEffectIntoGUI(stack, x, y);
         itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, x, y, "");
         RenderHelper.disableStandardItemLighting();

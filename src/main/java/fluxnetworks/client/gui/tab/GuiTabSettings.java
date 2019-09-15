@@ -226,7 +226,7 @@ public class GuiTabSettings extends GuiTabCore {
         if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
             if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
                 FMLCommonHandler.instance().showGuiScreen(new GuiFluxHome(player, tileEntity));
-                mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
+                triggerSoundEffect(RegistrySounds.BUTTON_CLICK, 1.0F);
             }
         }
         for(TextboxButton text : textBoxes) {

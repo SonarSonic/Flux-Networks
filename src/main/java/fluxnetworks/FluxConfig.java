@@ -12,7 +12,7 @@ public class FluxConfig {
     public static final String ENERGY = "energy";
     public static final String NETWORKS = "networks";
 
-    public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
+    public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin, enableGuiSoundEffects;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer;
 
@@ -33,10 +33,11 @@ public class FluxConfig {
         gargantuanCapacity = config.getInt("Gargantuan Storage Capacity", ENERGY, 128000000, 0, Integer.MAX_VALUE, "");
         gargantuanTransfer = config.getInt("Gargantuan Storage Transfer", ENERGY, 1440000, 0, Integer.MAX_VALUE, "");
 
-        maximumPerPlayer = config.getInt("Maximum Networks Per Player", NETWORKS, 3, -1, Integer.MAX_VALUE, "Maximum networks of each player can have. -1 = no limit");
+        maximumPerPlayer = config.getInt("Maximum Networks Per Player", NETWORKS, 3, -1, Integer.MAX_VALUE, "Maximum networks each player can have. -1 = no limit");
         enableSuperAdmin = config.getBoolean("Allow Network Super Admin", NETWORKS, true, "Allows someone to be a network super admin, otherwise, no one can access or dismantle your flux devices or delete your networks without permission");
 
         enableFluxRecipe = config.getBoolean("Enable Flux Recipe", GENERAL, true, "Enables redstones being compressed with the bedrock and obsidian to get flux");
         enableChunkLoading = config.getBoolean("Allow Flux Chunk Loading", GENERAL, true, "Allows flux connectors to work as chunk loaders");
+        enableGuiSoundEffects = config.getBoolean("GUI Sound Effects", GENERAL, true, "Enable GUI Sound Effects");
     }
 }

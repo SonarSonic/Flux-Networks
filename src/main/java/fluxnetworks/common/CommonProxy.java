@@ -14,10 +14,10 @@ import fluxnetworks.common.handler.CapabilityHandler;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;
+import fluxnetworks.common.integration.MekanismIntegration;
 import fluxnetworks.common.network.PacketNetworkUpdate;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
-import mekanism.api.MekanismAPI;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -62,7 +62,9 @@ public class CommonProxy {
         TileEntityHandler.registerEnergyHandler();
         FluxConfig.init(event.getModConfigurationDirectory());
         EntityRegistry.registerModEntity(new ResourceLocation(FluxNetworks.MODID, "Flux"), EntityFireItem.class, "Flux", 0, FluxNetworks.instance, 64, 10, true);
-        MekanismAPI.addBoxBlacklistMod(FluxNetworks.MODID);
+        if(Loader.isModLoaded("mekanism")){
+            MekanismIntegration.preInit();
+        }
         this.baublesLoaded = Loader.isModLoaded("baubles");
     }
 

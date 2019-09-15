@@ -129,6 +129,7 @@ public class GuiTabWireless extends GuiTabCore {
                     s.switchButton();
                     if(s.id == 4) {
                         enableWireless = enableWireless == 0 ? 1 : 0;
+                        apply.clickable = true;
                     }
                 }
             }

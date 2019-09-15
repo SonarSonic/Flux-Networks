@@ -1,6 +1,7 @@
 package fluxnetworks.client;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.api.FluxConfigurationType;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.common.block.BlockFluxCore;
 import fluxnetworks.common.data.FluxNetworkData;
@@ -142,6 +143,17 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             NBTTagCompound tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
             if (tag != null) {
                 return getOrRequestNetworkColor(tag.getInteger(FluxNetworkData.NETWORK_ID));
+            }
+            return NO_NETWORK_COLOR;
+        }
+        return -1;
+    }
+
+    public static int colorMultiplierForConfigurator(ItemStack stack, int i) {
+        if (i == 1) {
+            NBTTagCompound tag = stack.getSubCompound(FluxUtils.CONFIGS_TAG);
+            if (tag != null) {
+                return getOrRequestNetworkColor(tag.getInteger(FluxConfigurationType.NETWORK.getNBTName()));
             }
             return NO_NETWORK_COLOR;
         }

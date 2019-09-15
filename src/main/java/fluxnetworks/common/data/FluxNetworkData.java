@@ -9,6 +9,7 @@ import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.connection.*;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.network.PacketNetworkClear;
 import fluxnetworks.common.network.PacketNetworkUpdate;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -109,7 +110,7 @@ public class FluxNetworkData extends WorldSavedData {
     public void removeNetwork(IFluxNetwork network) {
         network.onRemoved();
         networks.remove(network.getNetworkID());
-        PacketHandler.network.sendToAll(new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_CLEAR));
+        PacketHandler.network.sendToAll(new PacketNetworkClear.NetworkClearMessage(Lists.newArrayList(network)));
     }
 
     @Override

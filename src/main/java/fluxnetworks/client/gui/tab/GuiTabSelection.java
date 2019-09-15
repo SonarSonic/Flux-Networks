@@ -47,7 +47,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         if(elements.size() == 0) {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_NETWORK.t(), FluxTranslate.TAB_SELECTION.t());
+            renderNavigationPrompt(FluxTranslate.ERROR_NO_NETWORK.t(), FluxTranslate.TAB_CREATE.t());
         } else {
             String amount = FluxTranslate.TOTAL.t() + ": " + elements.size();
             fontRenderer.drawString(amount, 154 - fontRenderer.getStringWidth(amount), 10, 0xffffff);
