@@ -77,8 +77,9 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                             if(editChunkLoad) {
                                 if (FluxConfig.enableChunkLoading) {
                                     if (load) {
-                                        FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
-                                        f.chunkLoading = true;
+                                        if(!f.chunkLoading) {
+                                            f.chunkLoading = FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
+                                        }
                                     } else {
                                         FluxChunkManager.releaseChunk(f.getWorld(), new ChunkPos(f.getPos()));
                                         f.chunkLoading = false;
