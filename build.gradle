@@ -42,8 +42,8 @@ processResources {
     }
 }
 
-sourceSets {
+/*sourceSets {
     main {
         output.resourcesDir = java.outputDir
     }
-}
+}*/
