@@ -314,7 +314,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         super.mousePopupClicked(mouseX, mouseY, mouseButton);
         if(mouseButton == 0) {
             for(NormalButton button : popButtons) {
-                if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+                if(button.clickable && button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
                     if(button.id == 11) {
                         main = true;
                     }
