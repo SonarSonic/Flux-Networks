@@ -1,5 +1,7 @@
 package fluxnetworks.common.network;
 
+import fluxnetworks.FluxNetworks;
+import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.core.NBTType;
@@ -21,7 +23,13 @@ public class PacketNetworkUpdate implements IMessageHandler<PacketNetworkUpdate.
     @Override
     public IMessage onMessage(NetworkUpdateMessage message, MessageContext ctx) {
         if(ctx.side == Side.CLIENT) {
-            PacketHandler.handlePacket(() -> FluxNetworkCache.instance.updateClientFromPacket(message.updatedNetworks, message.type), ctx.netHandler);
+            PacketHandler.handlePacket(() -> {
+                FluxNetworkCache.instance.updateClientFromPacket(message.updatedNetworks, message.type);
+                if(message.type == NBTType.NETWORK_PLAYERS) {
+                    FluxNetworks.proxy.setFeedback(FeedbackInfo.SUCCESS);
+                }
+            }, ctx.netHandler);
+
         }
 
         return null;

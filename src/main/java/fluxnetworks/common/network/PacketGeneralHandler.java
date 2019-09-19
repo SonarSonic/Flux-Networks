@@ -2,12 +2,10 @@ package fluxnetworks.common.network;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.SecurityType;
-import fluxnetworks.api.EnergyType;
+import fluxnetworks.api.*;
 import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
+import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.core.NBTType;
@@ -19,8 +17,12 @@ import fluxnetworks.common.handler.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -163,35 +165,69 @@ public class PacketGeneralHandler {
         return null;
     }
 
-    public static NBTTagCompound getChangePermissionPacket(int networkID, UUID playerChanged) {
+    public static NBTTagCompound getChangePermissionPacket(int networkID, UUID playerChanged, int type) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
         tag.setUniqueId("playerChanged", playerChanged);
+        tag.setInteger("t", type);
         return tag;
     }
 
     public static IMessage handleChangePermissionPacket(EntityPlayer player, NBTTagCompound packetTag) {
         int networkID = packetTag.getInteger(FluxNetworkData.NETWORK_ID);
         UUID playerChanged = packetTag.getUniqueId("playerChanged");
+        int type = packetTag.getInteger("t");
         if (playerChanged != null) {
-            if (EntityPlayer.getUUID(player.getGameProfile()).equals(playerChanged)) {
+            /*if (EntityPlayer.getUUID(player.getGameProfile()).equals(playerChanged)) {
                 //don't allow editing of their own permissions...
                 return null;
-            }
+            }*/
 
             IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
             if (!network.isInvalid()) {
                 if (network.getMemberPermission(player).canEdit()) {
-                    Optional<NetworkMember> settings = network.getValidMember(playerChanged);
-                    if (settings.isPresent()) {
-                        NetworkMember p = settings.get();
-                        if(!p.getAccessPermission().canDelete()) {
-                            p.setAccessPermission(p.getAccessPermission() == AccessPermission.USER ? AccessPermission.ADMIN : AccessPermission.USER);
+                    // Create new member
+                    if(type == 0) {
+                        EntityPlayer player1 = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(playerChanged);
+                        //noinspection ConstantConditions
+                        if(player1 != null) {
+                            NetworkMember newMember = NetworkMember.createNetworkMember(player1, AccessPermission.USER);
+                            network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
                             return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                         }
+                        return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);
+                    } else {
+                        Optional<NetworkMember> settings = network.getValidMember(playerChanged);
+                        if (settings.isPresent()) {
+                            NetworkMember p = settings.get();
+                            if (type == 1) {
+                                p.setAccessPermission(AccessPermission.ADMIN);
+                            } else if(type == 2) {
+                                p.setAccessPermission(AccessPermission.USER);
+                            } else if(type == 3) {
+                                network.getSetting(NetworkSettings.NETWORK_PLAYERS).remove(p);
+                            } else if(type == 4) {
+                                /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
+                                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
+                                network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
+                                p.setAccessPermission(AccessPermission.OWNER);
+                            }
+                            return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
+                        } else if(type == 4) {
+                            EntityPlayer player1 = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(playerChanged);
+                            //noinspection ConstantConditions
+                            if(player1 != null) {
+                                /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
+                                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
+                                network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
+                                NetworkMember newMember = NetworkMember.createNetworkMember(player1, AccessPermission.OWNER);
+                                network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
+                                return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
+                            }
+                            return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);
+                        }
+                        return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);
                     }
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);
-
                 } else {
                     return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
                 }

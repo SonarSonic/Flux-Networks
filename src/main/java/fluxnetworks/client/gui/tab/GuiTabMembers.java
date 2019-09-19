@@ -4,6 +4,7 @@ import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Capabilities;
+import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.button.NavigationButton;
@@ -52,7 +53,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         if(networkValid) {
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 162, 0xffffff);
+
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -62,6 +63,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 162, 0xffffff);
         drawCenteredString(fontRenderer, TextFormatting.AQUA + selectedPlayer.getCachedName(), 88, 38, 0xffffff);
         drawCenteredString(fontRenderer, selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
         String text = selectedPlayer.getPlayerUUID().toString();
@@ -211,9 +213,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         super.mousePopupClicked(mouseX, mouseY, mouseButton);
         for(NormalButton button : popButtons) {
             if(button.clickable && button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
-                switch (button.id) {
-
-                }
+                PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_PERMISSION, PacketGeneralHandler.getChangePermissionPacket(network.getNetworkID(), selectedPlayer.getPlayerUUID(), button.id)));
             }
         }
     }
@@ -221,14 +221,16 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     protected void keyTypedPop(char c, int k) throws IOException {
         super.keyTypedPop(c, k);
-        if(k == 42) {
-            dangerCount++;
-            if(dangerCount > 1) {
-                transferOwnership.clickable = true;
+        if(!main) {
+            if (k == 42) {
+                dangerCount++;
+                if (dangerCount > 1) {
+                    transferOwnership.clickable = true;
+                }
+            } else {
+                dangerCount = 0;
+                transferOwnership.clickable = false;
             }
-        } else {
-            dangerCount = 0;
-            transferOwnership.clickable = false;
         }
     }
 
@@ -237,6 +239,18 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         super.updateScreen();
         if(timer == 0) {
             refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
+            if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
+                if(!main) {
+                    Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
+                    if (n.isPresent()) {
+                        selectedPlayer = n.get();
+                        initPopGui();
+                    } else {
+                        backToMain();
+                    }
+                }
+                FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+            }
         }
         timer++;
         timer %= 2;
