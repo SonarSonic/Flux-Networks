@@ -99,7 +99,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         }
 
         if(type == NBTType.NETWORK_PLAYERS) {
-            FluxNetworkData.writePlayers(this, nbt);
+            FluxNetworkData.writeAllPlayers(this, nbt);
         }
 
         if(type == NBTType.NETWORK_CONNECTIONS) {

@@ -8,8 +8,8 @@ public enum PacketGeneralType {
     CREATE_NETWORK(PacketGeneralHandler::handleCreateNetworkPacket),
     EDIT_NETWORK(PacketGeneralHandler::handleNetworkEditPacket),
     DELETE_NETWORK(PacketGeneralHandler::handleDeleteNetworkPacket),
-    ADD_MEMBER(PacketGeneralHandler::handleAddMemberPacket),
-    REMOVE_MEMBER(PacketGeneralHandler::handleRemoveMemberPacket),
+    /*ADD_MEMBER(PacketGeneralHandler::handleAddMemberPacket),
+    REMOVE_MEMBER(PacketGeneralHandler::handleRemoveMemberPacket),*/
     CHANGE_PERMISSION(PacketGeneralHandler::handleChangePermissionPacket),
     CHANGE_WIRELESS(PacketGeneralHandler::handleChangeWirelessPacket);
 

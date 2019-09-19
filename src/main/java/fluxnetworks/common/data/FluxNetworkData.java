@@ -1,23 +1,31 @@
 package fluxnetworks.common.data;
 
 import com.google.common.collect.Lists;
+import com.mojang.authlib.GameProfile;
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.api.AccessPermission;
+import fluxnetworks.api.Capabilities;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.SecurityType;
 import fluxnetworks.api.network.IFluxNetwork;
+import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.connection.*;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketNetworkUpdate;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -171,6 +179,26 @@ public class FluxNetworkData extends WorldSavedData {
             nbt.setTag(PLAYER_LIST, list);
         }
         return nbt;
+    }
+
+    public static NBTTagCompound writeAllPlayers(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
+        List<NetworkMember> a = network.getSetting(NetworkSettings.NETWORK_PLAYERS);
+        NBTTagList list = new NBTTagList();
+        if(!a.isEmpty()) {
+            a.forEach(s -> list.appendTag(s.writeNetworkNBT(new NBTTagCompound())));
+        }
+        List<EntityPlayerMP> players = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayers();
+        if(!players.isEmpty()) {
+            players.stream().filter(p -> a.stream().noneMatch(s -> s.getPlayerUUID().equals(p.getUniqueID())))
+                    .forEach(s -> list.appendTag(NetworkMember.createNetworkMember(s, getPermission(s)).writeNetworkNBT(new NBTTagCompound())));
+        }
+        nbt.setTag(PLAYER_LIST, list);
+        return nbt;
+    }
+
+    private static AccessPermission getPermission(EntityPlayer player) {
+        ISuperAdmin superAdmin = player.getCapability(Capabilities.SUPER_ADMIN, null);
+        return (superAdmin != null && superAdmin.getPermission()) ? AccessPermission.SUPER_ADMIN : AccessPermission.NONE;
     }
 
     public static void readConnections(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {

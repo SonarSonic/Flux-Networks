@@ -13,8 +13,9 @@ import java.util.UUID;
 public class NetworkMember{
 
     private UUID playerUUID;
+    private UUID offlineUUID;
     private String cachedName;
-    private AccessPermission permission;
+    private AccessPermission accessPermission;
 
     NetworkMember() {}
 
@@ -28,7 +29,7 @@ public class NetworkMember{
 
         t.playerUUID = EntityPlayer.getUUID(profile);
         t.cachedName = profile.getName();
-        t.permission = permissionLevel;
+        t.accessPermission = permissionLevel;
 
         return t;
     }
@@ -51,7 +52,7 @@ public class NetworkMember{
             t.playerUUID = EntityPlayer.getOfflineUUID(username);
         }
         t.cachedName = username;
-        t.permission = AccessPermission.USER;
+        t.accessPermission = AccessPermission.USER;
         return t;
     }
 
@@ -59,28 +60,28 @@ public class NetworkMember{
         return cachedName;
     }
 
-    public AccessPermission getPermission() {
-        return permission;
+    public AccessPermission getAccessPermission() {
+        return accessPermission;
     }
 
     public UUID getPlayerUUID() {
         return playerUUID;
     }
 
-    public void setPermission(AccessPermission permission) {
-        this.permission = permission;
+    public void setAccessPermission(AccessPermission accessPermission) {
+        this.accessPermission = accessPermission;
     }
 
     public void readNetworkNBT(NBTTagCompound nbt) {
         playerUUID = nbt.getUniqueId("playerUUID");
         cachedName = nbt.getString("cachedName");
-        permission = AccessPermission.values()[nbt.getByte("playerAccess")];
+        accessPermission = AccessPermission.values()[nbt.getByte("playerAccess")];
     }
 
     public NBTTagCompound writeNetworkNBT(NBTTagCompound nbt) {
         nbt.setUniqueId("playerUUID", playerUUID);
         nbt.setString("cachedName", cachedName);
-        nbt.setByte("playerAccess", (byte) permission.ordinal());
+        nbt.setByte("playerAccess", (byte) accessPermission.ordinal());
         return nbt;
     }
 }

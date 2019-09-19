@@ -42,7 +42,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     }
 
     public <T> T getHoveredElement(int mouseX, int mouseY) {
-        if(currentPages == 0)
+        if(current.isEmpty())
             return null;
         for(int i = 0; i < currentPages; i++) {
             int y = (gridStartY + gridHeight * i);

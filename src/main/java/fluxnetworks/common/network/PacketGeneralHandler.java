@@ -185,8 +185,8 @@ public class PacketGeneralHandler {
                     Optional<NetworkMember> settings = network.getValidMember(playerChanged);
                     if (settings.isPresent()) {
                         NetworkMember p = settings.get();
-                        if(!p.getPermission().canDelete()) {
-                            p.setPermission(p.getPermission() == AccessPermission.USER ? AccessPermission.ADMIN : AccessPermission.USER);
+                        if(!p.getAccessPermission().canDelete()) {
+                            p.setAccessPermission(p.getAccessPermission() == AccessPermission.USER ? AccessPermission.ADMIN : AccessPermission.USER);
                             return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                         }
                     }

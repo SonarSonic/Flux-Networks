@@ -1,7 +1,6 @@
 package fluxnetworks.common.connection;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Capabilities;
 import fluxnetworks.api.SecurityType;
@@ -143,7 +142,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
                 return AccessPermission.SUPER_ADMIN;
             }
         }
-        return network_players.getValue().stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getPermission)).getOrDefault(EntityPlayer.getUUID(player.getGameProfile()), network_security.getValue().isEncrypted() ? AccessPermission.NONE : AccessPermission.USER);
+        return network_players.getValue().stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getAccessPermission)).getOrDefault(EntityPlayer.getUUID(player.getGameProfile()), network_security.getValue().isEncrypted() ? AccessPermission.NONE : AccessPermission.USER);
     }
 
     @SuppressWarnings("unchecked")
@@ -204,7 +203,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
     @Override
     public void removeMember(UUID uuid) {
-        network_players.getValue().removeIf(p -> p.getPlayerUUID().equals(uuid) && !p.getPermission().canDelete());
+        network_players.getValue().removeIf(p -> p.getPlayerUUID().equals(uuid) && !p.getAccessPermission().canDelete());
     }
 
     @Override

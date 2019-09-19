@@ -2,6 +2,9 @@ package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.AccessPermission;
+import fluxnetworks.api.Capabilities;
+import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.NormalButton;
@@ -15,6 +18,7 @@ import fluxnetworks.common.network.PacketGeneralHandler;
 import fluxnetworks.common.network.PacketGeneralType;
 import fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import fluxnetworks.common.tileentity.TileFluxCore;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
@@ -23,10 +27,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
-    public TextboxButton player;
+    public NetworkMember selectedPlayer;
+    public NormalButton transferOwnership;
+    public int dangerCount;
 
     private int timer;
 
@@ -52,6 +59,19 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
+    protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
+        drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
+        super.drawPopupForegroundLayer(mouseX, mouseY);
+        drawCenteredString(fontRenderer, TextFormatting.AQUA + selectedPlayer.getCachedName(), 88, 38, 0xffffff);
+        drawCenteredString(fontRenderer, selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
+        String text = selectedPlayer.getPlayerUUID().toString();
+        GlStateManager.scale(0.625, 0.625, 0.625);
+        drawCenteredString(fontRenderer, "UUID: " + text.substring(0, 16), (int) (88 * 1.6), (int) (60 * 1.6), 0xffffff);
+        drawCenteredString(fontRenderer, text.substring(16), (int) (88 * 1.6), (int) (66 * 1.6), 0xffffff);
+        GlStateManager.scale(1.6, 1.6, 1.6);
+    }
+
+    @Override
     public void initGui() {
 
         for(int i = 0; i < 7; i++) {
@@ -60,7 +80,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(5).setMain();
 
-        if(networkValid) {
+        /*if(networkValid) {
 
             buttons.add(new NormalButton("+", 152, 150, 12, 12, 1));
 
@@ -68,36 +88,107 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             player.setMaxStringLength(32);
 
             textBoxes.add(player);
-        }
+        }*/
 
         super.initGui();
     }
 
     @Override
     protected void onElementClicked(NetworkMember element, int mouseButton) {
-        if(mouseButton == 0) {
+        /*if(mouseButton == 0) {
             PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_PERMISSION, PacketGeneralHandler.getChangePermissionPacket(network.getNetworkID(), element.getPlayerUUID())));
         } else if(mouseButton == 1) {
             PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.REMOVE_MEMBER, PacketGeneralHandler.getRemoveMemberPacket(network.getNetworkID(), element.getPlayerUUID())));
+        }*/
+        if(mouseButton == 0) {
+            selectedPlayer = element;
+            main = false;
+            initPopGui();
+        }
+    }
+
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height) {
+        super.setWorldAndResolution(mc, width, height);
+        if(!main) {
+            initPopGui();
+        }
+    }
+
+    private void initPopGui() {
+        popButtons.clear();
+        boolean editPermission = false;
+        boolean ownerPermission = false;
+        Optional<NetworkMember> you = elements.stream().filter(p -> p.getPlayerUUID().equals(player.getUniqueID())).findFirst();
+        if(you.isPresent()) {
+            editPermission = you.get().getAccessPermission().canEdit();
+            ownerPermission = you.get().getAccessPermission().canDelete();
+        }
+        if(!selectedPlayer.getAccessPermission().canDelete() && editPermission) {
+            String text;
+            int length;
+            int i = 0;
+            if (selectedPlayer.getAccessPermission() == AccessPermission.NONE) {
+                text = "Set to " + AccessPermission.USER.localization.t();
+                length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
+            } else {
+                if(ownerPermission) {
+                    if (selectedPlayer.getAccessPermission() == AccessPermission.USER) {
+                        text = "Set to " + AccessPermission.ADMIN.localization.t();
+                        length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                        popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
+                    } else {
+                        text = "Set to " + AccessPermission.USER.localization.t();
+                        length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                        popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));
+                    }
+                }
+                text = "Kick " + selectedPlayer.getCachedName();
+                length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 3).setTextColor(0xffff5555));
+                if(ownerPermission) {
+                    text = "Transfer Ownership";
+                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
+                    popButtons.add(transferOwnership);
+                }
+            }
+        }
+        if(selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN && ownerPermission) {
+            String text = "Transfer Ownership";
+            int length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+            transferOwnership = new NormalButton(text, 88 - length / 2, 76, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
+            popButtons.add(transferOwnership);
         }
     }
 
     @Override
     public void renderElement(NetworkMember element, int x, int y) {
-        drawColorRect(x, y, elementHeight, elementWidth, element.getPermission().color | 0xcc000000);
+        GlStateManager.pushMatrix();
+        drawColorRect(x, y, elementHeight, elementWidth, element.getAccessPermission().color | 0xcc000000);
+        if(element.getPlayerUUID().equals(player.getUniqueID())) {
+            drawRect(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
+            drawRect(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
+        }
         fontRenderer.drawString(element.getCachedName(), x + 3, y + 1, 0xffffff);
-        String p = element.getPermission().getName();
+        String p = element.getAccessPermission().getName();
         fontRenderer.drawString(p, x + 140 - fontRenderer.getStringWidth(p), y + 1, 0xffffff);
+        GlStateManager.popMatrix();
     }
 
     @Override
     public void renderElementTooltip(NetworkMember element, int mouseX, int mouseY) {
+        if(!main)
+            return;
         GlStateManager.pushMatrix();
         List<String> strings = new ArrayList<>();
-        strings.add(TextFormatting.AQUA + element.getCachedName());
-        strings.add(TextFormatting.RESET + element.getPermission().getName());
+        strings.add("Username: " + TextFormatting.AQUA + element.getCachedName());
+        strings.add("Access: " + TextFormatting.RESET + element.getAccessPermission().getName());
         //strings.add(TextFormatting.GRAY + "UUID: " + TextFormatting.RESET + element.getPlayerUUID().toString());
-        strings.add(TextFormatting.WHITE + "L/R Change/Remove");
+        /*if(element.getPlayerUUID().equals(player.getUniqueID())) {
+            strings.add(TextFormatting.WHITE + "You");
+        }*/
         drawHoverTooltip(strings, mouseX + 4, mouseY - 8);
         GlStateManager.popMatrix();
     }
@@ -105,13 +196,39 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
-        for(NormalButton button : buttons) {
+        /*for(NormalButton button : buttons) {
             if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
                 if(button.id == 1 && !player.getText().isEmpty()) {
                     PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.ADD_MEMBER, PacketGeneralHandler.getAddMemberPacket(network.getNetworkID(), player.getText())));
                     player.setText("");
                 }
             }
+        }*/
+    }
+
+    @Override
+    protected void mousePopupClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mousePopupClicked(mouseX, mouseY, mouseButton);
+        for(NormalButton button : popButtons) {
+            if(button.clickable && button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+                switch (button.id) {
+
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void keyTypedPop(char c, int k) throws IOException {
+        super.keyTypedPop(c, k);
+        if(k == 42) {
+            dangerCount++;
+            if(dangerCount > 1) {
+                transferOwnership.clickable = true;
+            }
+        } else {
+            dangerCount = 0;
+            transferOwnership.clickable = false;
         }
     }
 
@@ -127,6 +244,6 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(NetworkMember::getPermission).thenComparing(NetworkMember::getCachedName));
+        elements.sort(Comparator.comparing(NetworkMember::getAccessPermission).thenComparing(NetworkMember::getCachedName));
     }
 }

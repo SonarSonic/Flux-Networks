@@ -100,7 +100,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                 tickCount = 0;
                 PacketHandler.network.sendToServer(new PacketColorRequest.ColorRequestMessage(Lists.newArrayList(requests)));
                 sent_requests.addAll(requests);
-                requests = new ArrayList<>();
+                requests.clear();
             }
         }
     }
@@ -116,7 +116,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     @Override
     public int colorMultiplier(IBlockState state, @Nullable IBlockAccess world, @Nullable BlockPos pos, int tintIndex) {
-        if (tintIndex == 1 && pos != null) {
+        if (tintIndex == 1 && pos != null && world != null) {
             TileEntity tile = world.getTileEntity(pos);
             if (!state.getValue(BlockFluxCore.CONNECTED)) {
                 return NO_NETWORK_COLOR;
