@@ -15,9 +15,8 @@ public class GuiHandler implements IGuiHandler {
     @Nullable
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        switch(ID) {
-            case 0:
-                return new ContainerCore(player, (TileFluxCore) world.getTileEntity(new BlockPos(x, y, z)));
+        if (ID == 0) {
+            return new ContainerCore(player, (TileFluxCore) world.getTileEntity(new BlockPos(x, y, z)));
         }
         return null;
     }
@@ -25,9 +24,8 @@ public class GuiHandler implements IGuiHandler {
     @Nullable
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        switch(ID) {
-            case 0:
-                return new GuiFluxHome(player, (TileFluxCore) world.getTileEntity(new BlockPos(x, y, z)));
+        if (ID == 0) {
+            return new GuiFluxHome(player, (TileFluxCore) world.getTileEntity(new BlockPos(x, y, z)));
         }
         return null;
     }

@@ -210,6 +210,7 @@ public class PacketGeneralHandler {
                                 /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
                                         .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
+                                network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);
                                 p.setAccessPermission(AccessPermission.OWNER);
                             }
                             return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
@@ -222,6 +223,7 @@ public class PacketGeneralHandler {
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
                                 NetworkMember newMember = NetworkMember.createNetworkMember(player1, AccessPermission.OWNER);
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
+                                network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);
                                 return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                             }
                             return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);

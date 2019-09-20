@@ -119,28 +119,29 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     private void initPopGui() {
         popButtons.clear();
-        boolean editPermission = false;
-        boolean ownerPermission = false;
-        Optional<NetworkMember> you = elements.stream().filter(p -> p.getPlayerUUID().equals(player.getUniqueID())).findFirst();
-        if(you.isPresent()) {
-            editPermission = you.get().getAccessPermission().canEdit();
-            ownerPermission = you.get().getAccessPermission().canDelete();
-        }
-        if(!selectedPlayer.getAccessPermission().canDelete() && editPermission) {
+        boolean editPermission = accessPermission.canEdit();
+        boolean ownerPermission = accessPermission.canDelete();
+        if(selectedPlayer.getAccessPermission() != AccessPermission.OWNER && editPermission) {
             String text;
             int length;
             int i = 0;
-            if (selectedPlayer.getAccessPermission() == AccessPermission.NONE) {
+            if (selectedPlayer.getAccessPermission() == AccessPermission.NONE || selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN) {
                 text = "Set to " + AccessPermission.USER.localization.t();
                 length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                 popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
+                if(selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN && ownerPermission) {
+                    text = "Transfer Ownership";
+                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
+                    popButtons.add(transferOwnership);
+                }
             } else {
                 if(ownerPermission) {
                     if (selectedPlayer.getAccessPermission() == AccessPermission.USER) {
                         text = "Set to " + AccessPermission.ADMIN.localization.t();
                         length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
-                    } else {
+                    } else if(selectedPlayer.getAccessPermission() == AccessPermission.ADMIN) {
                         text = "Set to " + AccessPermission.USER.localization.t();
                         length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));
@@ -156,12 +157,6 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                     popButtons.add(transferOwnership);
                 }
             }
-        }
-        if(selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN && ownerPermission) {
-            String text = "Transfer Ownership";
-            int length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
-            transferOwnership = new NormalButton(text, 88 - length / 2, 76, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
-            popButtons.add(transferOwnership);
         }
     }
 
@@ -221,7 +216,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     protected void keyTypedPop(char c, int k) throws IOException {
         super.keyTypedPop(c, k);
-        if(!main) {
+        if(transferOwnership != null) {
             if (k == 42) {
                 dangerCount++;
                 if (dangerCount > 1) {

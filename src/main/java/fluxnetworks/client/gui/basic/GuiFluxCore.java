@@ -3,6 +3,7 @@ package fluxnetworks.client.gui.basic;
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.network.IFluxNetwork;
@@ -11,6 +12,8 @@ import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.network.PacketPermissionRequest;
 import fluxnetworks.common.registry.RegistrySounds;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import fluxnetworks.common.core.FluxUtils;
@@ -32,6 +35,7 @@ import static net.minecraft.client.renderer.GlStateManager.scale;
 public abstract class GuiFluxCore extends GuiCore {
 
     public IFluxNetwork network;
+    public AccessPermission accessPermission = AccessPermission.NONE;
     protected boolean networkValid;
     private int timer1;
 
@@ -39,6 +43,7 @@ public abstract class GuiFluxCore extends GuiCore {
         super(player, tileEntity);
         this.network = FluxNetworkCache.instance.getClientNetwork(tileEntity.networkID);
         this.networkValid = !network.isInvalid();
+        PacketHandler.network.sendToServer(new PacketPermissionRequest.PermissionRequestMessage(network.getNetworkID(), player.getUniqueID()));
     }
 
     @Override

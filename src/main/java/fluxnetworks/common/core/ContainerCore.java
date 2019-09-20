@@ -10,7 +10,7 @@ public class ContainerCore extends Container {
 
     public ContainerCore(EntityPlayer player, TileFluxCore tileEntity) {
         this.tileEntity = tileEntity;
-        tileEntity.open(player);
+        this.tileEntity.open(player);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package fluxnetworks.common.data;
 
 import com.google.common.collect.Lists;
-import com.mojang.authlib.GameProfile;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Capabilities;
@@ -18,7 +17,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;
@@ -181,7 +179,7 @@ public class FluxNetworkData extends WorldSavedData {
         return nbt;
     }
 
-    public static NBTTagCompound writeAllPlayers(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
+    public static void writeAllPlayers(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
         List<NetworkMember> a = network.getSetting(NetworkSettings.NETWORK_PLAYERS);
         NBTTagList list = new NBTTagList();
         if(!a.isEmpty()) {
@@ -193,7 +191,6 @@ public class FluxNetworkData extends WorldSavedData {
                     .forEach(s -> list.appendTag(NetworkMember.createNetworkMember(s, getPermission(s)).writeNetworkNBT(new NBTTagCompound())));
         }
         nbt.setTag(PLAYER_LIST, list);
-        return nbt;
     }
 
     private static AccessPermission getPermission(EntityPlayer player) {
