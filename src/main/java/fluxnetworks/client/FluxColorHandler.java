@@ -49,22 +49,21 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     }
 
     public static void loadColorCache(int id, int color) {
-        if(id != -1) colorCache.put(id, color);
+        if(id != -1) {
+            colorCache.put(id, color);
+        }
     }
 
     public static void loadNameCache(int id, String name) {
-        if(id != -1) nameCache.put(id, name);
+        if(id != -1) {
+            nameCache.put(id, name);
+        }
     }
 
     public static void placeRequest(int id) {
         if(id != -1 && !requests.contains(id) && !sent_requests.contains(id)){
             requests.add(id);
         }
-    }
-
-    public static void clearCertain(int id) {
-        colorCache.remove(id);
-        nameCache.remove(id);
     }
 
     public static int getOrRequestNetworkColor(int id) {

@@ -202,8 +202,6 @@ public class CommonProxy {
 
     public void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache) {}
 
-    public void clearColorCache(int id) {}
-
     public EntityPlayer getPlayer(MessageContext ctx) {
         return ctx.getServerHandler().player;
     }

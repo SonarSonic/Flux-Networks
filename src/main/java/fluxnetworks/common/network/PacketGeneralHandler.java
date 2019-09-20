@@ -17,15 +17,13 @@ import fluxnetworks.common.handler.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class PacketGeneralHandler {
 
@@ -85,7 +83,9 @@ public class PacketGeneralHandler {
                     @SuppressWarnings("unchecked")
                     List<IFluxConnector> list = network.getConnections(FluxType.flux);
                     list.forEach(fluxConnector -> fluxConnector.connect(network)); // update color data
-                    FluxNetworks.proxy.clearColorCache(networkID);
+                    @SuppressWarnings("unchecked") HashMap<Integer, Tuple<Integer, String>> cache = new HashMap();
+                    cache.put(networkID, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000, network.getSetting(NetworkSettings.NETWORK_NAME)));
+                    PacketHandler.network.sendToAll(new PacketColorCache.ColorCacheMessage(cache));
                 }
                 network.setSetting(NetworkSettings.NETWORK_SECURITY, security);
                 network.setSetting(NetworkSettings.NETWORK_ENERGY, energy);
@@ -119,6 +119,7 @@ public class PacketGeneralHandler {
         return null;
     }
 
+    @Deprecated
     public static NBTTagCompound getAddMemberPacket(int networkID, String playerName) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
@@ -126,6 +127,7 @@ public class PacketGeneralHandler {
         return tag;
     }
 
+    @Deprecated
     public static IMessage handleAddMemberPacket(EntityPlayer player, NBTTagCompound packetTag) {
         int networkID = packetTag.getInteger(FluxNetworkData.NETWORK_ID);
         String playerName = packetTag.getString("playerName");
@@ -142,6 +144,7 @@ public class PacketGeneralHandler {
         return null;
     }
 
+    @Deprecated
     public static NBTTagCompound getRemoveMemberPacket(int networkID, UUID playerRemoved) {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
@@ -149,6 +152,7 @@ public class PacketGeneralHandler {
         return tag;
     }
 
+    @Deprecated
     public static IMessage handleRemoveMemberPacket(EntityPlayer player, NBTTagCompound packetTag) {
         int networkID = packetTag.getInteger(FluxNetworkData.NETWORK_ID);
         UUID playerRemoved = packetTag.getUniqueId("playerRemoved");
@@ -193,6 +197,7 @@ public class PacketGeneralHandler {
                         if(player1 != null) {
                             NetworkMember newMember = NetworkMember.createNetworkMember(player1, AccessPermission.USER);
                             network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
+                            PacketHandler.network.sendTo(new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS), (EntityPlayerMP) player);
                             return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                         }
                         return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);
@@ -213,6 +218,7 @@ public class PacketGeneralHandler {
                                 network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);
                                 p.setAccessPermission(AccessPermission.OWNER);
                             }
+                            PacketHandler.network.sendTo(new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS), (EntityPlayerMP) player);
                             return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                         } else if(type == 4) {
                             EntityPlayer player1 = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(playerChanged);
@@ -224,6 +230,7 @@ public class PacketGeneralHandler {
                                 NetworkMember newMember = NetworkMember.createNetworkMember(player1, AccessPermission.OWNER);
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
                                 network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);
+                                PacketHandler.network.sendTo(new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS), (EntityPlayerMP) player);
                                 return new PacketNetworkUpdate.NetworkUpdateMessage(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                             }
                             return new PacketFeedback.FeedbackMessage(FeedbackInfo.INVALID_USER);

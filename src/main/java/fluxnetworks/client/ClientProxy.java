@@ -118,11 +118,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void clearColorCache(int id) {
-        FluxColorHandler.clearCertain(id);
-    }
-
-    @Override
     public EntityPlayer getPlayer(MessageContext ctx) {
         return ctx.side.isServer() ? super.getPlayer(ctx) : Minecraft.getMinecraft().player;
     }
