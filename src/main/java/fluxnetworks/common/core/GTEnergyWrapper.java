@@ -1,5 +1,6 @@
 package fluxnetworks.common.core;
 
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.tileentity.IFluxPhantomEnergy;
 import fluxnetworks.api.tileentity.IFluxPlug;
 import fluxnetworks.api.tileentity.IFluxPoint;

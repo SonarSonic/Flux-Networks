@@ -144,12 +144,6 @@ public class GuiFluxHome extends GuiFluxCore {
             if (chunkLoad != null) {
                 chunkLoad.slideControl = tileEntity.chunkLoading;
             }
-            if(surge != null) {
-                surge.slideControl = tileEntity.surgeMode;
-            }
-            if(disableLimit != null) {
-                disableLimit.slideControl = tileEntity.disableLimit;
-            }
         }
         timer++;
         timer %= 100;
