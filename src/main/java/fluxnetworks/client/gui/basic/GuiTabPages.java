@@ -2,6 +2,8 @@ package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.api.AccessPermission;
+import fluxnetworks.client.gui.button.PageLabelButton;
+import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -13,6 +15,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     public List<T> elements = Lists.newArrayList();
     protected List<T> current = Lists.newArrayList();
     protected SortType sortType = SortType.ID;
+    protected PageLabelButton labelButton;
 
     public int page = 1, currentPages = 1, pages = 1, gridPerPage = 1, gridStartX = 0, gridStartY = 0, gridHeight = 0, elementHeight = 0, elementWidth = 0;
 
@@ -42,7 +45,8 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
             i++;
         }
         if(pages > 1) {
-            drawCenteredString(fontRenderer, page + " / " + pages, 89, 156, 0xffffff);
+            //drawCenteredString(fontRenderer, page + " / " + pages, 89, 156, 0xffffff);
+            labelButton.drawButton(mc, mouseX, mouseY);
         }
     }
 
@@ -80,6 +84,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     @Override
     public void initGui() {
         super.initGui();
+        labelButton = new PageLabelButton(14, 160, page, pages, network.getSetting(NetworkSettings.NETWORK_COLOR));
     }
 
     @Override
@@ -126,7 +131,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         for(int i = a; i < b; i++) {
             current.add(elements.get(i));
         }
-
+        labelButton.refreshPages(page, pages);
     }
 
     protected void sortGrids(SortType sortType) {

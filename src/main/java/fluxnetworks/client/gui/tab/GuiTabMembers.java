@@ -3,13 +3,11 @@ package fluxnetworks.client.gui.tab;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.Capabilities;
 import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.network.ISuperAdmin;
+import fluxnetworks.client.gui.basic.GuiCore;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.NormalButton;
-import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.core.NBTType;
@@ -34,18 +32,18 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     public NetworkMember selectedPlayer;
     public NormalButton transferOwnership;
-    public int dangerCount;
+    public int transferOwnershipCount;
 
     private int timer;
 
     public GuiTabMembers(EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
         super(player, tileEntity, accessPermission);
-        gridStartX = 16;
+        gridStartX = 15;
         gridStartY = 22;
-        gridHeight = 14;
-        gridPerPage = 9;
-        elementHeight = 11;
-        elementWidth = 143;
+        gridHeight = 13;
+        gridPerPage = 10;
+        elementHeight = 12;
+        elementWidth = 146;
         PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
     }
 
@@ -53,8 +51,9 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         if(networkValid) {
-            String str2 = "Your access: " + accessPermission.getName();
-            fontRenderer.drawString(str2, 20, 10, 0xffffff);
+            String str2 = accessPermission.getName();
+            fontRenderer.drawString(str2, 158 - fontRenderer.getStringWidth(str2), 10, 0xffffff);
+            fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 19, 10, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -166,14 +165,30 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     public void renderElement(NetworkMember element, int x, int y) {
         GlStateManager.pushMatrix();
-        drawColorRect(x, y, elementHeight, elementWidth, element.getAccessPermission().color | 0xcc000000);
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+
+        int color = element.getAccessPermission().color;
+
+        float f = (float)(color >> 16 & 255) / 255.0F;
+        float f1 = (float)(color >> 8 & 255) / 255.0F;
+        float f2 = (float)(color & 255) / 255.0F;
+
+        GlStateManager.color(f, f1, f2, 0.8f);
+
+        mc.getTextureManager().bindTexture(GuiCore.GUI_BAR);
+        drawTexturedModalRect(x, y, 0, 16, elementWidth, elementHeight);
+
         if(element.getPlayerUUID().equals(player.getUniqueID())) {
             drawRect(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
             drawRect(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
         }
-        fontRenderer.drawString(element.getCachedName(), x + 3, y + 1, 0xffffff);
+
+        fontRenderer.drawString(TextFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
+
         String p = element.getAccessPermission().getName();
-        fontRenderer.drawString(p, x + 140 - fontRenderer.getStringWidth(p), y + 1, 0xffffff);
+        fontRenderer.drawString(p, x + 142 - fontRenderer.getStringWidth(p), y + 2, 0xffffff);
+
         GlStateManager.popMatrix();
     }
 
@@ -222,12 +237,12 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         super.keyTypedPop(c, k);
         if(transferOwnership != null) {
             if (k == 42) {
-                dangerCount++;
-                if (dangerCount > 1) {
+                transferOwnershipCount++;
+                if (transferOwnershipCount > 1) {
                     transferOwnership.clickable = true;
                 }
             } else {
-                dangerCount = 0;
+                transferOwnershipCount = 0;
                 transferOwnership.clickable = false;
             }
         }

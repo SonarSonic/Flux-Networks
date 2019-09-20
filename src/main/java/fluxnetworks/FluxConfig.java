@@ -1,5 +1,6 @@
 package fluxnetworks;
 
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;
@@ -23,6 +24,15 @@ public class FluxConfig {
         config.load();
         read();
         config.save();
+        generateFluxChunkConfig();
+    }
+
+    public static void generateFluxChunkConfig() {
+        if(!ForgeChunkManager.getConfig().hasCategory(FluxNetworks.MODID)) {
+            ForgeChunkManager.getConfig().get(FluxNetworks.MODID, "maximumChunksPerTicket", 1000000).setMinValue(0);
+            ForgeChunkManager.getConfig().get(FluxNetworks.MODID, "maximumTicketCount", 1000000).setMinValue(0);
+            ForgeChunkManager.getConfig().save();
+        }
     }
 
     public static void read() {

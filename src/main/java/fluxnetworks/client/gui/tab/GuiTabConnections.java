@@ -7,6 +7,7 @@ import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.client.gui.basic.GuiCore;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.*;
@@ -53,12 +54,12 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     public GuiTabConnections(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
-        gridStartX = 16;
+        gridStartX = 15;
         gridStartY = 22;
         gridHeight = 19;
         gridPerPage = 7;
-        elementHeight = 16;
-        elementWidth = 144;
+        elementHeight = 18;
+        elementWidth = 146;
         PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_CONNECTIONS));
     }
 
@@ -97,7 +98,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             if(batchConnections.size() > 0) {
                 fontRenderer.drawString(FluxTranslate.SELECTED.t() + ": " + TextFormatting.AQUA + batchConnections.size(), 20, 10, 0xffffff);
             } else {
-                fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 20, 10, 0xffffff);
+                fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 19, 10, 0xffffff);
             }
             drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 165, 0xffffff);
         } else {
@@ -247,29 +248,42 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
     @Override
     public void renderElement(IFluxConnector element, int x, int y) {
         GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.color(1.0f, 1.0f, 1.0f);
+        mc.getTextureManager().bindTexture(GuiCore.GUI_BAR);
         int fontColor = 0xffffff;
+        int color = element.getConnectionType().color;
+
+        float f = (float)(color >> 16 & 255) / 255.0F;
+        float f1 = (float)(color >> 8 & 255) / 255.0F;
+        float f2 = (float)(color & 255) / 255.0F;
+
         if(batchConnections.size() > 0) {
             if (batchConnections.contains(element)) {
                 drawRect(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
                 drawRect(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
-                drawColorRect(x, y, elementHeight, elementWidth, element.getConnectionType().color | 0xff000000);
+                GlStateManager.color(f, f1, f2);
+                drawTexturedModalRect(x, y, 0, 32, elementWidth, elementHeight);
             } else {
                 drawRect(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xaa606060);
                 drawRect(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xaa606060);
-                drawColorRect(x, y, elementHeight, elementWidth, element.getConnectionType().color | 0x60000000);
+                GlStateManager.color(f * 0.5f, f1 * 0.5f, f2 * 0.5f);
+                drawTexturedModalRect(x, y, 0, 32, elementWidth, elementHeight);
                 fontColor = 0xd0d0d0;
             }
         } else {
-            drawColorRect(x, y, elementHeight, elementWidth, element.getConnectionType().color | 0xff000000);
+            GlStateManager.color(f, f1, f2);
+            drawTexturedModalRect(x, y, 0, 32, elementWidth, elementHeight);
         }
-        renderItemStack(element.getDisplayStack(), x, y);
+        renderItemStack(element.getDisplayStack(), x + 2, y + 1);
         if(element.isChunkLoaded()) {
-            fontRenderer.drawString(element.getCustomName(), x + 20, y + 1, fontColor);
+            fontRenderer.drawString(element.getCustomName(), x + 21, y + 2, fontColor);
             GlStateManager.scale(0.625, 0.625, 0.625);
-            fontRenderer.drawString(getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 20) * 1.6), (int) ((y + 10) * 1.6), fontColor);
+            fontRenderer.drawString(getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
             GlStateManager.scale(1.6, 1.6, 1.6);
         } else {
-            fontRenderer.drawString(element.getCustomName(), x + 20, y + 4, 0x808080);
+            fontRenderer.drawString(element.getCustomName(), x + 21, y + 5, 0x808080);
         }
         GlStateManager.popMatrix();
     }
