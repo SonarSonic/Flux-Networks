@@ -66,8 +66,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         super.drawPopupForegroundLayer(mouseX, mouseY);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 162, 0xffffff);
         drawCenteredString(fontRenderer, TextFormatting.AQUA + selectedPlayer.getCachedName(), 88, 38, 0xffffff);
-        String permission = selectedPlayer.getAccessPermission().getName() + (selectedPlayer.getPlayerUUID().equals(player.getUniqueID()) ? " (You)" : "");
-        drawCenteredString(fontRenderer, permission, 88, 48, 0xffffff);
+        drawCenteredString(fontRenderer, selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
         String text = selectedPlayer.getPlayerUUID().toString();
         GlStateManager.scale(0.625, 0.625, 0.625);
         drawCenteredString(fontRenderer, "UUID: " + text.substring(0, 16), (int) (88 * 1.6), (int) (60 * 1.6), 0xffffff);

@@ -1,5 +1,7 @@
 package fluxnetworks.common.handler.energy;
 
+import fluxnetworks.FluxConfig;
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import gregtech.api.capability.GregtechCapabilities;
@@ -41,18 +43,18 @@ public class GTEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
     @Override
     public long addEnergy(long amount, TileEntity tile, EnumFacing side, boolean simulate) {
         IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side);
-        /*if(simulate) {
-            return container.getEnergyCanBeInserted() << 2; //TODO
-        }*/
-        long eu = amount >> 2;
-        if(eu == 0) {
+        long demand = container.getEnergyCanBeInserted();
+        if(demand == 0) {
             return 0;
         }
-        long voltage = Math.min(container.getInputVoltage(), eu);
-        long energy = voltage * container.acceptEnergyFromNetwork(side, voltage, eu / voltage);
+        long voltage = Math.min(container.getInputVoltage(), demand);
         if(simulate) {
-            container.removeEnergy(energy);
+            return Math.min(voltage << 2, amount);
         }
+        if(amount >> 2 < voltage) {
+            return 0;
+        }
+        long energy = voltage * container.acceptEnergyFromNetwork(side, voltage, 1);
         return energy << 2;
     }
 

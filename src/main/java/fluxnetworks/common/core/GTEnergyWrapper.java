@@ -22,7 +22,9 @@ public class GTEnergyWrapper implements IEnergyContainer {
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing enumFacing, long l, long l1) {
-        return tileEntity.addPhantomEnergyToNetwork(enumFacing, l * l1 * 4, false) / (4 * l);
+        long a = tileEntity.addPhantomEnergyToNetwork(enumFacing, l * l1 << 2, true) / l >> 2;
+        tileEntity.addPhantomEnergyToNetwork(enumFacing, l * a << 2, false);
+        return a;
     }
 
     @Override

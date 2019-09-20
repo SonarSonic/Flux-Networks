@@ -133,10 +133,6 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
         return request;
     }
 
-    public void setBuffer(long amount) {
-        buffer = amount;
-    }
-
     private void checkBufferSize() {
         bufferSize = Math.min(Math.max(bufferSize, getConnectorLimit()), getBufferLimiter());
     }

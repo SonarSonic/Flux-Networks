@@ -24,9 +24,11 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -87,24 +89,36 @@ public class FluxNetworkData extends WorldSavedData {
 
     public static FluxNetworkData get() {
         if(data == null) {
-            World world = DimensionManager.getWorld(0);
+            loadData();
+        }
+        return data;
+    }
+
+    private static void loadData() {
+        World world = DimensionManager.getWorld(0);
+
+        MapStorage mapStorage = world.getMapStorage();
+        FluxNetworkData savedData = (FluxNetworkData) mapStorage.getOrLoadData(FluxNetworkData.class, NETWORK_DATA);
+
+        if (savedData == null) {
             File oldFile = new File(world.getSaveHandler().getWorldDirectory(), "data/sonar.flux.networks.configurations.dat");
             if (oldFile.exists()) {
-                oldFile.renameTo(new File(oldFile.getParent(), FluxNetworkData.NETWORK_DATA + ".dat"));
+                //oldFile.renameTo(new File(oldFile.getParent(), FluxNetworkData.NETWORK_DATA + ".dat"));
+                try {
+                    FileUtils.copyFile(oldFile, new File(oldFile.getParent(), FluxNetworkData.NETWORK_DATA + ".dat"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 FluxNetworks.logger.info("Old FluxNetworkData found");
-            }
-            MapStorage mapStorage = world.getMapStorage();
-            FluxNetworkData savedData = (FluxNetworkData) mapStorage.getOrLoadData(FluxNetworkData.class, NETWORK_DATA);
-
-            if (savedData == null) {
+                savedData = (FluxNetworkData) mapStorage.getOrLoadData(FluxNetworkData.class, NETWORK_DATA);
+            } else {
                 savedData = new FluxNetworkData(NETWORK_DATA);
                 mapStorage.setData(NETWORK_DATA, savedData);
                 FluxNetworks.logger.info("No FluxNetworkData found");
             }
-            data = savedData;
-            FluxNetworks.logger.info("FluxNetworkData has been successfully loaded");
         }
-        return data;
+        data = savedData;
+        FluxNetworks.logger.info("FluxNetworkData has been successfully loaded");
     }
 
     public void addNetwork(IFluxNetwork network) {
