@@ -1,6 +1,7 @@
 package fluxnetworks.client.gui.button;
 
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.client.gui.basic.GuiCore;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.GuiFluxHome;
@@ -75,7 +76,7 @@ public class NavigationButton extends GuiButtonCore {
         return "";
     }
 
-    public void switchTab(int destId, EntityPlayer player, TileFluxCore tileEntity) {
+    public void switchTab(int destId, EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
 
         switch (destId) {
             case 0:
@@ -94,7 +95,7 @@ public class NavigationButton extends GuiButtonCore {
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabStatistics(player, tileEntity));
                 break;
             case 5:
-                FMLCommonHandler.instance().showGuiScreen(new GuiTabMembers(player, tileEntity));
+                FMLCommonHandler.instance().showGuiScreen(new GuiTabMembers(player, tileEntity, accessPermission));
                 break;
             case 6:
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabSettings(player, tileEntity));

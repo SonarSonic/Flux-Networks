@@ -46,6 +46,13 @@ public abstract class GuiFluxCore extends GuiCore {
         PacketHandler.network.sendToServer(new PacketPermissionRequest.PermissionRequestMessage(network.getNetworkID(), player.getUniqueID()));
     }
 
+    public GuiFluxCore(EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
+        super(player, tileEntity);
+        this.network = FluxNetworkCache.instance.getClientNetwork(tileEntity.networkID);
+        this.networkValid = !network.isInvalid();
+        this.accessPermission = accessPermission;
+    }
+
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
@@ -67,7 +74,7 @@ public abstract class GuiFluxCore extends GuiCore {
         if(mouseButton == 0) {
             for(NavigationButton button : navigationButtons) {
                 if(button.isMouseHovered(mc, mouseX, mouseY)) {
-                    button.switchTab(button.buttonNavigationId, player, tileEntity);
+                    button.switchTab(button.buttonNavigationId, player, tileEntity, accessPermission);
                     if(FluxConfig.enableButtonSound)
                         mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
                 }

@@ -3,6 +3,7 @@ package fluxnetworks.client.gui.basic;
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.gui.GuiFluxHome;
 import fluxnetworks.client.gui.button.NormalButton;
@@ -19,6 +20,10 @@ import java.util.List;
 public abstract class GuiTabCore extends GuiFluxCore {
 
     protected List<NormalButton> popButtons = Lists.newArrayList();
+
+    public GuiTabCore(EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
+        super(player, tileEntity, accessPermission);
+    }
 
     public GuiTabCore(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);

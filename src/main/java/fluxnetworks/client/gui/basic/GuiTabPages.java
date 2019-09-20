@@ -1,6 +1,7 @@
 package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -14,6 +15,10 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     protected SortType sortType = SortType.ID;
 
     public int page = 1, currentPages = 1, pages = 1, gridPerPage = 1, gridStartX = 0, gridStartY = 0, gridHeight = 0, elementHeight = 0, elementWidth = 0;
+
+    public GuiTabPages(EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
+        super(player, tileEntity, accessPermission);
+    }
 
     public GuiTabPages(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);

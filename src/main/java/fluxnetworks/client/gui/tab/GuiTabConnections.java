@@ -3,6 +3,7 @@ package fluxnetworks.client.gui.tab;
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.tileentity.IFluxConnector;
