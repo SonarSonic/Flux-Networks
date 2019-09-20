@@ -39,7 +39,7 @@ public class GuiTabCreate extends GuiTabCore {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
 
-        drawCenteredString(fontRenderer, FluxTranslate.TAB_CREATE.t(), 89, 10, 0xb4b4b4);
+        drawCenteredString(fontRenderer, FluxTranslate.TAB_CREATE.t(), 88, 10, 0xb4b4b4);
         fontRenderer.drawString(FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
         fontRenderer.drawString(FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
         if(securityType == SecurityType.ENCRYPTED)
@@ -48,14 +48,14 @@ public class GuiTabCreate extends GuiTabCore {
         fontRenderer.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
 
         renderNetwork(name.getText(), color.color, 20, 129);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 150, 0xffffff);
     }
 
     @Override
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         drawRectWithBackground(30, 44, 60, 118, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, FluxTranslate.CUSTOM_COLOR.t(), 89, 48, 0xffffff);
+        drawCenteredString(fontRenderer, FluxTranslate.CUSTOM_COLOR.t(), 88, 48, 0xffffff);
     }
 
     @Override

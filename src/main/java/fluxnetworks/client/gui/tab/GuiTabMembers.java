@@ -64,7 +64,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 162, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 162, 0xffffff);
         drawCenteredString(fontRenderer, TextFormatting.AQUA + selectedPlayer.getCachedName(), 88, 38, 0xffffff);
         String permission = selectedPlayer.getAccessPermission().getName() + (selectedPlayer.getPlayerUUID().equals(player.getUniqueID()) ? " (You)" : "");
         drawCenteredString(fontRenderer, permission, 88, 48, 0xffffff);

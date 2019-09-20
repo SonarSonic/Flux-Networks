@@ -53,7 +53,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             fontRenderer.drawString(amount, 154 - fontRenderer.getStringWidth(amount), 10, 0xffffff);
             fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.name, 20, 10, 0xffffff);
             if (main) {
-                drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
+                drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 150, 0xffffff);
             }
         }
     }
@@ -70,11 +70,11 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         super.drawPopupForegroundLayer(mouseX, mouseY);
         if(popSelect != null) {
-            drawCenteredString(fontRenderer, FluxTranslate.CONNECTING_TO.t() + " " + popSelect.getSetting(NetworkSettings.NETWORK_NAME), 89, 50, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.CONNECTING_TO.t() + " " + popSelect.getSetting(NetworkSettings.NETWORK_NAME), 88, 50, 0xffffff);
         }
         drawCenteredString(fontRenderer, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
 
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 110, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 110, 0xffffff);
     }
 
     @Override

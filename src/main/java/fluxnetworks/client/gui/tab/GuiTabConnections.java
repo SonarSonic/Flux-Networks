@@ -99,7 +99,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             } else {
                 fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 20, 10, 0xffffff);
             }
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 165, 0xffffff);
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 165, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -116,18 +116,18 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             button.drawButton(mc, mouseX, mouseY);
         }
         if(!batchMode) {
-            drawCenteredString(fontRenderer, FluxTranslate.SINGLE_EDIT.t(), 89, 17, 0xffffff);
-            drawCenteredString(fontRenderer, singleConnection.getCoords().getStringInfo(), 89, 122, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.SINGLE_EDIT.t(), 88, 17, 0xffffff);
+            drawCenteredString(fontRenderer, singleConnection.getCoords().getStringInfo(), 88, 122, 0xffffff);
         } else {
-            drawCenteredString(fontRenderer, FluxTranslate.BATCH_EDIT.t(), 89, 17, 0xffffff);
-            drawCenteredString(fontRenderer, FluxTranslate.EDITING.t() + " " + batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 89, 122, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.BATCH_EDIT.t(), 88, 17, 0xffffff);
+            drawCenteredString(fontRenderer, FluxTranslate.EDITING.t() + " " + batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 88, 122, 0xffffff);
         }
         if(batchMode || !singleConnection.getConnectionType().isStorage()) {
             fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 82, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 94, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 106, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 155, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 155, 0xffffff);
     }
 
     @Override

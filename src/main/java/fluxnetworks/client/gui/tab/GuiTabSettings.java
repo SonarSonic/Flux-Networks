@@ -64,7 +64,7 @@ public class GuiTabSettings extends GuiTabCore {
                     drawCenteredString(fontRenderer, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
                 }
             }
-            drawCenteredString(fontRenderer, FluxTranslate.TAB_SETTING.t(), 89, 10, 0xb4b4b4);
+            drawCenteredString(fontRenderer, FluxTranslate.TAB_SETTING.t(), 88, 10, 0xb4b4b4);
             fontRenderer.drawString(FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
             fontRenderer.drawString(FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
             if (securityType == SecurityType.ENCRYPTED)
@@ -72,7 +72,7 @@ public class GuiTabSettings extends GuiTabCore {
             fontRenderer.drawString(FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
             fontRenderer.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
 
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 156, 0xffffff);
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 156, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -82,7 +82,7 @@ public class GuiTabSettings extends GuiTabCore {
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         drawRectWithBackground(30, 44, 60, 118, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, FluxTranslate.CUSTOM_COLOR.t(), 89, 48, 0xffffff);
+        drawCenteredString(fontRenderer, FluxTranslate.CUSTOM_COLOR.t(), 88, 48, 0xffffff);
     }
 
     @Override
