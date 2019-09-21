@@ -76,7 +76,7 @@ public class NavigationButton extends GuiButtonCore {
         return "";
     }
 
-    public void switchTab(int destId, EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
+    public void switchTab(int destId, EntityPlayer player, TileFluxCore tileEntity) {
 
         switch (destId) {
             case 0:
@@ -95,7 +95,7 @@ public class NavigationButton extends GuiButtonCore {
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabStatistics(player, tileEntity));
                 break;
             case 5:
-                FMLCommonHandler.instance().showGuiScreen(new GuiTabMembers(player, tileEntity, accessPermission));
+                FMLCommonHandler.instance().showGuiScreen(new GuiTabMembers(player, tileEntity));
                 break;
             case 6:
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabSettings(player, tileEntity));

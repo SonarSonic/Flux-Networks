@@ -7,6 +7,7 @@ import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.tileentity.IFluxConfigurable;
 import fluxnetworks.api.tileentity.ITileByteBuf;
 import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.client.FluxColorHandler;
 import fluxnetworks.common.connection.*;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.data.FluxChunkManager;
@@ -86,7 +87,8 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             if(!load) {
                 if(!FluxUtils.addConnection(this)) {
                     networkID = -1;
-                    color = -1;
+                    connected = false;
+                    color = FluxColorHandler.NO_NETWORK_COLOR;
                 }
                 updateTransfers(EnumFacing.VALUES);
                 sendPackets();
@@ -109,7 +111,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         if(network.getNetworkID() == getNetworkID()) {
             this.network = FluxNetworkInvalid.instance;
             this.networkID = -1;
-            this.color = -1;
+            this.color = FluxColorHandler.NO_NETWORK_COLOR;
             connected = false;
             sendPackets();
         }

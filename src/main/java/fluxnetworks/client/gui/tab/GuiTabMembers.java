@@ -12,10 +12,7 @@ import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.PacketGeneral;
-import fluxnetworks.common.network.PacketGeneralHandler;
-import fluxnetworks.common.network.PacketGeneralType;
-import fluxnetworks.common.network.PacketNetworkUpdateRequest;
+import fluxnetworks.common.network.*;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -36,8 +33,8 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     private int timer;
 
-    public GuiTabMembers(EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
-        super(player, tileEntity, accessPermission);
+    public GuiTabMembers(EntityPlayer player, TileFluxCore tileEntity) {
+        super(player, tileEntity);
         gridStartX = 15;
         gridStartY = 22;
         gridHeight = 13;
@@ -252,6 +249,9 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void updateScreen() {
         super.updateScreen();
         if(timer == 0) {
+            PacketHandler.network.sendToServer(new PacketPermissionRequest.PermissionRequestMessage(network.getNetworkID(), player.getUniqueID()));
+        }
+        if(timer % 2 == 0) {
             refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
             if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
                 if(!main) {
@@ -267,11 +267,12 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             }
         }
         timer++;
-        timer %= 2;
+        timer %= 40;
     }
 
     @Override
     protected void sortGrids(SortType sortType) {
         elements.sort(Comparator.comparing(NetworkMember::getAccessPermission).thenComparing(NetworkMember::getCachedName));
+        refreshCurrentPageInternal();
     }
 }

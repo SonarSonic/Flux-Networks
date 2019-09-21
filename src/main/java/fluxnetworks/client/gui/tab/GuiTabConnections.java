@@ -418,6 +418,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             if(elements.stream().noneMatch(f -> f.getCoords().equals(tileEntity.getCoords()))) {
                 FMLCommonHandler.instance().showGuiScreen(new GuiTabSelection(player, tileEntity));
             }
+            page = Math.min(page, pages);
         }
     }
 
@@ -428,6 +429,6 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
                 thenComparing(f -> f.getConnectionType().canAddEnergy()).
                 thenComparing(f -> f.getConnectionType().canRemoveEnergy()).
                 thenComparing(p -> -p.getPriority()));
-        refreshCurrentPage();
+        refreshCurrentPageInternal();
     }
 }

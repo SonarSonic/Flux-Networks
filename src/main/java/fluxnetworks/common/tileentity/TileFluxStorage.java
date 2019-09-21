@@ -19,7 +19,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 
     public static final int C = 1000000;
-    public static final int D = -1000;
+    public static final int D = -10000;
 
     public int energyStored;
     public int maxEnergyStorage;

@@ -16,12 +16,9 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     protected List<T> current = Lists.newArrayList();
     protected SortType sortType = SortType.ID;
     protected PageLabelButton labelButton;
+    private boolean init;
 
     public int page = 1, currentPages = 1, pages = 1, gridPerPage = 1, gridStartX = 0, gridStartY = 0, gridHeight = 0, elementHeight = 0, elementWidth = 0;
-
-    public GuiTabPages(EntityPlayer player, TileFluxCore tileEntity, AccessPermission accessPermission) {
-        super(player, tileEntity, accessPermission);
-    }
 
     public GuiTabPages(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
@@ -30,6 +27,9 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
+        if(pages > 1) {
+            labelButton.drawButton(mc, mouseX, mouseY);
+        }
         int i = 0;
         for(T s : current) {
             int y = (gridStartY + gridHeight * i);
@@ -44,10 +44,14 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
             }
             i++;
         }
-        if(pages > 1) {
-            //drawCenteredString(fontRenderer, page + " / " + pages, 89, 156, 0xffffff);
-            labelButton.drawButton(mc, mouseX, mouseY);
-        }
+        /*if(pages > 1) {
+            drawCenteredString(fontRenderer, page + " / " + pages, 89, 156, 0xffffff);
+        }*/
+    }
+
+    @Override
+    protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
     }
 
     public <T> T getHoveredElement(int mouseX, int mouseY) {
@@ -79,12 +83,18 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         if(e != null) {
             onElementClicked(e, mouseButton);
         }
+        if(labelButton.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+            if(page != labelButton.hoveredPage) {
+                page = labelButton.hoveredPage;
+                refreshCurrentPage();
+            }
+        }
     }
 
     @Override
     public void initGui() {
         super.initGui();
-        labelButton = new PageLabelButton(14, 160, page, pages, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        labelButton = new PageLabelButton(14, 157, page, pages, network.getSetting(NetworkSettings.NETWORK_COLOR), guiLeft, guiTop);
     }
 
     @Override
@@ -108,18 +118,23 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         this.elements = elements;
         pages = (int) Math.ceil(elements.size() / (double) gridPerPage);
         sortGrids(sortType);
-        refreshCurrentPage();
+        if(!init) {
+            refreshCurrentPage();
+            init = true;
+        } else {
+            refreshCurrentPageInternal();
+        }
     }
 
     protected void refreshCurrentPage() {
-        if(elements.size() == 0)
+        /*if(elements.size() == 0)
             return;
 
         current.clear();
         int a = (page - 1) * gridPerPage;
         int b = Math.min(elements.size(), page * gridPerPage);
         currentPages = b - a;
-        /*if(page == pages) {
+        if(page == pages) {
             for(int i = (page - 1) * gridPerPage; i < elements.size(); i++) {
                 current.add(elements.get(i));
             }
@@ -127,11 +142,26 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
             for (int i = (page - 1) * gridPerPage; i < page * gridPerPage; i++) {
                 current.add(elements.get(i));
             }
+        }
+        for(int i = a; i < b; i++) {
+            current.add(elements.get(i));
         }*/
+        refreshCurrentPageInternal();
+        labelButton.refreshPages(page, pages);
+    }
+
+    protected void refreshCurrentPageInternal() {
+        if(elements.size() == 0)
+            return;
+
+        current.clear();
+        int a = (page - 1) * gridPerPage;
+        int b = Math.min(elements.size(), page * gridPerPage);
+        currentPages = b - a;
+
         for(int i = a; i < b; i++) {
             current.add(elements.get(i));
         }
-        labelButton.refreshPages(page, pages);
     }
 
     protected void sortGrids(SortType sortType) {

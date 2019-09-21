@@ -200,11 +200,11 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         switch (sortType) {
             case ID:
                 elements.sort(Comparator.comparing(IFluxNetwork::getNetworkID));
-                refreshCurrentPage();
+                refreshCurrentPageInternal();
                 break;
             case NAME:
                 elements.sort(Comparator.comparing(IFluxNetwork::getNetworkName));
-                refreshCurrentPage();
+                refreshCurrentPageInternal();
                 break;
         }
     }
