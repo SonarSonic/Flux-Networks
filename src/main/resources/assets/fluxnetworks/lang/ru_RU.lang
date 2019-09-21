@@ -44,7 +44,7 @@ info.fluxnetworks.denied.removal=Удаление отказано: Нет ра�
 
 info.fluxnetworks.click=Нажмите
 info.fluxnetworks.above=Выше
-info.fluxnetworks.kick=Kick
+info.fluxnetworks.kick=Remove
 
 info.fluxnetworks.error.noselected=Сеть не выбрана
 info.fluxnetworks.error.nonetwork=Сеть недоступна

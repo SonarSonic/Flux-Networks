@@ -44,7 +44,7 @@ info.fluxnetworks.denied.removal=Removal denied: No permission
 
 info.fluxnetworks.click=Click
 info.fluxnetworks.above=Above
-info.fluxnetworks.kick=Kick
+info.fluxnetworks.kick=Remove
 
 info.fluxnetworks.error.noselected=No network selected
 info.fluxnetworks.error.nonetwork=No network available

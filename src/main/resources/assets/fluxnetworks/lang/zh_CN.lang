@@ -44,7 +44,7 @@ info.fluxnetworks.denied.removal=拒绝移除: 无权限
 
 info.fluxnetworks.click=点击上方的
 info.fluxnetworks.above=
-info.fluxnetworks.kick=踢出
+info.fluxnetworks.kick=移除
 
 info.fluxnetworks.error.noselected=尚未选择网络
 info.fluxnetworks.error.nonetwork=暂无可用网络
