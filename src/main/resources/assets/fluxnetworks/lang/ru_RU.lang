@@ -44,6 +44,7 @@ info.fluxnetworks.denied.removal=Удаление отказано: Нет ра�
 
 info.fluxnetworks.click=Нажмите
 info.fluxnetworks.above=Выше
+info.fluxnetworks.kick=Kick
 
 info.fluxnetworks.error.noselected=Сеть не выбрана
 info.fluxnetworks.error.nonetwork=Сеть недоступна
@@ -87,6 +88,12 @@ info.fluxnetworks.gui.connectingto=Подсоединенный к
 info.fluxnetworks.gui.total=Всего
 info.fluxnetworks.gui.deletenetwork=Удалить сеть
 info.fluxnetworks.gui.doubleshift=Двойной левый Shift
+info.fluxnetworks.gui.transferownership=Transfer Ownership
+info.fluxnetworks.gui.setuser=Set to User
+info.fluxnetworks.gui.setadmin=Set to Admin
+info.fluxnetworks.gui.playername=Username
+info.fluxnetworks.gui.playeraccess=Access
+info.fluxnetworks.gui.you=You
 
 info.fluxnetworks.button.batchclear=Очистить выбранное
 info.fluxnetworks.button.batchedit=Редактировать выбранное

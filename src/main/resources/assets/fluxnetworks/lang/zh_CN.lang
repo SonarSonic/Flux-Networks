@@ -44,13 +44,14 @@ info.fluxnetworks.denied.removal=拒绝移除: 无权限
 
 info.fluxnetworks.click=点击上方的
 info.fluxnetworks.above=
+info.fluxnetworks.kick=踢出
 
 info.fluxnetworks.error.noselected=尚未选择网络
 info.fluxnetworks.error.nonetwork=暂无可用网络
 
 info.fluxnetworks.flux.priority=优先级
 info.fluxnetworks.flux.surgemode=涌流模式
-info.fluxnetworks.flux.disablelimit=禁用限制
+info.fluxnetworks.flux.disablelimit=禁用限速
 info.fluxnetworks.flux.chunkloading=区块加载
 info.fluxnetworks.flux.name=名称
 info.fluxnetworks.flux.transferlimit=传输上限
@@ -87,6 +88,12 @@ info.fluxnetworks.gui.connectingto=正在连接至
 info.fluxnetworks.gui.total=共计
 info.fluxnetworks.gui.deletenetwork=删除网络
 info.fluxnetworks.gui.doubleshift=双击Shift键
+info.fluxnetworks.gui.transferownership=转让所有权
+info.fluxnetworks.gui.setuser=设为用户
+info.fluxnetworks.gui.setadmin=设为管理员
+info.fluxnetworks.gui.playername=玩家名字
+info.fluxnetworks.gui.playeraccess=访问权限
+info.fluxnetworks.gui.you=你
 
 info.fluxnetworks.button.batchclear=清空所选项
 info.fluxnetworks.button.batchedit=编辑所选项

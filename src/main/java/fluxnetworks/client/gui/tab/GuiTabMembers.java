@@ -46,12 +46,13 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
         if(networkValid) {
             String str2 = accessPermission.getName();
             fontRenderer.drawString(str2, 158 - fontRenderer.getStringWidth(str2), 10, 0xffffff);
             fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 19, 10, 0xffffff);
+            super.drawForegroundLayer(mouseX, mouseY);
         } else {
+            super.drawForegroundLayer(mouseX, mouseY);
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
@@ -123,11 +124,11 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             int length;
             int i = 0;
             if (selectedPlayer.getAccessPermission() == AccessPermission.NONE || selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN) {
-                text = "Set to " + AccessPermission.USER.localization.t();
+                text = FluxTranslate.SET_USER.t();
                 length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                 popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
                 if(selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN && ownerPermission) {
-                    text = "Transfer Ownership";
+                    text = FluxTranslate.TRANSFER_OWNERSHIP.t();
                     length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                     transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
                     popButtons.add(transferOwnership);
@@ -135,22 +136,22 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             } else {
                 if(ownerPermission) {
                     if (selectedPlayer.getAccessPermission() == AccessPermission.USER) {
-                        text = "Set to " + AccessPermission.ADMIN.localization.t();
+                        text = FluxTranslate.SET_ADMIN.t();
                         length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
                     } else if(selectedPlayer.getAccessPermission() == AccessPermission.ADMIN) {
-                        text = "Set to " + AccessPermission.USER.localization.t();
+                        text = FluxTranslate.SET_USER.t();
                         length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));
                     }
                 }
                 if(!selectedPlayer.getAccessPermission().canEdit() || ownerPermission) {
-                    text = "Kick " + selectedPlayer.getCachedName();
+                    text = FluxTranslate.KICK.t() + " " + selectedPlayer.getCachedName();
                     length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                     popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 3).setTextColor(0xffff5555));
                 }
                 if(ownerPermission) {
-                    text = "Transfer Ownership";
+                    text = FluxTranslate.TRANSFER_OWNERSHIP.t();
                     length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                     transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
                     popButtons.add(transferOwnership);
@@ -177,8 +178,8 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         drawTexturedModalRect(x, y, 0, 16, elementWidth, elementHeight);
 
         if(element.getPlayerUUID().equals(player.getUniqueID())) {
-            drawRect(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
-            drawRect(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
+            drawRect(x - 4, y + 1, x - 2, y + elementHeight - 1, 0xccffffff);
+            drawRect(x + elementWidth + 2, y + 1, x + elementWidth + 4, y + elementHeight - 1, 0xccffffff);
         }
 
         fontRenderer.drawString(TextFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
@@ -195,9 +196,9 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             return;
         GlStateManager.pushMatrix();
         List<String> strings = new ArrayList<>();
-        strings.add("Username: " + TextFormatting.AQUA + element.getCachedName());
-        String permission = element.getAccessPermission().getName() + (element.getPlayerUUID().equals(player.getUniqueID()) ? " (You)" : "");
-        strings.add("Access: " + TextFormatting.RESET + permission);
+        strings.add(FluxTranslate.USERNAME.t() + ": " + TextFormatting.AQUA + element.getCachedName());
+        String permission = element.getAccessPermission().getName() + (element.getPlayerUUID().equals(player.getUniqueID()) ? " (" + FluxTranslate.YOU.t() + ")" : "");
+        strings.add(FluxTranslate.ACCESS.t() + ": " + TextFormatting.RESET + permission);
         //strings.add(TextFormatting.GRAY + "UUID: " + TextFormatting.RESET + element.getPlayerUUID().toString());
         /*if(element.getPlayerUUID().equals(player.getUniqueID())) {
             strings.add(TextFormatting.WHITE + "You");

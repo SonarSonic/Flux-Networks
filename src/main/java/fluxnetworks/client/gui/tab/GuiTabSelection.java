@@ -21,7 +21,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
@@ -128,7 +130,10 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
     @Override
     public void renderElementTooltip(IFluxNetwork element, int mouseX, int mouseY) {
-
+        if(!main)
+            return;
+        /*GlStateManager.pushMatrix();
+        GlStateManager.popMatrix();*/
     }
 
     private void initPopGui() {
