@@ -1,7 +1,8 @@
-# Flux Network Refactored
-
+# Flux Network
 ## Introduction
 For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug], I will update the mod by weeks.
+### Wiki
+[GitHub Wiki](https://github.com/SonarSonic/Flux-Networks/wiki)
 
 ### Comparison
 ![20190825210548.png](https://i.loli.net/2019/08/25/3KGnWsAXlUmdE1Y.png)  
