@@ -40,7 +40,6 @@ public class FluxTranslate implements ILocalizationProvider {
 
     public static final Localization CLICK = i("click");
     public static final Localization ABOVE = i("above");
-    public static final Localization KICK = i("kick");
 
     public static final Localization ERROR_NO_SELECTED = i("error.noselected");
     public static final Localization ERROR_NO_NETWORK = i("error.nonetwork");
@@ -79,6 +78,7 @@ public class FluxTranslate implements ILocalizationProvider {
     public static final Localization SET_ADMIN = i("gui.setadmin");
     public static final Localization USERNAME = i("gui.playername");
     public static final Localization ACCESS = i("gui.playeraccess");
+    public static final Localization CANCEL_MEMBERSHIP = i("gui.cancelmembership");
     public static final Localization YOU = i("gui.you");
 
     public static final Localization BATCH_CLEAR_BUTTON = i("button.batchclear");

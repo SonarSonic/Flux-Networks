@@ -146,7 +146,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                     }
                 }
                 if(!selectedPlayer.getAccessPermission().canEdit() || ownerPermission) {
-                    text = FluxTranslate.KICK.t() + " " + selectedPlayer.getCachedName();
+                    text = FluxTranslate.CANCEL_MEMBERSHIP.t();
                     length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                     popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 3).setTextColor(0xffff5555));
                 }

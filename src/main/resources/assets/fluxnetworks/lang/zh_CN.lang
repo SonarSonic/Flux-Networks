@@ -44,7 +44,6 @@ info.fluxnetworks.denied.removal=拒绝移除: 无权限
 
 info.fluxnetworks.click=点击上方的
 info.fluxnetworks.above=
-info.fluxnetworks.kick=移除
 
 info.fluxnetworks.error.noselected=尚未选择网络
 info.fluxnetworks.error.nonetwork=暂无可用网络
@@ -93,6 +92,7 @@ info.fluxnetworks.gui.setuser=设为用户
 info.fluxnetworks.gui.setadmin=设为管理员
 info.fluxnetworks.gui.playername=玩家名字
 info.fluxnetworks.gui.playeraccess=访问权限
+info.fluxnetworks.gui.cancelmembership=撤销成员权限
 info.fluxnetworks.gui.you=你
 
 info.fluxnetworks.button.batchclear=清空所选项

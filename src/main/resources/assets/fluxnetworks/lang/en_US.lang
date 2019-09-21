@@ -44,7 +44,6 @@ info.fluxnetworks.denied.removal=Removal denied: No permission
 
 info.fluxnetworks.click=Click
 info.fluxnetworks.above=Above
-info.fluxnetworks.kick=Remove
 
 info.fluxnetworks.error.noselected=No network selected
 info.fluxnetworks.error.nonetwork=No network available
@@ -93,6 +92,7 @@ info.fluxnetworks.gui.setuser=Set to User
 info.fluxnetworks.gui.setadmin=Set to Admin
 info.fluxnetworks.gui.playername=Username
 info.fluxnetworks.gui.playeraccess=Access
+info.fluxnetworks.gui.cancelmembership=Cancel Membership
 info.fluxnetworks.gui.you=You
 
 info.fluxnetworks.button.batchclear=Clear Selected
