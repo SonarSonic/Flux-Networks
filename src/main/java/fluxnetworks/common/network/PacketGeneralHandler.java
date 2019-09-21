@@ -77,12 +77,19 @@ public class PacketGeneralHandler {
         IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
         if (!network.isInvalid()) {
             if (network.getMemberPermission(player).canEdit()) {
-                network.setSetting(NetworkSettings.NETWORK_NAME, newName);
+                boolean needPacket = false;
+                if(!network.getSetting(NetworkSettings.NETWORK_NAME).equals(newName)) {
+                    network.setSetting(NetworkSettings.NETWORK_NAME, newName);
+                    needPacket = true;
+                }
                 if(network.getSetting(NetworkSettings.NETWORK_COLOR) != color) {
                     network.setSetting(NetworkSettings.NETWORK_COLOR, color);
+                    needPacket = true;
                     @SuppressWarnings("unchecked")
                     List<IFluxConnector> list = network.getConnections(FluxType.flux);
                     list.forEach(fluxConnector -> fluxConnector.connect(network)); // update color data
+                }
+                if(needPacket) {
                     @SuppressWarnings("unchecked") HashMap<Integer, Tuple<Integer, String>> cache = new HashMap();
                     cache.put(networkID, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000, network.getSetting(NetworkSettings.NETWORK_NAME)));
                     PacketHandler.network.sendToAll(new PacketColorCache.ColorCacheMessage(cache));

@@ -125,11 +125,11 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             int i = 0;
             if (selectedPlayer.getAccessPermission() == AccessPermission.NONE || selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN) {
                 text = FluxTranslate.SET_USER.t();
-                length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                length = fontRenderer.getStringWidth(text) + 4;
                 popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
                 if(selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN && ownerPermission) {
                     text = FluxTranslate.TRANSFER_OWNERSHIP.t();
-                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                    length = fontRenderer.getStringWidth(text) + 4;
                     transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
                     popButtons.add(transferOwnership);
                 }
@@ -137,22 +137,22 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                 if(ownerPermission) {
                     if (selectedPlayer.getAccessPermission() == AccessPermission.USER) {
                         text = FluxTranslate.SET_ADMIN.t();
-                        length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                        length = fontRenderer.getStringWidth(text) + 4;
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
                     } else if(selectedPlayer.getAccessPermission() == AccessPermission.ADMIN) {
                         text = FluxTranslate.SET_USER.t();
-                        length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                        length = fontRenderer.getStringWidth(text) + 4;
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));
                     }
                 }
                 if(!selectedPlayer.getAccessPermission().canEdit() || ownerPermission) {
                     text = FluxTranslate.CANCEL_MEMBERSHIP.t();
-                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                    length = fontRenderer.getStringWidth(text) + 4;
                     popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 3).setTextColor(0xffff5555));
                 }
                 if(ownerPermission) {
                     text = FluxTranslate.TRANSFER_OWNERSHIP.t();
-                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
+                    length = fontRenderer.getStringWidth(text) + 4;
                     transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
                     popButtons.add(transferOwnership);
                 }
