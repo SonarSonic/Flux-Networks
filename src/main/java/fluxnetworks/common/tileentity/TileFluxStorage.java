@@ -23,26 +23,24 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
 
     public int energyStored;
     public int maxEnergyStorage;
-    public int maxTransferRate;
 
     public ItemStack stack = ItemStack.EMPTY;
 
     public TileFluxStorage() {
-        this(FluxConfig.basicCapacity, FluxConfig.basicTransfer);
+        this(FluxConfig.basicCapacity);
         customName = "Basic Storage";
         limit = FluxConfig.basicTransfer;
         stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_1);
     }
 
-    private TileFluxStorage(int maxEnergyStorage, int maxTransferRate) {
+    private TileFluxStorage(int maxEnergyStorage) {
         this.maxEnergyStorage = maxEnergyStorage;
-        this.maxTransferRate = maxTransferRate;
     }
 
     public static class Herculean extends TileFluxStorage {
 
         public Herculean() {
-            super(FluxConfig.herculeanCapacity, FluxConfig.herculeanTransfer);
+            super(FluxConfig.herculeanCapacity);
             customName = "Herculean Storage";
             limit = FluxConfig.herculeanTransfer;
             stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_2);
@@ -52,7 +50,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     public static class Gargantuan extends TileFluxStorage {
 
         public Gargantuan() {
-            super(FluxConfig.gargantuanCapacity, FluxConfig.gargantuanTransfer);
+            super(FluxConfig.gargantuanCapacity);
             customName = "Gargantuan Storage";
             limit = FluxConfig.gargantuanTransfer;
             stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_3);
@@ -77,7 +75,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     }
 
     public long addEnergy(long amount, boolean simulate) {
-        long energyReceived = Math.min(maxEnergyStorage - energyStored, Math.min(maxTransferRate, amount));
+        long energyReceived = Math.min(maxEnergyStorage - energyStored, amount);
         if (!simulate) {
             energyStored += energyReceived;
             sendPackets();
@@ -86,7 +84,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     }
 
     public long removeEnergy(long amount, boolean simulate) {
-        long energyExtracted = Math.min(energyStored, Math.min(maxTransferRate, amount));
+        long energyExtracted = Math.min(energyStored, amount);
         if (!simulate) {
             energyStored -= energyExtracted;
             sendPackets();
@@ -101,12 +99,17 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
 
     @Override
     public long getCurrentLimit() {
-        return maxTransferRate;
+        return disableLimit ? maxEnergyStorage : Math.min(limit, maxEnergyStorage);
     }
 
     @Override
     public int getPriority() {
-        return Math.min(priority - C, D);
+        return surgeMode ? D : Math.min(priority - C, D);
+    }
+
+    @Override
+    public long getMaxTransferLimit() {
+        return maxEnergyStorage;
     }
 
     @Override

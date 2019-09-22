@@ -33,21 +33,21 @@ public class GuiTabStatistics extends GuiTabCore {
         if(networkValid) {
             renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.PLUGS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxPlugCount, 12, 24, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxPlugCount, 12, 26, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.POINTS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxPointCount, 12, 36, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxPointCount, 12, 38, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.STORAGES.t() + TextFormatting.GRAY +  ": " +
-                    TextFormatting.RESET + stats.fluxStorageCount, 82, 24, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxStorageCount, 82, 26, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxControllerCount, 82, 36, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxControllerCount, 82, 38, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, "RF/t"), 12, 52, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 50, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.energyOutput, FluxUtils.TypeNumberFormat.COMPACT, "RF/t"), 12, 64, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    FluxUtils.format(stats.energyOutput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 62, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.BUFFER.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.totalBuffer, FluxUtils.TypeNumberFormat.COMPACT, "RF"), 12, 76, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    FluxUtils.format(stats.totalBuffer, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 74, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.ENERGY.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, "RF"), 12, 88, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 86, network.getSetting(NetworkSettings.NETWORK_COLOR));
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }

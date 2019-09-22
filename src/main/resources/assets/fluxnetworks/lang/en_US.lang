@@ -76,6 +76,7 @@ info.fluxnetworks.feedback.invaliduser=Invalid user selected
 info.fluxnetworks.feedback.illegalpassword=Wrong password format, must be digit or letter
 info.fluxnetworks.feedback.hasloader=This chunk has already a chunk loader
 info.fluxnetworks.feedback.bannedloading=Chunk loading was banned from the server
+info.fluxnetworks.feedback.rejectsome=The remote server rejected some changes
 
 info.fluxnetworks.gui.sortby=Sort by
 info.fluxnetworks.gui.selected=Selected

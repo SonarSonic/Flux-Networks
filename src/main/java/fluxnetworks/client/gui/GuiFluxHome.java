@@ -39,9 +39,9 @@ public class GuiFluxHome extends GuiFluxCore {
         renderTransfer(tileEntity.getTransferHandler(), 0xffffff, 30, 90);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
 
+        fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
         if(!tileEntity.getConnectionType().isStorage()) {
-            fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
     }
@@ -76,12 +76,13 @@ public class GuiFluxHome extends GuiFluxCore {
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(0).setMain();
 
+        surge = new SlidedSwitchButton(140, 120, 1, guiLeft, guiTop, tileEntity.surgeMode);
+        disableLimit = new SlidedSwitchButton(140, 132, 2, guiLeft, guiTop, tileEntity.disableLimit);
+        switches.add(surge);
+        switches.add(disableLimit);
+
         if(!tileEntity.getConnectionType().isStorage()) {
-            surge = new SlidedSwitchButton(140, 120, 1, guiLeft, guiTop, tileEntity.surgeMode);
-            disableLimit = new SlidedSwitchButton(140, 132, 2, guiLeft, guiTop, tileEntity.disableLimit);
             chunkLoad = new SlidedSwitchButton(140, 144, 3, guiLeft, guiTop, tileEntity.chunkLoading);
-            switches.add(surge);
-            switches.add(disableLimit);
             switches.add(chunkLoad);
         }
 
@@ -99,11 +100,7 @@ public class GuiFluxHome extends GuiFluxCore {
             tileEntity.priority = priority.getIntegerFromText(false);
             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 2));
         } else if(text == limit) {
-            if(!tileEntity.getConnectionType().isStorage()) {
-                tileEntity.limit = limit.getLongFromText(true);
-            } else {
-                tileEntity.limit = tileEntity.getCurrentLimit();
-            }
+            tileEntity.limit = Math.min(limit.getLongFromText(true), tileEntity.getMaxTransferLimit());
             limit.setText(String.valueOf(tileEntity.limit));
             PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 3));
         }

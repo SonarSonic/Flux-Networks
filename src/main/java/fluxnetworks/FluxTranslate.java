@@ -121,6 +121,7 @@ public class FluxTranslate implements ILocalizationProvider {
     public static final Localization ILLEGAL_PASSWORD = t("info.fluxnetworks.feedback.illegalpassword");
     public static final Localization HAS_LOADER = t("info.fluxnetworks.feedback.hasloader");
     public static final Localization BANNED_LOADING = t("info.fluxnetworks.feedback.bannedloading");
+    public static final Localization REJECT_SOME = t("info.fluxnetworks.feedback.rejectsome");
 
     public static final Localization OWNER = t("info.fluxnetworks.access.owner");
     public static final Localization ADMIN = t("info.fluxnetworks.access.admin");

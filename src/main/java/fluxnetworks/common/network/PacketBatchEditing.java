@@ -6,7 +6,6 @@ import fluxnetworks.api.Coord4D;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.FluxType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.data.FluxChunkManager;
@@ -15,16 +14,17 @@ import fluxnetworks.common.item.ItemFluxConnector;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import scala.util.control.Exception;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.BatchEditingMessage, IMessage> {
 
@@ -50,6 +50,7 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                     boolean load = message.tag.getBoolean("chunkLoad");
                     //noinspection unchecked
                     List<TileFluxCore> onlineConnectors = network.getConnections(FluxType.flux);
+                    AtomicBoolean reject = new AtomicBoolean(false);
                     PacketHandler.handlePacket(() -> message.coord4DS.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
                         if(disconnect) {
                             FluxUtils.removeConnection(f, false);
@@ -62,11 +63,7 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                                 f.priority = priority;
                             }
                             if(editLimit) {
-                                if(f.getConnectionType().isStorage()) {
-                                    f.limit = f.getCurrentLimit(); // Always max transfer
-                                    return; // Following settings are disabled for storage
-                                }
-                                f.limit = limit;
+                                f.limit = Math.min(limit, f.getMaxTransferLimit());
                             }
                             if(editSurge) {
                                 f.surgeMode = surge;
@@ -75,10 +72,17 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                                 f.disableLimit = unlimited;
                             }
                             if(editChunkLoad) {
+                                if(f.getConnectionType().isStorage()) {
+                                    reject.set(true);
+                                    return;
+                                }
                                 if (FluxConfig.enableChunkLoading) {
                                     if (load) {
                                         if(!f.chunkLoading) {
                                             f.chunkLoading = FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
+                                            if(!f.chunkLoading) {
+                                                reject.set(true);
+                                            }
                                         }
                                     } else {
                                         FluxChunkManager.releaseChunk(f.getWorld(), new ChunkPos(f.getPos()));
@@ -90,8 +94,13 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                             }
                             f.sendPackets();
                         }
+                        if(reject.get()) {
+                            PacketHandler.network.sendTo(new PacketFeedback.FeedbackMessage(FeedbackInfo.REJECT_SOME), (EntityPlayerMP) player);
+                        } else {
+                            PacketHandler.network.sendTo(disconnect ? new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS_2) : new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS), (EntityPlayerMP) player);
+                        }
                     })), ctx.netHandler);
-                    return disconnect ? new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS_2) : new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
+                    return null;
                 } else {
                     return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
                 }

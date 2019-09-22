@@ -14,6 +14,7 @@ public enum FeedbackInfo {
     ILLEGAL_PASSWORD(FluxTranslate.ILLEGAL_PASSWORD),
     HAS_LOADER(FluxTranslate.HAS_LOADER),
     BANNED_LOADING(FluxTranslate.BANNED_LOADING),
+    REJECT_SOME(FluxTranslate.REJECT_SOME),
     PASSWORD_REQUIRE(FluxTranslate.EMPTY),
     SUCCESS(FluxTranslate.EMPTY),
     SUCCESS_2(FluxTranslate.EMPTY); // Sometimes we need another success to compare to the first one

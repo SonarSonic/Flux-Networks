@@ -100,7 +100,8 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
                 fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 19, 10, 0xffffff);
             }
             super.drawForegroundLayer(mouseX, mouseY);
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 165, 0xffffff);
+            if(main)
+                drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 165, 0xffffff);
         } else {
             super.drawForegroundLayer(mouseX, mouseY);
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());

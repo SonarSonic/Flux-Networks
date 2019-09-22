@@ -68,8 +68,8 @@ public class LineChart {
         }
         glEnd();
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, 1, 0);
+
         glEnable(GL_POINT_SMOOTH);
         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
         glPointSize(8.0f);
@@ -83,9 +83,6 @@ public class LineChart {
 
         Gui.drawRect(x - 16, y + height, x + 116, y + height + 1, 0xffffffff);
         Gui.drawRect(x - 14, y - 6, x - 13, y + height + 3, 0xffffffff);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
 
         GlStateManager.scale(0.625f, 0.625f, 0.625f);
         mc.fontRenderer.drawString(suffixUnitY,(float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY), (float) ((y - 7.5) * 1.6), 0xffffff, false);

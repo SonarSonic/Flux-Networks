@@ -40,6 +40,10 @@ public interface IFluxConnector {
 
     long getActualLimit(); // ignore disable limit
 
+    default long getMaxTransferLimit() {
+        return Long.MAX_VALUE;
+    }
+
     boolean isActive();
 
     boolean isChunkLoaded();
@@ -65,7 +69,7 @@ public interface IFluxConnector {
     boolean getSurgeMode();
 
     default long getBuffer() {
-        return getTransferHandler().getBuffer();
+        return getTransferHandler().getEnergyStored();
     }
 
     default long getChange() {
