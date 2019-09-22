@@ -55,6 +55,7 @@ info.fluxnetworks.flux.chunkloading=区块加载
 info.fluxnetworks.flux.name=名称
 info.fluxnetworks.flux.transferlimit=传输上限
 info.fluxnetworks.flux.wireless=开启无线充能
+info.fluxnetworks.flux.energy=能量
 info.fluxnetworks.flux.energystored=能量存储
 info.fluxnetworks.flux.buffer=缓存
 info.fluxnetworks.flux.internalbuffer=内部缓存

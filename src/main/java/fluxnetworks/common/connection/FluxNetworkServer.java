@@ -123,7 +123,12 @@ public class FluxNetworkServer extends FluxNetworkBase {
                         } else {
                             // If we can only transfer 3RF, it returns 0 (3RF < 1EU), but this plug still need transfer (3RF > 0), and can't afford current point,
                             // So manually increment plug to prevent dead loop. (hasNext detect if it need transfer)
-                            plugTransferIterator.incrementFlux();
+                            if(plug.getTransferHandler().getBuffer() < 4) {
+                                plugTransferIterator.incrementFlux();
+                            } else {
+                                pointTransferIterator.incrementFlux();
+                                continue CYCLE;
+                            }
                         }
                         /*long removed = plug.getTransferHandler().addToNetwork(point.getTransferHandler().getRequest(), true);
                         long added = point.getTransferHandler().removeFromNetwork(removed, true, false);

@@ -55,6 +55,7 @@ info.fluxnetworks.flux.chunkloading=Чанк загружен
 info.fluxnetworks.flux.name=Название
 info.fluxnetworks.flux.transferlimit=Предел передачи
 info.fluxnetworks.flux.wireless=Включить беспроводную
+info.fluxnetworks.flux.energy=Energy
 info.fluxnetworks.flux.energystored=Энергии хранится
 info.fluxnetworks.flux.buffer=Буфер
 info.fluxnetworks.flux.internalbuffer=Внутренний буфер

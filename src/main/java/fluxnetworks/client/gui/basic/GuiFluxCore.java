@@ -123,7 +123,9 @@ public abstract class GuiFluxCore extends GuiCore {
         GlStateManager.color(1.0f, 1.0f, 1.0f);
 
         fontRenderer.drawString(getTransferInfo(tileEntity.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), handler.getChange()), x, y, color);
-        fontRenderer.drawString(FluxTranslate.BUFFER.t() + ": " + TextFormatting.BLUE + FluxUtils.format(handler.getEnergyStored(), FluxUtils.TypeNumberFormat.COMMAS, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
+        fontRenderer.drawString((tileEntity.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
+                ": " + TextFormatting.BLUE + FluxUtils.format(handler.getEnergyStored(), FluxUtils.TypeNumberFormat.COMMAS,
+                network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
 
         renderItemStack(tileEntity.getDisplayStack(), x - 20, y + 1);
 

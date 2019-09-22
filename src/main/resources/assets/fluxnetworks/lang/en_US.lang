@@ -55,6 +55,7 @@ info.fluxnetworks.flux.chunkloading=Chunk Loading
 info.fluxnetworks.flux.name=Name
 info.fluxnetworks.flux.transferlimit=Transfer Limit
 info.fluxnetworks.flux.wireless=Enable Wireless
+info.fluxnetworks.flux.energy=Energy
 info.fluxnetworks.flux.energystored=Energy Stored
 info.fluxnetworks.flux.buffer=Buffer
 info.fluxnetworks.flux.internalbuffer=Internal Buffer

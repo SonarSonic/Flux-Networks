@@ -40,13 +40,13 @@ public class GuiTabStatistics extends GuiTabCore {
                     TextFormatting.RESET + stats.fluxStorageCount, 84, 28, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
                     TextFormatting.RESET + stats.fluxControllerCount, 84, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(TextFormatting.GRAY + "Input: " + TextFormatting.RESET +
+            fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, "RF/t"), 12, 52, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(TextFormatting.GRAY + "Output: " + TextFormatting.RESET +
+            fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.energyOutput, FluxUtils.TypeNumberFormat.COMPACT, "RF/t"), 12, 64, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(TextFormatting.GRAY + "Buffer: " + TextFormatting.RESET +
+            fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.BUFFER.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.totalBuffer, FluxUtils.TypeNumberFormat.COMPACT, "RF"), 12, 76, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(TextFormatting.GRAY + "Energy: " + TextFormatting.RESET +
+            fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.ENERGY.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, "RF"), 12, 88, network.getSetting(NetworkSettings.NETWORK_COLOR));
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());

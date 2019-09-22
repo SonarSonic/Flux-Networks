@@ -52,6 +52,7 @@ public class FluxTranslate implements ILocalizationProvider {
     public static final Localization DISABLE_LIMIT = i("flux.disablelimit");
     public static final Localization CHUNK_LOADING = i("flux.chunkloading");
     public static final Localization ENABLE_WIRELESS = i("flux.wireless");
+    public static final Localization ENERGY = i("flux.energy");
     public static final Localization ENERGY_STORED = i("flux.energystored");
     public static final Localization BUFFER = i("flux.buffer");
     public static final Localization INTERNAL_BUFFER = i("flux.internalbuffer");
