@@ -25,9 +25,9 @@ public interface ITransferHandler {
 
     List<IFluxTransfer> getTransfers();
 
-    long addToNetwork(long maxAmount, boolean simulate);
+    long addToNetwork(long maxAmount);
 
-    long removeFromNetwork(long maxAmount, boolean simulate, boolean pre);
+    long removeFromNetwork(long maxAmount, boolean simulate);
 
     NBTTagCompound writeNetworkedNBT(NBTTagCompound tag);
 

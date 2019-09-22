@@ -26,16 +26,19 @@ public class SingleTransferHandler extends FluxTransferHandler<IFluxEnergy> {
         transfer.onServerStartTick();
     }
 
+    /**
+     * Discharge Flux Storage
+     * @param maxAmount
+     * @return
+     */
     @Override
-    public long addToNetwork(long maxAmount, boolean simulate) {
+    public long addToNetwork(long maxAmount) {
         if(!fluxConnector.isActive()) {
             return 0;
         }
-        long canAdd = Math.min(getConnectorLimit(), maxAmount);
-        long add = transfer.addToNetwork(canAdd, simulate);
-        if(!simulate) {
-            added += add;
-        }
+        //long canAdd = Math.min(getConnectorLimit(), maxAmount);
+        long add = transfer.addToNetwork(maxAmount, false);
+        added += add;
         return add;
     }
 
@@ -43,20 +46,18 @@ public class SingleTransferHandler extends FluxTransferHandler<IFluxEnergy> {
      * Charge Flux Storage or Wireless
      * @param maxAmount
      * @param simulate
-     * @param pre
      * @return
      */
     @Override
-    public long removeFromNetwork(long maxAmount, boolean simulate, boolean pre) {
+    public long removeFromNetwork(long maxAmount, boolean simulate) {
         if(!fluxConnector.isActive()) {
             return 0;
         }
         long canRemove = Math.min(getConnectorLimit(), maxAmount);
         long remove = transfer.removeFromNetwork(canRemove, simulate);
-        if(pre) {
-            request += remove;
-        }
-        if(!simulate) {
+        if(simulate) {
+            request = remove;
+        } else {
             request -= remove;
             removed += remove;
         }
@@ -75,6 +76,6 @@ public class SingleTransferHandler extends FluxTransferHandler<IFluxEnergy> {
 
     @Override
     public long getBuffer() {
-        return fluxConnector.getEnergy();
+        return Math.min(fluxConnector.getEnergy(), fluxConnector.getCurrentLimit());
     }
 }

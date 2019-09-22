@@ -101,7 +101,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         bufferLimiter = 0;
 
         if(!sortedPoints.isEmpty()) {
-            sortedPoints.forEach(g -> g.getConnectors().forEach(p -> bufferLimiter += p.getTransferHandler().removeFromNetwork(Integer.MAX_VALUE, true, true)));
+            sortedPoints.forEach(g -> g.getConnectors().forEach(p -> bufferLimiter += p.getTransferHandler().removeFromNetwork(Integer.MAX_VALUE, true)));
             if (bufferLimiter > 0 && !sortedPlugs.isEmpty()) {
                 pointTransferIterator.update(sortedPoints, true);
                 plugTransferIterator.update(sortedPlugs, false);
@@ -113,7 +113,17 @@ public class FluxNetworkServer extends FluxNetworkBase {
                         if(plug.getConnectionType() == point.getConnectionType()) { // Storage always have the lowest priority and must be
                             break CYCLE;
                         }
-                        long removed = plug.getTransferHandler().addToNetwork(point.getTransferHandler().getRequest(), true);
+                        long operate = Math.min(plug.getTransferHandler().getBuffer(), point.getTransferHandler().getRequest());
+                        long removed = point.getTransferHandler().removeFromNetwork(operate, false);
+                        if(removed > 0) {
+                            plug.getTransferHandler().addToNetwork(removed);
+                            if (point.getTransferHandler().getRequest() <= 0) {
+                                continue CYCLE;
+                            }
+                        } else {
+                            plugTransferIterator.incrementFlux();
+                        }
+                        /*long removed = plug.getTransferHandler().addToNetwork(point.getTransferHandler().getRequest(), true);
                         long added = point.getTransferHandler().removeFromNetwork(removed, true, false);
                         if(added > 0) {
                             long actualRemoved = plug.getTransferHandler().addToNetwork(added, false);
@@ -122,9 +132,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
                                 continue CYCLE;
                             }
                         } else {
-                            // EU received 4RF at least, prevent dead loop
                             plugTransferIterator.incrementFlux();
-                        }
+                        }*/
                     }
                     break;
                 }

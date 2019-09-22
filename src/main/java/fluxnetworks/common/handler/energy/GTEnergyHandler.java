@@ -51,7 +51,8 @@ public class GTEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
         if(simulate) {
             return Math.min(voltage << 2, amount);
         }
-        if(amount >> 2 < voltage) {
+        voltage = Math.min(voltage, amount >> 2);
+        if(voltage == 0) {
             return 0;
         }
         long energy = voltage * container.acceptEnergyFromNetwork(side, voltage, 1);

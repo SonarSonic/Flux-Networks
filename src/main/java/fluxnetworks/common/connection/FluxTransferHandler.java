@@ -35,15 +35,13 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
      * @return
      */
     @Override
-    public long addToNetwork(long maxAmount, boolean simulate) {
+    public long addToNetwork(long maxAmount) {
         if(!fluxConnector.isActive()) {
             return 0;
         }
-        long added = Math.min(maxAmount, buffer);
-        if(!simulate) {
-            buffer -= added;
-        }
-        return added;
+        //long added = Math.min(maxAmount, buffer);
+        buffer -= maxAmount;
+        return maxAmount;
     }
 
     /**
@@ -53,7 +51,7 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
      * @return
      */
     @Override
-    public long removeFromNetwork(long maxAmount, boolean simulate, boolean pre) {
+    public long removeFromNetwork(long maxAmount, boolean simulate) {
         if(!fluxConnector.isActive())
             return 0;
         long canRemove = getValidRemoval(maxAmount);
@@ -69,7 +67,7 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
                 }
             }
         }
-        if(pre) {
+        if(simulate) {
             request = removed;
         }
         return removed;

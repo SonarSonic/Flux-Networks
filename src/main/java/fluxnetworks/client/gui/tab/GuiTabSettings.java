@@ -237,14 +237,16 @@ public class GuiTabSettings extends GuiTabCore {
                 apply.clickable = (!securityType.isEncrypted() || password.getText().length() != 0) && name.getText().length() !=0;
             }
         }
-        if(k == 42) {
-            deleteCount++;
-            if(deleteCount > 1) {
-                delete.clickable = true;
+        if(delete != null) {
+            if (k == 42) {
+                deleteCount++;
+                if (deleteCount > 1) {
+                    delete.clickable = true;
+                }
+            } else {
+                deleteCount = 0;
+                delete.clickable = false;
             }
-        } else {
-            deleteCount = 0;
-            delete.clickable = false;
         }
     }
 
