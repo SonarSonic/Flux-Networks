@@ -1,9 +1,17 @@
 package fluxnetworks;
 
+import fluxnetworks.common.handler.TileEntityHandler;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FluxConfig {
 
@@ -13,18 +21,44 @@ public class FluxConfig {
     public static final String CLIENT = "client";
     public static final String ENERGY = "energy";
     public static final String NETWORKS = "networks";
+    public static final String BLACKLIST = "blacklists";
 
     public static boolean enableButtonSound;
     public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer;
+    public static String[] blockBlacklistStrings;
 
     public static void init(File file) {
         config = new Configuration(new File(file.getPath(), "flux_networks.cfg"));
         config.load();
         read();
+        verifyAndReadBlacklist();
         config.save();
         generateFluxChunkConfig();
+    }
+
+    public static void verifyAndReadBlacklist() {
+        TileEntityHandler.blockBlacklist.clear();
+        for(String str : blockBlacklistStrings) {
+            if(!str.contains(":")) {
+                FluxNetworks.logger.error("BLACKLIST ERROR: " + str + " has incorrect formatting, please use 'modid:name@meta'");
+            }
+            String root = str;
+            int meta = -1;
+            if(str.contains("@")) {
+                String[] split = str.split("@");
+                root = split[0];
+                try {
+                    meta = Integer.parseInt(split[1]);
+                    TileEntityHandler.blockBlacklist.put(root, meta);
+                } catch (Exception e) {
+                    FluxNetworks.logger.error("BLACKLIST ERROR: " + str + " has incorrect formatting, meta must be positive integer'");
+                }
+            } else {
+                TileEntityHandler.blockBlacklist.put(root, meta);
+            }
+        }
     }
 
     public static void generateFluxChunkConfig() {
@@ -52,5 +86,15 @@ public class FluxConfig {
         enableChunkLoading = config.getBoolean("Allow Flux Chunk Loading", GENERAL, true, "Allows flux connectors to work as chunk loaders");
 
         enableButtonSound = config.getBoolean("Enable GUI Button Sound", CLIENT, true, "Enable navigation buttons sound when pressing it");
+
+        blockBlacklistStrings = getBlackList("Block Connection Blacklist", BLACKLIST, new String[]{"actuallyadditions:block_phantom_energyface"}, "a blacklist for blocks which flux connections shouldn't connect to, use format 'modid:name@meta'");
+    }
+
+    public static String[] getBlackList(String name, String category, String[] defaultValue, String comment){
+        Property prop = config.get(category, name, defaultValue);
+        prop.setLanguageKey(name);
+        prop.setValidValues(null);
+        prop.setComment(comment);
+        return prop.getStringList();
     }
 }

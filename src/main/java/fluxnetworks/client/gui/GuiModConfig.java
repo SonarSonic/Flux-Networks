@@ -22,6 +22,7 @@ public class GuiModConfig extends GuiConfig {
         list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.CLIENT)));
         list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.NETWORKS)));
         list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.ENERGY)));
+        list.add(new ConfigElement(FluxConfig.config.getCategory(FluxConfig.BLACKLIST)));
         return list;
     }
 
@@ -30,5 +31,6 @@ public class GuiModConfig extends GuiConfig {
         super.onGuiClosed();
         FluxConfig.config.save();
         FluxConfig.read();
+        FluxConfig.verifyAndReadBlacklist();
     }
 }
