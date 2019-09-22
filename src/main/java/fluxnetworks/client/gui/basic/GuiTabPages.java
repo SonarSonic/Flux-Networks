@@ -83,9 +83,9 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         if(e != null) {
             onElementClicked(e, mouseButton);
         }
-        if(labelButton.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+        if(pages > 1 && labelButton.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
             if(page != labelButton.hoveredPage) {
-                page = labelButton.hoveredPage;
+                page = Math.max(labelButton.hoveredPage, 1);
                 refreshCurrentPage();
             }
         }
