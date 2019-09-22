@@ -392,6 +392,8 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     @Override
     public void updateScreen() {
+        if(!networkValid)
+            return;
         if(timer == 4) {
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
         }

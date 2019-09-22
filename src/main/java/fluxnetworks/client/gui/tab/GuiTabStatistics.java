@@ -56,7 +56,7 @@ public class GuiTabStatistics extends GuiTabCore {
     @Override
     protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
-        if(chart != null) {
+        if(networkValid && chart != null) {
             chart.drawChart(mc);
             chart.updateHeight(partialTicks);
         }
@@ -72,20 +72,24 @@ public class GuiTabStatistics extends GuiTabCore {
         navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
         navigationButtons.get(4).setMain();
 
-        chart = new LineChart(width / 2 - 48, height / 2 + 24, 52, 6, "s", "RF", this);
-        chart.updateData(stats.energyChange);
+        if(networkValid) {
+            chart = new LineChart(width / 2 - 48, height / 2 + 24, 52, 6, "s", "RF");
+            chart.updateData(stats.energyChange);
+        }
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(timer == 0) {
-            PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_STATISTICS));
+        if(networkValid) {
+            if (timer == 0) {
+                PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_STATISTICS));
+            }
+            if (timer == 1) {
+                chart.updateData(stats.energyChange);
+            }
+            timer++;
+            timer %= 20;
         }
-        if(timer == 1) {
-            chart.updateData(stats.energyChange);
-        }
-        timer++;
-        timer %= 20;
     }
 }

@@ -34,16 +34,13 @@ public class LineChart {
     public List<Double> currentHeight;
     public List<Double> targetHeight;
 
-    public GuiCore core;
-
-    public LineChart(int x, int y, int height, int linePoints, String displayUnitX, String suffixUnitY, GuiCore core) {
+    public LineChart(int x, int y, int height, int linePoints, String displayUnitX, String suffixUnitY) {
         this.x = x;
         this.y = y;
         this.height = height;
         this.linePoints = linePoints;
         this.displayUnitX = displayUnitX;
         this.suffixUnitY = suffixUnitY;
-        this.core = core;
 
         this.currentHeight = new ArrayList<>(linePoints);
         for(int i = 0; i < linePoints; i++) {
