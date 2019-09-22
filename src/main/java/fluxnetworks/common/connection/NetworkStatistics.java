@@ -31,8 +31,8 @@ public class NetworkStatistics {
     public long totalEnergy;
 
     private long energyChange5;
-    private long energyInput5;
-    private long energyOutput5;
+    private long energyInput4;
+    private long energyOutput4;
 
     public NetworkStatistics(IFluxNetwork network) {
         this.network = network;
@@ -45,7 +45,7 @@ public class NetworkStatistics {
         if(timer == 0) {
             weakestTick();
         }
-        if(timer % 4 == 0) {
+        if(timer % 5 == 0) {
             weakTick();
         }
         if(timer % 20 == 0) {
@@ -56,20 +56,20 @@ public class NetworkStatistics {
     }
 
     /**
-     * Called every 4 ticks
+     * Called every 5 ticks
      */
     @SuppressWarnings("unchecked")
     private void weakTick() {
         List<IFluxPlug> plugs = network.getConnections(FluxType.plug);
         plugs.forEach(p -> {
             if(!(p instanceof TileFluxStorage)) {
-                energyInput5 += p.getTransferHandler().getChange();
+                energyInput4 += p.getTransferHandler().getChange();
             }
         });
         List<IFluxPoint> points = network.getConnections(FluxType.point);
         points.forEach(p -> {
             if(!(p instanceof TileFluxStorage)) {
-                energyOutput5 -= p.getTransferHandler().getChange();
+                energyOutput4 -= p.getTransferHandler().getChange();
             }
         });
     }
@@ -93,10 +93,10 @@ public class NetworkStatistics {
         fluxStorageCount = storages.size();
         fluxPlugCount = plugs.size() - fluxStorageCount;
         fluxPointCount = network.getConnections(FluxType.point).size() - fluxStorageCount - fluxControllerCount;
-        energyInput = energyInput5 / 5;
-        energyOutput = energyOutput5 / 5;
-        energyInput5 = 0;
-        energyOutput5 = 0;
+        energyInput = energyInput4 / 4;
+        energyOutput = energyOutput4 / 4;
+        energyInput4 = 0;
+        energyOutput4 = 0;
         energyChange5 += Math.max(energyInput, energyOutput);
     }
 

@@ -33,13 +33,13 @@ public class GuiTabStatistics extends GuiTabCore {
         if(networkValid) {
             renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.PLUGS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxPlugCount, 12, 28, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxPlugCount, 12, 24, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.POINTS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxPointCount, 12, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxPointCount, 12, 36, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.STORAGES.t() + TextFormatting.GRAY +  ": " +
-                    TextFormatting.RESET + stats.fluxStorageCount, 82, 28, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxStorageCount, 82, 24, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxControllerCount, 82, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxControllerCount, 82, 36, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, "RF/t"), 12, 52, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +

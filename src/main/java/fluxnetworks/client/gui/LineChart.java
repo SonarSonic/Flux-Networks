@@ -93,9 +93,9 @@ public class LineChart {
         mc.fontRenderer.drawString(displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)), (float) ((y + height + 1.5) * 1.6), 0xffffff, false);
         for (int i = 0; i < data.size(); i++) {
             String d = FluxUtils.format(data.get(i), FluxUtils.TypeNumberFormat.COMPACT, "");
-            mc.fontRenderer.drawString(d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 2.0f, (float) ((currentHeight.get(i) - 7) * 1.6), 0xffffff, false);
+            mc.fontRenderer.drawString(d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 1.0f, (float) ((currentHeight.get(i) - 7) * 1.6), 0xffffff, false);
             String c = String.valueOf((5 - i) * 5);
-            mc.fontRenderer.drawString(c, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(c) / 2F) + 0.5f, (float) ((y + height + 2) * 1.6), 0xffffff, false);
+            mc.fontRenderer.drawString(c, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(c) / 2F), (float) ((y + height + 2) * 1.6), 0xffffff, false);
         }
         GlStateManager.scale(1.6f, 1.6f, 1.6f);
 
