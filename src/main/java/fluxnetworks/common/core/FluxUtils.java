@@ -181,13 +181,13 @@ public class FluxUtils {
                     suffix = suffix.substring(1);
                     if (exp - 2 >= 0) {
                         pre = "kMGTPE".charAt(exp - 2);
-                        return String.format("%.1f %s", in / Math.pow(unit, exp), pre) + suffix;
+                        return String.format("%.1f%s", in / Math.pow(unit, exp), pre) + suffix;
                     } else {
-                        return String.format("%.1f %s", in / Math.pow(unit, exp), suffix);
+                        return String.format("%.1f%s", in / Math.pow(unit, exp), suffix);
                     }
                 } else {
                     pre = "kMGTPE".charAt(exp - 1);
-                    return String.format("%.1f %s", in / Math.pow(unit, exp), pre) + suffix;
+                    return String.format("%.1f%s", in / Math.pow(unit, exp), pre) + suffix;
                 }
             }
             case COMMAS:

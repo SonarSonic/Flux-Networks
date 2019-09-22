@@ -15,9 +15,9 @@ public interface ITransferHandler {
 
     long getRequest();
 
-    long getAdded();
-
-    long getRemoved();
+    default long getEnergyStored() {
+        return getBuffer();
+    }
 
     long getChange();
 

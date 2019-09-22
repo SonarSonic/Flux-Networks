@@ -107,16 +107,6 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
     }
 
     @Override
-    public long getAdded() {
-        return added;
-    }
-
-    @Override
-    public long getRemoved() {
-        return removed;
-    }
-
-    @Override
     public long getChange() {
         return change;
     }

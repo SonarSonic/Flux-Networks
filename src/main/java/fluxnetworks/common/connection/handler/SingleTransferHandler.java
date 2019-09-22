@@ -78,4 +78,9 @@ public class SingleTransferHandler extends FluxTransferHandler<IFluxEnergy> {
     public long getBuffer() {
         return Math.min(fluxConnector.getEnergy(), fluxConnector.getCurrentLimit());
     }
+
+    @Override
+    public long getEnergyStored() {
+        return fluxConnector.getEnergy();
+    }
 }

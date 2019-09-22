@@ -399,7 +399,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             PacketHandler.network.sendToServer(new PacketConnectionUpdateRequest.ConnectionRequestMessage(network.getNetworkID(), current.stream().map(IFluxConnector::getCoords).collect(Collectors.toList())));
         }
         timer++;
-        timer %= 100;
+        timer %= 20;
         if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
             backToMain();
             batchConnections.clear();
