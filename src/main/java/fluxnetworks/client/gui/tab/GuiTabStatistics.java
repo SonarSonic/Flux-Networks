@@ -37,9 +37,9 @@ public class GuiTabStatistics extends GuiTabCore {
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.POINTS.t() + TextFormatting.GRAY + ": " +
                     TextFormatting.RESET + stats.fluxPointCount, 12, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.STORAGES.t() + TextFormatting.GRAY +  ": " +
-                    TextFormatting.RESET + stats.fluxStorageCount, 84, 28, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxStorageCount, 82, 28, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxControllerCount, 84, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                    TextFormatting.RESET + stats.fluxControllerCount, 82, 40, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, "RF/t"), 12, 52, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
