@@ -101,7 +101,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             }
             super.drawForegroundLayer(mouseX, mouseY);
             if(main)
-                drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 165, 0xffffff);
+                drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 165, 0xffffff);
         } else {
             super.drawForegroundLayer(mouseX, mouseY);
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
@@ -125,12 +125,12 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             drawCenteredString(fontRenderer, FluxTranslate.BATCH_EDIT.t(), 88, 17, 0xffffff);
             drawCenteredString(fontRenderer, FluxTranslate.EDITING.t() + " " + batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 88, 122, 0xffffff);
         }
+        fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 82, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 94, network.getSetting(NetworkSettings.NETWORK_COLOR));
         if(batchMode || !singleConnection.getConnectionType().isStorage()) {
-            fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 82, network.getSetting(NetworkSettings.NETWORK_COLOR));
-            fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 94, network.getSetting(NetworkSettings.NETWORK_COLOR));
             fontRenderer.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 106, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 155, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 155, 0xffffff);
     }
 
     @Override
@@ -197,12 +197,14 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             priority.setText(String.valueOf(singleConnection.getPriority()));
             limit.setText(String.valueOf(singleConnection.getCurrentLimit()));
 
+            surge = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, singleConnection.getSurgeMode());
+            unlimited = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, singleConnection.getDisableLimit());
+
+            popSwitches.add(surge);
+            popSwitches.add(unlimited);
+
             if(!singleConnection.getConnectionType().isStorage()) {
-                surge = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, singleConnection.getSurgeMode());
-                unlimited = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, singleConnection.getDisableLimit());
                 chunkLoad = new SlidedSwitchButton(140, 106, 3, guiLeft, guiTop, singleConnection.isForcedLoading());
-                popSwitches.add(surge);
-                popSwitches.add(unlimited);
                 popSwitches.add(chunkLoad);
             }
         } else {
@@ -403,7 +405,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         }
         timer++;
         timer %= 20;
-        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
             backToMain();
             batchConnections.clear();
             clear.clickable = false;
@@ -411,7 +413,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             disconnect.clickable = false;
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
         }
-        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS_2) {
+        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
             backToMain();
             elements.removeAll(batchConnections);
             batchConnections.clear();

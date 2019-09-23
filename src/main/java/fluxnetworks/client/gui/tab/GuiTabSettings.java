@@ -72,7 +72,7 @@ public class GuiTabSettings extends GuiTabCore {
             fontRenderer.drawString(FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
             fontRenderer.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
 
-            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 156, 0xffffff);
+            drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 156, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -282,13 +282,13 @@ public class GuiTabSettings extends GuiTabCore {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
             FMLCommonHandler.instance().showGuiScreen(new GuiFluxHome(player, tileEntity));
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
         }
-        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS_2) {
+        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
             apply.clickable = false;
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
         }
     }
 }

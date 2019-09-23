@@ -51,7 +51,8 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                     //noinspection unchecked
                     List<TileFluxCore> onlineConnectors = network.getConnections(FluxType.flux);
                     AtomicBoolean reject = new AtomicBoolean(false);
-                    PacketHandler.handlePacket(() -> message.coord4DS.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
+                    PacketHandler.handlePacket(() -> {
+                        message.coord4DS.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
                         if(disconnect) {
                             FluxUtils.removeConnection(f, false);
                             f.disconnect(network);
@@ -94,13 +95,12 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                             }
                             f.sendPackets();
                         }
+                        }));
                         if(reject.get()) {
                             PacketHandler.network.sendTo(new PacketFeedback.FeedbackMessage(FeedbackInfo.REJECT_SOME), (EntityPlayerMP) player);
-                        } else {
-                            PacketHandler.network.sendTo(disconnect ? new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS_2) : new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS), (EntityPlayerMP) player);
                         }
-                    })), ctx.netHandler);
-                    return null;
+                    }, ctx.netHandler);
+                    return disconnect ? new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS_2) : new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
                 } else {
                     return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
                 }

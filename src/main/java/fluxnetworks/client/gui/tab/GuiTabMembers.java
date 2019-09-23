@@ -61,7 +61,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
         drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
         super.drawPopupForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 162, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 162, 0xffffff);
         drawCenteredString(fontRenderer, TextFormatting.AQUA + selectedPlayer.getCachedName(), 88, 38, 0xffffff);
         drawCenteredString(fontRenderer, selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
         String text = selectedPlayer.getPlayerUUID().toString();
@@ -254,7 +254,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }
         if(timer % 2 == 0) {
             refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
-            if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
+            if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
                 if(!main) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
                     if (n.isPresent()) {
@@ -264,7 +264,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                         backToMain();
                     }
                 }
-                FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+                FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
             }
         }
         timer++;

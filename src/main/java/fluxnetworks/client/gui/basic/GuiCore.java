@@ -206,7 +206,8 @@ public abstract class GuiCore extends GuiContainer implements ITextBoxButton {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, false);
+        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
     }
 
     public void drawColorRect(int x, int y, int height, int width, int color) {

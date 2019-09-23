@@ -39,7 +39,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
         if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
             if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
                 FMLCommonHandler.instance().showGuiScreen(new GuiFluxHome(player, tileEntity));
-                FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+                FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, false);
                 if(FluxConfig.enableButtonSound)
                     mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
             }
@@ -73,6 +73,6 @@ public abstract class GuiTabCore extends GuiFluxCore {
         main = true;
         popButtons.clear();
         popBoxes.clear();
-        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
     }
 }

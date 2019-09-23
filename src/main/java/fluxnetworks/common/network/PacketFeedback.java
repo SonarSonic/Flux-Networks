@@ -12,7 +12,13 @@ public class PacketFeedback implements IMessageHandler<PacketFeedback.FeedbackMe
 
     @Override
     public IMessage onMessage(FeedbackMessage message, MessageContext ctx) {
-        PacketHandler.handlePacket(() -> FluxNetworks.proxy.setFeedback(message.info), ctx.netHandler);
+        PacketHandler.handlePacket(() -> {
+            if(message.info == FeedbackInfo.SUCCESS || message.info == FeedbackInfo.SUCCESS_2 || message.info == FeedbackInfo.PASSWORD_REQUIRE) {
+                FluxNetworks.proxy.setFeedback(message.info, true);
+            } else {
+                FluxNetworks.proxy.setFeedback(message.info, false);
+            }
+            }, ctx.netHandler);
         return null;
     }
 

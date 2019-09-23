@@ -48,7 +48,7 @@ public class GuiTabCreate extends GuiTabCore {
         fontRenderer.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
 
         renderNetwork(name.getText(), color.color, 20, 129);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 88, 150, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 150, 0xffffff);
     }
 
     @Override
@@ -217,9 +217,9 @@ public class GuiTabCreate extends GuiTabCore {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(FluxNetworks.proxy.getFeedback() == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
             FMLCommonHandler.instance().showGuiScreen(new GuiTabSelection(player, tileEntity));
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE);
+            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
         }
     }
 

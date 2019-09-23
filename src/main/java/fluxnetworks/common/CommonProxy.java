@@ -194,11 +194,11 @@ public class CommonProxy {
         }
     }
 
-    public FeedbackInfo getFeedback() {
+    public FeedbackInfo getFeedback(boolean operation) {
         return null;
     }
 
-    public void setFeedback(FeedbackInfo info) {}
+    public void setFeedback(FeedbackInfo info, boolean operation) {}
 
     public void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache) {}
 

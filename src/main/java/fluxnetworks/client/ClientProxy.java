@@ -35,7 +35,8 @@ import java.util.Map;
 public class ClientProxy extends CommonProxy {
 
     private LocalizationHandler localizationHandler = new LocalizationHandler();
-    private FeedbackInfo feedbackInfo = FeedbackInfo.NONE;
+    private FeedbackInfo feedbackInfo = FeedbackInfo.NONE; // Text message.
+    private FeedbackInfo feedbackInfoSuccess = FeedbackInfo.NONE; // Special operation.
     private int feedbackTimer = 0;
 
     @Override
@@ -95,20 +96,24 @@ public class ClientProxy extends CommonProxy {
                 feedbackTimer++;
                 if(feedbackTimer >= 60) {
                     feedbackTimer = 0;
-                    setFeedback(FeedbackInfo.NONE);
+                    setFeedback(FeedbackInfo.NONE, false);
                 }
             }
         }
     }
 
     @Override
-    public FeedbackInfo getFeedback() {
-        return feedbackInfo;
+    public FeedbackInfo getFeedback(boolean operation) {
+        return operation ? feedbackInfoSuccess : feedbackInfo;
     }
 
     @Override
-    public void setFeedback(FeedbackInfo info) {
-        this.feedbackInfo = info;
+    public void setFeedback(FeedbackInfo info, boolean operation) {
+        if(operation) {
+            this.feedbackInfoSuccess = info;
+        } else {
+            this.feedbackInfo = info;
+        }
         feedbackTimer = 0;
     }
 

@@ -37,7 +37,7 @@ public class GuiFluxHome extends GuiFluxCore {
         super.drawForegroundLayer(mouseX, mouseY);
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
         renderTransfer(tileEntity.getTransferHandler(), 0xffffff, 30, 90);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback().getInfo(), 89, 150, 0xffffff);
+        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
         fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
         fontRenderer.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
