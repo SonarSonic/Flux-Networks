@@ -73,12 +73,12 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                                 f.disableLimit = unlimited;
                             }
                             if(editChunkLoad) {
-                                if(f.getConnectionType().isStorage()) {
-                                    reject.set(true);
-                                    return;
-                                }
                                 if (FluxConfig.enableChunkLoading) {
                                     if (load) {
+                                        if(f.getConnectionType().isStorage()) {
+                                            reject.set(true);
+                                            return;
+                                        }
                                         if(!f.chunkLoading) {
                                             f.chunkLoading = FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
                                             if(!f.chunkLoading) {
