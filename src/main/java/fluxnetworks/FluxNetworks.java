@@ -13,7 +13,7 @@ public class FluxNetworks {
 
     public static final String MODID = "fluxnetworks";
     public static final String NAME = "Flux Networks";
-    public static final String VERSION = "4.0.9";
+    public static final String VERSION = "4.0.10";
 
     @Mod.Instance(MODID)
     public static FluxNetworks instance;
