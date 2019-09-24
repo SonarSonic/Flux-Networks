@@ -11,10 +11,11 @@ import fluxnetworks.common.connection.transfer.StorageTransfer;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.registry.RegistryBlocks;
+import fluxnetworks.common.tileentity.energy.TileOPStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy {
+public class TileFluxStorage extends TileOPStorage implements IFluxStorage, IFluxEnergy {
 
     public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 

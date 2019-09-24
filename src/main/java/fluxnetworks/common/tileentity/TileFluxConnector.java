@@ -3,11 +3,11 @@ package fluxnetworks.common.tileentity;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.common.connection.handler.ConnectionTransferHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
-import fluxnetworks.common.tileentity.energy.TileGTEnergy;
+import fluxnetworks.common.tileentity.energy.TileOPConnector;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-public abstract class TileFluxConnector extends TileGTEnergy {
+public abstract class TileFluxConnector extends TileOPConnector {
 
     public final ConnectionTransferHandler handler = new ConnectionTransferHandler(this, this);
 

@@ -1,5 +1,6 @@
 package fluxnetworks.common.core;
 
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.EnergyType;
 import fluxnetworks.api.FluxConfigurationType;
@@ -19,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -52,6 +54,36 @@ public class FluxUtils {
                 return face;
         }
         return null;
+    }
+
+    public static String getTransferInfo(ConnectionType type, EnergyType energyType, long change) {
+        if(type.canAddEnergy()) {
+            String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+            if(change == 0) {
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + b;
+            } else {
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + b;
+            }
+        }
+        if(type.canRemoveEnergy() || type.isController()) {
+            String b = FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+            if(change == 0) {
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
+            } else {
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + "-" + b;
+            }
+        }
+        // Storage are inverted
+        if(type == ConnectionType.STORAGE) {
+            if(change == 0) {
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
+            } else if(change > 0) {
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + "-" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+            } else {
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+            }
+        }
+        return "";
     }
 
     /*public static int getPlayerXP(EntityPlayer player) {

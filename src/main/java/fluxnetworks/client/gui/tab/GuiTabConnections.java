@@ -284,7 +284,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         if(element.isChunkLoaded()) {
             fontRenderer.drawString(element.getCustomName(), x + 21, y + 2, fontColor);
             GlStateManager.scale(0.625, 0.625, 0.625);
-            fontRenderer.drawString(getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
+            fontRenderer.drawString(FluxUtils.getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
             GlStateManager.scale(1.6, 1.6, 1.6);
         } else {
             fontRenderer.drawString(element.getCustomName(), x + 21, y + 5, 0x808080);

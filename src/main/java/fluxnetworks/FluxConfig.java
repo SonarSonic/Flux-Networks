@@ -23,7 +23,7 @@ public class FluxConfig {
     public static final String NETWORKS = "networks";
     public static final String BLACKLIST = "blacklists";
 
-    public static boolean enableButtonSound;
+    public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
     public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer;
@@ -86,6 +86,9 @@ public class FluxConfig {
         enableChunkLoading = config.getBoolean("Allow Flux Chunk Loading", GENERAL, true, "Allows flux connectors to work as chunk loaders");
 
         enableButtonSound = config.getBoolean("Enable GUI Button Sound", CLIENT, true, "Enable navigation buttons sound when pressing it");
+        enableOneProbeBasicInfo = config.getBoolean("Enable Basic One Probe Info", CLIENT, true, "Displays: Network Name, Live Transfer Rate & Internal Buffer");
+        enableOneProbeAdvancedInfo = config.getBoolean("Enable Advanced One Probe Info", CLIENT, true, "Displays: Transfer Limit & Priority etc");
+        enableOneProbeSneaking = config.getBoolean("Enable sneaking to display Advanced One Probe Info", CLIENT, true, "Displays Advanced Info when sneaking only");
 
         blockBlacklistStrings = getBlackList("Block Connection Blacklist", BLACKLIST, new String[]{"actuallyadditions:block_phantom_energyface"}, "a blacklist for blocks which flux connections shouldn't connect to, use format 'modid:name@meta'");
     }

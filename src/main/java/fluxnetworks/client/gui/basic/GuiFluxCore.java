@@ -122,7 +122,7 @@ public abstract class GuiFluxCore extends GuiCore {
         GlStateManager.enableAlpha();
         GlStateManager.color(1.0f, 1.0f, 1.0f);
 
-        fontRenderer.drawString(getTransferInfo(tileEntity.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), handler.getChange()), x, y, color);
+        fontRenderer.drawString(FluxUtils.getTransferInfo(tileEntity.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), handler.getChange()), x, y, color);
         fontRenderer.drawString((tileEntity.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
                 ": " + TextFormatting.BLUE + FluxUtils.format(handler.getEnergyStored(), FluxUtils.TypeNumberFormat.COMMAS,
                 network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
@@ -156,7 +156,7 @@ public abstract class GuiFluxCore extends GuiCore {
             if(flux.isForcedLoading()) {
                 list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
-            list.add(getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
+            list.add(FluxUtils.getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
             if(flux.getConnectionType() == ConnectionType.STORAGE) {
                 list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
             } else {
@@ -177,36 +177,6 @@ public abstract class GuiFluxCore extends GuiCore {
         list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getPriority()));
         list.add(TextFormatting.ITALIC + flux.getCoords().getStringInfo());
         return list;
-    }
-
-    protected String getTransferInfo(ConnectionType type, EnergyType energyType, long change) {
-        if(type.canAddEnergy()) {
-            String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
-            if(change == 0) {
-                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + b;
-            } else {
-                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + b;
-            }
-        }
-        if(type.canRemoveEnergy() || type.isController()) {
-            String b = FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
-            if(change == 0) {
-                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
-            } else {
-                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + "-" + b;
-            }
-        }
-        // Storage are inverted
-        if(type == ConnectionType.STORAGE) {
-            if(change == 0) {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
-            } else if(change > 0) {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + "-" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
-            } else {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
-            }
-        }
-        return "";
     }
 
     protected void renderNavigationPrompt(String error, String prompt) {
