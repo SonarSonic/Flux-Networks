@@ -11,11 +11,13 @@ import fluxnetworks.common.connection.transfer.StorageTransfer;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.registry.RegistryBlocks;
-import fluxnetworks.common.tileentity.energy.TileOPStorage;
+import mcjty.lib.api.power.IBigPower;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.Optional;
 
-public class TileFluxStorage extends TileOPStorage implements IFluxStorage, IFluxEnergy {
+@Optional.Interface(iface = "mcjty.lib.api.power.IBigPower", modid = "theoneprobe")
+public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy, IBigPower {
 
     public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
 
@@ -136,5 +138,17 @@ public class TileFluxStorage extends TileOPStorage implements IFluxStorage, IFlu
     @Override
     public ItemStack getDisplayStack() {
         return writeStorageToDisplayStack(stack);
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public long getStoredPower(){
+        return this.energyStored;
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public long getCapacity(){
+        return this.maxEnergyStorage;
     }
 }

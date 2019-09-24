@@ -15,7 +15,7 @@ import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.integration.MekanismIntegration;
-import fluxnetworks.common.integration.OPIntegration;
+import fluxnetworks.common.integration.TOPIntegration;
 import fluxnetworks.common.network.PacketNetworkUpdate;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
@@ -66,18 +66,13 @@ public class CommonProxy {
         if(Loader.isModLoaded("mekanism")){
             MekanismIntegration.preInit();
         }
-        if(Loader.isModLoaded("theoneprobe")){
-            OPIntegration.preInit();
-        }
         this.baublesLoaded = Loader.isModLoaded("baubles");
     }
 
     public void init(FMLInitializationEvent event) {
         DefaultSuperAdmin.register();
         FMLInterModComms.sendMessage("carryon", "blacklistBlock",  FluxNetworks.MODID + ":*");
-        if(Loader.isModLoaded("theoneprobe")){
-            OPIntegration.register();
-        }
+        FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", TOPIntegration.class.getName());
     }
 
     public void postInit(FMLPostInitializationEvent event) {

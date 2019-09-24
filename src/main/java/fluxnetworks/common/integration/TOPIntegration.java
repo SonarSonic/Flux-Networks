@@ -23,62 +23,65 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.function.Function;
 
-public class OPIntegration {
+public class TOPIntegration implements Function<ITheOneProbe, Void> {
 
-    public static void preInit() {
-        FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "hello");
+    @Override
+    public Void apply(ITheOneProbe iTheOneProbe) {
+        iTheOneProbe.registerProvider(new FluxConnectorInfoProvider());
+        iTheOneProbe.registerBlockDisplayOverride(new FluxConnectorDisplayOverride());
+        return null;
     }
 
-    private static boolean registered;
-
-    public static void register() {
-        if (registered)
-            return;
-        registered = true;
-        FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", "fluxnetworks.common.integration.OPIntegration$GetTheOneProbe");
-    }
-
-    public static class FluxConnectorInfoProvider implements IProbeInfoProvider{
-
-        protected String id = new ResourceLocation(FluxNetworks.MODID, "flux_storage_energy").toString();
+    public static class FluxConnectorInfoProvider implements IProbeInfoProvider {
 
         @Override
         public String getID() {
-            return id;
+            return FluxNetworks.MODID;
         }
 
         @Override
         public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer, World world, IBlockState iBlockState, IProbeHitData iProbeHitData) {
-            if(!(FluxConfig.enableOneProbeBasicInfo || FluxConfig.enableOneProbeAdvancedInfo)){
+            if(!(FluxConfig.enableOneProbeBasicInfo || FluxConfig.enableOneProbeAdvancedInfo)) {
                 return;
             }
-            if(iBlockState.getBlock() instanceof BlockFluxCore){
+            if(iBlockState.getBlock() instanceof BlockFluxCore) {
                 TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
-                if(tile instanceof IFluxConnector){
-                    IFluxConnector flux = (IFluxConnector)tile;
+                if(tile instanceof IFluxConnector) {
+                    IFluxConnector flux = (IFluxConnector) tile;
                     if(FluxConfig.enableOneProbeBasicInfo) {
                         iProbeInfo.text(TextFormatting.AQUA + (flux.getNetwork().isInvalid() ? FluxTranslate.ERROR_NO_SELECTED.t() : flux.getNetwork().getNetworkName()));
                         iProbeInfo.text(FluxUtils.getTransferInfo(flux.getConnectionType(), EnergyType.RF, flux.getChange()));
-                        if (flux.getConnectionType() != ConnectionType.STORAGE) {
-                            iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                        if(entityPlayer.isSneaking()) {
+                            if (flux.getConnectionType().isStorage()) {
+                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                            } else {
+                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                            }
+                        } else {
+                            if (flux.getConnectionType().isStorage()) {
+                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.GREEN + FluxUtils.format(flux.getBuffer(), FluxUtils.TypeNumberFormat.COMPACT, "RF"));
+                            } else {
+                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.GREEN + FluxUtils.format(flux.getBuffer(), FluxUtils.TypeNumberFormat.COMPACT, "RF"));
+                            }
                         }
                     }
                     if(FluxConfig.enableOneProbeAdvancedInfo && (!FluxConfig.enableOneProbeSneaking || entityPlayer.isSneaking())) {
-                        iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getCurrentLimit()));
+                        iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getActualLimit()));
                         iProbeInfo.text(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getActualPriority()));
                         if (flux.isForcedLoading()) {
-                            iProbeInfo.text(TextFormatting.YELLOW + FluxTranslate.FORCED_LOADING.t());
+                            iProbeInfo.text(TextFormatting.GOLD + FluxTranslate.FORCED_LOADING.t());
                         }
                     }
                 }
             }
         }
     }
-    public static class FluxConnectorDisplayOverride implements IBlockDisplayOverride{
+
+    public static class FluxConnectorDisplayOverride implements IBlockDisplayOverride {
 
         @Override
         public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer, World world, IBlockState iBlockState, IProbeHitData iProbeHitData) {
-            if(iBlockState.getBlock() instanceof BlockFluxCore){
+            if(iBlockState.getBlock() instanceof BlockFluxCore) {
                 TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
                 if(tile instanceof IFluxConnector) {
                     IFluxConnector flux = (IFluxConnector) tile;
@@ -88,20 +91,6 @@ public class OPIntegration {
                 }
             }
             return false;
-        }
-    }
-
-    public static class GetTheOneProbe implements Function<ITheOneProbe, Void> {
-
-        public static ITheOneProbe probe;
-
-        @Nullable
-        @Override
-        public Void apply(ITheOneProbe theOneProbe) {
-            probe = theOneProbe;
-            probe.registerProvider(new FluxConnectorInfoProvider());
-            probe.registerBlockDisplayOverride(new FluxConnectorDisplayOverride());
-            return null;
         }
     }
 }

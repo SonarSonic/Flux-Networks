@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 /**
- *extended by IFluxPoint and IFluxPlug
+ * extended by IFluxPoint and IFluxPlug
  */
 public interface IFluxConnector {
 

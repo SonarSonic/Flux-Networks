@@ -3,11 +3,14 @@ package fluxnetworks.common.tileentity;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.common.connection.handler.ConnectionTransferHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
-import fluxnetworks.common.tileentity.energy.TileOPConnector;
+import fluxnetworks.common.tileentity.energy.TileGTEnergy;
+import mcjty.lib.api.power.IBigPower;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.Optional;
 
-public abstract class TileFluxConnector extends TileOPConnector {
+@Optional.Interface(iface = "mcjty.lib.api.power.IBigPower", modid = "theoneprobe")
+public abstract class TileFluxConnector extends TileGTEnergy implements IBigPower {
 
     public final ConnectionTransferHandler handler = new ConnectionTransferHandler(this, this);
 
@@ -37,5 +40,17 @@ public abstract class TileFluxConnector extends TileOPConnector {
     @Override
     public ITransferHandler getTransferHandler() {
         return handler;
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public long getStoredPower(){
+        return getBuffer();
+    }
+
+    @Override
+    @Optional.Method(modid = "theoneprobe")
+    public long getCapacity(){
+        return getBuffer();
     }
 }
