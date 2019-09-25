@@ -94,11 +94,11 @@ info.fluxnetworks.gui.total=Gesamt
 info.fluxnetworks.gui.deletenetwork=Netzwerk löschen
 info.fluxnetworks.gui.doubleshift=2x LShift drücken
 info.fluxnetworks.gui.transferownership=Eigentum übertragen
-info.fluxnetworks.gui.setuser=Zum Benutzer herabstufen
-info.fluxnetworks.gui.setadmin=Zum Admin heraufstufen
+info.fluxnetworks.gui.setuser=Zum Benutzer machen
+info.fluxnetworks.gui.setadmin=Zum Admin machen
 info.fluxnetworks.gui.playername=Benutzername
 info.fluxnetworks.gui.playeraccess=Zugang
-info.fluxnetworks.gui.cancelmembership=Mitglied entfernen
+info.fluxnetworks.gui.cancelmembership=Mitglied blocken
 info.fluxnetworks.gui.you=Du
 
 info.fluxnetworks.button.batchclear=Auswahl entfernen
