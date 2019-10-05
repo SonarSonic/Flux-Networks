@@ -4,7 +4,6 @@ import fluxnetworks.common.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +12,7 @@ public class FluxNetworks {
 
     public static final String MODID = "fluxnetworks";
     public static final String NAME = "Flux Networks";
-    public static final String VERSION = "4.0.10";
+    public static final String VERSION = "4.0.11";
 
     @Mod.Instance(MODID)
     public static FluxNetworks instance;

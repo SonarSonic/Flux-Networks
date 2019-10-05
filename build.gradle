@@ -9,8 +9,8 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${minecraft_version}-4.0.10-27-b2"
-group = "fluxnetworks" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "${minecraft_version}-4.0.11-28"
+group = "fluxnetworks"
 archivesBaseName = "fluxnetworks"
 
 compileJava {
@@ -20,7 +20,7 @@ compileJava {
 minecraft {
     version = "1.12.2-14.23.5.2838"
     runDir = "run"
-    mappings = "snapshot_20171003"
+    mappings = "stable_39"
 }
 
 dependencies {
@@ -42,8 +42,8 @@ processResources {
     }
 }
 
-sourceSets {
+/*sourceSets {
     main {
         output.resourcesDir = java.outputDir
     }
-}
+}*/

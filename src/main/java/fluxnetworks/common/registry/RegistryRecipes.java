@@ -57,7 +57,7 @@ public class RegistryRecipes {
 
         public FluxShapedRecipe(@Nonnull ItemStack result, Object... recipe) {
             super(RegistryRecipes.group, result, recipe);
-            setRegistryName(new ResourceLocation(FluxNetworks.MODID, result.getUnlocalizedName()));
+            setRegistryName(new ResourceLocation(FluxNetworks.MODID, result.getTranslationKey()));
         }
     }
 
@@ -65,7 +65,7 @@ public class RegistryRecipes {
 
         public FluxShapelessRecipe(@Nonnull ItemStack result, Object... recipe) {
             super(RegistryRecipes.group, result, recipe);
-            setRegistryName(new ResourceLocation(FluxNetworks.MODID, result.getUnlocalizedName() + 's'));
+            setRegistryName(new ResourceLocation(FluxNetworks.MODID, result.getTranslationKey() + 's'));
         }
     }
 
@@ -99,6 +99,25 @@ public class RegistryRecipes {
                 return stack;
             }
             return super.getCraftingResult(crafting);
+        }
+    }
+
+    public static class FluxRecipe {
+
+        public final ItemStack input;
+        public final ItemStack output;
+
+        public FluxRecipe(ItemStack input, ItemStack output) {
+            this.input = input;
+            this.output = output;
+        }
+
+        public ItemStack getInput() {
+            return input;
+        }
+
+        public ItemStack getOutput() {
+            return output;
         }
     }
 }

@@ -9,7 +9,7 @@ public class ItemCore extends Item {
 
     public ItemCore(String name) {
 
-        setUnlocalizedName(FluxNetworks.MODID + "." + name.toLowerCase());
+        setTranslationKey(FluxNetworks.MODID + "." + name.toLowerCase());
         setRegistryName(name.toLowerCase());
         setCreativeTab(CommonProxy.creativeTabs);
         RegistryItems.ITEMS.add(this);

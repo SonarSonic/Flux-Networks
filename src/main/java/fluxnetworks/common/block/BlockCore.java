@@ -14,7 +14,7 @@ public class BlockCore extends Block {
 
     public BlockCore(String name, Material materialIn) {
         super(materialIn);
-        setUnlocalizedName(FluxNetworks.MODID + "." + name.toLowerCase());
+        setTranslationKey(FluxNetworks.MODID + "." + name.toLowerCase());
         setRegistryName(name.toLowerCase());
         RegistryBlocks.BLOCKS.add(this);
         RegistryItems.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
@@ -23,7 +23,7 @@ public class BlockCore extends Block {
 
     public BlockCore(String name, Material materialIn, boolean special) {
         super(materialIn);
-        setUnlocalizedName(FluxNetworks.MODID + "." + name.toLowerCase());
+        setTranslationKey(FluxNetworks.MODID + "." + name.toLowerCase());
         setRegistryName(name.toLowerCase());
         RegistryBlocks.BLOCKS.add(this);
         RegistryItems.ITEMS.add(new ItemFluxConnector(this).setRegistryName(this.getRegistryName()));

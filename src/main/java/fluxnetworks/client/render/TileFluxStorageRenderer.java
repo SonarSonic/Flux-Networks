@@ -44,14 +44,14 @@ public class TileFluxStorageRenderer extends TileEntitySpecialRenderer<TileFluxS
         EnumFacing face = EnumFacing.SOUTH;
         pushMatrix();
         rotate(face.getHorizontalAngle(), 0, 1, 0);
-        translate(-face.getFrontOffsetX(), 0, 0.0626F);
+        translate(-face.getXOffset(), 0, 0.0626F);
         RenderUtils.drawRect(left, i, 1 - 0.0625F * 2, bottom);
         popMatrix();
 
         face = EnumFacing.NORTH;
         pushMatrix();
         rotate(face.getHorizontalAngle(), 0, 1, 0);
-        translate(-1, 0, face.getFrontOffsetZ() + 0.0625);
+        translate(-1, 0, face.getZOffset() + 0.0625);
         RenderUtils.drawRect(left, i, 1 - 0.0625F * 2, bottom);
         popMatrix();
 

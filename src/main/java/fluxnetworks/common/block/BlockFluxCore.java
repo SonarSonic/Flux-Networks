@@ -172,9 +172,8 @@ public abstract class BlockFluxCore extends BlockCore {
         return bounding;
     }
 
-    @Nonnull
     @Override
-    public BlockRenderLayer getBlockLayer() {
+    public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
     }
 

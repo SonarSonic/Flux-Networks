@@ -92,7 +92,7 @@ public class CommonProxy {
     public static CreativeTabs creativeTabs = new CreativeTabs(FluxNetworks.MODID) {
 
         @Override
-        public ItemStack getTabIconItem() {
+        public ItemStack createIcon() {
             return new ItemStack(RegistryBlocks.FLUX_PLUG);
         }
     };

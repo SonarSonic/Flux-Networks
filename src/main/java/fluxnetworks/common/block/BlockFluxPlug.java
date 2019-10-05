@@ -7,8 +7,11 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -29,4 +32,5 @@ public class BlockFluxPlug extends BlockSidedConnection {
     public TileEntity createTileEntity(World world, IBlockState state) {
         return new TileFluxPlug();
     }
+
 }

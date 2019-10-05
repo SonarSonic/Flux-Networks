@@ -36,8 +36,8 @@ public class FluxStorageModel extends BuiltInModel implements IModel, IBakedMode
 
     @Override
     public boolean accepts(ResourceLocation modelLocation) {
-        if(modelLocation.getResourceDomain().equals(FluxNetworks.MODID)){
-            return modelLocation.getResourcePath().equals("models/item/fluxstoragebuiltin");
+        if(modelLocation.getNamespace().equals(FluxNetworks.MODID)){
+            return modelLocation.getPath().equals("models/item/fluxstoragebuiltin");
         }
         return false;
     }

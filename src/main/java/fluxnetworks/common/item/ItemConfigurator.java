@@ -54,7 +54,7 @@ public class ItemConfigurator extends ItemCore {
                 player.sendMessage(new TextComponentString("Copied Configuration"));
             } else {
                 NBTTagCompound configs = stack.getOrCreateSubCompound(CONFIGS_TAG);
-                if (!configs.hasNoTags()) {
+                if (!configs.isEmpty()) {
                     fluxCore.pasteConfiguration(configs);
                     player.sendMessage(new TextComponentString("Pasted Configuration"));
                 }

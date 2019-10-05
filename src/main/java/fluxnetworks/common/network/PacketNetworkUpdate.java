@@ -41,7 +41,7 @@ public class PacketNetworkUpdate implements IMessageHandler<PacketNetworkUpdate.
             toSend.forEach(n -> {
                 NBTTagCompound tag = new NBTTagCompound();
                 n.writeNetworkNBT(tag, type);
-                if(!tag.hasNoTags()) {
+                if(!tag.isEmpty()) {
                     updatedNetworks.put(n.getNetworkID(), tag);
                 }
             });
