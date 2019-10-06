@@ -31,14 +31,11 @@ public class FluxCraftingCategory implements IRecipeCategory<FluxRecipeWrapper> 
     }
 
     public static void register(IModRegistry registry) {
-        IJeiHelpers jeiHelpers = registry.getJeiHelpers();
-        IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
-
-        registry.addRecipes(getRecipes(guiHelper), "flux");
+        registry.addRecipes(getRecipes(), "flux");
         registry.addRecipeCatalyst(new ItemStack(RegistryItems.FLUX), "flux");
     }
 
-    public static List<FluxRecipeWrapper> getRecipes(IGuiHelper guiHelper) {
+    public static List<FluxRecipeWrapper> getRecipes() {
 
         List<FluxRecipeWrapper> recipes = new ArrayList<>();
 
