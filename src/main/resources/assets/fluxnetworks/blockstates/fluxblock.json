@@ -1,12 +1,11 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "textures": {"all":"fluxnetworks:blocks/fluxblock"},
-    "model":"cube_all",
-    "transform":"forge:default-block"
+    "model": "fluxnetworks:block/fluxblock"
   },
   "variants": {
-    "normal": [{}],
-    "inventory": [{}]
+    "": [{
+
+    }]
   }
 }

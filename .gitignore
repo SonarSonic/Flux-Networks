@@ -19,7 +19,7 @@ build
 
 # other
 eclipse
+resource
 run
 classes
 *.psd
-resource

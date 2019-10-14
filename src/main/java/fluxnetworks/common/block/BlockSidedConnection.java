@@ -1,69 +1,45 @@
 package fluxnetworks.common.block;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.common.tileentity.TileFluxConnector;
-import fluxnetworks.common.tileentity.TileFluxCore;
-import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.util.Direction;
 
 import java.util.ArrayList;
 
 public abstract class BlockSidedConnection extends BlockFluxCore {
 
-    public static final PropertyBoolFacing NORTH = PropertyBoolFacing.create("north", EnumFacing.NORTH);
-    public static final PropertyBoolFacing EAST = PropertyBoolFacing.create("east", EnumFacing.EAST);
-    public static final PropertyBoolFacing SOUTH = PropertyBoolFacing.create("south", EnumFacing.SOUTH);
-    public static final PropertyBoolFacing WEST = PropertyBoolFacing.create("west", EnumFacing.WEST);
-    public static final PropertyBoolFacing DOWN = PropertyBoolFacing.create("down", EnumFacing.DOWN);
-    public static final PropertyBoolFacing UP = PropertyBoolFacing.create("up", EnumFacing.UP);
+    public static final PropertyBoolFacing NORTH = PropertyBoolFacing.create("north", Direction.NORTH);
+    public static final PropertyBoolFacing EAST = PropertyBoolFacing.create("east", Direction.EAST);
+    public static final PropertyBoolFacing SOUTH = PropertyBoolFacing.create("south", Direction.SOUTH);
+    public static final PropertyBoolFacing WEST = PropertyBoolFacing.create("west", Direction.WEST);
+    public static final PropertyBoolFacing DOWN = PropertyBoolFacing.create("down", Direction.DOWN);
+    public static final PropertyBoolFacing UP = PropertyBoolFacing.create("up", Direction.UP);
     public static final ArrayList<PropertyBoolFacing> faces = Lists.newArrayList(DOWN, UP, NORTH, SOUTH, WEST, EAST);
 
     public BlockSidedConnection(String name) {
         super(name);
     }
 
-    public static class PropertyBoolFacing extends PropertyBool {
+    public static class PropertyBoolFacing extends BooleanProperty {
 
-        public EnumFacing facing;
+        public Direction facing;
 
-        protected PropertyBoolFacing(String name, EnumFacing facing) {
+        protected PropertyBoolFacing(String name, Direction facing) {
             super(name);
             this.facing = facing;
         }
 
-        public static PropertyBoolFacing create(String name, EnumFacing facing) {
+        public static PropertyBoolFacing create(String name, Direction facing) {
             return new PropertyBoolFacing(name, facing);
         }
     }
 
     @Override
-    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos) {
-        super.observedNeighborChange(observerState, world, observerPos, changedBlock, changedBlockPos);
-        TileFluxConnector tile = (TileFluxConnector) world.getTileEntity(observerPos);
-        if(!tile.getWorld().isRemote) {
-            tile.updateTransfers(FluxUtils.getBlockDirection(observerPos, changedBlockPos));
-        }
-    }
-
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        state = super.getActualState(state, worldIn, pos);
-        TileFluxCore tile = (TileFluxCore) worldIn.getTileEntity(pos);
-        for(PropertyBoolFacing face : faces) {
-            state = state.withProperty(face, tile.connections[face.facing.getIndex()] == 1);
-        }
-        return state;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, CONNECTED, NORTH, SOUTH, WEST, EAST, DOWN, UP);
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        super.fillStateContainer(builder);
+        builder.add(NORTH, SOUTH, WEST, EAST, DOWN, UP);
     }
 }
