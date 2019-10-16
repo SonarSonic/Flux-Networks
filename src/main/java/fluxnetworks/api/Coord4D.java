@@ -3,6 +3,7 @@ package fluxnetworks.api;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 
 public class Coord4D {
 
@@ -54,6 +55,14 @@ public class Coord4D {
 
     public String getStringInfo() {
         return "X: " + x + " Y: " + y + " Z: " + z + " Dim: " + dimension;
+    }
+
+    public BlockPos getPos(){
+        return new BlockPos(x,y,z);
+    }
+
+    public int getDimension(){
+        return dimension;
     }
 
     @Override

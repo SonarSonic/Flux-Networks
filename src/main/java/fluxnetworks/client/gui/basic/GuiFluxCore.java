@@ -1,28 +1,26 @@
 package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.FluxConfig;
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.ConnectionType;
-import fluxnetworks.api.EnergyType;
+import fluxnetworks.api.*;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.client.gui.button.NavigationButton;
+import fluxnetworks.client.gui.button.NormalButton;
+import fluxnetworks.client.gui.button.SlidedSwitchButton;
+import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.PacketPermissionRequest;
-import fluxnetworks.common.registry.RegistrySounds;
-import fluxnetworks.common.tileentity.TileFluxCore;
+import fluxnetworks.common.item.ItemAdminConfigurator;
+import fluxnetworks.common.item.ItemConfigurator;
+import fluxnetworks.common.network.PacketSetConfiguratorNetwork;
+import fluxnetworks.common.network.PacketTile;
+import fluxnetworks.common.network.PacketTileHandler;
+import fluxnetworks.common.network.PacketTileType;
 import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.tileentity.TileFluxStorage;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 
@@ -32,44 +30,69 @@ import java.util.List;
 
 import static net.minecraft.client.renderer.GlStateManager.scale;
 
-public abstract class GuiFluxCore extends GuiCore {
+public abstract class GuiFluxCore extends GuiPopUpHost {
+
+    public List<List<? extends GuiButtonCore>> buttonLists = Lists.newArrayList();
+    protected List<NormalButton> buttons = Lists.newArrayList();
+    protected List<TextboxButton> textBoxes = Lists.newArrayList();
+    protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
     public IFluxNetwork network;
     public AccessPermission accessPermission = AccessPermission.NONE;
     protected boolean networkValid;
     private int timer1;
 
-    public GuiFluxCore(EntityPlayer player, TileFluxCore tileEntity) {
-        super(player, tileEntity);
-        this.network = FluxNetworkCache.instance.getClientNetwork(tileEntity.networkID);
+    public GuiFluxCore(EntityPlayer player, INetworkConnector connector) {
+        super(player, connector);
+        this.network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
         this.networkValid = !network.isInvalid();
     }
 
     @Override
+    public void initGui(){
+        super.initGui();
+        buttonLists.clear();
+        buttons.clear();
+        switches.clear();
+        textBoxes.clear();
+
+        buttonLists.add(buttons);
+        buttonLists.add(switches);
+    }
+
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
+        textBoxes.forEach(TextboxButton::drawTextBox);
+        buttonLists.forEach(list -> list.forEach(b -> b.drawButton(mc, mouseX, mouseY, guiLeft, guiTop)));
     }
 
-    @Override
-    protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
-        super.drawPopupForegroundLayer(mouseX, mouseY);
-    }
-
-    @Override
     protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+        buttonLists.forEach(list -> list.forEach(b -> b.updateButton(partialTicks, mouseX, mouseY)));
     }
 
     @Override
-    protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
-        if(mouseButton == 0) {
-            for(NavigationButton button : navigationButtons) {
-                if(button.isMouseHovered(mc, mouseX, mouseY)) {
-                    button.switchTab(button.buttonNavigationId, player, tileEntity);
-                    if(FluxConfig.enableButtonSound)
-                        mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
+        CYCLE: for(List<? extends GuiButtonCore> list : buttonLists){
+           for(GuiButtonCore button : list){
+                if(button.clickable && button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
+                    onButtonClicked(button, mouseX - guiLeft, mouseY - guiTop, mouseButton);
+                    break CYCLE;
                 }
+            }
+        }
+        textBoxes.forEach(b -> b.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton));
+    }
+
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton){}
+
+
+    protected void keyTypedMain(char c, int k) throws IOException {
+
+        for(TextboxButton text : textBoxes) {
+            if(text.isFocused()) {
+                text.textboxKeyTyped(c, k);
             }
         }
     }
@@ -78,11 +101,18 @@ public abstract class GuiFluxCore extends GuiCore {
     public void updateScreen() {
         super.updateScreen();
         if(timer1 == 0) {
-            this.network = FluxNetworkCache.instance.getClientNetwork(tileEntity.networkID);
+            this.network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
             this.networkValid = !network.isInvalid();
         }
         timer1++;
         timer1 %= 20;
+    }
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, false);
+        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
     }
 
     @Override
@@ -99,54 +129,22 @@ public abstract class GuiFluxCore extends GuiCore {
         GlStateManager.popMatrix();
     }
 
-    protected void renderNetwork(String name, int color, int x, int y) {
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
-
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
-        GlStateManager.color(f, f1, f2);
-
-        mc.getTextureManager().bindTexture(GUI_BAR);
-        drawTexturedModalRect(x, y, 0, 0, 135, 12);
-        fontRenderer.drawString(name, x + 4, y + 2, 0xffffff);
-
-        GlStateManager.popMatrix();
-    }
-
-    protected void renderTransfer(ITransferHandler handler, int color, int x, int y) {
+    protected void renderTransfer(IFluxConnector fluxConnector, int color, int x, int y) {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.color(1.0f, 1.0f, 1.0f);
 
-        fontRenderer.drawString(FluxUtils.getTransferInfo(tileEntity.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), handler.getChange()), x, y, color);
-        fontRenderer.drawString((tileEntity.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
-                ": " + TextFormatting.BLUE + FluxUtils.format(handler.getEnergyStored(), FluxUtils.TypeNumberFormat.COMMAS,
+        fontRenderer.drawString(FluxUtils.getTransferInfo(fluxConnector.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), fluxConnector.getTransferHandler().getChange()), x, y, color);
+        fontRenderer.drawString((fluxConnector.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
+                ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferHandler().getEnergyStored(), FluxUtils.TypeNumberFormat.COMMAS,
                 network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
 
-        renderItemStack(tileEntity.getDisplayStack(), x - 20, y + 1);
+        renderItemStack(fluxConnector.getDisplayStack(), x - 20, y + 1);
 
         GlStateManager.popMatrix();
     }
 
-    protected void renderItemStack(ItemStack stack, int x, int y) {
-        GlStateManager.enableDepth();
-        GlStateManager.translate(0.0F, 0.0F, 32.0F);
-        this.zLevel = 200.0F;
-        this.itemRender.zLevel = 200.0F;
-
-        RenderHelper.enableGUIStandardItemLighting();
-        itemRender.renderItemAndEffectIntoGUI(stack, x, y);
-        itemRender.renderItemOverlayIntoGUI(fontRenderer, stack, x, y, "");
-        RenderHelper.disableStandardItemLighting();
-
-        this.zLevel = 0.0F;
-        this.itemRender.zLevel = 0.0F;
-        GlStateManager.disableDepth();
-    }
 
     protected List<String> getFluxInfo(IFluxConnector flux) {
         List<String> list = Lists.newArrayList();
@@ -179,12 +177,18 @@ public abstract class GuiFluxCore extends GuiCore {
         return list;
     }
 
-    protected void renderNavigationPrompt(String error, String prompt) {
-        GlStateManager.pushMatrix();
-        drawCenteredString(fontRenderer, error, xSize / 2, 16, 0x808080);
-        GlStateManager.scale(0.625, 0.625, 0.625);
-        drawCenteredString(fontRenderer, FluxTranslate.CLICK.t() + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE.t(), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
-        GlStateManager.scale(1.6, 1.6, 1.6);
-        GlStateManager.popMatrix();
+    public void onSuperAdminChanged(){}
+
+    public void setConnectedNetwork(int networkID, String password){
+        if(connector instanceof IFluxConnector){
+            PacketHandler.network.sendToServer(new PacketTile.TileMessage(PacketTileType.SET_NETWORK, PacketTileHandler.getSetNetworkPacket(networkID, password), ((IFluxConnector)connector).getCoords().getPos(), ((IFluxConnector)connector).getCoords().getDimension()));
+        }
+        if(connector instanceof ItemAdminConfigurator.AdminConnector){
+            FluxNetworks.proxy.admin_viewing_network_id = networkID;
+            FluxNetworks.proxy.admin_viewing_network = FluxNetworkCache.instance.getClientNetwork(networkID);
+        }
+        if(connector instanceof ItemConfigurator.NetworkConnector){
+            PacketHandler.network.sendToServer(new PacketSetConfiguratorNetwork.SetConfiguratorNetworkMessage(networkID, password));
+        }
     }
 }

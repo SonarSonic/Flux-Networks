@@ -129,6 +129,12 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
+    public void open(EntityPlayer player) {}
+
+    @Override
+    public void close(EntityPlayer player) {}
+
+    @Override
     public UUID getConnectionOwner() {
         return playerUUID;
     }
@@ -154,14 +160,10 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
-    public void connect(IFluxNetwork network) {
-
-    }
+    public void connect(IFluxNetwork network) {}
 
     @Override
-    public void disconnect(IFluxNetwork network) {
-
-    }
+    public void disconnect(IFluxNetwork network) {}
 
     @Override
     public ITransferHandler getTransferHandler() {

@@ -21,7 +21,7 @@ public class PageLabelButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
         GlStateManager.pushMatrix();
 
         drawRect(x, y, x + width, y + 1, 0x80ffffff);

@@ -2,44 +2,42 @@ package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.EnumNavigationTabs;
 import fluxnetworks.api.FeedbackInfo;
+import fluxnetworks.api.INetworkConnector;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.client.gui.basic.GuiCore;
+import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.basic.GuiTabPages;
-import fluxnetworks.client.gui.button.*;
+import fluxnetworks.client.gui.popups.GuiPopNetworkPassword;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.connection.NetworkSettings;
-import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.PacketTile;
-import fluxnetworks.common.network.PacketTileHandler;
-import fluxnetworks.common.network.PacketTileType;
-import fluxnetworks.common.tileentity.TileFluxCore;
 import fluxnetworks.common.core.FluxUtils;
-import net.minecraft.client.Minecraft;
+import fluxnetworks.common.item.ItemConfigurator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
-    public TextboxButton password;
     public IFluxNetwork selectedNetwork;
 
-    private int timer2;
+    protected int timer2;
 
-    public GuiTabSelection(EntityPlayer player, TileFluxCore tileEntity) {
-        super(player, tileEntity);
+    public GuiTabSelection(EntityPlayer player, INetworkConnector connector) {
+        super(player, connector);
         gridStartX = 15;
         gridStartY = 22;
         gridHeight = 13;
         gridPerPage = 10;
         elementHeight = 12;
         elementWidth = 146;
+    }
+
+    public EnumNavigationTabs getNavigationTab(){
+        return EnumNavigationTabs.TAB_SELECTION;
     }
 
     @Override
@@ -51,7 +49,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             String amount = FluxTranslate.TOTAL.t() + ": " + elements.size();
             fontRenderer.drawString(amount, 158 - fontRenderer.getStringWidth(amount), 10, 0xffffff);
             fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.name, 19, 10, 0xffffff);
-            if (main) {
+            if (!hasActivePopup()) {
                 drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 150, 0xffffff);
             }
         }
@@ -61,31 +59,14 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     protected void onElementClicked(IFluxNetwork element, int mouseButton) {
         if(mouseButton == 0) {
             selectedNetwork = element;
-            PacketHandler.network.sendToServer(new PacketTile.TileMessage(PacketTileType.SET_NETWORK, PacketTileHandler.getSetNetworkPacket(element.getNetworkID(), ""), tileEntity.getPos(), tileEntity.getWorld().provider.getDimension()));
-        }
-    }
-
-    @Override
-    protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
-        super.drawPopupForegroundLayer(mouseX, mouseY);
-        if(selectedNetwork != null) {
-            drawCenteredString(fontRenderer, FluxTranslate.CONNECTING_TO.t() + " " + selectedNetwork.getSetting(NetworkSettings.NETWORK_NAME), 88, 50, 0xffffff);
-        }
-        drawCenteredString(fontRenderer, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
-
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 110, 0xffffff);
+            setConnectedNetwork(element.getNetworkID(), "");
+         }
     }
 
     @Override
     public void initGui() {
-
-        for(int i = 0; i < 7; i++) {
-            navigationButtons.add(new NavigationButton(width / 2 - 75 + 18 * i, height / 2 - 99, i));
-        }
-        navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
-        navigationButtons.get(1).setMain();
-
         super.initGui();
+        configureNavigationButtons(EnumNavigationTabs.TAB_SELECTION, navigationTabs);
     }
 
     @Override
@@ -94,7 +75,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.color(1.0f, 1.0f, 1.0f);
-        mc.getTextureManager().bindTexture(GuiCore.GUI_BAR);
+        mc.getTextureManager().bindTexture(GuiDraw.GUI_BAR);
 
         int color = element.getSetting(NetworkSettings.NETWORK_COLOR);
 
@@ -102,7 +83,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         float f1 = (float)(color >> 8 & 255) / 255.0F;
         float f2 = (float)(color & 255) / 255.0F;
 
-        boolean selected = tileEntity.getNetworkID() == element.getNetworkID();
+        boolean selected = connector.getNetworkID() == element.getNetworkID();
         boolean isEncrypted = element.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted();
 
         if(isEncrypted) {
@@ -130,54 +111,18 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
     @Override
     public void renderElementTooltip(IFluxNetwork element, int mouseX, int mouseY) {
-        if(!main)
+        if(hasActivePopup())
             return;
         /*GlStateManager.pushMatrix();
         GlStateManager.popMatrix();*/
     }
-
-    private void initPopGui() {
-        popButtons.clear();
-        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 24, 86, 48, 12, 11));
-        popButtons.add(new NormalButton(FluxTranslate.CONNECT.t(), 102, 86, 48, 12, 12));
-
-        password = TextboxButton.create(this, "", 5, fontRenderer, 70, 66, 81, 12);
-        password.setTextInvisible();
-        password.setMaxStringLength(16);
-
-        popBoxes.add(password);
-    }
-
     @Override
-    protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
         if(mouseButton == 0) {
             if (mouseX > guiLeft + 45 && mouseX < guiLeft + 75 && mouseY > guiTop + 10 && mouseY < getGuiTop() + 17) {
                 sortType = FluxUtils.incrementEnum(sortType, SortType.values());
                 sortGrids(sortType);
-            }
-        }
-    }
-
-    @Override
-    protected void mousePopupClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mousePopupClicked(mouseX, mouseY, mouseButton);
-        if(mouseButton == 0) {
-            for(NormalButton button : popButtons) {
-                if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
-                    if(button.id == 11) {
-                        main = true;
-                    }
-                    if(button.id == 12) {
-                        if(password.getText().length() > 0) {
-                            PacketHandler.network.sendToServer(new PacketTile.TileMessage(PacketTileType.SET_NETWORK, PacketTileHandler.getSetNetworkPacket(selectedNetwork.getNetworkID(), password.getText()), tileEntity.getPos(), tileEntity.getWorld().provider.getDimension()));
-                            password.setText("");
-                        }
-                    }
-                }
-            }
-            if(main) {
-                backToMain();
             }
         }
     }
@@ -189,11 +134,18 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             refreshPages(FluxNetworkCache.instance.getAllClientNetworks());
         }
         if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
-            backToMain();
+           closePopUp();
+           if(connector instanceof ItemConfigurator.NetworkConnector){
+               ItemConfigurator.NetworkConnector networkConnector = (ItemConfigurator.NetworkConnector)connector;
+               networkConnector.network = selectedNetwork;
+               networkConnector.networkID = selectedNetwork.getNetworkID();
+
+               this.network = selectedNetwork;
+               this.networkValid = !selectedNetwork.isInvalid();
+           }
         }
         if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.PASSWORD_REQUIRE) {
-            main = false;
-            initPopGui();
+            openPopUp(new GuiPopNetworkPassword(this, player, connector));
             FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
         }
         timer2++;
@@ -211,19 +163,6 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
                 elements.sort(Comparator.comparing(IFluxNetwork::getNetworkName));
                 refreshCurrentPageInternal();
                 break;
-        }
-    }
-
-    @Override
-    protected void keyTypedPop(char c, int k) throws IOException {
-        super.keyTypedPop(c, k);
-    }
-
-    @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        super.setWorldAndResolution(mc, width, height);
-        if(!main) {
-            initPopGui();
         }
     }
 }

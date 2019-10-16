@@ -25,6 +25,7 @@ public class FluxNetworkCache {
 
     /** Client Cache **/
     public Map<Integer, IFluxNetwork> networks = new HashMap<>();
+    public boolean superAdminClient = false;
 
     public void clearNetworks() {
         FluxNetworkData.clear();
@@ -32,6 +33,7 @@ public class FluxNetworkCache {
 
     public void clearClientCache() {
         networks.clear();
+        superAdminClient = false;
     }
 
     public boolean hasSpaceLeft(EntityPlayer player) {

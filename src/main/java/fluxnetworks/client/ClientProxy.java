@@ -1,10 +1,8 @@
 package fluxnetworks.client;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.client.render.FluxStorageModel;
-import fluxnetworks.client.render.ItemFluxStorageRenderer;
 import fluxnetworks.client.render.TileFluxStorageRenderer;
 import fluxnetworks.common.CommonProxy;
 import fluxnetworks.common.connection.FluxNetworkCache;

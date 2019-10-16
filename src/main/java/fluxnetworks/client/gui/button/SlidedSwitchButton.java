@@ -1,9 +1,8 @@
 package fluxnetworks.client.gui.button;
 
 import fluxnetworks.client.gui.basic.GuiButtonCore;
-import fluxnetworks.client.gui.basic.GuiCore;
+import fluxnetworks.client.gui.basic.GuiDraw;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 /**
@@ -30,7 +29,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop){
         GlStateManager.pushMatrix();
         GlStateManager.enableAlpha();
         GlStateManager.enableBlend();
@@ -41,7 +40,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
         //mc.fontRenderer.drawString(text, x - mc.fontRenderer.getStringWidth(text), y, 0xffffff);
 
-        mc.getTextureManager().bindTexture(GuiCore.BUTTONS);
+        mc.getTextureManager().bindTexture(GuiDraw.BUTTONS);
 
         // Green background
         //drawTexturedModalRect(x, y, 32, 32, center * 2, 8);
@@ -64,7 +63,9 @@ public class SlidedSwitchButton extends GuiButtonCore {
         slideControl = !slideControl;
     }
 
-    public void updatePosition(float par) {
+
+    public void updateButton(float partialTicks, int mouseX, int mouseY) {
+        float par = partialTicks*4;
         if(slideControl) {
             if(center <= 8 - par) {
                 center += par;

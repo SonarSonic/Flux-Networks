@@ -1,25 +1,19 @@
 package fluxnetworks.client.gui.button;
 
 import fluxnetworks.client.gui.basic.GuiButtonCore;
-import fluxnetworks.client.gui.basic.GuiCore;
+import fluxnetworks.client.gui.basic.GuiDraw;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class BatchEditButton extends GuiButtonCore {
 
-    public boolean clickable = true;
-    private int guiLeft, guiTop;
-
-    public BatchEditButton(int x, int y, int guiLeft, int guiTop, int id, String text) {
+    public BatchEditButton(int x, int y, int id, String text) {
         super(x, y, 12, 12, id);
-        this.guiLeft = guiLeft;
-        this.guiTop = guiTop;
         this.text = text;
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
         GlStateManager.pushMatrix();
         GlStateManager.enableAlpha();
         GlStateManager.enableBlend();
@@ -31,7 +25,7 @@ public class BatchEditButton extends GuiButtonCore {
 
         boolean b = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
 
-        mc.getTextureManager().bindTexture(GuiCore.BUTTONS);
+        mc.getTextureManager().bindTexture(GuiDraw.BUTTONS);
         drawTexturedModalRect(x, y, 16 * id, 48 + (b ? 16 : 0), 12, 12);
 
         if(clickable && b) {

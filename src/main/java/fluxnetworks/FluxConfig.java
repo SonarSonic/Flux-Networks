@@ -26,7 +26,7 @@ public class FluxConfig {
     public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
     public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
-    public static int maximumPerPlayer;
+    public static int maximumPerPlayer, superAdminRequiredPermission;
     public static String[] blockBlacklistStrings;
 
     public static void init(File file) {
@@ -81,6 +81,7 @@ public class FluxConfig {
 
         maximumPerPlayer = config.getInt("Maximum Networks Per Player", NETWORKS, 3, -1, Integer.MAX_VALUE, "Maximum networks each player can have. -1 = no limit");
         enableSuperAdmin = config.getBoolean("Allow Network Super Admin", NETWORKS, true, "Allows someone to be a network super admin, otherwise, no one can access or dismantle your flux devices or delete your networks without permission");
+        superAdminRequiredPermission = config.getInt("Permission level required to activate Super Admin", NETWORKS, 1, 0, Integer.MAX_VALUE, "See ops.json. If the player has permission level equal or greater to the value set here they will be able to Activate Super Admin. Setting this to 0 will allow anyone to active Super Admin.");
 
         enableFluxRecipe = config.getBoolean("Enable Flux Recipe", GENERAL, true, "Enables redstones being compressed with the bedrock and obsidian to get flux");
         enableChunkLoading = config.getBoolean("Allow Flux Chunk Loading", GENERAL, true, "Allows flux connectors to work as chunk loaders");

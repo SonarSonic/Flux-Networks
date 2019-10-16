@@ -6,6 +6,7 @@ import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.capabilities.DefaultSuperAdmin;
+import fluxnetworks.common.connection.FluxNetworkInvalid;
 import fluxnetworks.common.core.EntityFireItem;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.data.FluxChunkManager;
@@ -17,6 +18,7 @@ import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.integration.MekanismIntegration;
 import fluxnetworks.common.integration.TOPIntegration;
 import fluxnetworks.common.network.PacketNetworkUpdate;
+import fluxnetworks.common.network.PacketSuperAdmin;
 import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.registry.RegistryItems;
 import net.minecraft.creativetab.CreativeTabs;
@@ -56,6 +58,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CommonProxy {
 
     public boolean baublesLoaded;
+
+    public int admin_viewing_network_id = -1;
+    public boolean detailed_network_view;
+    public IFluxNetwork admin_viewing_network = FluxNetworkInvalid.instance;
 
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
@@ -179,6 +185,7 @@ public class CommonProxy {
         EntityPlayer player = event.player;
         if(!player.world.isRemote) {
             PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(FluxNetworkCache.instance.getAllNetworks(), NBTType.NETWORK_GENERAL), (EntityPlayerMP) player);
+            PacketHandler.network.sendTo(new PacketSuperAdmin.SuperAdminMessage(DefaultSuperAdmin.isPlayerSuperAdmin(player)), (EntityPlayerMP) player);
         }
     }
 

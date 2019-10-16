@@ -1,5 +1,6 @@
 package fluxnetworks.common.item;
 
+import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxTranslate;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -16,6 +17,8 @@ public class ItemFlux extends ItemCore {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(FluxTranslate.FLUX_TOOLTIP.t());
+        if(FluxConfig.enableFluxRecipe) {
+            tooltip.add(FluxTranslate.FLUX_TOOLTIP.t());
+        }
     }
 }

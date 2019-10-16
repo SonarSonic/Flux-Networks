@@ -1,11 +1,18 @@
 package fluxnetworks.common.item;
 
 import fluxnetworks.FluxConfig;
+import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Capabilities;
+import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ISuperAdmin;
+import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.network.PacketGUIPermission;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -27,26 +34,40 @@ public class ItemAdminConfigurator extends ItemConfigurator {
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         return EnumActionResult.PASS;
-        //return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        if(playerIn.isSneaking()) {
-            ItemStack itemstack = playerIn.getHeldItem(handIn);
-            if(!worldIn.isRemote) {
-                ISuperAdmin sa = playerIn.getCapability(Capabilities.SUPER_ADMIN, null);
-                if (sa != null) {
-                    sa.changePermission();
-                    TextComponentTranslation textComponents = new TextComponentTranslation(sa.getPermission() ? FluxTranslate.SA_ON_KEY : FluxTranslate.SA_OFF_KEY);
-                    if(sa.getPermission())
-                        textComponents.getStyle().setColor(TextFormatting.DARK_PURPLE);
-                    playerIn.sendStatusMessage(textComponents, true);
-                }
-            }
-            return new ActionResult<>(EnumActionResult.SUCCESS, itemstack);
+        if(!worldIn.isRemote) {
+            playerIn.openGui(FluxNetworks.instance, 1, worldIn, 0, 0, 0);
         }
-        return super.onItemRightClick(worldIn, playerIn, handIn);
+        return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
+    }
+
+    private static AdminConnector connector = new AdminConnector();
+
+    public static INetworkConnector getAdminConnector(){
+        return connector;
+    }
+
+    public static class AdminConnector implements INetworkConnector{
+
+        @Override
+        public int getNetworkID() {
+            return FluxNetworks.proxy.admin_viewing_network_id;
+        }
+
+        @Override
+        public IFluxNetwork getNetwork() {
+            return FluxNetworks.proxy.admin_viewing_network;
+        }
+
+        @Override
+        public void open(EntityPlayer player) {}
+
+        @Override
+        public void close(EntityPlayer player) {}
+
     }
 
 }

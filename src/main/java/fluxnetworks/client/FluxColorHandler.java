@@ -7,6 +7,7 @@ import fluxnetworks.common.block.BlockFluxCore;
 import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
+import fluxnetworks.common.item.ItemConfigurator;
 import fluxnetworks.common.network.PacketColorRequest;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import fluxnetworks.common.core.FluxUtils;
@@ -150,6 +151,13 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     public static int colorMultiplierForConfigurator(ItemStack stack, int tintIndex) {
         if (tintIndex == 1) {
+            Gui screen = Minecraft.getMinecraft().currentScreen;
+            if (screen instanceof GuiFluxCore) {
+                GuiFluxCore guiFluxCore = (GuiFluxCore)screen;
+                if(guiFluxCore.connector instanceof ItemConfigurator.NetworkConnector){
+                    return guiFluxCore.network.getSetting(NetworkSettings.NETWORK_COLOR);
+                }
+            }
             NBTTagCompound tag = stack.getSubCompound(FluxUtils.CONFIGS_TAG);
             if (tag != null) {
                 return getOrRequestNetworkColor(tag.getInteger(FluxConfigurationType.NETWORK.getNBTName()));

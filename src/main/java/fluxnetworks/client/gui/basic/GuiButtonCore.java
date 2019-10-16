@@ -12,6 +12,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public abstract class GuiButtonCore extends Gui {
 
+    public boolean clickable = true;
+
     public int x;
     public int y;
 
@@ -30,14 +32,18 @@ public abstract class GuiButtonCore extends Gui {
         this.id = id;
     }
 
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {}
+    private final void drawButton(Minecraft mc, int mouseX, int mouseY) {}
+
+    public abstract void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop);
+
+    public void updateButton(float partialTicks, int mouseX, int mouseY) {}
 
     protected int getHoverState(boolean b) {
         return b ? 1 : 0;
     }
 
     public boolean isMouseHovered(Minecraft mc, int mouseX, int mouseY) {
-        return mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+        return mouseX >= this.x && mouseX < this.x + this.width && mouseY < this.y + this.height && mouseY >= this.y;
     }
 
     public int getId() {

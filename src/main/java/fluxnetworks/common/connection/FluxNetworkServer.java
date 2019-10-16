@@ -1,7 +1,6 @@
 package fluxnetworks.common.connection;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.Capabilities;
 import fluxnetworks.api.SecurityType;
@@ -11,6 +10,7 @@ import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.api.tileentity.IFluxPlug;
 import fluxnetworks.api.tileentity.IFluxPoint;
+import fluxnetworks.api.tileentity.IFluxStorage;
 import fluxnetworks.common.event.FluxConnectionEvent;
 import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -85,21 +85,23 @@ public class FluxNetworkServer extends FluxNetworkBase {
     @SuppressWarnings("unchecked")
     @Override
     public void onStartServerTick() {
+        network_stats.getValue().onStartServerTick();
+        network_stats.getValue().startProfiling();
         List<IFluxConnector> fluxConnectors = getConnections(FluxType.flux);
         fluxConnectors.forEach(f -> f.getTransferHandler().onServerStartTick());
+        network_stats.getValue().stopProfiling();
     }
 
     @Override
     public void onEndServerTick() {
+        network_stats.getValue().startProfiling();
         addConnections();
         removeConnections();
         if(sortConnections) {
             sortConnections();
             sortConnections = false;
         }
-
         bufferLimiter = 0;
-
         if(!sortedPoints.isEmpty()) {
             sortedPoints.forEach(g -> g.getConnectors().forEach(p -> bufferLimiter += p.getTransferHandler().removeFromNetwork(Integer.MAX_VALUE, true)));
             if (bufferLimiter > 0 && !sortedPlugs.isEmpty()) {
@@ -110,8 +112,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
                     while (plugTransferIterator.hasNext()) {
                         IFluxPlug plug = plugTransferIterator.getCurrentFlux();
                         IFluxPoint point = pointTransferIterator.getCurrentFlux();
-                        if(plug.getConnectionType() == point.getConnectionType()) { // Storage always have the lowest priority and must be
-                            break CYCLE;
+                        if(plug.getConnectionType() == point.getConnectionType()) {
+                            break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                         }
                         long operate = Math.min(plug.getTransferHandler().getBuffer(), point.getTransferHandler().getRequest());
                         long removed = point.getTransferHandler().removeFromNetwork(operate, false);
@@ -130,24 +132,15 @@ public class FluxNetworkServer extends FluxNetworkBase {
                                 continue CYCLE;
                             }
                         }
-                        /*long removed = plug.getTransferHandler().addToNetwork(point.getTransferHandler().getRequest(), true);
-                        long added = point.getTransferHandler().removeFromNetwork(removed, true, false);
-                        if(added > 0) {
-                            long actualRemoved = plug.getTransferHandler().addToNetwork(added, false);
-                            point.getTransferHandler().removeFromNetwork(actualRemoved, false, false);
-                            if(point.getTransferHandler().getRequest() <= 0) {
-                                continue CYCLE;
-                            }
-                        } else {
-                            plugTransferIterator.incrementFlux();
-                        }*/
                     }
-                    break;
+                    break; //all plugs have been used
                 }
             }
         }
+        network_stats.getValue().stopProfiling();
         network_stats.getValue().onEndServerTick();
     }
+
 
     @Override
     public AccessPermission getMemberPermission(EntityPlayer player) {

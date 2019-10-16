@@ -16,7 +16,7 @@ public class SimpleToggleButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
         GlStateManager.pushMatrix();
 
         if (isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {

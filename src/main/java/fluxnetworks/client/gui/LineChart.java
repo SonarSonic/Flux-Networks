@@ -1,6 +1,5 @@
 package fluxnetworks.client.gui;
 
-import fluxnetworks.client.gui.basic.GuiCore;
 import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

@@ -29,6 +29,10 @@ public class PacketHandler {
         network.registerMessage(PacketBatchEditing.class, PacketBatchEditing.BatchEditingMessage.class, 12, Side.SERVER);
         network.registerMessage(PacketPermissionRequest.class, PacketPermissionRequest.PermissionRequestMessage.class, 13, Side.SERVER);
         network.registerMessage(PacketGUIPermission.class, PacketGUIPermission.GUIPermissionMessage.class, 14, Side.CLIENT);
+        network.registerMessage(PacketSuperAdmin.class, PacketSuperAdmin.SuperAdminMessage.class, 15, Side.CLIENT);
+        network.registerMessage(PacketActivateSuperAdmin.class, PacketActivateSuperAdmin.ActivateSuperAdminMessage.class, 16, Side.SERVER);
+        network.registerMessage(PacketConfiguratorSettings.class, PacketConfiguratorSettings.ConfiguratorSettingsMessage.class, 17, Side.SERVER);
+        network.registerMessage(PacketSetConfiguratorNetwork.class, PacketSetConfiguratorNetwork.SetConfiguratorNetworkMessage.class, 18, Side.SERVER);
     }
 
     public static EntityPlayer getPlayer(MessageContext ctx) {

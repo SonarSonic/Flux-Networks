@@ -2,7 +2,11 @@ package fluxnetworks.client.gui;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.EnumNavigationTabs;
+import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
+import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
@@ -20,23 +24,29 @@ import java.io.IOException;
 /**
  * The home page.
  */
-public class GuiFluxHome extends GuiFluxCore {
+public class GuiFluxConnectorHome extends GuiTabCore {
 
     public TextboxButton fluxName, priority, limit;
 
     public SlidedSwitchButton surge, disableLimit, chunkLoad;
 
+    private TileFluxCore tileEntity;
     private int timer;
 
-    public GuiFluxHome(EntityPlayer player, TileFluxCore tileEntity) {
+    public GuiFluxConnectorHome(EntityPlayer player, TileFluxCore tileEntity) {
         super(player, tileEntity);
+        this.tileEntity = tileEntity;
+    }
+
+    public EnumNavigationTabs getNavigationTab(){
+        return EnumNavigationTabs.TAB_HOME;
     }
 
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
-        renderTransfer(tileEntity.getTransferHandler(), 0xffffff, 30, 90);
+        renderTransfer(tileEntity, 0xffffff, 30, 90);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
         fontRenderer.drawString(FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
@@ -47,34 +57,22 @@ public class GuiFluxHome extends GuiFluxCore {
     }
 
     @Override
-    protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
-    }
-
-    @Override
     public void initGui() {
         super.initGui();
+        configureNavigationButtons(EnumNavigationTabs.TAB_HOME, navigationTabs);
+
         int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
         fluxName = TextboxButton.create(this, FluxTranslate.NAME.t() + ": ", 0, fontRenderer, 16, 28, 144, 12).setOutlineColor(color);
-        //fluxName.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
         fluxName.setMaxStringLength(24);
         fluxName.setText(tileEntity.getCustomName());
 
         priority = TextboxButton.create(this, FluxTranslate.PRIORITY.t() + ": ", 1, fontRenderer, 16, 45, 144, 12).setOutlineColor(color).setDigitsOnly();
-        //priority.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
         priority.setMaxStringLength(5);
         priority.setText(String.valueOf(tileEntity.priority));
 
         limit = TextboxButton.create(this, FluxTranslate.TRANSFER_LIMIT.t() + ": ", 2, fontRenderer, 16, 62, 144, 12).setOutlineColor(color).setDigitsOnly();
-        //limit.setOutlineColor(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000);
         limit.setMaxStringLength(9);
         limit.setText(String.valueOf(tileEntity.limit));
-
-        for(int i = 0; i < 7; i++) {
-            navigationButtons.add(new NavigationButton(width / 2 - 75 + 18 * i, height / 2 - 99, i));
-        }
-        navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
-        navigationButtons.get(0).setMain();
 
         surge = new SlidedSwitchButton(140, 120, 1, guiLeft, guiTop, tileEntity.surgeMode);
         disableLimit = new SlidedSwitchButton(140, 132, 2, guiLeft, guiTop, tileEntity.disableLimit);
@@ -106,27 +104,23 @@ public class GuiFluxHome extends GuiFluxCore {
         }
     }
 
-    @Override
-    protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseMainClicked(mouseX, mouseY, mouseButton);
-        if(mouseButton == 0) {
-            for(SlidedSwitchButton s : switches) {
-                if(s.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
-                    s.switchButton();
-                    switch (s.id) {
-                        case 1:
-                            tileEntity.surgeMode = s.slideControl;
-                            PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 4));
-                            break;
-                        case 2:
-                            tileEntity.disableLimit = s.slideControl;
-                            PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 5));
-                            break;
-                        case 3:
-                            PacketHandler.network.sendToServer(new PacketTile.TileMessage(PacketTileType.CHUNK_LOADING, PacketTileHandler.getChunkLoadPacket(s.slideControl), tileEntity.getPos(), tileEntity.getWorld().provider.getDimension()));
-                            break;
-                    }
-                }
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton){
+        super.onButtonClicked(button, mouseX, mouseY, mouseButton);
+        if(mouseButton == 0 && button instanceof SlidedSwitchButton){
+            SlidedSwitchButton switchButton = (SlidedSwitchButton)button;
+            switchButton.switchButton();
+            switch (switchButton.id) {
+                case 1:
+                    tileEntity.surgeMode = switchButton.slideControl;
+                    PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 4));
+                    break;
+                case 2:
+                    tileEntity.disableLimit = switchButton.slideControl;
+                    PacketHandler.network.sendToServer(new PacketByteBuf.ByteBufMessage(tileEntity, tileEntity.getPos(), 5));
+                    break;
+                case 3:
+                    PacketHandler.network.sendToServer(new PacketTile.TileMessage(PacketTileType.CHUNK_LOADING, PacketTileHandler.getChunkLoadPacket(switchButton.slideControl), tileEntity.getPos(), tileEntity.getWorld().provider.getDimension()));
+                    break;
             }
         }
     }
@@ -144,16 +138,6 @@ public class GuiFluxHome extends GuiFluxCore {
         }
         timer++;
         timer %= 100;
-    }
-
-    @Override
-    protected void keyTypedMain(char c, int k) throws IOException {
-        super.keyTypedMain(c, k);
-        if (k == 1 || this.mc.gameSettings.keyBindInventory.isActiveAndMatches(k)) {
-            if(textBoxes.stream().noneMatch(GuiTextField::isFocused)) {
-                mc.player.closeScreen();
-            }
-        }
     }
 
 }

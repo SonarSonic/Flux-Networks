@@ -2,6 +2,7 @@ package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.api.AccessPermission;
+import fluxnetworks.api.INetworkConnector;
 import fluxnetworks.client.gui.button.PageLabelButton;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.tileentity.TileFluxCore;
@@ -10,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import java.io.IOException;
 import java.util.List;
 
+/**for tabs which have multiple pages: e.g. Network Selection, Network Connections */
 public abstract class GuiTabPages<T> extends GuiTabCore {
 
     public List<T> elements = Lists.newArrayList();
@@ -20,15 +22,15 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
 
     public int page = 1, currentPages = 1, pages = 1, gridPerPage = 1, gridStartX = 0, gridStartY = 0, gridHeight = 0, elementHeight = 0, elementWidth = 0;
 
-    public GuiTabPages(EntityPlayer player, TileFluxCore tileEntity) {
-        super(player, tileEntity);
+    public GuiTabPages(EntityPlayer player, INetworkConnector connector) {
+        super(player, connector);
     }
 
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         if(pages > 1) {
-            labelButton.drawButton(mc, mouseX, mouseY);
+            labelButton.drawButton(mc, mouseX, mouseY, guiLeft, guiTop);
         }
         int i = 0;
         for(T s : current) {
@@ -77,7 +79,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     protected abstract void onElementClicked(T element, int mouseButton);
 
     @Override
-    protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
         T e = getHoveredElement(mouseX - guiLeft, mouseY - guiTop);
         if(e != null) {

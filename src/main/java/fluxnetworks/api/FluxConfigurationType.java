@@ -50,7 +50,7 @@ public class FluxConfigurationType {
     //// PRIORITY \\\\
 
     public static void copyPriority(NBTTagCompound nbt, String key, TileFluxCore tile) {
-        nbt.setInteger(key, tile.getPriority());
+        nbt.setInteger(key, tile.priority);
     }
 
     public static void pastePriority(NBTTagCompound nbt, String key, TileFluxCore tile) {

@@ -2,19 +2,18 @@ package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.AccessPermission;
+import fluxnetworks.api.EnumNavigationTabs;
 import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.client.gui.basic.GuiCore;
+import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.basic.GuiTabPages;
-import fluxnetworks.client.gui.button.NavigationButton;
-import fluxnetworks.client.gui.button.NormalButton;
+import fluxnetworks.client.gui.popups.GuiPopUserEdit;
 import fluxnetworks.common.connection.NetworkMember;
 import fluxnetworks.common.connection.NetworkSettings;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.*;
-import fluxnetworks.common.tileentity.TileFluxCore;
-import net.minecraft.client.Minecraft;
+import fluxnetworks.common.network.PacketNetworkUpdateRequest;
+import fluxnetworks.common.network.PacketPermissionRequest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
@@ -28,13 +27,11 @@ import java.util.Optional;
 public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     public NetworkMember selectedPlayer;
-    public NormalButton transferOwnership;
-    public int transferOwnershipCount;
 
     private int timer;
 
-    public GuiTabMembers(EntityPlayer player, TileFluxCore tileEntity) {
-        super(player, tileEntity);
+    public GuiTabMembers(EntityPlayer player, INetworkConnector connector) {
+        super(player, connector);
         gridStartX = 15;
         gridStartY = 22;
         gridHeight = 13;
@@ -42,6 +39,10 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         elementHeight = 12;
         elementWidth = 146;
         PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
+    }
+
+    public EnumNavigationTabs getNavigationTab(){
+        return EnumNavigationTabs.TAB_MEMBER;
     }
 
     @Override
@@ -58,28 +59,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    protected void drawPopupForegroundLayer(int mouseX, int mouseY) {
-        drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
-        super.drawPopupForegroundLayer(mouseX, mouseY);
-        drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 162, 0xffffff);
-        drawCenteredString(fontRenderer, TextFormatting.AQUA + selectedPlayer.getCachedName(), 88, 38, 0xffffff);
-        drawCenteredString(fontRenderer, selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
-        String text = selectedPlayer.getPlayerUUID().toString();
-        GlStateManager.scale(0.625, 0.625, 0.625);
-        drawCenteredString(fontRenderer, "UUID: " + text.substring(0, 16), (int) (88 * 1.6), (int) (60 * 1.6), 0xffffff);
-        drawCenteredString(fontRenderer, text.substring(16), (int) (88 * 1.6), (int) (66 * 1.6), 0xffffff);
-        GlStateManager.scale(1.6, 1.6, 1.6);
-    }
-
-    @Override
     public void initGui() {
-
-        for(int i = 0; i < 7; i++) {
-            navigationButtons.add(new NavigationButton(width / 2 - 75 + 18 * i, height / 2 - 99, i));
-        }
-        navigationButtons.add(new NavigationButton(width / 2 + 59, height / 2 - 99, 7));
-        navigationButtons.get(5).setMain();
-
         /*if(networkValid) {
 
             buttons.add(new NormalButton("+", 152, 150, 12, 12, 1));
@@ -91,6 +71,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }*/
 
         super.initGui();
+        configureNavigationButtons(EnumNavigationTabs.TAB_MEMBER, navigationTabs);
     }
 
     @Override
@@ -102,61 +83,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }*/
         if(mouseButton == 0) {
             selectedPlayer = element;
-            main = false;
-            initPopGui();
-        }
-    }
-
-    @Override
-    public void setWorldAndResolution(Minecraft mc, int width, int height) {
-        super.setWorldAndResolution(mc, width, height);
-        if(!main) {
-            initPopGui();
-        }
-    }
-
-    private void initPopGui() {
-        popButtons.clear();
-        boolean editPermission = accessPermission.canEdit();
-        boolean ownerPermission = accessPermission.canDelete();
-        if(selectedPlayer.getAccessPermission() != AccessPermission.OWNER && editPermission) {
-            String text;
-            int length;
-            int i = 0;
-            if (selectedPlayer.getAccessPermission() == AccessPermission.NONE || selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN) {
-                text = FluxTranslate.SET_USER.t();
-                length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
-                popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
-                if(selectedPlayer.getAccessPermission() == AccessPermission.SUPER_ADMIN && ownerPermission) {
-                    text = FluxTranslate.TRANSFER_OWNERSHIP.t();
-                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
-                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
-                    popButtons.add(transferOwnership);
-                }
-            } else {
-                if(ownerPermission) {
-                    if (selectedPlayer.getAccessPermission() == AccessPermission.USER) {
-                        text = FluxTranslate.SET_ADMIN.t();
-                        length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
-                        popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
-                    } else if(selectedPlayer.getAccessPermission() == AccessPermission.ADMIN) {
-                        text = FluxTranslate.SET_USER.t();
-                        length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
-                        popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));
-                    }
-                }
-                if(!selectedPlayer.getAccessPermission().canEdit() || ownerPermission) {
-                    text = FluxTranslate.CANCEL_MEMBERSHIP.t();
-                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
-                    popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 3).setTextColor(0xffff5555));
-                }
-                if(ownerPermission) {
-                    text = FluxTranslate.TRANSFER_OWNERSHIP.t();
-                    length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
-                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
-                    popButtons.add(transferOwnership);
-                }
-            }
+            openPopUp(new GuiPopUserEdit(this, player, connector));
         }
     }
 
@@ -174,7 +101,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
         GlStateManager.color(f, f1, f2, 0.8f);
 
-        mc.getTextureManager().bindTexture(GuiCore.GUI_BAR);
+        mc.getTextureManager().bindTexture(GuiDraw.GUI_BAR);
         drawTexturedModalRect(x, y, 0, 16, elementWidth, elementHeight);
 
         if(element.getPlayerUUID().equals(player.getUniqueID())) {
@@ -192,7 +119,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     @Override
     public void renderElementTooltip(NetworkMember element, int mouseX, int mouseY) {
-        if(!main)
+        if(hasActivePopup())
             return;
         GlStateManager.pushMatrix();
         List<String> strings = new ArrayList<>();
@@ -208,7 +135,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    protected void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    public void mouseMainClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseMainClicked(mouseX, mouseY, mouseButton);
         /*for(NormalButton button : buttons) {
             if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
@@ -221,32 +148,6 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    protected void mousePopupClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mousePopupClicked(mouseX, mouseY, mouseButton);
-        for(NormalButton button : popButtons) {
-            if(button.clickable && button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
-                PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_PERMISSION, PacketGeneralHandler.getChangePermissionPacket(network.getNetworkID(), selectedPlayer.getPlayerUUID(), button.id)));
-            }
-        }
-    }
-
-    @Override
-    protected void keyTypedPop(char c, int k) throws IOException {
-        super.keyTypedPop(c, k);
-        if(transferOwnership != null) {
-            if (k == 42) {
-                transferOwnershipCount++;
-                if (transferOwnershipCount > 1) {
-                    transferOwnership.clickable = true;
-                }
-            } else {
-                transferOwnershipCount = 0;
-                transferOwnership.clickable = false;
-            }
-        }
-    }
-
-    @Override
     public void updateScreen() {
         super.updateScreen();
         if(timer == 0) {
@@ -255,13 +156,13 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         if(timer % 2 == 0) {
             refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
             if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
-                if(!main) {
+                if(hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
                     if (n.isPresent()) {
                         selectedPlayer = n.get();
-                        initPopGui();
+                        openPopUp(new GuiPopUserEdit(this, player, connector));
                     } else {
-                        backToMain();
+                        closePopUp();
                     }
                 }
                 FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);

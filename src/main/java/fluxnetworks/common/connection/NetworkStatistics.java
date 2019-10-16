@@ -34,11 +34,31 @@ public class NetworkStatistics {
     private long energyInput4;
     private long energyOutput4;
 
+    public long average_tick_micro = 0;
+
+    public long running_total_micro = 0;
+    public long running_total_count = 0;
+
+    public long network_nano_time;
+    public long network_tick;
+
     public NetworkStatistics(IFluxNetwork network) {
         this.network = network;
         for (int i = 0; i < 6; i++) {
             energyChange.add(0L);
         }
+    }
+
+    public void startProfiling(){
+        network_nano_time = System.nanoTime();
+    }
+
+    public void stopProfiling(){
+        network_tick += (System.nanoTime()-network_nano_time)/1000;
+    }
+
+    public void onStartServerTick() {
+        network_tick = 0;
     }
 
     public void onEndServerTick() {
@@ -51,6 +71,17 @@ public class NetworkStatistics {
         if(timer % 20 == 0) {
             weakerTick();
         }
+
+        running_total_micro+=network_tick;
+        running_total_count ++;
+
+        if(running_total_count >= 20) {
+            average_tick_micro = running_total_micro / running_total_count;
+
+            running_total_micro = 0;
+            running_total_count = 0;
+        }
+
         timer++;
         timer %= 100;
     }
@@ -91,13 +122,14 @@ public class NetworkStatistics {
         storages.forEach(p -> totalEnergy += p.getTransferHandler().getEnergyStored());
         fluxControllerCount = network.getConnections(FluxType.controller).size();
         fluxStorageCount = storages.size();
-        fluxPlugCount = plugs.size() - fluxStorageCount;
-        fluxPointCount = network.getConnections(FluxType.point).size() - fluxStorageCount - fluxControllerCount;
+        fluxPlugCount = plugs.size();
+        fluxPointCount = network.getConnections(FluxType.point).size() - fluxControllerCount;
         energyInput = energyInput4 / 4;
         energyOutput = energyOutput4 / 4;
         energyInput4 = 0;
         energyOutput4 = 0;
         energyChange5 += Math.max(energyInput, energyOutput);
+
     }
 
     /**
@@ -114,6 +146,10 @@ public class NetworkStatistics {
         energyChange.set(5, change);
     }
 
+    public int getConnectionCount(){
+        return this.fluxPlugCount + this.fluxPointCount + this.fluxStorageCount + this.fluxControllerCount;
+    }
+
     public NBTTagCompound writeNBT(NBTTagCompound tag) {
         tag.setInteger("i1", fluxPlugCount);
         tag.setInteger("i2", fluxPointCount);
@@ -123,6 +159,8 @@ public class NetworkStatistics {
         tag.setLong("l2", energyOutput);
         tag.setLong("l3", totalBuffer);
         tag.setLong("l4", totalEnergy);
+        tag.setLong("l5", average_tick_micro);
+
         for (int i = 0; i < energyChange.size(); i++) {
             tag.setLong("a" + i, energyChange.get(i));
         }
@@ -138,6 +176,7 @@ public class NetworkStatistics {
         energyOutput = tag.getLong("l2");
         totalBuffer = tag.getLong("l3");
         totalEnergy = tag.getLong("l4");
+        average_tick_micro = tag.getLong("l5");
         for (int i = 0; i < 6; i++) {
             energyChange.set(i, tag.getLong("a" + i));
         }

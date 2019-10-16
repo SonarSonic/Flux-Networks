@@ -1,7 +1,7 @@
 package fluxnetworks.common.network;
 
-import fluxnetworks.api.AccessPermission;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
+import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -11,41 +11,41 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class PacketGUIPermission implements IMessageHandler<PacketGUIPermission.GUIPermissionMessage, IMessage> {
+public class PacketSuperAdmin implements IMessageHandler<PacketSuperAdmin.SuperAdminMessage, IMessage> {
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public IMessage onMessage(GUIPermissionMessage message, MessageContext ctx) {
+    public IMessage onMessage(SuperAdminMessage message, MessageContext ctx) {
+        FluxNetworkCache.instance.superAdminClient = message.superAdmin;
         EntityPlayer player = PacketHandler.getPlayer(ctx);
         if(player != null) {
             Gui gui = Minecraft.getMinecraft().currentScreen;
             if (gui instanceof GuiFluxCore) {
                 GuiFluxCore guiFluxCore = (GuiFluxCore) gui;
-                guiFluxCore.accessPermission = message.accessPermission;
                 guiFluxCore.onSuperAdminChanged();
             }
         }
         return null;
     }
 
-    public static class GUIPermissionMessage implements IMessage {
+    public static class SuperAdminMessage implements IMessage {
 
-        public AccessPermission accessPermission;
+        public boolean superAdmin;
 
-        public GUIPermissionMessage() {
-        }
+        public SuperAdminMessage() {}
 
-        public GUIPermissionMessage(AccessPermission permission) {
-            this.accessPermission = permission;
+        public SuperAdminMessage(boolean superAdmin) {
+            this.superAdmin = superAdmin;
         }
 
         @Override
         public void fromBytes(ByteBuf buf) {
-            accessPermission = AccessPermission.values()[buf.readInt()];
+            superAdmin = buf.readBoolean();
         }
 
         @Override
         public void toBytes(ByteBuf buf) {
-            buf.writeInt(accessPermission.ordinal());
+            buf.writeBoolean(superAdmin);
         }
     }
 }

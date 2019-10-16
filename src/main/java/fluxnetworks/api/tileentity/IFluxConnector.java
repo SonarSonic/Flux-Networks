@@ -2,6 +2,7 @@ package fluxnetworks.api.tileentity;
 
 import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.Coord4D;
+import fluxnetworks.api.INetworkConnector;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.common.core.FluxGuiStack;
@@ -16,19 +17,15 @@ import java.util.UUID;
 /**
  * extended by IFluxPoint and IFluxPlug
  */
-public interface IFluxConnector {
+public interface IFluxConnector extends INetworkConnector {
 
     NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type);
 
     void readCustomNBT(NBTTagCompound tag, NBTType type);
 
-    int getNetworkID();
-
     int getPriority();
 
     int getActualPriority(); // ignore surge
-
-    IFluxNetwork getNetwork();
 
     UUID getConnectionOwner();
 

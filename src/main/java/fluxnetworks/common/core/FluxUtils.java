@@ -253,13 +253,6 @@ public class FluxUtils {
     }
 
     public static void pasteConfiguration(TileFluxCore flux, NBTTagCompound config) {
-        if(flux.getConnectionType() == ConnectionType.STORAGE) {
-            FluxConfigurationType type = FluxConfigurationType.NETWORK;
-            if(config.hasKey(type.getNBTName())) {
-                type.paste.pasteToTile(config, type.getNBTName(), flux);
-            }
-            return;
-        }
         for(FluxConfigurationType type : FluxConfigurationType.VALUES){
             if(config.hasKey(type.getNBTName())) {
                 type.paste.pasteToTile(config, type.getNBTName(), flux);

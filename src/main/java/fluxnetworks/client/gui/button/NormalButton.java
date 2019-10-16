@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.GlStateManager;
  */
 public class NormalButton extends GuiButtonCore {
 
-    public boolean clickable = true;
     public int color = 0xffffffff;
 
     public NormalButton(String text, int x, int y, int width, int height, int id) {
