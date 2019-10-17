@@ -66,6 +66,7 @@ info.fluxnetworks.flux.surge=涌流
 info.fluxnetworks.flux.input=输入
 info.fluxnetworks.flux.output=输出
 info.fluxnetworks.flux.change=变化
+info.fluxnetworks.flux.averagetick=平均耗时
 
 info.fluxnetworks.feedback.reject=服务器拒绝了你的请求
 info.fluxnetworks.feedback.noowner=你不是该网络的所有人
@@ -96,6 +97,10 @@ info.fluxnetworks.gui.playername=玩家名字
 info.fluxnetworks.gui.playeraccess=访问权限
 info.fluxnetworks.gui.cancelmembership=撤销成员权限
 info.fluxnetworks.gui.you=你
+
+info.fluxnetworks.gui.sort.smart=智能
+info.fluxnetworks.gui.sort.id=ID
+info.fluxnetworks.gui.sort.name=名称
 
 info.fluxnetworks.button.batchclear=清空所选项
 info.fluxnetworks.button.batchedit=编辑所选项
