@@ -122,8 +122,8 @@ public class NetworkStatistics {
         storages.forEach(p -> totalEnergy += p.getTransferHandler().getEnergyStored());
         fluxControllerCount = network.getConnections(FluxType.controller).size();
         fluxStorageCount = storages.size();
-        fluxPlugCount = plugs.size();
-        fluxPointCount = network.getConnections(FluxType.point).size() - fluxControllerCount;
+        fluxPlugCount = plugs.size() - fluxStorageCount;
+        fluxPointCount = network.getConnections(FluxType.point).size() - fluxStorageCount - fluxControllerCount;
         energyInput = energyInput4 / 4;
         energyOutput = energyOutput4 / 4;
         energyInput4 = 0;

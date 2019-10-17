@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${minecraft_version}-4.0.11-28"
+version = "${minecraft_version}-4.0.12-29"
 group = "fluxnetworks"
 archivesBaseName = "fluxnetworks"
 
