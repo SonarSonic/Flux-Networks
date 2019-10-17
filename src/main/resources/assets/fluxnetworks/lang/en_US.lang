@@ -66,6 +66,7 @@ info.fluxnetworks.flux.surge=Surge
 info.fluxnetworks.flux.input=Input
 info.fluxnetworks.flux.output=Output
 info.fluxnetworks.flux.change=Change
+info.fluxnetworks.flux.averagetick=Average Tick
 
 info.fluxnetworks.feedback.reject=The server rejected your request
 info.fluxnetworks.feedback.noowner=You aren't the owner of the network
@@ -96,6 +97,10 @@ info.fluxnetworks.gui.playername=Username
 info.fluxnetworks.gui.playeraccess=Access
 info.fluxnetworks.gui.cancelmembership=Cancel Membership
 info.fluxnetworks.gui.you=You
+
+info.fluxnetworks.gui.sort.smart=Smart
+info.fluxnetworks.gui.sort.id=ID
+info.fluxnetworks.gui.sort.name=Name
 
 info.fluxnetworks.button.batchclear=Clear Selected
 info.fluxnetworks.button.batchedit=Edit Selected

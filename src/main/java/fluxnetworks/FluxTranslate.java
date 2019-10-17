@@ -62,6 +62,8 @@ public class FluxTranslate implements ILocalizationProvider {
     public static final Localization INPUT = i("flux.input");
     public static final Localization OUTPUT = i("flux.output");
     public static final Localization CHANGE = i("flux.change");
+    public static final Localization AVERAGE_TICK = i("flux.averagetick");
+
 
     public static final Localization SORT_BY = i("gui.sortby");
     public static final Localization SELECTED = i("gui.selected");
@@ -81,6 +83,10 @@ public class FluxTranslate implements ILocalizationProvider {
     public static final Localization ACCESS = i("gui.playeraccess");
     public static final Localization CANCEL_MEMBERSHIP = i("gui.cancelmembership");
     public static final Localization YOU = i("gui.you");
+
+    public static final Localization SORTING_SMART = i("gui.sort.smart");
+    public static final Localization SORTING_ID = i("gui.sort.id");
+    public static final Localization SORTING_NAME = i("gui.sort.name");
 
     public static final Localization BATCH_CLEAR_BUTTON = i("button.batchclear");
     public static final Localization BATCH_EDIT_BUTTON = i("button.batchedit");

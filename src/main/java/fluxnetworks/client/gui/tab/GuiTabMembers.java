@@ -50,7 +50,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         if(networkValid) {
             String str2 = accessPermission.getName();
             fontRenderer.drawString(str2, 158 - fontRenderer.getStringWidth(str2), 10, 0xffffff);
-            fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 19, 10, 0xffffff);
+            fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
             super.drawForegroundLayer(mouseX, mouseY);
         } else {
             super.drawForegroundLayer(mouseX, mouseY);

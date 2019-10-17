@@ -59,7 +59,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         }
 
         GlStateManager.scale(0.625, 0.625, 0.625);
-        fontRenderer.drawString(FluxTranslate.CONNECTIONS.t() +": " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).getConnectionCount() + "  Avg: " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro + " μs/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
+        fontRenderer.drawString(FluxTranslate.CONNECTIONS.t() +": " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).getConnectionCount() + "  Avg: " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
         GlStateManager.scale(1.6, 1.6, 1.6);
 
         GlStateManager.popMatrix();

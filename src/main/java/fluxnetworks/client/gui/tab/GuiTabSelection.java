@@ -48,7 +48,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         } else {
             String amount = FluxTranslate.TOTAL.t() + ": " + elements.size();
             fontRenderer.drawString(amount, 158 - fontRenderer.getStringWidth(amount), 10, 0xffffff);
-            fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.name, 19, 10, 0xffffff);
+            fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
             if (!hasActivePopup()) {
                 drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 150, 0xffffff);
             }

@@ -1,10 +1,12 @@
 package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
+import fluxnetworks.FluxTranslate;
 import fluxnetworks.api.AccessPermission;
 import fluxnetworks.api.INetworkConnector;
 import fluxnetworks.client.gui.button.PageLabelButton;
 import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.core.Localization;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -171,14 +173,19 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     }
 
     public enum SortType {
-        ID("ID"),
-        NAME("Name");
+        ID(FluxTranslate.SORTING_ID),
+        NAME(FluxTranslate.SORTING_NAME);
 
-        public String name;
+        private Localization name;
 
-        SortType(String name) {
+        SortType(Localization name) {
             this.name = name;
         }
+
+        public String getTranslatedName(){
+            return name.t();
+        }
+
     }
 
 }

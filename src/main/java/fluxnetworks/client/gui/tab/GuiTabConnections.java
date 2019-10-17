@@ -99,7 +99,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             if(batchConnections.size() > 0) {
                 fontRenderer.drawString(FluxTranslate.SELECTED.t() + ": " + TextFormatting.AQUA + batchConnections.size(), 20, 10, 0xffffff);
             } else {
-                fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + "Smart", 19, 10, 0xffffff);
+                fontRenderer.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
             }
             super.drawForegroundLayer(mouseX, mouseY);
             if(!hasActivePopup())
