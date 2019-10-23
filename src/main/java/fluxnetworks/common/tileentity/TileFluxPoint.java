@@ -14,4 +14,8 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
         return ConnectionType.POINT;
     }
 
+    @Override
+    public String getPeripheralName() {
+        return "flux_point";
+    }
 }

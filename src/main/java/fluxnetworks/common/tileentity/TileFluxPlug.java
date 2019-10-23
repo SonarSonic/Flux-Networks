@@ -14,4 +14,8 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
         return ConnectionType.PLUG;
     }
 
+    @Override
+    public String getPeripheralName() {
+        return "flux_plug";
+    }
 }

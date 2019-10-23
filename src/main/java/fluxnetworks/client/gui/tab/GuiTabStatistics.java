@@ -12,7 +12,6 @@ import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import fluxnetworks.common.registry.RegistryBlocks;
-import fluxnetworks.common.registry.RegistryItems;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -47,37 +46,37 @@ public class GuiTabStatistics extends GuiTabCore {
         super(player, connector);
     }
 
-    public EnumNavigationTabs getNavigationTab(){
+    public EnumNavigationTabs getNavigationTab() {
         return EnumNavigationTabs.TAB_STATISTICS;
     }
 
     @Override
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
-        if(networkValid) {
-            int colour = network.getSetting(NetworkSettings.NETWORK_COLOR);
-            renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), colour, 20, 8);
+        if (networkValid) {
+            int color = network.getSetting(NetworkSettings.NETWORK_COLOR);
+            renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), color, 20, 8);
 
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.PLUGS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxPlugCount, 12, 24, colour);
+                    TextFormatting.RESET + stats.fluxPlugCount, 12, 24, color);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.POINTS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxPointCount, 12, 36, colour);
-            fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.STORAGES.t() + TextFormatting.GRAY +  ": " +
-                    TextFormatting.RESET + stats.fluxStorageCount, 82, 24, colour);
+                    TextFormatting.RESET + stats.fluxPointCount, 12, 36, color);
+            fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.STORAGES.t() + TextFormatting.GRAY + ": " +
+                    TextFormatting.RESET + stats.fluxStorageCount, 82, 24, color);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
-                    TextFormatting.RESET + stats.fluxControllerCount, 82, 36, colour);
+                    TextFormatting.RESET + stats.fluxControllerCount, 82, 36, color);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 48, colour);
+                    FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 48, color);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.energyOutput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 60, colour);
+                    FluxUtils.format(stats.energyOutput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 60, color);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.BUFFER.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.totalBuffer, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 72, colour);
+                    FluxUtils.format(stats.totalBuffer, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 72, color);
             fontRenderer.drawString(TextFormatting.GRAY + FluxTranslate.ENERGY.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 84, colour);
+                    FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 84, color);
 
             GlStateManager.scale(0.75, 0.75, 0.75);
-            drawCenteredString(fontRenderer, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.average_tick_micro  + " " + "\u03BC" + "s/t", (int)((xSize/2)*(1/0.75)), (int)((ySize-2)*(1/0.75)), colour);
-            GlStateManager.scale(1/0.75, 1/0.75, 1/0.75);
+            drawCenteredString(fontRenderer, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.average_tick_micro + " " + "\u00B5" + "s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
+            GlStateManager.scale(1 / 0.75, 1 / 0.75, 1 / 0.75);
 
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
@@ -87,7 +86,7 @@ public class GuiTabStatistics extends GuiTabCore {
     @Override
     protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
-        if(networkValid && chart != null) {
+        if (networkValid && chart != null) {
             chart.drawChart(mc);
             chart.updateHeight(partialTicks);
         }
@@ -98,7 +97,7 @@ public class GuiTabStatistics extends GuiTabCore {
         super.initGui();
         configureNavigationButtons(EnumNavigationTabs.TAB_STATISTICS, navigationTabs);
 
-        if(networkValid) {
+        if (networkValid) {
             chart = new LineChart(width / 2 - 48, height / 2 + 20, 50, 6, "s", "RF");
             chart.updateData(stats.energyChange);
         }
@@ -107,7 +106,7 @@ public class GuiTabStatistics extends GuiTabCore {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(networkValid) {
+        if (networkValid) {
             if (timer == 0) {
                 PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_STATISTICS));
             }

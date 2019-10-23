@@ -11,10 +11,14 @@ import fluxnetworks.common.connection.transfer.StorageTransfer;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.registry.RegistryBlocks;
+import li.cil.oc.api.machine.Arguments;
 import mcjty.lib.api.power.IBigPower;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Optional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Optional.Interface(iface = "mcjty.lib.api.power.IBigPower", modid = "theoneprobe")
 public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy, IBigPower {
@@ -150,5 +154,26 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     @Optional.Method(modid = "theoneprobe")
     public long getCapacity(){
         return this.maxEnergyStorage;
+    }
+
+    @Override
+    public String getPeripheralName() {
+        return "flux_storage";
+    }
+
+    @Override
+    public Object[] invokeMethods(String method, Arguments arguments) {
+        if(method.equals("getFluxInfo")) {
+            Map<Object, Object> map = new HashMap<>();
+            map.put("customName", customName);
+            map.put("priority", priority);
+            map.put("transferLimit", limit);
+            map.put("surgeMode", surgeMode);
+            map.put("unlimited", disableLimit);
+            map.put("energyStored", getTransferHandler().getEnergyStored());
+            map.put("maxStorage", maxEnergyStorage);
+            return new Object[]{map};
+        }
+        return super.invokeMethods(method, arguments);
     }
 }

@@ -10,10 +10,12 @@ import fluxnetworks.common.connection.*;
 import fluxnetworks.common.core.NBTType;
 import fluxnetworks.common.data.FluxChunkManager;
 import fluxnetworks.common.data.FluxNetworkData;
+import fluxnetworks.common.integration.oc.IOCPeripheral;
 import fluxnetworks.common.item.ItemFluxConnector;
 import fluxnetworks.common.connection.NetworkFolder;
 import fluxnetworks.common.core.FluxUtils;
 import io.netty.buffer.ByteBuf;
+import li.cil.oc.api.machine.Arguments;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,10 +29,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.UUID;
 
-public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickable, ITileByteBuf {
+public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickable, ITileByteBuf, IOCPeripheral {
 
     public HashSet<EntityPlayer> playerUsing = new HashSet<>();
 
@@ -408,5 +412,55 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public boolean getSurgeMode() {
         return surgeMode;
+    }
+
+    @Override
+    public String[] getOCMethods() {
+        return new String[]{"getNetworkInfo", "getCountInfo", "getEnergyInfo", "getFluxInfo"};
+    }
+
+    @Override
+    public Object[] invokeMethods(String method, Arguments arguments) {
+        switch (method) {
+            case "getNetworkInfo": {
+                Map<Object, Object> map = new HashMap<>();
+                map.put("id", network.getNetworkID());
+                map.put("name", network.getNetworkName());
+                map.put("ownerUUID", network.getSetting(NetworkSettings.NETWORK_OWNER).toString());
+                map.put("securityType", network.getSetting(NetworkSettings.NETWORK_SECURITY).name().toLowerCase());
+                map.put("energyType", network.getSetting(NetworkSettings.NETWORK_ENERGY).getStorageSuffix());
+                map.put("averageTick", network.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro);
+                return new Object[]{map};
+            }
+            case "getCountInfo": {
+                Map<Object, Object> map = new HashMap<>();
+                NetworkStatistics stats = network.getSetting(NetworkSettings.NETWORK_STATISTICS);
+                map.put("plugCount", stats.fluxPlugCount);
+                map.put("pointCount", stats.fluxPointCount);
+                map.put("controllerCount", stats.fluxControllerCount);
+                map.put("storageCount", stats.fluxStorageCount);
+                return new Object[]{map};
+            }
+            case "getEnergyInfo": {
+                Map<Object, Object> map = new HashMap<>();
+                NetworkStatistics stats = network.getSetting(NetworkSettings.NETWORK_STATISTICS);
+                map.put("energyInput", stats.energyInput);
+                map.put("energyOutput", stats.energyOutput);
+                map.put("totalBuffer", stats.totalBuffer);
+                map.put("totalEnergy", stats.totalEnergy);
+                return new Object[]{map};
+            }
+            case "getFluxInfo": {
+                Map<Object, Object> map = new HashMap<>();
+                map.put("customName", customName);
+                map.put("priority", priority);
+                map.put("transferLimit", limit);
+                map.put("surgeMode", surgeMode);
+                map.put("unlimited", disableLimit);
+                map.put("buffer", getTransferHandler().getEnergyStored());
+                return new Object[]{map};
+            }
+        }
+        return new Object[0];
     }
 }

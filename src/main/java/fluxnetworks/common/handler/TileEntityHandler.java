@@ -5,6 +5,7 @@ import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.common.CommonProxy;
 import fluxnetworks.common.handler.energy.ForgeEnergyHandler;
 import fluxnetworks.common.handler.energy.GTEnergyHandler;
 import fluxnetworks.common.handler.energy.IC2EnergyHandler;
@@ -13,6 +14,7 @@ import fluxnetworks.common.tileentity.TileFluxController;
 import fluxnetworks.common.tileentity.TileFluxPlug;
 import fluxnetworks.common.tileentity.TileFluxPoint;
 import fluxnetworks.common.tileentity.TileFluxStorage;
+import li.cil.oc.api.internal.Adapter;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -70,8 +72,9 @@ public class TileEntityHandler {
         if(tile instanceof IFluxConnector) {
             return null;
         }
-        if(blockBlacklist.containsKey(tile.getBlockType().getRegistryName().toString())) {
-            int meta = blockBlacklist.get(tile.getBlockType().getRegistryName().toString());
+        String s = tile.getBlockType().getRegistryName().toString();
+        if(blockBlacklist.containsKey(s)) {
+            int meta = blockBlacklist.get(s);
             if(meta == -1)
                 return null;
             else if(meta == tile.getBlockMetadata())
@@ -92,6 +95,11 @@ public class TileEntityHandler {
         if(tile instanceof IFluxConnector) {
             return false;
         }
+        /*if(FluxNetworks.proxy.ocLoaded) {
+            if(tile instanceof Adapter) {
+                return true;
+            }
+        }*/
         if(blockBlacklist.containsKey(tile.getBlockType().getRegistryName().toString())) {
             int meta = blockBlacklist.get(tile.getBlockType().getRegistryName().toString());
             if(meta == -1)
@@ -105,9 +113,6 @@ public class TileEntityHandler {
                 handler = handler1;
             }
         }
-        if(handler != null) {
-            return true;
-        }
-        return false;
+        return handler != null;
     }
 }

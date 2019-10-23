@@ -42,7 +42,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
-        fontRenderer.drawString(TextFormatting.DARK_PURPLE + "Super Admin", 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(AccessPermission.SUPER_ADMIN.getName(), 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
         fontRenderer.drawString("Detailed Network View", 20, 42, network.getSetting(NetworkSettings.NETWORK_COLOR));
     }
 

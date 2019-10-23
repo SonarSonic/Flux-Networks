@@ -4,8 +4,15 @@ import fluxnetworks.api.ConnectionType;
 import fluxnetworks.api.network.ITransferHandler;
 import fluxnetworks.api.tileentity.IFluxController;
 import fluxnetworks.api.tileentity.IFluxEnergy;
+import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.common.connection.NetworkStatistics;
 import fluxnetworks.common.connection.transfer.ControllerTransfer;
 import fluxnetworks.common.connection.handler.SingleTransferHandler;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.network.ManagedPeripheral;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TileFluxController extends TileFluxCore implements IFluxController, IFluxEnergy {
 
@@ -38,5 +45,10 @@ public class TileFluxController extends TileFluxCore implements IFluxController,
     @Override
     public long getEnergy() {
         return 0;
+    }
+
+    @Override
+    public String getPeripheralName() {
+        return "flux_controller";
     }
 }

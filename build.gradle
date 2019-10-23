@@ -9,7 +9,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${minecraft_version}-4.0.12-29"
+version = "${minecraft_version}-4.0.13-30"
 group = "fluxnetworks"
 archivesBaseName = "fluxnetworks"
 
@@ -42,8 +42,8 @@ processResources {
     }
 }
 
-sourceSets {
+/*sourceSets {
     main {
         output.resourcesDir = java.outputDir
     }
-}
+}*/

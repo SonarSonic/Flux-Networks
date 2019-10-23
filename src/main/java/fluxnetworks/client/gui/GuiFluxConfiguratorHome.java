@@ -49,7 +49,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
         updateSettingsFromTag();
     }
 
-    public EnumNavigationTabs getNavigationTab(){
+    public EnumNavigationTabs getNavigationTab() {
         return EnumNavigationTabs.TAB_HOME;
     }
 
@@ -84,7 +84,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
         switches.add(surge = new SlidedSwitchButton(140, 90, 1, guiLeft, guiTop, stackSurgeMode));
         switches.add(disableLimit = new SlidedSwitchButton(140, 102, 2, guiLeft, guiTop, stackDisableLimit));
         //switches.add(chunkLoad = new SlidedSwitchButton(140, 144, 3, guiLeft, guiTop, stackChunkLoading));
-        buttons.add(apply = new NormalButton(FluxTranslate.APPLY.t(), xSize/2 - 36/2, 138, 36, 12, 3));
+        buttons.add(apply = new NormalButton(FluxTranslate.APPLY.t(), xSize / 2 - 36 / 2, 138, 36, 12, 3));
         apply.clickable = configTag == null;
 
         textBoxes.add(fluxName);
@@ -95,23 +95,23 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     @Override
     public void onTextBoxChanged(TextboxButton text) {
         super.onTextBoxChanged(text);
-        if(text == fluxName) {
+        if (text == fluxName) {
             stackCustomName = fluxName.getText();
             onSettingsChanged();
-        } else if(text == priority) {
+        } else if (text == priority) {
             stackPriority = priority.getIntegerFromText(false);
             onSettingsChanged();
-        } else if(text == limit) {
+        } else if (text == limit) {
             stackLimit = Math.min(limit.getLongFromText(true), Long.MAX_VALUE);
             limit.setText(String.valueOf(stackLimit));
             onSettingsChanged();
         }
     }
 
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton){
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if(mouseButton == 0){
-            if(button instanceof SlidedSwitchButton) {
+        if (mouseButton == 0) {
+            if (button instanceof SlidedSwitchButton) {
                 SlidedSwitchButton switchButton = (SlidedSwitchButton) button;
                 switchButton.switchButton();
                 switch (switchButton.id) {
@@ -128,7 +128,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
                         break;
                 }
             }
-            if(button == apply){
+            if (button == apply) {
                 ///send changes to server.
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setInteger(FluxConfigurationType.NETWORK.getNBTName(), network.getNetworkID());
@@ -145,16 +145,16 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
         }
     }
 
-    public void updateSettingsFromTag(){
+    public void updateSettingsFromTag() {
         configTag = stack.getSubCompound(CONFIGS_TAG);
-        if(configTag != null) {
+        if (configTag != null) {
             stackCustomName = stack.getDisplayName();
             stackPriority = configTag.getInteger(FluxConfigurationType.PRIORITY.getNBTName());
             stackSurgeMode = configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName());
             stackLimit = configTag.getLong(FluxConfigurationType.TRANSFER.getNBTName());
             stackDisableLimit = configTag.getBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTName());
             stackChunkLoading = false; //disabled.
-        }else{
+        } else {
             stackCustomName = stack.getDisplayName();
             stackPriority = 0;
             stackSurgeMode = false;
@@ -164,24 +164,24 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
         }
     }
 
-    public void onSettingsChanged(){
-        if(configTag == null){
+    public void onSettingsChanged() {
+        if (configTag == null) {
             apply.clickable = true;
-        }else{
+        } else {
             apply.clickable =
                     network.getNetworkID() != configTag.getInteger(FluxConfigurationType.NETWORK.getNBTName()) ||
-                    stackPriority != configTag.getInteger(FluxConfigurationType.PRIORITY.getNBTName()) ||
-                    stackLimit != configTag.getLong(FluxConfigurationType.TRANSFER.getNBTName()) ||
-                    stackSurgeMode != configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName()) ||
-                    stackDisableLimit != configTag.getBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTName()) ||
-                    !stackCustomName.equals(stack.getDisplayName());
+                            stackPriority != configTag.getInteger(FluxConfigurationType.PRIORITY.getNBTName()) ||
+                            stackLimit != configTag.getLong(FluxConfigurationType.TRANSFER.getNBTName()) ||
+                            stackSurgeMode != configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName()) ||
+                            stackDisableLimit != configTag.getBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTName()) ||
+                            !stackCustomName.equals(stack.getDisplayName());
         }
     }
 
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(timer == 0) {
+        if (timer == 0) {
             PacketHandler.network.sendToServer(new PacketNetworkUpdateRequest.UpdateRequestMessage(network.getNetworkID(), NBTType.NETWORK_GENERAL));
         }
         timer++;

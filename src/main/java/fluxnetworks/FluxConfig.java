@@ -1,5 +1,6 @@
 package fluxnetworks;
 
+import fluxnetworks.common.handler.ItemEnergyHandler;
 import fluxnetworks.common.handler.TileEntityHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -27,7 +28,7 @@ public class FluxConfig {
     public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
-    public static String[] blockBlacklistStrings;
+    public static String[] blockBlacklistStrings, itemBlackListStrings;
 
     public static void init(File file) {
         config = new Configuration(new File(file.getPath(), "flux_networks.cfg"));
@@ -57,6 +58,26 @@ public class FluxConfig {
                 }
             } else {
                 TileEntityHandler.blockBlacklist.put(root, meta);
+            }
+        }
+        ItemEnergyHandler.itemBlackList.clear();
+        for(String str : itemBlackListStrings) {
+            if(!str.contains(":")) {
+                FluxNetworks.logger.error("BLACKLIST ERROR: " + str + " has incorrect formatting, please use 'modid:name@meta'");
+            }
+            String root = str;
+            int meta = -1;
+            if(str.contains("@")) {
+                String[] split = str.split("@");
+                root = split[0];
+                try {
+                    meta = Integer.parseInt(split[1]);
+                    ItemEnergyHandler.itemBlackList.put(root, meta);
+                } catch (Exception e) {
+                    FluxNetworks.logger.error("BLACKLIST ERROR: " + str + " has incorrect formatting, meta must be positive integer'");
+                }
+            } else {
+                ItemEnergyHandler.itemBlackList.put(root, meta);
             }
         }
     }
@@ -92,6 +113,7 @@ public class FluxConfig {
         enableOneProbeSneaking = config.getBoolean("Enable sneaking to display Advanced One Probe Info", CLIENT, true, "Displays Advanced Info when sneaking only");
 
         blockBlacklistStrings = getBlackList("Block Connection Blacklist", BLACKLIST, new String[]{"actuallyadditions:block_phantom_energyface"}, "a blacklist for blocks which flux connections shouldn't connect to, use format 'modid:name@meta'");
+        itemBlackListStrings = getBlackList("Item Transfer Blacklist", BLACKLIST, new String[]{}, "a blacklist for items which the Flux Controller shouldn't transfer to, use format 'modid:name@meta'");
     }
 
     public static String[] getBlackList(String name, String category, String[] defaultValue, String comment){

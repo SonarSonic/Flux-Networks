@@ -17,6 +17,7 @@ import fluxnetworks.common.handler.TileEntityHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.integration.MekanismIntegration;
 import fluxnetworks.common.integration.TOPIntegration;
+import fluxnetworks.common.integration.oc.OCIntegration;
 import fluxnetworks.common.network.PacketNetworkUpdate;
 import fluxnetworks.common.network.PacketSuperAdmin;
 import fluxnetworks.common.registry.RegistryBlocks;
@@ -40,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -58,6 +60,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CommonProxy {
 
     public boolean baublesLoaded;
+    public boolean ocLoaded;
 
     public int admin_viewing_network_id = -1;
     public boolean detailed_network_view;
@@ -72,6 +75,7 @@ public class CommonProxy {
         if(Loader.isModLoaded("mekanism")){
             MekanismIntegration.preInit();
         }
+        this.ocLoaded = Loader.isModLoaded("opencomputers");
         this.baublesLoaded = Loader.isModLoaded("baubles");
     }
 
@@ -79,6 +83,9 @@ public class CommonProxy {
         DefaultSuperAdmin.register();
         FMLInterModComms.sendMessage("carryon", "blacklistBlock",  FluxNetworks.MODID + ":*");
         FMLInterModComms.sendFunctionMessage("theoneprobe", "getTheOneProbe", TOPIntegration.class.getName());
+        if(ocLoaded) {
+            OCIntegration.init();
+        }
     }
 
     public void postInit(FMLPostInitializationEvent event) {
