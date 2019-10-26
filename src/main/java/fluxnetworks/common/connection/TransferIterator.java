@@ -16,7 +16,7 @@ public class TransferIterator<T extends IFluxConnector> {
     private boolean isPoint;
     public boolean finish = false;
 
-    public void update(List<PriorityGroup<T>> list, boolean isPoint) {
+    public void reset(List<PriorityGroup<T>> list, boolean isPoint) {
         groupIterator = list.iterator();
         currentGroup = null;
         fluxIterator = null;

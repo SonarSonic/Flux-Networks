@@ -123,27 +123,6 @@ public class CommonProxy {
             }
             World world = event.getWorld();
             BlockPos pos = event.getPos();
-            /*if(world.getBlockState(pos).getBlock().equals(Blocks.BEDROCK)) {
-                ItemStack stack = event.getItemStack();
-                EntityPlayer player = event.getEntityPlayer();
-                if(stack.getItem().equals(Items.REDSTONE)) {
-                    int a = 16;
-                    if(!player.isSneaking()) {
-                        if(!FluxUtils.removePlayerXP(player, a))
-                            return;
-                        stack.shrink(1);
-                        world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, new ItemStack(RegistryItems.FLUX)));
-                    } else {
-                        int exp = FluxUtils.getPlayerXP(player);
-                        if(exp < a)
-                            return;
-                        int count =  exp / (stack.getCount() * a) == 0 ? exp / a : stack.getCount();
-                        FluxUtils.addPlayerXP(player, -count * a);
-                        stack.shrink(count);
-                        world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, new ItemStack(RegistryItems.FLUX, count)));
-                    }
-                }
-            }*/
             if (world.getBlockState(pos).getBlock().equals(Blocks.OBSIDIAN) && world.getBlockState(pos.down(2)).getBlock().equals(Blocks.BEDROCK)) {
                 List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.down()));
                 if(entities.isEmpty())
@@ -165,12 +144,6 @@ public class CommonProxy {
                 world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                 world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
             }
-            /*{
-                EntityPlayer player = event.getEntityPlayer();
-                if(player.getHeldItemMainhand().getItem().equals(RegistryItems.FLUX_CORE)) {
-                    FluxNetworks.logger.info(FluxUtils.getBlockItem(world, pos));
-                }
-            }*/
         }
     }
 
