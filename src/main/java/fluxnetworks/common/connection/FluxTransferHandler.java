@@ -1,6 +1,5 @@
 package fluxnetworks.common.connection;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.IFluxTransfer;
 import fluxnetworks.api.network.ITransferHandler;
@@ -87,11 +86,6 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
         request = 0;
         added = 0;
         removed = 0;
-    }
-
-    @Override
-    public void onWorldEndTick() {
-
     }
 
     public long addToBuffer(long add, boolean simulate) {

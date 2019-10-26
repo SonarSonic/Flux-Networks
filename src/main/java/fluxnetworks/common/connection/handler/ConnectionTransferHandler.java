@@ -14,14 +14,15 @@ import net.minecraft.util.EnumFacing;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Flux connector(point or plug) transfer handler
  */
-public class ConnectionTransferHandler extends FluxTransferHandler {
+public class ConnectionTransferHandler extends FluxTransferHandler<IFluxConnector> {
 
-    public final TileFluxCore tileEntity;
-    public Map<EnumFacing, IFluxTransfer> transfers = new HashMap<>();
+    private final TileFluxCore tileEntity;
+    private Map<EnumFacing, IFluxTransfer> transfers = new HashMap<>();
 
     public ConnectionTransferHandler(TileFluxCore tile, IFluxConnector fluxConnector) {
         super(fluxConnector);
@@ -37,12 +38,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler {
     @Override
     public void onServerStartTick() {
         super.onServerStartTick();
-        transfers.entrySet().stream().filter(e -> e.getValue() != null).forEach(e -> e.getValue().onServerStartTick());
-    }
-
-    @Override
-    public void onWorldEndTick() {
-        super.onWorldEndTick();
+        transfers.values().stream().filter(Objects::nonNull).forEach(IFluxTransfer::onServerStartTick);
     }
 
     @Override

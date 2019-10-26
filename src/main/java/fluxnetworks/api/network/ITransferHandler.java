@@ -9,8 +9,6 @@ public interface ITransferHandler {
 
     void onServerStartTick();
 
-    void onWorldEndTick();
-
     long getBuffer();
 
     long getRequest();
