@@ -176,11 +176,11 @@ public class CommonProxy {
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        if(event.phase == TickEvent.Phase.START) {
+        /*if(event.phase == TickEvent.Phase.START) {
             for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
                 network.onStartServerTick();
             }
-        }
+        }*/
         if(event.phase == TickEvent.Phase.END) {
             for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
                 network.onEndServerTick();

@@ -10,7 +10,6 @@ import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.api.tileentity.IFluxPlug;
 import fluxnetworks.api.tileentity.IFluxPoint;
-import fluxnetworks.api.tileentity.IFluxStorage;
 import fluxnetworks.common.event.FluxConnectionEvent;
 import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -84,16 +83,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onStartServerTick() {
-        network_stats.getValue().onStartServerTick();
-        network_stats.getValue().startProfiling();
-        List<IFluxConnector> fluxConnectors = getConnections(FluxType.flux);
-        fluxConnectors.forEach(fluxConnector -> fluxConnector.getTransferHandler().onServerStartTick());
-        network_stats.getValue().stopProfiling();
-    }
-
-    @Override
     public void onEndServerTick() {
+        network_stats.getValue().onStartServerTick();
         network_stats.getValue().startProfiling();
         addConnections();
         removeConnections();
@@ -137,6 +128,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
                 }
             }
         }
+        List<IFluxConnector> fluxConnectors = getConnections(FluxType.flux);
+        fluxConnectors.forEach(fluxConnector -> fluxConnector.getTransferHandler().onLastEndTick());
         network_stats.getValue().stopProfiling();
         network_stats.getValue().onEndServerTick();
     }

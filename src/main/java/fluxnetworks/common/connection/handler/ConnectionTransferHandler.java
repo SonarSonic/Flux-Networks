@@ -14,7 +14,6 @@ import net.minecraft.util.EnumFacing;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Flux connector(point or plug) transfer handler
@@ -36,8 +35,8 @@ public class ConnectionTransferHandler extends FluxTransferHandler<IFluxConnecto
     }
 
     @Override
-    public void onServerStartTick() {
-        super.onServerStartTick();
+    public void onLastEndTick() {
+        super.onLastEndTick();
         // Useless this time
         //transfers.values().stream().filter(Objects::nonNull).forEach(IFluxTransfer::onServerStartTick);
     }

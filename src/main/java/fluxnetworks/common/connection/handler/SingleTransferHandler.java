@@ -1,12 +1,9 @@
 package fluxnetworks.common.connection.handler;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.network.IFluxTransfer;
-import fluxnetworks.api.tileentity.IFluxConnector;
 import fluxnetworks.api.tileentity.IFluxEnergy;
 import fluxnetworks.common.connection.FluxTransferHandler;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
 import java.util.List;
@@ -21,8 +18,8 @@ public class SingleTransferHandler extends FluxTransferHandler<IFluxEnergy> {
     }
 
     @Override
-    public void onServerStartTick() {
-        super.onServerStartTick();
+    public void onLastEndTick() {
+        super.onLastEndTick();
         transfer.onServerStartTick();
     }
 

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ITransferHandler {
 
-    void onServerStartTick();
+    void onLastEndTick();
 
     long getBuffer();
 

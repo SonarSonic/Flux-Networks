@@ -27,6 +27,7 @@ public interface IFluxNetwork {
 
     <T> void setSetting(NetworkSettings<T> settings, T value);
 
+    @Deprecated
     default void onStartServerTick() {}
 
     default void onEndServerTick() {}

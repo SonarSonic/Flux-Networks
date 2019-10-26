@@ -81,7 +81,7 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
     }
 
     @Override
-    public void onServerStartTick() {
+    public void onLastEndTick() {
         change = added - removed;
         request = 0;
         added = 0;
