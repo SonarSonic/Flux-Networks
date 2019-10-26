@@ -40,13 +40,13 @@ public class ItemConfigurator extends ItemCore {
 
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if(worldIn.isRemote) {
+        if (worldIn.isRemote) {
             return EnumActionResult.SUCCESS;
         }
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tile;
-            if(!fluxCore.canAccess(player)) {
+            if (!fluxCore.canAccess(player)) {
                 TextComponentTranslation textComponents = new TextComponentTranslation(FluxTranslate.ACCESS_DENIED_KEY);
                 textComponents.getStyle().setBold(true);
                 textComponents.getStyle().setColor(TextFormatting.DARK_RED);
@@ -54,7 +54,7 @@ public class ItemConfigurator extends ItemCore {
                 return EnumActionResult.FAIL;
             }
             ItemStack stack = player.getHeldItem(hand);
-            if(player.isSneaking()) {
+            if (player.isSneaking()) {
                 stack.setTagInfo(CONFIGS_TAG, fluxCore.copyConfiguration(new NBTTagCompound()));
                 player.sendMessage(new TextComponentString("Copied Configuration"));
             } else {
@@ -72,27 +72,28 @@ public class ItemConfigurator extends ItemCore {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        if(!worldIn.isRemote) {
+        if (!worldIn.isRemote) {
             playerIn.openGui(FluxNetworks.instance, 1, worldIn, 0, 0, 0);
         }
         return new ActionResult<>(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
     }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
         NBTTagCompound tag = stack.getSubCompound(CONFIGS_TAG);
-        if(tag != null) {
+        if (tag != null) {
             tooltip.add(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInteger(FluxConfigurationType.NETWORK.getNBTName())));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
-    public static class NetworkConnector implements INetworkConnector{
+    public static class NetworkConnector implements INetworkConnector {
 
         public ItemStack stack;
         public int networkID;
         public IFluxNetwork network;
 
-        public NetworkConnector(ItemStack stack, int networkID, IFluxNetwork network){
+        public NetworkConnector(ItemStack stack, int networkID, IFluxNetwork network) {
             this.stack = stack;
             this.networkID = networkID;
             this.network = network;
@@ -109,13 +110,17 @@ public class ItemConfigurator extends ItemCore {
         }
 
         @Override
-        public void open(EntityPlayer player) {}
+        public void open(EntityPlayer player) {
+
+        }
 
         @Override
-        public void close(EntityPlayer player) {}
+        public void close(EntityPlayer player) {
+
+        }
     }
 
-    public static NetworkConnector getNetworkConnector(ItemStack stack, World world){
+    public static NetworkConnector getNetworkConnector(ItemStack stack, World world) {
         NBTTagCompound tag = stack.getSubCompound(CONFIGS_TAG);
         int networkID = tag != null ? tag.getInteger(FluxConfigurationType.NETWORK.getNBTName()) : -1;
         IFluxNetwork network = world.isRemote ? FluxNetworkCache.instance.getClientNetwork(networkID) : FluxNetworkCache.instance.getNetwork(networkID);

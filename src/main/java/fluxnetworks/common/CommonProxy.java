@@ -53,6 +53,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -191,7 +192,7 @@ public class CommonProxy {
     public void onPlayerJoined(PlayerEvent.PlayerLoggedInEvent event) {
         EntityPlayer player = event.player;
         if(!player.world.isRemote) {
-            PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(FluxNetworkCache.instance.getAllNetworks(), NBTType.NETWORK_GENERAL), (EntityPlayerMP) player);
+            PacketHandler.network.sendTo(new PacketNetworkUpdate.NetworkUpdateMessage(new ArrayList<>(FluxNetworkCache.instance.getAllNetworks()), NBTType.NETWORK_GENERAL), (EntityPlayerMP) player);
             PacketHandler.network.sendTo(new PacketSuperAdmin.SuperAdminMessage(DefaultSuperAdmin.isPlayerSuperAdmin(player)), (EntityPlayerMP) player);
         }
     }

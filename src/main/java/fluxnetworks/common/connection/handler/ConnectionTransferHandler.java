@@ -38,7 +38,8 @@ public class ConnectionTransferHandler extends FluxTransferHandler<IFluxConnecto
     @Override
     public void onServerStartTick() {
         super.onServerStartTick();
-        transfers.values().stream().filter(Objects::nonNull).forEach(IFluxTransfer::onServerStartTick);
+        // Useless this time
+        //transfers.values().stream().filter(Objects::nonNull).forEach(IFluxTransfer::onServerStartTick);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler<IFluxConnecto
         }
     }
 
-    public void setTransfer(EnumFacing side, TileEntity tileEntity) {
+    private void setTransfer(EnumFacing side, TileEntity tileEntity) {
         IFluxTransfer transfer = transfers.get(side);
         ITileEnergyHandler handler;
         if(tileEntity == null || (handler = TileEntityHandler.getEnergyHandler(tileEntity, side.getOpposite())) == null) {

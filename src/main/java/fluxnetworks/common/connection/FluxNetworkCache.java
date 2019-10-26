@@ -97,8 +97,8 @@ public class FluxNetworkCache {
     }
 
     /** Server Only **/
-    public List<IFluxNetwork> getAllNetworks() {
-        return new ArrayList<>(FluxNetworkData.get().networks.values());
+    public Collection<IFluxNetwork> getAllNetworks() {
+        return FluxNetworkData.get().networks.values();
     }
 
     /** Client Only **/
