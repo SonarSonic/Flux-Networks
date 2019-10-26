@@ -87,8 +87,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
     public void onStartServerTick() {
         network_stats.getValue().onStartServerTick();
         network_stats.getValue().startProfiling();
-        List<IFluxConnector> fluxConnectors = connections.get(FluxType.flux);
-        fluxConnectors.forEach(f -> f.getTransferHandler().onServerStartTick());
+        List<IFluxConnector> fluxConnectors = getConnections(FluxType.flux);
+        fluxConnectors.forEach(fluxConnector -> fluxConnector.getTransferHandler().onServerStartTick());
         network_stats.getValue().stopProfiling();
     }
 
