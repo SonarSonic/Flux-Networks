@@ -1,7 +1,7 @@
 package fluxnetworks.client.gui.popups;
 
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.NormalButton;

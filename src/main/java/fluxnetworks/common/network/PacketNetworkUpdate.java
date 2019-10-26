@@ -1,10 +1,8 @@
 package fluxnetworks.common.network;
 
-import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.FeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;

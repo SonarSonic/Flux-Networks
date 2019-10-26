@@ -2,15 +2,18 @@ package fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.*;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.EnumConnectionType;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.network.INetworkConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
+import fluxnetworks.api.network.EnumAccessType;
 import fluxnetworks.client.gui.button.NormalButton;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.item.ItemAdminConfigurator;
 import fluxnetworks.common.item.ItemConfigurator;
@@ -28,8 +31,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.List;
 
-import static net.minecraft.client.renderer.GlStateManager.scale;
-
 public abstract class GuiFluxCore extends GuiPopUpHost {
 
     public List<List<? extends GuiButtonCore>> buttonLists = Lists.newArrayList();
@@ -38,7 +39,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
     public IFluxNetwork network;
-    public AccessPermission accessPermission = AccessPermission.NONE;
+    public EnumAccessType accessPermission = EnumAccessType.NONE;
     protected boolean networkValid;
     private int timer1;
 
@@ -111,8 +112,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, false);
-        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+        FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, false);
+        FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
     }
 
     @Override
@@ -155,7 +156,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
                 list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
             list.add(FluxUtils.getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
-            if(flux.getConnectionType() == ConnectionType.STORAGE) {
+            if(flux.getConnectionType() == EnumConnectionType.STORAGE) {
                 list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
             } else {
                 list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");

@@ -1,7 +1,7 @@
 package fluxnetworks.common.event;
 
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class FluxConnectionEvent extends Event {

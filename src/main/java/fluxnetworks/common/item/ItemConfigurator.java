@@ -1,9 +1,9 @@
 package fluxnetworks.common.item;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.FluxConfigurationType;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.utils.FluxConfigurationType;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.client.FluxColorHandler;
 import fluxnetworks.common.connection.FluxNetworkCache;

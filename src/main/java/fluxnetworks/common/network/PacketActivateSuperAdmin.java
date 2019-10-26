@@ -1,7 +1,7 @@
 package fluxnetworks.common.network;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.Capabilities;
+import fluxnetworks.api.utils.Capabilities;
 import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.common.capabilities.DefaultSuperAdmin;
 import io.netty.buffer.ByteBuf;

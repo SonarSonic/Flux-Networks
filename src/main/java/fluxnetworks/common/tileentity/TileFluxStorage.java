@@ -1,15 +1,15 @@
 package fluxnetworks.common.tileentity;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.api.ConnectionType;
+import fluxnetworks.api.network.EnumConnectionType;
 import fluxnetworks.api.network.ITransferHandler;
-import fluxnetworks.api.tileentity.IFluxEnergy;
-import fluxnetworks.api.tileentity.IFluxStorage;
+import fluxnetworks.api.tiles.IFluxEnergy;
+import fluxnetworks.api.tiles.IFluxStorage;
 import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.connection.handler.SingleTransferHandler;
 import fluxnetworks.common.connection.transfer.StorageTransfer;
 import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.registry.RegistryBlocks;
 import li.cil.oc.api.machine.Arguments;
 import mcjty.lib.api.power.IBigPower;
@@ -65,8 +65,8 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     }
 
     @Override
-    public ConnectionType getConnectionType() {
-        return ConnectionType.STORAGE;
+    public EnumConnectionType getConnectionType() {
+        return EnumConnectionType.STORAGE;
     }
 
     @Override

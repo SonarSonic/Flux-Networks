@@ -1,6 +1,6 @@
 package fluxnetworks.common.network;
 
-import fluxnetworks.api.AccessPermission;
+import fluxnetworks.api.network.EnumAccessType;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
@@ -29,18 +29,18 @@ public class PacketGUIPermission implements IMessageHandler<PacketGUIPermission.
 
     public static class GUIPermissionMessage implements IMessage {
 
-        public AccessPermission accessPermission;
+        public EnumAccessType accessPermission;
 
         public GUIPermissionMessage() {
         }
 
-        public GUIPermissionMessage(AccessPermission permission) {
+        public GUIPermissionMessage(EnumAccessType permission) {
             this.accessPermission = permission;
         }
 
         @Override
         public void fromBytes(ByteBuf buf) {
-            accessPermission = AccessPermission.values()[buf.readInt()];
+            accessPermission = EnumAccessType.values()[buf.readInt()];
         }
 
         @Override

@@ -1,9 +1,7 @@
 package fluxnetworks.common.core;
 
-import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.tileentity.IFluxPhantomEnergy;
-import fluxnetworks.api.tileentity.IFluxPlug;
-import fluxnetworks.api.tileentity.IFluxPoint;
+import fluxnetworks.api.tiles.IFluxPhantomEnergy;
+import fluxnetworks.api.tiles.IFluxPoint;
 import gregtech.api.capability.IEnergyContainer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.Optional;

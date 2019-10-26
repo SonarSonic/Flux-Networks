@@ -1,6 +1,6 @@
 package fluxnetworks.client.gui.button;
 
-import fluxnetworks.api.EnumNavigationTabs;
+import fluxnetworks.api.gui.EnumNavigationTabs;
 import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import net.minecraft.client.Minecraft;

@@ -1,9 +1,9 @@
 package fluxnetworks.common.network;
 
-import fluxnetworks.api.Coord4D;
-import fluxnetworks.api.network.FluxType;
+import fluxnetworks.api.utils.Coord4D;
+import fluxnetworks.api.network.FluxCacheTypes;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.common.connection.FluxLiteConnector;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import io.netty.buffer.ByteBuf;
@@ -26,7 +26,7 @@ public class PacketConnectionUpdateRequest implements IMessageHandler<PacketConn
         if(!network.isInvalid()) {
             List<NBTTagCompound> tags = new ArrayList<>();
             //noinspection unchecked
-            List<IFluxConnector> onlineConnectors = network.getConnections(FluxType.flux);
+            List<IFluxConnector> onlineConnectors = network.getConnections(FluxCacheTypes.flux);
             message.coords.forEach(c ->
                     onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst()
                             .ifPresent(f -> tags.add(FluxLiteConnector.writeCustomNBT(f, new NBTTagCompound()))));

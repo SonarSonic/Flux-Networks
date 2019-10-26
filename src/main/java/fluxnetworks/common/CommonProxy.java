@@ -3,12 +3,12 @@ package fluxnetworks.common;
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.FeedbackInfo;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.capabilities.DefaultSuperAdmin;
 import fluxnetworks.common.connection.FluxNetworkInvalid;
 import fluxnetworks.common.core.EntityFireItem;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.data.FluxChunkManager;
 import fluxnetworks.common.event.FluxConnectionEvent;
 import fluxnetworks.common.handler.CapabilityHandler;
@@ -41,7 +41,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -184,11 +183,11 @@ public class CommonProxy {
         }
     }
 
-    public FeedbackInfo getFeedback(boolean operation) {
+    public EnumFeedbackInfo getFeedback(boolean operation) {
         return null;
     }
 
-    public void setFeedback(FeedbackInfo info, boolean operation) {}
+    public void setFeedback(EnumFeedbackInfo info, boolean operation) {}
 
     public void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache) {}
 

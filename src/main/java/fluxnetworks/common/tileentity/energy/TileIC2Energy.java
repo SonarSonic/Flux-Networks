@@ -1,7 +1,5 @@
 package fluxnetworks.common.tileentity.energy;
 
-import fluxnetworks.FluxNetworks;
-import ic2.api.energy.EnergyNet;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyAcceptor;

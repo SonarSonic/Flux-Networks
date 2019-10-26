@@ -1,7 +1,5 @@
 package fluxnetworks.common.handler.energy;
 
-import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import gregtech.api.capability.GregtechCapabilities;

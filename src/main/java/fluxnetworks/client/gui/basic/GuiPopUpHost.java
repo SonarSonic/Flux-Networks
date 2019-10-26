@@ -1,6 +1,6 @@
 package fluxnetworks.client.gui.basic;
 
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.popups.GuiPopCore;
 import fluxnetworks.common.core.ContainerCore;
 import net.minecraft.client.Minecraft;

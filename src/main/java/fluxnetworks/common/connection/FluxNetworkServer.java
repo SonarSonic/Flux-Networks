@@ -1,15 +1,12 @@
 package fluxnetworks.common.connection;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.Capabilities;
-import fluxnetworks.api.SecurityType;
-import fluxnetworks.api.EnergyType;
-import fluxnetworks.api.network.FluxType;
-import fluxnetworks.api.network.ISuperAdmin;
-import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.api.tileentity.IFluxPlug;
-import fluxnetworks.api.tileentity.IFluxPoint;
+import fluxnetworks.api.network.*;
+import fluxnetworks.api.utils.Capabilities;
+import fluxnetworks.api.utils.EnergyType;
+import fluxnetworks.api.tiles.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxPlug;
+import fluxnetworks.api.tiles.IFluxPoint;
 import fluxnetworks.common.event.FluxConnectionEvent;
 import fluxnetworks.common.core.FluxUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public class FluxNetworkServer extends FluxNetworkBase {
 
-    public HashMap<FluxType, List<IFluxConnector>> connections = new HashMap<>();
+    public HashMap<FluxCacheTypes, List<IFluxConnector>> connections = new HashMap<>();
     public Queue<IFluxConnector> toAdd = new ConcurrentLinkedQueue<>();
     public Queue<IFluxConnector> toRemove = new ConcurrentLinkedQueue<>();
 
@@ -42,7 +39,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         super();
     }
 
-    public FluxNetworkServer(int id, String name, SecurityType security, int color, UUID owner, EnergyType energy, String password) {
+    public FluxNetworkServer(int id, String name, EnumSecurityType security, int color, UUID owner, EnergyType energy, String password) {
         super(id, name, security, color, owner, energy, password);
     }
 
@@ -54,7 +51,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         Iterator<IFluxConnector> iterator = toAdd.iterator();
         while(iterator.hasNext()) {
             IFluxConnector flux = iterator.next();
-            FluxType.getValidTypes(flux).forEach(t -> FluxUtils.addWithCheck(getConnections(t), flux));
+            FluxCacheTypes.getValidTypes(flux).forEach(t -> FluxUtils.addWithCheck(getConnections(t), flux));
             MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(flux, this));
             iterator.remove();
             sortConnections = true;
@@ -69,7 +66,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         Iterator<IFluxConnector> iterator = toRemove.iterator();
         while(iterator.hasNext()) {
             IFluxConnector flux = iterator.next();
-            FluxType.getValidTypes(flux).forEach(t -> ((List<IFluxConnector>) getConnections(t)).removeIf(f -> f == flux));
+            FluxCacheTypes.getValidTypes(flux).forEach(t -> ((List<IFluxConnector>) getConnections(t)).removeIf(f -> f == flux));
             iterator.remove();
             sortConnections = true;
         }
@@ -77,7 +74,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IFluxConnector> List<T> getConnections(FluxType<T> type) {
+    public <T extends IFluxConnector> List<T> getConnections(FluxCacheTypes<T> type) {
         return (List<T>) connections.computeIfAbsent(type, m -> new ArrayList<>());
     }
 
@@ -128,7 +125,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
                 }
             }
         }
-        List<IFluxConnector> fluxConnectors = getConnections(FluxType.flux);
+        List<IFluxConnector> fluxConnectors = getConnections(FluxCacheTypes.flux);
         fluxConnectors.forEach(fluxConnector -> fluxConnector.getTransferHandler().onLastEndTick());
         network_stats.getValue().stopProfiling();
         network_stats.getValue().onEndServerTick();
@@ -136,20 +133,20 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
 
     @Override
-    public AccessPermission getMemberPermission(EntityPlayer player) {
+    public EnumAccessType getMemberPermission(EntityPlayer player) {
         if(FluxConfig.enableSuperAdmin) {
             ISuperAdmin sa = player.getCapability(Capabilities.SUPER_ADMIN, null);
             if(sa != null && sa.getPermission()) {
-                return AccessPermission.SUPER_ADMIN;
+                return EnumAccessType.SUPER_ADMIN;
             }
         }
-        return network_players.getValue().stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getAccessPermission)).getOrDefault(EntityPlayer.getUUID(player.getGameProfile()), network_security.getValue().isEncrypted() ? AccessPermission.NONE : AccessPermission.USER);
+        return network_players.getValue().stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getAccessPermission)).getOrDefault(EntityPlayer.getUUID(player.getGameProfile()), network_security.getValue().isEncrypted() ? EnumAccessType.NONE : EnumAccessType.USER);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void onRemoved() {
-        getConnections(FluxType.flux).forEach(flux -> MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Disconnected((IFluxConnector) flux, this)));
+        getConnections(FluxCacheTypes.flux).forEach(flux -> MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Disconnected((IFluxConnector) flux, this)));
         connections.clear();
         toAdd.clear();
         toRemove.clear();
@@ -220,8 +217,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
     private void sortConnections() {
         sortedPlugs.clear();
         sortedPoints.clear();
-        List<IFluxPlug> plugs = getConnections(FluxType.plug);
-        List<IFluxPoint> points = getConnections(FluxType.point);
+        List<IFluxPlug> plugs = getConnections(FluxCacheTypes.plug);
+        List<IFluxPoint> points = getConnections(FluxCacheTypes.point);
         plugs.forEach(p -> PriorityGroup.getOrCreateGroup(p.getPriority(), sortedPlugs).getConnectors().add(p));
         points.forEach(p -> PriorityGroup.getOrCreateGroup(p.getPriority(), sortedPoints).getConnectors().add(p));
         sortedPlugs.sort(Comparator.comparing(p -> -p.getPriority()));

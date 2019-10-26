@@ -1,18 +1,19 @@
 package fluxnetworks.common.tileentity;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.api.Coord4D;
+import fluxnetworks.api.network.NetworkFolder;
+import fluxnetworks.api.network.NetworkSettings;
+import fluxnetworks.api.utils.Coord4D;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.IFluxConfigurable;
-import fluxnetworks.api.tileentity.ITileByteBuf;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxConfigurable;
+import fluxnetworks.api.tiles.ITileByteBuf;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.common.connection.*;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.data.FluxChunkManager;
 import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.integration.oc.IOCPeripheral;
 import fluxnetworks.common.item.ItemFluxConnector;
-import fluxnetworks.common.connection.NetworkFolder;
 import fluxnetworks.common.core.FluxUtils;
 import io.netty.buffer.ByteBuf;
 import li.cil.oc.api.machine.Arguments;

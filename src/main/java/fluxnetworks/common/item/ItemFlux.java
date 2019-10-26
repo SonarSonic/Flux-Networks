@@ -1,7 +1,7 @@
 package fluxnetworks.common.item;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.translate.FluxTranslate;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

@@ -1,11 +1,8 @@
 package fluxnetworks.common.handler;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.energy.ITileEnergyHandler;
-import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.common.CommonProxy;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.common.handler.energy.ForgeEnergyHandler;
 import fluxnetworks.common.handler.energy.GTEnergyHandler;
 import fluxnetworks.common.handler.energy.IC2EnergyHandler;
@@ -14,16 +11,12 @@ import fluxnetworks.common.tileentity.TileFluxController;
 import fluxnetworks.common.tileentity.TileFluxPlug;
 import fluxnetworks.common.tileentity.TileFluxPoint;
 import fluxnetworks.common.tileentity.TileFluxStorage;
-import li.cil.oc.api.internal.Adapter;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,11 +88,6 @@ public class TileEntityHandler {
         if(tile instanceof IFluxConnector) {
             return false;
         }
-        /*if(FluxNetworks.proxy.ocLoaded) {
-            if(tile instanceof Adapter) {
-                return true;
-            }
-        }*/
         if(blockBlacklist.containsKey(tile.getBlockType().getRegistryName().toString())) {
             int meta = blockBlacklist.get(tile.getBlockType().getRegistryName().toString());
             if(meta == -1)

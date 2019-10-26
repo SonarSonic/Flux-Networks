@@ -1,7 +1,6 @@
 package fluxnetworks.common.core;
 
-import fluxnetworks.api.INetworkConnector;
-import fluxnetworks.common.tileentity.TileFluxCore;
+import fluxnetworks.api.network.INetworkConnector;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 

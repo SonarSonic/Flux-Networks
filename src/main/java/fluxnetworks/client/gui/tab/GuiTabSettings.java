@@ -1,12 +1,15 @@
 package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.*;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.gui.EnumNetworkColor;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.button.ColorButton;
 import fluxnetworks.client.gui.button.NormalButton;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketGeneral;
 import fluxnetworks.common.network.PacketGeneralHandler;
@@ -65,7 +68,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
 
             int i = 0;
             boolean colorSet = false;
-            for (NetworkColor color : NetworkColor.values()) {
+            for (EnumNetworkColor color : EnumNetworkColor.values()) {
                 ColorButton b = new ColorButton(48 + ((i >= 7 ? i - 7 : i) * 16), 96 + ((i >= 7 ? 1 : 0) * 16), color.color);
                 colorButtons.add(b);
                 if(!colorSet && color.color == network.getSetting(NetworkSettings.NETWORK_COLOR)) {
@@ -126,13 +129,13 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTabs.TAB_HOME, player, connector);
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
         }
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
             apply.clickable = false;
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
         }
     }
 }

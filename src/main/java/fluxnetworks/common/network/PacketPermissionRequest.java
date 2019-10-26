@@ -1,6 +1,6 @@
 package fluxnetworks.common.network;
 
-import fluxnetworks.api.AccessPermission;
+import fluxnetworks.api.network.EnumAccessType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import io.netty.buffer.ByteBuf;
@@ -19,7 +19,7 @@ public class PacketPermissionRequest implements IMessageHandler<PacketPermission
     public IMessage onMessage(PermissionRequestMessage message, MessageContext ctx) {
         IFluxNetwork network = FluxNetworkCache.instance.getNetwork(message.networkID);
         EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(message.uuid);
-        return new PacketGUIPermission.GUIPermissionMessage((network.isInvalid() || player == null) ? AccessPermission.NONE : network.getMemberPermission(player));
+        return new PacketGUIPermission.GUIPermissionMessage((network.isInvalid() || player == null) ? EnumAccessType.NONE : network.getMemberPermission(player));
     }
 
     public static class PermissionRequestMessage implements IMessage {

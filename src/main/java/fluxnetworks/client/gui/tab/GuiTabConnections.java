@@ -1,20 +1,20 @@
 package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.Coord4D;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.INetworkConnector;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.utils.Coord4D;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.INetworkConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.button.BatchEditButton;
 import fluxnetworks.client.gui.popups.GuiPopConnectionEdit;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketBatchEditing;
 import fluxnetworks.common.network.PacketConnectionUpdateRequest;
@@ -197,7 +197,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         }
         timer++;
         timer %= 20;
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             closePopUp();
             batchConnections.clear();
             clear.clickable = false;
@@ -205,7 +205,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             disconnect.clickable = false;
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
         }
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
             closePopUp();
             elements.removeAll(batchConnections);
             batchConnections.clear();

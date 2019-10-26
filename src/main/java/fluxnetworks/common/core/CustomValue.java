@@ -1,5 +1,7 @@
 package fluxnetworks.common.core;
 
+import fluxnetworks.api.utils.ICustomValue;
+
 public class CustomValue<T> implements ICustomValue<T> {
 
     public T value;

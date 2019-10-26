@@ -1,6 +1,5 @@
 package fluxnetworks.client.gui.button;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.basic.ITextBoxButton;
 import net.minecraft.client.gui.FontRenderer;

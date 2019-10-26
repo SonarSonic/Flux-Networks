@@ -1,7 +1,7 @@
 package fluxnetworks.common.tileentity;
 
-import fluxnetworks.api.ConnectionType;
-import fluxnetworks.api.tileentity.IFluxPoint;
+import fluxnetworks.api.network.EnumConnectionType;
+import fluxnetworks.api.tiles.IFluxPoint;
 
 public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
 
@@ -10,8 +10,8 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
     }
 
     @Override
-    public ConnectionType getConnectionType() {
-        return ConnectionType.POINT;
+    public EnumConnectionType getConnectionType() {
+        return EnumConnectionType.POINT;
     }
 
     @Override

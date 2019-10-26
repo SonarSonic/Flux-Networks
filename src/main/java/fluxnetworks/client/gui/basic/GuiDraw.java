@@ -1,7 +1,7 @@
 package fluxnetworks.client.gui.basic;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.translate.FluxTranslate;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;

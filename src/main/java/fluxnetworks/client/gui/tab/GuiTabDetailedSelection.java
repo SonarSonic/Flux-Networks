@@ -1,11 +1,11 @@
 package fluxnetworks.client.gui.tab;
 
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.client.gui.basic.GuiDraw;
-import fluxnetworks.common.connection.NetworkSettings;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.network.NetworkSettings;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import net.minecraft.client.renderer.GlStateManager;

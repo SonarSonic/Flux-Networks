@@ -1,11 +1,11 @@
 package fluxnetworks.client;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.api.FluxConfigurationType;
+import fluxnetworks.api.utils.FluxConfigurationType;
 import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.common.block.BlockFluxCore;
 import fluxnetworks.common.data.FluxNetworkData;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.item.ItemConfigurator;
 import fluxnetworks.common.network.PacketColorRequest;

@@ -1,12 +1,9 @@
 package fluxnetworks.common.connection.transfer;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.network.IFluxTransfer;
-import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.tileentity.TileFluxStorage;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 
 public class StorageTransfer implements IFluxTransfer {
 
@@ -23,14 +20,12 @@ public class StorageTransfer implements IFluxTransfer {
 
     @Override
     public long addToNetwork(long amount, boolean simulate) {
-        long remove = tile.removeEnergy(amount, simulate);
-        return remove;
+        return tile.removeEnergy(amount, simulate);
     }
 
     @Override
     public long removeFromNetwork(long amount, boolean simulate) {
-        long add = tile.addEnergy(amount, simulate);
-        return add;
+        return tile.addEnergy(amount, simulate);
     }
 
     @Override

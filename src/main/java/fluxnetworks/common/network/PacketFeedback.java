@@ -1,7 +1,7 @@
 package fluxnetworks.common.network;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.FeedbackInfo;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
 import fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -13,7 +13,7 @@ public class PacketFeedback implements IMessageHandler<PacketFeedback.FeedbackMe
     @Override
     public IMessage onMessage(FeedbackMessage message, MessageContext ctx) {
         PacketHandler.handlePacket(() -> {
-            if(message.info == FeedbackInfo.SUCCESS || message.info == FeedbackInfo.SUCCESS_2 || message.info == FeedbackInfo.PASSWORD_REQUIRE) {
+            if(message.info == EnumFeedbackInfo.SUCCESS || message.info == EnumFeedbackInfo.SUCCESS_2 || message.info == EnumFeedbackInfo.PASSWORD_REQUIRE) {
                 FluxNetworks.proxy.setFeedback(message.info, true);
             } else {
                 FluxNetworks.proxy.setFeedback(message.info, false);
@@ -24,18 +24,18 @@ public class PacketFeedback implements IMessageHandler<PacketFeedback.FeedbackMe
 
     public static class FeedbackMessage implements IMessage {
 
-        public FeedbackInfo info;
+        public EnumFeedbackInfo info;
 
         public FeedbackMessage() {
         }
 
-        public FeedbackMessage(FeedbackInfo info) {
+        public FeedbackMessage(EnumFeedbackInfo info) {
             this.info = info;
         }
 
         @Override
         public void fromBytes(ByteBuf buf) {
-            info = FeedbackInfo.values()[buf.readInt()];
+            info = EnumFeedbackInfo.values()[buf.readInt()];
         }
 
         @Override

@@ -1,10 +1,10 @@
 package fluxnetworks.client.gui.button;
 
-import fluxnetworks.api.EnumChargingTypes;
+import fluxnetworks.api.gui.EnumChargingTypes;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.tab.GuiTabWireless;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 

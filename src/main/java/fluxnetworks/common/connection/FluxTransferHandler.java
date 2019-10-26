@@ -3,7 +3,7 @@ package fluxnetworks.common.connection;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.IFluxTransfer;
 import fluxnetworks.api.network.ITransferHandler;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class FluxTransferHandler<T extends IFluxConnector> implements ITransferHandler {

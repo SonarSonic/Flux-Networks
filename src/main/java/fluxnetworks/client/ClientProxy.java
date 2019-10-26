@@ -1,7 +1,7 @@
 package fluxnetworks.client;
 
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.FeedbackInfo;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
 import fluxnetworks.client.render.FluxStorageModel;
 import fluxnetworks.client.render.TileFluxStorageRenderer;
 import fluxnetworks.common.CommonProxy;
@@ -33,8 +33,8 @@ import java.util.Map;
 public class ClientProxy extends CommonProxy {
 
     private LocalizationHandler localizationHandler = new LocalizationHandler();
-    private FeedbackInfo feedbackInfo = FeedbackInfo.NONE; // Text message.
-    private FeedbackInfo feedbackInfoSuccess = FeedbackInfo.NONE; // Special operation.
+    private EnumFeedbackInfo feedbackInfo = EnumFeedbackInfo.NONE; // Text message.
+    private EnumFeedbackInfo feedbackInfoSuccess = EnumFeedbackInfo.NONE; // Special operation.
     private int feedbackTimer = 0;
 
     @Override
@@ -94,19 +94,19 @@ public class ClientProxy extends CommonProxy {
                 feedbackTimer++;
                 if(feedbackTimer >= 60) {
                     feedbackTimer = 0;
-                    setFeedback(FeedbackInfo.NONE, false);
+                    setFeedback(EnumFeedbackInfo.NONE, false);
                 }
             }
         }
     }
 
     @Override
-    public FeedbackInfo getFeedback(boolean operation) {
+    public EnumFeedbackInfo getFeedback(boolean operation) {
         return operation ? feedbackInfoSuccess : feedbackInfo;
     }
 
     @Override
-    public void setFeedback(FeedbackInfo info, boolean operation) {
+    public void setFeedback(EnumFeedbackInfo info, boolean operation) {
         if(operation) {
             this.feedbackInfoSuccess = info;
         } else {

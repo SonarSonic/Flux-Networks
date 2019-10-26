@@ -1,8 +1,13 @@
 package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.*;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.network.INetworkConnector;
+import fluxnetworks.api.utils.EnergyType;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.EnumSecurityType;
+import fluxnetworks.api.gui.EnumNetworkColor;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.button.ColorButton;
 import fluxnetworks.client.gui.button.NormalButton;
@@ -19,7 +24,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
     public GuiTabCreate(EntityPlayer player, INetworkConnector connector) {
         super(player, connector);
-        securityType = SecurityType.ENCRYPTED;
+        securityType = EnumSecurityType.ENCRYPTED;
         energyType = EnergyType.RF;
     }
 
@@ -33,7 +38,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         name.setText(mc.player.getName() + "'s Network");
 
         int i = 0;
-        for(NetworkColor color : NetworkColor.values()) {
+        for(EnumNetworkColor color : EnumNetworkColor.values()) {
             colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 96 + (i >= 7 ? 1 : 0) * 16, color.color));
             i++;
         }
@@ -69,9 +74,9 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector);
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
         }
     }
 

@@ -35,7 +35,7 @@ public class PacketGeneral implements IMessageHandler<PacketGeneral.GeneralMessa
         public PacketGeneralType handler;
         public NBTTagCompound nbtTag;
 
-        public GeneralMessage() {};
+        public GeneralMessage() {}
 
         public GeneralMessage(PacketGeneralType handler, NBTTagCompound nbtTag) {
             super();

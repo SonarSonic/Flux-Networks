@@ -1,6 +1,5 @@
 package fluxnetworks.common.handler;
 
-import fluxnetworks.api.INetworkConnector;
 import fluxnetworks.client.gui.GuiFluxAdminHome;
 import fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import fluxnetworks.client.gui.GuiFluxConnectorHome;

@@ -1,6 +1,5 @@
 package fluxnetworks.common.integration.oc;
 
-import fluxnetworks.FluxNetworks;
 import li.cil.oc.api.Driver;
 
 public class OCIntegration {

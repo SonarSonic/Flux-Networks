@@ -1,17 +1,17 @@
 package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.EnumChargingTypes;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumChargingTypes;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.basic.GuiTabCore;
 import fluxnetworks.client.gui.button.InventoryButton;
 import fluxnetworks.client.gui.button.NormalButton;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketGeneral;
 import fluxnetworks.common.network.PacketGeneralHandler;
@@ -105,9 +105,9 @@ public class GuiTabWireless extends GuiTabCore {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             apply.clickable = false;
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
         }
     }
 }

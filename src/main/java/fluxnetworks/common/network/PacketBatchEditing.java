@@ -1,10 +1,9 @@
 package fluxnetworks.common.network;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.Coord4D;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.network.FluxType;
+import fluxnetworks.api.utils.Coord4D;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.FluxCacheTypes;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.core.FluxUtils;
@@ -49,7 +48,7 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                     boolean unlimited = message.tag.getBoolean(ItemFluxConnector.DISABLE_LIMIT);
                     boolean load = message.tag.getBoolean("chunkLoad");
                     //noinspection unchecked
-                    List<TileFluxCore> onlineConnectors = network.getConnections(FluxType.flux);
+                    List<TileFluxCore> onlineConnectors = network.getConnections(FluxCacheTypes.flux);
                     AtomicBoolean reject = new AtomicBoolean(false);
                     PacketHandler.handlePacket(() -> {
                         message.coord4DS.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
@@ -97,12 +96,12 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                         }
                         }));
                         if(reject.get()) {
-                            PacketHandler.network.sendTo(new PacketFeedback.FeedbackMessage(FeedbackInfo.REJECT_SOME), (EntityPlayerMP) player);
+                            PacketHandler.network.sendTo(new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.REJECT_SOME), (EntityPlayerMP) player);
                         }
                     }, ctx.netHandler);
-                    return disconnect ? new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS_2) : new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
+                    return disconnect ? new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.SUCCESS_2) : new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.SUCCESS);
                 } else {
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.NO_ADMIN);
+                    return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.NO_ADMIN);
                 }
             }
         }

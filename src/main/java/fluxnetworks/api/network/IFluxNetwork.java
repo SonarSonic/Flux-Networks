@@ -1,11 +1,8 @@
 package fluxnetworks.api.network;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.common.connection.NetworkMember;
-import fluxnetworks.common.connection.NetworkSettings;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.tiles.IFluxConnector;
+import fluxnetworks.api.utils.NBTType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -34,15 +31,15 @@ public interface IFluxNetwork {
 
     default void onRemoved() {}
 
-    default AccessPermission getMemberPermission(EntityPlayer player) {
-        return AccessPermission.NONE;
+    default EnumAccessType getMemberPermission(EntityPlayer player) {
+        return EnumAccessType.NONE;
     }
 
     default void addNewMember(String name) {}
 
     default void removeMember(UUID uuid) {}
 
-    default <T extends IFluxConnector> List<T> getConnections(FluxType<T> type) {return Lists.newArrayList();}
+    default <T extends IFluxConnector> List<T> getConnections(FluxCacheTypes<T> type) {return Lists.newArrayList();}
 
     default Optional<NetworkMember> getValidMember(UUID player) {return Optional.empty();}
 

@@ -2,7 +2,6 @@ package fluxnetworks.api.network;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 
 public interface IFluxTransfer {
 

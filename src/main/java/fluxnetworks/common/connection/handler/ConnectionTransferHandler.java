@@ -3,7 +3,7 @@ package fluxnetworks.common.connection.handler;
 import com.google.common.collect.Lists;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import fluxnetworks.api.network.IFluxTransfer;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.common.connection.transfer.ConnectionTransfer;
 import fluxnetworks.common.connection.FluxTransferHandler;
 import fluxnetworks.common.handler.TileEntityHandler;

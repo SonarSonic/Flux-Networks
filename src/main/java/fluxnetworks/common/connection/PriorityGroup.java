@@ -1,6 +1,6 @@
 package fluxnetworks.common.connection;
 
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
 
 import java.util.ArrayList;
 import java.util.List;

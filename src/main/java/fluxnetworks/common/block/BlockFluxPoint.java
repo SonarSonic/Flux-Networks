@@ -1,6 +1,6 @@
 package fluxnetworks.common.block;
 
-import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.translate.FluxTranslate;
 import fluxnetworks.common.tileentity.TileFluxPoint;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;

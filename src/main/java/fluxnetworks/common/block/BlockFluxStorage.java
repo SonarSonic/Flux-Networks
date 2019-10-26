@@ -2,9 +2,8 @@ package fluxnetworks.common.block;
 
 import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.translate.FluxTranslate;
 import fluxnetworks.client.render.ItemFluxStorageRenderer;
-import fluxnetworks.common.registry.RegistryBlocks;
 import fluxnetworks.common.tileentity.TileFluxStorage;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

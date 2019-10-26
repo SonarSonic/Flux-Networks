@@ -1,20 +1,16 @@
 package fluxnetworks.common.network;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.FluxConfigurationType;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.utils.FluxConfigurationType;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.item.ItemConfigurator;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.network.play.server.SPacketHeldItemChange;
-import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -32,10 +28,10 @@ public class PacketSetConfiguratorNetwork implements IMessageHandler<PacketSetCo
         if(!network.isInvalid()) {
             if (!network.getMemberPermission(player).canAccess()) {
                 if (message.password.isEmpty()) {
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.PASSWORD_REQUIRE);
+                    return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }
                 if (!message.password.equals(network.getSetting(NetworkSettings.NETWORK_PASSWORD))) {
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.REJECT);
+                    return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.REJECT);
                 }
             }
             ItemStack stack = player.getHeldItemMainhand();
@@ -43,7 +39,7 @@ public class PacketSetConfiguratorNetwork implements IMessageHandler<PacketSetCo
                 NBTTagCompound configs = stack.getOrCreateSubCompound(CONFIGS_TAG);
                 configs.setInteger(FluxConfigurationType.NETWORK.getNBTName(), message.id);
             }
-            return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
+            return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.SUCCESS);
         }
         return null;
     }

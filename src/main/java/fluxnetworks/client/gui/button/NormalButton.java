@@ -2,7 +2,6 @@ package fluxnetworks.client.gui.button;
 
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 
 /**
  * A clickable button

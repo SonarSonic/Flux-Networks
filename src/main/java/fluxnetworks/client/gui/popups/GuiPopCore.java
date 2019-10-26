@@ -2,8 +2,8 @@ package fluxnetworks.client.gui.popups;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.basic.GuiPopUpHost;
 import fluxnetworks.client.gui.basic.GuiTextField;
@@ -51,7 +51,7 @@ public class GuiPopCore<T extends GuiPopUpHost> extends GuiDraw {
         popButtons.clear();
         popBoxes.clear();
         popSwitches.clear();
-        FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+        FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
     }
 
     public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {

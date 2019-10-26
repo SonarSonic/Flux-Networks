@@ -1,14 +1,13 @@
 package fluxnetworks.common.network;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.network.FluxType;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.FluxCacheTypes;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
 import fluxnetworks.common.data.FluxChunkManager;
 import fluxnetworks.common.data.FluxNetworkData;
-import fluxnetworks.common.connection.FluxNetworkServer;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,15 +31,15 @@ public class PacketTileHandler {
         }
         IFluxNetwork network = FluxNetworkCache.instance.getNetwork(id);
         if(!network.isInvalid()) {
-            if(tile.getConnectionType().isController() && network.getConnections(FluxType.controller).size() > 0) {
-                return new PacketFeedback.FeedbackMessage(FeedbackInfo.HAS_CONTROLLER);
+            if(tile.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
+                return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.HAS_CONTROLLER);
             }
             if(!network.getMemberPermission(player).canAccess()) {
                 if(pass.isEmpty()) {
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.PASSWORD_REQUIRE);
+                    return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }
                 if (!pass.equals(network.getSetting(NetworkSettings.NETWORK_PASSWORD))) {
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.REJECT);
+                    return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.REJECT);
                 }
             }
             if(tile.getNetwork() != null && !tile.getNetwork().isInvalid()) {
@@ -48,7 +47,7 @@ public class PacketTileHandler {
             }
             tile.playerUUID = EntityPlayer.getUUID(player.getGameProfile());
             network.queueConnectionAddition(tile);
-            return new PacketFeedback.FeedbackMessage(FeedbackInfo.SUCCESS);
+            return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.SUCCESS);
         }
         return null;
     }
@@ -66,7 +65,7 @@ public class PacketTileHandler {
                 boolean p = FluxChunkManager.forceChunk(tile.getWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = p;
                 if(!p) {
-                    return new PacketFeedback.FeedbackMessage(FeedbackInfo.HAS_LOADER);
+                    return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.HAS_LOADER);
                 }
                 return null;
             } else {
@@ -77,6 +76,6 @@ public class PacketTileHandler {
         } else {
             tile.chunkLoading = false;
         }
-        return new PacketFeedback.FeedbackMessage(FeedbackInfo.BANNED_LOADING);
+        return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.BANNED_LOADING);
     }
 }

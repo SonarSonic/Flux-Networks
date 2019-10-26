@@ -1,16 +1,16 @@
 package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.popups.GuiPopUserEdit;
-import fluxnetworks.common.connection.NetworkMember;
-import fluxnetworks.common.connection.NetworkSettings;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.network.NetworkMember;
+import fluxnetworks.api.network.NetworkSettings;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import fluxnetworks.common.network.PacketPermissionRequest;
@@ -155,7 +155,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }
         if(timer % 2 == 0) {
             refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
-            if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
+            if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
                 if(hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
                     if (n.isPresent()) {
@@ -165,7 +165,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                         closePopUp();
                     }
                 }
-                FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+                FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
             }
         }
         timer++;

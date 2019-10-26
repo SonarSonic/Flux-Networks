@@ -1,17 +1,11 @@
 package fluxnetworks.common.capabilities;
 
 import fluxnetworks.FluxConfig;
-import fluxnetworks.api.Capabilities;
+import fluxnetworks.api.utils.Capabilities;
 import fluxnetworks.api.network.ISuperAdmin;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.core.NBTType;
-import fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.PacketNetworkUpdate;
-import fluxnetworks.common.network.PacketSuperAdmin;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 

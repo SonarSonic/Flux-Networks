@@ -2,7 +2,7 @@ package fluxnetworks.common.connection.handler;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.api.network.IFluxTransfer;
-import fluxnetworks.api.tileentity.IFluxEnergy;
+import fluxnetworks.api.tiles.IFluxEnergy;
 import fluxnetworks.common.connection.FluxTransferHandler;
 import net.minecraft.util.EnumFacing;
 

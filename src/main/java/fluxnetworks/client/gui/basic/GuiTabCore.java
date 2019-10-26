@@ -3,15 +3,13 @@ package fluxnetworks.client.gui.basic;
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.GuiFluxAdminHome;
 import fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import fluxnetworks.client.gui.GuiFluxConnectorHome;
 import fluxnetworks.client.gui.button.NavigationButton;
-import fluxnetworks.client.gui.button.NormalButton;
-import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.client.gui.tab.*;
 import fluxnetworks.common.item.ItemAdminConfigurator;
 import fluxnetworks.common.item.ItemConfigurator;
@@ -61,7 +59,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
                     mc.player.closeScreen();
                 }else {
                     switchTab(EnumNavigationTabs.TAB_HOME, player, connector);
-                    FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, false);
+                    FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, false);
                     if (FluxConfig.enableButtonSound)
                         mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(RegistrySounds.BUTTON_CLICK, 1.0F));
                 }

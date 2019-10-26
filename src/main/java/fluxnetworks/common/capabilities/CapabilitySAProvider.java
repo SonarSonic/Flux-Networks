@@ -1,6 +1,6 @@
 package fluxnetworks.common.capabilities;
 
-import fluxnetworks.api.Capabilities;
+import fluxnetworks.api.utils.Capabilities;
 import fluxnetworks.api.network.ISuperAdmin;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;

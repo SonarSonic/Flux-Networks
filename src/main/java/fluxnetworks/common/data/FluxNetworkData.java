@@ -2,15 +2,12 @@ package fluxnetworks.common.data;
 
 import com.google.common.collect.Lists;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.Capabilities;
-import fluxnetworks.api.EnergyType;
-import fluxnetworks.api.SecurityType;
-import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.network.ISuperAdmin;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.network.*;
+import fluxnetworks.api.utils.Capabilities;
+import fluxnetworks.api.utils.EnergyType;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.common.connection.*;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketNetworkUpdate;
 import net.minecraft.entity.player.EntityPlayer;
@@ -207,9 +204,9 @@ public class FluxNetworkData extends WorldSavedData {
         nbt.setTag(PLAYER_LIST, list);
     }
 
-    private static AccessPermission getPermission(EntityPlayer player) {
+    private static EnumAccessType getPermission(EntityPlayer player) {
         ISuperAdmin superAdmin = player.getCapability(Capabilities.SUPER_ADMIN, null);
-        return (superAdmin != null && superAdmin.getPermission()) ? AccessPermission.SUPER_ADMIN : AccessPermission.NONE;
+        return (superAdmin != null && superAdmin.getPermission()) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.NONE;
     }
 
     public static void readConnections(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
@@ -296,7 +293,7 @@ public class FluxNetworkData extends WorldSavedData {
         network.network_color.setValue(color.getInteger("red") << 16 | color.getInteger("green") << 8 | color.getInteger("blue"));
         network.network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
         int c = nbt.getInteger(FluxNetworkData.OLD_NETWORK_ACCESS);
-        network.network_security.setValue(c > 0 ? SecurityType.ENCRYPTED : SecurityType.PUBLIC);
+        network.network_security.setValue(c > 0 ? EnumSecurityType.ENCRYPTED : EnumSecurityType.PUBLIC);
         network.network_password.setValue(String.valueOf((int) (Math.random() * 1000000)));
         network.network_energy.setValue(EnergyType.RF);
         FluxNetworkData.readPlayers(network, nbt);

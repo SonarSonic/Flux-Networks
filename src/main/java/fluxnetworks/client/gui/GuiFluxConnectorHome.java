@@ -1,25 +1,19 @@
 package fluxnetworks.client.gui;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumNavigationTabs;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
-import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.client.gui.basic.GuiTabCore;
-import fluxnetworks.client.gui.basic.GuiTextField;
-import fluxnetworks.client.gui.button.NavigationButton;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.client.gui.button.TextboxButton;
-import fluxnetworks.common.connection.NetworkSettings;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.network.NetworkSettings;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.*;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
-
-import java.io.IOException;
 
 /**
  * The home page.

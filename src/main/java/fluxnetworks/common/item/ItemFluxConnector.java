@@ -1,7 +1,7 @@
 package fluxnetworks.common.item;
 
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.EnergyType;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.utils.EnergyType;
 import fluxnetworks.client.FluxColorHandler;
 import fluxnetworks.common.data.FluxNetworkData;
 import fluxnetworks.common.core.FluxUtils;

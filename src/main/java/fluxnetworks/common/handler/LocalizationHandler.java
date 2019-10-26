@@ -1,7 +1,7 @@
 package fluxnetworks.common.handler;
 
-import fluxnetworks.common.core.ILocalizationProvider;
-import fluxnetworks.common.core.Localization;
+import fluxnetworks.api.translate.ITranslationProvider;
+import fluxnetworks.api.translate.Translation;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.resource.IResourceType;
@@ -13,26 +13,26 @@ import java.util.function.Predicate;
 
 public class LocalizationHandler implements ISelectiveResourceReloadListener {
 
-    public List<ILocalizationProvider> providers = new ArrayList<>();
+    public List<ITranslationProvider> providers = new ArrayList<>();
 
     public void clear() {
         providers.clear();
     }
 
-    public void add(ILocalizationProvider handler) {
+    public void add(ITranslationProvider handler) {
         providers.add(handler);
         loadHandler(handler);
     }
 
-    public void remove(ILocalizationProvider handler) {
+    public void remove(ITranslationProvider handler) {
         providers.remove(handler);
     }
 
-    public void loadHandler(ILocalizationProvider handler) {
-        handler.getLocalizations(new ArrayList<>()).forEach(LocalizationHandler::translate);
+    public void loadHandler(ITranslationProvider handler) {
+        handler.getTranslations(new ArrayList<>()).forEach(LocalizationHandler::translate);
     }
 
-    public static Localization translate(Localization l) {
+    public static Translation translate(Translation l) {
         l.translated = translate(l.key);
         return l;
     }

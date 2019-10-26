@@ -1,22 +1,18 @@
 package fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.FluxConfig;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.EnergyType;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.INetworkConnector;
-import fluxnetworks.api.SecurityType;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.utils.EnergyType;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.network.INetworkConnector;
+import fluxnetworks.api.network.EnumSecurityType;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
 import fluxnetworks.client.gui.basic.GuiTabCore;
-import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.ColorButton;
 import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.client.gui.popups.GuiPopCore;
 import fluxnetworks.client.gui.popups.GuiPopCustomColour;
 import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.registry.RegistrySounds;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 
@@ -28,7 +24,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
     protected List<ColorButton> colorButtons = Lists.newArrayList();
 
-    protected SecurityType securityType;
+    protected EnumSecurityType securityType;
     public EnergyType energyType;
     public ColorButton color;
     public TextboxButton name;
@@ -73,7 +69,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             drawCenteredString(fontRenderer, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
             fontRenderer.drawString(FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
             fontRenderer.drawString(FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
-            if (securityType == SecurityType.ENCRYPTED)
+            if (securityType == EnumSecurityType.ENCRYPTED)
                 fontRenderer.drawString(FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 64, 0x606060);
             fontRenderer.drawString(FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
             fontRenderer.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
@@ -86,7 +82,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         ////TODO replace with "text buttons
         if(mouseButton == 0) {
             if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
-                securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
+                securityType = FluxUtils.incrementEnum(securityType, EnumSecurityType.values());
                 password.setText("");
                 password.setVisible(!password.getVisible());
                 onEditSettingsChanged();

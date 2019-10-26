@@ -1,6 +1,6 @@
 package fluxnetworks.common.tileentity.energy;
 
-import fluxnetworks.api.tileentity.IFluxPhantomEnergy;
+import fluxnetworks.api.tiles.IFluxPhantomEnergy;
 import fluxnetworks.common.core.ForgeEnergyWrapper;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.util.EnumFacing;

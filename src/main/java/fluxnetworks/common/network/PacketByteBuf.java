@@ -1,6 +1,6 @@
 package fluxnetworks.common.network;
 
-import fluxnetworks.api.tileentity.ITileByteBuf;
+import fluxnetworks.api.tiles.ITileByteBuf;
 import fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;

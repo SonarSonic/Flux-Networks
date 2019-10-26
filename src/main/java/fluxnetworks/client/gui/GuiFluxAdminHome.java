@@ -1,27 +1,19 @@
 package fluxnetworks.client.gui;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.AccessPermission;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.INetworkConnector;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.network.EnumAccessType;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.basic.GuiButtonCore;
-import fluxnetworks.client.gui.basic.GuiFluxCore;
 import fluxnetworks.client.gui.basic.GuiTabCore;
-import fluxnetworks.client.gui.basic.GuiTextField;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
-import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.connection.NetworkSettings;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.network.NetworkSettings;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.*;
-import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
-
-import java.io.IOException;
 
 public class GuiFluxAdminHome extends GuiTabCore {
 
@@ -42,7 +34,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
-        fontRenderer.drawString(AccessPermission.SUPER_ADMIN.getName(), 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(EnumAccessType.SUPER_ADMIN.getName(), 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
         fontRenderer.drawString("Detailed Network View", 20, 42, network.getSetting(NetworkSettings.NETWORK_COLOR));
     }
 

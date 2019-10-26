@@ -1,16 +1,16 @@
 package fluxnetworks.client.gui.tab;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.FeedbackInfo;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.client.gui.basic.GuiDraw;
 import fluxnetworks.client.gui.basic.GuiTabPages;
 import fluxnetworks.client.gui.popups.GuiPopNetworkPassword;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.item.ItemConfigurator;
 import net.minecraft.client.renderer.GlStateManager;
@@ -133,7 +133,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         if(timer2 == 0) {
             refreshPages(FluxNetworkCache.instance.getAllClientNetworks());
         }
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.SUCCESS) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
            closePopUp();
            if(connector instanceof ItemConfigurator.NetworkConnector){
                ItemConfigurator.NetworkConnector networkConnector = (ItemConfigurator.NetworkConnector)connector;
@@ -144,9 +144,9 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
                this.networkValid = !selectedNetwork.isInvalid();
            }
         }
-        if(FluxNetworks.proxy.getFeedback(true) == FeedbackInfo.PASSWORD_REQUIRE) {
+        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.PASSWORD_REQUIRE) {
             openPopUp(new GuiPopNetworkPassword(this, player, connector));
-            FluxNetworks.proxy.setFeedback(FeedbackInfo.NONE, true);
+            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
         }
         timer2++;
         timer2 %= 10;

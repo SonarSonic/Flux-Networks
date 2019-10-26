@@ -1,10 +1,8 @@
 package fluxnetworks.common.registry;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.common.connection.NetworkFolder;
 import fluxnetworks.common.core.FluxUtils;
 import fluxnetworks.common.data.FluxNetworkData;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;

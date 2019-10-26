@@ -1,14 +1,14 @@
 package fluxnetworks.client.gui.tab;
 
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.EnumNavigationTabs;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.gui.EnumNavigationTabs;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.LineChart;
 import fluxnetworks.client.gui.basic.GuiTabCore;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import fluxnetworks.common.connection.NetworkStatistics;
 import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.handler.PacketHandler;
 import fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import fluxnetworks.common.registry.RegistryBlocks;

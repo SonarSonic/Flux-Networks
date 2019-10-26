@@ -1,9 +1,9 @@
 package fluxnetworks.common.block;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
+import fluxnetworks.api.translate.FluxTranslate;
 import fluxnetworks.common.core.FluxUtils;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.utils.NBTType;
 import fluxnetworks.common.item.ItemConfigurator;
 import fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.block.properties.PropertyBool;

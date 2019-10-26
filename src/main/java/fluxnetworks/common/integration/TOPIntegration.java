@@ -2,10 +2,9 @@ package fluxnetworks.common.integration;
 
 import fluxnetworks.FluxConfig;
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.ConnectionType;
-import fluxnetworks.api.EnergyType;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.utils.EnergyType;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.common.block.BlockFluxCore;
 import fluxnetworks.common.core.FluxUtils;
 import mcjty.theoneprobe.api.*;
@@ -13,14 +12,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 
-import javax.annotation.Nullable;
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.function.Function;
 
 public class TOPIntegration implements Function<ITheOneProbe, Void> {

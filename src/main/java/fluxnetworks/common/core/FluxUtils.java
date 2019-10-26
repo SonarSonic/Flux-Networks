@@ -1,12 +1,12 @@
 package fluxnetworks.common.core;
 
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.ConnectionType;
-import fluxnetworks.api.EnergyType;
-import fluxnetworks.api.FluxConfigurationType;
-import fluxnetworks.api.network.FluxType;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.network.EnumConnectionType;
+import fluxnetworks.api.utils.EnergyType;
+import fluxnetworks.api.utils.FluxConfigurationType;
+import fluxnetworks.api.network.FluxCacheTypes;
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.api.tileentity.IFluxConnector;
+import fluxnetworks.api.tiles.IFluxConnector;
 import fluxnetworks.client.gui.button.SlidedSwitchButton;
 import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.common.connection.FluxNetworkCache;
@@ -56,7 +56,7 @@ public class FluxUtils {
         return null;
     }
 
-    public static String getTransferInfo(ConnectionType type, EnergyType energyType, long change) {
+    public static String getTransferInfo(EnumConnectionType type, EnergyType energyType, long change) {
         if(type.canAddEnergy()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if(change == 0) {
@@ -74,7 +74,7 @@ public class FluxUtils {
             }
         }
         // Storage are inverted
-        if(type == ConnectionType.STORAGE) {
+        if(type == EnumConnectionType.STORAGE) {
             if(change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else if(change > 0) {
@@ -147,8 +147,7 @@ public class FluxUtils {
 
     public static ItemStack getBlockItem(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(state.getBlock()));
-        return stack;
+        return new ItemStack(Item.getItemFromBlock(state.getBlock()));
     }
 
 
@@ -156,7 +155,7 @@ public class FluxUtils {
         if(fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.instance.getNetwork(fluxConnector.getNetworkID());
             if(!network.isInvalid()) {
-                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxType.controller).size() > 0) {
+                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
                     return false;
                 }
                 network.queueConnectionAddition(fluxConnector);

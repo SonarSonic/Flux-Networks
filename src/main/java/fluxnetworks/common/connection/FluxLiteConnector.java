@@ -1,11 +1,11 @@
 package fluxnetworks.common.connection;
 
-import fluxnetworks.api.ConnectionType;
-import fluxnetworks.api.Coord4D;
+import fluxnetworks.api.network.EnumConnectionType;
+import fluxnetworks.api.utils.Coord4D;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.ITransferHandler;
-import fluxnetworks.api.tileentity.IFluxConnector;
-import fluxnetworks.common.core.NBTType;
+import fluxnetworks.api.tiles.IFluxConnector;
+import fluxnetworks.api.utils.NBTType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,7 +18,7 @@ public class FluxLiteConnector implements IFluxConnector {
     public int networkID;
     public int priority;
     public UUID playerUUID;
-    public ConnectionType connectionType;
+    public EnumConnectionType connectionType;
     public long limit;
     public Coord4D coord4D;
     public int folderID;
@@ -93,7 +93,7 @@ public class FluxLiteConnector implements IFluxConnector {
     @Override
     public void readCustomNBT(NBTTagCompound tag, NBTType type) {
         coord4D = new Coord4D(tag);
-        connectionType = ConnectionType.values()[tag.getInteger("type")];
+        connectionType = EnumConnectionType.values()[tag.getInteger("type")];
         networkID = tag.getInteger("n_id");
         priority = tag.getInteger("priority");
         folderID = tag.getInteger("folder_id");
@@ -140,7 +140,7 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
-    public ConnectionType getConnectionType() {
+    public EnumConnectionType getConnectionType() {
         return connectionType;
     }
 

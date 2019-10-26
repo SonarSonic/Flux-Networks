@@ -8,7 +8,6 @@ import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
 
 import static net.minecraft.client.renderer.GlStateManager.*;
-import static net.minecraft.client.renderer.GlStateManager.color;
 
 public class TileFluxStorageRenderer extends TileEntitySpecialRenderer<TileFluxStorage> {
 

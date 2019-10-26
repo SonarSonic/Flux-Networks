@@ -1,6 +1,5 @@
 package fluxnetworks.common.handler.energy;
 
-import fluxnetworks.FluxNetworks;
 import fluxnetworks.api.energy.IItemEnergyHandler;
 import fluxnetworks.api.energy.ITileEnergyHandler;
 import ic2.api.energy.EnergyNet;

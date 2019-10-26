@@ -2,7 +2,7 @@ package fluxnetworks.common.network;
 
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.FluxNetworkCache;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -18,7 +18,7 @@ public class PacketColorRequest implements IMessageHandler<PacketColorRequest.Co
 
     @Override
     public IMessage onMessage(ColorRequestMessage message, MessageContext ctx) {
-        Map<Integer, Tuple<Integer, String>> cache = new HashMap();
+        Map<Integer, Tuple<Integer, String>> cache = new HashMap<>();
         if(!message.requests.isEmpty()){
             for(int id : message.requests){
                 IFluxNetwork network = FluxNetworkCache.instance.getNetwork(id);

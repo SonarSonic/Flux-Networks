@@ -1,12 +1,12 @@
 package fluxnetworks.client.gui.popups;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.FluxTranslate;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.translate.FluxTranslate;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.client.gui.button.NormalButton;
 import fluxnetworks.client.gui.button.TextboxButton;
 import fluxnetworks.client.gui.tab.GuiTabSelection;
-import fluxnetworks.common.connection.NetworkSettings;
+import fluxnetworks.api.network.NetworkSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 

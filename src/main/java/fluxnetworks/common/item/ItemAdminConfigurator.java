@@ -1,7 +1,7 @@
 package fluxnetworks.common.item;
 
 import fluxnetworks.FluxNetworks;
-import fluxnetworks.api.INetworkConnector;
+import fluxnetworks.api.network.INetworkConnector;
 import fluxnetworks.api.network.IFluxNetwork;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
