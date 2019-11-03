@@ -3,6 +3,7 @@ package fluxnetworks;
 import fluxnetworks.common.core.proxy.ClientProxy;
 import fluxnetworks.common.core.proxy.IProxy;
 import fluxnetworks.common.core.proxy.ServerProxy;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;

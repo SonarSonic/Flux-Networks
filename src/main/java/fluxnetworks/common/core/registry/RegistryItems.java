@@ -7,7 +7,7 @@ import java.util.List;
 
 public class RegistryItems {
 
-    public static final List<Item> ITEMS = new ArrayList<>();
+    public static List<Item> ITEMS = new ArrayList<>();
 
     public static final Item FLUX = new Item(new Item.Properties()).setRegistryName("Flux".toLowerCase());
 }

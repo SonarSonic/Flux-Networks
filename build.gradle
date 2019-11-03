@@ -19,7 +19,7 @@ archivesBaseName = 'fluxnetworks'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190928-1.14.3'
+    mappings channel: 'snapshot', version: '20191102-1.14.3'
 
     runs {
         client {
@@ -83,7 +83,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.14.4-28.1.44'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.1.79'
 
     //compileOnly files("libs/jei-1.14.4-6.0.0.13.jar")
 
@@ -94,11 +94,11 @@ jar {
     manifest {
         attributes([
             "Specification-Title": "Flux Networks",
-            "Specification-Vendor": "Ollie Lansdell, BloCamLimb",
+            "Specification-Vendor": "BloCamLimb",
             "Specification-Version": "1",
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Ollie Lansdell, BloCamLimb",
+            "Implementation-Vendor" :"BloCamLimb",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

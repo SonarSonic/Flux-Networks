@@ -10,7 +10,7 @@ import java.util.List;
 
 public class RegistryBlocks {
 
-    public static final List<Block> BLOCKS = new ArrayList<>();
+    public static List<Block> BLOCKS = new ArrayList<>();
 
     public static final Block FLUX_BLOCK = new BlockCore("FluxBlock", Block.Properties.create(Material.ROCK));
     public static final Block FLUX_PLUG = new BlockFluxPlug();
