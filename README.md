@@ -1,5 +1,5 @@
 # Flux Network
-For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug], I will update the mod by weeks.
+For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug]
 ### Wiki
 [GitHub Wiki](https://github.com/SonarSonic/Flux-Networks/wiki)
 ### New GUI
