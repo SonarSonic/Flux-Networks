@@ -75,19 +75,22 @@ minecraft {
 }
 
 repositories {
-    maven {
+    /*maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
+    }*/
+    flatDir {
+        dirs 'libs'
     }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.1.79'
 
-    //compileOnly files("libs/jei-1.14.4-6.0.0.13.jar")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
 
-    //runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 }
 
 jar {

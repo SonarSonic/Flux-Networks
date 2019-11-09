@@ -1,6 +1,6 @@
 package fluxnetworks.common.block;
 
-import fluxnetworks.FluxNetworks;
+import mezz.jei.api.JeiPlugin;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
@@ -11,7 +11,6 @@ import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -42,7 +41,6 @@ public abstract class BlockFluxCore extends BlockCore {
 
     @Override
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        //TODO
         return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
     }
 
@@ -74,11 +72,6 @@ public abstract class BlockFluxCore extends BlockCore {
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT;
-    }
-
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
     }
 
     @Override

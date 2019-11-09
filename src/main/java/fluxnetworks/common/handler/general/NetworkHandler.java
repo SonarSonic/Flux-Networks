@@ -10,14 +10,14 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 public enum NetworkHandler {
     INSTANCE;
 
-    private final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
+    private SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(FluxNetworks.MODID, "network"))
             .networkProtocolVersion(() -> "1")
             .clientAcceptedVersions(s -> true)
             .serverAcceptedVersions(s -> true)
             .simpleChannel();
 
-    public void registerMessages() {
+    public void setup() {
 
     }
 
