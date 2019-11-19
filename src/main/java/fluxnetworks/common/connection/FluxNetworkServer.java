@@ -91,7 +91,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         }
         bufferLimiter = 0;
         if(!sortedPoints.isEmpty()) {
-            sortedPoints.forEach(g -> g.getConnectors().forEach(p -> bufferLimiter += p.getTransferHandler().removeFromNetwork(Integer.MAX_VALUE, true)));
+            sortedPoints.forEach(g -> g.getConnectors().forEach(p -> bufferLimiter += p.getTransferHandler().removeFromNetwork(Long.MAX_VALUE, true)));
             if (bufferLimiter > 0 && !sortedPlugs.isEmpty()) {
                 pointTransferIterator.reset(sortedPoints, true);
                 plugTransferIterator.reset(sortedPlugs, false);

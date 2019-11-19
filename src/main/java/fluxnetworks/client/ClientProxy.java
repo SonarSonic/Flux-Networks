@@ -1,7 +1,7 @@
 package fluxnetworks.client;
 
-import fluxnetworks.api.translate.FluxTranslate;
 import fluxnetworks.api.gui.EnumFeedbackInfo;
+import fluxnetworks.api.translate.FluxTranslate;
 import fluxnetworks.client.render.FluxStorageModel;
 import fluxnetworks.client.render.TileFluxStorageRenderer;
 import fluxnetworks.common.CommonProxy;
