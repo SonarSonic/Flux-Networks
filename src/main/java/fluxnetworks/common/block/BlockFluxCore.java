@@ -1,19 +1,24 @@
 package fluxnetworks.common.block;
 
-import mezz.jei.api.JeiPlugin;
+import fluxnetworks.api.utils.NBTType;
+import fluxnetworks.common.core.tool.FluxUtils;
+import fluxnetworks.common.tileentity.TileFluxCore;
+import net.minecraft.block.AbstractButtonBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.StoneButtonBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -28,11 +33,11 @@ import java.util.List;
 
 public abstract class BlockFluxCore extends BlockCore {
 
-    public static Material MACHINE = (new Material.Builder(MaterialColor.BLACK)).notSolid().build();
+    private static Material MACHINE = (new Material.Builder(MaterialColor.BLACK)).notSolid().build();
 
-    public static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
+    private static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
 
-    public AxisAlignedBB bounding = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
+    VoxelShape bounding = VoxelShapes.fullCube();
 
     public BlockFluxCore(String name) {
         super(name, BlockCore.Properties.create(MACHINE)
@@ -41,12 +46,24 @@ public abstract class BlockFluxCore extends BlockCore {
 
     @Override
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        if(worldIn.isRemote) {
+            return true;
+        }
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (tileEntity instanceof TileFluxCore) {
+            TileFluxCore fluxCore = (TileFluxCore) tileEntity;
+            if(fluxCore.playerUsing.size() > 0) {
+
+            } else {
+
+            }
+        }
+        return false;
     }
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return VoxelShapes.create(bounding);
+        return bounding;
     }
 
     @Override
@@ -56,7 +73,16 @@ public abstract class BlockFluxCore extends BlockCore {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        if(!worldIn.isRemote) {
+            TileEntity tile = worldIn.getTileEntity(pos);
+            if(tile instanceof TileFluxCore && stack.hasTag()) {
+                TileFluxCore t = (TileFluxCore) tile;
+                CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+                if(tag != null) {
+                    t.readCustomNBT(tag, NBTType.TILE_DROP);
+                }
+            }
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ package fluxnetworks.common.connection;
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.common.connection.manager.FluxSettingManager;
 
-public class FluxNetworkServer implements IFluxNetwork {
+public class FluxNetworkServer extends FluxNetworkBase {
 
     private final FluxSettingManager settingManager;
 

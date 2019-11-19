@@ -9,7 +9,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.DeferredRegister;
 
+@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class RegistryEventHandler {
 
@@ -17,8 +19,6 @@ public class RegistryEventHandler {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         RegistryBlocks.BLOCKS.forEach(b -> event.getRegistry().register(b));
     }
-
-
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {

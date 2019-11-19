@@ -3,6 +3,7 @@ package fluxnetworks.common.block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockReader;
 
@@ -13,7 +14,7 @@ public class BlockFluxPlug extends BlockSidedConnection {
 
     public BlockFluxPlug() {
         super("FluxPlug");
-        bounding = new AxisAlignedBB(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
+        bounding = VoxelShapes.create(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
     }
 
     @Override

@@ -8,14 +8,12 @@ version="${file.jarVersion}"
 displayName="Flux Networks"
 displayURL="https://curseforge.com/minecraft/mc-mods/flux-networks"
 authors="Ollie Lansdell, BloCamLimb"
-description='''
-Wireless Energy Networks
-'''
+description='''Wireless Energy Networks'''
 
 [[dependencies.fluxnetworks]]
     modId="forge"
     mandatory=true
-    versionRange="[28,)"
+    versionRange="[28.1.79,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]

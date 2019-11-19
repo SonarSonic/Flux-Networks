@@ -14,14 +14,12 @@ public class FluxNetworks {
 
     public static final String MODID = "fluxnetworks";
 
-    public static FluxNetworks instance;
-
     public static Logger logger = LogManager.getLogger("FluxNetworks");
 
     public static IProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public FluxNetworks() {
-        instance = this;
+
     }
 
 }
