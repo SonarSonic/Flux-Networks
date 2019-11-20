@@ -1,9 +1,10 @@
 package fluxnetworks.api.network;
 
+import fluxnetworks.api.utils.INetworkNBT;
 import fluxnetworks.api.utils.NBTType;
 import net.minecraft.nbt.CompoundNBT;
 
-public interface IFluxNetwork {
+public interface IFluxNetwork extends INetworkNBT {
 
     default int getNetworkID() {
         return getSetting().getNetworkID();
@@ -12,8 +13,4 @@ public interface IFluxNetwork {
     INetworkSetting getSetting();
 
     void tick();
-
-    void readNetworkNBT(CompoundNBT nbt, NBTType type);
-
-    CompoundNBT writeNetworkNBT(CompoundNBT nbt, NBTType type);
 }

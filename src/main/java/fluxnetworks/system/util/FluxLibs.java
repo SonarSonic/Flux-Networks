@@ -1,6 +1,6 @@
 package fluxnetworks.system.util;
 
-import fluxnetworks.connection.FluxNetworkServer;
+import fluxnetworks.network.FluxNetworkServer;
 
 import java.util.UUID;
 

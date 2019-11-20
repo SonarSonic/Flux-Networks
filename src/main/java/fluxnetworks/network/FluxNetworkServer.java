@@ -1,9 +1,9 @@
-package fluxnetworks.connection;
+package fluxnetworks.network;
 
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.network.INetworkSetting;
 import fluxnetworks.api.utils.NBTType;
-import fluxnetworks.connection.manager.NetworkSettingManager;
+import fluxnetworks.network.manager.NetworkSettingManager;
 import net.minecraft.nbt.CompoundNBT;
 
 public class FluxNetworkServer implements IFluxNetwork {

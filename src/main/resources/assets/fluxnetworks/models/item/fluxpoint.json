@@ -1,7 +1,7 @@
 {
   "parent": "fluxnetworks:block/fluxpoint",
   "textures": {
-    "0": "fluxnetworks:model/flux_point_off",
+    "0": "fluxnetworks:model/flux_point_on",
     "colour": "fluxnetworks:model/flux_point_colour"
   }
 }

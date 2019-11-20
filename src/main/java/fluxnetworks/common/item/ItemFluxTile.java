@@ -11,9 +11,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemFluxDevice extends BlockItem {
+public class ItemFluxTile extends BlockItem {
 
-    public ItemFluxDevice(Block blockIn, Properties builder) {
+    public ItemFluxTile(Block blockIn, Properties builder) {
         super(blockIn, builder);
     }
 

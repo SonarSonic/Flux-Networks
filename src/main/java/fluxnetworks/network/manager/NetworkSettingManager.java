@@ -1,4 +1,4 @@
-package fluxnetworks.connection.manager;
+package fluxnetworks.network.manager;
 
 import fluxnetworks.api.network.INetworkSetting;
 

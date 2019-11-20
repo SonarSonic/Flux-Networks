@@ -72,7 +72,7 @@ public abstract class BlockFluxCore extends Block {
                 TileFluxCore t = (TileFluxCore) tile;
                 CompoundNBT tag = stack.getChildTag(FluxLibs.TAG_DROP);
                 if(tag != null) {
-                    t.readCustomNBT(tag, NBTType.TILE_DROP);
+                    t.readNetworkNBT(tag, NBTType.TILE_DROP);
                 }
             }
         }

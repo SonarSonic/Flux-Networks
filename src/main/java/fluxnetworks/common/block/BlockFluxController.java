@@ -1,12 +1,9 @@
 package fluxnetworks.common.block;
 
-import fluxnetworks.common.tileentity.TileFluxPlug;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockReader;
@@ -14,10 +11,10 @@ import net.minecraft.world.IBlockReader;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockFluxPlug extends BlockSidedConnection {
+public class BlockFluxController extends BlockFluxCore {
 
-    public BlockFluxPlug() {
-        bounding = VoxelShapes.create(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
+    public BlockFluxController() {
+        bounding = VoxelShapes.create(0.0625F, 0.0625F, 0.0625F, 0.9375F, 0.9375F, 0.9375F);
     }
 
     @Override
@@ -28,6 +25,6 @@ public class BlockFluxPlug extends BlockSidedConnection {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileFluxPlug();
+        return null;
     }
 }

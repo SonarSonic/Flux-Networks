@@ -10,16 +10,6 @@
         "transform":"forge:default-block"
      },
     "variants": {
-        "inventory": [{            
-                 "submodel": {
-                    "north": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 180 },
-                    "east": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 270 },
-                    "south": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 0 },
-                    "west": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 90 },
-                    "down": { "model":"fluxnetworks:block/fluxconnection"},                    
-                    "up": { "model":"fluxnetworks:block/fluxconnection", "x": 180}
-                  }
-                }],
          "connected":{
             "true":{
                  "textures": {                 

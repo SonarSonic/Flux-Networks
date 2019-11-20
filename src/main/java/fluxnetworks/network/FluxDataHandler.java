@@ -1,7 +1,6 @@
-package fluxnetworks.connection;
+package fluxnetworks.network;
 
 import fluxnetworks.api.network.IFluxNetwork;
-import fluxnetworks.connection.manager.NetworkSettingManager;
 import fluxnetworks.system.FluxNetworks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.dimension.DimensionType;
