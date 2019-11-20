@@ -6,33 +6,38 @@ import net.minecraft.block.BlockState;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 
 import java.util.ArrayList;
 
 public abstract class BlockSidedConnection extends BlockFluxCore {
 
-    public static final PropertyBoolFacing NORTH = PropertyBoolFacing.create("north", Direction.NORTH);
-    public static final PropertyBoolFacing EAST = PropertyBoolFacing.create("east", Direction.EAST);
-    public static final PropertyBoolFacing SOUTH = PropertyBoolFacing.create("south", Direction.SOUTH);
-    public static final PropertyBoolFacing WEST = PropertyBoolFacing.create("west", Direction.WEST);
-    public static final PropertyBoolFacing DOWN = PropertyBoolFacing.create("down", Direction.DOWN);
-    public static final PropertyBoolFacing UP = PropertyBoolFacing.create("up", Direction.UP);
+    private static final PropertyBoolFacing NORTH = PropertyBoolFacing.create("north", Direction.NORTH);
+    private static final PropertyBoolFacing EAST = PropertyBoolFacing.create("east", Direction.EAST);
+    private static final PropertyBoolFacing SOUTH = PropertyBoolFacing.create("south", Direction.SOUTH);
+    private static final PropertyBoolFacing WEST = PropertyBoolFacing.create("west", Direction.WEST);
+    private static final PropertyBoolFacing DOWN = PropertyBoolFacing.create("down", Direction.DOWN);
+    private static final PropertyBoolFacing UP = PropertyBoolFacing.create("up", Direction.UP);
     public static final ArrayList<PropertyBoolFacing> faces = Lists.newArrayList(DOWN, UP, NORTH, SOUTH, WEST, EAST);
 
-    public BlockSidedConnection(String name) {
-        super(name);
+    BlockSidedConnection() {
+        setDefaultState(getStateContainer().getBaseState()
+                .with(NORTH, false).with(EAST, false)
+                .with(SOUTH, false).with(WEST, false)
+                .with(DOWN, false).with(UP, false).with(CONNECTED, false));
     }
 
     public static class PropertyBoolFacing extends BooleanProperty {
 
-        public Direction facing;
+        Direction facing;
 
-        protected PropertyBoolFacing(String name, Direction facing) {
+        PropertyBoolFacing(String name, Direction facing) {
             super(name);
             this.facing = facing;
         }
 
-        public static PropertyBoolFacing create(String name, Direction facing) {
+        static PropertyBoolFacing create(String name, Direction facing) {
             return new PropertyBoolFacing(name, facing);
         }
     }

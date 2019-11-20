@@ -2,9 +2,8 @@ package fluxnetworks.common.tileentity;
 
 import fluxnetworks.api.network.IFluxNetwork;
 import fluxnetworks.api.utils.NBTType;
-import fluxnetworks.common.connection.FluxNetworkInvalid;
-import fluxnetworks.common.core.data.FluxConfig;
-import fluxnetworks.common.core.tool.FluxUtils;
+import fluxnetworks.system.FluxConfig;
+import fluxnetworks.system.util.FluxLibs;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -13,9 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
 
 public class TileFluxCore extends TileEntity {
@@ -24,7 +21,7 @@ public class TileFluxCore extends TileEntity {
 
     public String customName = "";
     public int networkID = -1;
-    public UUID playerUUID = FluxUtils.UUID_DEFAULT;
+    public UUID playerUUID = FluxLibs.UUID_EMPTY;
     public int color = -1;
     public int folderID = -1;
 
@@ -39,7 +36,7 @@ public class TileFluxCore extends TileEntity {
 
     public boolean chunkLoading = false;
 
-    protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
+    protected IFluxNetwork network = FluxLibs.INVALID_NETWORK;
 
     protected boolean load = false;
 

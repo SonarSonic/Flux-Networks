@@ -4,8 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockReader;
@@ -13,10 +11,10 @@ import net.minecraft.world.IBlockReader;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockFluxPlug extends BlockSidedConnection {
+public class BlockFluxPoint extends BlockSidedConnection {
 
-    public BlockFluxPlug() {
-        bounding = VoxelShapes.create(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
+    public BlockFluxPoint() {
+        bounding = VoxelShapes.create(0.34375F, 0.34375F, 0.34375F, 0.65625F, 0.65625F, 0.65625F);
     }
 
     @Override

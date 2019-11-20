@@ -1,7 +1,7 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model":"fluxnetworks:fluxpoint",
+        "model":"fluxnetworks:block/fluxpoint",
         "textures": {
             "0":"fluxnetworks:model/flux_point_on",
             "colour":"fluxnetworks:model/flux_point_colour",
@@ -12,12 +12,12 @@
     "variants": {
         "inventory": [{            
                  "submodel": {
-                    "north": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 180 },
-                    "east": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 270 },
-                    "south": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 0 },
-                    "west": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 90 },
-                    "down": { "model":"fluxnetworks:FluxConnection"},                    
-                    "up": { "model":"fluxnetworks:FluxConnection", "x": 180}
+                    "north": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 180 },
+                    "east": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 270 },
+                    "south": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 0 },
+                    "west": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 90 },
+                    "down": { "model":"fluxnetworks:block/fluxconnection"},                    
+                    "up": { "model":"fluxnetworks:block/fluxconnection", "x": 180}
                   }
                 }],
          "connected":{
@@ -35,7 +35,7 @@
          "north":{
             "true":{
                  "submodel": {
-                    "north": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 180 }
+                    "north": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 180 }
                 }
             },
             "false":{
@@ -45,7 +45,7 @@
         "east":{
             "true":{
                  "submodel": {
-                    "east": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 270 }
+                    "east": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 270 }
                 }
             },
             "false":{
@@ -55,7 +55,7 @@
         "south":{
             "true":{
                  "submodel": {
-                    "south": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 0 }
+                    "south": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 0 }
                 }
             },
             "false":{
@@ -65,7 +65,7 @@
         "west":{
             "true":{
                  "submodel": {
-                    "west": { "model":"fluxnetworks:FluxConnection", "x": 90, "y": 90 }
+                    "west": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 90 }
                 }
             },
             "false":{
@@ -75,7 +75,7 @@
         "down":{
             "true":{
                  "submodel": {
-                    "down": { "model":"fluxnetworks:FluxConnection"}
+                    "down": { "model":"fluxnetworks:block/fluxconnection"}
                 }
             },
             "false":{
@@ -85,7 +85,7 @@
         "up":{
             "true":{
                  "submodel": {
-                    "up": { "model":"fluxnetworks:FluxConnection", "x": 180}
+                    "up": { "model":"fluxnetworks:block/fluxconnection", "x": 180}
                 }
             },
             "false":{

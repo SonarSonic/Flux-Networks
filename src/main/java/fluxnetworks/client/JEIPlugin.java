@@ -1,6 +1,6 @@
 package fluxnetworks.client;
 
-import fluxnetworks.FluxNetworks;
+import fluxnetworks.system.FluxNetworks;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import net.minecraft.util.ResourceLocation;

@@ -1,12 +1,11 @@
 package fluxnetworks.common.block;
 
 import fluxnetworks.api.utils.NBTType;
-import fluxnetworks.common.core.tool.FluxUtils;
+import fluxnetworks.system.util.FluxLibs;
 import fluxnetworks.common.tileentity.TileFluxCore;
-import net.minecraft.block.AbstractButtonBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.StoneButtonBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
@@ -31,17 +30,16 @@ import net.minecraft.world.storage.loot.LootContext;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class BlockFluxCore extends BlockCore {
+public abstract class BlockFluxCore extends Block {
 
     private static Material MACHINE = (new Material.Builder(MaterialColor.BLACK)).notSolid().build();
 
-    private static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
+    protected static final BooleanProperty CONNECTED = BooleanProperty.create("connected");
 
     VoxelShape bounding = VoxelShapes.fullCube();
 
-    public BlockFluxCore(String name) {
-        super(name, BlockCore.Properties.create(MACHINE)
-                .hardnessAndResistance(0.3f, 1000000.0f));
+    BlockFluxCore() {
+        super(Block.Properties.create(MACHINE).hardnessAndResistance(0.3f, 1000000.0f));
     }
 
     @Override
@@ -67,27 +65,17 @@ public abstract class BlockFluxCore extends BlockCore {
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-        return null;
-    }
-
-    @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if(!worldIn.isRemote) {
             TileEntity tile = worldIn.getTileEntity(pos);
             if(tile instanceof TileFluxCore && stack.hasTag()) {
                 TileFluxCore t = (TileFluxCore) tile;
-                CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+                CompoundNBT tag = stack.getChildTag(FluxLibs.TAG_DROP);
                 if(tag != null) {
                     t.readCustomNBT(tag, NBTType.TILE_DROP);
                 }
             }
         }
-    }
-
-    @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
-        return false;
     }
 
     @Override
