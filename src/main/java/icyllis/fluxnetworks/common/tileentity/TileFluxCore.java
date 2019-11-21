@@ -13,15 +13,15 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public abstract class TileFluxCore extends TileEntity implements IFluxTile, ITickableTileEntity {
 
-    public HashSet<PlayerEntity> playerUsing = new HashSet<>();
+    public Set<PlayerEntity> playerUsing = new HashSet<>();
 
     public String customName = "";
     public int networkID = -1;
@@ -55,7 +55,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxTile, ITic
 
     @Override
     public void onChunkUnloaded() {
-        
+
     }
 
     @Override
