@@ -2,11 +2,11 @@ package icyllis.fluxnetworks.network.manager;
 
 import icyllis.fluxnetworks.api.network.INetworkSetting;
 
-public class NetworkSettingManager implements INetworkSetting {
+public class NetworkSetting implements INetworkSetting {
 
     private int networkID;
 
-    public NetworkSettingManager() {
+    public NetworkSetting() {
 
     }
 

@@ -3,6 +3,7 @@ package icyllis.fluxnetworks.common.tileentity;
 import icyllis.fluxnetworks.api.network.IFluxNetwork;
 import icyllis.fluxnetworks.api.tile.IFluxTile;
 import icyllis.fluxnetworks.api.util.NBTType;
+import icyllis.fluxnetworks.network.FluxNetworkInvalid;
 import icyllis.fluxnetworks.system.FluxConfig;
 import icyllis.fluxnetworks.system.util.FluxLibs;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,6 +13,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -38,7 +40,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxTile, ITic
 
     public boolean chunkLoading = false;
 
-    protected IFluxNetwork network = FluxLibs.INVALID_NETWORK;
+    protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
     protected boolean load = false;
 
@@ -53,7 +55,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxTile, ITic
 
     @Override
     public void onChunkUnloaded() {
-
+        
     }
 
     @Override

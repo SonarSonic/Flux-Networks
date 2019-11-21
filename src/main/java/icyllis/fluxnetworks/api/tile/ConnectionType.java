@@ -1,4 +1,4 @@
-package icyllis.fluxnetworks.api.network;
+package icyllis.fluxnetworks.api.tile;
 
 public enum ConnectionType {
     POINT(0x882828),

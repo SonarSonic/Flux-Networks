@@ -4,27 +4,20 @@ import icyllis.fluxnetworks.api.network.IFluxNetwork;
 import icyllis.fluxnetworks.api.network.INetworkSetting;
 import icyllis.fluxnetworks.api.network.INetworkTransfer;
 import icyllis.fluxnetworks.api.util.NBTType;
-import icyllis.fluxnetworks.network.manager.NetworkSetting;
-import icyllis.fluxnetworks.network.manager.NetworkTransfer;
 import net.minecraft.nbt.CompoundNBT;
 
-public class FluxNetworkServer implements IFluxNetwork {
+public class FluxNetworkInvalid implements IFluxNetwork {
 
-    private final INetworkSetting setting = new NetworkSetting();
-    private final INetworkTransfer transfer = new NetworkTransfer();
-
-    public FluxNetworkServer() {
-
-    }
+    public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 
     @Override
     public INetworkSetting getSetting() {
-        return setting;
+        return null;
     }
 
     @Override
     public INetworkTransfer getTransfer() {
-        return transfer;
+        return null;
     }
 
     @Override
@@ -34,7 +27,7 @@ public class FluxNetworkServer implements IFluxNetwork {
 
     @Override
     public boolean isValid() {
-        return true;
+        return false;
     }
 
     @Override
@@ -44,6 +37,6 @@ public class FluxNetworkServer implements IFluxNetwork {
 
     @Override
     public CompoundNBT writeNetworkNBT(CompoundNBT nbt, NBTType type) {
-        return null;
+        return nbt;
     }
 }

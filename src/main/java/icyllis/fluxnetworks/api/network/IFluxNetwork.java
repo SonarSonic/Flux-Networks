@@ -10,5 +10,9 @@ public interface IFluxNetwork extends INetworkNBT {
 
     INetworkSetting getSetting();
 
+    INetworkTransfer getTransfer();
+
     void tick();
+
+    boolean isValid();
 }
