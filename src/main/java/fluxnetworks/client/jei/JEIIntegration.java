@@ -1,5 +1,6 @@
-package fluxnetworks.common.integration.jei;
+package fluxnetworks.client.jei;
 
+import fluxnetworks.FluxConfig;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
@@ -10,11 +11,13 @@ public class JEIIntegration implements IModPlugin {
 
     @Override
     public void register(IModRegistry registry) {
-        FluxCraftingCategory.register(registry);
+        if(FluxConfig.enableFluxRecipe)
+            FluxCraftingCategory.register(registry);
     }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
-        registry.addRecipeCategories(new FluxCraftingCategory(registry.getJeiHelpers().getGuiHelper()));
+        if(FluxConfig.enableFluxRecipe)
+            registry.addRecipeCategories(new FluxCraftingCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 }

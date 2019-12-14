@@ -37,15 +37,18 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -142,6 +145,31 @@ public class CommonProxy {
                 world.spawnEntity(new EntityItem(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
                 world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                 world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onEntityAdded(EntityJoinWorldEvent event) {
+        if (!FluxConfig.enableFluxRecipe || !FluxConfig.enableOldRecipe || event.getWorld().isRemote) {
+            return;
+        }
+        final Entity entity = event.getEntity();
+        if (entity instanceof EntityItem && !(entity instanceof EntityFireItem)) {
+            EntityItem entityItem = (EntityItem) entity;
+            ItemStack stack = entityItem.getItem();
+            if (!stack.isEmpty() && stack.getItem() == Items.REDSTONE) {
+                EntityFireItem newEntity = new EntityFireItem(entityItem);
+                entityItem.setDead();
+
+                int i = MathHelper.floor(newEntity.posX / 16.0D);
+                int j = MathHelper.floor(newEntity.posZ / 16.0D);
+                event.getWorld().getChunk(i, j).addEntity(newEntity);
+                event.getWorld().loadedEntityList.add(newEntity);
+                event.getWorld().onEntityAdded(newEntity);
+
+                event.setCanceled(true);
             }
         }
     }

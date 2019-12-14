@@ -1,4 +1,4 @@
-package fluxnetworks.common.integration.jei;
+package fluxnetworks.client.jei;
 
 import fluxnetworks.common.registry.RegistryRecipes;
 import mezz.jei.api.ingredients.IIngredients;

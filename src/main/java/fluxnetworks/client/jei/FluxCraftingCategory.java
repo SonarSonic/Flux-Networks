@@ -1,4 +1,4 @@
-package fluxnetworks.common.integration.jei;
+package fluxnetworks.client.jei;
 
 import fluxnetworks.FluxNetworks;
 import fluxnetworks.common.registry.RegistryItems;
