@@ -114,7 +114,7 @@ public class CommonProxy {
 
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true)
     public void onPlayerInteract(PlayerInteractEvent.LeftClickBlock event) {
         if(event.getSide().isServer()) {
             if(!FluxConfig.enableFluxRecipe) {

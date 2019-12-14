@@ -15,7 +15,7 @@ public class StorageTransfer implements IFluxTransfer {
 
     @Override
     public void onServerStartTick() {
-
+        tile.sendPacketIfNeeded();
     }
 
     @Override

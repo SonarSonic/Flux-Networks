@@ -31,6 +31,8 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     public int energyStored;
     public int maxEnergyStorage;
 
+    private boolean needSyncEnergy = false;
+
     public ItemStack stack = ItemStack.EMPTY;
 
     public TileFluxStorage() {
@@ -85,7 +87,7 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
         long energyReceived = Math.min(maxEnergyStorage - energyStored, amount);
         if (!simulate) {
             energyStored += energyReceived;
-            sendPackets();
+            needSyncEnergy = true;
         }
         return energyReceived;
     }
@@ -94,9 +96,19 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
         long energyExtracted = Math.min(energyStored, amount);
         if (!simulate) {
             energyStored -= energyExtracted;
-            sendPackets();
+            needSyncEnergy = true;
         }
         return energyExtracted;
+    }
+
+    /** on server side **/
+    public void sendPacketIfNeeded() {
+        if (needSyncEnergy) {
+            if ((world.getWorldTime() & 3) == 0) {
+                sendPackets();
+                needSyncEnergy = false;
+            }
+        }
     }
 
     @Override
