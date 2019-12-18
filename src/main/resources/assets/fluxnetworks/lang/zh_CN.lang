@@ -14,10 +14,10 @@ item.fluxnetworks.fluxconfigurator.name=能量网络配置器
 item.fluxnetworks.adminconfigurator.name=管理员网络配置器
 
 tooltip.fluxnetworks.flux=通过基岩与黑曜石压缩红石获得
-tooltip.fluxnetworks.fluxcontroller=管理网络与无线充能
-tooltip.fluxnetworks.fluxplug=用于向能量网络中增加能量
-tooltip.fluxnetworks.fluxpoint=用于从能量网络中移除能量
-tooltip.fluxnetworks.fluxstorage=在能量网络中存储能量
+tooltip.fluxnetworks.fluxcontroller=给你的网络带来无线充电功能
+tooltip.fluxnetworks.fluxplug=用于向能量网络中增加能量(从相邻方块中被动接收能量)
+tooltip.fluxnetworks.fluxpoint=用于从能量网络中移除能量(主动为相邻方块供给能量)
+tooltip.fluxnetworks.fluxstorage=为你的能量网络存储能量
 
 info.fluxnetworks.tab.home=主页
 info.fluxnetworks.tab.selection=网络选择
