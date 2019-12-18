@@ -14,10 +14,10 @@ item.fluxnetworks.fluxconfigurator.name=Flux Configurator
 item.fluxnetworks.adminconfigurator.name=Admin Configurator
 
 tooltip.fluxnetworks.flux=Obtained by compressing redstones with bedrock and obisidian
-tooltip.fluxnetworks.fluxcontroller=Manages network and wireless charging
-tooltip.fluxnetworks.fluxplug=For adding energy to the flux network
-tooltip.fluxnetworks.fluxpoint=For removing energy from the flux network
-tooltip.fluxnetworks.fluxstorage=Stores energy in the flux network
+tooltip.fluxnetworks.fluxcontroller=Enables Wireless Charging on your Flux Network
+tooltip.fluxnetworks.fluxplug=Extracts energy from adjacent tiles. Adding energy to your Flux Network
+tooltip.fluxnetworks.fluxpoint=Inserts energy into adjacent tiles. Removing energy from your Flux Network
+tooltip.fluxnetworks.fluxstorage=Stores energy for your Flux Network.
 
 info.fluxnetworks.tab.home=Home
 info.fluxnetworks.tab.selection=Network Selection
