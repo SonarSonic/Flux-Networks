@@ -14,7 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -39,9 +39,9 @@ public abstract class BlockFluxCore extends Block {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    public ActionResultType func_225533_a_(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if(worldIn.isRemote) {
-            return true;
+            return ActionResultType.SUCCESS;
         }
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileFluxCore) {
@@ -52,7 +52,7 @@ public abstract class BlockFluxCore extends Block {
 
             }
         }
-        return false;
+        return ActionResultType.PASS;
     }
 
     @Override
@@ -77,11 +77,6 @@ public abstract class BlockFluxCore extends Block {
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
-    }
-
-    @Override
-    public BlockRenderLayer getRenderLayer() {
-        return BlockRenderLayer.CUTOUT;
     }
 
     @Override

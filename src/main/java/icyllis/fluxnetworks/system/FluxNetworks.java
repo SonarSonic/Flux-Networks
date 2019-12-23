@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(FluxNetworks.MODID)
 public class FluxNetworks {
 
-    public static final String MODID = "icyllis/fluxnetworks";
+    public static final String MODID = "fluxnetworks";
 
     public static Logger logger = LogManager.getLogger("FluxNetworks");
 
