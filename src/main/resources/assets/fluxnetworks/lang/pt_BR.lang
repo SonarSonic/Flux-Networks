@@ -1,0 +1,133 @@
+itemGroup.fluxnetworks=Flux Networks
+
+tile.fluxnetworks.fluxblock.name=Bloco de Flux
+tile.fluxnetworks.fluxcontroller.name=Controlador de Flux
+tile.fluxnetworks.fluxpoint.name=Ponto de Flux
+tile.fluxnetworks.fluxplug.name=Plugue de Flux
+tile.fluxnetworks.fluxstorage.name=Armazenamento Básico de Flux
+tile.fluxnetworks.herculeanfluxstorage.name=Armazenamento Hercúleo de Flux
+tile.fluxnetworks.gargantuanfluxstorage.name=Armazenamento Gigantesco de Flux
+
+item.fluxnetworks.flux.name=Flux
+item.fluxnetworks.fluxcore.name=Núcleo de Flux
+item.fluxnetworks.fluxconfigurator.name=Configurador de Flux
+item.fluxnetworks.adminconfigurator.name=Configurador Admin
+
+tooltip.fluxnetworks.flux=Obtido comprimindo redstones com rocha matriz e obsidiana
+tooltip.fluxnetworks.fluxcontroller=Ativa o Carregamento Sem Fio em sua Rede de Flux
+tooltip.fluxnetworks.fluxplug=Extrai energia de blocos adjacentes, adicionando energia para sua Rede de Flux
+tooltip.fluxnetworks.fluxpoint=Insere energia em blocos adjacentes, removendo energia de sua Rede de Flux
+tooltip.fluxnetworks.fluxstorage=Guarda energia para sua Rede de Flux.
+
+info.fluxnetworks.tab.home=Início
+info.fluxnetworks.tab.selection=Seleção de Rede
+info.fluxnetworks.tab.wireless=Carregamento Sem Fio
+info.fluxnetworks.tab.connection=Conexões da Rede
+info.fluxnetworks.tab.statistics=Estatísticas da Rede
+info.fluxnetworks.tab.member=Membros da Rede
+info.fluxnetworks.tab.setting=Configurações da Rede
+info.fluxnetworks.tab.create=Criar Nova Rede
+
+info.fluxnetworks.superadmin.on=Você é agora um super administrador de rede
+info.fluxnetworks.superadmin.off=Você não é mais um super administrador de rede
+
+info.fluxnetworks.network.name=Nome
+info.fluxnetworks.network.fullname=Nome da Rede
+info.fluxnetworks.network.security=Tipo de Segurança
+info.fluxnetworks.network.password=Senha
+info.fluxnetworks.network.energy=Tipo de Energia
+info.fluxnetworks.network.color=Cor
+
+info.fluxnetworks.denied.access=Acesso negado: Sem permissão
+info.fluxnetworks.denied.occupy=Acesso negado: Outro jogador já está usando
+info.fluxnetworks.denied.removal=Remoção negada: Sem permissão
+
+info.fluxnetworks.click=Clique
+info.fluxnetworks.above=Acima
+
+info.fluxnetworks.error.noselected=Nenhuma rede selecionada
+info.fluxnetworks.error.nonetwork=Nenhuma rede disponível
+
+info.fluxnetworks.flux.priority=Prioridade
+info.fluxnetworks.flux.surgemode=Modo de Surto
+info.fluxnetworks.flux.disablelimit=Desabilitar Limite
+info.fluxnetworks.flux.chunkloading=Carregar Chunk
+info.fluxnetworks.flux.name=Nome
+info.fluxnetworks.flux.transferlimit=Limite de Transferência
+info.fluxnetworks.flux.wireless=Ativar Sem Fio
+info.fluxnetworks.flux.energy=Energia
+info.fluxnetworks.flux.energystored=Energia Armazenada
+info.fluxnetworks.flux.buffer=Buffer
+info.fluxnetworks.flux.internalbuffer=Buffer Interno
+info.fluxnetworks.flux.unlimited=Ilimitado
+info.fluxnetworks.flux.forcedloading=Carregamento Forçado
+info.fluxnetworks.flux.chunkunloaded=Chunk Descarregado
+info.fluxnetworks.flux.surge=Surto
+info.fluxnetworks.flux.input=Entrada
+info.fluxnetworks.flux.output=Saída
+info.fluxnetworks.flux.change=Mudança
+info.fluxnetworks.flux.averagetick=Tick Médio
+
+info.fluxnetworks.feedback.reject=O servidor rejeitou seu pedido
+info.fluxnetworks.feedback.noowner=Você não é mais o dono da rede
+info.fluxnetworks.feedback.noadmin=Você não é mais o administrador da rede
+info.fluxnetworks.feedback.nospace=Você não pode criar mais redes
+info.fluxnetworks.feedback.hascontroller=A rede já possui um controlador
+info.fluxnetworks.feedback.invaliduser=Usuário inválido selecionado
+info.fluxnetworks.feedback.illegalpassword=Formato de senha errado, tem de ser um dígito ou letra
+info.fluxnetworks.feedback.hasloader=Esse chunk já possui um Carregador de Chunk
+info.fluxnetworks.feedback.bannedloading=Carregamento de Chunks foi banido desse servidor
+info.fluxnetworks.feedback.rejectsome=O servidor rejeitou algumas mudanças
+
+info.fluxnetworks.gui.sortby=Ordenar por
+info.fluxnetworks.gui.selected=Selecionado
+info.fluxnetworks.gui.singleedit=Modo de Edição Único
+info.fluxnetworks.gui.batchedit=Modo de Edição em Grupo
+info.fluxnetworks.gui.editing=Editando
+info.fluxnetworks.gui.connections=Conexões
+info.fluxnetworks.gui.customcolor=Cor Customizada
+info.fluxnetworks.gui.connectingto=Conectando à
+info.fluxnetworks.gui.total=Total
+info.fluxnetworks.gui.deletenetwork=Deletar Rede
+info.fluxnetworks.gui.doubleshift=Shift-Esquerdo Duplo
+info.fluxnetworks.gui.transferownership=Transferir Posse
+info.fluxnetworks.gui.setuser=Definir para Usuário
+info.fluxnetworks.gui.setadmin=Definir para Administrador
+info.fluxnetworks.gui.playername=Nome de Usuário
+info.fluxnetworks.gui.playeraccess=Acesso
+info.fluxnetworks.gui.cancelmembership=Cancelar Filiação
+info.fluxnetworks.gui.you=Você
+
+info.fluxnetworks.gui.sort.smart=Smart
+info.fluxnetworks.gui.sort.id=ID
+info.fluxnetworks.gui.sort.name=Nome
+
+info.fluxnetworks.button.batchclear=Limpar Selecionado
+info.fluxnetworks.button.batchedit=Editar Selecionado
+info.fluxnetworks.button.batchdisconnect=Desconectar Selecionado
+info.fluxnetworks.button.apply=Aplicar
+info.fluxnetworks.button.cancel=Cancelar
+info.fluxnetworks.button.create=Criar
+info.fluxnetworks.button.connect=Conectar
+info.fluxnetworks.button.delete=Deletar
+
+info.fluxnetworks.slot.main=Inventário Principal (Desabilitado)
+info.fluxnetworks.slot.hotbar=Espaços da Hotbar
+info.fluxnetworks.slot.righthand=Mão Direita
+info.fluxnetworks.slot.lefthand=Mão Esquerda
+info.fluxnetworks.slot.armor=Espaços de Armadura
+info.fluxnetworks.slot.baubles=Espaços de Anéis
+
+info.fluxnetworks.stat.plug=Plugues
+info.fluxnetworks.stat.point=Pontos
+info.fluxnetworks.stat.controller=Controladores
+info.fluxnetworks.stat.storage=Armazenamentos
+
+info.fluxnetworks.security.encrypted=Criptografado
+info.fluxnetworks.security.public=Público
+
+info.fluxnetworks.access.owner=Dono
+info.fluxnetworks.access.admin=Administrador
+info.fluxnetworks.access.user=Usuário
+info.fluxnetworks.access.blocked=Bloqueado
+info.fluxnetworks.access.superadmin=Super Administrador
