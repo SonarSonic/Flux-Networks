@@ -49,7 +49,7 @@ info.fluxnetworks.error.noselected=Nenhuma rede selecionada
 info.fluxnetworks.error.nonetwork=Nenhuma rede disponível
 
 info.fluxnetworks.flux.priority=Prioridade
-info.fluxnetworks.flux.surgemode=Modo de Surto
+info.fluxnetworks.flux.surgemode=Modo de Sobrecarga
 info.fluxnetworks.flux.disablelimit=Desabilitar Limite
 info.fluxnetworks.flux.chunkloading=Carregar Chunk
 info.fluxnetworks.flux.name=Nome
@@ -62,7 +62,7 @@ info.fluxnetworks.flux.internalbuffer=Buffer Interno
 info.fluxnetworks.flux.unlimited=Ilimitado
 info.fluxnetworks.flux.forcedloading=Carregamento Forçado
 info.fluxnetworks.flux.chunkunloaded=Chunk Descarregado
-info.fluxnetworks.flux.surge=Surto
+info.fluxnetworks.flux.surge=Sobrecarga
 info.fluxnetworks.flux.input=Entrada
 info.fluxnetworks.flux.output=Saída
 info.fluxnetworks.flux.change=Mudança
