@@ -1,11 +1,8 @@
 {
   "forge_marker": 1,
-  "defaults": {
-    "model": "fluxnetworks:block/fluxblock"
-  },
   "variants": {
     "": [{
-
+      "model": "fluxnetworks:block/fluxblock"
     }]
   }
 }

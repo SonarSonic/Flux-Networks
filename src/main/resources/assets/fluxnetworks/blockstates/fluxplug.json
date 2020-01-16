@@ -1,86 +1,13 @@
 {
-    "forge_marker": 1,
-    "defaults": {
+    "multipart": [{
+      "apply": {
         "model":"fluxnetworks:block/fluxplug",
         "textures": {
-            "0":"fluxnetworks:model/flux_plug_on",
-            "colour": "fluxnetworks:model/flux_plug_colour",
-            "particle":"fluxnetworks:model/flux_plug_on"
+          "0":"fluxnetworks:model/flux_plug_on",
+          "colour": "fluxnetworks:model/flux_plug_colour",
+          "particle":"fluxnetworks:model/flux_plug_on"
         },
         "transform":"forge:default-block"
-     },
-    "variants": {
-         "connected":{
-            "true":{
-                 "textures": {                 
-                    "0":"fluxnetworks:model/flux_plug_on"
-                  }
-            },
-            "false":{
-                 "textures": {                 
-                    "0":"fluxnetworks:model/flux_plug_off"
-                  }                
-            }
-         },    
-         "north":{
-            "true":{
-                 "submodel": {
-                    "north": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 180 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "east":{
-            "true":{
-                 "submodel": {
-                    "east": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 270 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "south":{
-            "true":{
-                 "submodel": {
-                    "south": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 0 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "west":{
-            "true":{
-                 "submodel": {
-                    "west": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 90 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "down":{
-            "true":{
-                 "submodel": {
-                    "down": { "model":"fluxnetworks:block/fluxconnection"}
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "up":{
-            "true":{
-                 "submodel": {
-                    "up": { "model":"fluxnetworks:block/fluxconnection", "x": 180}
-                }
-            },
-            "false":{
-                
-            }
-        }
-    }
+      }
+    }]
 }

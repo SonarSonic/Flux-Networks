@@ -11,7 +11,7 @@ import java.util.List;
 
 public class RegistryBlocks {
 
-    public static List<Block> BLOCKS = new ArrayList<>();
+    public static List<Block> MACHINE_BLOCKS = new ArrayList<>();
 
     public static final Block FLUX_BLOCK = new Block(Block.Properties.create(Material.ROCK).hardnessAndResistance(1.5f, 17.5f)).setRegistryName("fluxblock");
     public static final Block FLUX_PLUG = new BlockFluxPlug().setRegistryName("fluxplug");
@@ -19,8 +19,8 @@ public class RegistryBlocks {
     public static final Block FLUX_CONTROLLER = new BlockFluxController().setRegistryName("fluxcontroller");
 
     static {
-        BLOCKS.add(FLUX_PLUG);
-        BLOCKS.add(FLUX_POINT);
-        BLOCKS.add(FLUX_CONTROLLER);
+        MACHINE_BLOCKS.add(FLUX_PLUG);
+        MACHINE_BLOCKS.add(FLUX_POINT);
+        MACHINE_BLOCKS.add(FLUX_CONTROLLER);
     }
 }

@@ -1,14 +1,17 @@
 package icyllis.fluxnetworks.common.block;
 
 import icyllis.fluxnetworks.api.util.NBTType;
+import icyllis.fluxnetworks.system.FluxNetworks;
 import icyllis.fluxnetworks.system.util.FluxLibs;
 import icyllis.fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.BooleanProperty;
@@ -23,6 +26,8 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
@@ -43,6 +48,7 @@ public abstract class BlockFluxCore extends Block {
         if(worldIn.isRemote) {
             return ActionResultType.SUCCESS;
         }
+        FluxNetworks.logger.info("d");
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tileEntity;

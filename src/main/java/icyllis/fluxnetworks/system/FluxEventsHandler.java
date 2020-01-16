@@ -9,6 +9,7 @@ import icyllis.fluxnetworks.system.registry.RegistryTiles;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -72,7 +74,7 @@ public class FluxEventsHandler {
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        if(RegistryBlocks.BLOCKS.stream().anyMatch(b -> b.equals(event.getState().getBlock()))) {
+        if(RegistryBlocks.MACHINE_BLOCKS.stream().anyMatch(b -> b.equals(event.getState().getBlock()))) {
             event.setCanceled(true);
         }
     }
@@ -111,12 +113,12 @@ public class FluxEventsHandler {
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event) {
             event.getRegistry().register(RegistryBlocks.FLUX_BLOCK);
-            RegistryBlocks.BLOCKS.forEach(b -> event.getRegistry().register(b));
+            RegistryBlocks.MACHINE_BLOCKS.forEach(b -> event.getRegistry().register(b));
         }
 
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event) {
-            RegistryItems.ITEMS.forEach(i -> event.getRegistry().register(i));
+            RegistryItems.ALL_ITEMS.forEach(i -> event.getRegistry().register(i));
         }
 
         @SubscribeEvent

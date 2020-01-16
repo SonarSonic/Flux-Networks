@@ -31,11 +31,6 @@ public abstract class BlockSidedConnection extends BlockFluxCore {
     }
 
     @Override
-    public float getPlayerRelativeBlockHardness(BlockState state, PlayerEntity player, IBlockReader worldIn, BlockPos pos) {
-        return 0;
-    }
-
-    @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
 
         return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
