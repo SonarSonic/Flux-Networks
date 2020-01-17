@@ -1,0 +1,8 @@
+{
+  "parent": "fluxnetworks:block/fluxpoint",
+  "textures": {
+    "0":"fluxnetworks:model/flux_point_on",
+    "color": "fluxnetworks:model/flux_point_color",
+    "particle":"fluxnetworks:model/flux_point_on"
+  }
+}

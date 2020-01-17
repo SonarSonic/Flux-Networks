@@ -1,0 +1,10 @@
+{
+  "parent": "fluxnetworks:block/fluxcontroller",
+  "textures": {
+    "0": "fluxnetworks:model/fluxcontroller_bottom",
+    "1": "fluxnetworks:model/flux_controller",
+    "color" : "fluxnetworks:model/fluxcontroller_color",
+    "top": "fluxnetworks:model/fluxcontroller_on",
+    "particle": "fluxnetworks:model/fluxcontroller_bottom"
+  }
+}

@@ -32,12 +32,12 @@
             "from": [ 0, 14, 0 ],
             "to": [ 16, 15, 16 ],
             "faces": {
-                "down": { "uv": [ 0, 0, 16, 16 ], "texture": "#colour", "tintindex": 1 },
-                "up": { "uv": [ 0, 0, 16, 16 ], "texture": "#colour", "tintindex": 1 },
-                "north": { "uv": [ 0, 0, 16, 1 ], "texture": "#colour", "tintindex": 1 },
-                "south": { "uv": [ 0, 0, 16, 1 ], "texture": "#colour", "tintindex": 1 },
-                "west": { "uv": [ 0, 0, 16, 1 ], "texture": "#colour", "tintindex": 1 },
-                "east": { "uv": [ 0, 0, 16, 1 ], "texture": "#colour", "tintindex": 1 }
+                "down": { "uv": [ 0, 0, 16, 16 ], "texture": "#color", "tintindex": 1 },
+                "up": { "uv": [ 0, 0, 16, 16 ], "texture": "#color", "tintindex": 1 },
+                "north": { "uv": [ 0, 0, 16, 1 ], "texture": "#color", "tintindex": 1 },
+                "south": { "uv": [ 0, 0, 16, 1 ], "texture": "#color", "tintindex": 1 },
+                "west": { "uv": [ 0, 0, 16, 1 ], "texture": "#color", "tintindex": 1 },
+                "east": { "uv": [ 0, 0, 16, 1 ], "texture": "#color", "tintindex": 1 }
             }
         },
         {

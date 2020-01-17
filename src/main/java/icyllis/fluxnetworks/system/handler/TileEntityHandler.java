@@ -2,6 +2,7 @@ package icyllis.fluxnetworks.system.handler;
 
 import icyllis.fluxnetworks.api.tile.IFluxTile;
 import icyllis.fluxnetworks.api.util.ITileEnergyHandler;
+import icyllis.fluxnetworks.system.handler.energy.ForgeEnergyHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 

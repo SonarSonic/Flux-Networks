@@ -3,8 +3,10 @@ package icyllis.fluxnetworks.common.tileentity;
 import icyllis.fluxnetworks.api.network.IFluxNetwork;
 import icyllis.fluxnetworks.api.tile.IFluxTile;
 import icyllis.fluxnetworks.api.util.NBTType;
-import icyllis.fluxnetworks.network.FluxNetworkInvalid;
+import icyllis.fluxnetworks.fluxnet.FluxNetworkInvalid;
 import icyllis.fluxnetworks.system.FluxConfig;
+import icyllis.fluxnetworks.system.FluxNetworks;
+import icyllis.fluxnetworks.system.misc.FluxTranslate;
 import icyllis.fluxnetworks.system.util.FluxLibs;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -13,6 +15,7 @@ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.Direction;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -129,6 +132,11 @@ public abstract class TileFluxCore extends TileEntity implements IFluxTile, ITic
     @Override
     public void readNetworkNBT(CompoundNBT nbt, NBTType type) {
 
+    }
+
+    public void updateTransfers(Direction... sides) {
+        getTransferHandler().updateTransfers(sides);
+        FluxNetworks.logger.info("ss update");
     }
 
     @Override

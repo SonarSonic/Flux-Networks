@@ -1,13 +1,69 @@
 {
-    "multipart": [{
+  "variants": {
+    "connected=true": {
+        "model": "fluxnetworks:block/variants/fluxplug_on"
+    },
+    "connected=false": {
+      "model": "fluxnetworks:block/variants/fluxplug_off"
+    }
+  },
+  "multipart": [
+    {
+      "when": {
+        "north": "true"
+      },
       "apply": {
-        "model":"fluxnetworks:block/fluxplug",
-        "textures": {
-          "0":"fluxnetworks:model/flux_plug_on",
-          "colour": "fluxnetworks:model/flux_plug_colour",
-          "particle":"fluxnetworks:model/flux_plug_on"
-        },
-        "transform":"forge:default-block"
+        "model": "fluxnetworks:block/variants/fluxplug_rod",
+        "x": 90,
+        "y": 180
       }
-    }]
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxplug_rod",
+        "x": 90,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxplug_rod",
+        "x": 90,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxplug_rod",
+        "x": 90,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxplug_rod"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxplug_rod",
+        "x": 180
+      }
+    }
+  ]
 }

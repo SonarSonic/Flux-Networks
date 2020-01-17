@@ -13,7 +13,7 @@ description='''Wireless Energy Networks'''
 [[dependencies.fluxnetworks]]
     modId="forge"
     mandatory=true
-    versionRange="[30.0.15,)"
+    versionRange="[30.0.41,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]

@@ -1,7 +1,7 @@
 package icyllis.fluxnetworks.system.registry;
 
 import icyllis.fluxnetworks.common.item.ItemFluxTile;
-import icyllis.fluxnetworks.system.FluxItemGroup;
+import icyllis.fluxnetworks.system.misc.FluxItemGroup;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 
@@ -16,9 +16,11 @@ public class RegistryItems {
     public static List<Item> ALL_ITEMS = new ArrayList<>();
 
     public static final Item FLUX = new Item(new Item.Properties().group(FluxItemGroup.GROUP)).setRegistryName("flux");
+    public static final Item FLUX_CORE = new Item(new Item.Properties().group(FluxItemGroup.GROUP)).setRegistryName("fluxcore");
 
     static {
         ALL_ITEMS.add(FLUX);
+        ALL_ITEMS.add(FLUX_CORE);
         ALL_ITEMS.add(new BlockItem(FLUX_BLOCK, new Item.Properties().group(FluxItemGroup.GROUP)).setRegistryName(FLUX_BLOCK.getRegistryName()));
         ALL_ITEMS.add(new ItemFluxTile(FLUX_PLUG, new Item.Properties().group(FluxItemGroup.GROUP)).setRegistryName(FLUX_PLUG.getRegistryName()));
         ALL_ITEMS.add(new ItemFluxTile(FLUX_POINT, new Item.Properties().group(FluxItemGroup.GROUP)).setRegistryName(FLUX_POINT.getRegistryName()));

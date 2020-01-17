@@ -1,86 +1,69 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "model":"fluxnetworks:block/fluxpoint",
-        "textures": {
-            "0":"fluxnetworks:model/flux_point_on",
-            "colour":"fluxnetworks:model/flux_point_colour",
-            "particle":"fluxnetworks:model/flux_point_on"
-        },
-        "transform":"forge:default-block"
-     },
-    "variants": {
-         "connected":{
-            "true":{
-                 "textures": {                 
-                    "0":"fluxnetworks:model/flux_point_on"
-                  }
-            },
-            "false":{
-                 "textures": {                 
-                    "0":"fluxnetworks:model/flux_point_off"
-                  }                
-            }
-         }, 
-         "north":{
-            "true":{
-                 "submodel": {
-                    "north": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 180 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "east":{
-            "true":{
-                 "submodel": {
-                    "east": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 270 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "south":{
-            "true":{
-                 "submodel": {
-                    "south": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 0 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "west":{
-            "true":{
-                 "submodel": {
-                    "west": { "model":"fluxnetworks:block/fluxconnection", "x": 90, "y": 90 }
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "down":{
-            "true":{
-                 "submodel": {
-                    "down": { "model":"fluxnetworks:block/fluxconnection"}
-                }
-            },
-            "false":{
-                
-            }
-        },
-        "up":{
-            "true":{
-                 "submodel": {
-                    "up": { "model":"fluxnetworks:block/fluxconnection", "x": 180}
-                }
-            },
-            "false":{
-                
-            }
-        }
+  "variants": {
+    "connected=true": {
+      "model": "fluxnetworks:block/variants/fluxpoint_on"
+    },
+    "connected=false": {
+      "model": "fluxnetworks:block/variants/fluxpoint_off"
     }
+  },
+  "multipart": [
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxpoint_rod",
+        "x": 90,
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxpoint_rod",
+        "x": 90,
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxpoint_rod",
+        "x": 90,
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxpoint_rod",
+        "x": 90,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxpoint_rod"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxpoint_rod",
+        "x": 180
+      }
+    }
+  ]
 }

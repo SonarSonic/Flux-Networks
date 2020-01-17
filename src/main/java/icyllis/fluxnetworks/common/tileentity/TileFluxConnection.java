@@ -3,7 +3,7 @@ package icyllis.fluxnetworks.common.tileentity;
 import icyllis.fluxnetworks.api.tile.IFluxPhantom;
 import icyllis.fluxnetworks.api.tile.ITransferHandler;
 import icyllis.fluxnetworks.common.tileentity.component.ConnectionTransferHandler;
-import icyllis.fluxnetworks.system.util.ForgeEnergyWrapper;
+import icyllis.fluxnetworks.system.util.wrapper.ForgeEnergyWrapper;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;

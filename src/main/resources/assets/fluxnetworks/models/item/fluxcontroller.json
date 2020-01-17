@@ -3,7 +3,7 @@
   "textures": {
     "0": "fluxnetworks:model/fluxcontroller_bottom",
     "1": "fluxnetworks:model/flux_controller",
-    "colour": "fluxnetworks:model/fluxcontroller_colour",
+    "color": "fluxnetworks:model/fluxcontroller_color",
     "top": "fluxnetworks:model/fluxcontroller_off"
   }
 }

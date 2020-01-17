@@ -1,0 +1,11 @@
+{
+  "itemGroup.fluxnetworks": "Flux Networks",
+
+  "block.fluxnetworks.fluxblock": "Flux Block",
+  "block.fluxnetworks.fluxplug": "Flux Plug",
+  "block.fluxnetworks.fluxpoint": "Flux Point",
+  "block.fluxnetworks.fluxcontroller": "Flux Controller",
+
+  "item.fluxnetworks.flux": "Flux",
+  "item.fluxnetworks.fluxcore": "Flux Core"
+}

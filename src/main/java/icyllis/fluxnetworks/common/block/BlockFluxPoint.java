@@ -1,5 +1,6 @@
 package icyllis.fluxnetworks.common.block;
 
+import icyllis.fluxnetworks.system.misc.FluxTranslate;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -20,6 +21,7 @@ public class BlockFluxPoint extends BlockSidedConnection {
     @Override
     public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
+        tooltip.add(FluxTranslate.FLUX_POINT_TOOLTIP);
     }
 
     @Nullable

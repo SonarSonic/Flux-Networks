@@ -2,6 +2,6 @@
   "parent": "fluxnetworks:block/fluxplug",
   "textures": {
     "0": "fluxnetworks:model/flux_plug_on",
-    "colour": "fluxnetworks:model/flux_plug_colour"
+    "color": "fluxnetworks:model/flux_plug_color"
   }
 }

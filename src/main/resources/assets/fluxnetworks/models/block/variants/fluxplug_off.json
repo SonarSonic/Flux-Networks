@@ -1,0 +1,8 @@
+{
+  "parent": "fluxnetworks:block/fluxplug",
+  "textures": {
+    "0":"fluxnetworks:model/flux_plug_off",
+    "color": "fluxnetworks:model/flux_plug_color",
+    "particle":"fluxnetworks:model/flux_plug_on"
+  }
+}

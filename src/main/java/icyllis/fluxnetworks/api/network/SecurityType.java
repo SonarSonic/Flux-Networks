@@ -1,20 +1,20 @@
 package icyllis.fluxnetworks.api.network;
 
-import icyllis.fluxnetworks.api.translate.FluxTranslate;
-import icyllis.fluxnetworks.api.translate.Translation;
+import icyllis.fluxnetworks.system.misc.FluxTranslate;
+import net.minecraft.util.text.ITextComponent;
 
 public enum SecurityType {
     PUBLIC(FluxTranslate.PUBLIC),
     ENCRYPTED(FluxTranslate.ENCRYPTED);
 
-    private Translation localization;
+    private ITextComponent textComponent;
 
-    SecurityType(Translation localization) {
-        this.localization = localization;
+    SecurityType(ITextComponent textComponent) {
+        this.textComponent = textComponent;
     }
 
     public String getDisplayText() {
-        return localization.t();
+        return textComponent.getFormattedText();
     }
 
     public boolean isEncrypted() {

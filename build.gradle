@@ -65,11 +65,13 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.1-30.0.15'
+    minecraft 'net.minecraftforge:forge:1.15.1-30.0.41'
 
     //compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
 
     //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+
+    compile fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
 }
 
 jar {

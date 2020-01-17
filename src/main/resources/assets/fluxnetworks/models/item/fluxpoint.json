@@ -2,6 +2,13 @@
   "parent": "fluxnetworks:block/fluxpoint",
   "textures": {
     "0": "fluxnetworks:model/flux_point_on",
-    "colour": "fluxnetworks:model/flux_point_colour"
+    "color": "fluxnetworks:model/flux_point_color"
+  },
+  "display": {
+    "gui": {
+      "rotation": [ 30, 225, 0 ],
+      "translation": [ 0, 0, 0],
+      "scale": [1.0, 1.0, 1.0]
+    }
   }
 }
