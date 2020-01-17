@@ -5,16 +5,21 @@ import icyllis.fluxnetworks.common.block.state.PropertyBoolFacing;
 import icyllis.fluxnetworks.common.tileentity.TileFluxCore;
 import icyllis.fluxnetworks.system.FluxNetworks;
 import icyllis.fluxnetworks.system.util.FluxUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.state.StateContainer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import java.util.ArrayList;
 
@@ -32,8 +37,7 @@ public abstract class BlockSidedConnection extends BlockFluxCore {
         setDefaultState(getStateContainer().getBaseState()
                 .with(NORTH, false).with(EAST, false)
                 .with(SOUTH, false).with(WEST, false)
-                .with(DOWN, false).with(UP, false)
-                .with(CONNECTED, false));
+                .with(DOWN, false).with(UP, false));
     }
 
     @Override

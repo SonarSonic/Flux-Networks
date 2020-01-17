@@ -44,4 +44,6 @@ public interface ITransferHandler extends INetworkNBT {
     long addToNetwork(long maxAmount);
 
     long removeFromNetwork(long maxAmount, boolean simulate);
+
+    void onLastEndTick();
 }

@@ -1,18 +1,27 @@
 package icyllis.fluxnetworks.api.network;
 
+import icyllis.fluxnetworks.api.tile.IFluxTile;
 import icyllis.fluxnetworks.api.util.INetworkNBT;
+
+import java.util.List;
 
 public interface IFluxNetwork extends INetworkNBT {
 
     default int getNetworkID() {
-        return getSetting().getNetworkID();
+        return getNetworkSetting().getNetworkID();
     }
 
-    INetworkSetting getSetting();
+    INetworkSetting getNetworkSetting();
 
-    INetworkTransfer getTransfer();
+    INetworkTransfer getNetworkTransfer();
+
+    IRequestHandler getRequestHandler();
+
+    <T extends IFluxTile> List<T> getConnections(FluxCacheTypes<T> type);
 
     void tick();
 
     boolean isValid();
+
+    void onRemoved();
 }

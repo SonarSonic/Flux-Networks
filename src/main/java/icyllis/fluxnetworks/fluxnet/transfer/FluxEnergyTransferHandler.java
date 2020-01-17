@@ -1,4 +1,4 @@
-package icyllis.fluxnetworks.common.tileentity.component;
+package icyllis.fluxnetworks.fluxnet.transfer;
 
 import icyllis.fluxnetworks.api.tile.IFluxTransfer;
 import icyllis.fluxnetworks.api.tile.ITransferHandler;
@@ -6,9 +6,12 @@ import icyllis.fluxnetworks.api.tile.IFluxTile;
 import icyllis.fluxnetworks.api.util.NBTType;
 import net.minecraft.nbt.CompoundNBT;
 
-public abstract class FluxTransferHandler implements ITransferHandler {
+/**
+ * A phantom energy handler for calculation in a flux network internally
+ */
+public abstract class FluxEnergyTransferHandler implements ITransferHandler {
 
-    protected final IFluxTile tile;
+    protected final IFluxTile fluxTile;
 
     private long added;
     private long removed;
@@ -20,8 +23,8 @@ public abstract class FluxTransferHandler implements ITransferHandler {
 
     private long bufferSize;
 
-    FluxTransferHandler(IFluxTile tile) {
-        this.tile = tile;
+    FluxEnergyTransferHandler(IFluxTile fluxTile) {
+        this.fluxTile = fluxTile;
     }
 
     @Override
@@ -87,16 +90,16 @@ public abstract class FluxTransferHandler implements ITransferHandler {
     }
 
     private void checkBufferSize() {
-        bufferSize = Math.min(Math.max(bufferSize, tile.getLogicalLimit()), tile.getNetwork().getTransfer().getBufferLimiter());
+        bufferSize = Math.min(Math.max(bufferSize, fluxTile.getLogicalLimit()), fluxTile.getNetwork().getNetworkTransfer().getBufferLimiter());
     }
 
     private long getMaxAddition() {
-        long r = Math.min(tile.getLogicalLimit() - added, bufferSize - buffer);
+        long r = Math.min(fluxTile.getLogicalLimit() - added, bufferSize - buffer);
         return Math.max(r, 0);
     }
 
     private long getMaxRemoval() {
-        return tile.getLogicalLimit() - removed;
+        return fluxTile.getLogicalLimit() - removed;
     }
 
     private long getValidAddition(long toAdd) {

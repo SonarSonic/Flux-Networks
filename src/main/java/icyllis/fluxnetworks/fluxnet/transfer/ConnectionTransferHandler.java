@@ -1,4 +1,4 @@
-package icyllis.fluxnetworks.common.tileentity.component;
+package icyllis.fluxnetworks.fluxnet.transfer;
 
 import icyllis.fluxnetworks.api.tile.IFluxTile;
 import icyllis.fluxnetworks.api.tile.IFluxTransfer;
@@ -11,14 +11,14 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- * Plug or point transfer handler (6 sides)
+ * plug or point transfer handler (6 sides)
  */
-public class ConnectionTransferHandler extends FluxTransferHandler {
+public class ConnectionTransferHandler extends FluxEnergyTransferHandler {
 
     private HashMap<Direction, IFluxTransfer> transfers = new HashMap<>(6);
 
-    public ConnectionTransferHandler(IFluxTile tile) {
-        super(tile);
+    public ConnectionTransferHandler(IFluxTile fluxTile) {
+        super(fluxTile);
         for (Direction side : Direction.values()) {
             transfers.put(side, null);
         }
@@ -27,7 +27,7 @@ public class ConnectionTransferHandler extends FluxTransferHandler {
     @Override
     public void updateTransfers(Direction... sides) {
         for (Direction side : sides) {
-            TileEntity target = this.tile.getWorld().getTileEntity(this.tile.getPos().offset(side));
+            TileEntity target = this.fluxTile.getWorld().getTileEntity(this.fluxTile.getPos().offset(side));
             IFluxTransfer transfer = transfers.get(side);
             ITileEnergyHandler handler = TileEntityHandler.INSTANCE.getEnergyHandler(target, side.getOpposite());
             if (handler == null) {
@@ -45,11 +45,16 @@ public class ConnectionTransferHandler extends FluxTransferHandler {
         return transfers.values();
     }
 
+    @Override
+    public void onLastEndTick() {
+
+    }
+
     /**
      * Only called by flux plug
      */
     public long addPhantomEnergyToNetwork(long amount, Direction side, boolean simulate) {
-        if (!tile.getNetwork().isValid()) {
+        if (!fluxTile.getNetwork().isValid()) {
             return 0;
         }
         IFluxTransfer transfer = transfers.get(side);

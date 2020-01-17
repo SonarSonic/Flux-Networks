@@ -1,5 +1,6 @@
 package icyllis.fluxnetworks.system.misc;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -14,92 +15,92 @@ public class FluxTranslate {
     public static final ITextComponent FLUX_POINT_TOOLTIP = t("tooltip.fluxnetworks.fluxpoint");
     public static final ITextComponent FLUX_STORAGE_TOOLTIP = t("tooltip.fluxnetworks.fluxstorage");
 
-    public static final ITextComponent TAB_HOME = i("tab.home");
-    public static final ITextComponent TAB_SELECTION = i("tab.selection");
-    public static final ITextComponent TAB_WIRELESS = i("tab.wireless");
-    public static final ITextComponent TAB_CONNECTION = i("tab.connection");
-    public static final ITextComponent TAB_STATISTICS = i("tab.statistics");
-    public static final ITextComponent TAB_MEMBER = i("tab.member");
-    public static final ITextComponent TAB_SETTING = i("tab.setting");
-    public static final ITextComponent TAB_CREATE = i("tab.create");
+    public static final String TAB_HOME = i("tab.home");
+    public static final String TAB_SELECTION = i("tab.selection");
+    public static final String TAB_WIRELESS = i("tab.wireless");
+    public static final String TAB_CONNECTION = i("tab.connection");
+    public static final String TAB_STATISTICS = i("tab.statistics");
+    public static final String TAB_MEMBER = i("tab.member");
+    public static final String TAB_SETTING = i("tab.setting");
+    public static final String TAB_CREATE = i("tab.create");
 
-    public static final ITextComponent NETWORK_NAME = i("network.name");
-    public static final ITextComponent NETWORK_FULL_NAME = i("network.fullname");
-    public static final ITextComponent NETWORK_SECURITY = i("network.security");
-    public static final ITextComponent NETWORK_PASSWORD = i("network.password");
-    public static final ITextComponent NETWORK_ENERGY = i("network.energy");
-    public static final ITextComponent NETWORK_COLOR = i("network.color");
+    public static final String NETWORK_NAME = i("network.name");
+    public static final String NETWORK_FULL_NAME = i("network.fullname");
+    public static final String NETWORK_SECURITY = i("network.security");
+    public static final String NETWORK_PASSWORD = i("network.password");
+    public static final String NETWORK_ENERGY = i("network.energy");
+    public static final String NETWORK_COLOR = i("network.color");
 
-    public static final ITextComponent CLICK = i("click");
-    public static final ITextComponent ABOVE = i("above");
+    public static final String CLICK = i("click");
+    public static final String ABOVE = i("above");
 
-    public static final ITextComponent ERROR_NO_SELECTED = i("error.noselected");
-    public static final ITextComponent ERROR_NO_NETWORK = i("error.nonetwork");
+    public static final String ERROR_NO_SELECTED = i("error.noselected");
+    public static final String ERROR_NO_NETWORK = i("error.nonetwork");
 
-    public static final ITextComponent NAME = i("flux.name");
-    public static final ITextComponent PRIORITY = i("flux.priority");
-    public static final ITextComponent SURGE = i("flux.surge");
-    public static final ITextComponent SURGE_MODE = i("flux.surgemode");
-    public static final ITextComponent TRANSFER_LIMIT = i("flux.transferlimit");
-    public static final ITextComponent DISABLE_LIMIT = i("flux.disablelimit");
-    public static final ITextComponent CHUNK_LOADING = i("flux.chunkloading");
-    public static final ITextComponent ENABLE_WIRELESS = i("flux.wireless");
-    public static final ITextComponent ENERGY = i("flux.energy");
-    public static final ITextComponent ENERGY_STORED = i("flux.energystored");
-    public static final ITextComponent BUFFER = i("flux.buffer");
-    public static final ITextComponent INTERNAL_BUFFER = i("flux.internalbuffer");
-    public static final ITextComponent UNLIMITED = i("flux.unlimited");
-    public static final ITextComponent FORCED_LOADING = i("flux.forcedloading");
-    public static final ITextComponent CHUNK_UNLOADED = i("flux.chunkunloaded");
-    public static final ITextComponent INPUT = i("flux.input");
-    public static final ITextComponent OUTPUT = i("flux.output");
-    public static final ITextComponent CHANGE = i("flux.change");
-    public static final ITextComponent AVERAGE_TICK = i("flux.averagetick");
+    public static final String NAME = i("flux.name");
+    public static final String PRIORITY = i("flux.priority");
+    public static final String SURGE = i("flux.surge");
+    public static final String SURGE_MODE = i("flux.surgemode");
+    public static final String TRANSFER_LIMIT = i("flux.transferlimit");
+    public static final String DISABLE_LIMIT = i("flux.disablelimit");
+    public static final String CHUNK_LOADING = i("flux.chunkloading");
+    public static final String ENABLE_WIRELESS = i("flux.wireless");
+    public static final String ENERGY = i("flux.energy");
+    public static final String ENERGY_STORED = i("flux.energystored");
+    public static final String BUFFER = i("flux.buffer");
+    public static final String INTERNAL_BUFFER = i("flux.internalbuffer");
+    public static final String UNLIMITED = i("flux.unlimited");
+    public static final String FORCED_LOADING = i("flux.forcedloading");
+    public static final String CHUNK_UNLOADED = i("flux.chunkunloaded");
+    public static final String INPUT = i("flux.input");
+    public static final String OUTPUT = i("flux.output");
+    public static final String CHANGE = i("flux.change");
+    public static final String AVERAGE_TICK = i("flux.averagetick");
 
 
-    public static final ITextComponent SORT_BY = i("gui.sortby");
-    public static final ITextComponent SELECTED = i("gui.selected");
-    public static final ITextComponent SINGLE_EDIT = i("gui.singleedit");
-    public static final ITextComponent BATCH_EDIT = i("gui.batchedit");
-    public static final ITextComponent EDITING = i("gui.editing");
-    public static final ITextComponent CONNECTIONS = i("gui.connections");
-    public static final ITextComponent CUSTOM_COLOR = i("gui.customcolor");
-    public static final ITextComponent CONNECTING_TO = i("gui.connectingto");
-    public static final ITextComponent TOTAL = i("gui.total");
-    public static final ITextComponent DELETE_NETWORK = i("gui.deletenetwork");
-    public static final ITextComponent DOUBLE_SHIFT = i("gui.doubleshift");
-    public static final ITextComponent TRANSFER_OWNERSHIP = i("gui.transferownership");
-    public static final ITextComponent SET_USER = i("gui.setuser");
-    public static final ITextComponent SET_ADMIN = i("gui.setadmin");
-    public static final ITextComponent USERNAME = i("gui.playername");
-    public static final ITextComponent ACCESS = i("gui.playeraccess");
-    public static final ITextComponent CANCEL_MEMBERSHIP = i("gui.cancelmembership");
-    public static final ITextComponent YOU = i("gui.you");
+    public static final String SORT_BY = i("gui.sortby");
+    public static final String SELECTED = i("gui.selected");
+    public static final String SINGLE_EDIT = i("gui.singleedit");
+    public static final String BATCH_EDIT = i("gui.batchedit");
+    public static final String EDITING = i("gui.editing");
+    public static final String CONNECTIONS = i("gui.connections");
+    public static final String CUSTOM_COLOR = i("gui.customcolor");
+    public static final String CONNECTING_TO = i("gui.connectingto");
+    public static final String TOTAL = i("gui.total");
+    public static final String DELETE_NETWORK = i("gui.deletenetwork");
+    public static final String DOUBLE_SHIFT = i("gui.doubleshift");
+    public static final String TRANSFER_OWNERSHIP = i("gui.transferownership");
+    public static final String SET_USER = i("gui.setuser");
+    public static final String SET_ADMIN = i("gui.setadmin");
+    public static final String USERNAME = i("gui.playername");
+    public static final String ACCESS = i("gui.playeraccess");
+    public static final String CANCEL_MEMBERSHIP = i("gui.cancelmembership");
+    public static final String YOU = i("gui.you");
 
-    public static final ITextComponent SORTING_SMART = i("gui.sort.smart");
-    public static final ITextComponent SORTING_ID = i("gui.sort.id");
-    public static final ITextComponent SORTING_NAME = i("gui.sort.name");
+    public static final String SORTING_SMART = i("gui.sort.smart");
+    public static final String SORTING_ID = i("gui.sort.id");
+    public static final String SORTING_NAME = i("gui.sort.name");
 
-    public static final ITextComponent BATCH_CLEAR_BUTTON = i("button.batchclear");
-    public static final ITextComponent BATCH_EDIT_BUTTON = i("button.batchedit");
-    public static final ITextComponent BATCH_DISCONNECT_BUTTON = i("button.batchdisconnect");
-    public static final ITextComponent APPLY = i("button.apply");
-    public static final ITextComponent CANCEL = i("button.cancel");
-    public static final ITextComponent CREATE = i("button.create");
-    public static final ITextComponent CONNECT = i("button.connect");
-    public static final ITextComponent DELETE = i("button.delete");
+    public static final String BATCH_CLEAR_BUTTON = i("button.batchclear");
+    public static final String BATCH_EDIT_BUTTON = i("button.batchedit");
+    public static final String BATCH_DISCONNECT_BUTTON = i("button.batchdisconnect");
+    public static final String APPLY = i("button.apply");
+    public static final String CANCEL = i("button.cancel");
+    public static final String CREATE = i("button.create");
+    public static final String CONNECT = i("button.connect");
+    public static final String DELETE = i("button.delete");
 
-    public static final ITextComponent INVENTORY = i("slot.main");
-    public static final ITextComponent HOT_BAR = i("slot.hotbar");
-    public static final ITextComponent RIGHT_HAND = i("slot.righthand");
-    public static final ITextComponent LEFT_HAND = i("slot.lefthand");
-    public static final ITextComponent ARMOR = i("slot.armor");
-    public static final ITextComponent BAUBLES = i("slot.baubles");
+    public static final String INVENTORY = i("slot.main");
+    public static final String HOT_BAR = i("slot.hotbar");
+    public static final String RIGHT_HAND = i("slot.righthand");
+    public static final String LEFT_HAND = i("slot.lefthand");
+    public static final String ARMOR = i("slot.armor");
+    public static final String BAUBLES = i("slot.baubles");
 
-    public static final ITextComponent PLUGS = i("stat.plug");
-    public static final ITextComponent POINTS = i("stat.point");
-    public static final ITextComponent CONTROLLERS = i("stat.controller");
-    public static final ITextComponent STORAGES = i("stat.storage");
+    public static final String PLUGS = i("stat.plug");
+    public static final String POINTS = i("stat.point");
+    public static final String CONTROLLERS = i("stat.controller");
+    public static final String STORAGES = i("stat.storage");
 
 
     /** Server Only (ITextComponent key) **/
@@ -134,7 +135,7 @@ public class FluxTranslate {
         return new TranslationTextComponent(s);
     }
 
-    public static ITextComponent i(String s) {
-        return t("info.fluxnetworks." + s);
+    public static String i(String s) {
+        return I18n.format("info.fluxnetworks." + s);
     }
 }

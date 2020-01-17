@@ -38,14 +38,11 @@ public abstract class TileFluxCore extends TileEntity implements IFluxTile, ITic
     public boolean surgeMode = false;
     public boolean disableLimit = false;
 
-    public boolean connected = false;
-    public byte[] connections = new byte[]{0,0,0,0,0,0};
-
     public boolean chunkLoading = false;
 
     protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
-    protected boolean load = false;
+    protected boolean firstTicked = false;
 
     public TileFluxCore(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -63,7 +60,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxTile, ITic
 
     @Override
     public void tick() {
-
+        if(!world.isRemote) {
+            if(!firstTicked) {
+                updateTransfers(Direction.values());
+                firstTicked = true;
+            }
+        }
     }
 
     @Override

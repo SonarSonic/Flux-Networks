@@ -4,11 +4,14 @@ import icyllis.fluxnetworks.api.util.NBTType;
 import icyllis.fluxnetworks.system.FluxNetworks;
 import icyllis.fluxnetworks.system.util.FluxLibs;
 import icyllis.fluxnetworks.common.tileentity.TileFluxCore;
+import icyllis.fluxnetworks.system.util.FluxUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -41,6 +44,8 @@ public abstract class BlockFluxCore extends Block {
 
     BlockFluxCore() {
         super(Block.Properties.create(MACHINE).hardnessAndResistance(0.3f, 1000000.0f));
+        setDefaultState(getStateContainer().getBaseState().with(CONNECTED, false));
+        RenderTypeLookup.setRenderLayer(this, RenderType.func_228643_e_());
     }
 
     @Override
@@ -48,7 +53,6 @@ public abstract class BlockFluxCore extends Block {
         if(worldIn.isRemote) {
             return ActionResultType.SUCCESS;
         }
-        FluxNetworks.logger.info("d");
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileFluxCore) {
             TileFluxCore fluxCore = (TileFluxCore) tileEntity;
@@ -69,13 +73,13 @@ public abstract class BlockFluxCore extends Block {
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if(!worldIn.isRemote) {
-            TileEntity tile = worldIn.getTileEntity(pos);
-            if(tile instanceof TileFluxCore && stack.hasTag()) {
-                TileFluxCore t = (TileFluxCore) tile;
-                CompoundNBT tag = stack.getChildTag(FluxLibs.TAG_DROP);
-                if(tag != null) {
-                    t.readNetworkNBT(tag, NBTType.TILE_DROP);
-                }
+            if(stack.hasTag()) {
+                FluxUtils.getFluxTE(worldIn, pos).ifPresent(t -> {
+                    CompoundNBT tag = stack.getChildTag(FluxLibs.TAG_DROP);
+                    if(tag != null) {
+                        t.readNetworkNBT(tag, NBTType.TILE_DROP);
+                    }
+                });
             }
         }
     }

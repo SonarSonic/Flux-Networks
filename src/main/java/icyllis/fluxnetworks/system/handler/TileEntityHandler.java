@@ -34,4 +34,8 @@ public enum TileEntityHandler {
         return null;
     }
 
+    public boolean canRenderConnection(@Nullable TileEntity tile, Direction side) {
+        return getEnergyHandler(tile, side) != null;
+    }
+
 }

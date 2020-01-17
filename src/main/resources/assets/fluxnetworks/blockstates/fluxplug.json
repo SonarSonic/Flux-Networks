@@ -1,13 +1,21 @@
 {
-  "variants": {
-    "connected=true": {
-        "model": "fluxnetworks:block/variants/fluxplug_on"
-    },
-    "connected=false": {
-      "model": "fluxnetworks:block/variants/fluxplug_off"
-    }
-  },
   "multipart": [
+    {
+      "when": {
+        "connected": "true"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxplug_on"
+      }
+    },
+    {
+      "when": {
+        "connected": "false"
+      },
+      "apply": {
+        "model": "fluxnetworks:block/variants/fluxplug_off"
+      }
+    },
     {
       "when": {
         "north": "true"

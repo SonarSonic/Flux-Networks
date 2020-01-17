@@ -1,10 +1,13 @@
-package icyllis.fluxnetworks.common.tileentity.component;
+package icyllis.fluxnetworks.fluxnet.transfer;
 
 import icyllis.fluxnetworks.api.tile.IFluxTransfer;
 import icyllis.fluxnetworks.api.util.ITileEnergyHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 
+/**
+ * Single side transfer of plug or point
+ */
 public class ConnectionTransfer implements IFluxTransfer {
 
     private final ITileEnergyHandler energyHandler;

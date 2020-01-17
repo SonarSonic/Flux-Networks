@@ -1,22 +1,33 @@
 package icyllis.fluxnetworks.fluxnet;
 
-import icyllis.fluxnetworks.api.network.IFluxNetwork;
-import icyllis.fluxnetworks.api.network.INetworkSetting;
-import icyllis.fluxnetworks.api.network.INetworkTransfer;
+import icyllis.fluxnetworks.api.network.*;
+import icyllis.fluxnetworks.api.tile.IFluxTile;
 import icyllis.fluxnetworks.api.util.NBTType;
 import net.minecraft.nbt.CompoundNBT;
+
+import java.util.List;
 
 public class FluxNetworkInvalid implements IFluxNetwork {
 
     public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 
     @Override
-    public INetworkSetting getSetting() {
+    public INetworkSetting getNetworkSetting() {
         return null;
     }
 
     @Override
-    public INetworkTransfer getTransfer() {
+    public INetworkTransfer getNetworkTransfer() {
+        return null;
+    }
+
+    @Override
+    public IRequestHandler getRequestHandler() {
+        return null;
+    }
+
+    @Override
+    public <T extends IFluxTile> List<T> getConnections(FluxCacheTypes<T> type) {
         return null;
     }
 
@@ -28,6 +39,11 @@ public class FluxNetworkInvalid implements IFluxNetwork {
     @Override
     public boolean isValid() {
         return false;
+    }
+
+    @Override
+    public void onRemoved() {
+
     }
 
     @Override

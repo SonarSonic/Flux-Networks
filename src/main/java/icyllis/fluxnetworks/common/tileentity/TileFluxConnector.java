@@ -2,8 +2,11 @@ package icyllis.fluxnetworks.common.tileentity;
 
 import icyllis.fluxnetworks.api.tile.IFluxPhantom;
 import icyllis.fluxnetworks.api.tile.ITransferHandler;
-import icyllis.fluxnetworks.common.tileentity.component.ConnectionTransferHandler;
+import icyllis.fluxnetworks.common.block.BlockSidedConnection;
+import icyllis.fluxnetworks.fluxnet.transfer.ConnectionTransferHandler;
+import icyllis.fluxnetworks.system.handler.TileEntityHandler;
 import icyllis.fluxnetworks.system.util.wrapper.ForgeEnergyWrapper;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -16,17 +19,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Plug or point tile entity (6 sides)
+ * plug or point
  */
-public abstract class TileFluxConnection extends TileFluxCore implements IFluxPhantom {
+public abstract class TileFluxConnector extends TileFluxCore implements IFluxPhantom {
 
     final ConnectionTransferHandler handler = new ConnectionTransferHandler(this);
+
     private Map<Direction, ForgeEnergyWrapper> forgeWrappers = new HashMap<>();
 
-    TileFluxConnection(TileEntityType<?> tileEntityTypeIn) {
+    TileFluxConnector(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
         for (Direction side : Direction.values()) {
             forgeWrappers.put(side, new ForgeEnergyWrapper(this, side));
+        }
+    }
+
+    @Override
+    public void updateTransfers(Direction... sides) {
+        super.updateTransfers(sides);
+        if(world != null) {
+            for (Direction side : sides) {
+                TileEntity tile = world.getTileEntity(pos.offset(side));
+                boolean c = TileEntityHandler.INSTANCE.canRenderConnection(tile, side.getOpposite());
+                int index = side.getIndex();
+                world.setBlockState(pos, getBlockState().with(BlockSidedConnection.FACES.get(index), c), 10);
+            }
         }
     }
 

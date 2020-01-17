@@ -4,7 +4,8 @@ import net.minecraft.util.Direction;
 
 /**
  * A phantom interface to transfer energy across flux network by other mods
- * Implemented by flux plug
+ *
+ * Only implemented by flux plug
  */
 public interface IFluxPhantom extends IFluxTile {
 
