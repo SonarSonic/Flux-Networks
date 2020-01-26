@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.15.1-5.1.1'
+version = "${minecraft_version}-${mod_version}"
 group = 'icyllis'
 archivesBaseName = 'FluxNetworks'
 
