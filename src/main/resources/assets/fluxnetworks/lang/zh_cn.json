@@ -1,0 +1,11 @@
+{
+  "itemGroup.fluxnetworks": "通量网络",
+
+  "block.fluxnetworks.fluxblock": "能量块",
+  "block.fluxnetworks.fluxplug": "能量网络接入点",
+  "block.fluxnetworks.fluxpoint": "能量网络输出点",
+  "block.fluxnetworks.fluxcontroller": "能量网络控制器",
+
+  "item.fluxnetworks.flux": "能量尘",
+  "item.fluxnetworks.fluxcore": "能量核心"
+}
