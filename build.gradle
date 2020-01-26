@@ -19,7 +19,7 @@ archivesBaseName = 'FluxNetworks'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20191102-1.14.3'
+    mappings channel: 'snapshot', version: mappings_version
 
     runs {
         client {
@@ -62,14 +62,19 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.1-30.0.41'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    //compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
 
-    //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
     compile fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
 }

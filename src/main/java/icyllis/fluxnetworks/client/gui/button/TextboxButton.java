@@ -17,9 +17,8 @@ public class TextboxButton extends TextFieldWidget {
     private static final int boxColor = 0x20000000;
 
     public TextboxButton(ITextBoxButton gui, String text, int componentId, FontRenderer fontRenderer, int x, int y, int par5Width, int par6Height, int width) {
-        super(componentId, fontRenderer, x + width, y, par5Width - width, par6Height);
+        super(fontRenderer, x + width, y , par5Width - width, par6Height, text);
         this.extraText = text;
-        this.fontRenderer = fontRenderer;
         this.textWidth = width;
         this.gui = gui;
     }
@@ -52,7 +51,7 @@ public class TextboxButton extends TextFieldWidget {
         return Integer.parseInt(getText(), 16);
     }
 
-    @Override
+    /* @Override
     public void drawTextBox() {
         this.setEnableBackgroundDrawing(true);
         if (this.getVisible()) {
@@ -71,7 +70,7 @@ public class TextboxButton extends TextFieldWidget {
         fontRenderer.drawString(extraText, x - textWidth, y, outlineColor);
         x -= 4;
         y -= (this.height - 8) / 2;
-    }
+    } */
 
     /*@Override
     public boolean textboxKeyTyped(char c, int i) {
@@ -136,7 +135,7 @@ public class TextboxButton extends TextFieldWidget {
     /**
      * Better than Sonar Sonic's
      */
-    @Override
+    /* @Override
     public void switchFocused(boolean isFocusedIn) {
         if(digitsOnly) {
             if(isFocusedIn) {
@@ -156,17 +155,17 @@ public class TextboxButton extends TextFieldWidget {
         if(!isFocusedIn) {
             gui.onTextBoxChanged(this);
         }
-    }
+    } */
 
     public TextboxButton setOutlineColor(int color) {
         this.outlineColor = color;
         return this;
     }
 
-    public TextboxButton setTextInvisible() {
+    /* public TextboxButton setTextInvisible() {
         isTextInvisible = true;
         return this;
-    }
+    } */
 
     public TextboxButton setDigitsOnly() {
         digitsOnly = true;

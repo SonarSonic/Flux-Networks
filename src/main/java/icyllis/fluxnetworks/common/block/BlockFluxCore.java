@@ -45,11 +45,12 @@ public abstract class BlockFluxCore extends Block {
     BlockFluxCore() {
         super(Block.Properties.create(MACHINE).hardnessAndResistance(0.3f, 1000000.0f));
         setDefaultState(getStateContainer().getBaseState().with(CONNECTED, false));
-        RenderTypeLookup.setRenderLayer(this, RenderType.func_228643_e_());
+        RenderTypeLookup.setRenderLayer(this, RenderType.cutout());
     }
 
     @Override
-    public ActionResultType func_225533_a_(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    @Deprecated
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if(worldIn.isRemote) {
             return ActionResultType.SUCCESS;
         }
