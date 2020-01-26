@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DBD",
+    "BEB",
+    "DBD"
+  ],
+  "key": {
+    "D": {
+      "item": "fluxnetworks:flux"
+    },
+    "B": {
+      "item": "minecraft:obsidian"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    }
+  },
+  "result": {
+    "item": "fluxnetworks:fluxcore",
+    "count": 4
+  }
+}
