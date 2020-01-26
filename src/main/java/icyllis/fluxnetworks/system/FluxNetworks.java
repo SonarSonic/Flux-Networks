@@ -12,7 +12,7 @@ public class FluxNetworks {
     public static Logger logger = LogManager.getLogger("FluxNetworks");
 
     public FluxNetworks() {
-
+        FluxConfig.setup();
     }
 
 }
