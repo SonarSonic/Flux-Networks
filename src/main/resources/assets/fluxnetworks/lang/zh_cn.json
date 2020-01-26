@@ -7,5 +7,8 @@
   "block.fluxnetworks.fluxcontroller": "能量网络控制器",
 
   "item.fluxnetworks.flux": "能量尘",
-  "item.fluxnetworks.fluxcore": "能量核心"
+  "item.fluxnetworks.fluxcore": "能量核心",
+
+  "tooltip.fluxnetworks.fluxpoint": "用于从能量网络中输出能量(主动为相邻方块供给能量)",
+  "tooltip.fluxnetworks.fluxplug": "用于向能量网络中输入能量(从相邻方块中被动接收能量)"
 }
