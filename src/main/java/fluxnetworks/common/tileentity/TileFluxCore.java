@@ -472,9 +472,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                     mapItem.put("priority", connector.getPriority());
                     mapItem.put("active", connector.isActive());
                     mapItem.put("chunkLoaded", connector.isChunkLoaded());
-                    mapItem.put("name", connector.getCustomName());
+                    mapItem.put("customName", connector.getCustomName());
                     mapItem.put("transferLimit", connector.getCurrentLimit());
-                    mapItem.put("surge", connector.getSurgeMode());
+                    mapItem.put("surgeMode", connector.getSurgeMode());
+                    mapItem.put("unlimited", connector.getDisableLimit());
+                    mapItem.put("owner", connector.getConnectionOwner().toString());
+                    mapItem.put("dimension", connector.getDimension().getProviderName());
 
                     connections.put(i, mapItem);
                 }
