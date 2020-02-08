@@ -31,7 +31,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickable, ITileByteBuf, IOCPeripheral {
 
@@ -461,11 +460,11 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             }
             case "getNetworkDevices": {
                 List<IFluxConnector> connectors = network.getSetting(NetworkSettings.ALL_CONNECTORS);
-
                 Map<Object, Object> connections = new HashMap<>();
 
-                int i = 0;
-                for(IFluxConnector connector : connectors) {
+                for(int i = 0; i < connectors.size(); i++) {
+                    IFluxConnector connector = connectors.get(i);
+
                     Map<Object, Object> mapItem = new HashMap<>();
 
                     mapItem.put("connectionType", connector.getConnectionType());
@@ -477,7 +476,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                     mapItem.put("transferLimit", connector.getCurrentLimit());
                     mapItem.put("surge", connector.getSurgeMode());
 
-                    connections.put(i++, mapItem);
+                    connections.put(i, mapItem);
                 }
 
                 return new Object[]{connections};
