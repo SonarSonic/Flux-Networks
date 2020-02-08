@@ -30,10 +30,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickable, ITileByteBuf, IOCPeripheral {
 
@@ -417,7 +415,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
 
     @Override
     public String[] getOCMethods() {
-        return new String[]{"getNetworkInfo", "getCountInfo", "getEnergyInfo", "getFluxInfo"};
+        return new String[]{"getNetworkInfo", "getCountInfo", "getEnergyInfo", "getFluxInfo", "getNetworkDevices"};
     }
 
     @Override
@@ -460,6 +458,29 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                 map.put("unlimited", disableLimit);
                 map.put("buffer", getTransferHandler().getEnergyStored());
                 return new Object[]{map};
+            }
+            case "getNetworkDevices": {
+                List<IFluxConnector> connectors = network.getSetting(NetworkSettings.ALL_CONNECTORS);
+
+                Map<Object, Object> connections = new HashMap<>();
+
+                int i = 0;
+                for(IFluxConnector connector : connectors) {
+                    Map<Object, Object> mapItem = new HashMap<>();
+
+                    mapItem.put("connectionType", connector.getConnectionType());
+                    mapItem.put("transfer", connector.getChange());
+                    mapItem.put("priority", connector.getPriority());
+                    mapItem.put("active", connector.isActive());
+                    mapItem.put("chunkLoaded", connector.isChunkLoaded());
+                    mapItem.put("name", connector.getCustomName());
+                    mapItem.put("transferLimit", connector.getCurrentLimit());
+                    mapItem.put("surge", connector.getSurgeMode());
+
+                    connections.put(i++, mapItem);
+                }
+
+                return new Object[]{connections};
             }
         }
         return new Object[0];
