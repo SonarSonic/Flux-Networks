@@ -1,0 +1,9 @@
+{
+  "parent": "fluxnetworks:block/basicfluxstorage",
+  "textures": {
+    "gray": "fluxnetworks:model/gray",
+    "top": "fluxnetworks:model/tier2",
+    "colour": "fluxnetworks:model/tier2_colour",
+    "particle": "fluxnetworks:model/tier2"
+  }
+}

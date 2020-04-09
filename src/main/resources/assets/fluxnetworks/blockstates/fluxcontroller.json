@@ -1,29 +1,5 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "model":"fluxnetworks:fluxcontroller",
-        "transform":"forge:default-block",
-        "textures": {
-          "0": "fluxnetworks:model/fluxcontroller_bottom",
-          "1": "fluxnetworks:model/flux_controller",
-          "colour" : "fluxnetworks:model/fluxcontroller_colour",
-          "top": "fluxnetworks:model/fluxcontroller_off",
-          "particle": "fluxnetworks:model/fluxcontroller_bottom"
-        }
-      },
-    "variants": {
-        "inventory": [{}],
-        "connected":{
-            "true":{
-                 "textures": {                 
-                    "top":"fluxnetworks:model/fluxcontroller_on"
-                  }
-            },
-            "false":{
-                 "textures": {                 
-                    "top":"fluxnetworks:model/fluxcontroller_off"
-                  }                
-            }
-         }        
-    }
+  "variants": {
+    "": { "model":  "fluxnetworks:block/fluxcontroller"}
+  }
 }

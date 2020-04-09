@@ -1,4 +1,10 @@
 {
+    "parent": "block/cube_all",
+    "textures": {
+        "0":"fluxnetworks:model/flux_point_on",
+        "colour":"fluxnetworks:model/flux_point_colour",
+        "particle":"fluxnetworks:model/flux_point_on"
+    },
     "elements": [
         {
             "name":"Centre",

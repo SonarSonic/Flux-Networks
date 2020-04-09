@@ -1,6 +1,6 @@
 {
     "parent":"item/generated",
     "textures": {
-        "layer0":"fluxnetworks:items/fluxCore"
+        "layer0":"fluxnetworks:item/fluxcore"
     }
 }

@@ -1,6 +1,6 @@
 {
   "parent":"item/generated",
   "textures": {
-    "layer0":"fluxnetworks:items/admin_configurator"
+    "layer0":"fluxnetworks:item/admin_configurator"
   }
 }
