@@ -1,92 +1,67 @@
 package sonar.fluxnetworks.client.render;
-/* TODO FIX FLUX STORAGE RENDERER
+
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import sonar.fluxnetworks.common.core.RenderUtils;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumFacing;
-import org.lwjgl.opengl.GL11;
-
-import static net.minecraft.client.renderer.GlStateManager.*;
 
 public class TileFluxStorageRenderer extends TileEntityRenderer<TileFluxStorage> {
+
+    public static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
+    public static final float startX = 2F/16, startY = 2F/16, offsetZ = 1F/16, width = 12F/16, height = 13F/16;
+    public static final float alpha = 150F / 255.0F;
+
 
     public TileFluxStorageRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
     }
 
     @Override
-    public void render(TileFluxStorage tileEntityIn, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        enableBlend();
-        render(te.energyStored, te.maxEnergyStorage, te.color | 0xff000000, x, y, z);
-        disableBlend();
+    public void render(TileFluxStorage tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        render(partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.color | 0xff000000);
     }
 
-    public static void render(int stored, int capacity, int colour, double x, double y, double z) {
-        if (stored == 0 || capacity == 0) {
+    public static void render(float partialTicks, MatrixStack matrix, IRenderTypeBuffer bufferIn, int light, int overlay, int energyStored, int energyMax, int networkColour) {
+        if (energyStored == 0 || energyMax == 0) {
             return;
         }
-        pushMatrix();
-        translate(x, y, z);
-        disableTexture2D();
-        //enableAlpha();
-        disableLighting();
-        tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, 1, 1, 0);
-        float full = 1 - 0.0625F * 3;
-        float bottom = 0 + 0.0625F * 2;
-        float left = 0 + 0.0625F * 2;
-        float i = Math.max(0.0625F*2.2F, (stored * full / capacity) + bottom);
+        float r = ScreenUtils.getRed(networkColour);
+        float g = ScreenUtils.getGreen(networkColour);
+        float b = ScreenUtils.getBlue(networkColour);
+        float energyPercentage = ((float)energyStored)/energyMax;
+        float renderHeight = height * energyPercentage;
+        float renderWidth = width;
 
-        float f3 = (float) (colour >> 24 & 255) / 255.0F;
-        float f = (float) (colour >> 16 & 255) / 255.0F;
-        float f1 = (float) (colour >> 8 & 255) / 255.0F;
-        float f2 = (float) (colour & 255) / 255.0F;
-        color(f, f1, f2, f3);
-
-
-        EnumFacing face = EnumFacing.SOUTH;
-        pushMatrix();
-        rotate(face.getHorizontalAngle(), 0, 1, 0);
-        translate(-face.getXOffset(), 0, 0.0626F);
-        RenderUtils.drawRect(left, i, 1 - 0.0625F * 2, bottom);
-        popMatrix();
-
-        face = EnumFacing.NORTH;
-        pushMatrix();
-        rotate(face.getHorizontalAngle(), 0, 1, 0);
-        translate(-1, 0, face.getZOffset() + 0.0625);
-        RenderUtils.drawRect(left, i, 1 - 0.0625F * 2, bottom);
-        popMatrix();
-
-        face = EnumFacing.EAST;
-        pushMatrix();
-        rotate(face.getHorizontalAngle(), 0, 1, 0);
-        translate(0, 0, -1 + 0.0625);
-        RenderUtils.drawRect(left, i, 1 - 0.0625F * 2, bottom);
-        popMatrix();
-
-        face = EnumFacing.WEST;
-        pushMatrix();
-        rotate(face.getHorizontalAngle(), 0, 1, 0);
-        translate(-1, 0, 0.0625);
-        RenderUtils.drawRect(left, i, 1 - 0.0625F * 2, bottom);
-        popMatrix();
-
-        pushMatrix();
-        rotate(90, 1, 0, 0);
-        translate(0, 0, -i);
-        RenderUtils.drawRect(0 + 0.0625F, 1 - 0.0625F, 1 - 0.0625F, 0 + 0.0625F);
-        popMatrix();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        enableLighting();
-        //disableAlpha();
-        enableTexture2D();
-        popMatrix();
-        color(1, 1, 1, 1);
+        IVertexBuilder builder = bufferIn.getBuffer(RenderType.getEntityTranslucent(ENERGY_TEXTURE));
+        renderSide(matrix, builder, Direction.NORTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.SOUTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.EAST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.WEST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
+        if(energyPercentage != 1) {
+            renderSide(matrix, builder, Direction.DOWN, 1F / 16, 1F / 16, offsetZ + height - renderHeight, 14F / 16, 14F / 16, r, g, b, alpha, light, overlay, energyPercentage);
+        }
     }
+
+    public static void renderSide(MatrixStack matrix, IVertexBuilder builder, Direction dir, float x, float y, float z, float width, float height, float r, float g, float b, float a, int light, int overlay, float fillPercentage){
+        float minU = 0, minV = 0, maxU = 1, maxV = 1 * fillPercentage;
+        matrix.push();
+        matrix.translate(0.5, 0.5, 0.5);
+        matrix.rotate(dir.getRotation());
+        matrix.rotate(new Quaternion(-90, 0, 0, true));
+        matrix.translate(-0.5, -0.5, -0.5);
+        Matrix4f matrix4f = matrix.getLast().getMatrix();
+        Matrix3f normal = matrix.getLast().getNormal();
+        builder.pos(matrix4f, x, y + height, z).color(r, g, b, a).tex(minU, maxV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x + width, y + height, z).color(r, g, b, a).tex(maxU, maxV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x + width, y, z).color(r, g, b, a).tex(maxU, minV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x, y, z).color(r, g, b, a).tex(minU, minV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
+        matrix.pop();
+    }
+
 }
-*/

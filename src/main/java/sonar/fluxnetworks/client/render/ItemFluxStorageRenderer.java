@@ -1,39 +1,44 @@
 package sonar.fluxnetworks.client.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.client.FluxColorHandler;
+import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.item.ItemStack;
 
 public class ItemFluxStorageRenderer extends ItemStackTileEntityRenderer {
 
-    public static final ItemFluxStorageRenderer INSTANCE = new ItemFluxStorageRenderer();
-
-    /* TODO FIX  FLUX STORAGE RENDERER
     @Override
-    public void renderByItem(ItemStack stack, float partialTicks) {
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        IBakedModel model = blockrendererdispatcher.getModelForState(Block.getBlockFromItem(stack.getItem()).getDefaultState());
-        GlStateManager.translated(0.5, 0.5, 0.5);
-        net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(model, FluxStorageModel.CURRENT_TRANSFORM, true);
-        Minecraft.getInstance().getItemRenderer().renderItem(stack, model);
-        GlStateManager.translated(-0.5, -0.5, -0.5);
-
-        FluxStorageBlock block = (FluxStorageBlock) Block.getBlockFromItem(stack.getItem());
+    public void render(ItemStack stack, MatrixStack matrix, IRenderTypeBuffer buffer, int light, int overlay) {
+        int colour = FluxColorHandler.NO_NETWORK_COLOR;
+        int energy = 0;
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
         if(tag != null) {
-            int colour = FluxColorHandler.getOrRequestNetworkColor(tag.getInt(FluxNetworkData.NETWORK_ID));
-            TileFluxStorageRenderer.render(tag.getInt("energy"), block.getMaxStorage(), colour, 0.0D, 0.0D, 0.0D);
+            colour = FluxColorHandler.getOrRequestNetworkColor(tag.getInt(FluxNetworkData.NETWORK_ID));
+            energy = tag.getInt("energy");
         }
-    }
 
-     */
+        FluxStorageBlock block = (FluxStorageBlock) Block.getBlockFromItem(stack.getItem());
+        BlockState renderState = block.getDefaultState();
+
+        BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
+        IBakedModel ibakedmodel = dispatcher.getModelForState(renderState);
+
+        float r = ScreenUtils.getRed(colour), g = ScreenUtils.getGreen(colour), b = ScreenUtils.getBlue(colour);
+        dispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), buffer.getBuffer(RenderTypeLookup.getRenderType(renderState)), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
+        //TODO minor issue - the renderer culls parts of the block model, could it have something to do with the Renderers render type.
+        TileFluxStorageRenderer.render(0.0F, matrix, buffer, light, overlay, energy, block.getMaxStorage(), colour);
+    }
 }

@@ -19,7 +19,7 @@ archivesBaseName = 'fluxnetworks'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 minecraft {
-    mappings channel: 'snapshot', version: '20200409-1.15.1'
+    mappings channel: 'snapshot', version: '20200410-1.15.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -79,8 +79,16 @@ minecraft {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.1.37'
+
+    compile fg.deobf("mekanism:Mekanism-1.15.2:9.9.18.410")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

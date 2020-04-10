@@ -9,6 +9,7 @@ import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
@@ -19,6 +20,7 @@ import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.client.render.TileFluxStorageRenderer;
 import sonar.fluxnetworks.common.core.ContainerCore;
 import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
@@ -34,13 +36,12 @@ public class ClientRegistration {
         FluxNetworks.LOGGER.info("Started Client Setup Event");
 
         FluxNetworks.LOGGER.info("Registering TileEntity Renderers");
-        //ClientRegistry.bindTileEntityRenderer(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new); //TODO FLUX STORAGE RENDERER
-        //ClientRegistry.bindTileEntityRenderer(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
-        //ClientRegistry.bindTileEntityRenderer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
-        //ModelLoaderRegistry.registerLoader(FluxStorageModel.INSTANCE); //TODO WHAT IS THIS ? DO WE NEED IT...
+        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
+
 
         FluxNetworks.LOGGER.info("Registering Render Types");
-
         RenderTypeLookup.setRenderLayer(RegistryBlocks.FLUX_PLUG, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(RegistryBlocks.FLUX_POINT, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(RegistryBlocks.FLUX_CONTROLLER, RenderType.getCutout());

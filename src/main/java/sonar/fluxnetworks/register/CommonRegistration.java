@@ -2,9 +2,7 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
@@ -12,18 +10,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.client.FluxColorHandler;
+import sonar.fluxnetworks.client.render.ItemRendererCallable;
 import sonar.fluxnetworks.common.block.*;
 import sonar.fluxnetworks.common.capabilities.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.core.ContainerCore;
-import sonar.fluxnetworks.common.core.FireItemEntity;
 import sonar.fluxnetworks.common.handler.CapabilityHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
@@ -32,7 +28,6 @@ import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
 import sonar.fluxnetworks.common.item.FluxItem;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -74,7 +69,7 @@ public class CommonRegistration {
         FluxNetworks.LOGGER.info("Started Registering Blocks");
 
         Block.Properties normalProps = Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(1.0F, 1000F);
-        Block.Properties connectorProps = Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(1.0F, 1000F).doesNotBlockMovement();
+        Block.Properties connectorProps = Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(1.0F, 1000F).notSolid();
 
         event.getRegistry().register(new Block(normalProps).setRegistryName("fluxblock"));
         event.getRegistry().register(new FluxPlugBlock(connectorProps).setRegistryName("fluxplug"));
@@ -98,9 +93,13 @@ public class CommonRegistration {
         event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.FLUX_PLUG, props).setRegistryName("fluxplug"));
         event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.FLUX_POINT, props).setRegistryName("fluxpoint"));
         event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.FLUX_CONTROLLER, props).setRegistryName("fluxcontroller"));
-        event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.BASIC_FLUX_STORAGE, props).setRegistryName("basicfluxstorage"));
-        event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE, props).setRegistryName("herculeanfluxstorage"));
-        event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, props).setRegistryName("gargantuanfluxstorage"));
+
+
+        Item.Properties storageProps =  new Item.Properties().group(ITEM_GROUP).setISTER(ItemRendererCallable::getStorageRenderer);
+
+        event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.BASIC_FLUX_STORAGE, storageProps).setRegistryName("basicfluxstorage"));
+        event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE, storageProps).setRegistryName("herculeanfluxstorage"));
+        event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, storageProps).setRegistryName("gargantuanfluxstorage"));
 
         event.getRegistry().register(new FluxItem(props).setRegistryName("flux"));
         event.getRegistry().register(new Item(props).setRegistryName("fluxcore"));

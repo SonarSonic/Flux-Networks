@@ -2,10 +2,14 @@ package sonar.fluxnetworks.common.block;
 
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.common.core.FluxShapes;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -18,7 +22,11 @@ public class FluxControllerBlock extends FluxNetworkBlock {
 
     public FluxControllerBlock(Properties props) {
         super(props);
-        //bounding = new AxisAlignedBB(0.0625F, 0.0625F, 0.0625F, 1 - 0.0625F, 1 - 0.0625F, 1 - 0.0625F);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext context) {
+        return FluxShapes.FLUX_CONTROLLER_VOXEL;
     }
 
     @Override

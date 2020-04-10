@@ -36,11 +36,20 @@ public class ScreenUtils extends AbstractGui {
         font = minecraft.fontRenderer;
     }
 
+    public static float getRed(int colour){
+        return (float) (colour >> 16 & 255) / 255.0F;
+    }
+
+    public static float getGreen(int colour){
+        return (float) (colour >> 8 & 255) / 255.0F;
+    }
+
+    public static float getBlue(int colour){
+        return (float) (colour & 255) / 255.0F;
+    }
+
     public void setGuiColouring(int colour){
-        float f = (float)(colour >> 16 & 255) / 255.0F;
-        float f1 = (float)(colour >> 8 & 255) / 255.0F;
-        float f2 = (float)(colour & 255) / 255.0F;
-        RenderSystem.color3f(f, f1, f2);
+        RenderSystem.color3f(getRed(colour), getGreen(colour), getBlue(colour));
     }
 
     public void resetGuiColouring(){

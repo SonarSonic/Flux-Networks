@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.tileentity;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.network.ITransferHandler;
@@ -39,6 +40,18 @@ public abstract class TileFluxConnector extends TileForgeEnergy {
             sendPackets();
         }
     }
+
+    @Override
+    public void sendPackets() {
+        if(!world.isRemote){
+            BlockState newState = FluxConnectorBlock.getConnectedState(getBlockState(), getWorld(), getPos());
+            world.setBlockState(pos, newState, 3);
+            world.markBlockRangeForRenderUpdate(pos, getBlockState(), newState);
+            world.notifyBlockUpdate(pos, getBlockState(), newState, 3);
+        }
+    }
+
+
 
     @Override
     public ITransferHandler getTransferHandler() {

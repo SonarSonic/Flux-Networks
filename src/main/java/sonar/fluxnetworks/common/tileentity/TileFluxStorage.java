@@ -102,10 +102,10 @@ public abstract class TileFluxStorage extends TileFluxCore implements IFluxStora
     /** on server side **/
     public void sendPacketIfNeeded() {
         if (needSyncEnergy) {
-            if ((world.getGameTime() & 3) == 0) {
+            //if ((world.getGameTime() & 3) == 0) {
                 sendPackets();
                 needSyncEnergy = false;
-            }
+            //}
         }
     }
 

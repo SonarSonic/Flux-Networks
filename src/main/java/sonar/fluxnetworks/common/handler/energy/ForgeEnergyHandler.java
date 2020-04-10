@@ -16,7 +16,7 @@ public class ForgeEnergyHandler implements ITileEnergyHandler, IItemEnergyHandle
 
     @Override
     public boolean canRenderConnection(@Nonnull TileEntity tile, Direction side) {
-        return tile.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
+        return !tile.isRemoved() && tile.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
     }
 
     @Override

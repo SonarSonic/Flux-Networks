@@ -165,8 +165,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
 
     public void sendPackets() {
         if(!world.isRemote){
-            BlockState newState = FluxConnectorBlock.getConnectedState(getBlockState(), getWorld(), getPos());
-            world.notifyBlockUpdate(pos, getBlockState(), newState, 3);
+            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
         }
     }
 
