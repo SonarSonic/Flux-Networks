@@ -7,6 +7,7 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
@@ -27,6 +28,8 @@ import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
 import sonar.fluxnetworks.common.item.FluxItem;
+import sonar.fluxnetworks.common.recipes.FluxStorageRecipeSerializer;
+import sonar.fluxnetworks.common.recipes.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
 import net.minecraft.block.Block;
@@ -155,12 +158,12 @@ public class CommonRegistration {
         FluxNetworks.LOGGER.info("Finished Registering Containers");
     }
 
-    /* TODO RECIPES
     @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        RegistryRecipes.registerRecipes(event.getRegistry());
+    public static void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+        event.getRegistry().register(new FluxStorageRecipeSerializer().setRegistryName(FluxNetworks.MODID, "fluxstoragerecipe"));
+        event.getRegistry().register(new NBTWipeRecipeSerializer().setRegistryName(FluxNetworks.MODID, "nbtwiperecipe"));
     }
-    */
+
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
         RegistrySounds.registerSounds(event.getRegistry());

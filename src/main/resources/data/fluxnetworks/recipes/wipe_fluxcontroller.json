@@ -1,0 +1,12 @@
+{
+  "type": "fluxnetworks:nbtwiperecipe",
+  "group": "fluxnetworks",
+  "ingredients": [
+    {
+      "item": "fluxnetworks:fluxcontroller"
+    }
+  ],
+  "result": {
+    "item": "fluxnetworks:fluxcontroller"
+  }
+}

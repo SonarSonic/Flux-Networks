@@ -45,16 +45,24 @@ public class FluxConnectorBlockItem extends BlockItem {
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
         if(tag != null) {
-            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInt(FluxNetworkData.NETWORK_ID))));
-            tooltip.add(new StringTextComponent(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.WHITE + FluxUtils.format(tag.getLong(LIMIT), FluxUtils.TypeNumberFormat.COMMAS, " " + EnergyType.FE.getStorageSuffix())));
-            tooltip.add(new StringTextComponent(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.WHITE + tag.getInt(PRIORITY)));
-            if(tag.contains("energy")) {
-                tooltip.add(new StringTextComponent(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.WHITE + NumberFormat.getInstance().format(tag.getInt("energy")) + " " + EnergyType.FE.getStorageSuffix()));
-            } else {
-                tooltip.add(new StringTextComponent(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.WHITE + FluxUtils.format(tag.getLong("buffer"), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE.getStorageSuffix())));
-            }
+            if(tag.contains(FluxNetworkData.NETWORK_ID))
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.RESET + FluxColorHandler.getOrRequestNetworkName(tag.getInt(FluxNetworkData.NETWORK_ID))));
+
+            if(tag.contains(LIMIT))
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.RESET + FluxUtils.format(tag.getLong(LIMIT), FluxUtils.TypeNumberFormat.COMMAS, " " + EnergyType.FE.getStorageSuffix())));
+
+            if(tag.contains(PRIORITY))
+            tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.PRIORITY.t() + ": " + TextFormatting.RESET + tag.getInt(PRIORITY)));
+
+            if(tag.contains("energy"))
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.RESET + NumberFormat.getInstance().format(tag.getInt("energy")) + " " + EnergyType.FE.getStorageSuffix()));
+
+            if(tag.contains("buffer"))
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.RESET + FluxUtils.format(tag.getLong("buffer"), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE.getStorageSuffix())));
+
+        }else {
+            super.addInformation(stack, worldIn, tooltip, flagIn);
         }
-        super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
 }
