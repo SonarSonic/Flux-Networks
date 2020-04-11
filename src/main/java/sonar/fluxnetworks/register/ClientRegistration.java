@@ -1,11 +1,8 @@
 package sonar.fluxnetworks.register;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,13 +11,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.client.render.TileFluxStorageRenderer;
+import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
 import sonar.fluxnetworks.common.core.ContainerCore;
 import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
@@ -36,9 +32,9 @@ public class ClientRegistration {
         FluxNetworks.LOGGER.info("Started Client Setup Event");
 
         FluxNetworks.LOGGER.info("Registering TileEntity Renderers");
-        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
-        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, TileFluxStorageRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, FluxStorageTileRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, FluxStorageTileRenderer::new);
+        ClientRegistry.bindTileEntityRenderer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, FluxStorageTileRenderer::new);
 
 
         FluxNetworks.LOGGER.info("Registering Render Types");

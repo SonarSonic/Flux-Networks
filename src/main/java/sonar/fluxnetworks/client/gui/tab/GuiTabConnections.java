@@ -146,7 +146,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         } else {
             font.drawString(element.getCustomName(), x + 21, y + 5, 0x808080);
         }
-        if(currentPopUp == null) { //FIXME - TEMP FIX ! - DEPTH PROBLEM WITH POPUPS DUE TO THE ITEMRENDERER OFFSET I THINK - lets disable when there is no pop up for now.
+        if(currentPopUp == null) { //TODO MINOR - TEMP FIX ! - DEPTH PROBLEM WITH POPUPS DUE TO THE ITEMRENDERER OFFSET I THINK - lets disable when there is no pop up for now.
             screenUtils.renderItemStack(element.getDisplayStack(), x + 2, y + 1);
         }
     }

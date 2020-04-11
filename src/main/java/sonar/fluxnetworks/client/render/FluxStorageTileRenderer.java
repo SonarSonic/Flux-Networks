@@ -11,14 +11,13 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
-public class TileFluxStorageRenderer extends TileEntityRenderer<TileFluxStorage> {
+public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage> {
 
-    public static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
     public static final float startX = 2F/16, startY = 2F/16, offsetZ = 1F/16, width = 12F/16, height = 13F/16;
     public static final float alpha = 150F / 255.0F;
+    public static final int maxLight = 0xF000F0;
 
-
-    public TileFluxStorageRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
+    public FluxStorageTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
     }
 
@@ -38,13 +37,13 @@ public class TileFluxStorageRenderer extends TileEntityRenderer<TileFluxStorage>
         float renderHeight = height * energyPercentage;
         float renderWidth = width;
 
-        IVertexBuilder builder = bufferIn.getBuffer(RenderType.getEntityTranslucent(ENERGY_TEXTURE));
-        renderSide(matrix, builder, Direction.NORTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.SOUTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.EAST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.WEST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, light, overlay, energyPercentage);
+        IVertexBuilder builder = bufferIn.getBuffer(FluxRenderTypes.FLUX_STORAGE_GLOW);
+        renderSide(matrix, builder, Direction.NORTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.SOUTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.EAST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.WEST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
         if(energyPercentage != 1) {
-            renderSide(matrix, builder, Direction.DOWN, 1F / 16, 1F / 16, offsetZ + height - renderHeight, 14F / 16, 14F / 16, r, g, b, alpha, light, overlay, energyPercentage);
+            renderSide(matrix, builder, Direction.DOWN, 1F / 16, 1F / 16, offsetZ + height - renderHeight, 14F / 16, 14F / 16, r, g, b, alpha, maxLight, overlay, energyPercentage);
         }
     }
 

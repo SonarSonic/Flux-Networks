@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 public class ItemRendererCallable {
 
     public static Callable<ItemStackTileEntityRenderer> getStorageRenderer(){
-        return ItemFluxStorageRenderer::new;
+        return FluxStorageItemRenderer::new;
     }
 
 }

@@ -18,7 +18,7 @@ import sonar.fluxnetworks.common.core.FluxUtils;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
-public class ItemFluxStorageRenderer extends ItemStackTileEntityRenderer {
+public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
 
     @Override
     public void render(ItemStack stack, MatrixStack matrix, IRenderTypeBuffer buffer, int light, int overlay) {
@@ -39,6 +39,6 @@ public class ItemFluxStorageRenderer extends ItemStackTileEntityRenderer {
         float r = ScreenUtils.getRed(colour), g = ScreenUtils.getGreen(colour), b = ScreenUtils.getBlue(colour);
         dispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), buffer.getBuffer(RenderTypeLookup.getRenderType(renderState)), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
         //TODO minor issue - the renderer culls parts of the block model, could it have something to do with the Renderers render type.
-        TileFluxStorageRenderer.render(0.0F, matrix, buffer, light, overlay, energy, block.getMaxStorage(), colour);
+        FluxStorageTileRenderer.render(0.0F, matrix, buffer, light, overlay, energy, block.getMaxStorage(), colour);
     }
 }

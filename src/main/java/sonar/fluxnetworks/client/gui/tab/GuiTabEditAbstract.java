@@ -78,7 +78,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     @Override
     public boolean mouseClickedMain(double mouseX, double mouseY, int mouseButton) {
         super.mouseClickedMain(mouseX, mouseY, mouseButton);
-        ////TODO replace with "text buttons
+        ////TODO MINOR replace with "text buttons
         if(mouseButton == 0) {
             if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
                 securityType = FluxUtils.incrementEnum(securityType, EnumSecurityType.values());

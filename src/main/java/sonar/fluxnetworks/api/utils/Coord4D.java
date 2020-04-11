@@ -7,7 +7,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class Coord4D {
 
-    private int x, y, z, dimension; //TODO should we change to DimensionType?
+    private int x, y, z, dimension; //TODO should we change to DimensionType? or perhaps GlobalPos
 
     public Coord4D(CompoundNBT tag) {
         read(tag);

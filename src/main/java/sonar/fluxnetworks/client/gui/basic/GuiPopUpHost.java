@@ -41,7 +41,6 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerCore> {
         currentPopUp = popUp;
         currentPopUp.openPopUp();
         onPopUpOpen(popUp);
-        currentPopUp.init(minecraft, width, height);
     }
 
     public void onPopUpOpen(PopUpCore popUp){}
@@ -212,24 +211,6 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerCore> {
     public boolean charTypedMain(char typedChar, int keyCode) {
         return false;
     }
-
-    /* TODO REMOVE ?
-    @Override
-    public final void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-
-        if(hasActivePopup())
-            return;
-
-        int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-
-        int k = Integer.signum(Mouse.getEventDWheel());
-        if(k != 0) {
-            mouseScroll(i, j, k);
-        }
-    }
-    */
 
     //// INIT \\\\
 

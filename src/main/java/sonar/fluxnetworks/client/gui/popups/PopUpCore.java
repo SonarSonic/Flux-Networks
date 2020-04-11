@@ -47,7 +47,7 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCor
     }
 
     public void openPopUp(){
-        super.init(Minecraft.getInstance(), host.width, host.height); //TODO CHECK
+        super.init(Minecraft.getInstance(), host.width, host.height);
     }
 
     public void closePopUp(){

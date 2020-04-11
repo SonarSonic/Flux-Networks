@@ -80,6 +80,16 @@ minecraft {
 }
 
 repositories {
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.k-4u.nl"
+    }
     flatDir {
         dirs 'libs'
     }
@@ -88,7 +98,10 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.1.37'
 
-    compile fg.deobf("mekanism:Mekanism-1.15.2:9.9.18.410")
+    compile fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
+
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

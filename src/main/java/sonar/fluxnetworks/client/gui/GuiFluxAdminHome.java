@@ -22,8 +22,8 @@ public class GuiFluxAdminHome extends GuiTabCore {
     private int timer;
     public SlidedSwitchButton detailed_network_view, super_admin;
 
-    public GuiFluxAdminHome(PlayerEntity player, INetworkConnector tileEntity) {
-        super(player, tileEntity);
+    public GuiFluxAdminHome(PlayerEntity player, INetworkConnector connector) {
+        super(player, connector);
     }
 
     public EnumNavigationTabs getNavigationTab(){

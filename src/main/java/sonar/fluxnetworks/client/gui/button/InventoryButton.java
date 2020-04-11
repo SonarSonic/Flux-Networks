@@ -26,7 +26,7 @@ public class InventoryButton extends GuiButtonCore {
     }
 
     public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
-        //TODO FIX FLICKERING, WHEN HOVERING
+        //TODO MINOR - FIX FLICKERING, WHEN HOVERING
         int colour = host.network.getSetting(NetworkSettings.NETWORK_COLOR);
         ScreenUtils.INSTANCE.setGuiColouring(colour);
         boolean hover = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);

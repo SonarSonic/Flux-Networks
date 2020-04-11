@@ -145,7 +145,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     public void updateSettingsFromTag() {
         configTag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (configTag != null) {
-            stackCustomName = stack.getDisplayName().getString(); //TODO CHECK CUSTOM NAME
+            stackCustomName = stack.getDisplayName().getString();
             stackPriority = configTag.getInt(FluxConfigurationType.PRIORITY.getNBTName());
             stackSurgeMode = configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName());
             stackLimit = configTag.getLong(FluxConfigurationType.TRANSFER.getNBTName());
