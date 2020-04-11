@@ -8,9 +8,9 @@ import sonar.fluxnetworks.common.block.FluxConnectorBlock;
 import sonar.fluxnetworks.common.connection.handler.ConnectionTransferHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import net.minecraft.tileentity.TileEntity;
-import sonar.fluxnetworks.common.tileentity.energy.TileForgeEnergy;
+import sonar.fluxnetworks.common.tileentity.energy.TileDefaultEnergy;
 
-public abstract class TileFluxConnector extends TileForgeEnergy {
+public abstract class TileFluxConnector extends TileDefaultEnergy {
 
     public final ConnectionTransferHandler handler = new ConnectionTransferHandler(this, this);
 

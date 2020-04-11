@@ -5,6 +5,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.common.handler.energy.FNEnergyHandler;
 import sonar.fluxnetworks.common.handler.energy.ForgeEnergyHandler;
 import net.minecraft.tileentity.TileEntity;
 
@@ -18,21 +19,13 @@ public class TileEntityHandler {
     public static List<ITileEnergyHandler> tileEnergyHandlers = Lists.newArrayList();
     public static Map<String, Integer> blockBlacklist = new HashMap<>();
 
-    public static void registerTileEntity() {
-        // SonarCore still use old method, this will be minecraft:FluxController etc.
-
-
-        /*GameRegistry.registerTileEntity(TileFluxController.class, new ResourceLocation(FluxNetworks.MODID, "FluxController"));
-        GameRegistry.registerTileEntity(TileFluxPoint.class, new ResourceLocation(FluxNetworks.MODID, "FluxPoint"));
-        GameRegistry.registerTileEntity(TileFluxPlug.class, new ResourceLocation(FluxNetworks.MODID, "FluxPlug"));
-        GameRegistry.registerTileEntity(TileFluxStorage.class, new ResourceLocation(FluxNetworks.MODID, "FluxStorage"));
-        GameRegistry.registerTileEntity(TileFluxStorage.Herculean.class, new ResourceLocation(FluxNetworks.MODID, "HerculeanFluxStorage"));
-        GameRegistry.registerTileEntity(TileFluxStorage.Gargantuan.class, new ResourceLocation(FluxNetworks.MODID, "GargantuanFluxStorage"));*/
-    }
-
     public static void registerEnergyHandler() {
+        tileEnergyHandlers.add(FNEnergyHandler.INSTANCE);
+        ItemEnergyHandler.itemEnergyHandlers.add(FNEnergyHandler.INSTANCE);
+
         tileEnergyHandlers.add(ForgeEnergyHandler.INSTANCE);
         ItemEnergyHandler.itemEnergyHandlers.add(ForgeEnergyHandler.INSTANCE);
+
         /* TODO PORT OTHER MOD ENERGY HANDLERS.
         if(Loader.isModLoaded("gregtech")) {
             tileEnergyHandlers.add(GTEnergyHandler.INSTANCE);

@@ -21,6 +21,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.energy.FNEnergyCapability;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.render.ItemRendererCallable;
 import sonar.fluxnetworks.common.block.*;
@@ -61,6 +62,7 @@ public class CommonRegistration {
     public static void setup(FMLCommonSetupEvent event) {
         FluxNetworks.LOGGER.info("Started Common Setup");
 
+        FNEnergyCapability.register();
 
         PacketHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
