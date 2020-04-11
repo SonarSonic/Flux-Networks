@@ -4,15 +4,14 @@ import com.google.common.collect.Lists;
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.tiles.IFluxEnergy;
-import sonar.fluxnetworks.common.connection.FluxTransferHandler;
 
 import java.util.List;
 
-public class SingleTransferHandler extends FluxTransferHandler<IFluxEnergy> {
+public class DefaultTransferHandler extends AbstractTransferHandler<IFluxEnergy> {
 
     public final IFluxTransfer transfer;
 
-    public SingleTransferHandler(IFluxEnergy tile, IFluxTransfer transfer) {
+    public DefaultTransferHandler(IFluxEnergy tile, IFluxTransfer transfer) {
         super(tile);
         this.transfer = transfer;
     }

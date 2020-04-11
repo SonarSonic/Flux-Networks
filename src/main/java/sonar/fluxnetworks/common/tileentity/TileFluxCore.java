@@ -1,9 +1,8 @@
 package sonar.fluxnetworks.common.tileentity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
@@ -15,19 +14,20 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.NetworkFolder;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.tiles.IFluxConfigurable;
-import sonar.fluxnetworks.api.tiles.ITileByteBuf;
+import sonar.fluxnetworks.api.tiles.ITilePacketBuffer;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.block.FluxConnectorBlock;
 import sonar.fluxnetworks.common.core.ContainerCore;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import net.minecraft.tileentity.TileEntity;
@@ -35,13 +35,16 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.connection.FluxTransferHandler;
+import sonar.fluxnetworks.common.connection.handler.AbstractTransferHandler;
+import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
+
+import static sonar.fluxnetworks.common.network.TilePacketBufferContants.*;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.UUID;
 
-public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickableTileEntity, ITileByteBuf, INamedContainerProvider {
+public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickableTileEntity, ITilePacketBuffer, INamedContainerProvider {
 
     public HashSet<PlayerEntity> playerUsing = new HashSet<>();
 
@@ -65,6 +68,9 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     protected IFluxNetwork network = FluxNetworkInvalid.instance;
 
     protected boolean load = false;
+
+    //// PACKET FLAGS \\\\
+    public boolean settings_changed;
 
     public TileFluxCore(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -95,7 +101,8 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public void tick() {
         if(!world.isRemote) {
             if(playerUsing.size() > 0) {
-                //sendPackets();
+                sendTilePacketToUsing(FLUX_GUI_SYNC);
+                settings_changed = false;
             }
             if(!load) {
                 if(!FluxUtils.addConnection(this)) {
@@ -104,7 +111,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                     color = 0xb2b2b2;
                 }
                 updateTransfers(Direction.values());
-                sendPackets();
+                sendFullUpdatePacket();
                 load = true;
             }
         }
@@ -116,7 +123,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         this.networkID = network.getNetworkID();
         this.color = network.getSetting(NetworkSettings.NETWORK_COLOR);
         connected = true;
-        sendPackets();
+        sendFullUpdatePacket();
     }
 
     @Override
@@ -126,7 +133,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             this.networkID = -1;
             this.color = 0xb2b2b2;
             connected = false;
-            sendPackets();
+            sendFullUpdatePacket();
         }
     }
 
@@ -163,12 +170,6 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         read(tag);
     }
 
-    public void sendPackets() {
-        if(!world.isRemote){
-            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
-        }
-    }
-
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         super.write(compound);
@@ -197,14 +198,14 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             for(int i = 0; i < connections.length; i++) {
                 tag.putByte('c' + String.valueOf(i), connections[i]);
             }
-            tag.putLong("buf", ((FluxTransferHandler) getTransferHandler()).buffer);
+            tag.putLong("buf", ((AbstractTransferHandler) getTransferHandler()).buffer);
             tag.putBoolean("l", chunkLoading);
         }
         if(type == NBTType.TILE_UPDATE) {
             getTransferHandler().writeNetworkedNBT(tag);
         }
         if(type == NBTType.TILE_DROP) {
-            tag.putLong("buffer", ((FluxTransferHandler) getTransferHandler()).buffer);
+            tag.putLong("buffer", ((AbstractTransferHandler) getTransferHandler()).buffer);
             tag.putInt(FluxConnectorBlockItem.PRIORITY, priority);
             tag.putLong(FluxConnectorBlockItem.LIMIT, limit);
             tag.putBoolean(FluxConnectorBlockItem.DISABLE_LIMIT, disableLimit);
@@ -232,7 +233,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             for(int i = 0; i < connections.length; i++) {
                 connections[i] = tag.getByte('c' + String.valueOf(i));
             }
-            ((FluxTransferHandler) getTransferHandler()).buffer = tag.getLong("buf");
+            ((AbstractTransferHandler) getTransferHandler()).buffer = tag.getLong("buf");
             chunkLoading = tag.getBoolean("l");
         }
         if(type == NBTType.TILE_UPDATE) {
@@ -240,7 +241,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         }
         if(type == NBTType.TILE_DROP) {
             long k;
-            ((FluxTransferHandler) getTransferHandler()).buffer = (k = tag.getLong("buffer")) > 0 ? k : ((FluxTransferHandler) getTransferHandler()).buffer;
+            ((AbstractTransferHandler) getTransferHandler()).buffer = (k = tag.getLong("buffer")) > 0 ? k : ((AbstractTransferHandler) getTransferHandler()).buffer;
             priority = tag.getInt(FluxConnectorBlockItem.PRIORITY);
             long l;
             limit = (l = tag.getLong(FluxConnectorBlockItem.LIMIT)) > 0 ? l : limit;
@@ -264,49 +265,104 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         return true;
     }
 
+    //// PACKETS\\\\
+
+    /**sends a block update*/
+    public void sendFullUpdatePacket() {
+        if(!world.isRemote){
+            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    /**for all simple GUI updates*/
+    public void sendTilePacketToUsing(byte packetID){
+        if(!world.isRemote) {
+            for (PlayerEntity playerEntity : playerUsing) {
+                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity), new TilePacketBufferPacket(this, pos, packetID));
+            }
+        }
+    }
+
+    /**for any visual updates - colour / energy storage*/
+    public void sendTilePacketToNearby(byte packetID){
+        if(!world.isRemote) {
+            PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunkAt(pos)), new TilePacketBufferPacket(this, pos, packetID));
+        }
+    }
+
+
+    public void sendTilePacketToServer(byte packetID){
+        PacketHandler.INSTANCE.sendToServer(new TilePacketBufferPacket(this, pos, packetID));
+    }
+
     @Override
-    public void writePacket(PacketBuffer buf, int id) {
+    public void writePacket(PacketBuffer buf, byte id) {
         switch (id) {
-            case 1:
+            case FLUX_CUSTOM_NAME:
                 buf.writeString(customName);
                 break;
-            case 2:
+            case FLUX_PRIORITY:
                 buf.writeInt(priority);
                 break;
-            case 3:
+            case FLUX_LIMIT:
                 buf.writeLong(limit);
                 break;
-            case 4:
+            case FLUX_SURGE_MODE:
                 buf.writeBoolean(surgeMode);
                 break;
-            case 5:
+            case FLUX_DISABLE_LIMIT:
                 buf.writeBoolean(disableLimit);
+                break;
+            case FLUX_GUI_SYNC:
+                buf.writeBoolean(settings_changed);
+                if(settings_changed){
+                    buf.writeString(customName);
+                    buf.writeInt(priority);
+                    buf.writeLong(limit);
+                    buf.writeBoolean(surgeMode);
+                    buf.writeBoolean(disableLimit);
+                    buf.writeBoolean(chunkLoading);
+                }
+                buf.writeCompoundTag(getTransferHandler().writeNetworkedNBT(new CompoundNBT()));
                 break;
         }
     }
 
     @Override
-    public void readPacket(PacketBuffer buf, int id) {
+    public void readPacket(PacketBuffer buf, byte id) {
         switch (id) {
-            case 1:
+            case FLUX_CUSTOM_NAME:
                 customName = buf.readString();
                 markLiteSettingChanged();
                 break;
-            case 2:
+            case FLUX_PRIORITY:
                 priority = buf.readInt();
                 sortNetworkConnections();
                 break;
-            case 3:
+            case FLUX_LIMIT:
                 limit = buf.readLong();
                 markLiteSettingChanged();
                 break;
-            case 4:
+            case FLUX_SURGE_MODE:
                 surgeMode = buf.readBoolean();
                 sortNetworkConnections();
                 break;
-            case 5:
+            case FLUX_DISABLE_LIMIT:
                 disableLimit = buf.readBoolean();
                 markLiteSettingChanged();
+                break;
+            case FLUX_GUI_SYNC:
+                if(buf.readBoolean()){
+                    customName = buf.readString();
+                    priority = buf.readInt();
+                    limit = buf.readLong();
+                    surgeMode = buf.readBoolean();
+                    disableLimit = buf.readBoolean();
+                    chunkLoading = buf.readBoolean();
+                    settings_changed = true;
+                    ///NEED TO SEND TO GUI?
+                }
+                getTransferHandler().readNetworkedNBT(buf.readCompoundTag());
                 break;
         }
     }
@@ -323,6 +379,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         if (network instanceof FluxNetworkServer) {
             FluxNetworkServer fluxNetworkServer = (FluxNetworkServer) network;
             fluxNetworkServer.markLiteSettingChanged(this);
+            settings_changed = true;
         }
     }
 
@@ -358,7 +415,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public void open(PlayerEntity player) {
         if(!world.isRemote) {
             playerUsing.add(player);
-            sendPackets();
+            sendFullUpdatePacket();
         }
     }
 

@@ -6,7 +6,6 @@ import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.common.connection.transfer.ConnectionTransfer;
-import sonar.fluxnetworks.common.connection.FluxTransferHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.tileentity.TileEntity;
@@ -18,12 +17,12 @@ import java.util.Map;
 /**
  * Flux connector(point or plug) transfer handler
  */
-public class ConnectionTransferHandler extends FluxTransferHandler<IFluxConnector> {
+public class SidedTransferHandler extends AbstractTransferHandler<IFluxConnector> {
 
     private final TileFluxCore tileEntity;
     private Map<Direction, IFluxTransfer> transfers = new HashMap<>();
 
-    public ConnectionTransferHandler(TileFluxCore tile, IFluxConnector fluxConnector) {
+    public SidedTransferHandler(TileFluxCore tile, IFluxConnector fluxConnector) {
         super(fluxConnector);
         this.tileEntity = tile;
     }

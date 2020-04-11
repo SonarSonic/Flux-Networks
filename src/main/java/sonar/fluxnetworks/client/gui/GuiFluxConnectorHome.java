@@ -62,7 +62,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         fluxName.setText(tileEntity.getCustomName());
         fluxName.setResponder(string -> {
             tileEntity.customName = fluxName.getText();
-            PacketHandler.INSTANCE.sendToServer(new TileByteBufPacket(tileEntity, tileEntity.getPos(), 1));
+            tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_CUSTOM_NAME);
         });
         addButton(fluxName);
 
@@ -71,7 +71,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         priority.setText(String.valueOf(tileEntity.priority));
         priority.setResponder(string -> {
             tileEntity.priority = priority.getValidInt();
-            PacketHandler.INSTANCE.sendToServer(new TileByteBufPacket(tileEntity, tileEntity.getPos(), 2));
+            tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_PRIORITY);
         });
         addButton(priority);
 
@@ -80,7 +80,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         limit.setText(String.valueOf(tileEntity.limit));
         limit.setResponder(string -> {
             tileEntity.limit = limit.getValidLong();
-            PacketHandler.INSTANCE.sendToServer(new TileByteBufPacket(tileEntity, tileEntity.getPos(), 3));
+            tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_LIMIT);
         });
         addButton(limit);
 
@@ -101,18 +101,19 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if(mouseButton == 0 && button instanceof SlidedSwitchButton){
             SlidedSwitchButton switchButton = (SlidedSwitchButton)button;
-            switchButton.switchButton();
             switch (switchButton.id) {
                 case 1:
+                    switchButton.switchButton();
                     tileEntity.surgeMode = switchButton.slideControl;
-                    PacketHandler.INSTANCE.sendToServer(new TileByteBufPacket(tileEntity, tileEntity.getPos(), 4));
+                    tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_SURGE_MODE);
                     break;
                 case 2:
+                    switchButton.switchButton();
                     tileEntity.disableLimit = switchButton.slideControl;
-                    PacketHandler.INSTANCE.sendToServer(new TileByteBufPacket(tileEntity, tileEntity.getPos(), 5));
+                    tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_DISABLE_LIMIT);
                     break;
                 case 3:
-                    PacketHandler.INSTANCE.sendToServer(new TilePacket(TilePacketEnum.CHUNK_LOADING, TilePacketHandler.getChunkLoadPacket(switchButton.slideControl), tileEntity.getPos(), tileEntity.getWorld().getDimension().getType().getId()));
+                    PacketHandler.INSTANCE.sendToServer(new TilePacket(TilePacketEnum.CHUNK_LOADING, TilePacketHandler.getChunkLoadPacket(!switchButton.slideControl), tileEntity.getPos(), tileEntity.getWorld().getDimension().getType().getId()));
                     break;
             }
         }

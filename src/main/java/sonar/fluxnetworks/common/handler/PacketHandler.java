@@ -20,7 +20,7 @@ public class PacketHandler {
 
         INSTANCE.registerMessage(packetID++, GeneralPacket.class, GeneralPacket::encode, GeneralPacket::new, GeneralPacket::handle);
         INSTANCE.registerMessage(packetID++, NetworkUpdatePacket.class, NetworkUpdatePacket::encode, NetworkUpdatePacket::new, NetworkUpdatePacket::handle);
-        INSTANCE.registerMessage(packetID++, TileByteBufPacket.class, TileByteBufPacket::encode, TileByteBufPacket::new, TileByteBufPacket::handle);
+        INSTANCE.registerMessage(packetID++, TilePacketBufferPacket.class, TilePacketBufferPacket::encode, TilePacketBufferPacket::new, TilePacketBufferPacket::handle);
         INSTANCE.registerMessage(packetID++, TilePacket.class, TilePacket::encode, TilePacket::new, TilePacket::handle);
         INSTANCE.registerMessage(packetID++, FeedbackPacket.class, FeedbackPacket::encode, FeedbackPacket::new, FeedbackPacket::handle);
         INSTANCE.registerMessage(packetID++, NetworkColourRequestPacket.class, NetworkColourRequestPacket::encode, NetworkColourRequestPacket::new, NetworkColourRequestPacket::handle);

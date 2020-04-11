@@ -125,7 +125,7 @@ public class BatchEditingPacket extends AbstractPacket {
                                         f.chunkLoading = false;
                                     }
                                 }
-                                f.sendPackets();
+                                f.sendFullUpdatePacket();
                             }
                         });
                     }

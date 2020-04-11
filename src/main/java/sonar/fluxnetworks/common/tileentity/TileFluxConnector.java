@@ -5,14 +5,14 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.block.FluxConnectorBlock;
-import sonar.fluxnetworks.common.connection.handler.ConnectionTransferHandler;
+import sonar.fluxnetworks.common.connection.handler.SidedTransferHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import net.minecraft.tileentity.TileEntity;
 import sonar.fluxnetworks.common.tileentity.energy.TileDefaultEnergy;
 
 public abstract class TileFluxConnector extends TileDefaultEnergy {
 
-    public final ConnectionTransferHandler handler = new ConnectionTransferHandler(this, this);
+    public final SidedTransferHandler handler = new SidedTransferHandler(this, this);
 
     public TileFluxConnector(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -37,16 +37,15 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
             }
         }
         if(sendUpdate) {
-            sendPackets();
+            sendFullUpdatePacket();
         }
     }
 
     @Override
-    public void sendPackets() {
+    public void sendFullUpdatePacket() {
         if(!world.isRemote){
             BlockState newState = FluxConnectorBlock.getConnectedState(getBlockState(), getWorld(), getPos());
             world.setBlockState(pos, newState, 3);
-            world.markBlockRangeForRenderUpdate(pos, getBlockState(), newState);
             world.notifyBlockUpdate(pos, getBlockState(), newState, 3);
         }
     }

@@ -1,12 +1,13 @@
-package sonar.fluxnetworks.common.connection;
+package sonar.fluxnetworks.common.connection.handler;
 
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 
-public abstract class FluxTransferHandler<T extends IFluxConnector> implements ITransferHandler {
+public abstract class AbstractTransferHandler<T extends IFluxConnector> implements ITransferHandler {
 
     public final T fluxConnector;
 
@@ -20,7 +21,7 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
 
     private long bufferSize;
 
-    public FluxTransferHandler(T fluxConnector) {
+    public AbstractTransferHandler(T fluxConnector) {
         this.fluxConnector = fluxConnector;
     }
 
@@ -144,10 +145,12 @@ public abstract class FluxTransferHandler<T extends IFluxConnector> implements I
      */
     public CompoundNBT writeNetworkedNBT(CompoundNBT tag) {
         tag.putLong("71", change);
+        tag.putLong("72", buffer);
         return tag;
     }
 
     public void readNetworkedNBT(CompoundNBT tag) {
         change = tag.getLong("71");
+        buffer = tag.getLong("72");
     }
 }

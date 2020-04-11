@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.common.tileentity;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityType;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.EnumConnectionType;
@@ -8,16 +9,17 @@ import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxEnergy;
 import sonar.fluxnetworks.api.tiles.IFluxStorage;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
-import sonar.fluxnetworks.common.connection.handler.SingleTransferHandler;
+import sonar.fluxnetworks.common.connection.handler.DefaultTransferHandler;
 import sonar.fluxnetworks.common.connection.transfer.StorageTransfer;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;
+import static sonar.fluxnetworks.common.network.TilePacketBufferContants.*;
 
 public abstract class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy {
 
-    public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
+    public final DefaultTransferHandler handler = new DefaultTransferHandler(this, new StorageTransfer(this));
 
     public static final int C = 1000000;
     public static final int D = -10000;
@@ -25,7 +27,7 @@ public abstract class TileFluxStorage extends TileFluxCore implements IFluxStora
     public int energyStored;
     public int maxEnergyStorage;
 
-    private boolean needSyncEnergy = false;
+    private boolean energyChanged = false;
 
     public ItemStack stack = ItemStack.EMPTY;
 
@@ -85,7 +87,7 @@ public abstract class TileFluxStorage extends TileFluxCore implements IFluxStora
         long energyReceived = Math.min(maxEnergyStorage - energyStored, amount);
         if (!simulate) {
             energyStored += energyReceived;
-            needSyncEnergy = true;
+            energyChanged = true;
         }
         return energyReceived;
     }
@@ -94,19 +96,18 @@ public abstract class TileFluxStorage extends TileFluxCore implements IFluxStora
         long energyExtracted = Math.min(energyStored, amount);
         if (!simulate) {
             energyStored -= energyExtracted;
-            needSyncEnergy = true;
+            energyChanged = true;
         }
         return energyExtracted;
     }
 
     /** on server side **/
     public void sendPacketIfNeeded() {
-        if (needSyncEnergy) {
-            //TODO FIX TILEENTITY PACKETS - TO AVOID SO MANY BLOCK UPDATES.
-            //if ((world.getGameTime() & 3) == 0) {
-                sendPackets();
-                needSyncEnergy = false;
-            //}
+        if (energyChanged) {
+            if ((world.getDimension().getWorldTime() & 3) == 0) {
+                sendTilePacketToNearby(FLUX_STORAGE_ENERGY);
+                energyChanged = false;
+            }
         }
     }
 
@@ -153,6 +154,28 @@ public abstract class TileFluxStorage extends TileFluxCore implements IFluxStora
     @Override
     public ItemStack getDisplayStack() {
         return writeStorageToDisplayStack(stack);
+    }
+
+    @Override
+    public void writePacket(PacketBuffer buf, byte id) {
+        super.writePacket(buf, id);
+        switch(id){
+            case FLUX_GUI_SYNC:
+            case FLUX_STORAGE_ENERGY:
+                buf.writeInt(energyStored);
+                break;
+        }
+    }
+
+    @Override
+    public void readPacket(PacketBuffer buf, byte id) {
+        super.readPacket(buf, id);
+        switch(id){
+            case FLUX_GUI_SYNC:
+            case FLUX_STORAGE_ENERGY:
+                energyStored = buf.readInt();
+                break;
+        }
     }
 
     /* TODO IBigPower - One Probe

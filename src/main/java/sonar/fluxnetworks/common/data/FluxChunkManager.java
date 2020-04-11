@@ -1,24 +1,26 @@
 package sonar.fluxnetworks.common.data;
-//TODO FIX CHUNK MANAGER
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.TicketType;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 public class FluxChunkManager {
 
-    //public static final Map<Integer, ForgeChunkManager.Ticket> worldTickets = new HashMap<>();
-
+    /*
+    public static final Map<Integer, ForgeChunkManager.Ticket> worldTickets = new HashMap<>();
+    */
     public static void clear() {
         //worldTickets.clear();
     }
 
     public static boolean forceChunk(World world, ChunkPos chunk) {
+        //TODO
+        //world.getChunkProvider().registerTicket(TicketType.FORCED, chunk, 1, chunk);
         /*
         if(FluxNetworkData.get().loadedChunks.computeIfAbsent(world.provider.getDimension(), l -> new ArrayList<>()).contains(chunk)) {
             return false;

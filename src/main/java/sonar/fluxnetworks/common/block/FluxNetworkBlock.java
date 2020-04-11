@@ -74,8 +74,8 @@ public abstract class FluxNetworkBlock extends Block {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        readDataFromStack(stack, pos, worldIn); //doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
         if(!worldIn.isRemote) {
-            readDataFromStack(stack, pos, worldIn);
             TileEntity tileEntity = worldIn.getTileEntity(pos);
             if (tileEntity instanceof TileFluxCore) {
                 TileFluxCore fluxCore = (TileFluxCore) tileEntity;
@@ -117,7 +117,7 @@ public abstract class FluxNetworkBlock extends Block {
         return false;
     }
 
-    protected void writeDataToStack(ItemStack stack, BlockPos pos, World world) {
+    public static void writeDataToStack(ItemStack stack, BlockPos pos, World world) {
         TileEntity tile = world.getTileEntity(pos);
         if(tile instanceof TileFluxCore) {
             TileFluxCore t = (TileFluxCore) tile;

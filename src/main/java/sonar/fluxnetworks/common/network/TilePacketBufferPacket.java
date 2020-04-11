@@ -2,26 +2,27 @@ package sonar.fluxnetworks.common.network;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.api.tiles.ITileByteBuf;
+import sonar.fluxnetworks.api.tiles.ITilePacketBuffer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 
-public class TileByteBufPacket extends AbstractPacket {
+public class TilePacketBufferPacket extends AbstractPacket {
 
-    public ITileByteBuf tile;
+    public ITilePacketBuffer tile;
     public BlockPos pos;
-    public int id;
+    public byte id;
     public ByteBuf buf;
 
-    public TileByteBufPacket(PacketBuffer buf) {
+    public TilePacketBufferPacket(PacketBuffer buf) {
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-        id = buf.readInt();
+        id = buf.readByte();
         this.buf = buf.retain();
     }
 
-    public TileByteBufPacket(ITileByteBuf tile, BlockPos pos, int id) {
+    public TilePacketBufferPacket(ITilePacketBuffer tile, BlockPos pos, byte id) {
         this.tile = tile;
         this.pos = pos;
         this.id = id;
@@ -32,7 +33,7 @@ public class TileByteBufPacket extends AbstractPacket {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
-        buf.writeInt(id);
+        buf.writeByte(id);
         tile.writePacket(buf, id);
     }
 
@@ -40,9 +41,9 @@ public class TileByteBufPacket extends AbstractPacket {
     public Object handle(NetworkEvent.Context ctx) {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         if(player != null) {
-            ITileByteBuf tile = (ITileByteBuf) player.getEntityWorld().getTileEntity(pos);
-            if (tile != null) {
-                tile.readPacket(new PacketBuffer(buf), id);
+            TileEntity tile = player.getEntityWorld().getTileEntity(pos);
+            if (tile instanceof ITilePacketBuffer) {
+                ((ITilePacketBuffer) tile).readPacket(new PacketBuffer(buf), id);
                 buf.release();
             }
         }
