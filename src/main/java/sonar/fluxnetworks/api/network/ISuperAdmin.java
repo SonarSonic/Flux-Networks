@@ -2,9 +2,6 @@ package sonar.fluxnetworks.api.network;
 
 import net.minecraft.nbt.CompoundNBT;
 
-/**
- *
- */
 public interface ISuperAdmin {
 
     void changePermission();

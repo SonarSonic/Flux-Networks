@@ -3,7 +3,7 @@ package sonar.fluxnetworks.api.gui;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 
 public enum EnumFeedbackInfo {
-    NONE(FluxTranslate.EMPTY),
+    NONE(null),
     REJECT(FluxTranslate.REJECT),
     NO_OWNER(FluxTranslate.NO_OWNER),
     NO_ADMIN(FluxTranslate.NO_ADMIN),
@@ -14,9 +14,9 @@ public enum EnumFeedbackInfo {
     HAS_LOADER(FluxTranslate.HAS_LOADER),
     BANNED_LOADING(FluxTranslate.BANNED_LOADING),
     REJECT_SOME(FluxTranslate.REJECT_SOME),
-    PASSWORD_REQUIRE(FluxTranslate.EMPTY),
-    SUCCESS(FluxTranslate.EMPTY),
-    SUCCESS_2(FluxTranslate.EMPTY); // Sometimes we need another success to compare to the first one
+    PASSWORD_REQUIRE(null),
+    SUCCESS(null),
+    SUCCESS_2(null); // Sometimes we need another success to compare to the first one
 
     private FluxTranslate localization;
 
@@ -29,7 +29,7 @@ public enum EnumFeedbackInfo {
     }
 
     public String getInfo() {
-        return localization.t();
+        return localization == null ? "": localization.t();
     }
 
 }

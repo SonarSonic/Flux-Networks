@@ -1,24 +1,40 @@
 package sonar.fluxnetworks.client.jei;
-/* TODO JEI INTEGRATION
+
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.FluxConfig;
 import mezz.jei.api.IModPlugin;
-import mezz.jei.api.IModRegistry;
-import mezz.jei.api.JEIPlugin;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
+import sonar.fluxnetworks.FluxNetworks;
 
-@JEIPlugin
+@JeiPlugin
 public class JEIIntegration implements IModPlugin {
 
     @Override
-    public void register(IModRegistry registry) {
-        if(FluxConfig.enableFluxRecipe)
-            FluxCraftingCategory.register(registry);
+    public ResourceLocation getPluginUid() {
+        return new ResourceLocation(FluxNetworks.MODID);
+    }
+
+
+    @Override
+    public void registerRecipes(IRecipeRegistration registration) {
+        if(FluxConfig.enableFluxRecipe){
+            registration.addRecipes(CreatingFluxRecipeCategory.getRecipes(), CreatingFluxRecipeCategory.CATEGORY_UUID);
+        }
     }
 
     @Override
-    public void registerCategories(IRecipeCategoryRegistration registry) {
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        if(FluxConfig.enableFluxRecipe){
+            CreatingFluxRecipeCategory.getCatalysts().forEach(c -> registration.addRecipeCatalyst(c, CreatingFluxRecipeCategory.CATEGORY_UUID));;
+        }
+    }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registration) {
         if(FluxConfig.enableFluxRecipe)
-            registry.addRecipeCategories(new FluxCraftingCategory(registry.getJeiHelpers().getGuiHelper()));
+            registration.addRecipeCategories(new CreatingFluxRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 }
-*/

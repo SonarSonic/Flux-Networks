@@ -19,6 +19,7 @@ public abstract class AbstractPacket {
     public final void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(()->{
             reply(ctx.get(), handle(ctx.get()));
+            ctx.get().setPacketHandled(true);
         });
     }
 

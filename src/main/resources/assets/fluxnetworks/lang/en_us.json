@@ -131,5 +131,8 @@
 	"info.fluxnetworks.access.admin": "Admin",
 	"info.fluxnetworks.access.user": "User",
 	"info.fluxnetworks.access.blocked": "Blocked",
-	"info.fluxnetworks.access.superadmin": "Super Admin"
+	"info.fluxnetworks.access.superadmin": "Super Admin",
+
+	"info.fluxnetworks.jei.creatingfluxrecipe": "Creating Flux",
+	"info.fluxnetworks.jei.leftclickhelp": "Left click the %s"
 }

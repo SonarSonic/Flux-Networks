@@ -1,11 +1,11 @@
 package sonar.fluxnetworks.api.translate;
 
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.TranslationTextComponent;
 
 public enum FluxTranslate {
 
-    EMPTY(false, ""),
     FLUX_TOOLTIP(false, "tooltip.fluxnetworks.flux"),
     FLUX_CONTROLLER_TOOLTIP(false, "tooltip.fluxnetworks.fluxcontroller"),
     FLUX_PLUG_TOOLTIP(false, "tooltip.fluxnetworks.fluxplug"),
@@ -125,7 +125,10 @@ public enum FluxTranslate {
     SUPER_ADMIN(true, "access.superadmin"),
 
     ENCRYPTED(true, "security.encrypted"),
-    PUBLIC(true, "security.public");
+    PUBLIC(true, "security.public"),
+
+    JEI_CREATING_FLUX(true, "jei.creatingfluxrecipe"),
+    JEI_LEFT_CLICK(true, "jei.leftclickhelp");
 
 
     String key;
@@ -145,6 +148,10 @@ public enum FluxTranslate {
     @Override
     public String toString(){
         return t();
+    }
+
+    public String format(Object ...args){
+        return I18n.format(t(), args);
     }
 
     public TranslationTextComponent getTextComponent(Object... args){

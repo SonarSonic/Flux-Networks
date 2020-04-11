@@ -35,13 +35,11 @@ public abstract class FluxConnectorBlock extends FluxNetworkBlock {
         }
     }
 
-
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         return getConnectedState(getDefaultState(), context.getWorld(), context.getPos());
     }
-
 
     public static BlockState getConnectedState(BlockState state, World world, BlockPos pos){
         TileFluxCore tile = (TileFluxCore) world.getTileEntity(pos);
