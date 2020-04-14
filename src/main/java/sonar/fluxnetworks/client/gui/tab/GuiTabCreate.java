@@ -67,7 +67,9 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
     @Override
     public void onEditSettingsChanged() {
-        create.clickable = (!securityType.isEncrypted() || password.getText().length() != 0) && name.getText().length() !=0;
+        if(create != null) {
+            create.clickable = (!securityType.isEncrypted() || password.getText().length() != 0) && name.getText().length() != 0;
+        }
     }
 
     @Override

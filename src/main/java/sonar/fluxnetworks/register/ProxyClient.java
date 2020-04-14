@@ -25,10 +25,6 @@ public class ProxyClient implements IProxy {
     public IFluxNetwork admin_viewing_network = FluxNetworkInvalid.instance;
     public boolean detailed_network_view;
 
-    public ProxyClient(){
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
     @Override
     public World getClientWorld() {
         return Minecraft.getInstance().world;
@@ -39,6 +35,10 @@ public class ProxyClient implements IProxy {
         return Minecraft.getInstance().player;
     }
 
+
+    public void onServerStopped() {
+        FluxColorHandler.reset();
+    }
 
     @SubscribeEvent
     public void onRenderTick(TickEvent.RenderTickEvent event) {

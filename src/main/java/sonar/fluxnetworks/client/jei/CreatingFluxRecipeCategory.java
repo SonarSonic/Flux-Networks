@@ -48,8 +48,8 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
 
     public static List<CreatingFluxRecipeType> getRecipes() {
         List<CreatingFluxRecipeType> recipes = new ArrayList<>();
-        recipes.add(new CreatingFluxRecipeType(Blocks.BEDROCK.getDefaultState(), Blocks.OBSIDIAN.getDefaultState(), new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX)));
-        recipes.add(new CreatingFluxRecipeType(RegistryBlocks.FLUX_BLOCK.getDefaultState(), Blocks.OBSIDIAN.getDefaultState(), new ItemStack(Items.REDSTONE_BLOCK), new ItemStack(RegistryBlocks.FLUX_BLOCK)));
+        recipes.add(new CreatingFluxRecipeType(Blocks.BEDROCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX)));
+        recipes.add(new CreatingFluxRecipeType(RegistryBlocks.FLUX_BLOCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX)));
         return recipes;
     }
 
@@ -125,7 +125,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
         stack.translate(52, 10 + offset, 128);
         stack.scale(16, 16, 16);
         stack.rotate(new Quaternion(30, 45, 0, true));
-        dispatcher.renderBlock(recipe.getCrusher(), stack, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        dispatcher.renderBlock(recipe.getCrusher().getDefaultState(), stack, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         stack.pop();
 
         //// BEDROCK
@@ -133,7 +133,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
         stack.translate(52, 40, 128+ -32);
         stack.scale(16, 16, 16);
         stack.rotate(new Quaternion(30, 45, 0, true));
-        dispatcher.renderBlock(recipe.getBase(), stack, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        dispatcher.renderBlock(recipe.getBase().getDefaultState(), stack, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
         stack.pop();
 
         //// ITEM

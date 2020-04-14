@@ -98,7 +98,7 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if(transferOwnership != null) {
-            if (keyCode == 42) {
+            if (scanCode == 42) {
                 transferOwnershipCount++;
                 if (transferOwnershipCount > 1) {
                     transferOwnership.clickable = true;

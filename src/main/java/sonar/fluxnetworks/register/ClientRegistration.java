@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -44,7 +46,6 @@ public class ClientRegistration {
         RenderTypeLookup.setRenderLayer(RegistryBlocks.BASIC_FLUX_STORAGE, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(RegistryBlocks.HERCULEAN_FLUX_STORAGE, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, RenderType.getCutout());
-
 
         FluxNetworks.LOGGER.info("Registering Screens");
 

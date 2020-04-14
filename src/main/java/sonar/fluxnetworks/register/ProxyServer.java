@@ -51,10 +51,6 @@ public class ProxyServer implements IProxy {
     public int admin_viewing_network_id = -1;
     public IFluxNetwork admin_viewing_network = FluxNetworkInvalid.instance;
 
-    public ProxyServer(){
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
     @Override
     public World getClientWorld() {
         throw new IllegalStateException("Only run this on the client");

@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.register;
 
 import com.google.common.collect.Lists;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
@@ -8,11 +9,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -22,7 +25,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
+import org.apache.logging.log4j.core.jmx.Server;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.client.FluxColorHandler;
@@ -33,6 +38,7 @@ import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
 import sonar.fluxnetworks.common.network.SuperAdminPacket;
+import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 
 import java.util.ArrayList;
@@ -45,24 +51,18 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onServerStarted(FMLServerStartedEvent event){
-
+        FluxNetworks.proxy.onServerStarted();
     }
 
     @SubscribeEvent
     public static void onServerStopped(FMLServerStoppedEvent event){
         FluxNetworkCache.instance.clearNetworks();
-
-        FluxColorHandler.reset();
         FluxNetworkCache.instance.clearClientCache();
+        FluxNetworks.proxy.onServerStopped();
     }
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        /*if(event.phase == TickEvent.Phase.START) {
-            for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
-                network.onStartServerTick();
-            }
-        }*/
         if(event.phase == TickEvent.Phase.END) {
             for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
                 network.onEndServerTick();
@@ -78,9 +78,11 @@ public class EventHandler {
             if(!FluxConfig.enableFluxRecipe) {
                 return;
             }
-            World world = event.getWorld();
+            ServerWorld world = (ServerWorld)event.getWorld();
             BlockPos pos = event.getPos();
-            if (world.getBlockState(pos).getBlock().equals(Blocks.OBSIDIAN) && world.getBlockState(pos.down(2)).getBlock().equals(Blocks.BEDROCK)) {
+            BlockState crusher = world.getBlockState(pos);
+            BlockState base = world.getBlockState(pos.down(2));
+            if (crusher.getBlock().equals(Blocks.OBSIDIAN) && (base.getBlock().equals(Blocks.BEDROCK)) || base.getBlock().equals(RegistryBlocks.FLUX_BLOCK)) {
                 List<ItemEntity> entities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.down()));
                 if(entities.isEmpty())
                     return;
@@ -100,6 +102,7 @@ public class EventHandler {
                 world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
                 world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                 world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+
                 event.setCanceled(true);
             }
         }

@@ -35,7 +35,6 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
     public abstract void onEditSettingsChanged();
 
-
     @Override
     public void init() {
         super.init();
@@ -47,11 +46,13 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             int l = font.getStringWidth(FluxTranslate.NETWORK_NAME.t());
             name = FluxTextWidget.create("", font, guiLeft + 20 + l, guiTop + 28, 140 - l, 12);
             name.setMaxStringLength(24);
+            name.setResponder(string -> onEditSettingsChanged());
 
 
             l = font.getStringWidth(FluxTranslate.NETWORK_PASSWORD.t());
             password = FluxTextWidget.create("", font, guiLeft + 20 + l, guiTop + 62, 140 - l, 12).setTextInvisible();
             password.setMaxStringLength(16);
+            password.setResponder(string -> onEditSettingsChanged());
 
             addButton(name);
             addButton(password);
@@ -117,9 +118,4 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         }
     }
 
-    @Override
-    public boolean charTypedMain(char c, int k) {
-        onEditSettingsChanged();
-        return super.charTypedMain(c, k);
-    }
 }

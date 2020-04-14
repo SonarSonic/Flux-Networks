@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
@@ -37,6 +38,7 @@ import sonar.fluxnetworks.common.item.FluxItem;
 import sonar.fluxnetworks.common.recipes.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipes.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -54,14 +56,13 @@ public class CommonRegistration {
     public static final ItemGroup ITEM_GROUP = new ItemGroup("fluxnetworks") {
         @Override
         public ItemStack createIcon() {
-            return new ItemStack(RegistryBlocks.FLUX_PLUG);
+            return new ItemStack(RegistryItems.FLUX_CORE);
         }
     };
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
         FluxNetworks.LOGGER.info("Started Common Setup");
-
         FNEnergyCapability.register();
 
         PacketHandler.registerMessages();
@@ -167,9 +168,10 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event) {
-        event.getRegistry().register(new FluxStorageRecipeSerializer().setRegistryName(FluxNetworks.MODID, "fluxstoragerecipe"));
-        event.getRegistry().register(new NBTWipeRecipeSerializer().setRegistryName(FluxNetworks.MODID, "nbtwiperecipe"));
+        event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "fluxstoragerecipe"));
+        event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "nbtwiperecipe"));
     }
+
 
     @SubscribeEvent
     public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {

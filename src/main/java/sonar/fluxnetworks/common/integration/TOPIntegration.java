@@ -1,15 +1,16 @@
 package sonar.fluxnetworks.common.integration;
-/* TODO ONE PROBE INTEGRATION
+
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.common.block.BlockFluxCore;
+import sonar.fluxnetworks.common.block.FluxNetworkBlock;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import mcjty.theoneprobe.api.*;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.TextFormatting;
@@ -35,18 +36,18 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
         }
 
         @Override
-        public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer, World world, IBlockState iBlockState, IProbeHitData iProbeHitData) {
+        public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, BlockState blockState, IProbeHitData iProbeHitData) {
             if(!(FluxConfig.enableOneProbeBasicInfo || FluxConfig.enableOneProbeAdvancedInfo)) {
                 return;
             }
-            if(iBlockState.getBlock() instanceof BlockFluxCore) {
+            if(blockState.getBlock() instanceof FluxNetworkBlock) {
                 TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
                 if(tile instanceof IFluxConnector) {
                     IFluxConnector flux = (IFluxConnector) tile;
                     if(FluxConfig.enableOneProbeBasicInfo) {
                         iProbeInfo.text(TextFormatting.AQUA + (flux.getNetwork().isInvalid() ? FluxTranslate.ERROR_NO_SELECTED.t() : flux.getNetwork().getNetworkName()));
-                        iProbeInfo.text(FluxUtils.getTransferInfo(flux.getConnectionType(), EnergyType.RF, flux.getChange()));
-                        if(entityPlayer.isSneaking()) {
+                        iProbeInfo.text(FluxUtils.getTransferInfo(flux.getConnectionType(), EnergyType.FE, flux.getChange()));
+                        if(playerEntity.isShiftKeyDown()) {
                             if (flux.getConnectionType().isStorage()) {
                                 iProbeInfo.text(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
                             } else {
@@ -60,7 +61,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                             }
                         }
                     }
-                    if(FluxConfig.enableOneProbeAdvancedInfo && (!FluxConfig.enableOneProbeSneaking || entityPlayer.isSneaking())) {
+                    if(FluxConfig.enableOneProbeAdvancedInfo && (!FluxConfig.enableOneProbeSneaking || playerEntity.isShiftKeyDown())) {
                         iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getActualLimit()));
                         iProbeInfo.text(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getActualPriority()));
                         if (flux.isForcedLoading()) {
@@ -75,12 +76,12 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
     public static class FluxConnectorDisplayOverride implements IBlockDisplayOverride {
 
         @Override
-        public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, EntityPlayer entityPlayer, World world, IBlockState iBlockState, IProbeHitData iProbeHitData) {
-            if(iBlockState.getBlock() instanceof BlockFluxCore) {
+        public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, BlockState blockState, IProbeHitData iProbeHitData) {
+            if(blockState.getBlock() instanceof FluxNetworkBlock) {
                 TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
                 if(tile instanceof IFluxConnector) {
                     IFluxConnector flux = (IFluxConnector) tile;
-                    ItemStack pickBlock = flux.getDisplayStack().setStackDisplayName(flux.getCustomName());
+                    ItemStack pickBlock = flux.getDisplayStack().setDisplayName(new StringTextComponent(flux.getCustomName()));
                     iProbeInfo.horizontal().item(pickBlock).vertical().itemLabel(pickBlock).text(TextStyleClass.MODNAME + FluxNetworks.NAME);
                     return true;
                 }
@@ -89,4 +90,3 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
         }
     }
 }
-*/

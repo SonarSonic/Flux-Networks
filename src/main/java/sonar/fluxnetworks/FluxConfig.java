@@ -214,6 +214,7 @@ public class FluxConfig {
 
     public static void verifyAndReadBlacklist() {
         //TODO FIX BLACK LIST VERIFICATION
+        /*
         TileEntityHandler.blockBlacklist.clear();
         for(String str : blockBlacklistStrings) {
             if(!str.contains(":")) {
@@ -254,6 +255,8 @@ public class FluxConfig {
                 ItemEnergyHandler.itemBlackList.put(root, meta);
             }
         }
+
+         */
     }
 
     public static void generateFluxChunkConfig() {

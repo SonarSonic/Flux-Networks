@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
@@ -77,7 +78,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 i++;
             }
             if(!colorSet) {
-                ColorButton c = new ColorButton(width / 2 - 56, height / 2 + 29, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                ColorButton c = new ColorButton(32, 112, network.getSetting(NetworkSettings.NETWORK_COLOR));
                 colorButtons.add(c);
                 this.color = c;
                 this.color.selected = true;
@@ -89,7 +90,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
 
     @Override
     public void onEditSettingsChanged() {
-        if(networkValid) {
+        if(networkValid && apply != null) {
             apply.clickable = ((!securityType.isEncrypted() || password.getText().length() != 0) && name.getText().length() != 0);
         }
     }
@@ -110,9 +111,9 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     }
 
     @Override
-    public boolean charTypedMain(char c, int k) {
+    public boolean keyPressedMain(int keyCode, int scanCode, int modifiers) {
         if(delete != null) {
-            if (k == 42) {
+            if (scanCode == 42) {
                 deleteCount++;
                 if (deleteCount > 1) {
                     delete.clickable = true;
@@ -122,8 +123,9 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 delete.clickable = false;
             }
         }
-        return super.charTypedMain(c, k);
+        return super.keyPressedMain(keyCode, scanCode, modifiers);
     }
+
     @Override
     public void tick() {
         super.tick();

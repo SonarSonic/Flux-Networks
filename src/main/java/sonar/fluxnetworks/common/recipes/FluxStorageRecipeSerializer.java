@@ -1,22 +1,39 @@
 package sonar.fluxnetworks.common.recipes;
 
 import com.google.gson.JsonObject;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistryEntry;
+import sonar.fluxnetworks.FluxNetworks;
 
-public class FluxStorageRecipeSerializer extends ShapedRecipe.Serializer {
+public class FluxStorageRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<FluxStorageRecipe>{
 
     public static final FluxStorageRecipeSerializer INSTANCE = new FluxStorageRecipeSerializer();
 
-    public ShapedRecipe read(ResourceLocation recipeId, JsonObject json) {
-        ShapedRecipe recipe = super.read(recipeId, json);
-        return new FluxStorageRecipe(recipe);
+    public FluxStorageRecipe read(ResourceLocation recipeId, JsonObject json) {
+        return new FluxStorageRecipe(IRecipeSerializer.CRAFTING_SHAPED.read(recipeId, json));
     }
 
-    public ShapedRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
-        ShapedRecipe recipe = super.read(recipeId, buffer);
-        return recipe != null ? new FluxStorageRecipe(recipe) : null;
+    public FluxStorageRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
+        try {
+            return new FluxStorageRecipe(IRecipeSerializer.CRAFTING_SHAPED.read(recipeId, buffer));
+        }
+        catch (Exception e) {
+            FluxNetworks.LOGGER.error("Error reading Flux Storage Recipe from Packet", e);
+            throw e;
+        }
     }
 
+    @Override
+    public void write(PacketBuffer buffer, FluxStorageRecipe recipe) {
+        try {
+            IRecipeSerializer.CRAFTING_SHAPED.write(buffer, recipe);
+        }
+        catch(Exception e){
+            FluxNetworks.LOGGER.error("Error writing Flux Storage Recipe to packet.", e);
+            throw e;
+        }
+    }
 }

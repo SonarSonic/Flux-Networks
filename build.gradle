@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${minecraft_version}-5.0.0-2"
+version = "${minecraft_version}-5.0.0-1"
 group = 'sonar.fluxnetworks'
 archivesBaseName = 'fluxnetworks'
 
@@ -99,6 +99,8 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.1.37'
 
     runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
+
+    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-${top_version}")
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")

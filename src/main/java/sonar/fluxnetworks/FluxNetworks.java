@@ -4,6 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -20,12 +21,13 @@ import sonar.fluxnetworks.common.capabilities.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.handler.CapabilityHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
+import sonar.fluxnetworks.common.integration.TOPIntegration;
 import sonar.fluxnetworks.register.EventHandler;
 import sonar.fluxnetworks.register.ProxyClient;
 import sonar.fluxnetworks.register.ProxyServer;
 import sonar.fluxnetworks.register.IProxy;
 
-@Mod(FluxNetworks.MODID)
+@Mod("fluxnetworks")
 public class FluxNetworks {
 
     public static final String MODID = "fluxnetworks";
@@ -45,12 +47,15 @@ public class FluxNetworks {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, FluxConfig.CLIENT_SPEC);
         FMLJavaModLoadingContext.get().getModEventBus().register(FluxConfig.class);
         MinecraftForge.EVENT_BUS.register(EventHandler.class);
-
+        MinecraftForge.EVENT_BUS.register(proxy);
 
     }
     private void enqueueIMC(final InterModEnqueueEvent event){
         InterModComms.sendTo("carryon", "blacklistBlock", () -> FluxNetworks.MODID + ":*");
-        //InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration.class.getName());
+
+        if(ModList.get().isLoaded("theoneprobe")) {
+            InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration::new);
+        }
     }
 
     private void processIMC(final InterModProcessEvent event){}
