@@ -4,7 +4,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.energy.FNEnergyCapability;
-import sonar.fluxnetworks.api.tiles.IFluxPhantomEnergy;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.common.core.DefaultEnergyWrapper;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraftforge.common.capabilities.Capability;
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class TileDefaultEnergy extends TileFluxCore implements IFluxPhantomEnergy {
+public abstract class TileDefaultEnergy extends TileFluxCore implements IFluxConnector {
 
     public Map<Direction, DefaultEnergyWrapper> wrappers = new HashMap<>();
     {

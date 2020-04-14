@@ -2,17 +2,18 @@ package sonar.fluxnetworks.common.core;
 
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.api.tiles.IFluxPhantomEnergy;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import net.minecraftforge.energy.IEnergyStorage;
+import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 
 /**uses forge's own energy wrapper and also IExtendedEnergyStorage*/
 public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
-    public IFluxPhantomEnergy tileEntity;
+    public IFluxConnector tileEntity;
     public Direction side;
 
-    public DefaultEnergyWrapper(IFluxPhantomEnergy tileEntity, Direction side) {
+    public DefaultEnergyWrapper(IFluxConnector tileEntity, Direction side) {
         this.tileEntity = tileEntity;
         this.side = side;
     }
@@ -21,7 +22,7 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public long receiveEnergyL(long maxReceive, boolean simulate) {
-        return tileEntity.addPhantomEnergyToNetwork(side, maxReceive, simulate);
+        return tileEntity instanceof TileFluxPlug ? ((TileFluxPlug) tileEntity).addPhantomEnergyToNetwork(side, maxReceive, simulate) : 0;
     }
 
     @Override

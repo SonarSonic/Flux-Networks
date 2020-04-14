@@ -8,9 +8,8 @@ import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxEnergy;
 import sonar.fluxnetworks.api.tiles.IFluxStorage;
+import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
-import sonar.fluxnetworks.common.connection.handler.DefaultTransferHandler;
-import sonar.fluxnetworks.common.connection.transfer.StorageTransfer;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -19,7 +18,7 @@ import static sonar.fluxnetworks.common.network.TilePacketBufferContants.*;
 
 public abstract class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy {
 
-    public final DefaultTransferHandler handler = new DefaultTransferHandler(this, new StorageTransfer(this));
+    public final FluxStorageHandler handler = new FluxStorageHandler(this);
 
     public static final int C = 1000000;
     public static final int D = -10000;

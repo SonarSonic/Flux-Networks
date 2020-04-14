@@ -5,22 +5,14 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.block.FluxConnectorBlock;
-import sonar.fluxnetworks.common.connection.handler.SidedTransferHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import net.minecraft.tileentity.TileEntity;
 import sonar.fluxnetworks.common.tileentity.energy.TileDefaultEnergy;
 
 public abstract class TileFluxConnector extends TileDefaultEnergy {
 
-    public final SidedTransferHandler handler = new SidedTransferHandler(this, this);
-
     public TileFluxConnector(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
-    }
-
-    @Override
-    public long addPhantomEnergyToNetwork(Direction dir, long amount, boolean simulate) {
-        return isActive() && getConnectionType().canAddEnergy() ? handler.addPhantomEnergyToNetwork(amount, dir, simulate) : 0;
     }
 
     @Override
@@ -48,13 +40,6 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
             world.setBlockState(pos, newState, 3);
             world.notifyBlockUpdate(pos, getBlockState(), newState, 3);
         }
-    }
-
-
-
-    @Override
-    public ITransferHandler getTransferHandler() {
-        return handler;
     }
 
     /* TODO - FIX ONE PROBE "IBIGPOWER"

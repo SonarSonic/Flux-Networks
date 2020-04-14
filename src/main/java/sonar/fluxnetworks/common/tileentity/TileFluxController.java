@@ -4,13 +4,12 @@ import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxController;
 import sonar.fluxnetworks.api.tiles.IFluxEnergy;
-import sonar.fluxnetworks.common.connection.transfer.ControllerTransfer;
-import sonar.fluxnetworks.common.connection.handler.DefaultTransferHandler;
+import sonar.fluxnetworks.common.connection.handler.FluxControllerHandler;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
 public class TileFluxController extends TileFluxCore implements IFluxController, IFluxEnergy {
 
-    public final DefaultTransferHandler handler = new DefaultTransferHandler(this, new ControllerTransfer(this));
+    public final FluxControllerHandler handler = new FluxControllerHandler(this);
 
     public TileFluxController() {
         super(RegistryBlocks.FLUX_CONTROLLER_TILE);

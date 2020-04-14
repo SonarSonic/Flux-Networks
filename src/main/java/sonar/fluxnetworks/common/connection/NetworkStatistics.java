@@ -119,7 +119,7 @@ public class NetworkStatistics {
             }
         });
         List<IFluxStorage> storages = network.getConnections(FluxCacheTypes.storage);
-        storages.forEach(p -> totalEnergy += p.getTransferHandler().getEnergyStored());
+        storages.forEach(p -> totalEnergy += p.getEnergy());
         fluxControllerCount = network.getConnections(FluxCacheTypes.controller).size();
         fluxStorageCount = storages.size();
         fluxPlugCount = plugs.size() - fluxStorageCount;

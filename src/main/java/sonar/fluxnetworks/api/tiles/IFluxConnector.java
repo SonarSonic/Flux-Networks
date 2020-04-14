@@ -2,11 +2,8 @@ package sonar.fluxnetworks.api.tiles;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.core.FluxGuiStack;
 import sonar.fluxnetworks.api.utils.NBTType;
 import net.minecraft.item.ItemStack;
@@ -68,7 +65,7 @@ public interface IFluxConnector extends INetworkConnector {
     boolean getSurgeMode();
 
     default long getBuffer() {
-        return getTransferHandler().getEnergyStored();
+        return getTransferHandler().getBuffer();
     }
 
     default long getChange() {

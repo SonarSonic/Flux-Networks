@@ -4,53 +4,34 @@ import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.network.ISidedTransfer;
-import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 public class ConnectionTransfer implements IFluxTransfer, ISidedTransfer {
 
-    public final ITransferHandler transferHandler;
     public final ITileEnergyHandler energyHandler;
     public final TileEntity tile;
     public final Direction dir;
     public final ItemStack displayStack;
 
-    public long added;
-    public long removed;
+    public long outbound;
+    public long inbound;
 
-    public ConnectionTransfer(ITransferHandler transferHandler, ITileEnergyHandler energyHandler, TileEntity tile, Direction dir) {
-        this.transferHandler = transferHandler;
+    public ConnectionTransfer(ITileEnergyHandler energyHandler, TileEntity tile, Direction dir) {
         this.energyHandler = energyHandler;
         this.tile = tile;
         this.dir = dir;
         this.displayStack = FluxUtils.getBlockItem(tile.getWorld(), tile.getPos());
     }
 
-    /**
-     * Flux Plug
-     * @param amount
-     * @return
-     */
     @Override
-    public long addToNetwork(long amount, boolean simulate) {
-        return 0;
-    }
-
-    /**
-     * Flux point
-     * @param amount
-     * @param simulate
-     * @return
-     */
-    @Override
-    public long removeFromNetwork(long amount, boolean simulate) {
+    public long addEnergy(long amount, boolean simulate) {
         Direction dir = this.dir.getOpposite();
         if(energyHandler.canAddEnergy(tile, dir)) {
             long added = energyHandler.addEnergy(amount, tile, dir, simulate);
             if(!simulate) {
-                removedFromNetwork(added);
+                onEnergyAdded(added);
             }
             return added;
         }
@@ -58,20 +39,28 @@ public class ConnectionTransfer implements IFluxTransfer, ISidedTransfer {
     }
 
     @Override
-    public void addedToNetwork(long amount) {
-        added += amount;
+    public long removeEnergy(long amount, boolean simulate) {
+        return 0; //we only receive energy from nearby tiles passively.
     }
 
     @Override
-    public void removedFromNetwork(long amount) {
-        removed += amount;
+    public void onEnergyAdded(long amount) {
+        inbound += amount;
     }
 
     @Override
-    public void onServerStartTick() {
-        added = 0;
-        removed = 0;
+    public void onEnergyRemoved(long amount) {
+        outbound += amount;
     }
+
+    @Override
+    public void onStartCycle() {
+        outbound = 0;
+        inbound = 0;
+    }
+
+    @Override
+    public void onEndCycle() {}
 
     @Override
     public TileEntity getTile() {

@@ -2,26 +2,22 @@ package sonar.fluxnetworks.common.connection.handler;
 
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 
-public abstract class AbstractTransferHandler<T extends IFluxConnector> implements ITransferHandler {
-
-    public final T fluxConnector;
-
-    public long added;
-    public long removed;
-
-    public long change;
+public abstract class AbstractTransferHandler<C extends IFluxConnector>  implements ITransferHandler {
 
     public long buffer;
-    public long request;
 
-    private long bufferSize;
+    public final C fluxConnector;
 
-    public AbstractTransferHandler(T fluxConnector) {
+    protected long addedToBuffer;
+    protected long removedFromBuffer;
+
+    /**the actual energy transfer change - has no relation to the buffer's usage*/
+    protected long change;
+
+    public AbstractTransferHandler(C fluxConnector) {
         this.fluxConnector = fluxConnector;
     }
 
@@ -29,75 +25,48 @@ public abstract class AbstractTransferHandler<T extends IFluxConnector> implemen
         return fluxConnector.getNetwork();
     }
 
-    /**
-     * Flux Plug
-     * @param maxAmount
-     * @return
-     */
-    @Override
-    public long addToNetwork(long maxAmount) {
-        if(!fluxConnector.isActive()) {
-            return 0;
-        }
-        //long added = Math.min(maxAmount, buffer);
-        buffer -= maxAmount;
-        return maxAmount;
+    public void onStartCycle(){
+        change = 0;
+        addedToBuffer = 0;
+        removedFromBuffer = 0;
     }
 
-    /**
-     * Flux point
-     * @param maxAmount
-     * @param simulate
-     * @return
-     */
-    @Override
-    public long removeFromNetwork(long maxAmount, boolean simulate) {
-        if(!fluxConnector.isActive())
-            return 0;
-        long canRemove = getValidRemoval(maxAmount);
-        long removed = 0;
-        for(IFluxTransfer transfer : getTransfers()) {
-            if(transfer != null) {
-                long toTransfer = canRemove - removed;
-                long remove = transfer.removeFromNetwork(toTransfer, simulate);
-                removed += remove;
-                if(!simulate) {
-                    this.removed += remove;
-                    request -= remove;
-                }
-            }
-        }
-        if(simulate) {
-            request = removed;
-        }
-        return removed;
-    }
-
-    public long getConnectorLimit() {
-        return fluxConnector.getCurrentLimit();
-    }
-
-    public long getBufferLimiter() {
-        return ((FluxNetworkServer) getNetwork()).bufferLimiter;
+    public void onEndCycle(){
+        //do
     }
 
     @Override
-    public void onLastEndTick() {
-        change = added - removed;
-        request = 0;
-        added = 0;
-        removed = 0;
-    }
-
-    public long addToBuffer(long add, boolean simulate) {
-        long r = getValidAddition(add);
-        if(r > 0) {
+    public long addEnergyToBuffer(long energy, boolean simulate) {
+        long add = getMaxAdd(energy);
+        if(add > 0) {
             if(!simulate) {
-                buffer += r;
-                added += r;
+                buffer += add;
+                addedToBuffer += add;
             }
-            return r;
+            return add;
         }
+        return 0;
+    }
+
+    @Override
+    public long removeEnergyFromBuffer(long energy, boolean simulate) {
+        long remove = getMaxRemove(energy);
+        if(remove > 0) {
+            if(!simulate) {
+                buffer -= remove;
+                removedFromBuffer += remove;
+            }
+            return remove;
+        }
+        return 0;
+    }
+    @Override
+    public long getBuffer() {
+        return buffer;
+    }
+
+    @Override
+    public long getRequest(){
         return 0;
     }
 
@@ -106,43 +75,22 @@ public abstract class AbstractTransferHandler<T extends IFluxConnector> implemen
         return change;
     }
 
-    @Override
-    public long getBuffer() {
-        return buffer;
+    public long getAddLimit(){
+        return fluxConnector.getCurrentLimit();
     }
 
-    @Override
-    public long getRequest() {
-        return request;
+    public long getRemoveLimit(){
+        return fluxConnector.getCurrentLimit();
     }
 
-    private void checkBufferSize() {
-        bufferSize = Math.min(Math.max(bufferSize, getConnectorLimit()), getBufferLimiter());
+    public long getMaxAdd(long toAdd){
+        return Math.max(Math.min(getAddLimit() - addedToBuffer, toAdd), 0);
     }
 
-    private long getMaxAddition() {
-        long r = Math.min(getConnectorLimit() - added, bufferSize - buffer);
-        return r > 0 ? r : 0 ;
+    public long getMaxRemove(long toRemove) {
+        return Math.max(Math.min(getRemoveLimit() - removedFromBuffer, Math.min(toRemove, getBuffer())), 0);
     }
 
-    private long getMaxRemoval() {
-        return getConnectorLimit() - removed;
-    }
-
-    private long getValidAddition(long toAdd) {
-        checkBufferSize();
-        return Math.min(getMaxAddition(), toAdd);
-    }
-
-    private long getValidRemoval(long toRemove) {
-        return Math.min(getMaxRemoval(), toRemove);
-    }
-
-    /**
-     * Send data to client tile entity for gui, this is always last tick energy change.
-     * @param tag
-     * @return
-     */
     public CompoundNBT writeNetworkedNBT(CompoundNBT tag) {
         tag.putLong("71", change);
         tag.putLong("72", buffer);

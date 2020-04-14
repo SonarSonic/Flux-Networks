@@ -14,29 +14,28 @@ public class StorageTransfer implements IFluxTransfer {
     }
 
     @Override
-    public void onServerStartTick() {
+    public void onStartCycle() {
         tile.sendPacketIfNeeded();
     }
 
     @Override
-    public long addToNetwork(long amount, boolean simulate) {
-        return tile.removeEnergy(amount, simulate);
-    }
+    public void onEndCycle() {}
 
     @Override
-    public long removeFromNetwork(long amount, boolean simulate) {
+    public long addEnergy(long amount, boolean simulate) {
         return tile.addEnergy(amount, simulate);
     }
 
     @Override
-    public void addedToNetwork(long amount) {
-
+    public long removeEnergy(long amount, boolean simulate) {
+        return tile.removeEnergy(amount, simulate);
     }
 
     @Override
-    public void removedFromNetwork(long amount) {
+    public void onEnergyAdded(long amount) {}
 
-    }
+    @Override
+    public void onEnergyRemoved(long amount) {}
 
     @Override
     public TileEntity getTile() {

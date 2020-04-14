@@ -24,6 +24,7 @@ import sonar.fluxnetworks.api.tiles.IFluxConfigurable;
 import sonar.fluxnetworks.api.tiles.ITilePacketBuffer;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.common.connection.handler.AbstractTransferHandler;
 import sonar.fluxnetworks.common.core.ContainerCore;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
@@ -35,7 +36,6 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.connection.handler.AbstractTransferHandler;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
 
 import static sonar.fluxnetworks.common.network.TilePacketBufferContants.*;
@@ -198,14 +198,14 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             for(int i = 0; i < connections.length; i++) {
                 tag.putByte('c' + String.valueOf(i), connections[i]);
             }
-            tag.putLong("buf", ((AbstractTransferHandler) getTransferHandler()).buffer);
+            tag.putLong("buf", getTransferHandler().getBuffer());
             tag.putBoolean("l", chunkLoading);
         }
         if(type == NBTType.TILE_UPDATE) {
             getTransferHandler().writeNetworkedNBT(tag);
         }
         if(type == NBTType.TILE_DROP) {
-            tag.putLong("buffer", ((AbstractTransferHandler) getTransferHandler()).buffer);
+            tag.putLong("buffer", getTransferHandler().getBuffer());
             tag.putInt(FluxConnectorBlockItem.PRIORITY, priority);
             tag.putLong(FluxConnectorBlockItem.LIMIT, limit);
             tag.putBoolean(FluxConnectorBlockItem.DISABLE_LIMIT, disableLimit);

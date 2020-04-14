@@ -62,21 +62,20 @@ public class FluxUtils {
             }
         }
         if(type.canRemoveEnergy() || type.isController()) {
-            String b = FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+            String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if(change == 0) {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
             } else {
-                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + "-" + b;
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + b;
             }
         }
-        // Storage are inverted
         if(type == EnumConnectionType.STORAGE) {
             if(change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else if(change > 0) {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + "-" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             } else {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             }
         }
         return "";

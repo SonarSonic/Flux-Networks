@@ -90,8 +90,14 @@ public class FluxNetworkServer extends FluxNetworkBase {
             sortConnections = false;
         }
         bufferLimiter = 0;
+
+        List<IFluxConnector> fluxConnectors = getConnections(FluxCacheTypes.flux);
+        fluxConnectors.forEach(f -> {
+            f.getTransferHandler().onStartCycle();
+            bufferLimiter += f.getTransferHandler().getRequest();
+        });
         if(!sortedPoints.isEmpty()) {
-            sortedPoints.forEach(g -> g.getConnectors().forEach(p -> bufferLimiter += p.getTransferHandler().removeFromNetwork(Long.MAX_VALUE, true)));
+
             if (bufferLimiter > 0 && !sortedPlugs.isEmpty()) {
                 pointTransferIterator.reset(sortedPoints, true);
                 plugTransferIterator.reset(sortedPlugs, false);
@@ -103,10 +109,10 @@ public class FluxNetworkServer extends FluxNetworkBase {
                         if(plug.getConnectionType() == point.getConnectionType()) {
                             break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                         }
-                        long operate = Math.min(plug.getTransferHandler().getBuffer(), point.getTransferHandler().getRequest());
-                        long removed = point.getTransferHandler().removeFromNetwork(operate, false);
+                        long operate = plug.getTransferHandler().removeEnergyFromBuffer(point.getTransferHandler().getRequest(), true);
+                        long removed = point.getTransferHandler().addEnergyToBuffer(operate, false);
                         if(removed > 0) {
-                            plug.getTransferHandler().addToNetwork(removed);
+                            plug.getTransferHandler().removeEnergyFromBuffer(removed, false);
                             if (point.getTransferHandler().getRequest() <= 0) {
                                 continue CYCLE;
                             }
@@ -125,8 +131,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
                 }
             }
         }
-        List<IFluxConnector> fluxConnectors = getConnections(FluxCacheTypes.flux);
-        fluxConnectors.forEach(fluxConnector -> fluxConnector.getTransferHandler().onLastEndTick());
+        fluxConnectors.forEach(fluxConnector -> fluxConnector.getTransferHandler().onEndCycle());
         network_stats.getValue().stopProfiling();
         network_stats.getValue().onEndServerTick();
     }

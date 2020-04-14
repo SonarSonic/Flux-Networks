@@ -5,15 +5,17 @@ import net.minecraft.tileentity.TileEntity;
 
 public interface IFluxTransfer {
 
-    void onServerStartTick();
+    void onStartCycle();
 
-    long addToNetwork(long amount, boolean simulate);
+    void onEndCycle();
 
-    long removeFromNetwork(long amount, boolean simulate);
+    long addEnergy(long amount, boolean simulate);
 
-    void addedToNetwork(long amount);
+    long removeEnergy(long amount, boolean simulate);
 
-    void removedFromNetwork(long amount);
+    void onEnergyAdded(long amount);
+
+    void onEnergyRemoved(long amount);
 
     TileEntity getTile();
 
