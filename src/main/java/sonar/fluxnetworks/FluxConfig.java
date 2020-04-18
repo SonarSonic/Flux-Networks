@@ -5,8 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
-import sonar.fluxnetworks.common.handler.ItemEnergyHandler;
-import sonar.fluxnetworks.common.handler.TileEntityHandler;
+
 import java.util.List;
 
 public class FluxConfig {
@@ -60,6 +59,7 @@ public class FluxConfig {
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
     public static List<String> blockBlacklistStrings, itemBlackListStrings;
+    public static boolean enableGuiDebug;
 
     public static void bakeCommonConfig(){
         defaultLimit = COMMON_CONFIG.defaultLimit.get();
@@ -87,6 +87,7 @@ public class FluxConfig {
         enableOneProbeBasicInfo = CLIENT_CONFIG.enableOneProbeBasicInfo.get();
         enableOneProbeAdvancedInfo = CLIENT_CONFIG.enableOneProbeAdvancedInfo.get();
         enableOneProbeSneaking = CLIENT_CONFIG.enableOneProbeSneaking.get();
+        enableGuiDebug = CLIENT_CONFIG.enableGuiDebug.get();
     }
 
     public static class CommonConfig{
@@ -182,6 +183,7 @@ public class FluxConfig {
     public static class ClientConfig{
 
         public ForgeConfigSpec.BooleanValue enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
+        public ForgeConfigSpec.BooleanValue enableGuiDebug;
 
         public ClientConfig(ForgeConfigSpec.Builder builder) {
 
@@ -190,6 +192,9 @@ public class FluxConfig {
                     .comment("Enable navigation buttons sound when pressing it")
                     .translation(FluxNetworks.MODID + ".config." + "enableButtonSound")
                     .define("enableButtonSound", true);
+            enableGuiDebug = builder
+                    .comment("Internal use only! Keep this to false!")
+                    .define("enableGuiDebug", false);
 
             builder.pop();
 

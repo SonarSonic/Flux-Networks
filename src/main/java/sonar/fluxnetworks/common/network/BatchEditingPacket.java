@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxCacheTypes;
@@ -79,7 +80,8 @@ public class BatchEditingPacket extends AbstractPacket {
                     boolean surge = tag.getBoolean(FluxConnectorBlockItem.SURGE_MODE);
                     boolean unlimited = tag.getBoolean(FluxConnectorBlockItem.DISABLE_LIMIT);
                     boolean load = tag.getBoolean("chunkLoad");
-                    //noinspection unchecked
+                    //TODO TODO TODO toooodoooooo
+                    @SuppressWarnings("unchecked") 
                     List<TileFluxCore> onlineConnectors = network.getConnections(FluxCacheTypes.flux);
                     AtomicBoolean reject = new AtomicBoolean(false);
 

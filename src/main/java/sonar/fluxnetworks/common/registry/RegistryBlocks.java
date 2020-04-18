@@ -5,7 +5,7 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 import sonar.fluxnetworks.common.block.*;
-import sonar.fluxnetworks.common.core.ContainerCore;
+import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
@@ -18,8 +18,9 @@ public class RegistryBlocks {
     public static Block FLUX_BLOCK;
 
 
-    @ObjectHolder("containercore")
-    public static ContainerType<ContainerCore> CONTAINER_CORE;
+
+    @ObjectHolder("connector")
+    public static ContainerType<ContainerConnector<?>> CONTAINER_CONNECTOR;
 
     @ObjectHolder("fluxplug")
     public static FluxPlugBlock FLUX_PLUG;

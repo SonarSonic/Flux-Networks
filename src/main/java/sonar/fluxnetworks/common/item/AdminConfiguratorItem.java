@@ -9,8 +9,6 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -18,7 +16,7 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
-import sonar.fluxnetworks.common.core.ContainerCore;
+import sonar.fluxnetworks.common.core.ContainerConnector;
 
 import javax.annotation.Nullable;
 
@@ -73,7 +71,7 @@ public class AdminConfiguratorItem extends FluxConfiguratorItem {
         @Nullable
         @Override
         public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity player) {
-            return new ContainerCore(windowID, playerInventory, this);
+            return new ContainerConnector<>(windowID, playerInventory, this);
         }
     }
 

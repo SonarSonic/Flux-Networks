@@ -3,24 +3,26 @@ package sonar.fluxnetworks.common.core;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.items.wrapper.InvWrapper;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
-public class ContainerCore extends Container {
+import javax.annotation.Nonnull;
 
-    public INetworkConnector connector;
+/**
+ * Server and client are same class
+ */
+public class ContainerConnector<T extends INetworkConnector> extends Container {
 
-    public ContainerCore(int windowId, PlayerInventory inv, INetworkConnector connector) {
-        super(RegistryBlocks.CONTAINER_CORE, windowId);
+    public T connector;
+
+    public ContainerConnector(int windowId, @Nonnull PlayerInventory inv, T connector) {
+        super(RegistryBlocks.CONTAINER_CONNECTOR, windowId);
         this.connector = connector;
         this.connector.open(inv.player);
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
+    public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
         return true;
     }
 

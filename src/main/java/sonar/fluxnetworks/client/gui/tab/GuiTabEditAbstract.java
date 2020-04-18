@@ -2,11 +2,12 @@ package sonar.fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.network.EnumSecurityType;
+import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.EnumSecurityType;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
@@ -14,7 +15,6 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.popups.PopUpCore;
 import sonar.fluxnetworks.client.gui.popups.PopUpCustomColour;
 import sonar.fluxnetworks.common.core.FluxUtils;
-import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 

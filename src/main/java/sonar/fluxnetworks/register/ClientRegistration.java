@@ -1,16 +1,16 @@
 package sonar.fluxnetworks.register;
 
+import icyllis.modernui.gui.master.GlobalModuleManager;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxColorHandler;
@@ -18,17 +18,20 @@ import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.client.mui.module.NavigationHome;
 import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
-import sonar.fluxnetworks.common.core.ContainerCore;
+import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 
+@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = FluxNetworks.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistration {
 
+    @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void init(FMLClientSetupEvent event) {
         FluxNetworks.LOGGER.info("Started Client Setup Event");
@@ -49,19 +52,25 @@ public class ClientRegistration {
 
         FluxNetworks.LOGGER.info("Registering Screens");
 
-        ScreenManager.registerFactory(RegistryBlocks.CONTAINER_CORE, (ScreenManager.IScreenFactory<ContainerCore, GuiTabCore>)(container, inventory, windowID) -> {
-            INetworkConnector connector = container.connector;
-            if(connector instanceof TileFluxCore){
-                return new GuiFluxConnectorHome(inventory.player, (TileFluxCore) connector);
-            }
-            if(connector instanceof FluxConfiguratorItem.ContainerProvider){
-                return new GuiFluxConfiguratorHome(inventory.player, (FluxConfiguratorItem.ContainerProvider)connector);
-            }
-            if(connector instanceof AdminConfiguratorItem.ContainerProvider){
-                return new GuiFluxAdminHome(inventory.player, connector);
-            }
-            return new GuiFluxAdminHome(inventory.player, connector); //TODO CHANGE ME??
-        });
+        ScreenManager.registerFactory(RegistryBlocks.CONTAINER_CONNECTOR,
+                (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) ? GlobalModuleManager.INSTANCE.castModernScreen(c ->
+                        () -> new NavigationHome(c.connector))
+                        : (ScreenManager.IScreenFactory<ContainerConnector<?>, GuiTabCore>) (container, inventory, windowID) -> {
+                    if (container == null) {
+                        return null;
+                    }
+                    INetworkConnector connector = container.connector;
+                    if (connector instanceof TileFluxCore) {
+                        return new GuiFluxConnectorHome(inventory.player, (TileFluxCore) connector);
+                    }
+                    if (connector instanceof FluxConfiguratorItem.ContainerProvider) {
+                        return new GuiFluxConfiguratorHome(inventory.player, (FluxConfiguratorItem.ContainerProvider) connector);
+                    }
+                    if (connector instanceof AdminConfiguratorItem.ContainerProvider) {
+                        return new GuiFluxAdminHome(inventory.player, connector);
+                    }
+                    return null;
+                });
 
 
         FluxNetworks.LOGGER.info("Finished Client Setup Event");

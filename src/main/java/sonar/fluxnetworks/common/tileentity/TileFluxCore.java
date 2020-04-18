@@ -25,7 +25,7 @@ import sonar.fluxnetworks.api.tiles.ITilePacketBuffer;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.connection.handler.AbstractTransferHandler;
-import sonar.fluxnetworks.common.core.ContainerCore;
+import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -40,6 +40,7 @@ import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
 
 import static sonar.fluxnetworks.common.network.TilePacketBufferContants.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.UUID;
@@ -536,13 +537,14 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
     */
 
+    @Nonnull
     @Override
     public ITextComponent getDisplayName() {
         return new StringTextComponent(getCustomName());
     }
 
     @Nullable
-    public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity entity){
-        return new ContainerCore(windowID, playerInventory, this);
+    public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity entity){
+        return new ContainerConnector<>(windowID, playerInventory, this);
     }
 }

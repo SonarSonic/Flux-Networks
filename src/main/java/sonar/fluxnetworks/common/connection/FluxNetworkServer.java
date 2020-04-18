@@ -66,7 +66,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         Iterator<IFluxConnector> iterator = toRemove.iterator();
         while(iterator.hasNext()) {
             IFluxConnector flux = iterator.next();
-            FluxCacheTypes.getValidTypes(flux).forEach(t -> ((List<IFluxConnector>) getConnections(t)).removeIf(f -> f == flux));
+            FluxCacheTypes.getValidTypes(flux).forEach(t -> getConnections(t).removeIf(f -> f == flux));
             iterator.remove();
             sortConnections = true;
         }

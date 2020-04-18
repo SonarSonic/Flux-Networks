@@ -1,21 +1,26 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
+        maven {
+            name "forge"
+            url "https://files.minecraftforge.net/maven"
+        }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
+plugins {
+    id "com.wynprice.cursemaven" version "2.1.1"
+}
 apply plugin: 'net.minecraftforge.gradle'
-
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${minecraft_version}-5.0.0-1"
+version = "${minecraft_version}-5.0.1-2"
 group = 'sonar.fluxnetworks'
-archivesBaseName = 'fluxnetworks'
+archivesBaseName = 'FluxNetworks'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 minecraft {
@@ -37,7 +42,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                fluxnetworks {
                     source sourceSets.main
                 }
             }
@@ -53,7 +58,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                examplemod {
+                fluxnetworks {
                     source sourceSets.main
                 }
             }
@@ -81,6 +86,10 @@ minecraft {
 
 repositories {
     maven {
+        name 'Forge'
+        url 'https://files.minecraftforge.net/maven'
+    }
+    maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
@@ -104,6 +113,9 @@ dependencies {
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+
+    // 1.4.4-38
+    compile fg.deobf("curse.maven:modern-ui:2933741")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -137,5 +149,13 @@ publishing {
         maven {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
+    }
+}
+
+sourceSets {
+    api
+    main {
+        compileClasspath += sourceSets.api.output
+        runtimeClasspath += sourceSets.api.output
     }
 }

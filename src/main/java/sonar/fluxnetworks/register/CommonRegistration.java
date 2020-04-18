@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.register;
 
-import com.google.gson.JsonObject;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
@@ -11,14 +10,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.storage.loot.conditions.ILootCondition;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
@@ -27,7 +21,7 @@ import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.render.ItemRendererCallable;
 import sonar.fluxnetworks.common.block.*;
 import sonar.fluxnetworks.common.capabilities.DefaultSuperAdmin;
-import sonar.fluxnetworks.common.core.ContainerCore;
+import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.handler.CapabilityHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
@@ -50,6 +44,8 @@ import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
+import javax.annotation.Nonnull;
+
 @Mod.EventBusSubscriber(modid = FluxNetworks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CommonRegistration {
 
@@ -70,7 +66,6 @@ public class CommonRegistration {
 
         DefaultSuperAdmin.register();
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
-
 
         FluxNetworks.LOGGER.info("Finished Common Setup");
     }
@@ -140,28 +135,35 @@ public class CommonRegistration {
         FluxNetworks.LOGGER.info("Finished Registering Tile Entities");
     }
 
+    /**
+     * ContainerType has the function to create container on client side
+     * Register the create container function that will be opened on client side from the packet that from the server
+     */
     @SubscribeEvent
-    public static void onContainerRegistry(final RegistryEvent.Register<ContainerType<?>> event) {
+    public static void onContainerRegistry(final @Nonnull RegistryEvent.Register<ContainerType<?>> event) {
         FluxNetworks.LOGGER.info("Started Registering Containers");
 
-        event.getRegistry().register(IForgeContainerType.create((windowId, inv, data) -> {
-            if(data.readBoolean()){ //check for tileentity
-                BlockPos pos = data.readBlockPos();
-                TileEntity tile = inv.player.getEntityWorld().getTileEntity(pos);
-                if(tile instanceof INetworkConnector){
-                    return new ContainerCore(windowId, inv, (INetworkConnector) tile);
+        event.getRegistry().register(IForgeContainerType.create((windowId, inventory, packet) -> {
+            // check if it's tile entity
+            if (packet.readBoolean()) {
+                BlockPos pos = packet.readBlockPos();
+                TileEntity tile = inventory.player.getEntityWorld().getTileEntity(pos);
+                if (tile instanceof INetworkConnector){
+                    return new ContainerConnector<>(windowId, inventory, (INetworkConnector) tile);
                 }
-            }else{
-                ItemStack stack = inv.player.getHeldItemMainhand();
-                if(stack.getItem() instanceof AdminConfiguratorItem){
-                    return new ContainerCore(windowId, inv, new AdminConfiguratorItem.ContainerProvider(stack));
+            } else {
+                ItemStack stack = inventory.player.getHeldItemMainhand();
+                // build a bridge to connect to a flux network
+                if (stack.getItem() instanceof AdminConfiguratorItem){
+                    return new ContainerConnector<>(windowId, inventory, new AdminConfiguratorItem.ContainerProvider(stack));
                 }
-                if(stack.getItem() instanceof FluxConfiguratorItem){
-                    return new ContainerCore(windowId, inv, new FluxConfiguratorItem.ContainerProvider(stack));
+                if (stack.getItem() instanceof FluxConfiguratorItem){
+                    return new ContainerConnector<>(windowId, inventory, new FluxConfiguratorItem.ContainerProvider(stack));
                 }
             }
+            // return null, because players have broken some rules, and there's no gui will be opened, and the server container will be closed as well
             return null;
-        }).setRegistryName("containercore"));
+        }).setRegistryName("connector"));
 
         FluxNetworks.LOGGER.info("Finished Registering Containers");
     }

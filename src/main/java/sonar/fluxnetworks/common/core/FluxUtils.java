@@ -34,7 +34,7 @@ public class FluxUtils {
 
     public static UUID UUID_DEFAULT = new UUID(-1, -1);
 
-    public static <E extends Enum> E incrementEnum(E enumObj, E[] values) {
+    public static <E extends Enum<?>> E incrementEnum(E enumObj, E[] values) {
         int ordinal = enumObj.ordinal() + 1;
         if (ordinal < values.length) {
             return values[ordinal];

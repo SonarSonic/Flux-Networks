@@ -19,8 +19,7 @@ import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.FluxColorHandler;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.core.ContainerCore;
+import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -122,7 +121,7 @@ public class FluxConfiguratorItem extends Item {
         @Nullable
         @Override
         public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity player) {
-            return new ContainerCore(windowID, playerInventory, this);
+            return new ContainerConnector<>(windowID, playerInventory, this);
         }
     }
 

@@ -1,30 +1,23 @@
 package sonar.fluxnetworks.client.gui.popups;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.client.FluxColorHandler;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.client.gui.basic.GuiDraw;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 import sonar.fluxnetworks.client.gui.basic.GuiPopUpHost;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.common.core.ContainerCore;
+import sonar.fluxnetworks.common.core.ContainerConnector;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCore> {
+public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerConnector<?>> {
 
     protected List<NormalButton> popButtons = Lists.newArrayList();
     protected List<SlidedSwitchButton> popSwitches = new ArrayList<>();
