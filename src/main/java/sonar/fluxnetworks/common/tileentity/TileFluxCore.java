@@ -300,7 +300,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public void writePacket(PacketBuffer buf, byte id) {
         switch (id) {
             case FLUX_CUSTOM_NAME:
-                buf.writeString(customName);
+                buf.writeString(customName, 256);
                 break;
             case FLUX_PRIORITY:
                 buf.writeInt(priority);
@@ -317,7 +317,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             case FLUX_GUI_SYNC:
                 buf.writeBoolean(settings_changed);
                 if(settings_changed){
-                    buf.writeString(customName);
+                    buf.writeString(customName, 256);
                     buf.writeInt(priority);
                     buf.writeLong(limit);
                     buf.writeBoolean(surgeMode);
@@ -333,7 +333,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public void readPacket(PacketBuffer buf, byte id) {
         switch (id) {
             case FLUX_CUSTOM_NAME:
-                customName = buf.readString();
+                customName = buf.readString(256);
                 markLiteSettingChanged();
                 break;
             case FLUX_PRIORITY:
@@ -354,7 +354,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                 break;
             case FLUX_GUI_SYNC:
                 if(buf.readBoolean()){
-                    customName = buf.readString();
+                    customName = buf.readString(256);
                     priority = buf.readInt();
                     limit = buf.readLong();
                     surgeMode = buf.readBoolean();

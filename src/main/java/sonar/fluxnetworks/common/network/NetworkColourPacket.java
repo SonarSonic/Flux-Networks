@@ -18,7 +18,7 @@ public class NetworkColourPacket extends AbstractPacket {
         for (int i = 0; i < size; i++) {
             int id = buf.readInt();
             int colour = buf.readInt();
-            String name = buf.readString();
+            String name = buf.readString(256);
             cache.put(id, new Tuple<>(colour, name));
         }
     }
@@ -26,13 +26,14 @@ public class NetworkColourPacket extends AbstractPacket {
     public NetworkColourPacket(Map<Integer, Tuple<Integer, String>> cache) {
         this.cache = cache;
     }
+
     @Override
     public void encode(PacketBuffer buf) {
         buf.writeInt(cache.size());
         cache.forEach((ID,DETAILS)->{
             buf.writeInt(ID);
             buf.writeInt(DETAILS.getA());
-            buf.writeString(DETAILS.getB());
+            buf.writeString(DETAILS.getB(), 256);
         });
     }
 

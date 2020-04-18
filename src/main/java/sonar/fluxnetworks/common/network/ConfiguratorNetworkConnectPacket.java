@@ -32,7 +32,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
     @Override
     public void encode(PacketBuffer buf) {
         buf.writeInt(id);
-        buf.writeString(password);
+        buf.writeString(password, 256);
     }
 
     @Override
