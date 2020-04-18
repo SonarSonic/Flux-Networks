@@ -53,7 +53,7 @@ public class FluxNetworks {
     private void enqueueIMC(final InterModEnqueueEvent event){
         InterModComms.sendTo("carryon", "blacklistBlock", () -> FluxNetworks.MODID + ":*");
 
-        if(ModList.get().isLoaded("theoneprobe")) {
+        if (ModList.get().isLoaded("theoneprobe")) {
             InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration::new);
         }
     }

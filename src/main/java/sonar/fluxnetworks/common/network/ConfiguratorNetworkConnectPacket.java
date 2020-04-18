@@ -26,7 +26,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
 
     public ConfiguratorNetworkConnectPacket(PacketBuffer buf){
         id = buf.readInt();
-        password = buf.readString();
+        password = buf.readString(256);
     }
 
     @Override

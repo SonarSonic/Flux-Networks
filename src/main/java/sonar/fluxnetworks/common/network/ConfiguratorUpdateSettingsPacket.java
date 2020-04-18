@@ -21,7 +21,7 @@ public class ConfiguratorUpdateSettingsPacket extends AbstractPacket{
     }
 
     public ConfiguratorUpdateSettingsPacket(PacketBuffer buf) {
-        customName = buf.readString();
+        customName = buf.readString(256);
         tag = buf.readCompoundTag();
     }
 

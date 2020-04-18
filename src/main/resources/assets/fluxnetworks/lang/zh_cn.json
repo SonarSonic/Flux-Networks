@@ -131,5 +131,8 @@
 	"info.fluxnetworks.access.admin": "管理员",
 	"info.fluxnetworks.access.user": "用户",
 	"info.fluxnetworks.access.blocked": "陌生人",
-	"info.fluxnetworks.access.superadmin": "超级管理员"
+	"info.fluxnetworks.access.superadmin": "超级管理员",
+
+	"info.fluxnetworks.jei.creatingfluxrecipe": "某科学的通量创造",
+	"info.fluxnetworks.jei.leftclickhelp": "左键点击%s"
 }
