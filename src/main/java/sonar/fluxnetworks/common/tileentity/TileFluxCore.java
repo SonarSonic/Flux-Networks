@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.NetworkFolder;
@@ -83,7 +84,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         if(!world.isRemote && load) {
             FluxUtils.removeConnection(this, false);
             if(chunkLoading) {
-                FluxChunkManager.releaseChunk(world, new ChunkPos(pos));
+                FluxChunkManager.removeChunkLoader((ServerWorld)world, new ChunkPos(pos));
             }
             load = false;
         }

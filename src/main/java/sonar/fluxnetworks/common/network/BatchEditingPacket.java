@@ -3,6 +3,7 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
@@ -114,13 +115,13 @@ public class BatchEditingPacket extends AbstractPacket {
                                                 return;
                                             }
                                             if (!f.chunkLoading) {
-                                                f.chunkLoading = FluxChunkManager.forceChunk(f.getWorld(), new ChunkPos(f.getPos()));
+                                                f.chunkLoading = FluxChunkManager.addChunkLoader((ServerWorld) f.getWorld(), new ChunkPos(f.getPos()));
                                                 if (!f.chunkLoading) {
                                                     reject.set(true);
                                                 }
                                             }
                                         } else {
-                                            FluxChunkManager.releaseChunk(f.getWorld(), new ChunkPos(f.getPos()));
+                                            FluxChunkManager.removeChunkLoader((ServerWorld) f.getWorld(), new ChunkPos(f.getPos()));
                                             f.chunkLoading = false;
                                         }
                                     } else {

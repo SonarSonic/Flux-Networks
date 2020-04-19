@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.network;
 
+import net.minecraft.world.server.ServerWorld;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxCacheTypes;
@@ -61,7 +62,7 @@ public class TilePacketHandler {
         boolean load = tag.getBoolean("c");
         if(FluxConfig.enableChunkLoading) {
             if (load) {
-                boolean p = FluxChunkManager.forceChunk(tile.getWorld(), new ChunkPos(tile.getPos()));
+                boolean p = FluxChunkManager.addChunkLoader((ServerWorld)tile.getWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = p;
                 tile.settings_changed = true;
                 if(!p) {
@@ -69,7 +70,7 @@ public class TilePacketHandler {
                 }
                 return null;
             } else {
-                FluxChunkManager.releaseChunk(tile.getWorld(), new ChunkPos(tile.getPos()));
+                FluxChunkManager.removeChunkLoader((ServerWorld) tile.getWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = false;
                 tile.settings_changed = true;
                 return null;

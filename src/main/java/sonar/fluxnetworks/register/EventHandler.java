@@ -20,6 +20,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
@@ -34,6 +35,7 @@ import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.capabilities.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FireItemEntity;
+import sonar.fluxnetworks.common.data.FluxChunkManager;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
@@ -59,6 +61,7 @@ public class EventHandler {
         FluxNetworkCache.instance.clearNetworks();
         FluxNetworkCache.instance.clearClientCache();
         FluxNetworks.proxy.onServerStopped();
+        FluxChunkManager.clear();
     }
 
     @SubscribeEvent
@@ -69,6 +72,16 @@ public class EventHandler {
             }
         }
     }
+
+    //// WORLD EVENTS \\\\
+
+    @SubscribeEvent
+    public static void onWorldLoad(WorldEvent.Load event) {
+        if(event.getWorld() instanceof ServerWorld) {
+            FluxChunkManager.loadWorld((ServerWorld)event.getWorld());
+        }
+    }
+
 
     //// PLAYER EVENTS \\\\
 
