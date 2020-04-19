@@ -15,6 +15,7 @@ import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpConnectionEdit;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.core.FluxUtils;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
+
+    public InvisibleButton redirectButton;
 
     private List<BatchEditButton> editButtons = new ArrayList<>();
 
@@ -60,7 +63,10 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         editButtons.clear();
         buttonLists.add(editButtons);
 
-        if(networkValid) {
+        if(!networkValid) {
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            addButton(redirectButton);
+        }else{
             clear = new BatchEditButton(118, 8, 0, FluxTranslate.BATCH_CLEAR_BUTTON.t()).setUnclickable();
             edit = new BatchEditButton(132, 8, 1, FluxTranslate.BATCH_EDIT_BUTTON.t()).setUnclickable();
             disconnect = new BatchEditButton(146, 8, 2, FluxTranslate.BATCH_DISCONNECT_BUTTON.t()).setUnclickable();

@@ -12,6 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpCore;
 import sonar.fluxnetworks.client.gui.popups.PopUpCustomColour;
 import sonar.fluxnetworks.common.core.FluxUtils;
@@ -20,6 +21,8 @@ import java.util.List;
 
 /**the base class for settings and creation guis*/
 public abstract class GuiTabEditAbstract extends GuiTabCore {
+
+    public InvisibleButton redirectButton;
 
     protected List<ColorButton> colorButtons = Lists.newArrayList();
 
@@ -56,8 +59,10 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
             addButton(name);
             addButton(password);
+        }else if(!networkValid){
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            addButton(redirectButton);
         }
-
     }
 
 

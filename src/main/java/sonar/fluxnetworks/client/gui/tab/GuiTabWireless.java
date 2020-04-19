@@ -10,6 +10,7 @@ import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InventoryButton;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.api.network.NetworkSettings;
@@ -23,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiTabWireless extends GuiTabCore {
+
+    public InvisibleButton redirectButton;
 
     public List<InventoryButton> inventoryButtonList = new ArrayList<>();
     public NormalButton apply;
@@ -73,6 +76,9 @@ public class GuiTabWireless extends GuiTabCore {
 
             apply = new NormalButton(FluxTranslate.APPLY.t(), 73, 130, 32, 12, 0).setUnclickable();
             buttons.add(apply);
+        }else{
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            addButton(redirectButton);
         }
     }
 

@@ -9,6 +9,7 @@ import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.LineChart;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.api.network.NetworkSettings;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
@@ -19,6 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 
 public class GuiTabStatistics extends GuiTabCore {
+
+    public InvisibleButton redirectButton;
 
     private NetworkStatistics stats = network.getSetting(NetworkSettings.NETWORK_STATISTICS);
     private LineChart chart;
@@ -80,6 +83,8 @@ public class GuiTabStatistics extends GuiTabCore {
 
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            addButton(redirectButton);
         }
     }
 

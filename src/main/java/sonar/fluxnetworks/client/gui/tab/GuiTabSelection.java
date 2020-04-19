@@ -11,6 +11,7 @@ import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpNetworkPassword;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.network.NetworkSettings;
@@ -21,6 +22,8 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.Comparator;
 
 public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
+
+    public InvisibleButton redirectButton;
 
     public IFluxNetwork selectedNetwork;
 
@@ -67,6 +70,10 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     public void init() {
         super.init();
         configureNavigationButtons(EnumNavigationTabs.TAB_SELECTION, navigationTabs);
+        if(!networkValid){
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_CREATE.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_CREATE, player, connector));
+            addButton(redirectButton);
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
@@ -23,6 +24,8 @@ import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.common.core.FluxUtils;
 
 public class GuiFluxConfiguratorHome extends GuiTabCore {
+
+    public InvisibleButton redirectButton;
 
     public NormalButton apply;
     public FluxTextWidget fluxName, priority, limit;
@@ -66,6 +69,9 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     public void init() {
         super.init();
         configureNavigationButtons(EnumNavigationTabs.TAB_HOME, navigationTabs);
+
+        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+        addButton(redirectButton);
 
         int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
 

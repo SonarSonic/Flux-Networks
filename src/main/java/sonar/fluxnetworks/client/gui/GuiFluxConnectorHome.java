@@ -1,11 +1,13 @@
 package sonar.fluxnetworks.client.gui;
 
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.api.network.NetworkSettings;
@@ -20,6 +22,7 @@ import sonar.fluxnetworks.common.network.*;
  */
 public class GuiFluxConnectorHome extends GuiTabCore {
 
+    public InvisibleButton redirectButton;
     public FluxTextWidget fluxName, priority, limit;
 
     public SlidedSwitchButton surge, disableLimit, chunkLoad;
@@ -37,24 +40,14 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         return EnumNavigationTabs.TAB_HOME;
     }
 
-    @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
-        screenUtils.renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
-        renderTransfer(tileEntity, 0xffffff, 30, 90);
-        screenUtils.drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
-
-        font.drawString(FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        font.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        if(!tileEntity.getConnectionType().isStorage()) {
-            font.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        }
-    }
 
     @Override
     public void init() {
         super.init();
         configureNavigationButtons(EnumNavigationTabs.TAB_HOME, navigationTabs);
+
+        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+        addButton(redirectButton);
 
         int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
         fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 16, guiTop + 28, 144, 12).setOutlineColor(color);
@@ -94,6 +87,21 @@ public class GuiFluxConnectorHome extends GuiTabCore {
             switches.add(chunkLoad);
         }
 
+    }
+
+
+    @Override
+    protected void drawForegroundLayer(int mouseX, int mouseY) {
+        super.drawForegroundLayer(mouseX, mouseY);
+        screenUtils.renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
+        renderTransfer(tileEntity, 0xffffff, 30, 90);
+        screenUtils.drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
+
+        font.drawString(FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        if(!tileEntity.getConnectionType().isStorage()) {
+            font.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        }
     }
 
     @Override

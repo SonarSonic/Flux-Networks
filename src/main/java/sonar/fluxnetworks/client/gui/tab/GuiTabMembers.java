@@ -10,6 +10,7 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpUserEdit;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSettings;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class GuiTabMembers extends GuiTabPages<NetworkMember> {
+
+    public InvisibleButton redirectButton;
 
     public NetworkMember selectedPlayer;
 
@@ -72,6 +75,10 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
         super.init();
         configureNavigationButtons(EnumNavigationTabs.TAB_MEMBER, navigationTabs);
+        if(!networkValid) {
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            addButton(redirectButton);
+        }
     }
 
     @Override

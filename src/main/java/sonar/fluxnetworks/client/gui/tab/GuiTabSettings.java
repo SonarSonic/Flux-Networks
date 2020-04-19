@@ -10,6 +10,7 @@ import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -19,6 +20,8 @@ import sonar.fluxnetworks.common.network.GeneralPacketEnum;
 import net.minecraft.util.text.TextFormatting;
 
 public class GuiTabSettings extends GuiTabEditAbstract {
+
+    public InvisibleButton redirectButton;
 
     public NormalButton apply, delete;
     public int deleteCount;
@@ -83,6 +86,9 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 this.color = c;
                 this.color.selected = true;
             }
+        }else{
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            addButton(redirectButton);
         }
 
     }

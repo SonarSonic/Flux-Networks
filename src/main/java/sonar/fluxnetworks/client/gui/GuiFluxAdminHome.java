@@ -7,6 +7,7 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.network.NetworkSettings;
@@ -18,6 +19,8 @@ import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 import sonar.fluxnetworks.common.network.GUIPermissionRequestPacket;
 
 public class GuiFluxAdminHome extends GuiTabCore {
+
+    public InvisibleButton redirectButton;
 
     private int timer;
     public SlidedSwitchButton detailed_network_view, super_admin;
@@ -44,6 +47,9 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public void init() {
         super.init();
         configureNavigationButtons(EnumNavigationTabs.TAB_HOME, navigationTabs);
+
+        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+        addButton(redirectButton);
 
         super_admin = new SlidedSwitchButton(140, 30, 0, guiLeft, guiTop, FluxNetworkCache.instance.superAdminClient);
         switches.add(super_admin);

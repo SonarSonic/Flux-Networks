@@ -5,13 +5,12 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 
-///TODO remove common references
 public class FluxConfigurationType {
-    public static FluxConfigurationType NETWORK = new FluxConfigurationType(0,"network", (nbt, key1, tile) -> copyNetwork(nbt, key1, tile), (nbt, key1, tile) -> pasteNetwork(nbt, key1, tile));
-    public static FluxConfigurationType PRIORITY = new FluxConfigurationType(2,"priority", (nbt, key1, tile) -> copyPriority(nbt, key1, tile), (nbt, key1, tile) -> pastePriority(nbt, key1, tile));
-    public static FluxConfigurationType PRIORITY_SETTING = new FluxConfigurationType(3,"p_setting", (nbt, key1, tile) -> copyPrioritySetting(nbt, key1, tile), (nbt, key1, tile) -> pastePrioritySetting(nbt, key1, tile));
-    public static FluxConfigurationType TRANSFER = new FluxConfigurationType(4,"transfer", (nbt, key1, tile) -> copyTransfer(nbt, key1, tile), (nbt, key1, tile) -> pasteTransfer(nbt, key1, tile));
-    public static FluxConfigurationType TRANSFER_SETTING = new FluxConfigurationType(5,"t_setting", (nbt, key1, tile) -> copyTransferSetting(nbt, key1, tile), (nbt, key1, tile) -> pasteTransferSetting(nbt, key1, tile));
+    public static FluxConfigurationType NETWORK = new FluxConfigurationType(0,"network", FluxConfigurationType::copyNetwork, FluxConfigurationType::pasteNetwork);
+    public static FluxConfigurationType PRIORITY = new FluxConfigurationType(2,"priority", FluxConfigurationType::copyPriority, FluxConfigurationType::pastePriority);
+    public static FluxConfigurationType PRIORITY_SETTING = new FluxConfigurationType(3,"p_setting", FluxConfigurationType::copyPrioritySetting, FluxConfigurationType::pastePrioritySetting);
+    public static FluxConfigurationType TRANSFER = new FluxConfigurationType(4,"transfer", FluxConfigurationType::copyTransfer, FluxConfigurationType::pasteTransfer);
+    public static FluxConfigurationType TRANSFER_SETTING = new FluxConfigurationType(5,"t_setting", FluxConfigurationType::copyTransferSetting, FluxConfigurationType::pasteTransferSetting);
 
     public static FluxConfigurationType[] VALUES = new FluxConfigurationType[]{NETWORK, PRIORITY, PRIORITY_SETTING, TRANSFER, TRANSFER_SETTING};
 
@@ -88,11 +87,11 @@ public class FluxConfigurationType {
         tile.disableLimit = nbt.getBoolean(key);
     }
 
-    public interface ICopyMethod<T> {
+    public interface ICopyMethod {
         void copyFromTile(CompoundNBT tag, String key, TileFluxCore tile);
     }
 
-    public interface IPasteMethod<T> {
+    public interface IPasteMethod {
         void pasteToTile(CompoundNBT tag, String key, TileFluxCore tile);
     }
 
