@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.register;
 
-import icyllis.modernui.gui.master.GlobalModuleManager;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
@@ -18,7 +17,7 @@ import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.client.mui.module.NavigationHome;
+import sonar.fluxnetworks.client.mui.MUIIntegration;
 import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
 import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
@@ -49,28 +48,28 @@ public class ClientRegistration {
         RenderTypeLookup.setRenderLayer(RegistryBlocks.BASIC_FLUX_STORAGE, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(RegistryBlocks.HERCULEAN_FLUX_STORAGE, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, RenderType.getCutout());
-
         FluxNetworks.LOGGER.info("Registering Screens");
 
-        ScreenManager.registerFactory(RegistryBlocks.CONTAINER_CONNECTOR,
-                (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) ? GlobalModuleManager.INSTANCE.castModernScreen(c ->
-                        () -> new NavigationHome(c.connector))
-                        : (ScreenManager.IScreenFactory<ContainerConnector<?>, GuiTabCore>) (container, inventory, windowID) -> {
-                    if (container == null) {
-                        return null;
-                    }
-                    INetworkConnector connector = container.connector;
-                    if (connector instanceof TileFluxCore) {
-                        return new GuiFluxConnectorHome(inventory.player, (TileFluxCore) connector);
-                    }
-                    if (connector instanceof FluxConfiguratorItem.ContainerProvider) {
-                        return new GuiFluxConfiguratorHome(inventory.player, (FluxConfiguratorItem.ContainerProvider) connector);
-                    }
-                    if (connector instanceof AdminConfiguratorItem.ContainerProvider) {
-                        return new GuiFluxAdminHome(inventory.player, connector);
-                    }
+        if(FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded){
+            MUIIntegration.init(event);
+        }else {
+            ScreenManager.registerFactory(RegistryBlocks.CONTAINER_CONNECTOR, (ScreenManager.IScreenFactory<ContainerConnector<?>, GuiTabCore>)(container, inventory, windowID) -> {
+                if (container == null) {
                     return null;
-                });
+                }
+                INetworkConnector connector = container.connector;
+                if (connector instanceof TileFluxCore) {
+                    return new GuiFluxConnectorHome(inventory.player, (TileFluxCore) connector);
+                }
+                if (connector instanceof FluxConfiguratorItem.ContainerProvider) {
+                    return new GuiFluxConfiguratorHome(inventory.player, (FluxConfiguratorItem.ContainerProvider) connector);
+                }
+                if (connector instanceof AdminConfiguratorItem.ContainerProvider) {
+                    return new GuiFluxAdminHome(inventory.player, connector);
+                }
+                return null;
+            });
+        }
 
 
         FluxNetworks.LOGGER.info("Finished Client Setup Event");
