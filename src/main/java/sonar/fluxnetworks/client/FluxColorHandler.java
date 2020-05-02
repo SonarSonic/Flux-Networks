@@ -5,9 +5,11 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.ILightReader;
+import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
-import sonar.fluxnetworks.common.block.FluxNetworkBlock;
+import sonar.fluxnetworks.client.mui.module.NavigationHome;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -132,6 +134,9 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     public int getColor(ItemStack stack, int tintIndex) {
         if (tintIndex == 1) {
             if (stack.hasTag() && stack.getTag().getBoolean(FluxUtils.GUI_COLOR)) {
+                if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {
+                    return NavigationHome.network.isInvalid() ? NO_NETWORK_COLOR : NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
+                }
                 Screen screen = Minecraft.getInstance().currentScreen;
                 if (screen instanceof GuiFluxCore) {
                     GuiFluxCore guiFluxCore = (GuiFluxCore) screen;

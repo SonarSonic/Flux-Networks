@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.network;
 
-public class TilePacketBufferContants {
+public class TilePacketBufferConstants {
 
     public static final byte FLUX_CUSTOM_NAME = 0;
     public static final byte FLUX_PRIORITY = 1;

@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.client.gui;
 
-import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
@@ -55,7 +54,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         fluxName.setText(tileEntity.getCustomName());
         fluxName.setResponder(string -> {
             tileEntity.customName = fluxName.getText();
-            tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_CUSTOM_NAME);
+            tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_CUSTOM_NAME);
         });
         addButton(fluxName);
 
@@ -64,7 +63,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         priority.setText(String.valueOf(tileEntity.priority));
         priority.setResponder(string -> {
             tileEntity.priority = priority.getValidInt();
-            tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_PRIORITY);
+            tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_PRIORITY);
         });
         addButton(priority);
 
@@ -73,7 +72,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         limit.setText(String.valueOf(tileEntity.limit));
         limit.setResponder(string -> {
             tileEntity.limit = limit.getValidLong();
-            tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_LIMIT);
+            tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_LIMIT);
         });
         addButton(limit);
 
@@ -113,12 +112,12 @@ public class GuiFluxConnectorHome extends GuiTabCore {
                 case 1:
                     switchButton.switchButton();
                     tileEntity.surgeMode = switchButton.slideControl;
-                    tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_SURGE_MODE);
+                    tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_SURGE_MODE);
                     break;
                 case 2:
                     switchButton.switchButton();
                     tileEntity.disableLimit = switchButton.slideControl;
-                    tileEntity.sendTilePacketToServer(TilePacketBufferContants.FLUX_DISABLE_LIMIT);
+                    tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_DISABLE_LIMIT);
                     break;
                 case 3:
                     PacketHandler.INSTANCE.sendToServer(new TilePacket(TilePacketEnum.CHUNK_LOADING, TilePacketHandler.getChunkLoadPacket(!switchButton.slideControl), tileEntity.getPos(), tileEntity.getWorld().getDimension().getType().getId()));

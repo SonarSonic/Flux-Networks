@@ -3,6 +3,8 @@ package sonar.fluxnetworks.api.translate;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public enum FluxTranslate {
 
@@ -150,6 +152,7 @@ public enum FluxTranslate {
         return t();
     }
 
+    @OnlyIn(Dist.CLIENT)
     public String format(Object ...args){
         return I18n.format(t(), args);
     }

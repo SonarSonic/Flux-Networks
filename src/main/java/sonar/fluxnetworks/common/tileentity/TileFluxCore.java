@@ -39,7 +39,7 @@ import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
 
-import static sonar.fluxnetworks.common.network.TilePacketBufferContants.*;
+import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
