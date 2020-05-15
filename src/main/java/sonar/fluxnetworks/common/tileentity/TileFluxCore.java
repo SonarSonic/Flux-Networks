@@ -396,7 +396,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     @Override
-    public World getDimension() {
+    public World getWorld0() {
         return world;
     }
 

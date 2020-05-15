@@ -1,14 +1,15 @@
 package sonar.fluxnetworks.common.network;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.tiles.ITilePacketBuffer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.util.math.BlockPos;
 
+//TODO security check
 public class TilePacketBufferPacket extends AbstractPacket {
 
     public ITilePacketBuffer tile;

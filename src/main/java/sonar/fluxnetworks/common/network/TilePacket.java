@@ -3,9 +3,11 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 import net.minecraft.server.MinecraftServer;
@@ -15,32 +17,26 @@ import net.minecraft.world.World;
 
 public class TilePacket extends AbstractPacket {
 
-    public TilePacketEnum handler;
-    public CompoundNBT tag;
-    public BlockPos pos;
-    public int dimension;
+    private final TilePacketEnum type;
+    private final CompoundNBT tag;
+    private final Coord4D coord4D;
 
     public TilePacket(PacketBuffer buf) {
-        pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-        dimension = buf.readInt();
-        handler = TilePacketEnum.values()[buf.readInt()];
+        coord4D = new Coord4D(buf);
+        type = TilePacketEnum.values()[buf.readInt()];
         tag = buf.readCompoundTag();
     }
 
-    public TilePacket(TilePacketEnum handler, CompoundNBT tag, BlockPos pos, int dimension) {
-        this.handler = handler;
+    public TilePacket(TilePacketEnum type, CompoundNBT tag, Coord4D coord4D) {
+        this.type = type;
         this.tag = tag;
-        this.pos = pos;
-        this.dimension = dimension;
+        this.coord4D = coord4D;
     }
 
     @Override
     public void encode(PacketBuffer buf) {
-        buf.writeInt(pos.getX());
-        buf.writeInt(pos.getY());
-        buf.writeInt(pos.getZ());
-        buf.writeInt(dimension);
-        buf.writeInt(handler.ordinal());
+        coord4D.write(buf);
+        buf.writeInt(type.ordinal());
         buf.writeCompoundTag(tag);
     }
 
@@ -49,14 +45,14 @@ public class TilePacket extends AbstractPacket {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         if(player != null) {
             World world = player.getEntityWorld();
-            if(world.getDimension().getType().getId() != dimension) {
+            if(world.getDimension().getType().getId() != coord4D.getDimension()) {
                 MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-                world = server.getWorld(DimensionType.getById(dimension));
+                world = server.getWorld(DimensionType.getById(coord4D.getDimension()));
             }
-            TileEntity tile = world.getTileEntity(pos);
+            TileEntity tile = world.getTileEntity(coord4D.getPos());
             if(tile instanceof TileFluxCore) {
                 TileFluxCore flux = (TileFluxCore) tile;
-                return handler.handler.handlePacket(flux, player, tag);
+                return type.handler.handlePacket(flux, player, tag);
             }
         }
         return null;

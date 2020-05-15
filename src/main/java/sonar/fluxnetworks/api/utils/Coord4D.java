@@ -5,6 +5,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
+
 public class Coord4D {
 
     private int x, y, z, dimension; //TODO should we change to DimensionType? or perhaps GlobalPos
@@ -13,7 +15,7 @@ public class Coord4D {
         read(tag);
     }
 
-    public Coord4D(TileEntity tile) {
+    public Coord4D(@Nonnull TileEntity tile) {
         x = tile.getPos().getX();
         y = tile.getPos().getY();
         z = tile.getPos().getZ();
@@ -24,29 +26,28 @@ public class Coord4D {
         read(buf);
     }
 
-    public CompoundNBT write(CompoundNBT tag) {
+    public void write(@Nonnull CompoundNBT tag) {
         tag.putInt("x", x);
         tag.putInt("y", y);
         tag.putInt("z", z);
         tag.putInt("dimension", dimension);
-        return tag;
     }
 
-    public void read(CompoundNBT tag) {
+    public void read(@Nonnull CompoundNBT tag) {
         x = tag.getInt("x");
         y = tag.getInt("y");
         z = tag.getInt("z");
         dimension = tag.getInt("dimension");
     }
 
-    public void write(ByteBuf buf) {
+    public void write(@Nonnull ByteBuf buf) {
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);
         buf.writeInt(dimension);
     }
 
-    public void read(ByteBuf buf) {
+    public void read(@Nonnull ByteBuf buf) {
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();

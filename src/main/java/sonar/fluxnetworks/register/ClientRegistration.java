@@ -50,10 +50,10 @@ public class ClientRegistration {
         RenderTypeLookup.setRenderLayer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, RenderType.getCutout());
         FluxNetworks.LOGGER.info("Registering Screens");
 
-        if(FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded){
-            MUIIntegration.init(event);
-        }else {
-            ScreenManager.registerFactory(RegistryBlocks.CONTAINER_CONNECTOR, (ScreenManager.IScreenFactory<ContainerConnector<?>, GuiTabCore>)(container, inventory, windowID) -> {
+        if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded){
+            MUIIntegration.init();
+        } else {
+            ScreenManager.registerFactory(RegistryBlocks.CONTAINER_CONNECTOR, (ScreenManager.IScreenFactory<ContainerConnector<?>, GuiTabCore>) (container, inventory, windowID) -> {
                 if (container == null) {
                     return null;
                 }

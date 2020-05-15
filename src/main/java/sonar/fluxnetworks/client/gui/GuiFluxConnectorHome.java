@@ -120,7 +120,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
                     tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_DISABLE_LIMIT);
                     break;
                 case 3:
-                    PacketHandler.INSTANCE.sendToServer(new TilePacket(TilePacketEnum.CHUNK_LOADING, TilePacketHandler.getChunkLoadPacket(!switchButton.slideControl), tileEntity.getPos(), tileEntity.getWorld().getDimension().getType().getId()));
+                    PacketHandler.INSTANCE.sendToServer(new TilePacket(TilePacketEnum.CHUNK_LOADING, TilePacketHandler.getChunkLoadPacket(!switchButton.slideControl), tileEntity.getCoords()));
                     break;
             }
         }

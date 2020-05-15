@@ -7,7 +7,7 @@ import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
 public class MUIIntegration {
 
-    public static void init(FMLClientSetupEvent event) {
+    public static void init() {
         GlobalModuleManager.INSTANCE.registerContainerScreen(RegistryBlocks.CONTAINER_CONNECTOR, c -> () -> new NavigationHome(c.connector));
     }
 

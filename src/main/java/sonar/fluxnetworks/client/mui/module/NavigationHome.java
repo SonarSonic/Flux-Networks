@@ -7,8 +7,10 @@ import icyllis.modernui.gui.master.ModuleGroup;
 import icyllis.modernui.gui.math.Align3H;
 import icyllis.modernui.gui.math.Color3f;
 import icyllis.modernui.gui.math.Direction4D;
+import icyllis.modernui.gui.math.Locator;
 import icyllis.modernui.gui.widget.TextIconButton;
 import icyllis.modernui.system.ConstantsLibrary;
+import icyllis.modernui.system.RegistrySounds;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -37,36 +39,36 @@ public class NavigationHome extends ModuleGroup {
 
     private final FluxBackground bg;
 
+    private final INetworkConnector connector;
+
     public NavigationHome(@Nonnull INetworkConnector connector) {
         network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
+        this.connector = connector;
 
         addDrawable(bg = new FluxBackground());
 
         for (EnumNavigationTabs tab : EnumNavigationTabs.values()) {
             int id = tab.getId();
             Icon icon = new Icon(ConstantsLibrary.ICONS, ((id - 1) * 32) / 512f, 352 / 512f, (id * 32) / 512f, 384 / 512f, true);
-            /*TextIconButton button = new TextIconButton(this, tab.getTranslatedName(), 16, 16, icon,
-                    () -> {
-                        switchChildModule(id);
-                        if (FluxConfig.enableButtonSound)
-                            Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(RegistrySounds.BUTTON_CLICK, 1.0F));
-                    }, TextIconButton.Direction.UP);
-            button.setId(id);
-            if (id == EnumNavigationTabs.TAB_HOME.getId()) {
-                button.setDefaultOpen();
-            }*/
+            Locator locator;
+            if (tab == EnumNavigationTabs.TAB_CREATE) {
+                locator = new Locator(60, -95); // spacing = 12
+            } else {
+                locator = new Locator(id * 18 - 94, -95); // spacing = 2
+            }
             TextIconButton button = new TextIconButton.Builder(icon, tab.getTranslatedName())
                     .setWidth(16)
                     .setHeight(16)
+                    .setLocator(locator)
                     .setModuleId(id)
                     .setTextDirection(Direction4D.UP)
                     .build(this)
-                    .buildCallback(true, tab == EnumNavigationTabs.TAB_HOME, () -> {
+                    .buildCallback(tab == EnumNavigationTabs.TAB_HOME, () -> {
                         switchChildModule(id);
                         if (FluxConfig.enableButtonSound) {
-                            playSound(icyllis.modernui.system.RegistrySounds.BUTTON_CLICK_1);
+                            playSound(RegistrySounds.BUTTON_CLICK_1);
                         }
-                    }, false);
+                    });
             navigationButtons.add(button);
         }
         navigationButtons.forEach(this::addWidget);
@@ -74,23 +76,9 @@ public class NavigationHome extends ModuleGroup {
         if (connector instanceof TileFluxCore) {
             addChildModule(EnumNavigationTabs.TAB_HOME.getId(), () -> new FluxTileHome((TileFluxCore) connector));
         }
+        addChildModule(EnumNavigationTabs.TAB_SELECTION.getId(), () -> new NetworkSelection(connector));
 
         switchChildModule(EnumNavigationTabs.TAB_HOME.getId());
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-        int id = 1;
-        float ty = height / 2f - 95;
-        for (TextIconButton button : navigationButtons) {
-            if (id == EnumNavigationTabs.TAB_CREATE.getId()) {
-                button.locate(width / 2f + 60f, ty); // spacing = 12
-            } else {
-                button.locate(width / 2f - 94f + id * 18, ty); // spacing = 2
-            }
-            id++;
-        }
     }
 
     @Override
@@ -102,6 +90,13 @@ public class NavigationHome extends ModuleGroup {
         } else {
             bg.setRenderNetworkName(false);
         }
+    }
+
+    @Override
+    public void tick(int ticks) {
+        super.tick(ticks);
+        //TODO use packet
+        network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
     }
 
     /**
@@ -118,7 +113,7 @@ public class NavigationHome extends ModuleGroup {
         private boolean renderNetworkName = false;
 
         public FluxBackground() {
-            updateInfo();
+            updateColor();
         }
 
         @Override
@@ -149,11 +144,12 @@ public class NavigationHome extends ModuleGroup {
         @Override
         public void tick(int ticks) {
             if ((ticks & 15) == 0) {
-                updateInfo();
+                //TODO use packet
+                updateColor();
             }
         }
 
-        private void updateInfo() {
+        private void updateColor() {
             int color = network.getSetting(NetworkSettings.NETWORK_COLOR);
             r = Color3f.getRedFrom(color);
             g = Color3f.getGreenFrom(color);

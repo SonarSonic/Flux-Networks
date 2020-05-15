@@ -119,6 +119,7 @@ public class CommonRegistration {
     @SubscribeEvent
     public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
         //TODO FIXME event.getRegistry().register(EntityType.Builder.<FireItemEntity>create(FireItemEntity::new, EntityClassification.MISC).immuneToFire().build(null).setRegistryName("fireitementity"));
+        //WONT FIX, the fire recipe has been abandoned
     }
 
     @SubscribeEvent

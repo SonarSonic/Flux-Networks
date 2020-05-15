@@ -9,12 +9,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -26,12 +24,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.apache.logging.log4j.core.jmx.Server;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.capabilities.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FireItemEntity;
@@ -152,14 +148,14 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onFluxConnected(FluxConnectionEvent.Connected event) {
-        if(!event.flux.getDimension().isRemote) {
+        if(!event.flux.getWorld0().isRemote) {
             event.flux.connect(event.network);
         }
     }
 
     @SubscribeEvent
     public static void onFluxDisconnect(FluxConnectionEvent.Disconnected event) {
-        if(!event.flux.getDimension().isRemote) {
+        if(!event.flux.getWorld0().isRemote) {
             event.flux.disconnect(event.network);
         }
     }

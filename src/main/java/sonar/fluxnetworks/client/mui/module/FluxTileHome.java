@@ -6,6 +6,7 @@ import icyllis.modernui.gui.master.IKeyboardListener;
 import icyllis.modernui.gui.master.Module;
 import icyllis.modernui.gui.math.Align3H;
 import icyllis.modernui.gui.math.Color3f;
+import icyllis.modernui.gui.math.Locator;
 import icyllis.modernui.gui.widget.NumberInputField;
 import icyllis.modernui.gui.widget.SlidingToggleButton;
 import icyllis.modernui.gui.widget.TextField;
@@ -27,24 +28,20 @@ public class FluxTileHome extends Module {
 
     private final TileFluxCore tileEntity;
 
-    private TextField nameField;
     private TextField.Frame nameDeco;
-
-    private NumberInputField priorityField;
     private TextField.Frame priorityDeco;
-
-    private NumberInputField limitField;
     private TextField.Frame limitDeco;
-
-    private SlidingToggleButton surgeToggle;
-    private SlidingToggleButton unlimitedToggle;
 
     public FluxTileHome(@Nonnull TileFluxCore tileEntity) {
         this.tileEntity = tileEntity;
 
         addDrawable(this.new Background());
 
-        nameField = new TextField.Builder().setWidth(144).setHeight(12).build(this);
+        TextField nameField = new TextField.Builder()
+                .setWidth(144)
+                .setHeight(12)
+                .setLocator(new Locator(-72, -52))
+                .build(this);
         nameDeco = new TextField.Frame(nameField, FluxTranslate.NAME.t() + ":", -1);
         nameField.setMaxStringLength(24);
         nameField.setText(tileEntity.getCustomName());
@@ -52,7 +49,10 @@ public class FluxTileHome extends Module {
         nameField.setListener(this::changeName, false);
         addWidget(nameField);
 
-        priorityField = new NumberInputField(this, new TextField.Builder().setWidth(144).setHeight(12));
+        NumberInputField priorityField = new NumberInputField(this, new TextField.Builder()
+                .setWidth(144)
+                .setHeight(12)
+                .setLocator(new Locator(-72, -35)));
         priorityDeco = new TextField.Frame(priorityField, FluxTranslate.PRIORITY.t() + ":", -1);
         priorityField.setLimit(-10000, 10000);
         priorityField.setText(String.valueOf(tileEntity.priority));
@@ -60,7 +60,10 @@ public class FluxTileHome extends Module {
         priorityField.setNumberListener(this::changePriority, true);
         addWidget(priorityField);
 
-        limitField = new NumberInputField(this, new TextField.Builder().setWidth(144).setHeight(12));
+        NumberInputField limitField = new NumberInputField(this, new TextField.Builder()
+                .setWidth(144)
+                .setHeight(12)
+                .setLocator(new Locator(-72, -18)));
         limitDeco = new TextField.Frame(limitField, FluxTranslate.TRANSFER_LIMIT.t() + ":", -1);
         limitField.setLimit(0, Math.min(tileEntity.getMaxTransferLimit(), 1000000000));
         limitField.setText(String.valueOf(tileEntity.limit));
@@ -68,12 +71,14 @@ public class FluxTileHome extends Module {
         limitField.setNumberListener(this::changeLimit, true);
         addWidget(limitField);
 
-        surgeToggle = new SlidingToggleButton.Builder(0x8006c909, 0x40808080, 4)
+        SlidingToggleButton surgeToggle = new SlidingToggleButton.Builder(0x8006c909, 0x40808080, 4)
+                .setLocator(new Locator(47, 38))
                 .build(this)
                 .buildCallback(tileEntity.surgeMode, this::changeSurgeMode);
         addWidget(surgeToggle);
 
-        unlimitedToggle = new SlidingToggleButton.Builder(0x8090b9f9, 0x40808080, 4)
+        SlidingToggleButton unlimitedToggle = new SlidingToggleButton.Builder(0x8090b9f9, 0x40808080, 4)
+                .setLocator(new Locator(47, 50))
                 .build(this)
                 .buildCallback(tileEntity.disableLimit, this::changeUnlimitedMode);
         addWidget(unlimitedToggle);
@@ -82,20 +87,10 @@ public class FluxTileHome extends Module {
     }
 
     @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-        nameField.locate(width / 2f - 72, height / 2f - 52);
-        priorityField.locate(width / 2f - 72, height / 2f - 35);
-        limitField.locate(width / 2f - 72, height / 2f - 18);
-
-        surgeToggle.locate(width / 2f + 47, height / 2f + 38);
-        unlimitedToggle.locate(width / 2f + 47, height / 2f + 50);
-    }
-
-    @Override
     public void tick(int ticks) {
         super.tick(ticks);
         if ((ticks & 15) == 0) {
+            //TODO use packet
             updateDecoColor();
         }
     }
@@ -143,6 +138,7 @@ public class FluxTileHome extends Module {
 
     private void updateDecoColor() {
         int color = NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR);
+        // RGB to RGBA
         color = color | 0xff000000;
         nameDeco.setColor(color);
         priorityDeco.setColor(color);
