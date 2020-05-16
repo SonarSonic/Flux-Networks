@@ -6,7 +6,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxCacheTypes;
@@ -65,7 +64,7 @@ public class BatchEditingPacket extends AbstractPacket {
     public Object handle(NetworkEvent.Context ctx) {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         if (player != null) {
-            IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
             if (!network.isInvalid()) {
                 if (network.getMemberPermission(player).canEdit()) {
                     boolean editName = editions[0];

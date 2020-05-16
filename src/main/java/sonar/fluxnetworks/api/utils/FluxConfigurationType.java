@@ -41,7 +41,7 @@ public class FluxConfigurationType {
     public static void pasteNetwork(CompoundNBT nbt, String key, TileFluxCore tile) {
         int storedID = nbt.getInt(key);
         if (storedID != -1) {
-            IFluxNetwork newNetwork = FluxNetworkCache.instance.getNetwork(storedID);
+            IFluxNetwork newNetwork = FluxNetworkCache.INSTANCE.getNetwork(storedID);
             tile.getNetwork().queueConnectionRemoval(tile, false);
             newNetwork.queueConnectionAddition(tile);
         }

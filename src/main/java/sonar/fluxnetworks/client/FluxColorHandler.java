@@ -9,7 +9,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
-import sonar.fluxnetworks.client.mui.module.NavigationHome;
+import sonar.fluxnetworks.client.mui.NavigationHome;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.PacketHandler;

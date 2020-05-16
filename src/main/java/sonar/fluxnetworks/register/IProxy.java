@@ -3,8 +3,6 @@ package sonar.fluxnetworks.register;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
@@ -48,6 +46,6 @@ public interface IProxy {
     }
 
     default IFluxNetwork getAdminViewingNetwork(){
-        return FluxNetworkInvalid.instance;
+        return FluxNetworkInvalid.INSTANCE;
     }
 }

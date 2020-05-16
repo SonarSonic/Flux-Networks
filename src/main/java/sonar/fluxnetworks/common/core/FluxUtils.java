@@ -148,7 +148,7 @@ public class FluxUtils {
 
     public static boolean addConnection(IFluxConnector fluxConnector) {
         if(fluxConnector.getNetworkID() != -1) {
-            IFluxNetwork network = FluxNetworkCache.instance.getNetwork(fluxConnector.getNetworkID());
+            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
             if(!network.isInvalid()) {
                 if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
                     return false;
@@ -162,7 +162,7 @@ public class FluxUtils {
 
     public static void removeConnection(IFluxConnector fluxConnector, boolean isChunkUnload) {
         if(fluxConnector.getNetworkID() != -1) {
-            IFluxNetwork network = FluxNetworkCache.instance.getNetwork(fluxConnector.getNetworkID());
+            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
             if(!network.isInvalid()) {
                 network.queueConnectionRemoval(fluxConnector, isChunkUnload);
                 return;

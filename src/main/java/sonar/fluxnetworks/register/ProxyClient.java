@@ -2,7 +2,6 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
@@ -22,7 +21,7 @@ public class ProxyClient implements IProxy {
     private int feedbackTimer = 0;
 
     public int admin_viewing_network_id = -1;
-    public IFluxNetwork admin_viewing_network = FluxNetworkInvalid.instance;
+    public IFluxNetwork admin_viewing_network = FluxNetworkInvalid.INSTANCE;
     public boolean detailed_network_view;
 
     @Override
@@ -90,7 +89,7 @@ public class ProxyClient implements IProxy {
 
     @Override
     public IFluxNetwork getNetwork(int networkID) {
-        return FluxNetworkCache.instance.getClientNetwork(networkID);
+        return FluxNetworkCache.INSTANCE.getClientNetwork(networkID);
     }
 
     @Override

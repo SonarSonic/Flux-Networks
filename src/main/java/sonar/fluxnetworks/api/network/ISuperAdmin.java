@@ -4,9 +4,9 @@ import net.minecraft.nbt.CompoundNBT;
 
 public interface ISuperAdmin {
 
-    void changePermission();
+    void iterateSuperAdmin();
 
-    boolean getPermission();
+    boolean isSuperAdmin();
 
     CompoundNBT writeToNBT(CompoundNBT nbt);
 

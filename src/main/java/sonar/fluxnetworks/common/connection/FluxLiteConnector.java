@@ -125,7 +125,7 @@ public class FluxLiteConnector implements IFluxConnector {
 
     @Override
     public IFluxNetwork getNetwork() {
-        return FluxNetworkInvalid.instance;
+        return FluxNetworkInvalid.INSTANCE;
     }
 
     @Override

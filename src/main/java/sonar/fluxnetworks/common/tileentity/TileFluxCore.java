@@ -67,7 +67,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
 
     public boolean chunkLoading = false;
 
-    protected IFluxNetwork network = FluxNetworkInvalid.instance;
+    protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
     protected boolean load = false;
 
@@ -131,7 +131,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public void disconnect(IFluxNetwork network) {
         if(network.getNetworkID() == getNetworkID()) {
-            this.network = FluxNetworkInvalid.instance;
+            this.network = FluxNetworkInvalid.INSTANCE;
             this.networkID = -1;
             this.color = 0xb2b2b2;
             connected = false;

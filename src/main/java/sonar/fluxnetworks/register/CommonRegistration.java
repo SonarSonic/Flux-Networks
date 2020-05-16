@@ -20,7 +20,7 @@ import sonar.fluxnetworks.api.energy.FNEnergyCapability;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.render.ItemRendererCallable;
 import sonar.fluxnetworks.common.block.*;
-import sonar.fluxnetworks.common.capabilities.DefaultSuperAdmin;
+import sonar.fluxnetworks.common.capability.SuperAdminInstance;
 import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.handler.CapabilityHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -50,6 +50,7 @@ import javax.annotation.Nonnull;
 public class CommonRegistration {
 
     public static final ItemGroup ITEM_GROUP = new ItemGroup("fluxnetworks") {
+        @Nonnull
         @Override
         public ItemStack createIcon() {
             return new ItemStack(RegistryItems.FLUX_CORE);
@@ -64,14 +65,14 @@ public class CommonRegistration {
         PacketHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
 
-        DefaultSuperAdmin.register();
+        SuperAdminInstance.register();
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 
         FluxNetworks.LOGGER.info("Finished Common Setup");
     }
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+    public static void registerBlocks(@Nonnull RegistryEvent.Register<Block> event) {
         FluxNetworks.LOGGER.info("Started Registering Blocks");
 
         Block.Properties normalProps = Block.Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(1.0F, 1000F);
@@ -89,7 +90,7 @@ public class CommonRegistration {
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
+    public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
         FluxNetworks.LOGGER.info("Started Registering Items");
 
         Item.Properties props =  new Item.Properties().group(ITEM_GROUP);
@@ -119,11 +120,10 @@ public class CommonRegistration {
     @SubscribeEvent
     public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
         //TODO FIXME event.getRegistry().register(EntityType.Builder.<FireItemEntity>create(FireItemEntity::new, EntityClassification.MISC).immuneToFire().build(null).setRegistryName("fireitementity"));
-        //WONT FIX, the fire recipe has been abandoned
     }
 
     @SubscribeEvent
-    public static void onTileEntityRegistry(final RegistryEvent.Register<TileEntityType<?>> event) {
+    public static void onTileEntityRegistry(@Nonnull final RegistryEvent.Register<TileEntityType<?>> event) {
         FluxNetworks.LOGGER.info("Started Registering Tile Entities");
 
         event.getRegistry().register(TileEntityType.Builder.create(TileFluxPlug::new, RegistryBlocks.FLUX_PLUG).build(null).setRegistryName("fluxplug"));
@@ -170,14 +170,14 @@ public class CommonRegistration {
     }
 
     @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+    public static void registerRecipes(@Nonnull RegistryEvent.Register<IRecipeSerializer<?>> event) {
         event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "fluxstoragerecipe"));
         event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "nbtwiperecipe"));
     }
 
 
     @SubscribeEvent
-    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
+    public static void registerSounds(@Nonnull RegistryEvent.Register<SoundEvent> event) {
         RegistrySounds.registerSounds(event.getRegistry());
     }
 }

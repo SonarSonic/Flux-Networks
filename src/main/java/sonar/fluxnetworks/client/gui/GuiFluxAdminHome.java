@@ -51,7 +51,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
         addButton(redirectButton);
 
-        super_admin = new SlidedSwitchButton(140, 30, 0, guiLeft, guiTop, FluxNetworkCache.instance.superAdminClient);
+        super_admin = new SlidedSwitchButton(140, 30, 0, guiLeft, guiTop, FluxNetworkCache.INSTANCE.superAdminClient);
         switches.add(super_admin);
 
         detailed_network_view = new SlidedSwitchButton(140, 42, 1, guiLeft, guiTop, FluxNetworks.proxy.getDetailedNetworkView());
@@ -61,7 +61,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
 
     public void onSuperAdminChanged(){
         super.onSuperAdminChanged();
-        super_admin.slideControl = FluxNetworkCache.instance.superAdminClient;
+        super_admin.slideControl = FluxNetworkCache.INSTANCE.superAdminClient;
     }
 
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton){

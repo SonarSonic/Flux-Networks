@@ -42,7 +42,7 @@ public class NetworkColourRequestPacket extends AbstractPacket {
         Map<Integer, Tuple<Integer, String>> cache = new HashMap<>();
         if(!requests.isEmpty()){
             for(int id : requests){
-                IFluxNetwork network = FluxNetworkCache.instance.getNetwork(id);
+                IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
                 cache.put(id, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000, network.isInvalid() ? "NONE": network.getSetting(NetworkSettings.NETWORK_NAME)));
             } // More than one
             reply(player, new NetworkColourPacket(cache));

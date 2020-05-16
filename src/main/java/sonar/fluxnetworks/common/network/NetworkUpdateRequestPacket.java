@@ -45,7 +45,7 @@ public class NetworkUpdateRequestPacket extends AbstractPacket {
         List<IFluxNetwork> networks = Lists.newArrayList();
 
         for(Integer i : networkIDs){
-            IFluxNetwork network = FluxNetworkCache.instance.getNetwork(i);
+            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(i);
             if(!network.isInvalid()) {
                 networks.add(network);
             }

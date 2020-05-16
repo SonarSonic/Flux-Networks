@@ -28,7 +28,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.capabilities.DefaultSuperAdmin;
+import sonar.fluxnetworks.common.capability.SuperAdminInstance;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FireItemEntity;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
@@ -54,8 +54,8 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onServerStopped(FMLServerStoppedEvent event){
-        FluxNetworkCache.instance.clearNetworks();
-        FluxNetworkCache.instance.clearClientCache();
+        FluxNetworkCache.INSTANCE.clearNetworks();
+        FluxNetworkCache.INSTANCE.clearClientCache();
         FluxNetworks.proxy.onServerStopped();
         FluxChunkManager.clear();
     }
@@ -63,7 +63,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if(event.phase == TickEvent.Phase.END) {
-            for(IFluxNetwork network : FluxNetworkCache.instance.getAllNetworks()) {
+            for(IFluxNetwork network : FluxNetworkCache.INSTANCE.getAllNetworks()) {
                 network.onEndServerTick();
             }
         }
@@ -139,8 +139,8 @@ public class EventHandler {
     public static void onPlayerJoined(PlayerEvent.PlayerLoggedInEvent event) {
         PlayerEntity player = event.getPlayer();
         if(!player.world.isRemote) {
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.instance.getAllNetworks()), NBTType.NETWORK_GENERAL));
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SuperAdminPacket(DefaultSuperAdmin.isPlayerSuperAdmin(player)));
+            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
+            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SuperAdminPacket(SuperAdminInstance.isPlayerSuperAdmin(player)));
         }
     }
 

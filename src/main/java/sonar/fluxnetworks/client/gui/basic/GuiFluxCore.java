@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -13,8 +12,6 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.network.EnumAccessType;
-import sonar.fluxnetworks.client.FluxColorHandler;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
@@ -45,7 +42,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
 
     public GuiFluxCore(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
-        this.network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
+        this.network = FluxNetworkCache.INSTANCE.getClientNetwork(connector.getNetworkID());
         this.networkValid = !network.isInvalid();
     }
 
@@ -94,7 +91,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     public void tick() {
         super.tick();
         if(timer1 == 0) {
-            this.network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
+            this.network = FluxNetworkCache.INSTANCE.getClientNetwork(connector.getNetworkID());
             this.networkValid = !network.isInvalid();
         }
         timer1++;
@@ -175,7 +172,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         }
         if(connector instanceof AdminConfiguratorItem.ContainerProvider){
             FluxNetworks.proxy.setAdminViewingNetworkID(networkID);
-            FluxNetworks.proxy.setAdminViewingNetwork(FluxNetworkCache.instance.getClientNetwork(networkID));
+            FluxNetworks.proxy.setAdminViewingNetwork(FluxNetworkCache.INSTANCE.getClientNetwork(networkID));
         }
         if(connector instanceof FluxConfiguratorItem.ContainerProvider){
             PacketHandler.INSTANCE.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));

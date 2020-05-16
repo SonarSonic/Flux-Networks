@@ -28,7 +28,7 @@ public class SuperAdminPacket extends AbstractPacket {
 
     @Override
     public Object handle(NetworkEvent.Context ctx) {
-        FluxNetworkCache.instance.superAdminClient = superAdmin;
+        FluxNetworkCache.INSTANCE.superAdminClient = superAdmin;
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         if(player != null) {
             Screen gui = Minecraft.getInstance().currentScreen;

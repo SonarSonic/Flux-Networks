@@ -8,6 +8,7 @@ import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
+import sonar.fluxnetworks.common.capability.SuperAdminInstance;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import net.minecraftforge.common.MinecraftForge;
@@ -139,13 +140,15 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
     @Override
     public EnumAccessType getMemberPermission(PlayerEntity player) {
-        if(FluxConfig.enableSuperAdmin) {
-            ISuperAdmin sa = player.getCapability(Capabilities.SUPER_ADMIN, null).orElse(null);
-            if(sa != null && sa.getPermission()) {
+        if (FluxConfig.enableSuperAdmin) {
+            if (SuperAdminInstance.isPlayerSuperAdmin(player)) {
                 return EnumAccessType.SUPER_ADMIN;
             }
         }
-        return network_players.getValue().stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getAccessPermission)).getOrDefault(PlayerEntity.getUUID(player.getGameProfile()), network_security.getValue().isEncrypted() ? EnumAccessType.NONE : EnumAccessType.USER);
+        return network_players.getValue()
+                .stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getAccessPermission))
+                .getOrDefault(PlayerEntity.getUUID(player.getGameProfile()),
+                        network_security.getValue().isEncrypted() ? EnumAccessType.NONE : EnumAccessType.USER);
     }
 
     @SuppressWarnings("unchecked")

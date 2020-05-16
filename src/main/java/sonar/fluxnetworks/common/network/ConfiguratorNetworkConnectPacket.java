@@ -39,7 +39,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
     public Object handle(NetworkEvent.Context ctx) {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
 
-        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(id);
+        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(!network.isInvalid()) {
             if (!network.getMemberPermission(player).canAccess()) {
                 if (password.isEmpty()) {

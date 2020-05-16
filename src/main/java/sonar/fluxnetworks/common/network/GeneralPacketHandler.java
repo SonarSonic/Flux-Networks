@@ -45,8 +45,8 @@ public class GeneralPacketHandler {
         if(!FluxUtils.checkPassword(password)) {
             return new FeedbackPacket(EnumFeedbackInfo.ILLEGAL_PASSWORD);
         }
-        if(FluxNetworkCache.instance.hasSpaceLeft(player)) {
-            FluxNetworkCache.instance.createdNetwork(player, name, color, security, energy, password);
+        if(FluxNetworkCache.INSTANCE.hasSpaceLeft(player)) {
+            FluxNetworkCache.INSTANCE.createdNetwork(player, name, color, security, energy, password);
             return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
         }
         return new FeedbackPacket(EnumFeedbackInfo.NO_SPACE);
@@ -73,7 +73,7 @@ public class GeneralPacketHandler {
         if(!FluxUtils.checkPassword(password)) {
             return new FeedbackPacket(EnumFeedbackInfo.ILLEGAL_PASSWORD);
         }
-        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         if (!network.isInvalid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 boolean needPacket = false;
@@ -112,7 +112,7 @@ public class GeneralPacketHandler {
 
     public static Object handleDeleteNetworkPacket(PlayerEntity player, CompoundNBT nbtTag) {
         int id = nbtTag.getInt(FluxNetworkData.NETWORK_ID);
-        IFluxNetwork toDelete = FluxNetworkCache.instance.getNetwork(id);
+        IFluxNetwork toDelete = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(!toDelete.isInvalid()) {
             if(toDelete.getMemberPermission(player).canDelete()) {
                 FluxNetworkData.get().removeNetwork(toDelete);
@@ -137,7 +137,7 @@ public class GeneralPacketHandler {
         int networkID = packetTag.getInt(FluxNetworkData.NETWORK_ID);
         String playerName = packetTag.getString("playerName");
 
-        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         if (!network.isInvalid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 network.addNewMember(playerName);
@@ -162,7 +162,7 @@ public class GeneralPacketHandler {
         int networkID = packetTag.getInt(FluxNetworkData.NETWORK_ID);
         UUID playerRemoved = packetTag.getUniqueId("playerRemoved");
 
-        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         if (!network.isInvalid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 network.removeMember(playerRemoved);
@@ -192,7 +192,7 @@ public class GeneralPacketHandler {
                 return null;
             }*/
 
-            IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
             if (!network.isInvalid()) {
                 if (network.getMemberPermission(player).canEdit()) {
                     // Create new member
@@ -260,7 +260,7 @@ public class GeneralPacketHandler {
     public static Object handleChangeWirelessPacket(PlayerEntity player, CompoundNBT packetTag) {
         int networkID = packetTag.getInt(FluxNetworkData.NETWORK_ID);
         int wireless = packetTag.getInt(FluxNetworkData.WIRELESS_MODE);
-        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(networkID);
+        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         if (!network.isInvalid()) {
             if(network.getMemberPermission(player).canEdit()) {
                 network.setSetting(NetworkSettings.NETWORK_WIRELESS, wireless);

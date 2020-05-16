@@ -29,7 +29,7 @@ public class TilePacketHandler {
         if(tile.getNetworkID() == id) {
             return null;
         }
-        IFluxNetwork network = FluxNetworkCache.instance.getNetwork(id);
+        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(!network.isInvalid()) {
             if(tile.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);

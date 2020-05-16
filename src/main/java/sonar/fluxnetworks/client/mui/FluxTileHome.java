@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.client.mui.module;
+package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.gui.master.Canvas;
 import icyllis.modernui.gui.master.IDrawable;

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.client.mui.module;
+package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.gui.master.Canvas;
 import icyllis.modernui.gui.master.IDrawable;
@@ -33,7 +33,7 @@ import java.util.List;
 public class NavigationHome extends ModuleGroup {
 
     @Nonnull
-    public static IFluxNetwork network = FluxNetworkInvalid.instance;
+    public static IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
     private final List<TextIconButton> navigationButtons = new ArrayList<>();
 
@@ -42,7 +42,7 @@ public class NavigationHome extends ModuleGroup {
     private final INetworkConnector connector;
 
     public NavigationHome(@Nonnull INetworkConnector connector) {
-        network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
+        network = FluxNetworkCache.INSTANCE.getClientNetwork(connector.getNetworkID());
         this.connector = connector;
 
         addDrawable(bg = new FluxBackground());
@@ -77,6 +77,7 @@ public class NavigationHome extends ModuleGroup {
             addChildModule(EnumNavigationTabs.TAB_HOME.getId(), () -> new FluxTileHome((TileFluxCore) connector));
         }
         addChildModule(EnumNavigationTabs.TAB_SELECTION.getId(), () -> new NetworkSelection(connector));
+        addChildModule(EnumNavigationTabs.TAB_WIRELESS.getId(), WirelessCharging::new);
 
         switchChildModule(EnumNavigationTabs.TAB_HOME.getId());
     }
@@ -96,7 +97,7 @@ public class NavigationHome extends ModuleGroup {
     public void tick(int ticks) {
         super.tick(ticks);
         //TODO use packet
-        network = FluxNetworkCache.instance.getClientNetwork(connector.getNetworkID());
+        network = FluxNetworkCache.INSTANCE.getClientNetwork(connector.getNetworkID());
     }
 
     /**

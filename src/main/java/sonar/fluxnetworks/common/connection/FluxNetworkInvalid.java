@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class FluxNetworkInvalid extends FluxNetworkBase {
 
-    public static final FluxNetworkInvalid instance = new FluxNetworkInvalid();
+    public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 
     private FluxNetworkInvalid() {
         super(-1, "Please select a network", EnumSecurityType.PUBLIC, 0xb6b6b6, new UUID(-1 ,-1), EnergyType.FE, "");

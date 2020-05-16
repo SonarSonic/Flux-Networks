@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
  */
 public class FluxNetworkCache {
 
-    public static FluxNetworkCache instance = new FluxNetworkCache();
+    public static final FluxNetworkCache INSTANCE = new FluxNetworkCache();
 
     /** Client Cache **/
     public Map<Integer, IFluxNetwork> networks = new HashMap<>();
     public boolean superAdminClient = false;
 
     public void clearNetworks() {
-        FluxNetworkData.clear();
+        FluxNetworkData.release();
     }
 
     public void clearClientCache() {
@@ -46,14 +46,14 @@ public class FluxNetworkCache {
         UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
 
         NetworkMember owner = NetworkMember.createNetworkMember(player, EnumAccessType.OWNER);
-        FluxNetworkServer network = new FluxNetworkServer(getUniqueID(), name, securityType, color, uuid, energyType, password);
+        FluxNetworkServer network = new FluxNetworkServer(nextUID(), name, securityType, color, uuid, energyType, password);
         network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(owner);
 
         FluxNetworkData.get().addNetwork(network);
         return network;
     }
 
-    private int getUniqueID() {
+    private int nextUID() {
         return FluxNetworkData.get().uniqueID++;
     }
 
@@ -90,7 +90,7 @@ public class FluxNetworkCache {
 
     /** Server Only **/
     public IFluxNetwork getNetwork(int id) {
-        return FluxNetworkData.get().networks.getOrDefault(id, FluxNetworkInvalid.instance);
+        return FluxNetworkData.get().networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     /** Server Only **/
@@ -100,7 +100,7 @@ public class FluxNetworkCache {
 
     /** Client Only **/
     public IFluxNetwork getClientNetwork(int id) {
-        return networks.getOrDefault(id, FluxNetworkInvalid.instance);
+        return networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     /** Client Only **/
