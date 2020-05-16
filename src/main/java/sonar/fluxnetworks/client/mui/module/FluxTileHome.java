@@ -32,7 +32,7 @@ public class FluxTileHome extends Module {
     private TextField.Frame priorityDeco;
     private TextField.Frame limitDeco;
 
-    public FluxTileHome(@Nonnull TileFluxCore tileEntity) {
+    protected FluxTileHome(@Nonnull TileFluxCore tileEntity) {
         this.tileEntity = tileEntity;
 
         addDrawable(this.new Background());

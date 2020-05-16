@@ -68,13 +68,12 @@ public class TilePacketHandler {
                 if(!p) {
                     return new FeedbackPacket(EnumFeedbackInfo.HAS_LOADER);
                 }
-                return null;
             } else {
                 FluxChunkManager.removeChunkLoader((ServerWorld) tile.getWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = false;
                 tile.settings_changed = true;
-                return null;
             }
+            return null;
         } else {
             tile.chunkLoading = false;
             tile.settings_changed = true;

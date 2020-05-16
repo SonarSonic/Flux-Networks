@@ -26,18 +26,22 @@ import java.util.stream.Collectors;
 
 public class NetworkSelection extends Module {
 
-    public NetworkSelection(INetworkConnector connector) {
-        addWidget(new Panel(this, connector));
+    private final INetworkConnector connector;
+
+    protected NetworkSelection(INetworkConnector connector) {
+        this.connector = connector;
+        addWidget(new Panel());
     }
 
-    private static class Panel extends MultiPageScrollPanel<Group.Entry, Group> {
+    private class Panel extends MultiPageScrollPanel<Entry, Group> {
 
-        public Panel(IHost host, INetworkConnector connector) {
-            super(host, new MultiPageScrollPanel.Builder(30)
-                            .setWidth(158)
-                            .setHeight(130)
-                            .setLocator(new Locator(-79, -58)),
-                    window -> new Group(window, connector));
+        //TODO crash here
+        public Panel() {
+            super(NetworkSelection.this, new MultiPageScrollPanel.Builder(30)
+                            .setWidth(162)
+                            .setHeight(134)
+                            .setLocator(new Locator(-81, -59)),
+                    Group::new);
         }
 
         @Override
@@ -46,17 +50,14 @@ public class NetworkSelection extends Module {
             canvas.resetColor();
             canvas.setTextAlign(Align3H.RIGHT);
             String a = FluxTranslate.TOTAL.t() + ": " + allEntries.size();
-            canvas.drawText(a, x2 - 10, y1 - 12);
+            canvas.drawText(a, x2 - 12, y1 - 11);
         }
     }
 
-    private static class Group extends UniformScrollGroup<Group.Entry> {
+    private class Group extends UniformScrollGroup<Entry> {
 
-        private final INetworkConnector connector;
-
-        public Group(IScrollHost window, INetworkConnector connector) {
+        public Group(IScrollHost window) {
             super(window, 12);
-            this.connector = connector;
             entries.addAll(FluxNetworkCache.instance.getAllClientNetworks().stream().map(f -> new Entry(window, f)).collect(Collectors.toList()));
             height = entries.size() * entryHeight;
         }
@@ -71,56 +72,56 @@ public class NetworkSelection extends Module {
                 i++;
             }
         }
+    }
 
-        private class Entry extends UniformScrollEntry {
+    private class Entry extends UniformScrollEntry {
 
-            private final IFluxNetwork network;
+        private final IFluxNetwork network;
 
-            private float br = 0.5f;
+        private float br = 0.7f;
 
-            public Entry(@Nonnull IScrollHost window, IFluxNetwork network) {
-                super(window, 146, 12);
-                this.network = network;
+        public Entry(@Nonnull IScrollHost window, IFluxNetwork network) {
+            super(window, 146, 12);
+            this.network = network;
+        }
+
+        @Override
+        protected void onDraw(@Nonnull Canvas canvas, float time) {
+            canvas.setLineAntiAliasing(true);
+            canvas.setLineWidth(2.0f);
+            int color = network.getSetting(NetworkSettings.NETWORK_COLOR);
+            float factor = NavigationHome.network.getNetworkID() == network.getNetworkID() ? 1 : br;
+            canvas.setRGBA(Color3f.getRedFrom(color) * factor, Color3f.getGreenFrom(color) * factor, Color3f.getBlueFrom(color) * factor, 1);
+            canvas.drawOctagonRectFrame(x1, y1 + 1, x2, y2 - 1, 2);
+            canvas.setLineAntiAliasing(false);
+            factor = factor * factor * factor;
+            canvas.setRGB(factor, factor, factor);
+            canvas.setTextAlign(Align3H.LEFT);
+            canvas.drawText(network.getNetworkName(), x1 + 4, y1 + 2);
+        }
+
+        @Override
+        protected boolean onMouseLeftClick(double mouseX, double mouseY) {
+            if (NavigationHome.network.getNetworkID() != network.getNetworkID()) {
+                PacketHandler.INSTANCE.sendToServer(
+                        new TilePacket(TilePacketEnum.SET_NETWORK,
+                                TilePacketHandler.getSetNetworkPacket(network.getNetworkID(), ""),
+                                ((IFluxConnector) connector).getCoords()));
+                return true;
             }
+            return false;
+        }
 
-            @Override
-            protected void onDraw(@Nonnull Canvas canvas, float time) {
-                canvas.setLineAntiAliasing(true);
-                canvas.setLineWidth(2.0f);
-                int color = network.getSetting(NetworkSettings.NETWORK_COLOR);
-                float factor = NavigationHome.network.getNetworkID() == network.getNetworkID() ? 1 : br;
-                canvas.setRGBA(Color3f.getRedFrom(color) * factor, Color3f.getGreenFrom(color) * factor, Color3f.getBlueFrom(color) * factor, 1);
-                canvas.drawOctagonRectFrame(x1, y1 + 1, x2, y2 - 1, 2);
-                canvas.setLineAntiAliasing(false);
-                factor = factor * factor;
-                canvas.setRGB(factor, factor, factor);
-                canvas.setTextAlign(Align3H.LEFT);
-                canvas.drawText(network.getNetworkName(), x1 + 4, y1 + 2);
-            }
+        @Override
+        protected void onMouseHoverEnter(double mouseX, double mouseY) {
+            super.onMouseHoverEnter(mouseX, mouseY);
+            br = 0.85f;
+        }
 
-            @Override
-            protected boolean onMouseLeftClick(double mouseX, double mouseY) {
-                if (NavigationHome.network.getNetworkID() != network.getNetworkID()) {
-                    PacketHandler.INSTANCE.sendToServer(
-                            new TilePacket(TilePacketEnum.SET_NETWORK,
-                                    TilePacketHandler.getSetNetworkPacket(network.getNetworkID(), ""),
-                                    ((IFluxConnector) connector).getCoords()));
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            protected void onMouseHoverEnter(double mouseX, double mouseY) {
-                super.onMouseHoverEnter(mouseX, mouseY);
-                br = 0.85f;
-            }
-
-            @Override
-            protected void onMouseHoverExit() {
-                super.onMouseHoverExit();
-                br = 0.7f;
-            }
+        @Override
+        protected void onMouseHoverExit() {
+            super.onMouseHoverExit();
+            br = 0.7f;
         }
     }
 }
