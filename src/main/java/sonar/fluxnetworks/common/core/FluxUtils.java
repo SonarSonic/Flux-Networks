@@ -150,7 +150,7 @@ public class FluxUtils {
         if(fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
             if(!network.isInvalid()) {
-                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
+                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheTypes.CONTROLLER).size() > 0) {
                     return false;
                 }
                 network.queueConnectionAddition(fluxConnector);

@@ -31,7 +31,7 @@ public class TilePacketHandler {
         }
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(!network.isInvalid()) {
-            if(tile.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
+            if(tile.getConnectionType().isController() && network.getConnections(FluxCacheTypes.CONTROLLER).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);
             }
             if(!network.getMemberPermission(player).canAccess()) {

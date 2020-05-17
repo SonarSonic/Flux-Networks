@@ -19,12 +19,12 @@ public class SuperAdminInstance implements ISuperAdmin {
     private boolean superAdmin = false;
 
     @Override
-    public void iterateSuperAdmin() {
+    public void changePermission() {
         superAdmin = !superAdmin;
     }
 
     @Override
-    public boolean isSuperAdmin() {
+    public boolean hasPermission() {
         return superAdmin;
     }
 
@@ -55,7 +55,7 @@ public class SuperAdminInstance implements ISuperAdmin {
 
     public static boolean isPlayerSuperAdmin(@Nonnull PlayerEntity player) {
         if (!player.world.isRemote) {
-            return player.getCapability(Capabilities.SUPER_ADMIN).orElse(SuperAdminInstance.DEFAULT).isSuperAdmin();
+            return player.getCapability(Capabilities.SUPER_ADMIN).orElse(SuperAdminInstance.DEFAULT).hasPermission();
         }
         return FluxNetworkCache.INSTANCE.superAdminClient;
     }

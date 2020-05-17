@@ -84,7 +84,7 @@ public class GeneralPacketHandler {
                 if(network.getSetting(NetworkSettings.NETWORK_COLOR) != color) {
                     network.setSetting(NetworkSettings.NETWORK_COLOR, color);
                     needPacket = true;
-                    List<IFluxConnector> list = network.getConnections(FluxCacheTypes.flux);
+                    List<IFluxConnector> list = network.getConnections(FluxCacheTypes.FLUX);
                     list.forEach(fluxConnector -> fluxConnector.connect(network)); // update color data
                 }
                 if(needPacket) {

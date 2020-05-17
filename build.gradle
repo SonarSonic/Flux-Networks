@@ -114,9 +114,9 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
-    // 1.5.7 - sources
+    // 1.5.8 - sources
     // constantly update
-    compile fg.deobf("curse.maven:modern-ui:2957309")
+    compile fg.deobf("curse.maven:modern-ui:2959002")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

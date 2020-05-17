@@ -49,7 +49,7 @@ public class ConnectionUpdateRequestPacket extends AbstractPacket{
             PlayerEntity player = PacketHandler.getPlayer(ctx);
             List<CompoundNBT> tags = new ArrayList<>();
             //no inspection unchecked
-            List<IFluxConnector> onlineConnectors = network.getConnections(FluxCacheTypes.flux);
+            List<IFluxConnector> onlineConnectors = network.getConnections(FluxCacheTypes.FLUX);
             coords.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst()
                             .ifPresent(f -> tags.add(FluxLiteConnector.writeCustomNBT(f, new CompoundNBT()))));
             return new ConnectionUpdatePacket(networkID, tags);

@@ -103,7 +103,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         if(type == NBTType.NETWORK_CONNECTIONS) {
             all_connectors.getValue().removeIf(IFluxConnector::isChunkLoaded);
             @SuppressWarnings("unchecked")
-            List<IFluxConnector> connectors = getConnections(FluxCacheTypes.flux);
+            List<IFluxConnector> connectors = getConnections(FluxCacheTypes.FLUX);
             connectors.forEach(f -> all_connectors.getValue().add(new FluxLiteConnector(f)));
             FluxNetworkData.writeAllConnections(this, nbt);
         }

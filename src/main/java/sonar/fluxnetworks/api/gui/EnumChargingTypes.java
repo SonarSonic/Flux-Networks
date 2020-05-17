@@ -1,5 +1,7 @@
 package sonar.fluxnetworks.api.gui;
 
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 
 import javax.annotation.Nonnull;
@@ -24,6 +26,10 @@ public enum EnumChargingTypes {
             return false;
         }
         return (setting >> ordinal() & 1) == 1;
+    }
+
+    public boolean isActivated(@Nonnull IFluxNetwork network) {
+        return isActivated(network.getSetting(NetworkSettings.NETWORK_WIRELESS));
     }
 
     @Nonnull

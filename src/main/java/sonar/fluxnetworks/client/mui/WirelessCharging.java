@@ -27,8 +27,7 @@ public class WirelessCharging extends Module {
         addWidget(new SlidingToggleButton.Builder(0x8006c909, 0x40808080, 4)
                 .setLocator(new Locator(47, 73))
                 .build(this)
-                .buildCallback(EnumChargingTypes.ENABLE_WIRELESS.isActivated(
-                        NavigationHome.network.getSetting(NetworkSettings.NETWORK_WIRELESS)),
+                .buildCallback(EnumChargingTypes.ENABLE_WIRELESS.isActivated(NavigationHome.network),
                         b -> changeWireless(EnumChargingTypes.ENABLE_WIRELESS)));
     }
 
@@ -45,9 +44,10 @@ public class WirelessCharging extends Module {
             settings[types.ordinal()] = types.isActivated(wireless);
         }
         settings[type.ordinal()] = !settings[type.ordinal()];
-        wireless = (settings[0] ? 1 : 0) | (settings[1] ? 1 : 0) << 1 |
-                (settings[2] ? 1 : 0) << 2 | (settings[3] ? 1 : 0) << 3 |
-                (settings[4] ? 1 : 0) << 4 | (settings[5] ? 1 : 0) << 5;
+        wireless = 0;
+        for (int i = 0; i < settings.length - 1; i++) {
+            wireless |= ((settings[i] ? 1 : 0) << i);
+        }
         PacketHandler.INSTANCE.sendToServer(
                 new GeneralPacket(GeneralPacketEnum.CHANGE_WIRELESS, GeneralPacketHandler.getChangeWirelessPacket(
                         NavigationHome.network.getNetworkID(), wireless)));

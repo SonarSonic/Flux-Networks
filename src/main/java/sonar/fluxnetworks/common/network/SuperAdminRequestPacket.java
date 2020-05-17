@@ -21,9 +21,9 @@ public class SuperAdminRequestPacket extends AbstractPacket {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
 
         player.getCapability(Capabilities.SUPER_ADMIN).ifPresent(iSuperAdmin -> {
-            if (iSuperAdmin.isSuperAdmin() || SuperAdminInstance.canActivateSuperAdmin(player)) {
-                iSuperAdmin.iterateSuperAdmin();
-                reply(ctx, new SuperAdminPacket(iSuperAdmin.isSuperAdmin()));
+            if (iSuperAdmin.hasPermission() || SuperAdminInstance.canActivateSuperAdmin(player)) {
+                iSuperAdmin.changePermission();
+                reply(ctx, new SuperAdminPacket(iSuperAdmin.hasPermission()));
             }
         });
         return null;

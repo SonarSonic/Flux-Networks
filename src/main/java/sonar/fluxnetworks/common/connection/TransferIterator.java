@@ -27,9 +27,9 @@ public class TransferIterator<T extends IFluxConnector> {
     }
 
     public boolean incrementGroup() {
-        if(groupIterator.hasNext()) {
+        if (groupIterator.hasNext()) {
             currentGroup = groupIterator.next();
-            fluxIterator = currentGroup.connectors.iterator();
+            fluxIterator = currentGroup.getConnectors().iterator();
             return incrementFlux();
         }
         finish = true;
@@ -37,7 +37,7 @@ public class TransferIterator<T extends IFluxConnector> {
     }
 
     public boolean incrementFlux() {
-        if(fluxIterator.hasNext()) {
+        if (fluxIterator.hasNext()) {
             currentFlux = fluxIterator.next();
             return needTransfer() || incrementFlux();
         }
@@ -45,10 +45,10 @@ public class TransferIterator<T extends IFluxConnector> {
     }
 
     public boolean needTransfer() {
-        if(!currentFlux.isActive()) {
+        if (!currentFlux.isActive()) {
             return false;
         }
-        if(isPoint) {
+        if (isPoint) {
             return currentFlux.getTransferHandler().getRequest() > 0;
         } else {
             return currentFlux.getTransferHandler().getBuffer() > 0;
@@ -60,7 +60,7 @@ public class TransferIterator<T extends IFluxConnector> {
     }
 
     public boolean hasNext() {
-        if(finish) {
+        if (finish) {
             return false;
         }
         return needTransfer() || incrementFlux();
