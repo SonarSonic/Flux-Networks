@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public interface IFluxNetwork {
 
-    default int getNetworkID(){
+    default int getNetworkID() {
         return getSetting(NetworkSettings.NETWORK_ID);
     }
 
@@ -25,32 +25,45 @@ public interface IFluxNetwork {
     <T> void setSetting(NetworkSettings<T> settings, T value);
 
     @Deprecated
-    default void onStartServerTick() {}
+    default void onStartServerTick() {
+    }
 
-    default void onEndServerTick() {}
+    default void onEndServerTick() {
+    }
 
-    default void onRemoved() {}
+    default void onRemoved() {
+    }
 
     default EnumAccessType getMemberPermission(PlayerEntity player) {
         return EnumAccessType.NONE;
     }
 
-    default void addNewMember(String name) {}
+    default void addNewMember(String name) {
+    }
 
-    default void removeMember(UUID uuid) {}
+    default void removeMember(UUID uuid) {
+    }
 
-    default <T extends IFluxConnector> List<T> getConnections(FluxCacheTypes<T> type) {return Lists.newArrayList();}
+    default <T extends IFluxConnector> List<T> getConnections(FluxCacheType<T> type) {
+        return Lists.newArrayList();
+    }
 
-    default Optional<NetworkMember> getValidMember(UUID player) {return Optional.empty();}
+    default Optional<NetworkMember> getValidMember(UUID player) {
+        return Optional.empty();
+    }
 
-    default void queueConnectionAddition(IFluxConnector flux) {}
+    default void queueConnectionAddition(IFluxConnector flux) {
+    }
 
-    default void queueConnectionRemoval(IFluxConnector flux, boolean chunkUnload) {}
+    default void queueConnectionRemoval(IFluxConnector flux, boolean chunkUnload) {
+    }
 
-    default boolean isInvalid() {return false;}
+    default boolean isInvalid() {
+        return false;
+    }
 
     void readNetworkNBT(CompoundNBT nbt, NBTType type);
 
-    CompoundNBT writeNetworkNBT(CompoundNBT nbt, NBTType type);
+    void writeNetworkNBT(CompoundNBT nbt, NBTType type);
 
 }

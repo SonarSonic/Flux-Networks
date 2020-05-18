@@ -1,16 +1,14 @@
 package sonar.fluxnetworks.common.network;
 
-import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FluxUtils;
@@ -82,9 +80,8 @@ public class BatchEditingPacket extends AbstractPacket {
                     boolean surge = tag.getBoolean(FluxConnectorBlockItem.SURGE_MODE);
                     boolean unlimited = tag.getBoolean(FluxConnectorBlockItem.DISABLE_LIMIT);
                     boolean load = tag.getBoolean("chunkLoad");
-                    //TODO TODO TODO toooodoooooo
                     List<TileFluxCore> onlineConnectors = new ArrayList<>();
-                    network.getConnections(FluxCacheTypes.FLUX).forEach(e -> onlineConnectors.add((TileFluxCore) e));
+                    network.getConnections(FluxCacheType.FLUX).forEach(e -> onlineConnectors.add((TileFluxCore) e));
                     AtomicBoolean reject = new AtomicBoolean(false);
 
                     for (Coord4D c : coord4DS) {

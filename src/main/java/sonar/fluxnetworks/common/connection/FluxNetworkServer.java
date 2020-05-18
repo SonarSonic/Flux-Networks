@@ -5,7 +5,7 @@ import net.minecraftforge.common.MinecraftForge;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.EnumSecurityType;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.tiles.IFluxPlug;
@@ -24,14 +24,14 @@ import java.util.stream.Collectors;
  */
 public class FluxNetworkServer extends FluxNetworkBase {
 
-    public HashMap<FluxCacheTypes<?>, List<? extends IFluxConnector>> connections = new HashMap<>();
-    public Queue<IFluxConnector> toAdd = new ConcurrentLinkedQueue<>();
-    public Queue<IFluxConnector> toRemove = new ConcurrentLinkedQueue<>();
+    private Map<FluxCacheType<? extends IFluxConnector>, List<? extends IFluxConnector>> connections = new HashMap<>();
+    private Queue<IFluxConnector> toAdd = new ConcurrentLinkedQueue<>();
+    private Queue<IFluxConnector> toRemove = new ConcurrentLinkedQueue<>();
 
     public boolean sortConnections = true;
 
-    public List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
-    public List<PriorityGroup<IFluxPoint>> sortedPoints = new ArrayList<>();
+    private List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
+    private List<PriorityGroup<IFluxPoint>> sortedPoints = new ArrayList<>();
 
     private TransferIterator<IFluxPlug> plugTransferIterator = new TransferIterator<>();
     private TransferIterator<IFluxPoint> pointTransferIterator = new TransferIterator<>();
@@ -53,7 +53,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         Iterator<IFluxConnector> iterator = toAdd.iterator();
         while (iterator.hasNext()) {
             IFluxConnector flux = iterator.next();
-            FluxCacheTypes.getValidTypes(flux).forEach(t -> FluxUtils.addWithCheck(getConnections(t), flux));
+            FluxCacheType.getValidTypes(flux).forEach(t -> FluxUtils.addWithCheck(getConnections(t), flux));
             MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(flux, this));
             iterator.remove();
             sortConnections = true;
@@ -67,15 +67,14 @@ public class FluxNetworkServer extends FluxNetworkBase {
         Iterator<IFluxConnector> iterator = toRemove.iterator();
         while (iterator.hasNext()) {
             IFluxConnector flux = iterator.next();
-            FluxCacheTypes.getValidTypes(flux).forEach(t -> getConnections(t).removeIf(f -> f == flux));
+            FluxCacheType.getValidTypes(flux).forEach(t -> getConnections(t).removeIf(f -> f == flux));
             iterator.remove();
             sortConnections = true;
         }
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T extends IFluxConnector> List<T> getConnections(FluxCacheTypes<T> type) {
+    public <T extends IFluxConnector> List<T> getConnections(FluxCacheType<T> type) {
         return (List<T>) connections.computeIfAbsent(type, m -> new ArrayList<T>());
     }
 
@@ -91,7 +90,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         }
         bufferLimiter = 0;
 
-        List<IFluxConnector> fluxConnectors = getConnections(FluxCacheTypes.FLUX);
+        List<IFluxConnector> fluxConnectors = getConnections(FluxCacheType.FLUX);
         fluxConnectors.forEach(f -> {
             f.getTransferHandler().onStartCycle();
             bufferLimiter += f.getTransferHandler().getRequest();
@@ -152,7 +151,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
     @Override
     public void onRemoved() {
-        getConnections(FluxCacheTypes.FLUX).forEach(flux -> MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Disconnected((IFluxConnector) flux, this)));
+        getConnections(FluxCacheType.FLUX).forEach(flux -> MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Disconnected((IFluxConnector) flux, this)));
         connections.clear();
         toAdd.clear();
         toRemove.clear();
@@ -222,8 +221,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
     private void sortConnections() {
         sortedPlugs.clear();
         sortedPoints.clear();
-        List<IFluxPlug> plugs = getConnections(FluxCacheTypes.PLUG);
-        List<IFluxPoint> points = getConnections(FluxCacheTypes.POINT);
+        List<IFluxPlug> plugs = getConnections(FluxCacheType.PLUG);
+        List<IFluxPoint> points = getConnections(FluxCacheType.POINT);
         plugs.forEach(p -> PriorityGroup.getOrCreateGroup(p.getPriority(), sortedPlugs).getConnectors().add(p));
         points.forEach(p -> PriorityGroup.getOrCreateGroup(p.getPriority(), sortedPoints).getConnectors().add(p));
         sortedPlugs.sort(Comparator.comparing(p -> -p.getPriority()));

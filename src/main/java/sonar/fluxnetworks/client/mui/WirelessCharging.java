@@ -68,7 +68,7 @@ public class WirelessCharging extends Module {
 
         @Override
         protected void onDraw(@Nonnull Canvas canvas, float time) {
-            if (type.isActivated(NavigationHome.network.getSetting(NetworkSettings.NETWORK_WIRELESS))) {
+            if (type.isActivated(NavigationHome.network)) {
                 int color = NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR);
                 float r = Color3f.getRedFrom(color);
                 float g = Color3f.getGreenFrom(color);

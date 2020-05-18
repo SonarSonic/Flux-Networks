@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
@@ -89,15 +89,14 @@ public class NetworkStatistics {
     /**
      * Called every 5 ticks
      */
-    @SuppressWarnings("unchecked")
     private void weakTick() {
-        List<IFluxPlug> plugs = network.getConnections(FluxCacheTypes.PLUG);
+        List<IFluxPlug> plugs = network.getConnections(FluxCacheType.PLUG);
         plugs.forEach(p -> {
             if(!(p instanceof TileFluxStorage)) {
                 energyInput4 += p.getTransferHandler().getChange();
             }
         });
-        List<IFluxPoint> points = network.getConnections(FluxCacheTypes.POINT);
+        List<IFluxPoint> points = network.getConnections(FluxCacheType.POINT);
         points.forEach(p -> {
             if(!(p instanceof TileFluxStorage)) {
                 energyOutput4 -= p.getTransferHandler().getChange();
@@ -108,22 +107,21 @@ public class NetworkStatistics {
     /**
      * Called every 20 ticks
      */
-    @SuppressWarnings("unchecked")
     private void weakerTick() {
         totalBuffer = 0;
         totalEnergy = 0;
-        List<IFluxPlug> plugs = network.getConnections(FluxCacheTypes.PLUG);
+        List<IFluxPlug> plugs = network.getConnections(FluxCacheType.PLUG);
         plugs.forEach(p -> {
             if(p instanceof TileFluxPlug) {
                 totalBuffer += p.getTransferHandler().getBuffer();
             }
         });
-        List<IFluxStorage> storages = network.getConnections(FluxCacheTypes.STORAGE);
+        List<IFluxStorage> storages = network.getConnections(FluxCacheType.STORAGE);
         storages.forEach(p -> totalEnergy += p.getEnergy());
-        fluxControllerCount = network.getConnections(FluxCacheTypes.CONTROLLER).size();
+        fluxControllerCount = network.getConnections(FluxCacheType.CONTROLLER).size();
         fluxStorageCount = storages.size();
         fluxPlugCount = plugs.size() - fluxStorageCount;
-        fluxPointCount = network.getConnections(FluxCacheTypes.POINT).size() - fluxStorageCount - fluxControllerCount;
+        fluxPointCount = network.getConnections(FluxCacheType.POINT).size() - fluxStorageCount - fluxControllerCount;
         energyInput = energyInput4 / 4;
         energyOutput = energyOutput4 / 4;
         energyInput4 = 0;

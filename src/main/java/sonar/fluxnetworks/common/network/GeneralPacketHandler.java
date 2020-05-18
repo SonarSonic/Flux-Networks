@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.network.EnumAccessType;
@@ -84,7 +84,7 @@ public class GeneralPacketHandler {
                 if(network.getSetting(NetworkSettings.NETWORK_COLOR) != color) {
                     network.setSetting(NetworkSettings.NETWORK_COLOR, color);
                     needPacket = true;
-                    List<IFluxConnector> list = network.getConnections(FluxCacheTypes.FLUX);
+                    List<IFluxConnector> list = network.getConnections(FluxCacheType.FLUX);
                     list.forEach(fluxConnector -> fluxConnector.connect(network)); // update color data
                 }
                 if(needPacket) {

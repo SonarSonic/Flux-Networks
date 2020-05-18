@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.world.server.ServerWorld;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
@@ -31,7 +31,7 @@ public class TilePacketHandler {
         }
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(!network.isInvalid()) {
-            if(tile.getConnectionType().isController() && network.getConnections(FluxCacheTypes.CONTROLLER).size() > 0) {
+            if(tile.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);
             }
             if(!network.getMemberPermission(player).canAccess()) {

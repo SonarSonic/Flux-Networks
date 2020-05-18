@@ -95,22 +95,6 @@ public class FluxTileHome extends Module {
         }
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        IKeyboardListener k = this.getKeyboardListener();
-        if (super.mouseClicked(mouseX, mouseY, mouseButton)) {
-            if (k != null && this.getKeyboardListener() != k) {
-                this.setKeyboardListener(null);
-            }
-            return true;
-        } else if (this.getKeyboardListener() != null) {
-            this.setKeyboardListener(null);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void changeName(@Nonnull TextField field) {
         tileEntity.customName = field.getText();
         tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_CUSTOM_NAME);

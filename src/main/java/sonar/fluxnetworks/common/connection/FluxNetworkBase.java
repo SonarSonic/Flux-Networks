@@ -79,7 +79,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     }
 
     @Override
-    public CompoundNBT writeNetworkNBT(CompoundNBT nbt, NBTType type) {
+    public void writeNetworkNBT(CompoundNBT nbt, NBTType type) {
         if(type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
             nbt.putInt(FluxNetworkData.NETWORK_ID, network_id.getValue());
             nbt.putString(FluxNetworkData.NETWORK_NAME, network_name.getValue());
@@ -102,8 +102,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
 
         if(type == NBTType.NETWORK_CONNECTIONS) {
             all_connectors.getValue().removeIf(IFluxConnector::isChunkLoaded);
-            @SuppressWarnings("unchecked")
-            List<IFluxConnector> connectors = getConnections(FluxCacheTypes.FLUX);
+            List<IFluxConnector> connectors = getConnections(FluxCacheType.FLUX);
             connectors.forEach(f -> all_connectors.getValue().add(new FluxLiteConnector(f)));
             FluxNetworkData.writeAllConnections(this, nbt);
         }
@@ -114,7 +113,6 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
             nbt.putBoolean("clear", true); // Nothing
         }
 
-        return nbt;
     }
 
 }

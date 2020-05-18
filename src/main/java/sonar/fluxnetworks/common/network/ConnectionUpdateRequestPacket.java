@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.common.connection.FluxLiteConnector;
@@ -48,8 +48,7 @@ public class ConnectionUpdateRequestPacket extends AbstractPacket{
         if(!network.isInvalid()) {
             PlayerEntity player = PacketHandler.getPlayer(ctx);
             List<CompoundNBT> tags = new ArrayList<>();
-            //no inspection unchecked
-            List<IFluxConnector> onlineConnectors = network.getConnections(FluxCacheTypes.FLUX);
+            List<IFluxConnector> onlineConnectors = network.getConnections(FluxCacheType.FLUX);
             coords.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst()
                             .ifPresent(f -> tags.add(FluxLiteConnector.writeCustomNBT(f, new CompoundNBT()))));
             return new ConnectionUpdatePacket(networkID, tags);

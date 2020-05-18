@@ -26,7 +26,6 @@ import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 
-@SuppressWarnings("unused")
 @Mod.EventBusSubscriber(modid = FluxNetworks.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistration {
 

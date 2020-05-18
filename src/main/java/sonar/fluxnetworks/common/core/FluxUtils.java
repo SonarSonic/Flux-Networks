@@ -7,7 +7,7 @@ import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
@@ -150,7 +150,7 @@ public class FluxUtils {
         if(fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
             if(!network.isInvalid()) {
-                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheTypes.CONTROLLER).size() > 0) {
+                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
                     return false;
                 }
                 network.queueConnectionAddition(fluxConnector);
