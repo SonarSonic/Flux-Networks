@@ -87,10 +87,12 @@ public class FluxConfigurationType {
         tile.disableLimit = nbt.getBoolean(key);
     }
 
+    @FunctionalInterface
     public interface ICopyMethod {
         void copyFromTile(CompoundNBT tag, String key, TileFluxCore tile);
     }
 
+    @FunctionalInterface
     public interface IPasteMethod {
         void pasteToTile(CompoundNBT tag, String key, TileFluxCore tile);
     }

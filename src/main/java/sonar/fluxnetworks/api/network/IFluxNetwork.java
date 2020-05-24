@@ -25,24 +25,21 @@ public interface IFluxNetwork {
     <T> void setSetting(NetworkSettings<T> settings, T value);
 
     @Deprecated
-    default void onStartServerTick() {
-    }
+    default void onStartServerTick() {}
 
-    default void onEndServerTick() {
-    }
+    default void onEndServerTick() {}
 
-    default void onRemoved() {
-    }
+    default void onDeleted() {}
 
     default EnumAccessType getMemberPermission(PlayerEntity player) {
         return EnumAccessType.NONE;
     }
 
-    default void addNewMember(String name) {
-    }
+    @Deprecated
+    default void addNewMember(String name) {}
 
-    default void removeMember(UUID uuid) {
-    }
+    @Deprecated
+    default void removeMember(UUID uuid) {}
 
     default <T extends IFluxConnector> List<T> getConnections(FluxCacheType<T> type) {
         return Lists.newArrayList();
@@ -52,9 +49,11 @@ public interface IFluxNetwork {
         return Optional.empty();
     }
 
+    /* Server only */
     default void queueConnectionAddition(IFluxConnector flux) {
     }
 
+    /* Server only */
     default void queueConnectionRemoval(IFluxConnector flux, boolean chunkUnload) {
     }
 

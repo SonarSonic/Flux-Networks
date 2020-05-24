@@ -22,7 +22,7 @@ public class ConnectionTransfer implements IFluxTransfer, ISidedTransfer {
         this.energyHandler = energyHandler;
         this.tile = tile;
         this.dir = dir;
-        this.displayStack = FluxUtils.getBlockItem(tile.getWorld(), tile.getPos());
+        this.displayStack = FluxUtils.createItemStackFromBlock(tile.getWorld(), tile.getPos());
     }
 
     @Override

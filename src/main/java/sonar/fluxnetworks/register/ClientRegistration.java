@@ -1,12 +1,17 @@
 package sonar.fluxnetworks.register;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.entity.EntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import sonar.fluxnetworks.FluxConfig;
@@ -19,7 +24,9 @@ import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.mui.MUIIntegration;
 import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
+import sonar.fluxnetworks.client.render.ItemRendererCallable;
 import sonar.fluxnetworks.common.core.ContainerConnector;
+import sonar.fluxnetworks.common.core.FireItemEntity;
 import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -69,6 +76,9 @@ public class ClientRegistration {
                 return null;
             });
         }
+
+        //TODO this renderer doesn't render item??
+        RenderingRegistry.registerEntityRenderingHandler(RegistryItems.FIRE_ITEM_ENTITY, manager -> new ItemRenderer(manager, Minecraft.getInstance().getItemRenderer()));
 
 
         FluxNetworks.LOGGER.info("Finished Client Setup Event");

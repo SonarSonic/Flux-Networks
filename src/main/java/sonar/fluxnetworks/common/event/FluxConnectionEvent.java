@@ -9,7 +9,6 @@ public class FluxConnectionEvent extends Event {
     public final IFluxConnector flux;
 
     public FluxConnectionEvent(IFluxConnector flux) {
-        super();
         this.flux = flux;
     }
 

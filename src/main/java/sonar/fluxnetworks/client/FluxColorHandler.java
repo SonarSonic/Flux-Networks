@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /** Render network color on blocks and items.*/
+//TODO use flux networks cache
 public class FluxColorHandler implements IBlockColor, IItemColor {
 
     public static final FluxColorHandler INSTANCE = new FluxColorHandler();

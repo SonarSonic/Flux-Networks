@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.api.utils;
 
+//TODO remove enum, using int id
 public enum NBTType {
     DEFAULT,
     TILE_SAVE,

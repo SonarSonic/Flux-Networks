@@ -1,26 +1,26 @@
 package sonar.fluxnetworks.common.core;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
-import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.utils.FluxConfigurationType;
-import sonar.fluxnetworks.api.network.FluxCacheType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.FluxCacheType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.utils.FluxConfigurationType;
+import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
+import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
+import sonar.fluxnetworks.common.connection.FluxNetworkCache;
+import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
+import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
 import java.util.Collection;
@@ -45,34 +45,34 @@ public class FluxUtils {
 
     @Nullable
     public static Direction getBlockDirection(BlockPos pos, BlockPos other) {
-        for(Direction face : Direction.values()) {
-            if(pos.offset(face).equals(other))
+        for (Direction face : Direction.values()) {
+            if (pos.offset(face).equals(other))
                 return face;
         }
         return null;
     }
 
     public static String getTransferInfo(EnumConnectionType type, EnergyType energyType, long change) {
-        if(type.canAddEnergy()) {
+        if (type.canAddEnergy()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
-            if(change == 0) {
+            if (change == 0) {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + b;
             } else {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + b;
             }
         }
-        if(type.canRemoveEnergy() || type.isController()) {
+        if (type.canRemoveEnergy() || type.isController()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
-            if(change == 0) {
+            if (change == 0) {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
             } else {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + b;
             }
         }
-        if(type == EnumConnectionType.STORAGE) {
-            if(change == 0) {
+        if (type == EnumConnectionType.STORAGE) {
+            if (change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
-            } else if(change > 0) {
+            } else if (change > 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             } else {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
@@ -132,25 +132,25 @@ public class FluxUtils {
         }
     }*/
 
-    public static <T> boolean addWithCheck(Collection<T> list, T toAdd) {
-        if(toAdd != null && !list.contains(toAdd)) {
+    public static <T> boolean addWithCheck(@Nonnull Collection<T> list, @Nullable T toAdd) {
+        if (toAdd != null && !list.contains(toAdd)) {
             list.add(toAdd);
             return true;
         }
         return false;
     }
 
-    public static ItemStack getBlockItem(World world, BlockPos pos) {
+    @Nonnull
+    public static ItemStack createItemStackFromBlock(@Nonnull World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return new ItemStack(Item.getItemFromBlock(state.getBlock()));
+        return new ItemStack(state.getBlock().asItem());
     }
 
-
     public static boolean addConnection(IFluxConnector fluxConnector) {
-        if(fluxConnector.getNetworkID() != -1) {
+        if (fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
-            if(!network.isInvalid()) {
-                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
+            if (!network.isInvalid()) {
+                if (fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
                     return false;
                 }
                 network.queueConnectionAddition(fluxConnector);
@@ -161,11 +161,10 @@ public class FluxUtils {
     }
 
     public static void removeConnection(IFluxConnector fluxConnector, boolean isChunkUnload) {
-        if(fluxConnector.getNetworkID() != -1) {
+        if (fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
-            if(!network.isInvalid()) {
+            if (!network.isInvalid()) {
                 network.queueConnectionRemoval(fluxConnector, isChunkUnload);
-                return;
             }
         }
     }
@@ -178,11 +177,11 @@ public class FluxUtils {
         return 0xFF000000 | red | green | blue;
     }
 
-    public static int getBrighterColor(int color, double index) {
+    public static int getBrighterColor(int color, double factor) {
         int red = (color >> 16) & 0x000000FF;
         int green = (color >> 8) & 0x000000FF;
         int blue = (color) & 0x000000FF;
-        return getIntFromColor((int) Math.min(red * index, 255), (int) Math.min(green * index, 255), (int) Math.min(blue * index, 255));
+        return getIntFromColor((int) Math.min(red * factor, 255), (int) Math.min(green * factor, 255), (int) Math.min(blue * factor, 255));
     }
 
     public enum TypeNumberFormat {
@@ -225,30 +224,30 @@ public class FluxUtils {
     }
 
     public static String format(long in, TypeNumberFormat style, EnergyType energy, boolean usage) {
-        if(energy == EnergyType.EU) {
+        if (energy == EnergyType.EU) {
             return format(in / 4, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
         }
         return format(in, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
     }
 
     public static boolean checkPassword(String str) {
-        for(int i = 0; i < str.length(); i++) {
-            if(!Character.isLetterOrDigit(str.charAt(i)))
+        for (int i = 0; i < str.length(); i++) {
+            if (!Character.isLetterOrDigit(str.charAt(i)))
                 return false;
         }
         return true;
     }
 
     public static CompoundNBT copyConfiguration(TileFluxCore flux, CompoundNBT config) {
-        for(FluxConfigurationType type : FluxConfigurationType.VALUES){
+        for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
             type.copy.copyFromTile(config, type.getNBTName(), flux);
         }
         return config;
     }
 
     public static void pasteConfiguration(TileFluxCore flux, CompoundNBT config) {
-        for(FluxConfigurationType type : FluxConfigurationType.VALUES){
-            if(config.contains(type.getNBTName())) {
+        for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
+            if (config.contains(type.getNBTName())) {
                 type.paste.pasteToTile(config, type.getNBTName(), flux);
             }
         }

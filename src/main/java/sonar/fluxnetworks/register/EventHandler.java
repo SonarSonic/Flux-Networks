@@ -9,10 +9,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -41,6 +44,7 @@ import sonar.fluxnetworks.common.registry.RegistryItems;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventHandler {
@@ -48,12 +52,12 @@ public class EventHandler {
     //// SERVER EVENTS \\\\
 
     @SubscribeEvent
-    public static void onServerStarted(FMLServerStartedEvent event){
+    public static void onServerStarted(FMLServerStartedEvent event) {
         FluxNetworks.proxy.onServerStarted();
     }
 
     @SubscribeEvent
-    public static void onServerStopped(FMLServerStoppedEvent event){
+    public static void onServerStopped(FMLServerStoppedEvent event) {
         FluxNetworkCache.INSTANCE.clearNetworks();
         FluxNetworkCache.INSTANCE.clearClientCache();
         FluxNetworks.proxy.onServerStopped();
@@ -62,8 +66,8 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        if(event.phase == TickEvent.Phase.END) {
-            for(IFluxNetwork network : FluxNetworkCache.INSTANCE.getAllNetworks()) {
+        if (event.phase == TickEvent.Phase.END) {
+            for (IFluxNetwork network : FluxNetworkCache.INSTANCE.getAllNetworks()) {
                 network.onEndServerTick();
             }
         }
@@ -73,8 +77,8 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        if(event.getWorld() instanceof ServerWorld) {
-            FluxChunkManager.loadWorld((ServerWorld)event.getWorld());
+        if (event.getWorld() instanceof ServerWorld) {
+            FluxChunkManager.loadWorld((ServerWorld) event.getWorld());
         }
     }
 
@@ -83,37 +87,53 @@ public class EventHandler {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onPlayerInteract(PlayerInteractEvent.LeftClickBlock event) {
-        if(event.getSide().isServer()) {
-            if(!FluxConfig.enableFluxRecipe) {
+        if (!FluxConfig.enableFluxRecipe) {
+            return;
+        }
+        World world = event.getWorld();
+        BlockPos pos = event.getPos();
+        BlockState crusher = world.getBlockState(pos);
+        BlockState base = world.getBlockState(pos.down(2));
+        if (crusher.getBlock() == Blocks.OBSIDIAN && (base.getBlock() == Blocks.BEDROCK || base.getBlock() == RegistryBlocks.FLUX_BLOCK)) {
+            List<ItemEntity> entities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.down()));
+            if (entities.isEmpty())
                 return;
-            }
-            ServerWorld world = (ServerWorld)event.getWorld();
-            BlockPos pos = event.getPos();
-            BlockState crusher = world.getBlockState(pos);
-            BlockState base = world.getBlockState(pos.down(2));
-            if (crusher.getBlock().equals(Blocks.OBSIDIAN) && (base.getBlock().equals(Blocks.BEDROCK)) || base.getBlock().equals(RegistryBlocks.FLUX_BLOCK)) {
-                List<ItemEntity> entities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.down()));
-                if(entities.isEmpty())
-                    return;
-                List<ItemEntity> s = Lists.newArrayList();
-                AtomicInteger count = new AtomicInteger();
-                entities.forEach(e -> {
-                    if (e.getItem().getItem().equals(Items.REDSTONE)) {
-                        s.add(e);
-                        count.addAndGet(e.getItem().getCount());
+            List<ItemEntity> validEntities = Lists.newArrayList();
+            int count = 0;
+            for (ItemEntity entity : entities) {
+                if (entity.getItem().getItem() == Items.REDSTONE) {
+                    validEntities.add(entity);
+                    count += entity.getItem().getCount();
+                    if (count >= 512) {
+                        break;
                     }
-                });
-                if (s.isEmpty())
-                    return;
-                ItemStack stack = new ItemStack(RegistryItems.FLUX, count.getAndIncrement());
-                s.forEach(Entity::remove);
-                world.setBlockState(pos, Blocks.AIR.getDefaultState());
-                world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
-                world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
-                world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
-
-                event.setCanceled(true);
+                }
             }
+            if (validEntities.isEmpty())
+                return;
+            if (event.getSide().isServer()) {
+                ItemStack stack = new ItemStack(RegistryItems.FLUX, count);
+                validEntities.forEach(Entity::remove);
+                world.removeBlock(pos, false);
+                world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
+                Random rand = new Random();
+                if (rand.nextDouble() < (1 - Math.pow(0.9, count >> 4))) {
+                    world.setBlockState(pos.down(), Blocks.COBBLESTONE.getDefaultState());
+                    world.playSound(null, pos, SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                } else {
+                    world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
+                    world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                }
+            } else {
+                int max = MathHelper.clamp(count >> 2, 1, 64);
+                //TODO send to all nearby player
+                for (int i = 0; i < max; i++) {
+                    // speed won't work with lava particle, because its constructor doesn't use these params
+                    world.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
+                }
+            }
+
+            event.setCanceled(true);
         }
     }
 
@@ -138,7 +158,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void onPlayerJoined(PlayerEvent.PlayerLoggedInEvent event) {
         PlayerEntity player = event.getPlayer();
-        if(!player.world.isRemote) {
+        if (!player.world.isRemote) {
             PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
             PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SuperAdminPacket(SuperAdminInstance.isPlayerSuperAdmin(player)));
         }
@@ -148,14 +168,14 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onFluxConnected(FluxConnectionEvent.Connected event) {
-        if(!event.flux.getWorld0().isRemote) {
+        if (!event.flux.getWorld0().isRemote) {
             event.flux.connect(event.network);
         }
     }
 
     @SubscribeEvent
     public static void onFluxDisconnect(FluxConnectionEvent.Disconnected event) {
-        if(!event.flux.getWorld0().isRemote) {
+        if (!event.flux.getWorld0().isRemote) {
             event.flux.disconnect(event.network);
         }
     }

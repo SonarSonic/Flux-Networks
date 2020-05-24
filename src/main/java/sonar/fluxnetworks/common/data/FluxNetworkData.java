@@ -9,7 +9,6 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.utils.Capabilities;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.capability.SuperAdminInstance;
@@ -28,7 +27,8 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
- * Save network data to local. Only on server side
+ * Manage all flux network server and save network data to local.
+ * Only on logic server side
  */
 public class FluxNetworkData extends WorldSavedData {
 
@@ -92,9 +92,9 @@ public class FluxNetworkData extends WorldSavedData {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
     }
 
-    public void removeNetwork(IFluxNetwork network) {
+    public void deleteNetwork(IFluxNetwork network) {
         PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_CLEAR));
-        network.onRemoved();
+        network.onDeleted();
         networks.remove(network.getNetworkID());
     }
 

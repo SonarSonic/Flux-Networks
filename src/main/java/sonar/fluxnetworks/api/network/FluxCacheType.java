@@ -17,7 +17,7 @@ public class FluxCacheType<T extends IFluxConnector> {
 
     private final Class<T> clazz;
 
-    public static final List<FluxCacheType<?>> TYPES = Lists.newArrayList(FLUX, PLUG, POINT, STORAGE, CONTROLLER);
+    public static final List<FluxCacheType<? extends IFluxConnector>> TYPES = Lists.newArrayList(FLUX, PLUG, POINT, STORAGE, CONTROLLER);
 
     public FluxCacheType(Class<T> clazz) {
         this.clazz = clazz;
@@ -25,11 +25,11 @@ public class FluxCacheType<T extends IFluxConnector> {
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    public static <T extends IFluxConnector> List<FluxCacheType<T>> getValidTypes(T tile) {
-        List<FluxCacheType<T>> valid = new ArrayList<>();
-        for (FluxCacheType<?> type : FluxCacheType.TYPES) {
+    public static List<FluxCacheType<IFluxConnector>> getValidTypes(IFluxConnector tile) {
+        List<FluxCacheType<IFluxConnector>> valid = new ArrayList<>();
+        for (FluxCacheType<? extends IFluxConnector> type : FluxCacheType.TYPES) {
             if (type.clazz.isInstance(tile)) {
-                valid.add((FluxCacheType<T>) type);
+                valid.add((FluxCacheType<IFluxConnector>) type);
             }
         }
         return valid;

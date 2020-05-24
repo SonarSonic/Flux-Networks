@@ -372,7 +372,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     protected void sortNetworkConnections() {
         if (network instanceof FluxNetworkServer) {
             FluxNetworkServer fluxNetworkServer = (FluxNetworkServer) network;
-            fluxNetworkServer.sortConnections = true;
+            fluxNetworkServer.needSortConnections = true;
             markLiteSettingChanged();
         }
     }

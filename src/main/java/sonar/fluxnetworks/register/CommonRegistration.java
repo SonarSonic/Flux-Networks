@@ -2,7 +2,9 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
@@ -22,6 +24,7 @@ import sonar.fluxnetworks.client.render.ItemRendererCallable;
 import sonar.fluxnetworks.common.block.*;
 import sonar.fluxnetworks.common.capability.SuperAdminInstance;
 import sonar.fluxnetworks.common.core.ContainerConnector;
+import sonar.fluxnetworks.common.core.FireItemEntity;
 import sonar.fluxnetworks.common.handler.CapabilityHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
@@ -118,8 +121,8 @@ public class CommonRegistration {
 
 
     @SubscribeEvent
-    public static void onEntityRegistry(final RegistryEvent.Register<EntityType<?>> event) {
-        //TODO FIXME event.getRegistry().register(EntityType.Builder.<FireItemEntity>create(FireItemEntity::new, EntityClassification.MISC).immuneToFire().build(null).setRegistryName("fireitementity"));
+    public static void onEntityRegistry(@Nonnull final RegistryEvent.Register<EntityType<?>> event) {
+        event.getRegistry().register(EntityType.Builder.<FireItemEntity>create(FireItemEntity::new, EntityClassification.MISC).immuneToFire().build("fireitem").setRegistryName("fireitem"));
     }
 
     @SubscribeEvent

@@ -68,14 +68,14 @@ public class WirelessCharging extends Module {
 
         @Override
         protected void onDraw(@Nonnull Canvas canvas, float time) {
+            int color = NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR);
+            float r = Color3f.getRedFrom(color);
+            float g = Color3f.getGreenFrom(color);
+            float b = Color3f.getBlueFrom(color);
             if (type.isActivated(NavigationHome.network)) {
-                int color = NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR);
-                float r = Color3f.getRedFrom(color);
-                float g = Color3f.getGreenFrom(color);
-                float b = Color3f.getBlueFrom(color);
                 canvas.setRGBA(r, g, b, 1);
             } else {
-                canvas.resetColor();
+                canvas.setRGBA(r * 0.7f, g * 0.7f, b * 0.7f, 0.7f);
             }
             canvas.drawIcon(icon, x1, y1, x2, y2);
             if (isMouseHovered()) {

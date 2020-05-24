@@ -23,6 +23,12 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<Integer> network_wireless = new CustomValue<>(0);
 
     public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
+    //TODO Server:
+    // 1. Online Connections: getConnections (TileFluxCore)
+    // 2. Unloaded Connections: FluxLiteConnector, to record data and send to client
+    // Client:
+    // All are FluxLiteConnector for gui connections tab
+    // Current: as its name (... server and client
     public ICustomValue<List<IFluxConnector>> all_connectors = new CustomValue<>(new ArrayList<>());
     public ICustomValue<List<NetworkMember>> network_players = new CustomValue<>(new ArrayList<>());
 

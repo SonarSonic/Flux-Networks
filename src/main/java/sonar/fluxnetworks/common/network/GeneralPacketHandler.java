@@ -115,7 +115,7 @@ public class GeneralPacketHandler {
         IFluxNetwork toDelete = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(!toDelete.isInvalid()) {
             if(toDelete.getMemberPermission(player).canDelete()) {
-                FluxNetworkData.get().removeNetwork(toDelete);
+                FluxNetworkData.get().deleteNetwork(toDelete);
                 return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
             } else {
                 return new FeedbackPacket(EnumFeedbackInfo.NO_OWNER);

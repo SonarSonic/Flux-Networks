@@ -107,7 +107,7 @@ public abstract class FluxNetworkBlock extends Block {
 
                 ItemEntity entityItem = new ItemEntity(world, pos.getX() + motionX, pos.getY() + motionY, pos.getZ() + motionZ, stack);
 
-                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                world.removeBlock(pos, false);
                 world.addEntity(entityItem);
                 return true;
             }else{
