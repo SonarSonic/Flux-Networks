@@ -25,7 +25,7 @@ public class FluxNetworks {
     public static final String NAME = "Flux Networks";
     //public static final String VERSION = "5.0.0";
 
-    public static IProxy proxy = DistExecutor.runForDist(() -> ProxyClient::new, () -> ProxyServer::new);
+    public static final IProxy PROXY = DistExecutor.safeRunForDist(() -> ProxyClient::new, () -> ProxyServer::new);
     public static final Logger LOGGER = LogManager.getLogger("FluxNetworks");
 
     public static boolean modernUILoaded = false;
@@ -40,7 +40,7 @@ public class FluxNetworks {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, FluxConfig.CLIENT_SPEC);
         FMLJavaModLoadingContext.get().getModEventBus().register(FluxConfig.class);
         MinecraftForge.EVENT_BUS.register(EventHandler.class);
-        MinecraftForge.EVENT_BUS.register(proxy);
+        MinecraftForge.EVENT_BUS.register(PROXY);
         modernUILoaded = ModList.get().isLoaded("modernui");
     }
 

@@ -11,7 +11,6 @@ import sonar.fluxnetworks.api.network.EnumSecurityType;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
-import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.GeneralPacket;
@@ -53,7 +52,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.drawForegroundLayer(mouseX, mouseY);
 
         screenUtils.renderNetwork(name.getText(), color.color, 20, 129);
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 150, 0xffffff);
+        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 150, 0xffffff);
     }
 
     @Override
@@ -76,9 +75,9 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     public void tick() {
         super.tick();
-        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector);
-            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
         }
     }
 

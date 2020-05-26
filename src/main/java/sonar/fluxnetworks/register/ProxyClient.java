@@ -34,16 +34,7 @@ public class ProxyClient implements IProxy {
         return Minecraft.getInstance().player;
     }
 
-
-    public void onServerStopped() {
-        FluxColorHandler.reset();
-    }
-
-    @SubscribeEvent
-    public void onRenderTick(TickEvent.RenderTickEvent event) {
-        FluxColorHandler.sendRequests();
-    }
-
+    //TODO move to client cache manager or UI data manager
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if(event.phase == TickEvent.Phase.END) {

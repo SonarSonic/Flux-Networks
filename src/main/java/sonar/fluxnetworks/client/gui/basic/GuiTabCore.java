@@ -3,7 +3,6 @@ package sonar.fluxnetworks.client.gui.basic;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
@@ -86,7 +85,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 }
                 break;
             case TAB_SELECTION:
-                if(connector instanceof AdminConfiguratorItem.ContainerProvider && FluxNetworks.proxy.getDetailedNetworkView()) {
+                if(connector instanceof AdminConfiguratorItem.ContainerProvider && FluxNetworks.PROXY.getDetailedNetworkView()) {
                     Minecraft.getInstance().displayGuiScreen(new GuiTabDetailedSelection(player, connector));
                     break;
                 }

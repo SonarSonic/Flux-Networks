@@ -142,7 +142,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         if(batchMode || !host.singleConnection.getConnectionType().isStorage()) {
             font.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 155, 0xffffff);
+        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 155, 0xffffff);
     }
 
 

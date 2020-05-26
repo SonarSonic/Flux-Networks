@@ -37,7 +37,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         screenUtils.renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
+        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
         font.drawString(EnumAccessType.SUPER_ADMIN.getName(), 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
         font.drawString("Detailed Network View", 20, 42, network.getSetting(NetworkSettings.NETWORK_COLOR));
@@ -54,7 +54,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         super_admin = new SlidedSwitchButton(140, 30, 0, guiLeft, guiTop, FluxNetworkCache.INSTANCE.superAdminClient);
         switches.add(super_admin);
 
-        detailed_network_view = new SlidedSwitchButton(140, 42, 1, guiLeft, guiTop, FluxNetworks.proxy.getDetailedNetworkView());
+        detailed_network_view = new SlidedSwitchButton(140, 42, 1, guiLeft, guiTop, FluxNetworks.PROXY.getDetailedNetworkView());
         switches.add(detailed_network_view);
     }
 
@@ -74,7 +74,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
                     PacketHandler.INSTANCE.sendToServer(new SuperAdminRequestPacket());
                     break;
                 case 1:
-                    FluxNetworks.proxy.setDetailedNetworkView(switchButton.slideControl);
+                    FluxNetworks.PROXY.setDetailedNetworkView(switchButton.slideControl);
                     break;
             }
         }

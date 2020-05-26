@@ -17,14 +17,6 @@ public interface IProxy {
 
     EnumFeedbackInfo getFeedback(boolean operation);
 
-    default void onServerStarted(){
-
-    }
-
-    default void onServerStopped(){
-
-    }
-
     void setFeedback(EnumFeedbackInfo info, boolean operation);
 
     void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache);

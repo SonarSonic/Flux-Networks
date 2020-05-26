@@ -47,7 +47,7 @@ public class GuiTabWireless extends GuiTabCore {
             int colour = network.getSetting(NetworkSettings.NETWORK_COLOR);
             drawCenteredString(font, FluxTranslate.TAB_WIRELESS.t(), 88, 12, 0xb4b4b4);
             font.drawString(FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, colour);
-            drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 146, 0xffffff);
+            drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 146, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -111,9 +111,9 @@ public class GuiTabWireless extends GuiTabCore {
     @Override
     public void tick() {
         super.tick();
-        if(apply != null && FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if(apply != null && FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             apply.clickable = false;
-            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
         }
     }
 }

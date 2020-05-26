@@ -24,7 +24,7 @@ archivesBaseName = 'FluxNetworks'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 minecraft {
-    mappings channel: 'snapshot', version: '20200410-1.15.1'
+    mappings channel: 'snapshot', version: '20200525-1.15.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -105,7 +105,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.37'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.5'
 
     runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
 
@@ -114,9 +114,9 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
-    // 1.5.8 - sources
+    // 1.5.9 - sources
     // constantly update
-    compile fg.deobf("curse.maven:modern-ui:2959002")
+    compile fg.deobf("curse.maven:modern-ui:2966106")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

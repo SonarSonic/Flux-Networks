@@ -52,7 +52,7 @@ public interface IFluxConnector extends INetworkConnector {
 
     ITransferHandler getTransferHandler();
 
-    World getWorld0();
+    World getWorld();
 
     Coord4D getCoords();
 

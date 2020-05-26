@@ -11,6 +11,8 @@ import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
+import javax.annotation.Nonnull;
+
 @ObjectHolder("fluxnetworks")
 public class RegistryBlocks {
 

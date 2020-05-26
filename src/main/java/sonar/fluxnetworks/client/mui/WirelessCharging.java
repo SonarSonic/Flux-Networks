@@ -1,9 +1,8 @@
 package sonar.fluxnetworks.client.mui;
 
+import icyllis.modernui.graphics.math.TextAlign;
 import icyllis.modernui.gui.master.*;
-import icyllis.modernui.gui.math.Align3H;
-import icyllis.modernui.gui.math.Color3f;
-import icyllis.modernui.gui.math.Locator;
+import icyllis.modernui.gui.math.Color3i;
 import icyllis.modernui.gui.widget.SlidingToggleButton;
 import sonar.fluxnetworks.api.gui.EnumChargingTypes;
 import sonar.fluxnetworks.api.network.NetworkSettings;
@@ -69,9 +68,9 @@ public class WirelessCharging extends Module {
         @Override
         protected void onDraw(@Nonnull Canvas canvas, float time) {
             int color = NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR);
-            float r = Color3f.getRedFrom(color);
-            float g = Color3f.getGreenFrom(color);
-            float b = Color3f.getBlueFrom(color);
+            float r = Color3i.getRedFrom(color);
+            float g = Color3i.getGreenFrom(color);
+            float b = Color3i.getBlueFrom(color);
             if (type.isActivated(NavigationHome.network)) {
                 canvas.setRGBA(r, g, b, 1);
             } else {
@@ -79,7 +78,7 @@ public class WirelessCharging extends Module {
             }
             canvas.drawIcon(icon, x1, y1, x2, y2);
             if (isMouseHovered()) {
-                canvas.setTextAlign(Align3H.CENTER);
+                canvas.setTextAlign(TextAlign.CENTER);
                 canvas.resetColor();
                 canvas.drawText(text, x1 + width / 2, y1 - 9);
             }

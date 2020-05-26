@@ -73,7 +73,7 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
     public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         //screenUtils.drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 162, 0xffffff);
+        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 162, 0xffffff);
         drawCenteredString(font, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
         drawCenteredString(font, host.selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
         String text = host.selectedPlayer.getPlayerUUID().toString();

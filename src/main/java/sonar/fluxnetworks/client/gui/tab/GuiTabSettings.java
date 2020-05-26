@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
@@ -49,7 +48,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                     drawCenteredString(font, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
                 }
             }
-            drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 156, 0xffffff);
+            drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 156, 0xffffff);
         } else {
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -135,13 +134,13 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void tick() {
         super.tick();
-        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTabs.TAB_HOME, player, connector);
-            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
         }
-        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
+        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
             apply.clickable = false;
-            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
         }
     }
 }

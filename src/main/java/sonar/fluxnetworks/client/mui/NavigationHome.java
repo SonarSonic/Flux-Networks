@@ -1,16 +1,12 @@
 package sonar.fluxnetworks.client.mui;
 
-import icyllis.modernui.gui.master.Canvas;
-import icyllis.modernui.gui.master.IDrawable;
-import icyllis.modernui.gui.master.Icon;
-import icyllis.modernui.gui.master.ModuleGroup;
-import icyllis.modernui.gui.math.Align3H;
-import icyllis.modernui.gui.math.Color3f;
+import icyllis.modernui.graphics.math.TextAlign;
+import icyllis.modernui.gui.master.*;
+import icyllis.modernui.gui.math.Color3i;
 import icyllis.modernui.gui.math.Direction4D;
-import icyllis.modernui.gui.math.Locator;
 import icyllis.modernui.gui.widget.TextIconButton;
 import icyllis.modernui.system.ConstantsLibrary;
-import icyllis.modernui.system.RegistrySounds;
+import icyllis.modernui.system.RegistryLibrary;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -66,7 +62,7 @@ public class NavigationHome extends ModuleGroup {
                     .buildCallback(tab == EnumNavigationTabs.TAB_HOME, () -> {
                         switchChildModule(id);
                         if (FluxConfig.enableButtonSound) {
-                            playSound(RegistrySounds.BUTTON_CLICK_1);
+                            playSound(RegistryLibrary.BUTTON_CLICK_1);
                         }
                     });
             navigationButtons.add(button);
@@ -129,7 +125,7 @@ public class NavigationHome extends ModuleGroup {
                 canvas.drawOctagonRectFrame(x1 + 18, y1 + 6, x2 - 18, y1 + 18, 2);
                 canvas.setLineAntiAliasing(false);
                 canvas.resetColor();
-                canvas.setTextAlign(Align3H.LEFT);
+                canvas.setTextAlign(TextAlign.LEFT);
                 canvas.drawText(network.getNetworkName(), x1 + 22, y1 + 8);
             }
         }
@@ -152,9 +148,9 @@ public class NavigationHome extends ModuleGroup {
 
         private void updateColor() {
             int color = network.getSetting(NetworkSettings.NETWORK_COLOR);
-            r = Color3f.getRedFrom(color);
-            g = Color3f.getGreenFrom(color);
-            b = Color3f.getBlueFrom(color);
+            r = Color3i.getRedFrom(color);
+            g = Color3i.getGreenFrom(color);
+            b = Color3i.getBlueFrom(color);
         }
 
         public void setRenderNetworkName(boolean renderNetworkName) {

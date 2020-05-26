@@ -53,7 +53,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             font.drawString(amount, 158 - font.getStringWidth(amount), 10, 0xffffff);
             font.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
             if (!hasActivePopup()) {
-                drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 150, 0xffffff);
+                drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 150, 0xffffff);
             }
         }
     }
@@ -142,7 +142,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         if(timer2 == 0) {
             refreshPages(FluxNetworkCache.INSTANCE.getAllClientNetworks());
         }
-        if(selectedNetwork != null && FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if(selectedNetwork != null && FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
            closePopUp();
            if(connector instanceof FluxConfiguratorItem.ContainerProvider){
                FluxConfiguratorItem.ContainerProvider networkConnector = (FluxConfiguratorItem.ContainerProvider)connector;
@@ -153,9 +153,9 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
                this.networkValid = !selectedNetwork.isInvalid();
            }
         }
-        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.PASSWORD_REQUIRE) {
+        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.PASSWORD_REQUIRE) {
             openPopUp(new PopUpNetworkPassword(this, player, connector));
-            FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
         }
         timer2++;
         timer2 %= 10;

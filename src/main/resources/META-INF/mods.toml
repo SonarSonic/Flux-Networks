@@ -13,12 +13,12 @@ issueTrackerURL="https://github.com/SonarSonic/Flux-Networks/issues"
 [[dependencies.fluxnetworks]]
     modId="forge"
     mandatory=true
-    versionRange="[31.1,)"
+    versionRange="[31.2.5,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.15.2,)"
     ordering="NONE"
     side="BOTH"

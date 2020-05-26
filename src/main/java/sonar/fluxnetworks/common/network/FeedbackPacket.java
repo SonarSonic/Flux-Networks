@@ -25,9 +25,9 @@ public class FeedbackPacket extends AbstractPacket {
     @Override
     public Object handle(NetworkEvent.Context ctx) {
         if(info == EnumFeedbackInfo.SUCCESS || info == EnumFeedbackInfo.SUCCESS_2 || info == EnumFeedbackInfo.PASSWORD_REQUIRE) {
-            FluxNetworks.proxy.setFeedback(info, true);
+            FluxNetworks.PROXY.setFeedback(info, true);
         } else {
-            FluxNetworks.proxy.setFeedback(info, false);
+            FluxNetworks.PROXY.setFeedback(info, false);
         }
         return null;
     }

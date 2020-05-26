@@ -49,12 +49,12 @@ public class AdminConfiguratorItem extends FluxConfiguratorItem {
 
         @Override
         public int getNetworkID() {
-            return FluxNetworks.proxy.getAdminViewingNetworkID();
+            return FluxNetworks.PROXY.getAdminViewingNetworkID();
         }
 
         @Override
         public IFluxNetwork getNetwork() {
-            return FluxNetworks.proxy.getAdminViewingNetwork();
+            return FluxNetworks.PROXY.getAdminViewingNetwork();
         }
 
         @Override

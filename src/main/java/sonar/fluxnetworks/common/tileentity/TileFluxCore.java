@@ -396,11 +396,6 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     @Override
-    public World getWorld0() {
-        return world;
-    }
-
-    @Override
     public UUID getConnectionOwner() {
         return playerUUID;
     }

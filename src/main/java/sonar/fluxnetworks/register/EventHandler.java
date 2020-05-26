@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -24,17 +25,18 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.capability.SuperAdminInstance;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FireItemEntity;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
+import sonar.fluxnetworks.common.data.FluxNetworkData;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
@@ -42,30 +44,24 @@ import sonar.fluxnetworks.common.network.SuperAdminPacket;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventHandler {
 
     //// SERVER EVENTS \\\\
 
     @SubscribeEvent
-    public static void onServerStarted(FMLServerStartedEvent event) {
-        FluxNetworks.proxy.onServerStarted();
-    }
-
-    @SubscribeEvent
     public static void onServerStopped(FMLServerStoppedEvent event) {
-        FluxNetworkCache.INSTANCE.clearNetworks();
-        FluxNetworkCache.INSTANCE.clearClientCache();
-        FluxNetworks.proxy.onServerStopped();
+        // Mainly used to switch data while changing single-player saves
+        // Useless on dedicated server
+        FluxNetworkData.release();
         FluxChunkManager.clear();
     }
 
     @SubscribeEvent
-    public static void onServerTick(TickEvent.ServerTickEvent event) {
+    public static void onServerTick(@Nonnull TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             for (IFluxNetwork network : FluxNetworkCache.INSTANCE.getAllNetworks()) {
                 network.onEndServerTick();
@@ -76,8 +72,8 @@ public class EventHandler {
     //// WORLD EVENTS \\\\
 
     @SubscribeEvent
-    public static void onWorldLoad(WorldEvent.Load event) {
-        if (event.getWorld() instanceof ServerWorld) {
+    public static void onWorldLoad(@Nonnull WorldEvent.Load event) {
+        if (!event.getWorld().isRemote()) {
             FluxChunkManager.loadWorld((ServerWorld) event.getWorld());
         }
     }
@@ -116,8 +112,7 @@ public class EventHandler {
                 validEntities.forEach(Entity::remove);
                 world.removeBlock(pos, false);
                 world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
-                Random rand = new Random();
-                if (rand.nextDouble() < (1 - Math.pow(0.9, count >> 4))) {
+                if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 4)) {
                     world.setBlockState(pos.down(), Blocks.COBBLESTONE.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 } else {
@@ -156,26 +151,24 @@ public class EventHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerJoined(PlayerEvent.PlayerLoggedInEvent event) {
+    public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         PlayerEntity player = event.getPlayer();
-        if (!player.world.isRemote) {
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SuperAdminPacket(SuperAdminInstance.isPlayerSuperAdmin(player)));
-        }
+        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
+        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SuperAdminPacket(SuperAdminInstance.isPlayerSuperAdmin(player)));
     }
 
     //// TILE EVENTS \\\\
 
     @SubscribeEvent
-    public static void onFluxConnected(FluxConnectionEvent.Connected event) {
-        if (!event.flux.getWorld0().isRemote) {
+    public static void onFluxConnected(@Nonnull FluxConnectionEvent.Connected event) {
+        if (!event.flux.getWorld().isRemote) {
             event.flux.connect(event.network);
         }
     }
 
     @SubscribeEvent
-    public static void onFluxDisconnect(FluxConnectionEvent.Disconnected event) {
-        if (!event.flux.getWorld0().isRemote) {
+    public static void onFluxDisconnect(@Nonnull FluxConnectionEvent.Disconnected event) {
+        if (!event.flux.getWorld().isRemote) {
             event.flux.disconnect(event.network);
         }
     }

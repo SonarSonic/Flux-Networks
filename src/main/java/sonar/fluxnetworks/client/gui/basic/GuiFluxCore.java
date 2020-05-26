@@ -101,8 +101,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     @Override
     public void onClose() {
         super.onClose();
-        FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, false);
-        FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
+        FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, false);
+        FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
     }
 
 
@@ -171,8 +171,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
             PacketHandler.INSTANCE.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxConnector)connector).getCoords()));
         }
         if(connector instanceof AdminConfiguratorItem.ContainerProvider){
-            FluxNetworks.proxy.setAdminViewingNetworkID(networkID);
-            FluxNetworks.proxy.setAdminViewingNetwork(FluxNetworkCache.INSTANCE.getClientNetwork(networkID));
+            FluxNetworks.PROXY.setAdminViewingNetworkID(networkID);
+            FluxNetworks.PROXY.setAdminViewingNetwork(FluxNetworkCache.INSTANCE.getClientNetwork(networkID));
         }
         if(connector instanceof FluxConfiguratorItem.ContainerProvider){
             PacketHandler.INSTANCE.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));

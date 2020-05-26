@@ -46,7 +46,7 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCon
     public void closePopUp(){
         popButtons.clear();
         popSwitches.clear();
-        FluxNetworks.proxy.setFeedback(EnumFeedbackInfo.NONE, true);
+        FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
     }
 
     @Override

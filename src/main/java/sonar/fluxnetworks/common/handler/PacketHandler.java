@@ -46,7 +46,7 @@ public class PacketHandler {
         if(context.getDirection() == NetworkDirection.PLAY_TO_SERVER){
             return context.getSender();
         }
-        return FluxNetworks.proxy.getClientPlayer();
+        return FluxNetworks.PROXY.getClientPlayer();
     }
 
 }

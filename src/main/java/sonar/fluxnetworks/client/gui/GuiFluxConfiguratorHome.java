@@ -59,7 +59,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     protected void drawForegroundLayer(int mouseX, int mouseY) {
         super.drawForegroundLayer(mouseX, mouseY);
         screenUtils.renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
-        screenUtils.drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
+        screenUtils.drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
         font.drawString(FluxTranslate.SURGE_MODE.t(), 20, 90, network.getSetting(NetworkSettings.NETWORK_COLOR));
         font.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 102, network.getSetting(NetworkSettings.NETWORK_COLOR));

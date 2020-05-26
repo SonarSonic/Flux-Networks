@@ -109,7 +109,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             }
             super.drawForegroundLayer(mouseX, mouseY);
             if(!hasActivePopup())
-                drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 165, 0xffffff);
+                drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 165, 0xffffff);
         } else {
             super.drawForegroundLayer(mouseX, mouseY);
             renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
@@ -202,7 +202,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         }
         timer++;
         timer %= 20;
-        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             closePopUp();
             batchConnections.clear();
             clear.clickable = false;
@@ -210,7 +210,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             disconnect.clickable = false;
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
         }
-        if(FluxNetworks.proxy.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
+        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
             closePopUp();
             elements.removeAll(batchConnections);
             batchConnections.clear();

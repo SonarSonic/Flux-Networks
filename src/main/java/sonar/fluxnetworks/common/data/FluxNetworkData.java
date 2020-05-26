@@ -3,28 +3,33 @@ package sonar.fluxnetworks.common.data;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.WorldSavedData;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.capability.SuperAdminInstance;
 import sonar.fluxnetworks.common.connection.FluxLiteConnector;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manage all flux network server and save network data to local.
@@ -106,9 +111,9 @@ public class FluxNetworkData extends WorldSavedData {
     @Override
     public void read(@Nonnull CompoundNBT nbt) {
         uniqueID = nbt.getInt(UNIQUE_ID);
-        if(nbt.contains(NETWORKS)) {
+        if (nbt.contains(NETWORKS)) {
             ListNBT list = nbt.getList(NETWORKS, Constants.NBT.TAG_COMPOUND);
-            for(int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < list.size(); i++) {
                 CompoundNBT tag = list.getCompound(i);
                 FluxNetworkServer network = new FluxNetworkServer();
                 /*if(tag.contains(OLD_NETWORK_ID)) {
@@ -129,7 +134,7 @@ public class FluxNetworkData extends WorldSavedData {
         compound.putInt(UNIQUE_ID, uniqueID);
 
         ListNBT list = new ListNBT();
-        for(IFluxNetwork network : FluxNetworkCache.INSTANCE.getAllNetworks()) {
+        for (IFluxNetwork network : networks.values()) {
             CompoundNBT tag = new CompoundNBT();
             network.writeNetworkNBT(tag, NBTType.ALL_SAVE);
             list.add(tag);
@@ -143,12 +148,12 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public static void readPlayers(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
-        if(!nbt.contains(PLAYER_LIST)) {
+        if (!nbt.contains(PLAYER_LIST)) {
             return;
         }
         List<NetworkMember> a = new ArrayList<>();
         ListNBT list = nbt.getList(PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {
             CompoundNBT c = list.getCompound(i);
             a.add(new NetworkMember(c));
         }
@@ -157,7 +162,7 @@ public class FluxNetworkData extends WorldSavedData {
 
     public static void writePlayers(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
         List<NetworkMember> a = network.getSetting(NetworkSettings.NETWORK_PLAYERS);
-        if(!a.isEmpty()) {
+        if (!a.isEmpty()) {
             ListNBT list = new ListNBT();
             a.forEach(s -> list.add(s.writeNetworkNBT(new CompoundNBT())));
             nbt.put(PLAYER_LIST, list);
@@ -167,11 +172,11 @@ public class FluxNetworkData extends WorldSavedData {
     public static void writeAllPlayers(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
         List<NetworkMember> a = network.getSetting(NetworkSettings.NETWORK_PLAYERS);
         ListNBT list = new ListNBT();
-        if(!a.isEmpty()) {
+        if (!a.isEmpty()) {
             a.forEach(s -> list.add(s.writeNetworkNBT(new CompoundNBT())));
         }
         List<ServerPlayerEntity> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
-        if(!players.isEmpty()) {
+        if (!players.isEmpty()) {
             players.stream().filter(p -> a.stream().noneMatch(s -> s.getPlayerUUID().equals(p.getUniqueID())))
                     .forEach(s -> list.add(NetworkMember.createNetworkMember(s, getPermission(s)).writeNetworkNBT(new CompoundNBT())));
         }
@@ -183,7 +188,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
-        if(!nbt.contains(UNLOADED_CONNECTIONS)) {
+        if (!nbt.contains(UNLOADED_CONNECTIONS)) {
             return;
         }
         List<IFluxConnector> a = new ArrayList<>();
@@ -196,10 +201,10 @@ public class FluxNetworkData extends WorldSavedData {
 
     public static void writeConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
         List<IFluxConnector> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
-        if(!a.isEmpty()) {
+        if (!a.isEmpty()) {
             ListNBT list = new ListNBT();
             a.forEach(s -> {
-                if(!s.isChunkLoaded()) {
+                if (!s.isChunkLoaded()) {
                     list.add(s.writeCustomNBT(new CompoundNBT(), NBTType.DEFAULT));
                 }
             });
@@ -208,7 +213,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public static void readAllConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
-        if(!nbt.contains(UNLOADED_CONNECTIONS)) {
+        if (!nbt.contains(UNLOADED_CONNECTIONS)) {
             return;
         }
         List<IFluxConnector> a = new ArrayList<>();
@@ -221,7 +226,7 @@ public class FluxNetworkData extends WorldSavedData {
 
     public static void writeAllConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
         List<IFluxConnector> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
-        if(!a.isEmpty()) {
+        if (!a.isEmpty()) {
             ListNBT list = new ListNBT();
             a.forEach(s -> list.add(s.writeCustomNBT(new CompoundNBT(), NBTType.DEFAULT)));
             nbt.put(UNLOADED_CONNECTIONS, list);
@@ -229,11 +234,11 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     private void readChunks(CompoundNBT nbt) {
-        if(!nbt.contains(LOADED_CHUNKS)) {
+        if (!nbt.contains(LOADED_CHUNKS)) {
             return;
         }
         CompoundNBT tags = nbt.getCompound(LOADED_CHUNKS);
-        for(String key : tags.keySet()) {
+        for (String key : tags.keySet()) {
             ListNBT list = tags.getList(key, Constants.NBT.TAG_COMPOUND);
             List<ChunkPos> pos = loadedChunks.computeIfAbsent(Integer.valueOf(key), l -> new ArrayList<>());
             for (int i = 0; i < list.size(); i++) {
@@ -244,7 +249,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     private void writeChunks(int dim, List<ChunkPos> pos, CompoundNBT nbt) {
-        if(!pos.isEmpty()) {
+        if (!pos.isEmpty()) {
             ListNBT list = new ListNBT();
             pos.forEach(p -> {
                 CompoundNBT t = new CompoundNBT();

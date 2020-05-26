@@ -41,7 +41,7 @@ public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
         }
         drawCenteredString(font, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
 
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 88, 110, 0xffffff);
+        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 110, 0xffffff);
     }
 
 

@@ -1,32 +1,34 @@
 package sonar.fluxnetworks.common.item;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.translate.StyleUtils;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.core.ContainerConnector;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.world.World;
 import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -51,7 +53,7 @@ public class FluxConfiguratorItem extends Item {
                 return ActionResultType.FAIL;
             }
             ItemStack stack = player.getHeldItem(context.getHand());
-            if (player.isShiftKeyDown()) {
+            if (player.isSneaking()) {
                 stack.setTagInfo(FluxUtils.CONFIGS_TAG, fluxCore.copyConfiguration(new CompoundNBT()));
                 player.sendMessage(new StringTextComponent("Copied Configuration"));
             } else {
@@ -90,11 +92,11 @@ public class FluxConfiguratorItem extends Item {
         public int networkID;
         public IFluxNetwork network;
 
-        public ContainerProvider(ItemStack stack){
+        public ContainerProvider(ItemStack stack) {
             this.stack = stack;
             CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
             networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTName()) : -1;
-            network = FluxNetworks.proxy.getNetwork(networkID);
+            network = FluxNetworks.PROXY.getNetwork(networkID);
         }
 
         @Override
@@ -108,10 +110,12 @@ public class FluxConfiguratorItem extends Item {
         }
 
         @Override
-        public void open(PlayerEntity player) {}
+        public void open(PlayerEntity player) {
+        }
 
         @Override
-        public void close(PlayerEntity player) {}
+        public void close(PlayerEntity player) {
+        }
 
         @Override
         public ITextComponent getDisplayName() {

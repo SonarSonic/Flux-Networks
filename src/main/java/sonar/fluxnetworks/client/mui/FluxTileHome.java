@@ -1,12 +1,11 @@
 package sonar.fluxnetworks.client.mui;
 
+import icyllis.modernui.graphics.math.TextAlign;
 import icyllis.modernui.gui.master.Canvas;
 import icyllis.modernui.gui.master.IDrawable;
-import icyllis.modernui.gui.master.IKeyboardListener;
+import icyllis.modernui.gui.master.Locator;
 import icyllis.modernui.gui.master.Module;
-import icyllis.modernui.gui.math.Align3H;
-import icyllis.modernui.gui.math.Color3f;
-import icyllis.modernui.gui.math.Locator;
+import icyllis.modernui.gui.math.Color3i;
 import icyllis.modernui.gui.widget.NumberInputField;
 import icyllis.modernui.gui.widget.SlidingToggleButton;
 import icyllis.modernui.gui.widget.TextField;
@@ -143,7 +142,7 @@ public class FluxTileHome extends Module {
         @Override
         public void draw(@Nonnull Canvas canvas, float v) {
             canvas.resetColor();
-            canvas.setTextAlign(Align3H.LEFT);
+            canvas.setTextAlign(TextAlign.LEFT);
             canvas.drawText(FluxUtils.getTransferInfo(tileEntity.getConnectionType(),
                     NavigationHome.network.getSetting(NetworkSettings.NETWORK_ENERGY),
                     tileEntity.getChange()), x1 + 28, y1 + 8);
@@ -171,9 +170,9 @@ public class FluxTileHome extends Module {
 
         private void updateInfo() {
             int color = NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR);
-            r = Color3f.getRedFrom(color);
-            g = Color3f.getGreenFrom(color);
-            b = Color3f.getBlueFrom(color);
+            r = Color3i.getRedFrom(color);
+            g = Color3i.getGreenFrom(color);
+            b = Color3i.getBlueFrom(color);
         }
     }
 }
