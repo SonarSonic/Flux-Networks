@@ -2,52 +2,61 @@ package sonar.fluxnetworks.client.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.Matrix3f;
+import net.minecraft.client.renderer.Matrix4f;
+import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
+import javax.annotation.Nonnull;
+
 public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage> {
 
-    public static final float startX = 2F/16, startY = 2F/16, offsetZ = 1F/16, width = 12F/16, height = 13F/16;
-    public static final float alpha = 150F / 255.0F;
-    public static final int maxLight = 0xF000F0;
+    public static final float START_X  = 2.0f / 16.0f;
+    public static final float START_Y  = 2.0f / 16.0f;
+    public static final float OFFSET_Z = 1.0f / 16.0f;
+    public static final float WIDTH    = 12.0f / 16.0f;
+    public static final float HEIGHT   = 13.0f / 16.0f;
+
+    public static final float ALPHA = 150.0f / 255.0f;
+
+    public static final int LIGHT_MAP = 0x00f000f0;
 
     public FluxStorageTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
     }
 
     @Override
-    public void render(TileFluxStorage tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        render(partialTicks, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.color | 0xff000000);
+    public void render(@Nonnull TileFluxStorage tile, float partialTicks, @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+        render(matrixStackIn, bufferIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.color);
     }
 
-    public static void render(float partialTicks, MatrixStack matrix, IRenderTypeBuffer bufferIn, int light, int overlay, int energyStored, int energyMax, int networkColour) {
-        if (energyStored == 0 || energyMax == 0) {
+    static void render(MatrixStack matrix, IRenderTypeBuffer bufferIn, int overlay, int energyStored, int energyCapacity, int networkRGB) {
+        if (energyStored <= 0 || energyCapacity <= 0) {
             return;
         }
-        float r = ScreenUtils.getRed(networkColour);
-        float g = ScreenUtils.getGreen(networkColour);
-        float b = ScreenUtils.getBlue(networkColour);
-        float energyPercentage = ((float)energyStored)/energyMax;
-        float renderHeight = height * energyPercentage;
-        float renderWidth = width;
+        float r = ScreenUtils.getRed(networkRGB);
+        float g = ScreenUtils.getGreen(networkRGB);
+        float b = ScreenUtils.getBlue(networkRGB);
+        float energyPercentage = Math.min((float) energyStored / energyCapacity, 1.0f);
+        float renderHeight = HEIGHT * energyPercentage;
+        float renderWidth = WIDTH;
 
         IVertexBuilder builder = bufferIn.getBuffer(FluxRenderTypes.FLUX_STORAGE_GLOW);
-        renderSide(matrix, builder, Direction.NORTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.SOUTH, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.EAST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.WEST, startX, startY, offsetZ, renderWidth, renderHeight, r, g, b, alpha, maxLight, overlay, energyPercentage);
-        if(energyPercentage != 1) {
-            renderSide(matrix, builder, Direction.DOWN, 1F / 16, 1F / 16, offsetZ + height - renderHeight, 14F / 16, 14F / 16, r, g, b, alpha, maxLight, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.NORTH, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.SOUTH, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.EAST, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.WEST, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
+        if (energyPercentage < 1.0f) {
+            renderSide(matrix, builder, Direction.DOWN, 1.0f / 16.0f, 1.0f / 16.0f, OFFSET_Z + HEIGHT - renderHeight, 14.0f / 16.0f, 14.0f / 16.0f, r, g, b, overlay, energyPercentage);
         }
     }
 
-    public static void renderSide(MatrixStack matrix, IVertexBuilder builder, Direction dir, float x, float y, float z, float width, float height, float r, float g, float b, float a, int light, int overlay, float fillPercentage){
+    private static void renderSide(@Nonnull MatrixStack matrix, @Nonnull IVertexBuilder builder, @Nonnull Direction dir, float x, float y, float z, float width, float height, float r, float g, float b, int overlay, float fillPercentage) {
         float minU = 0, minV = 0, maxU = 1, maxV = 1 * fillPercentage;
         matrix.push();
         matrix.translate(0.5, 0.5, 0.5);
@@ -56,10 +65,10 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
         matrix.translate(-0.5, -0.5, -0.5);
         Matrix4f matrix4f = matrix.getLast().getMatrix();
         Matrix3f normal = matrix.getLast().getNormal();
-        builder.pos(matrix4f, x, y + height, z).color(r, g, b, a).tex(minU, maxV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
-        builder.pos(matrix4f, x + width, y + height, z).color(r, g, b, a).tex(maxU, maxV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
-        builder.pos(matrix4f, x + width, y, z).color(r, g, b, a).tex(maxU, minV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
-        builder.pos(matrix4f, x, y, z).color(r, g, b, a).tex(minU, minV).overlay(overlay).lightmap(light).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(minU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x + width, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(maxU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x + width, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(maxU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(minU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
         matrix.pop();
     }
 

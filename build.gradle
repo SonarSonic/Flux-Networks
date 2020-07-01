@@ -18,7 +18,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${minecraft_version}-5.0.2-3"
+version = "${minecraft_version}-${mod_version}"
 group = 'sonar.fluxnetworks'
 archivesBaseName = 'FluxNetworks'
 
@@ -115,7 +115,7 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
     // 1.5.9 - sources
-    // constantly update
+    // no longer use, waiting for v2.0
     compile fg.deobf("curse.maven:modern-ui:2966106")
 }
 

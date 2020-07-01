@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.mui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import icyllis.modernui.graphics.math.TextAlign;
 import icyllis.modernui.gui.master.*;
 import icyllis.modernui.gui.math.Color3i;
@@ -7,7 +8,11 @@ import icyllis.modernui.gui.math.Direction4D;
 import icyllis.modernui.gui.widget.TextIconButton;
 import icyllis.modernui.system.ConstantsLibrary;
 import icyllis.modernui.system.RegistryLibrary;
+import net.minecraft.client.renderer.Matrix3f;
+import net.minecraft.client.renderer.Matrix4f;
+import org.lwjgl.opengl.GL11;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -128,6 +133,21 @@ public class NavigationHome extends ModuleGroup {
                 canvas.setTextAlign(TextAlign.LEFT);
                 canvas.drawText(network.getNetworkName(), x1 + 22, y1 + 8);
             }
+            RenderSystem.enableDepthTest();
+            canvas.setZ(300);
+            canvas.setColor(Color3i.GRAY, 0.2f);
+            canvas.drawRect(20, 20, 40, 40);
+            canvas.setZ(0);
+            canvas.setColor(Color3i.GOLD, 1);
+            canvas.drawRect(30, 20, 50, 40);
+
+            canvas.setZ(300);
+            canvas.setColor(Color3i.GRAY, 1);
+            canvas.drawRect(60, 20, 80, 40);
+            canvas.setZ(0);
+            canvas.setColor(Color3i.GOLD, 0.2f);
+            canvas.drawRect(70, 20, 90, 40);
+            RenderSystem.disableDepthTest();
         }
 
         @Override

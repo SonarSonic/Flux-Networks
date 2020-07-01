@@ -8,6 +8,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import sonar.fluxnetworks.FluxNetworks;
 
+import javax.annotation.Nonnull;
+
 public class FluxRenderTypes extends RenderType {
 
     public static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
@@ -17,8 +19,14 @@ public class FluxRenderTypes extends RenderType {
         super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
     }
 
+    @Nonnull
     public static RenderType getGlowType(ResourceLocation resourceLocation) {
-        RenderType.State state = RenderType.State.getBuilder().texture(new RenderState.TextureState(resourceLocation, false, false)).shadeModel(SHADE_ENABLED).alpha(DEFAULT_ALPHA).transparency(TRANSLUCENT_TRANSPARENCY).build(true);
+        RenderType.State state = RenderType.State.getBuilder()
+                .texture(new RenderState.TextureState(resourceLocation, false, false))
+                .shadeModel(SHADE_ENABLED)
+                .alpha(DEFAULT_ALPHA)
+                .transparency(TRANSLUCENT_TRANSPARENCY)
+                .build(true);
         return makeType("glow_type", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, true, state);
     }
 }

@@ -25,6 +25,7 @@ import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.network.NetworkColourRequestPacket;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,11 +40,13 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     public static final FluxColorHandler INSTANCE = new FluxColorHandler();
 
-    public static final int DEFAULT_COLOR = FluxUtils.getIntFromColor(41, 94, 138);
+    public static final int DEFAULT_COLOR    = FluxUtils.getIntFromColor(41, 94, 138);
     public static final int NO_NETWORK_COLOR = FluxUtils.getIntFromColor(178, 178, 178);
+
     private static final Map<Integer, Integer> COLOR_MAP = new HashMap<>();
-    private static final Map<Integer, String> NAME_MAP = new HashMap<>();
-    private static final List<Integer> REQUESTS = new ArrayList<>();
+    private static final Map<Integer, String>  NAME_MAP  = new HashMap<>();
+
+    private static final List<Integer> REQUESTS      = new ArrayList<>();
     private static final List<Integer> SENT_REQUESTS = new ArrayList<>();
 
     public static void reset() {
@@ -118,7 +121,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     }
 
     @Override
-    public int getColor(BlockState state, @Nullable ILightReader world, @Nullable BlockPos pos, int tintIndex) {
+    public int getColor(@Nonnull BlockState state, @Nullable ILightReader world, @Nullable BlockPos pos, int tintIndex) {
         if (tintIndex == 1 && pos != null && world != null) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileFluxCore) {
@@ -134,7 +137,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     }
 
     @Override
-    public int getColor(ItemStack stack, int tintIndex) {
+    public int getColor(@Nonnull ItemStack stack, int tintIndex) {
         if (tintIndex == 1) {
             if (stack.hasTag() && stack.getTag().getBoolean(FluxUtils.GUI_COLOR)) {
                 if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {

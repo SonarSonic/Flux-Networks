@@ -36,20 +36,18 @@ public class WirelessCharging extends Module {
         addWidget(new WirelessSlot(this, builder, icon, type));
     }
 
-    private void changeWireless(EnumChargingTypes type) {
-        int wireless = NavigationHome.network.getSetting(NetworkSettings.NETWORK_WIRELESS);
-        boolean[] settings = new boolean[EnumChargingTypes.values().length];
-        for (EnumChargingTypes types : EnumChargingTypes.values()) {
-            settings[types.ordinal()] = types.isActivated(wireless);
+    private void changeWireless(@Nonnull EnumChargingTypes type) {
+        int setting = NavigationHome.network.getSetting(NetworkSettings.NETWORK_WIRELESS);
+
+        if (type.isActivated(setting)) {
+            setting &= ~(1 << type.ordinal());
+        } else {
+            setting |= 1 << type.ordinal();
         }
-        settings[type.ordinal()] = !settings[type.ordinal()];
-        wireless = 0;
-        for (int i = 0; i < settings.length - 1; i++) {
-            wireless |= ((settings[i] ? 1 : 0) << i);
-        }
+
         PacketHandler.INSTANCE.sendToServer(
                 new GeneralPacket(GeneralPacketEnum.CHANGE_WIRELESS, GeneralPacketHandler.getChangeWirelessPacket(
-                        NavigationHome.network.getNetworkID(), wireless)));
+                        NavigationHome.network.getNetworkID(), setting)));
     }
 
     private class WirelessSlot extends Widget {
