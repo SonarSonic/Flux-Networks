@@ -3,7 +3,6 @@ package sonar.fluxnetworks.common.tileentity;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.block.FluxConnectorBlock;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import net.minecraft.tileentity.TileEntity;
@@ -36,7 +35,7 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
     @Override
     public void sendFullUpdatePacket() {
         if(!world.isRemote){
-            BlockState newState = FluxConnectorBlock.getConnectedState(getBlockState(), getWorld(), getPos());
+            BlockState newState = FluxConnectorBlock.getConnectedState(getBlockState(), getFluxWorld(), getPos());
             world.setBlockState(pos, newState, 3);
             world.notifyBlockUpdate(pos, getBlockState(), newState, 3);
         }

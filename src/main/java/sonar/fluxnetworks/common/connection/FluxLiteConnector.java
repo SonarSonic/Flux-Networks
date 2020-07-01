@@ -171,7 +171,7 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
-    public World getWorld() {
+    public World getFluxWorld() {
         return null;
     }
 

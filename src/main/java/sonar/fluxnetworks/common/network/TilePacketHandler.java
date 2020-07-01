@@ -62,14 +62,14 @@ public class TilePacketHandler {
         boolean load = tag.getBoolean("c");
         if(FluxConfig.enableChunkLoading) {
             if (load) {
-                boolean p = FluxChunkManager.addChunkLoader((ServerWorld)tile.getWorld(), new ChunkPos(tile.getPos()));
+                boolean p = FluxChunkManager.addChunkLoader((ServerWorld)tile.getFluxWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = p;
                 tile.settings_changed = true;
                 if(!p) {
                     return new FeedbackPacket(EnumFeedbackInfo.HAS_LOADER);
                 }
             } else {
-                FluxChunkManager.removeChunkLoader((ServerWorld) tile.getWorld(), new ChunkPos(tile.getPos()));
+                FluxChunkManager.removeChunkLoader((ServerWorld) tile.getFluxWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = false;
                 tile.settings_changed = true;
             }

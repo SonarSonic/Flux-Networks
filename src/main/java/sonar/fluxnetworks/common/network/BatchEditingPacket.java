@@ -113,13 +113,13 @@ public class BatchEditingPacket extends AbstractPacket {
                                                 return;
                                             }
                                             if (!f.chunkLoading) {
-                                                f.chunkLoading = FluxChunkManager.addChunkLoader((ServerWorld) f.getWorld(), new ChunkPos(f.getPos()));
+                                                f.chunkLoading = FluxChunkManager.addChunkLoader((ServerWorld) f.getFluxWorld(), new ChunkPos(f.getPos()));
                                                 if (!f.chunkLoading) {
                                                     reject.set(true);
                                                 }
                                             }
                                         } else {
-                                            FluxChunkManager.removeChunkLoader((ServerWorld) f.getWorld(), new ChunkPos(f.getPos()));
+                                            FluxChunkManager.removeChunkLoader((ServerWorld) f.getFluxWorld(), new ChunkPos(f.getPos()));
                                             f.chunkLoading = false;
                                         }
                                     } else {

@@ -25,7 +25,7 @@ public class ContainerConnector<T extends INetworkConnector> extends Container {
     @Override
     public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
         if (connector instanceof IFluxConnector) {
-            return ((IFluxConnector) connector).getWorld().getDimension().getType() == playerIn.getEntityWorld().getDimension().getType();
+            return ((IFluxConnector) connector).getFluxWorld() == playerIn.getEntityWorld();
         }
         return true;
     }

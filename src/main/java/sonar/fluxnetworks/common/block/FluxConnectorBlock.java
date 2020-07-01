@@ -30,7 +30,7 @@ public abstract class FluxConnectorBlock extends FluxNetworkBlock {
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(state, world, pos, neighbor);
         TileFluxConnector tile = (TileFluxConnector) world.getTileEntity(pos);
-        if(!tile.getWorld().isRemote) {
+        if(!tile.getFluxWorld().isRemote) {
             tile.updateTransfers(FluxUtils.getBlockDirection(pos, neighbor));
         }
     }

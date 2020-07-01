@@ -44,13 +44,12 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
         float b = ScreenUtils.getBlue(networkRGB);
         float energyPercentage = Math.min((float) energyStored / energyCapacity, 1.0f);
         float renderHeight = HEIGHT * energyPercentage;
-        float renderWidth = WIDTH;
 
         IVertexBuilder builder = bufferIn.getBuffer(FluxRenderTypes.FLUX_STORAGE_GLOW);
-        renderSide(matrix, builder, Direction.NORTH, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.SOUTH, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.EAST, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
-        renderSide(matrix, builder, Direction.WEST, START_X, START_Y, OFFSET_Z, renderWidth, renderHeight, r, g, b, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.NORTH, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.SOUTH, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.EAST, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
+        renderSide(matrix, builder, Direction.WEST, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
         if (energyPercentage < 1.0f) {
             renderSide(matrix, builder, Direction.DOWN, 1.0f / 16.0f, 1.0f / 16.0f, OFFSET_Z + HEIGHT - renderHeight, 14.0f / 16.0f, 14.0f / 16.0f, r, g, b, overlay, energyPercentage);
         }

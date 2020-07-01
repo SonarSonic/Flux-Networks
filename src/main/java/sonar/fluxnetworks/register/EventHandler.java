@@ -17,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -28,10 +27,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.capability.SuperAdminInstance;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FireItemEntity;
@@ -161,14 +158,14 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onFluxConnected(@Nonnull FluxConnectionEvent.Connected event) {
-        if (!event.flux.getWorld().isRemote) {
+        if (!event.flux.getFluxWorld().isRemote) {
             event.flux.connect(event.network);
         }
     }
 
     @SubscribeEvent
     public static void onFluxDisconnect(@Nonnull FluxConnectionEvent.Disconnected event) {
-        if (!event.flux.getWorld().isRemote) {
+        if (!event.flux.getFluxWorld().isRemote) {
             event.flux.disconnect(event.network);
         }
     }
