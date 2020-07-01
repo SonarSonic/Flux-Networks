@@ -22,6 +22,7 @@ public class TileFluxStorageRenderer extends TileEntitySpecialRenderer<TileFluxS
         if (stored == 0 || capacity == 0) {
             return;
         }
+        stored = Math.min(stored, capacity);
         pushMatrix();
         translate(x, y, z);
         disableTexture2D();
@@ -31,7 +32,7 @@ public class TileFluxStorageRenderer extends TileEntitySpecialRenderer<TileFluxS
         float full = 1 - 0.0625F * 3;
         float bottom = 0 + 0.0625F * 2;
         float left = 0 + 0.0625F * 2;
-        float i = Math.max(0.0625F*2.2F, (stored * full / capacity) + bottom);
+        float i = Math.max(0.0625F * 2.2F, (stored * full / capacity) + bottom);
 
         float f3 = (float) (colour >> 24 & 255) / 255.0F;
         float f = (float) (colour >> 16 & 255) / 255.0F;
