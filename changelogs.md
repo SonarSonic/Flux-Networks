@@ -2,7 +2,7 @@
 
 * Bug Fixed: Storage render glitch after reducing the capacity
 * Bug Fixed: Client flux networks cache won't be cleared when logging out a server
-* Added: Flame particles when creating flux
+* Added: Flame particles when creating flux and there's a chance to turn obsidian into cobblestone
 
 #### Changelog 4.0.15 (1.12.2)
 
@@ -43,8 +43,6 @@ PORTED TO 1.15.2
 * Improvement: Recuded storage render lag
 * Improvement: Add back old flux recipe (in config)
 * Bug Fixed: Flux point can't transfer over 2^31-1 RF/t
-
- 
 
 #### Changelog 4.0.13
 
