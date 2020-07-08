@@ -2,7 +2,7 @@
 
 * Bug Fixed: Storage render glitch after reducing the capacity
 * Bug Fixed: Client flux networks cache won't be cleared when logging out a server
-* Added: Flame particles when creating flux and there's a chance to turn obsidian into cobblestone
+* Added: Lava particles when creating flux and there's a chance to turn obsidian into cobblestone
 
 #### Changelog 4.0.15 (1.12.2)
 

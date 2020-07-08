@@ -35,7 +35,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(packetID++, SuperAdminRequestPacket.class, SuperAdminRequestPacket::encode, SuperAdminRequestPacket::new, SuperAdminRequestPacket::handle);
         INSTANCE.registerMessage(packetID++, ConfiguratorUpdateSettingsPacket.class, ConfiguratorUpdateSettingsPacket::encode, ConfiguratorUpdateSettingsPacket::new, ConfiguratorUpdateSettingsPacket::handle);
         INSTANCE.registerMessage(packetID++, ConfiguratorNetworkConnectPacket.class, ConfiguratorNetworkConnectPacket::encode, ConfiguratorNetworkConnectPacket::new, ConfiguratorNetworkConnectPacket::handle);
-
+        INSTANCE.registerMessage(packetID++, LavaParticlePacket.class, LavaParticlePacket::encode, LavaParticlePacket::new, LavaParticlePacket::handle);
     }
 
     public static World getWorld(NetworkEvent.Context context){

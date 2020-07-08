@@ -36,6 +36,7 @@ import sonar.fluxnetworks.common.data.FluxChunkManager;
 import sonar.fluxnetworks.common.data.FluxNetworkData;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.network.LavaParticlePacket;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
 import sonar.fluxnetworks.common.network.SuperAdminPacket;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -102,9 +103,11 @@ public class EventHandler {
                     }
                 }
             }
-            if (validEntities.isEmpty())
+            if (validEntities.isEmpty()) {
                 return;
-            if (event.getSide().isServer()) {
+            }
+            final int max = MathHelper.clamp(count >> 2, 4, 64);
+            if (!event.getWorld().isRemote) {
                 ItemStack stack = new ItemStack(RegistryItems.FLUX, count);
                 validEntities.forEach(Entity::remove);
                 world.removeBlock(pos, false);
@@ -116,9 +119,8 @@ public class EventHandler {
                     world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }
+                PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(event::getPlayer), new LavaParticlePacket(pos, max));
             } else {
-                int max = MathHelper.clamp(count >> 2, 1, 64);
-                //TODO send to all nearby player
                 for (int i = 0; i < max; i++) {
                     // speed won't work with lava particle, because its constructor doesn't use these params
                     world.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
