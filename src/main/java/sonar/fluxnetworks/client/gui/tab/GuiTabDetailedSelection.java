@@ -7,7 +7,6 @@ import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.client.gui.basic.GuiDraw;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -70,7 +69,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
     @Override
     public void tick() {
         if (timer2 == 1) {
-            PacketHandler.INSTANCE.sendToServer(new NetworkUpdateRequestPacket(current, NBTType.NETWORK_STATISTICS));
+            PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(current, NBTType.NETWORK_STATISTICS));
         }
         super.tick();
     }

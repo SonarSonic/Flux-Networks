@@ -4,7 +4,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
@@ -20,9 +19,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.FNEnergyCapability;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.client.render.ItemRendererCallable;
+import sonar.fluxnetworks.client.render.FluxStorageItemRenderer;
 import sonar.fluxnetworks.common.block.*;
-import sonar.fluxnetworks.common.capability.SuperAdminInstance;
+import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.core.FireItemEntity;
 import sonar.fluxnetworks.common.handler.CapabilityHandler;
@@ -68,7 +67,7 @@ public class CommonRegistration {
         PacketHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
 
-        SuperAdminInstance.register();
+        DefaultSuperAdmin.register();
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 
         FluxNetworks.LOGGER.info("Finished Common Setup");
@@ -104,8 +103,8 @@ public class CommonRegistration {
         event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.FLUX_POINT, props).setRegistryName("fluxpoint"));
         event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.FLUX_CONTROLLER, props).setRegistryName("fluxcontroller"));
 
-
-        Item.Properties storageProps =  new Item.Properties().group(ITEM_GROUP).setISTER(ItemRendererCallable::getStorageRenderer);
+        // the new method is in another class, so there will be no server crash
+        Item.Properties storageProps =  new Item.Properties().group(ITEM_GROUP).setISTER(() -> FluxStorageItemRenderer::new);
 
         event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.BASIC_FLUX_STORAGE, storageProps).setRegistryName("basicfluxstorage"));
         event.getRegistry().register(new FluxConnectorBlockItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE, storageProps).setRegistryName("herculeanfluxstorage"));

@@ -113,7 +113,7 @@ public class GuiTabStatistics extends GuiTabCore {
         super.tick();
         if (networkValid) {
             if (timer == 0) {
-                PacketHandler.INSTANCE.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_STATISTICS));
+                PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_STATISTICS));
             }
             if (timer == 1) {
                 chart.updateData(stats.energyChange);

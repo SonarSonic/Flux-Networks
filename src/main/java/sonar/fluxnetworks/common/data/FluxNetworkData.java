@@ -19,7 +19,7 @@ import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.capability.SuperAdminInstance;
+import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxLiteConnector;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -94,11 +94,11 @@ public class FluxNetworkData extends WorldSavedData {
 
     public void addNetwork(IFluxNetwork network) {
         networks.putIfAbsent(network.getNetworkID(), network);
-        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
+        PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
     }
 
     public void deleteNetwork(IFluxNetwork network) {
-        PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_CLEAR));
+        PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_CLEAR));
         network.onDeleted();
         networks.remove(network.getNetworkID());
     }
@@ -184,7 +184,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     private static EnumAccessType getPermission(@Nonnull PlayerEntity player) {
-        return SuperAdminInstance.isPlayerSuperAdmin(player) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.NONE;
+        return DefaultSuperAdmin.isPlayerSuperAdmin(player) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.NONE;
     }
 
     public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {

@@ -93,7 +93,7 @@ public class GuiTabWireless extends GuiTabCore {
         }
         if(button instanceof NormalButton && button.id == 0){
             int wireless = (settings[0]?1:0) | (settings[1]?1:0) << 1 | (settings[2]?1:0) << 2 | (settings[3]?1:0) << 3 | (settings[4]?1:0) << 4 | (settings[5]?1:0) << 5;
-            PacketHandler.INSTANCE.sendToServer(new GeneralPacket(GeneralPacketEnum.CHANGE_WIRELESS, GeneralPacketHandler.getChangeWirelessPacket(network.getNetworkID(), wireless)));
+            PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CHANGE_WIRELESS, GeneralPacketHandler.getChangeWirelessPacket(network.getNetworkID(), wireless)));
         }
         if(button instanceof SlidedSwitchButton){
             ((SlidedSwitchButton)button).switchButton();

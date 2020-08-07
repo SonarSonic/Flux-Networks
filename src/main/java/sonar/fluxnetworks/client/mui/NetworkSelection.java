@@ -103,7 +103,7 @@ public class NetworkSelection extends Module {
             protected boolean onMouseLeftClick(double mouseX, double mouseY) {
                 if (NavigationHome.network.getNetworkID() != network.getNetworkID()) {
                     if (connector instanceof IFluxConnector) {
-                        PacketHandler.INSTANCE.sendToServer(
+                        PacketHandler.CHANNEL.sendToServer(
                                 new TilePacket(TilePacketEnum.SET_NETWORK,
                                         TilePacketHandler.getSetNetworkPacket(network.getNetworkID(), ""),
                                         ((IFluxConnector) connector).getCoords()));

@@ -3,7 +3,6 @@ package sonar.fluxnetworks.common.connection;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.EnumSecurityType;
 import sonar.fluxnetworks.api.network.FluxCacheType;
@@ -12,7 +11,7 @@ import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.common.capability.SuperAdminInstance;
+import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 
@@ -161,7 +160,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
     @Override
     public EnumAccessType getMemberPermission(PlayerEntity player) {
         if (FluxConfig.enableSuperAdmin) {
-            if (SuperAdminInstance.isPlayerSuperAdmin(player)) {
+            if (DefaultSuperAdmin.isPlayerSuperAdmin(player)) {
                 return EnumAccessType.SUPER_ADMIN;
             }
         }

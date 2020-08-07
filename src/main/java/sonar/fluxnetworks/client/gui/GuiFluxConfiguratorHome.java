@@ -140,7 +140,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
                 tag.putBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName(), stackSurgeMode);
                 tag.putBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTName(), stackDisableLimit);
 
-                PacketHandler.INSTANCE.sendToServer(new ConfiguratorUpdateSettingsPacket(stackCustomName, tag));
+                PacketHandler.CHANNEL.sendToServer(new ConfiguratorUpdateSettingsPacket(stackCustomName, tag));
                 stack.setTagInfo(FluxUtils.CONFIGS_TAG, tag);
                 updateSettingsFromTag();
                 apply.setUnclickable();
@@ -185,7 +185,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            PacketHandler.INSTANCE.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_GENERAL));
+            PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_GENERAL));
         }
         timer++;
         timer %= 100;

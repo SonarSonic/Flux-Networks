@@ -60,7 +60,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if(button instanceof NormalButton){
             if (mouseButton == 0 && button.id == 3) {
-                PacketHandler.INSTANCE.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK, GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
+                PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK, GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
             }
         }
     }

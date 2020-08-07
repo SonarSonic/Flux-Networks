@@ -290,7 +290,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public void sendTilePacketToUsing(byte packetID) {
         if (!world.isRemote) {
             for (PlayerEntity playerEntity : playerUsing) {
-                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity), new TilePacketBufferPacket(this, pos, packetID));
+                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity), new TilePacketBufferPacket(this, pos, packetID));
             }
         }
     }
@@ -300,13 +300,13 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
      */
     public void sendTilePacketToNearby(byte packetID) {
         if (!world.isRemote) {
-            PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunkAt(pos)), new TilePacketBufferPacket(this, pos, packetID));
+            PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunkAt(pos)), new TilePacketBufferPacket(this, pos, packetID));
         }
     }
 
 
     public void sendTilePacketToServer(byte packetID) {
-        PacketHandler.INSTANCE.sendToServer(new TilePacketBufferPacket(this, pos, packetID));
+        PacketHandler.CHANNEL.sendToServer(new TilePacketBufferPacket(this, pos, packetID));
     }
 
     @Override

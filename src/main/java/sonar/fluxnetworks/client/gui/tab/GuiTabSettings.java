@@ -106,10 +106,10 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (networkValid && button instanceof NormalButton) {
             switch (button.id){
                 case 3:
-                    PacketHandler.INSTANCE.sendToServer(new GeneralPacket(GeneralPacketEnum.EDIT_NETWORK, GeneralPacketHandler.getNetworkEditPacket(network.getNetworkID(), name.getText(), color.color, securityType, energyType, password.getText())));
+                    PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.EDIT_NETWORK, GeneralPacketHandler.getNetworkEditPacket(network.getNetworkID(), name.getText(), color.color, securityType, energyType, password.getText())));
                     break;
                 case 4:
-                    PacketHandler.INSTANCE.sendToServer(new GeneralPacket(GeneralPacketEnum.DELETE_NETWORK, GeneralPacketHandler.getDeleteNetworkPacket(connector.getNetworkID())));
+                    PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.DELETE_NETWORK, GeneralPacketHandler.getDeleteNetworkPacket(connector.getNetworkID())));
                     break;
             }
         }

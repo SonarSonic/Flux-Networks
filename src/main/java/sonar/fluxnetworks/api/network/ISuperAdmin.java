@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.network;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ByteNBT;
 
 public interface ISuperAdmin {
 
@@ -8,7 +8,7 @@ public interface ISuperAdmin {
 
     boolean hasPermission();
 
-    CompoundNBT writeToNBT(CompoundNBT nbt);
+    ByteNBT writeNBT();
 
-    void readFromNBT(CompoundNBT nbt);
+    void readNBT(ByteNBT nbt);
 }

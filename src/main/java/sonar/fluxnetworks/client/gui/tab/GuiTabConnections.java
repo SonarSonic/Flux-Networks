@@ -49,7 +49,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
         gridStartX = 15; gridStartY = 22;
         gridHeight = 19; gridPerPage = 7;
         elementHeight = 18; elementWidth = 146;
-        PacketHandler.INSTANCE.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_CONNECTIONS));
+        PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_CONNECTIONS));
     }
 
     public EnumNavigationTabs getNavigationTab(){
@@ -183,7 +183,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
                 case 2:
                     List<Coord4D> list = batchConnections.stream().map(IFluxConnector::getCoords).collect(Collectors.toList());
                     boolean[] b = {false, false, false, false, false, false, true};
-                    PacketHandler.INSTANCE.sendToServer(new BatchEditingPacket(network.getNetworkID(), list, new CompoundNBT(), b));
+                    PacketHandler.CHANNEL.sendToServer(new BatchEditingPacket(network.getNetworkID(), list, new CompoundNBT(), b));
                     break;
             }
         }
@@ -198,7 +198,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
         }
         if(timer % 5 == 0) {
-            PacketHandler.INSTANCE.sendToServer(new ConnectionUpdateRequestPacket(network.getNetworkID(), current.stream().map(IFluxConnector::getCoords).collect(Collectors.toList())));
+            PacketHandler.CHANNEL.sendToServer(new ConnectionUpdateRequestPacket(network.getNetworkID(), current.stream().map(IFluxConnector::getCoords).collect(Collectors.toList())));
         }
         timer++;
         timer %= 20;

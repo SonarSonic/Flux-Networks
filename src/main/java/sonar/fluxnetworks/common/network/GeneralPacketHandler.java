@@ -90,12 +90,12 @@ public class GeneralPacketHandler {
                 if(needPacket) {
                     HashMap<Integer, Tuple<Integer, String>> cache = new HashMap<>();
                     cache.put(networkID, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000, network.getSetting(NetworkSettings.NETWORK_NAME)));
-                    PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new NetworkColourPacket(cache));
+                    PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new NetworkColourPacket(cache));
                 }
                 network.setSetting(NetworkSettings.NETWORK_SECURITY, security);
                 network.setSetting(NetworkSettings.NETWORK_ENERGY, energy);
                 network.setSetting(NetworkSettings.NETWORK_PASSWORD, password);
-                PacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
+                PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
                 return new FeedbackPacket(EnumFeedbackInfo.SUCCESS_2);
             } else {
                 return new FeedbackPacket(EnumFeedbackInfo.NO_ADMIN);
@@ -202,7 +202,7 @@ public class GeneralPacketHandler {
                         if(player1 != null) {
                             NetworkMember newMember = NetworkMember.createNetworkMember(player1, EnumAccessType.USER);
                             network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
-                            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
+                            PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
                             return new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                         }
                         return new FeedbackPacket(EnumFeedbackInfo.INVALID_USER);
@@ -223,7 +223,7 @@ public class GeneralPacketHandler {
                                 network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);
                                 p.setAccessPermission(EnumAccessType.OWNER);
                             }
-                            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
+                            PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
                             return new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                         } else if(type == 4) {
                             PlayerEntity player1 = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerChanged);
@@ -235,7 +235,7 @@ public class GeneralPacketHandler {
                                 NetworkMember newMember = NetworkMember.createNetworkMember(player1, EnumAccessType.OWNER);
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
                                 network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);
-                                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
+                                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
                                 return new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
                             }
                             return new FeedbackPacket(EnumFeedbackInfo.INVALID_USER);
@@ -264,7 +264,7 @@ public class GeneralPacketHandler {
         if (!network.isInvalid()) {
             if(network.getMemberPermission(player).canEdit()) {
                 network.setSetting(NetworkSettings.NETWORK_WIRELESS, wireless);
-                PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
+                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
                 return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
             } else {
                 return new FeedbackPacket(EnumFeedbackInfo.NO_ADMIN);

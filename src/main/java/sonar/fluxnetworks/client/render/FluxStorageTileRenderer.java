@@ -45,7 +45,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
         float energyPercentage = Math.min((float) energyStored / energyCapacity, 1.0f);
         float renderHeight = HEIGHT * energyPercentage;
 
-        IVertexBuilder builder = bufferIn.getBuffer(FluxRenderTypes.FLUX_STORAGE_GLOW);
+        IVertexBuilder builder = bufferIn.getBuffer(FluxStorageRenderType.INSTANCE);
         renderSide(matrix, builder, Direction.NORTH, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
         renderSide(matrix, builder, Direction.SOUTH, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
         renderSide(matrix, builder, Direction.EAST, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);

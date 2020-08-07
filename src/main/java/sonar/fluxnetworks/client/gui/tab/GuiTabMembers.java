@@ -41,7 +41,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         gridPerPage = 10;
         elementHeight = 12;
         elementWidth = 146;
-        PacketHandler.INSTANCE.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
+        PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
     }
 
     public EnumNavigationTabs getNavigationTab(){
@@ -159,7 +159,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void tick() {
         super.tick();
         if(timer == 0) {
-            PacketHandler.INSTANCE.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
+            PacketHandler.CHANNEL.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
         }
         if(timer % 2 == 0) {
             refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));

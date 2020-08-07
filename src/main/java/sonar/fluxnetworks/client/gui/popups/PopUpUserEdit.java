@@ -88,7 +88,7 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         for(NormalButton button : popButtons) {
             if(button.clickable && button.isMouseHovered(minecraft, (int)mouseX - guiLeft, (int)mouseY - guiTop)) {
-                PacketHandler.INSTANCE.sendToServer(new GeneralPacket(GeneralPacketEnum.CHANGE_PERMISSION, GeneralPacketHandler.getChangePermissionPacket(host.network.getNetworkID(), host.selectedPlayer.getPlayerUUID(), button.id)));
+                PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CHANGE_PERMISSION, GeneralPacketHandler.getChangePermissionPacket(host.network.getNetworkID(), host.selectedPlayer.getPlayerUUID(), button.id)));
                 return true;
             }
         }

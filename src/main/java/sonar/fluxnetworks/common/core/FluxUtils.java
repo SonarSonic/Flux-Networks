@@ -7,6 +7,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -236,6 +238,14 @@ public class FluxUtils {
                 return false;
         }
         return true;
+    }
+
+    @Nullable
+    public static <T> T getCap(@Nonnull LazyOptional<T> lazyOptional) {
+        if (lazyOptional.isPresent()) {
+            return lazyOptional.orElseThrow(IllegalStateException::new);
+        }
+        return null;
     }
 
     public static CompoundNBT copyConfiguration(TileFluxCore flux, CompoundNBT config) {

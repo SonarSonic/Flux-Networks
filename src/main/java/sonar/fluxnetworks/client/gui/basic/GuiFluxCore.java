@@ -168,14 +168,14 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
 
     public void setConnectedNetwork(int networkID, String password){
         if(connector instanceof IFluxConnector){
-            PacketHandler.INSTANCE.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxConnector)connector).getCoords()));
+            PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxConnector)connector).getCoords()));
         }
         if(connector instanceof AdminConfiguratorItem.ContainerProvider){
             FluxNetworks.PROXY.setAdminViewingNetworkID(networkID);
             FluxNetworks.PROXY.setAdminViewingNetwork(FluxNetworkCache.INSTANCE.getClientNetwork(networkID));
         }
         if(connector instanceof FluxConfiguratorItem.ContainerProvider){
-            PacketHandler.INSTANCE.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));
+            PacketHandler.CHANNEL.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));
         }
     }
 }

@@ -5,7 +5,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -29,7 +28,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.capability.SuperAdminInstance;
+import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FireItemEntity;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
@@ -45,6 +44,7 @@ import sonar.fluxnetworks.common.registry.RegistryItems;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class EventHandler {
 
@@ -90,9 +90,10 @@ public class EventHandler {
         BlockState base = world.getBlockState(pos.down(2));
         if (crusher.getBlock() == Blocks.OBSIDIAN && (base.getBlock() == Blocks.BEDROCK || base.getBlock() == RegistryBlocks.FLUX_BLOCK)) {
             List<ItemEntity> entities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.down()));
-            if (entities.isEmpty())
+            if (entities.isEmpty()) {
                 return;
-            List<ItemEntity> validEntities = Lists.newArrayList();
+            }
+            final List<ItemEntity> validEntities = Lists.newArrayList();
             int count = 0;
             for (ItemEntity entity : entities) {
                 if (entity.getItem().getItem() == Items.REDSTONE) {
@@ -112,6 +113,7 @@ public class EventHandler {
                 validEntities.forEach(Entity::remove);
                 world.removeBlock(pos, false);
                 world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
+                //TODO configure this chance
                 if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 4)) {
                     world.setBlockState(pos.down(), Blocks.COBBLESTONE.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -119,7 +121,7 @@ public class EventHandler {
                     world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }
-                PacketHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(event::getPlayer), new LavaParticlePacket(pos, max));
+                PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(event::getPlayer), new LavaParticlePacket(pos, max));
             } else {
                 for (int i = 0; i < max; i++) {
                     // speed won't work with lava particle, because its constructor doesn't use these params
@@ -151,9 +153,9 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
-        PlayerEntity player = event.getPlayer();
-        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
-        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SuperAdminPacket(SuperAdminInstance.isPlayerSuperAdmin(player)));
+        Supplier<ServerPlayerEntity> s = () -> (ServerPlayerEntity) event.getPlayer();
+        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(s), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
+        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(s), new SuperAdminPacket(DefaultSuperAdmin.isPlayerSuperAdmin(event.getPlayer())));
     }
 
     //// TILE EVENTS \\\\

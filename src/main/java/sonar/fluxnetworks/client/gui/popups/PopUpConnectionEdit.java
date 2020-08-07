@@ -171,7 +171,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
                             list = Lists.newArrayList(host.singleConnection.getCoords());
                         }
                         CompoundNBT tag = FluxUtils.getBatchEditingTag(fluxName, priority, limit, surge, unlimited, chunkLoad);
-                        PacketHandler.INSTANCE.sendToServer(new BatchEditingPacket(host.network.getNetworkID(), list, tag, b));
+                        PacketHandler.CHANNEL.sendToServer(new BatchEditingPacket(host.network.getNetworkID(), list, tag, b));
                         return true;
                     }
                 }

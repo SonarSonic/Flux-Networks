@@ -45,7 +45,7 @@ public class WirelessCharging extends Module {
             setting |= 1 << type.ordinal();
         }
 
-        PacketHandler.INSTANCE.sendToServer(
+        PacketHandler.CHANNEL.sendToServer(
                 new GeneralPacket(GeneralPacketEnum.CHANGE_WIRELESS, GeneralPacketHandler.getChangeWirelessPacket(
                         NavigationHome.network.getNetworkID(), setting)));
     }

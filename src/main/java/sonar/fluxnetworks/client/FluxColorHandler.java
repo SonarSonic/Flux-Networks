@@ -104,7 +104,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             tickCount++;
             if (tickCount > 40) {
                 tickCount = 0;
-                PacketHandler.INSTANCE.sendToServer(new NetworkColourRequestPacket(Lists.newArrayList(REQUESTS)));
+                PacketHandler.CHANNEL.sendToServer(new NetworkColourRequestPacket(Lists.newArrayList(REQUESTS)));
                 SENT_REQUESTS.addAll(REQUESTS);
                 REQUESTS.clear();
             }

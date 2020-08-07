@@ -71,7 +71,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
             switchButton.switchButton();
             switch (switchButton.id) {
                 case 0:
-                    PacketHandler.INSTANCE.sendToServer(new SuperAdminRequestPacket());
+                    PacketHandler.CHANNEL.sendToServer(new SuperAdminRequestPacket());
                     break;
                 case 1:
                     FluxNetworks.PROXY.setDetailedNetworkView(switchButton.slideControl);
@@ -85,8 +85,8 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if(timer == 0) {
-            PacketHandler.INSTANCE.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_GENERAL));
-            PacketHandler.INSTANCE.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
+            PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_GENERAL));
+            PacketHandler.CHANNEL.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
         }
         timer++;
         timer %= 100;
