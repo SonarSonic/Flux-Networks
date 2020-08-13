@@ -1,8 +1,8 @@
 ---
 name: Bug report
 about: Help us improve Flux Networks
-title: "[Bug]"
-labels: bug
+title: ''
+labels: ''
 assignees: ''
 
 ---
