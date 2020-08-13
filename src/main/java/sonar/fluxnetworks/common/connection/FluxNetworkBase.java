@@ -7,7 +7,7 @@ import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.common.core.CustomValue;
 import sonar.fluxnetworks.api.utils.ICustomValue;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import java.util.*;
 

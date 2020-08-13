@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -54,45 +55,45 @@ public class GuiTabStatistics extends GuiTabCore {
     }
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         if (networkValid) {
             int color = network.getSetting(NetworkSettings.NETWORK_COLOR);
-            screenUtils.renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), color, 20, 8);
+            screenUtils.renderNetwork(matrixStack, network.getSetting(NetworkSettings.NETWORK_NAME), color, 20, 8);
 
-            font.drawString(TextFormatting.GRAY + FluxTranslate.PLUGS.t() + TextFormatting.GRAY + ": " +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.PLUGS.t() + TextFormatting.GRAY + ": " +
                     TextFormatting.RESET + stats.fluxPlugCount, 12, 24, color);
-            font.drawString(TextFormatting.GRAY + FluxTranslate.POINTS.t() + TextFormatting.GRAY + ": " +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.POINTS.t() + TextFormatting.GRAY + ": " +
                     TextFormatting.RESET + stats.fluxPointCount, 12, 36, color);
-            font.drawString(TextFormatting.GRAY + FluxTranslate.STORAGES.t() + TextFormatting.GRAY + ": " +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.STORAGES.t() + TextFormatting.GRAY + ": " +
                     TextFormatting.RESET + stats.fluxStorageCount, 82, 24, color);
-            font.drawString(TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
                     TextFormatting.RESET + stats.fluxControllerCount, 82, 36, color);
-            font.drawString(TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.energyInput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 48, color);
-            font.drawString(TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.energyOutput, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), true), 12, 60, color);
-            font.drawString(TextFormatting.GRAY + FluxTranslate.BUFFER.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.BUFFER.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.totalBuffer, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 72, color);
-            font.drawString(TextFormatting.GRAY + FluxTranslate.ENERGY.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
+            font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.ENERGY.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 84, color);
 
             GlStateManager.scaled(0.75, 0.75, 0.75);
-            drawCenteredString(font, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.average_tick_micro + " " + "\u00B5" + "s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
+            drawCenteredString(matrixStack, font, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.average_tick_micro + " " + "\u00B5" + "s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
             GlStateManager.scaled(1 / 0.75, 1 / 0.75, 1 / 0.75);
 
         } else {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
             addButton(redirectButton);
         }
     }
 
     @Override
-    protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
         if (networkValid && chart != null) {
-            chart.drawChart(minecraft);
+            chart.drawChart(minecraft, matrixStack);
             chart.updateHeight(partialTicks);
         }
     }

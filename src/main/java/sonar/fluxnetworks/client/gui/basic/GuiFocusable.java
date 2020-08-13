@@ -23,8 +23,8 @@ public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
 
     /**de-focus other text elements**/
     @Override
-    public void setFocused(@Nullable IGuiEventListener listener) {
-        super.setFocused(listener);
+    public void setListener(@Nullable IGuiEventListener listener) {
+        super.setListener(listener);
         children.forEach(child -> {
             if(child != listener && child instanceof FluxTextWidget){
                 FluxTextWidget textWidget = (FluxTextWidget) child;
@@ -38,9 +38,9 @@ public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         InputMappings.Input mouseKey = InputMappings.getInputByCode(keyCode, scanCode);
-        if (getFocused() != null) {
+        if (getListener() != null) {
             if(keyCode == 256) {
-                this.setFocused(null);
+                this.setListener(null);
                 return true;
             }
             if(this.minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {

@@ -2,6 +2,7 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.ContainerType;
@@ -16,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.FNEnergyCapability;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -31,6 +33,7 @@ import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
 import sonar.fluxnetworks.common.item.FluxItem;
+import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
 import sonar.fluxnetworks.common.recipes.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipes.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -181,5 +184,13 @@ public class CommonRegistration {
     @SubscribeEvent
     public static void registerSounds(@Nonnull RegistryEvent.Register<SoundEvent> event) {
         RegistrySounds.registerSounds(event.getRegistry());
+    }
+
+    @SubscribeEvent
+    public static void gatherData(@Nonnull GatherDataEvent event) {
+        DataGenerator generator = event.getGenerator();
+        if (event.includeServer()) {
+            generator.addProvider(new FluxLootTableProvider(generator));
+        }
     }
 }

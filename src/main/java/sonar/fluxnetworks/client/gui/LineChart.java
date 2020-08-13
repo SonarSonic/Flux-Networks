@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import sonar.fluxnetworks.common.core.FluxUtils;
@@ -51,7 +52,7 @@ public class LineChart {
         }
     }
 
-    public void drawChart(Minecraft mc) {
+    public void drawChart(Minecraft mc, MatrixStack matrixStack) {
         RenderSystem.pushLightingAttributes();
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
@@ -80,18 +81,18 @@ public class LineChart {
         glDisable(GL_POINT_SMOOTH);
         glDisable(GL_BLEND);
 
-        Screen.fill(x - 16, y + height, x + 116, y + height + 1, 0xffffffff);
-        Screen.fill(x - 14, y - 6, x - 13, y + height + 3, 0xffffffff);
+        Screen.fill(matrixStack, x - 16, y + height, x + 116, y + height + 1, 0xffffffff);
+        Screen.fill(matrixStack, x - 14, y - 6, x - 13, y + height + 3, 0xffffffff);
 
         RenderSystem.scaled(0.625f, 0.625f, 0.625f);
-        mc.fontRenderer.drawString(suffixUnitY,(float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY), (float) ((y - 7.5) * 1.6), 0xffffff);
-        mc.fontRenderer.drawString(displayUnitY,(float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY), (float) ((y - 2) * 1.6), 0xffffff);
-        mc.fontRenderer.drawString(displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)), (float) ((y + height + 1.5) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, suffixUnitY,(float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY), (float) ((y - 7.5) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, displayUnitY,(float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY), (float) ((y - 2) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)), (float) ((y + height + 1.5) * 1.6), 0xffffff);
         for (int i = 0; i < data.size(); i++) {
             String d = FluxUtils.format(data.get(i), FluxUtils.TypeNumberFormat.COMPACT, "");
-            mc.fontRenderer.drawString(d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 1.0f, (float) ((currentHeight.get(i) - 7) * 1.6), 0xffffff);
+            mc.fontRenderer.drawString(matrixStack, d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 1.0f, (float) ((currentHeight.get(i) - 7) * 1.6), 0xffffff);
             String c = String.valueOf((5 - i) * 5);
-            mc.fontRenderer.drawString(c, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(c) / 2F), (float) ((y + height + 2) * 1.6), 0xffffff);
+            mc.fontRenderer.drawString(matrixStack, c, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(c) / 2F), (float) ((y + height + 2) * 1.6), 0xffffff);
         }
         RenderSystem.scaled(1.6f, 1.6f, 1.6f);
 

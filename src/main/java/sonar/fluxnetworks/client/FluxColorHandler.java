@@ -11,15 +11,12 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
-import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
+import net.minecraft.world.IBlockDisplayReader;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
-import sonar.fluxnetworks.client.mui.NavigationHome;
 import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.network.NetworkColourRequestPacket;
@@ -121,7 +118,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     }
 
     @Override
-    public int getColor(@Nonnull BlockState state, @Nullable ILightReader world, @Nullable BlockPos pos, int tintIndex) {
+    public int getColor(@Nonnull BlockState state, @Nullable IBlockDisplayReader world, @Nullable BlockPos pos, int tintIndex) {
         if (tintIndex == 1 && pos != null && world != null) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileFluxCore) {
@@ -140,9 +137,9 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     public int getColor(@Nonnull ItemStack stack, int tintIndex) {
         if (tintIndex == 1) {
             if (stack.hasTag() && stack.getTag().getBoolean(FluxUtils.GUI_COLOR)) {
-                if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {
+                /*if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {
                     return NavigationHome.network.isInvalid() ? NO_NETWORK_COLOR : NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
-                }
+                }*/
                 Screen screen = Minecraft.getInstance().currentScreen;
                 if (screen instanceof GuiFluxCore) {
                     GuiFluxCore guiFluxCore = (GuiFluxCore) screen;

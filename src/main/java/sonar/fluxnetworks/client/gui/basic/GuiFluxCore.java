@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -62,13 +63,13 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         buttonLists.add(switches);
     }
 
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
-        buttonLists.forEach(list -> list.forEach(b -> b.drawButton(minecraft, mouseX, mouseY, guiLeft, guiTop)));
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
+        buttonLists.forEach(list -> list.forEach(b -> b.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop)));
     }
 
-    protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+        super.drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
         buttonLists.forEach(list -> list.forEach(b -> b.updateButton(partialTicks, mouseX, mouseY)));
     }
 
@@ -106,23 +107,23 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     }
 
 
-    protected void renderNavigationPrompt(String error, String prompt) {
+    protected void renderNavigationPrompt(MatrixStack matrixStack, String error, String prompt) {
         RenderSystem.pushMatrix();
-        drawCenteredString(font, error, xSize / 2, 16, 0x808080);
+        drawCenteredString(matrixStack, font, error, xSize / 2, 16, 0x808080);
         RenderSystem.scaled(0.625, 0.625, 0.625);
-        drawCenteredString(font, FluxTranslate.CLICK.t() + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE.t(), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
+        drawCenteredString(matrixStack, font, FluxTranslate.CLICK.t() + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE.t(), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
         RenderSystem.scaled(1.6, 1.6, 1.6);
         RenderSystem.popMatrix();
     }
 
-    protected void renderTransfer(IFluxConnector fluxConnector, int color, int x, int y) {
+    protected void renderTransfer(MatrixStack matrixStack, IFluxConnector fluxConnector, int color, int x, int y) {
         RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
         screenUtils.resetGuiColouring();
-        font.drawString(FluxUtils.getTransferInfo(fluxConnector.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), fluxConnector.getTransferHandler().getChange()), x, y, color);
+        font.drawString(matrixStack, FluxUtils.getTransferInfo(fluxConnector.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), fluxConnector.getTransferHandler().getChange()), x, y, color);
 
-        font.drawString((fluxConnector.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
+        font.drawString(matrixStack, (fluxConnector.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
                 ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferHandler().getBuffer(), FluxUtils.TypeNumberFormat.COMMAS,
                 network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
 

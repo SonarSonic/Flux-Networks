@@ -1,7 +1,10 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.text.StringTextComponent;
 
 public class FluxTextWidget extends TextFieldWidget {
 
@@ -20,7 +23,7 @@ public class FluxTextWidget extends TextFieldWidget {
     private static final int boxColor = 0x20000000;
 
     public FluxTextWidget(String text, FontRenderer fontRenderer, int x, int y, int par5Width, int par6Height, int width) {
-        super(fontRenderer, x + width, y, par5Width - width, par6Height, "");
+        super(fontRenderer, x + width, y, par5Width - width, par6Height, new StringTextComponent(""));
         this.extraText = text;
         this.textWidth = width;
         this.font = fontRenderer;
@@ -51,23 +54,23 @@ public class FluxTextWidget extends TextFieldWidget {
     }
 
     @Override
-    public void renderButton(int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.setEnableBackgroundDrawing(true);
         if (this.getVisible()) {
-            fill(this.x - textWidth - 1, this.y - 1, this.x + this.width + 1, this.y, outlineColor);
-            fill(this.x - textWidth - 1, this.y + this.height, this.x + this.width + 1, this.y + this.height + 1, outlineColor);
-            fill(this.x - textWidth - 1, this.y, this.x - textWidth, this.y + this.height, outlineColor);
-            fill(this.x + width, this.y, this.x + this.width + 1, this.y + this.height, outlineColor);
-            fill(this.x - textWidth, this.y, this.x + this.width, this.y + this.height, boxColor);
+            fill(matrixStack, this.x - textWidth - 1, this.y - 1, this.x + this.width + 1, this.y, outlineColor);
+            fill(matrixStack, this.x - textWidth - 1, this.y + this.height, this.x + this.width + 1, this.y + this.height + 1, outlineColor);
+            fill(matrixStack, this.x - textWidth - 1, this.y, this.x - textWidth, this.y + this.height, outlineColor);
+            fill(matrixStack, this.x + width, this.y, this.x + this.width + 1, this.y + this.height, outlineColor);
+            fill(matrixStack, this.x - textWidth, this.y, this.x + this.width, this.y + this.height, boxColor);
         }
         this.setEnableBackgroundDrawing(false);
         x += 4;
         y += (this.height - 8) / 2;
 
-        super.renderButton(mouseX, mouseY, partialTicks);
+        super.renderButton(matrixStack, mouseX, mouseY, partialTicks);
 
 
-        font.drawString(extraText, x - textWidth, y, outlineColor);
+        font.drawString(matrixStack, extraText, x - textWidth, y, outlineColor);
         x -= 4;
         y -= (this.height - 8) / 2;
     }
@@ -140,17 +143,18 @@ public class FluxTextWidget extends TextFieldWidget {
     }
 
     public FluxTextWidget setTextInvisible() {
-        this.setTextFormatter(FluxTextWidget::getInvisibleText);
+        //this.setTextFormatter(FluxTextWidget::getInvisibleText);
         return this;
     }
 
-    public static String getInvisibleText(String string, int cursorPos) {
+    //TODO
+    /*public static IReorderingProcessor getInvisibleText(String string, int cursorPos) {
         StringBuilder builder = new StringBuilder();
         for(int i = 0; i < string.length(); i++) {
             builder.append("*");
         }
-        return builder.toString();
-    }
+        return IReorderingProcessor
+    }*/
 
     public FluxTextWidget setDigitsOnly() {
         this.digitsOnly = true;

@@ -1,20 +1,6 @@
 package sonar.fluxnetworks.client.mui;
 
-import icyllis.modernui.graphics.math.TextAlign;
-import icyllis.modernui.gui.master.*;
-import icyllis.modernui.gui.math.Color3i;
-import icyllis.modernui.gui.widget.SlidingToggleButton;
-import sonar.fluxnetworks.api.gui.EnumChargingTypes;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.GeneralPacket;
-import sonar.fluxnetworks.common.network.GeneralPacketEnum;
-import sonar.fluxnetworks.common.network.GeneralPacketHandler;
-
-import javax.annotation.Nonnull;
-
-public class WirelessCharging extends Module {
+public class WirelessCharging {/*extends Module {
 
     protected WirelessCharging() {
         addWireless(EnumChargingTypes.ARMOR_SLOT, 24, 32, 0, 80, 52, 16);
@@ -87,5 +73,5 @@ public class WirelessCharging extends Module {
             changeWireless(type);
             return true;
         }
-    }
+    }*/
 }

@@ -1,16 +1,7 @@
 package sonar.fluxnetworks.client.jei;
 
-import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.util.ResourceLocation;
-import sonar.fluxnetworks.FluxConfig;
-import mezz.jei.api.IModPlugin;
-import sonar.fluxnetworks.FluxNetworks;
-
-@JeiPlugin
-public class JEIIntegration implements IModPlugin {
+//@JeiPlugin
+public class JEIIntegration {/*implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -36,5 +27,5 @@ public class JEIIntegration implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registration) {
         if(FluxConfig.enableFluxRecipe)
             registration.addRecipeCategories(new CreatingFluxRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
-    }
+    }*/
 }

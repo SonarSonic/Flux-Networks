@@ -15,7 +15,7 @@ import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.EnumSecurityType;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.core.FluxUtils;

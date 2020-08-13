@@ -32,6 +32,7 @@ import sonar.fluxnetworks.common.tileentity.TileFluxCore;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 public class FluxConfiguratorItem extends Item {
 
@@ -55,12 +56,12 @@ public class FluxConfiguratorItem extends Item {
             ItemStack stack = player.getHeldItem(context.getHand());
             if (player.isSneaking()) {
                 stack.setTagInfo(FluxUtils.CONFIGS_TAG, fluxCore.copyConfiguration(new CompoundNBT()));
-                player.sendMessage(new StringTextComponent("Copied Configuration"));
+                player.sendMessage(new StringTextComponent("Copied Configuration"), UUID.randomUUID());
             } else {
                 CompoundNBT configs = stack.getOrCreateChildTag(FluxUtils.CONFIGS_TAG);
                 if (!configs.isEmpty()) {
                     fluxCore.pasteConfiguration(configs);
-                    player.sendMessage(new StringTextComponent("Pasted Configuration"));
+                    player.sendMessage(new StringTextComponent("Pasted Configuration"), UUID.randomUUID());
                 }
             }
             return ActionResultType.SUCCESS;

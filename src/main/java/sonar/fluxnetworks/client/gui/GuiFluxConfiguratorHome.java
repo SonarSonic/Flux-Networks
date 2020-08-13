@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxConfig;
@@ -56,13 +57,13 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     }
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
-        screenUtils.renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
-        screenUtils.drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 89, 150, 0xffffff);
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
+        screenUtils.renderNetwork(matrixStack, network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
-        font.drawString(FluxTranslate.SURGE_MODE.t(), 20, 90, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        font.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 102, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 90, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 102, network.getSetting(NetworkSettings.NETWORK_COLOR));
     }
 
     @Override

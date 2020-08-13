@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -18,7 +19,7 @@ import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +27,7 @@ import javax.annotation.Nonnull;
 public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
 
     @Override
-    public void render(@Nonnull ItemStack stack, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
+    public void func_239207_a_(@Nonnull ItemStack stack, ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
         int color = FluxColorHandler.NO_NETWORK_COLOR;
         int energy = 0;
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
@@ -42,7 +43,7 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
         IBakedModel ibakedmodel = dispatcher.getModelForState(renderState);
 
         float r = ScreenUtils.getRed(color), g = ScreenUtils.getGreen(color), b = ScreenUtils.getBlue(color);
-        dispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), buffer.getBuffer(RenderTypeLookup.getRenderType(renderState)), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
+        dispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), buffer.getBuffer(RenderTypeLookup.func_239221_b_(renderState)), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
         //TODO minor issue - the renderer culls parts of the block model, could it have something to do with the Renderers render type.
         FluxStorageTileRenderer.render(matrix, buffer, overlay, energy, block.getMaxStorage(), color);
     }

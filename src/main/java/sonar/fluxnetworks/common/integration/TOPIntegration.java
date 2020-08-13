@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.integration;
 
-import mcjty.theoneprobe.api.*;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -19,7 +18,8 @@ import sonar.fluxnetworks.common.core.FluxUtils;
 import java.text.NumberFormat;
 import java.util.function.Function;
 
-public class TOPIntegration implements Function<ITheOneProbe, Void> {
+//TODO waiting for update
+public class TOPIntegration {/*implements Function<ITheOneProbe, Void> {
 
     @Override
     public Void apply(ITheOneProbe iTheOneProbe) {
@@ -88,5 +88,5 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
             }
             return false;
         }
-    }
+    }*/
 }

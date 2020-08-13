@@ -12,7 +12,7 @@ import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.common.data.FluxChunkManager;
+import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;

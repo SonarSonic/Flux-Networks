@@ -23,10 +23,19 @@ group = 'sonar.fluxnetworks'
 archivesBaseName = 'FluxNetworks'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+sourceSets {
+    api
+    main {
+        compileClasspath += sourceSets.api.output
+        runtimeClasspath += sourceSets.api.output
+    }
+}
+
 minecraft {
-    mappings channel: 'snapshot', version: '20200525-1.15.1'
+    mappings channel: 'snapshot', version: '20200723-1.16.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
+
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
@@ -73,7 +82,7 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'fluxnetworks', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'fluxnetworks', '--all', '--output', file('src/generated/')
 
             mods {
                 fluxnetworks {
@@ -91,13 +100,13 @@ repositories {
     }
     maven {
         // location of the maven that hosts JEI files
-        name = "Progwml6 maven"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        name "Progwml6 maven"
+        url "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
         // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
+        name "ModMaven"
+        url "https://modmaven.k-4u.nl"
     }
     flatDir {
         dirs 'libs'
@@ -105,58 +114,29 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.5'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
+    /*runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
 
     compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-${top_version}")
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")*/
 
-    // 1.5.9 - sources
-    // no longer use, waiting for v2.0
-    compile fg.deobf("curse.maven:modern-ui:2966106")
+    // need to be updated
+    //compile fg.deobf("curse.maven:modern-ui:2966106")
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         attributes([
-            "Specification-Title": "Flux-Networks",
-            "Specification-Vendor": "SonarSonic",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"SonarSonic",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title"     : "Flux-Networks",
+                "Specification-Vendor"    : "SonarSonic",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "SonarSonic",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
-    }
-}
-
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar') 
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
-
-sourceSets {
-    api
-    main {
-        compileClasspath += sourceSets.api.output
-        runtimeClasspath += sourceSets.api.output
     }
 }

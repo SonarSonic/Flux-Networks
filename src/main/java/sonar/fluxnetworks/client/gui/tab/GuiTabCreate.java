@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
@@ -35,7 +36,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     public void init() {
         super.init();
-        name.setText(minecraft.player.getDisplayName().getFormattedText() + "'s Network");
+        name.setText(minecraft.player.getDisplayName().getString() + "'s Network");
         int i = 0;
         for(EnumNetworkColor color : EnumNetworkColor.values()) {
             colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 96 + (i >= 7 ? 1 : 0) * 16, color.color));
@@ -48,11 +49,11 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     }
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
 
-        screenUtils.renderNetwork(name.getText(), color.color, 20, 129);
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 150, 0xffffff);
+        screenUtils.renderNetwork(matrixStack, name.getText(), color.color, 20, 129);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 150, 0xffffff);
     }
 
     @Override

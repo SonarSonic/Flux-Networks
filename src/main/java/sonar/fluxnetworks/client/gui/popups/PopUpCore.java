@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.client.gui.popups;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -54,21 +55,21 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCon
         return host.getGuiColouring();
     }
 
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        popButtons.forEach(b -> b.drawButton(minecraft, mouseX, mouseY, guiLeft, guiTop));
+    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        popButtons.forEach(b -> b.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop));
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-        fillGradient(0 - guiLeft, 0 - guiTop, this.width, this.height, 0xa0101010, 0xb0101010);
-        drawFluxDefaultBackground();
+    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY){
+        fillGradient(matrixStack, -guiLeft, -guiTop, this.width, this.height, 0xa0101010, 0xb0101010);
+        drawFluxDefaultBackground(matrixStack);
 
         //screenUtils.drawRectWithBackground(guiLeft + 8, guiTop + 13, 150, 160, 0xccffffff, 0xb0000000);
         for(SlidedSwitchButton button : popSwitches) {
             button.updateButton(partialTicks * 4, mouseX, mouseY);
         }
         for(Widget widget : buttons){
-            widget.render(mouseX, mouseY, 1);
+            widget.render(matrixStack, mouseX, mouseY, 1);
         }
     }
 

@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
@@ -33,18 +34,18 @@ public abstract class GuiDraw<T extends Container> extends ContainerScreen<T> {
     }
 
 
-    protected void drawFluxDefaultBackground() {
+    protected void drawFluxDefaultBackground(MatrixStack matrixStack) {
         RenderSystem.enableAlphaTest();
         RenderSystem.enableBlend();
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         RenderSystem.pushMatrix();
         minecraft.getTextureManager().bindTexture(ScreenUtils.BACKGROUND);
-        blit(width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
+        blit(matrixStack, width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
 
         screenUtils.setGuiColouring(getGuiColouring());
         minecraft.getTextureManager().bindTexture(ScreenUtils.FRAME);
-        blit(width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
+        blit(matrixStack, width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
         RenderSystem.popMatrix();
         RenderSystem.disableBlend();
         RenderSystem.disableAlphaTest();

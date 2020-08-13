@@ -1,17 +1,14 @@
 package sonar.fluxnetworks.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
 
 import java.awt.*;
 import java.util.List;
@@ -62,7 +59,7 @@ public class ScreenUtils extends AbstractGui {
         RenderSystem.color4f(1,1,1, 1);
     }
 
-    public void renderNetwork(String name, int color, int x, int y) {
+    public void renderNetwork(MatrixStack matrixStack, String name, int color, int x, int y) {
         RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
@@ -73,8 +70,8 @@ public class ScreenUtils extends AbstractGui {
         RenderSystem.color3f(f, f1, f2);
 
         Minecraft.getInstance().getTextureManager().bindTexture(GUI_BAR);
-        blit(x, y, 0, 0, 135, 12, 256, 256);
-        Minecraft.getInstance().fontRenderer.drawString(name, x + 4, y + 2, 0xffffff);
+        blit(matrixStack, x, y, 0, 0, 135, 12, 256, 256);
+        Minecraft.getInstance().fontRenderer.drawString(matrixStack, name, x + 4, y + 2, 0xffffff);
 
         RenderSystem.popMatrix();
     }
@@ -99,36 +96,36 @@ public class ScreenUtils extends AbstractGui {
         RenderSystem.disableBlend();
     }
 
-    public void drawColorRect(int x, int y, int height, int width, int color) {
+    /*public void drawColorRect(int x, int y, int height, int width, int color) {
         fill(x - 1, y - 1, x + width + 1, y, color);
         fill(x - 1, y + height, x + width + 1, y + height + 1, color);
         fill(x - 1, y, x, y + height, color);
         fill(x + width, y, x + width + 1, y + height, color);
-    }
+    }*/
 
-    public void drawRectWithBackground(int x, int y, int height, int width, int frameColor, int backColor) {
+    public void drawRectWithBackground(MatrixStack matrixStack, int x, int y, int height, int width, int frameColor, int backColor) {
        // fill(x - 1, y - 1, x + width + 1, y, frameColor);
         //fill(x - 1, y + height, x + width + 1, y + height + 1, frameColor);
         //fill(x - 1, y, x, y + height, frameColor);
        // fill(x + width, y, x + width + 1, y + height, frameColor);
-        fill(x, y, x + width, y + height, backColor);
+        fill(matrixStack, x, y, x + width, y + height, backColor);
     }
 
-    public void drawHoverTooltip(List<String> strings, int x, int y) {
+    public void drawHoverTooltip(MatrixStack matrixStack, List<String> strings, int x, int y) {
         AtomicInteger maxLength = new AtomicInteger();
         strings.forEach(a -> maxLength.set(Math.max(font.getStringWidth(a), maxLength.get())));
-        drawRectWithBackground(x, y, strings.size() * 9 + 3, maxLength.get() + 4, 0x80ffffff, 0xc0000000);
+        drawRectWithBackground(matrixStack, x, y, strings.size() * 9 + 3, maxLength.get() + 4, 0x80ffffff, 0xc0000000);
         int i = 0;
         for(String s : strings) {
-            font.drawString(s, x + 2, y + 2 + 9 * i, 0xffffff);
+            font.drawString(matrixStack, s, x + 2, y + 2 + 9 * i, 0xffffff);
             i++;
         }
     }
 
-    public void drawHoverTooltip(String text, int x, int y) {
+    /*public void drawHoverTooltip(String text, int x, int y) {
         int maxLength = font.getStringWidth(text);
-        fill(x, y, x + maxLength + 4, y + 12, 0x80000000);
-        font.drawString(text, x + 2, y + 2, Color.GREEN.getRGB());
-    }
+        fill(matrixStack, x, y, x + maxLength + 4, y + 12, 0x80000000);
+        font.drawString(matrixStack, text, x + 2, y + 2, Color.GREEN.getRGB());
+    }*/
 
 }

@@ -20,7 +20,7 @@ public class Coord4D {
         x = tile.getPos().getX();
         y = tile.getPos().getY();
         z = tile.getPos().getZ();
-        dimension = tile.getWorld().getDimension().getType().getId();
+        //dimension = tile.getWorld().getDimension().getType().getId();
     }
 
     public Coord4D(ByteBuf buf) {

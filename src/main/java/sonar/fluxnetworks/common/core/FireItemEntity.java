@@ -12,6 +12,7 @@ import sonar.fluxnetworks.common.registry.RegistryItems;
 
 import javax.annotation.Nonnull;
 
+//TODO remove
 public class FireItemEntity extends ItemEntity {
 
     public boolean changed;
@@ -26,7 +27,7 @@ public class FireItemEntity extends ItemEntity {
         copyDataFromOld(toConvert);
     }
 
-    @Override
+    /*@Override
     protected void dealFireDamage(int amount) {
         if (!changed) {
             ItemStack stack = getItem().copy();
@@ -37,5 +38,5 @@ public class FireItemEntity extends ItemEntity {
             setItem(newStack);
             changed = true;
         }
-    }
+    }*/
 }

@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,7 @@ public class PageLabelButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
+    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
         GlStateManager.pushMatrix();
 
         drawRect(x, y, x + width, y + 1, 0x80ffffff);
@@ -36,7 +37,7 @@ public class PageLabelButton extends GuiButtonCore {
                 double c = (hoveredPage - 1) * singleWidth + x + 1;
                 drawRect(c, y + 1, c + singleWidth, y + 3, color | 0x60000000);
             }
-            drawCenteredString(mc.fontRenderer, hoveredPage + " / " + pages, 88, y + 6, color);
+            drawCenteredString(matrixStack, mc.fontRenderer, hoveredPage + " / " + pages, 88, y + 6, color);
         } else if(showTick > 0) {
 
             int alpha = Math.min(255, showTick * 32);
@@ -44,7 +45,7 @@ public class PageLabelButton extends GuiButtonCore {
             GlStateManager.enableAlphaTest();
             GlStateManager.enableBlend();
 
-            drawCenteredString(mc.fontRenderer, page + " / " + pages, 88, y + 6, color | alpha << 24);
+            drawCenteredString(matrixStack, mc.fontRenderer, page + " / " + pages, 88, y + 6, color | alpha << 24);
 
             GlStateManager.disableBlend();
 
@@ -68,8 +69,7 @@ public class PageLabelButton extends GuiButtonCore {
         showTick = 40;
     }
 
-    @Override
-    public void drawCenteredString(FontRenderer fontRendererIn, String text, int x, int y, int color) {
-        fontRendererIn.drawString(text, x - fontRendererIn.getStringWidth(text) / 2, y, color);
+    public static void drawCenteredString(MatrixStack matrixStack, FontRenderer fontRendererIn, String text, int x, int y, int color) {
+        fontRendererIn.drawString(matrixStack, text, x - fontRendererIn.getStringWidth(text) / 2f, y, color);
     }
 }

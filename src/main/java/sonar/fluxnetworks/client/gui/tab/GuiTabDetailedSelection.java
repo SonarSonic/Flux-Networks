@@ -1,14 +1,15 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
+import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.NetworkSettings;
+import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 
@@ -16,15 +17,17 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
     public GuiTabDetailedSelection(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
-        gridStartX = 15; gridStartY = 22;
-        gridHeight = 19; gridPerPage = 7;
-        elementHeight = 18; elementWidth = 146;
+        gridStartX = 15;
+        gridStartY = 22;
+        gridHeight = 19;
+        gridPerPage = 7;
+        elementHeight = 18;
+        elementWidth = 146;
     }
 
 
     @Override
-    public void renderElement(IFluxNetwork element, int x, int y) {
-        GlStateManager.pushMatrix();
+    public void renderElement(MatrixStack matrixStack, IFluxNetwork element, int x, int y) {
         GlStateManager.enableBlend();
         GlStateManager.enableAlphaTest();
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
@@ -32,38 +35,37 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
         int color = element.getSetting(NetworkSettings.NETWORK_COLOR);
 
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
 
         boolean selected = connector.getNetworkID() == element.getNetworkID();
         boolean isEncrypted = element.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted();
 
-        if(isEncrypted) {
-            if(selected) {
-                blit(x + 131, y, 159, 16, 16, elementHeight);
+        if (isEncrypted) {
+            if (selected) {
+                blit(matrixStack, x + 131, y, 159, 16, 16, elementHeight);
             } else {
-                blit(x + 131, y, 175, 16, 16, elementHeight);
+                blit(matrixStack, x + 131, y, 175, 16, 16, elementHeight);
             }
         }
 
         String text = element.getSetting(NetworkSettings.NETWORK_NAME);
 
-        if(selected) {
+        if (selected) {
             RenderSystem.color3f(f, f1, f2);
-            blit(x, y, 0, 32, elementWidth, elementHeight);
-            minecraft.fontRenderer.drawString(text, x + 4, y + 2, 0xffffff);
+            blit(matrixStack, x, y, 0, 32, elementWidth, elementHeight);
+            minecraft.fontRenderer.drawString(matrixStack, text, x + 4, y + 2, 0xffffff);
         } else {
             RenderSystem.color3f(f * 0.75f, f1 * 0.75f, f2 * 0.75f);
-            blit(x, y, 0, 32, elementWidth, elementHeight);
-            minecraft.fontRenderer.drawString(text, x + 4, y + 2, 0x404040);
+            blit(matrixStack, x, y, 0, 32, elementWidth, elementHeight);
+            minecraft.fontRenderer.drawString(matrixStack, text, x + 4, y + 2, 0x404040);
         }
 
-        GlStateManager.scaled(0.625, 0.625, 0.625);
-        font.drawString(FluxTranslate.CONNECTIONS.t() +": " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).getConnectionCount() + "  Avg: " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
-        GlStateManager.scaled(1.6, 1.6, 1.6);
-
-        GlStateManager.popMatrix();
+        matrixStack.push();
+        matrixStack.scale(0.625f, 0.625f, 0.625f);
+        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).getConnectionCount() + "  Avg: " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
+        matrixStack.pop();
     }
 
     @Override

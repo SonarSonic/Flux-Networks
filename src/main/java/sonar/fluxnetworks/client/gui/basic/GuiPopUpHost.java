@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.entity.player.PlayerEntity;
@@ -226,28 +227,29 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector<?>> {
 
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        super.render(mouseX, mouseY, partialTicks);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
         if(currentPopUp != null){
-            //currentPopUp.render(mouseX, mouseY, partialTicks);
+            currentPopUp.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 
-    @Override
+    /*@Override
     public void renderHoveredToolTip(int mouseX, int mouseY) {
         if(currentPopUp == null){
             super.renderHoveredToolTip(mouseX, mouseY);
         }
 
-    }
+    }*/
 
-    protected void drawForegroundLayer(int mouseX, int mouseY){}
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY){}
 
-    protected void drawBackgroundLayer(float partialTicks, int mouseX, int mouseY){}
+    protected void drawBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY){}
 
-    protected final void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawForegroundLayer(mouseX, mouseY);
+    @Override
+    protected final void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        drawForegroundLayer(matrixStack, mouseX, mouseY);
 
         float partialTicks = Minecraft.getInstance().getRenderPartialTicks();
 
@@ -255,18 +257,18 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector<?>> {
             RenderSystem.disableDepthTest();
             RenderSystem.pushMatrix();
             RenderSystem.translated(-guiLeft, -guiTop, 0);
-            currentPopUp.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+            currentPopUp.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
             RenderSystem.popMatrix();
 
-            currentPopUp.drawGuiContainerForegroundLayer(mouseX, mouseY);
+            currentPopUp.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
             RenderSystem.enableDepthTest();
         }
 
     }
 
-    protected final void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-        renderBackground();
-        drawFluxDefaultBackground();
-        drawBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected final void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY){
+        renderBackground(matrixStack);
+        drawFluxDefaultBackground(matrixStack);
+        drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
     }
 }

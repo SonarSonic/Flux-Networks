@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
@@ -41,15 +42,15 @@ public class GuiTabWireless extends GuiTabCore {
     }
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         if(networkValid) {
             int colour = network.getSetting(NetworkSettings.NETWORK_COLOR);
-            drawCenteredString(font, FluxTranslate.TAB_WIRELESS.t(), 88, 12, 0xb4b4b4);
-            font.drawString(FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, colour);
-            drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 146, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxTranslate.TAB_WIRELESS.t(), 88, 12, 0xb4b4b4);
+            font.drawString(matrixStack, FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, colour);
+            drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 146, 0xffffff);
         } else {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
 

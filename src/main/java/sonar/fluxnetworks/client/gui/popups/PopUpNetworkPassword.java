@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.popups;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
@@ -34,14 +35,14 @@ public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if(host.selectedNetwork != null) {
-            drawCenteredString(font, FluxTranslate.CONNECTING_TO.t() + " " + host.selectedNetwork.getSetting(NetworkSettings.NETWORK_NAME), 88, 50, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxTranslate.CONNECTING_TO.t() + " " + host.selectedNetwork.getSetting(NetworkSettings.NETWORK_NAME), 88, 50, 0xffffff);
         }
-        drawCenteredString(font, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
+        drawCenteredString(matrixStack, font, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
 
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 110, 0xffffff);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 110, 0xffffff);
     }
 
 

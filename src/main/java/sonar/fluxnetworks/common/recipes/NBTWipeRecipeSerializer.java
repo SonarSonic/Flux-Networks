@@ -9,19 +9,23 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import sonar.fluxnetworks.FluxNetworks;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class NBTWipeRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<NBTWipeRecipe> {
 
     public static NBTWipeRecipeSerializer INSTANCE = new NBTWipeRecipeSerializer();
 
+    @Nonnull
     @Override
-    public NBTWipeRecipe read(ResourceLocation recipeId, JsonObject json) {
+    public NBTWipeRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
         return new NBTWipeRecipe(IRecipeSerializer.CRAFTING_SHAPELESS.read(recipeId, json));
     }
 
     @Override
-    public NBTWipeRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
+    public NBTWipeRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull PacketBuffer buffer) {
         try {
-            return new NBTWipeRecipe(IRecipeSerializer.CRAFTING_SHAPELESS.read(recipeId, buffer));
+            return new NBTWipeRecipe(Objects.requireNonNull(IRecipeSerializer.CRAFTING_SHAPELESS.read(recipeId, buffer)));
         } catch (Exception e) {
             FluxNetworks.LOGGER.error("Error reading NBT Wipe Recipe from Packet", e);
             throw e;
@@ -29,7 +33,7 @@ public class NBTWipeRecipeSerializer extends ForgeRegistryEntry<IRecipeSerialize
     }
 
     @Override
-    public void write(PacketBuffer buffer, NBTWipeRecipe recipe) {
+    public void write(@Nonnull PacketBuffer buffer, @Nonnull NBTWipeRecipe recipe) {
         try {
             IRecipeSerializer.CRAFTING_SHAPELESS.write(buffer, recipe);
         } catch(Exception e){

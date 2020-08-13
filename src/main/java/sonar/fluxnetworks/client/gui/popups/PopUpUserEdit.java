@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.popups;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
@@ -70,16 +71,16 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
         }
     }
     @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         //screenUtils.drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 162, 0xffffff);
-        drawCenteredString(font, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
-        drawCenteredString(font, host.selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 162, 0xffffff);
+        drawCenteredString(matrixStack, font, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
+        drawCenteredString(matrixStack, font, host.selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
         String text = host.selectedPlayer.getPlayerUUID().toString();
         GlStateManager.scaled(0.625, 0.625, 0.625);
-        drawCenteredString(font, "UUID: " + text.substring(0, 16), (int) (88 * 1.6), (int) (60 * 1.6), 0xffffff);
-        drawCenteredString(font, text.substring(16), (int) (88 * 1.6), (int) (66 * 1.6), 0xffffff);
+        drawCenteredString(matrixStack, font, "UUID: " + text.substring(0, 16), (int) (88 * 1.6), (int) (60 * 1.6), 0xffffff);
+        drawCenteredString(matrixStack, font, text.substring(16), (int) (88 * 1.6), (int) (66 * 1.6), 0xffffff);
         GlStateManager.scaled(1.6, 1.6, 1.6);
     }
 

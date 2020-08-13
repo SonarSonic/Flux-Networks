@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -49,15 +50,15 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         if(networkValid) {
             String str2 = accessPermission.getName();
-            font.drawString(str2, 158 - font.getStringWidth(str2), 10, 0xffffff);
-            font.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
-            super.drawForegroundLayer(mouseX, mouseY);
+            font.drawString(matrixStack, str2, 158 - font.getStringWidth(str2), 10, 0xffffff);
+            font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
+            super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         } else {
-            super.drawForegroundLayer(mouseX, mouseY);
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            super.drawForegroundLayer(matrixStack, mouseX, mouseY);
+            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
 
@@ -95,8 +96,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    public void renderElement(NetworkMember element, int x, int y) {
-        GlStateManager.pushMatrix();
+    public void renderElement(MatrixStack matrixStack, NetworkMember element, int x, int y) {
         GlStateManager.enableBlend();
         GlStateManager.enableAlphaTest();
 
@@ -109,26 +109,23 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         RenderSystem.color4f(f, f1, f2, 0.8f);
 
         minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
-        blit(x, y, 0, 16, elementWidth, elementHeight);
+        blit(matrixStack, x, y, 0, 16, elementWidth, elementHeight);
 
         if(element.getPlayerUUID().equals(player.getUniqueID())) {
-            fill(x - 4, y + 1, x - 2, y + elementHeight - 1, 0xccffffff);
-            fill(x + elementWidth + 2, y + 1, x + elementWidth + 4, y + elementHeight - 1, 0xccffffff);
+            fill(matrixStack, x - 4, y + 1, x - 2, y + elementHeight - 1, 0xccffffff);
+            fill(matrixStack, x + elementWidth + 2, y + 1, x + elementWidth + 4, y + elementHeight - 1, 0xccffffff);
         }
 
-        font.drawString(TextFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
+        font.drawString(matrixStack, TextFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
 
         String p = element.getAccessPermission().getName();
-        font.drawString(p, x + 142 - font.getStringWidth(p), y + 2, 0xffffff);
-
-        GlStateManager.popMatrix();
+        font.drawString(matrixStack, p, x + 142 - font.getStringWidth(p), y + 2, 0xffffff);
     }
 
     @Override
-    public void renderElementTooltip(NetworkMember element, int mouseX, int mouseY) {
+    public void renderElementTooltip(MatrixStack matrixStack, NetworkMember element, int mouseX, int mouseY) {
         if(hasActivePopup())
             return;
-        GlStateManager.pushMatrix();
         List<String> strings = new ArrayList<>();
         strings.add(FluxTranslate.USERNAME.t() + ": " + TextFormatting.AQUA + element.getCachedName());
         String permission = element.getAccessPermission().getName() + (element.getPlayerUUID().equals(player.getUniqueID()) ? " (" + FluxTranslate.YOU.t() + ")" : "");
@@ -137,8 +134,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         /*if(element.getPlayerUUID().equals(player.getUniqueID())) {
             strings.add(TextFormatting.WHITE + "You");
         }*/
-        screenUtils.drawHoverTooltip(strings, mouseX + 4, mouseY - 8);
-        GlStateManager.popMatrix();
+        screenUtils.drawHoverTooltip(matrixStack, strings, mouseX + 4, mouseY - 8);
     }
 
     @Override

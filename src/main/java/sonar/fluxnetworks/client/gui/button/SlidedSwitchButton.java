@@ -1,10 +1,10 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import sonar.fluxnetworks.client.gui.basic.GuiDraw;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -31,7 +31,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop){
+    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop){
         GlStateManager.pushMatrix();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableBlend();
@@ -42,7 +42,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
         //mc.fontRenderer.drawString(text, x - mc.fontRenderer.getStringWidth(text), y, 0xffffff);
 
-        mc.getTextureManager().bindTexture(ScreenUtils.INSTANCE.BUTTONS);
+        mc.getTextureManager().bindTexture(ScreenUtils.BUTTONS);
 
         // Green background
         //drawTexturedModalRect(x, y, 32, 32, center * 2, 8);
@@ -52,7 +52,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
         accurateBlit(x + center, y, 16 * s, 40, 8, 8);
 
         // Button Bar
-        blit(x, y, 16 * s, 32, 16, 8);
+        blit(matrixStack, x, y, 16 * s, 32, 16, 8);
 
         GlStateManager.popMatrix();
     }

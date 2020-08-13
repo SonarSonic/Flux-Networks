@@ -1,29 +1,11 @@
 package sonar.fluxnetworks.client.mui;
 
-import icyllis.modernui.graphics.math.TextAlign;
-import icyllis.modernui.gui.master.Canvas;
-import icyllis.modernui.gui.master.IDrawable;
-import icyllis.modernui.gui.master.Locator;
-import icyllis.modernui.gui.master.Module;
-import icyllis.modernui.gui.math.Color3i;
-import icyllis.modernui.gui.widget.NumberInputField;
-import icyllis.modernui.gui.widget.SlidingToggleButton;
-import icyllis.modernui.gui.widget.TextField;
-import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.common.network.TilePacketBufferConstants;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
-
-import javax.annotation.Nonnull;
-
 /**
  * The home page for flux tiles (plug / point / storage)
  *
  * @author BloCamLimb
  */
-public class FluxTileHome extends Module {
+public class FluxTileHome {/*extends Module {
 
     private final TileFluxCore tileEntity;
 
@@ -174,5 +156,5 @@ public class FluxTileHome extends Module {
             g = Color3i.getGreenFrom(color);
             b = Color3i.getBlueFrom(color);
         }
-    }
+    }*/
 }

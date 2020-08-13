@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.tileentity;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -33,8 +34,8 @@ import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.connection.handler.AbstractTransferHandler;
 import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.common.data.FluxChunkManager;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.storage.FluxChunkManager;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
@@ -47,15 +48,17 @@ import java.util.UUID;
 import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.*;
 
 @SuppressWarnings("ConstantConditions")
-public abstract class TileFluxCore extends TileEntity implements IFluxConnector, IFluxConfigurable, ITickableTileEntity, ITilePacketBuffer, INamedContainerProvider {
+public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
+        IFluxConfigurable, ITickableTileEntity, ITilePacketBuffer, INamedContainerProvider {
 
     public HashSet<PlayerEntity> playerUsing = new HashSet<>();
 
     public String customName = "";
-    public int    networkID  = -1;
     public UUID   playerUUID = FluxUtils.UUID_DEFAULT;
-    public int    color      = -1;
-    public int    folderID   = -1;
+
+    public int networkID = -1;
+    public int color     = -1;
+    public int folderID  = -1;
 
     public int  priority = 0;
     public long limit    = FluxConfig.defaultLimit;
@@ -163,14 +166,15 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
 
     }
 
+    @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
         return write(super.getUpdateTag());
     }
 
     @Override
-    public void handleUpdateTag(CompoundNBT tag) {
-        read(tag);
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        read(state, tag);
     }
 
     @Override
@@ -186,8 +190,8 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
+    public void read(BlockState state, CompoundNBT compound) {
+        super.read(state, compound);
         readCustomNBT(compound, NBTType.ALL_SAVE);
     }
 

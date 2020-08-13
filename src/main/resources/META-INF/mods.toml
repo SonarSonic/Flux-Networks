@@ -1,6 +1,7 @@
 modLoader="javafml"
-loaderVersion="[31,)"
+loaderVersion="[33,)"
 issueTrackerURL="https://github.com/SonarSonic/Flux-Networks/issues"
+license="MIT"
 
 [[mods]]
     modId="fluxnetworks"
@@ -13,12 +14,12 @@ issueTrackerURL="https://github.com/SonarSonic/Flux-Networks/issues"
 [[dependencies.fluxnetworks]]
     modId="forge"
     mandatory=true
-    versionRange="[31.2.5,)"
+    versionRange="[33.0.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2,)"
+    versionRange="[1.16.2, 1.17)"
     ordering="NONE"
     side="BOTH"

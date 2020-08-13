@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,16 +45,16 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     }
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         if(elements.size() == 0) {
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_NETWORK.t(), FluxTranslate.TAB_CREATE.t());
+            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_NETWORK.t(), FluxTranslate.TAB_CREATE.t());
         } else {
             String amount = FluxTranslate.TOTAL.t() + ": " + elements.size();
-            font.drawString(amount, 158 - font.getStringWidth(amount), 10, 0xffffff);
-            font.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
+            font.drawString(matrixStack, amount, 158 - font.getStringWidth(amount), 10, 0xffffff);
+            font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
             if (!hasActivePopup()) {
-                drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 150, 0xffffff);
+                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 150, 0xffffff);
             }
         }
     }
@@ -77,7 +78,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     }
 
     @Override
-    public void renderElement(IFluxNetwork element, int x, int y) {
+    public void renderElement(MatrixStack matrixStack, IFluxNetwork element, int x, int y) {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.enableAlphaTest();
@@ -95,9 +96,9 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
         if(isEncrypted) {
             if(selected) {
-                blit(x + 131, y, 159, 16, 16, elementHeight);
+                blit(matrixStack, x + 131, y, 159, 16, 16, elementHeight);
             } else {
-                blit(x + 131, y, 175, 16, 16, elementHeight);
+                blit(matrixStack, x + 131, y, 175, 16, 16, elementHeight);
             }
         }
 
@@ -105,19 +106,19 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
         if(selected) {
             RenderSystem.color3f(f, f1, f2);
-            blit(x, y, 0, 16, elementWidth, elementHeight);
-            minecraft.fontRenderer.drawString(text, x + 4, y + 2, 0xffffff);
+            blit(matrixStack, x, y, 0, 16, elementWidth, elementHeight);
+            minecraft.fontRenderer.drawString(matrixStack, text, x + 4, y + 2, 0xffffff);
         } else {
             RenderSystem.color3f(f * 0.75f, f1 * 0.75f, f2 * 0.75f);
-            blit(x, y, 0, 16, elementWidth, elementHeight);
-            minecraft.fontRenderer.drawString(text, x + 4, y + 2, 0x404040);
+            blit(matrixStack, x, y, 0, 16, elementWidth, elementHeight);
+            minecraft.fontRenderer.drawString(matrixStack, text, x + 4, y + 2, 0x404040);
         }
 
         GlStateManager.popMatrix();
     }
 
     @Override
-    public void renderElementTooltip(IFluxNetwork element, int mouseX, int mouseY) {
+    public void renderElementTooltip(MatrixStack matrixStack, IFluxNetwork element, int mouseX, int mouseY) {
         if(hasActivePopup())
             return;
         /*GlStateManager.pushMatrix();

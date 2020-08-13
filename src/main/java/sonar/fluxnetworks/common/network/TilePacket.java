@@ -3,20 +3,19 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxCore;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class TilePacket extends AbstractPacket {
 
     private final TilePacketEnum type;
+
     private final CompoundNBT tag;
+
     private final Coord4D coord4D;
 
     public TilePacket(PacketBuffer buf) {
@@ -41,14 +40,14 @@ public class TilePacket extends AbstractPacket {
     @Override
     public Object handle(NetworkEvent.Context ctx) {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
-        if(player != null) {
+        if (player != null) {
             World world = player.getEntityWorld();
-            if(world.getDimension().getType().getId() != coord4D.getDimension()) {
+            /*if (world.getDimension().getType().getId() != coord4D.getDimension()) {
                 MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
                 world = server.getWorld(DimensionType.getById(coord4D.getDimension()));
-            }
+            }*/
             TileEntity tile = world.getTileEntity(coord4D.getPos());
-            if(tile instanceof TileFluxCore) {
+            if (tile instanceof TileFluxCore) {
                 TileFluxCore flux = (TileFluxCore) tile;
                 return type.handler.handlePacket(flux, player, tag);
             }

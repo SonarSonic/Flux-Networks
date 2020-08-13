@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.data;
+package sonar.fluxnetworks.common.storage;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
@@ -6,7 +6,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -41,21 +40,21 @@ public class FluxNetworkData extends WorldSavedData {
 
     private static FluxNetworkData data;
 
-    public static String NETWORKS = "networks";
+    public static String NETWORKS      = "networks";
     public static String LOADED_CHUNKS = "loadedChunks";
-    public static String UNIQUE_ID = "uniqueID";
+    public static String UNIQUE_ID     = "uniqueID";
 
-    public static String NETWORK_ID = "networkID";
-    public static String NETWORK_NAME = "networkName";
-    public static String NETWORK_COLOR = "networkColor";
+    public static String NETWORK_ID       = "networkID";
+    public static String NETWORK_NAME     = "networkName";
+    public static String NETWORK_COLOR    = "networkColor";
     public static String NETWORK_PASSWORD = "networkPassword";
-    public static String SECURITY_TYPE = "networkSecurity";
-    public static String ENERGY_TYPE = "networkEnergy";
-    public static String OWNER_UUID = "ownerUUID";
-    public static String WIRELESS_MODE = "wirelessMode";
+    public static String SECURITY_TYPE    = "networkSecurity";
+    public static String ENERGY_TYPE      = "networkEnergy";
+    public static String OWNER_UUID       = "ownerUUID";
+    public static String WIRELESS_MODE    = "wirelessMode";
 
-    public static String PLAYER_LIST = "playerList";
-    public static String NETWORK_FOLDERS = "folders";
+    public static String PLAYER_LIST          = "playerList";
+    public static String NETWORK_FOLDERS      = "folders";
     public static String UNLOADED_CONNECTIONS = "unloaded";
 
     /*public static String OLD_NETWORK_ID = "id";
@@ -63,7 +62,7 @@ public class FluxNetworkData extends WorldSavedData {
     public static String OLD_NETWORK_COLOR = "colour";
     public static String OLD_NETWORK_ACCESS = "access";*/
 
-    public Map<Integer, IFluxNetwork> networks = new HashMap<>();
+    public Map<Integer, IFluxNetwork>   networks     = new HashMap<>();
     public Map<Integer, List<ChunkPos>> loadedChunks = new HashMap<>(); // Forced Chunks
 
     public int uniqueID = 1;
@@ -80,7 +79,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     private static void load() {
-        ServerWorld saveWorld = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD);
+        ServerWorld saveWorld = ServerLifecycleHooks.getCurrentServer().func_241755_D_();
         data = saveWorld.getSavedData().getOrCreate(FluxNetworkData::new, NETWORK_DATA);
         FluxNetworks.LOGGER.info("FluxNetworkData has been successfully loaded");
     }

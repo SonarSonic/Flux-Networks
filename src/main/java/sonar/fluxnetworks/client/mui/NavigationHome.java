@@ -1,37 +1,12 @@
 package sonar.fluxnetworks.client.mui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import icyllis.modernui.graphics.math.TextAlign;
-import icyllis.modernui.gui.master.*;
-import icyllis.modernui.gui.math.Color3i;
-import icyllis.modernui.gui.math.Direction4D;
-import icyllis.modernui.gui.widget.TextIconButton;
-import icyllis.modernui.system.ConstantsLibrary;
-import icyllis.modernui.system.RegistryLibrary;
-import net.minecraft.client.renderer.Matrix3f;
-import net.minecraft.client.renderer.Matrix4f;
-import org.lwjgl.opengl.GL11;
-import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The root module of all flux gui tabs
  * This module contains all navigation buttons, and updates gui data
  *
  * @author BloCamLimb
  */
-public class NavigationHome extends ModuleGroup {
+public class NavigationHome {/*extends ModuleGroup {
 
     @Nonnull
     public static IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
@@ -101,11 +76,11 @@ public class NavigationHome extends ModuleGroup {
         network = FluxNetworkCache.INSTANCE.getClientNetwork(connector.getNetworkID());
     }
 
-    /**
-     * Flux gui background layer
-     *
-     * @author BloCamLimb
-     */
+    *//**
+ * Flux gui background layer
+ *
+ * @author BloCamLimb
+ *//*
     private static class FluxBackground implements IDrawable {
 
         private float x1, x2, y1, y2;
@@ -176,5 +151,5 @@ public class NavigationHome extends ModuleGroup {
         public void setRenderNetworkName(boolean renderNetworkName) {
             this.renderNetworkName = renderNetworkName;
         }
-    }
+    }*/
 }

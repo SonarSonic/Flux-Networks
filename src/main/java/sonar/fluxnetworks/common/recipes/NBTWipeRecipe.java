@@ -13,29 +13,34 @@ import net.minecraft.world.World;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.core.FluxUtils;
 
-/**save Flux Storage energy when wiping NBT*/
+import javax.annotation.Nonnull;
+
+/**
+ * save Flux Storage energy when wiping NBT
+ */
 public class NBTWipeRecipe extends ShapelessRecipe {
 
     public NBTWipeRecipe(ResourceLocation idIn, String groupIn, ItemStack recipeOutputIn, NonNullList<Ingredient> recipeItemsIn) {
         super(idIn, groupIn, recipeOutputIn, recipeItemsIn);
     }
 
-    public NBTWipeRecipe(ShapelessRecipe recipe){
+    public NBTWipeRecipe(@Nonnull ShapelessRecipe recipe) {
         super(recipe.getId(), recipe.getGroup(), recipe.getRecipeOutput(), recipe.getIngredients());
     }
 
+    @Nonnull
     @Override
     public ItemStack getCraftingResult(CraftingInventory inventory) {
         ItemStack originalStack = null;
 
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
-            if(!stack.isEmpty()){
+            if (!stack.isEmpty()) {
                 originalStack = stack;
                 break;
             }
         }
-        if(originalStack != null) {
+        if (originalStack != null) {
             ItemStack output = getRecipeOutput().copy();
             if (Block.getBlockFromItem(output.getItem()) instanceof FluxStorageBlock) {
                 CompoundNBT fluxData = originalStack.getChildTag(FluxUtils.FLUX_DATA);
@@ -43,7 +48,7 @@ public class NBTWipeRecipe extends ShapelessRecipe {
                 if (fluxData != null) {
                     energy = fluxData.getInt("energy");
                 }
-                if(energy != 0){
+                if (energy != 0) {
                     CompoundNBT newTag = output.getOrCreateChildTag(FluxUtils.FLUX_DATA);
                     newTag.putInt("energy", energy);
                 }
@@ -57,8 +62,8 @@ public class NBTWipeRecipe extends ShapelessRecipe {
         return super.matches(inv, worldIn);
     }
 
-    public IRecipeSerializer<?> getSerializer(){
+    @Nonnull
+    public IRecipeSerializer<?> getSerializer() {
         return NBTWipeRecipeSerializer.INSTANCE;
     }
-
 }

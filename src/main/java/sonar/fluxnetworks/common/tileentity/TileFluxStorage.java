@@ -9,7 +9,7 @@ import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxEnergy;
 import sonar.fluxnetworks.api.tiles.IFluxStorage;
 import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -103,7 +103,7 @@ public abstract class TileFluxStorage extends TileFluxCore implements IFluxStora
     /** on server side **/
     public void sendPacketIfNeeded() {
         if (energyChanged) {
-            if ((world.getDimension().getWorldTime() & 3) == 0) {
+            if ((world.getWorldInfo().getGameTime() & 3) == 0) {
                 sendTilePacketToNearby(FLUX_STORAGE_ENERGY);
                 energyChanged = false;
             }

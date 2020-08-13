@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import net.minecraft.client.Minecraft;
@@ -16,7 +17,7 @@ public class SimpleToggleButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
+    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
         GlStateManager.pushMatrix();
 
         if (isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {

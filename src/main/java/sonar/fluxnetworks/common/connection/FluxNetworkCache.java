@@ -3,13 +3,12 @@ package sonar.fluxnetworks.common.connection;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import java.util.*;

@@ -1,30 +1,6 @@
 package sonar.fluxnetworks.client.mui;
 
-import icyllis.modernui.graphics.math.TextAlign;
-import icyllis.modernui.gui.master.Canvas;
-import icyllis.modernui.gui.master.IHost;
-import icyllis.modernui.gui.master.Locator;
-import icyllis.modernui.gui.master.Module;
-import icyllis.modernui.gui.math.Color3i;
-import icyllis.modernui.gui.scroll.IScrollHost;
-import icyllis.modernui.gui.scroll.MultiPageScrollPanel;
-import icyllis.modernui.gui.scroll.UniformScrollEntry;
-import icyllis.modernui.gui.scroll.UniformScrollGroup;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.TilePacket;
-import sonar.fluxnetworks.common.network.TilePacketEnum;
-import sonar.fluxnetworks.common.network.TilePacketHandler;
-
-import javax.annotation.Nonnull;
-import java.util.stream.Collectors;
-
-public class NetworkSelection extends Module {
+public class NetworkSelection {/*extends Module {
 
     protected NetworkSelection(INetworkConnector connector) {
         addWidget(new Panel(this, connector));
@@ -113,5 +89,5 @@ public class NetworkSelection extends Module {
                 return false;
             }
         }
-    }
+    }*/
 }

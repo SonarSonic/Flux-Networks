@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.client.gui.tab;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
@@ -67,17 +68,17 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
-        super.drawForegroundLayer(mouseX, mouseY);
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         if (getNavigationTab() == EnumNavigationTabs.TAB_CREATE || networkValid) {
 
-            drawCenteredString(font, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
-            font.drawString(FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
-            font.drawString(FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
+            drawCenteredString(matrixStack, font, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
+            font.drawString(matrixStack, FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
+            font.drawString(matrixStack, FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
             if (securityType == EnumSecurityType.ENCRYPTED)
-                font.drawString(FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 64, 0x606060);
-            font.drawString(FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
-            font.drawString(FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
+                font.drawString(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 64, 0x606060);
+            font.drawString(matrixStack, FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
+            font.drawString(matrixStack, FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
         }
     }
 

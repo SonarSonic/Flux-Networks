@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -33,9 +34,7 @@ public abstract class GuiButtonCore extends Screen {
         this.id = id;
     }
 
-    private final void drawButton(Minecraft mc, int mouseX, int mouseY) {}
-
-    public abstract void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop);
+    public abstract void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop);
 
     public void updateButton(float partialTicks, int mouseX, int mouseY) {}
 

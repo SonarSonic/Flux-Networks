@@ -2,56 +2,50 @@ package sonar.fluxnetworks;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
-import org.apache.commons.lang3.tuple.Pair;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FluxConfig {
 
+    private static final ClientConfig    CLIENT_CONFIG;
+    private static final ForgeConfigSpec CLIENT_SPEC;
 
-    public static final ClientConfig CLIENT_CONFIG;
-    public static final ForgeConfigSpec CLIENT_SPEC;
-
-    public static final CommonConfig COMMON_CONFIG;
-    public static final ForgeConfigSpec COMMON_SPEC;
+    private static final CommonConfig    COMMON_CONFIG;
+    private static final ForgeConfigSpec COMMON_SPEC;
 
     static {
+        ForgeConfigSpec.Builder builder;
 
-        final Pair<CommonConfig, ForgeConfigSpec> commonPair = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
-        COMMON_SPEC = commonPair.getRight();
-        COMMON_CONFIG = commonPair.getLeft();
+        builder = new ForgeConfigSpec.Builder();
+        COMMON_CONFIG = new CommonConfig(builder);
+        COMMON_SPEC = builder.build();
 
-        final Pair<ClientConfig, ForgeConfigSpec> clientPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
-        CLIENT_SPEC = clientPair.getRight();
-        CLIENT_CONFIG = clientPair.getLeft();
-
+        builder = new ForgeConfigSpec.Builder();
+        CLIENT_CONFIG = new ClientConfig(builder);
+        CLIENT_SPEC = builder.build();
     }
 
-    @SubscribeEvent
-    public static void onLoad(final ModConfig.Loading configEvent) {
-        reloadConfig(configEvent);
+    static void init() {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, FluxConfig.COMMON_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, FluxConfig.CLIENT_SPEC);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(FluxConfig::reloadConfig);
     }
 
-    @SubscribeEvent
-    public static void onReload(final ModConfig.Reloading configEvent) {
-        reloadConfig(configEvent);
-    }
-
-    public static void reloadConfig(ModConfig.ModConfigEvent configEvent){
-
-        FluxNetworks.LOGGER.info("LOADING CONFIG");
-        if (configEvent.getConfig().getSpec() == FluxConfig.COMMON_SPEC) {
+    static void reloadConfig(@Nonnull ModConfig.ModConfigEvent event) {
+        final ForgeConfigSpec spec = event.getConfig().getSpec();
+        if (spec == FluxConfig.COMMON_SPEC) {
             bakeCommonConfig();
             verifyAndReadBlacklist();
             generateFluxChunkConfig();
-        }
-
-        if (configEvent.getConfig().getSpec() == FluxConfig.CLIENT_SPEC) {
+            FluxNetworks.LOGGER.info("COMMON CONFIG LOADED");
+        } else if (spec == FluxConfig.CLIENT_SPEC) {
             bakeClientConfig();
+            FluxNetworks.LOGGER.info("CLIENT CONFIG LOADED");
         }
-        FluxNetworks.LOGGER.info("LOADED CONFIG");
     }
 
     public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
@@ -61,36 +55,40 @@ public class FluxConfig {
     public static List<String> blockBlacklistStrings, itemBlackListStrings;
     public static boolean enableGuiDebug;
 
-    public static void bakeCommonConfig(){
-        defaultLimit = COMMON_CONFIG.defaultLimit.get();
-        basicCapacity = COMMON_CONFIG.basicCapacity.get();
-        basicTransfer = COMMON_CONFIG.basicTransfer.get();
-        herculeanCapacity = COMMON_CONFIG.herculeanCapacity.get();
-        herculeanTransfer = COMMON_CONFIG.herculeanTransfer.get();
-        gargantuanCapacity = COMMON_CONFIG.gargantuanCapacity.get();
-        gargantuanTransfer = COMMON_CONFIG.gargantuanTransfer.get();
+    public static void bakeCommonConfig() {
+        CommonConfig config = COMMON_CONFIG;
 
-        maximumPerPlayer = COMMON_CONFIG.maximumPerPlayer.get();
-        superAdminRequiredPermission = COMMON_CONFIG.superAdminRequiredPermission.get();
-        enableSuperAdmin = COMMON_CONFIG.enableSuperAdmin.get();
+        defaultLimit = config.defaultLimit.get();
+        basicCapacity = config.basicCapacity.get();
+        basicTransfer = config.basicTransfer.get();
+        herculeanCapacity = config.herculeanCapacity.get();
+        herculeanTransfer = config.herculeanTransfer.get();
+        gargantuanCapacity = config.gargantuanCapacity.get();
+        gargantuanTransfer = config.gargantuanTransfer.get();
 
-        enableFluxRecipe = COMMON_CONFIG.enableFluxRecipe.get();
-        enableOldRecipe = COMMON_CONFIG.enableOldRecipe.get();
-        enableChunkLoading = COMMON_CONFIG.enableChunkLoading.get();
+        maximumPerPlayer = config.maximumPerPlayer.get();
+        superAdminRequiredPermission = config.superAdminRequiredPermission.get();
+        enableSuperAdmin = config.enableSuperAdmin.get();
 
-        blockBlacklistStrings = COMMON_CONFIG.blockBlacklistStrings.get();
-        itemBlackListStrings = COMMON_CONFIG.itemBlackListStrings.get();
+        enableFluxRecipe = config.enableFluxRecipe.get();
+        enableOldRecipe = config.enableOldRecipe.get();
+        enableChunkLoading = config.enableChunkLoading.get();
+
+        blockBlacklistStrings = config.blockBlacklistStrings.get();
+        itemBlackListStrings = config.itemBlackListStrings.get();
     }
 
-    public static void bakeClientConfig(){
-        enableButtonSound = CLIENT_CONFIG.enableButtonSound.get();
-        enableOneProbeBasicInfo = CLIENT_CONFIG.enableOneProbeBasicInfo.get();
-        enableOneProbeAdvancedInfo = CLIENT_CONFIG.enableOneProbeAdvancedInfo.get();
-        enableOneProbeSneaking = CLIENT_CONFIG.enableOneProbeSneaking.get();
-        enableGuiDebug = CLIENT_CONFIG.enableGuiDebug.get();
+    public static void bakeClientConfig() {
+        ClientConfig config = CLIENT_CONFIG;
+
+        enableButtonSound = config.enableButtonSound.get();
+        enableOneProbeBasicInfo = config.enableOneProbeBasicInfo.get();
+        enableOneProbeAdvancedInfo = config.enableOneProbeAdvancedInfo.get();
+        enableOneProbeSneaking = config.enableOneProbeSneaking.get();
+        enableGuiDebug = config.enableGuiDebug.get();
     }
 
-    public static class CommonConfig{
+    public static class CommonConfig {
 
         ///energy
         public ForgeConfigSpec.IntValue defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
@@ -106,7 +104,7 @@ public class FluxConfig {
         public ForgeConfigSpec.ConfigValue<List<String>> blockBlacklistStrings, itemBlackListStrings;
 
 
-        public CommonConfig(ForgeConfigSpec.Builder builder){
+        public CommonConfig(ForgeConfigSpec.Builder builder) {
             builder.push("energy");
             defaultLimit = builder
                     .comment("The default transfer limit of a flux connector")
@@ -179,8 +177,7 @@ public class FluxConfig {
     }
 
 
-
-    public static class ClientConfig{
+    public static class ClientConfig {
 
         public ForgeConfigSpec.BooleanValue enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
         public ForgeConfigSpec.BooleanValue enableGuiDebug;

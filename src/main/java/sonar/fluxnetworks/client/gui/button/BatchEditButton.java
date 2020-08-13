@@ -1,10 +1,10 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import sonar.fluxnetworks.client.gui.basic.GuiDraw;
 import net.minecraft.client.Minecraft;
 
 public class BatchEditButton extends GuiButtonCore {
@@ -15,7 +15,7 @@ public class BatchEditButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
+    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
         GlStateManager.pushMatrix();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableBlend();
@@ -28,10 +28,10 @@ public class BatchEditButton extends GuiButtonCore {
         boolean b = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
 
         mc.getTextureManager().bindTexture(ScreenUtils.BUTTONS);
-        blit(x, y, 16 * id, 48 + (b ? 16 : 0), 12, 12);
+        blit(matrixStack, x, y, 16 * id, 48 + (b ? 16 : 0), 12, 12);
 
         if(clickable && b) {
-            mc.fontRenderer.drawString(text, x - mc.fontRenderer.getStringWidth(text) / 2 + 6, y - 9, 0xFFFFFF);
+            mc.fontRenderer.drawString(matrixStack, text, x - mc.fontRenderer.getStringWidth(text) / 2f + 6, y - 9, 0xFFFFFF);
         }
 
         GlStateManager.popMatrix();

@@ -6,6 +6,8 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 public enum FluxTranslate {
 
     FLUX_TOOLTIP(false, "tooltip.fluxnetworks.flux"),
@@ -139,8 +141,9 @@ public enum FluxTranslate {
         this.key = prefix ? "info.fluxnetworks." + key : key;
     }
 
+    @Nonnull
     public String t() {
-        return LanguageMap.getInstance().translateKey(key);
+        return LanguageMap.getInstance().func_230503_a_(key);
     }
 
     public String k(){

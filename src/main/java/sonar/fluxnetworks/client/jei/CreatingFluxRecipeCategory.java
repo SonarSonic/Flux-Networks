@@ -1,37 +1,7 @@
 package sonar.fluxnetworks.client.jei;
 
-import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.ITickTimer;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Items;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.registry.RegistryItems;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.ingredients.IIngredients;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxRecipeType> {
+//TODO JEI
+public class CreatingFluxRecipeCategory {/*implements IRecipeCategory<CreatingFluxRecipeType> {
 
     public static final ResourceLocation CATEGORY_UUID = new ResourceLocation(FluxNetworks.MODID, "creatingflux");
     public static final ResourceLocation TEXTURES = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_creating_flux_recipe.png");
@@ -151,5 +121,5 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
         String help = FluxTranslate.JEI_LEFT_CLICK.format(recipe.getCrusher().getBlock().getNameTextComponent().getFormattedText());
         fontRenderer.drawString(help, (float)(64 - fontRenderer.getStringWidth(help) / 2), 68, 4210752);
 
-    }
+    }*/
 }

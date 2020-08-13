@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import net.minecraft.client.Minecraft;
 
@@ -15,7 +16,7 @@ public class NormalButton extends GuiButtonCore {
         this.text = text;
     }
 
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, int guiLeft, int guiTop) {
+    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
 
         boolean hovered = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
         int color;
@@ -37,7 +38,7 @@ public class NormalButton extends GuiButtonCore {
         drawRect(x - 1, y, x, y + height, color);
         drawRect(x + width, y, x + width + 1, y + height, color);
 
-        drawCenteredString(mc.fontRenderer, text, x + width / 2, y + height / 2 - 5, color);
+        drawCenteredString(matrixStack, mc.fontRenderer, text, x + width / 2, y + height / 2 - 5, color);
     }
 
     public NormalButton setUnclickable() {

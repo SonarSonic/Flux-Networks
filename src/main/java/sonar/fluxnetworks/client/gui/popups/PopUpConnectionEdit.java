@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.client.gui.popups;
 
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
@@ -121,28 +122,28 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         for(SlidedSwitchButton button : popSwitches) {
-            button.drawButton(minecraft, mouseX, mouseY, guiLeft, guiTop);
+            button.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop);
         }
         for(SimpleToggleButton button : toggleButtons) {
-            button.drawButton(minecraft, mouseX, mouseY, guiLeft, guiTop);
+            button.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop);
         }
 
         if(!batchMode) {
-            drawCenteredString(font, FluxTranslate.SINGLE_EDIT.t(), 88, 14, 0xffffff);
-            drawCenteredString(font, host.singleConnection.getCoords().getStringInfo(), 88, 122, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxTranslate.SINGLE_EDIT.t(), 88, 14, 0xffffff);
+            drawCenteredString(matrixStack, font, host.singleConnection.getCoords().getStringInfo(), 88, 122, 0xffffff);
         } else {
-            drawCenteredString(font, FluxTranslate.BATCH_EDIT.t(), 88, 14, 0xffffff);
-            drawCenteredString(font, FluxTranslate.EDITING.t() + " " + host.batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 88, 122, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxTranslate.BATCH_EDIT.t(), 88, 14, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxTranslate.EDITING.t() + " " + host.batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 88, 122, 0xffffff);
         }
-        font.drawString(FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
-        font.drawString(FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
         if(batchMode || !host.singleConnection.getConnectionType().isStorage()) {
-            font.drawString(FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
+            font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
-        drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 155, 0xffffff);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 155, 0xffffff);
     }
 
 

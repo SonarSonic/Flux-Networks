@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -100,24 +101,24 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
     }
 
     @Override
-    protected void drawForegroundLayer(int mouseX, int mouseY) {
+    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         if(networkValid) {
             if(batchConnections.size() > 0) {
-                font.drawString(FluxTranslate.SELECTED.t() + ": " + TextFormatting.AQUA + batchConnections.size(), 20, 10, 0xffffff);
+                font.drawString(matrixStack, FluxTranslate.SELECTED.t() + ": " + TextFormatting.AQUA + batchConnections.size(), 20, 10, 0xffffff);
             } else {
-                font.drawString(FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
+                font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
             }
-            super.drawForegroundLayer(mouseX, mouseY);
+            super.drawForegroundLayer(matrixStack, mouseX, mouseY);
             if(!hasActivePopup())
-                drawCenteredString(font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 165, 0xffffff);
+                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 165, 0xffffff);
         } else {
-            super.drawForegroundLayer(mouseX, mouseY);
-            renderNavigationPrompt(FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            super.drawForegroundLayer(matrixStack, mouseX, mouseY);
+            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
     }
 
     @Override
-    public void renderElement(IFluxConnector element, int x, int y) {
+    public void renderElement(MatrixStack matrixStack, IFluxConnector element, int x, int y) {
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
         minecraft.getTextureManager().bindTexture(screenUtils.GUI_BAR);
         int fontColor = 0xffffff;
@@ -129,28 +130,28 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
         if(batchConnections.size() > 0) {
             if (batchConnections.contains(element)) {
-                fill(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
-                fill(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
+                fill(matrixStack, x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
+                fill(matrixStack, x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
                 RenderSystem.color3f(red, green, blue);
-                blit(x, y, 0, 32, elementWidth, elementHeight);
+                blit(matrixStack, x, y, 0, 32, elementWidth, elementHeight);
             } else {
-                fill(x - 5, y + 1, x - 3, y + elementHeight - 1, 0xaa606060);
-                fill(x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xaa606060);
+                fill(matrixStack, x - 5, y + 1, x - 3, y + elementHeight - 1, 0xaa606060);
+                fill(matrixStack, x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xaa606060);
                 RenderSystem.color3f(red * 0.5f, green * 0.5f, blue * 0.5f);
-                blit(x, y, 0, 32, elementWidth, elementHeight);
+                blit(matrixStack, x, y, 0, 32, elementWidth, elementHeight);
                 fontColor = 0xd0d0d0;
             }
         } else {
             RenderSystem.color3f(red, green, blue);
-            blit(x, y, 0, 32, elementWidth, elementHeight);
+            blit(matrixStack, x, y, 0, 32, elementWidth, elementHeight);
         }
         if(element.isChunkLoaded()) {
-            font.drawString(element.getCustomName(), x + 21, y + 2, fontColor);
+            font.drawString(matrixStack, element.getCustomName(), x + 21, y + 2, fontColor);
             RenderSystem.scaled(0.625, 0.625, 0.625);
-            font.drawString(FluxUtils.getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
+            font.drawString(matrixStack, FluxUtils.getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
             RenderSystem.scaled(1.6, 1.6, 1.6);
         } else {
-            font.drawString(element.getCustomName(), x + 21, y + 5, 0x808080);
+            font.drawString(matrixStack, element.getCustomName(), x + 21, y + 5, 0x808080);
         }
         if(currentPopUp == null) { //TODO MINOR - TEMP FIX ! - DEPTH PROBLEM WITH POPUPS DUE TO THE ITEMRENDERER OFFSET I THINK - lets disable when there is no pop up for now.
             screenUtils.renderItemStack(element.getDisplayStack(), x + 2, y + 1);
@@ -158,11 +159,9 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
     }
 
     @Override
-    public void renderElementTooltip(IFluxConnector element, int mouseX, int mouseY) {
+    public void renderElementTooltip(MatrixStack matrixStack, IFluxConnector element, int mouseX, int mouseY) {
         if(!hasActivePopup()) {
-            GlStateManager.pushMatrix();
-            screenUtils.drawHoverTooltip(getFluxInfo(element), mouseX + 4, mouseY - 16);
-            GlStateManager.popMatrix();
+            screenUtils.drawHoverTooltip(matrixStack, getFluxInfo(element), mouseX + 4, mouseY - 16);
         }
     }
 
