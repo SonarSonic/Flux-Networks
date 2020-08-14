@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
@@ -43,7 +44,7 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
         IBakedModel ibakedmodel = dispatcher.getModelForState(renderState);
 
         float r = ScreenUtils.getRed(color), g = ScreenUtils.getGreen(color), b = ScreenUtils.getBlue(color);
-        dispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), buffer.getBuffer(RenderTypeLookup.func_239221_b_(renderState)), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
+        dispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), buffer.getBuffer(RenderType.getCutout()), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
         //TODO minor issue - the renderer culls parts of the block model, could it have something to do with the Renderers render type.
         FluxStorageTileRenderer.render(matrix, buffer, overlay, energy, block.getMaxStorage(), color);
     }

@@ -1,7 +1,9 @@
 package sonar.fluxnetworks.common.storage;
 
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.TicketType;
 import sonar.fluxnetworks.FluxConfig;
@@ -27,7 +29,7 @@ public class FluxChunkManager {
         if (!FluxConfig.enableChunkLoading) {
             return;
         }
-        ResourceLocation dim = world.func_234923_W_().func_240901_a_();
+        RegistryKey<World> dim = world.getDimensionKey();
         /*List<ChunkPos> toLoad = FluxNetworkData.get().loadedChunks.get(dim);
         if(toLoad == null){
             return;
