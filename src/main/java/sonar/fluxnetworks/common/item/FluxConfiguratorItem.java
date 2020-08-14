@@ -28,8 +28,9 @@ import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
@@ -40,15 +41,19 @@ public class FluxConfiguratorItem extends Item {
         super(props);
     }
 
+    @Nonnull
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
+    public ActionResultType onItemUse(@Nonnull ItemUseContext context) {
         if (context.getWorld().isRemote) {
             return ActionResultType.SUCCESS;
         }
         PlayerEntity player = context.getPlayer();
+        if (player == null) {
+            return ActionResultType.PASS;
+        }
         TileEntity tile = context.getWorld().getTileEntity(context.getPos());
-        if (tile instanceof TileFluxCore) {
-            TileFluxCore fluxCore = (TileFluxCore) tile;
+        if (tile instanceof TileFluxDevice) {
+            TileFluxDevice fluxCore = (TileFluxDevice) tile;
             if (!fluxCore.canAccess(context.getPlayer())) {
                 player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_DENIED_KEY), true);
                 return ActionResultType.FAIL;
@@ -70,8 +75,9 @@ public class FluxConfiguratorItem extends Item {
         return ActionResultType.SUCCESS;
     }
 
+    @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, PlayerEntity player, @Nonnull Hand hand) {
         if (!world.isRemote) {
             NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
         }
@@ -79,7 +85,7 @@ public class FluxConfiguratorItem extends Item {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (tag != null) {
             tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInt(FluxConfigurationType.NETWORK.getNBTName()))));
@@ -118,6 +124,7 @@ public class FluxConfiguratorItem extends Item {
         public void close(PlayerEntity player) {
         }
 
+        @Nonnull
         @Override
         public ITextComponent getDisplayName() {
             return stack.getDisplayName();
@@ -125,9 +132,8 @@ public class FluxConfiguratorItem extends Item {
 
         @Nullable
         @Override
-        public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity player) {
+        public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
             return new ContainerConnector<>(windowID, playerInventory, this);
         }
     }
-
 }

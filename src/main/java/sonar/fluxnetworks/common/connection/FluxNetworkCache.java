@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.utils.NBTType;
@@ -81,7 +81,7 @@ public class FluxNetworkCache {
     public void updateClientConnections(int networkID, List<CompoundNBT> tags) {
         IFluxNetwork network = networks.get(networkID);
         if (network != null) {
-            List<IFluxConnector> connectors = network.getSetting(NetworkSettings.ALL_CONNECTORS);
+            List<IFluxDevice> connectors = network.getSetting(NetworkSettings.ALL_CONNECTORS);
             tags.forEach(t -> {
                 Coord4D coord4D = new Coord4D(t);
                 connectors.stream().filter(f -> f.getCoords().equals(coord4D)).findFirst().ifPresent(f -> f.readCustomNBT(t, NBTType.DEFAULT));

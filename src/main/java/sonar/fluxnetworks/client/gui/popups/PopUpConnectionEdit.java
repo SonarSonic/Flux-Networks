@@ -5,10 +5,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SimpleToggleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
@@ -161,7 +161,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
                         List<Coord4D> list;
                         boolean[] b = {true, true, true, true, true, true, false};
                         if(batchMode) {
-                            list = host.batchConnections.stream().map(IFluxConnector::getCoords).collect(Collectors.toList());
+                            list = host.batchConnections.stream().map(IFluxDevice::getCoords).collect(Collectors.toList());
                             b[0] = editName.on;
                             b[1] = editPriority.on;
                             b[2] = editLimit.on;

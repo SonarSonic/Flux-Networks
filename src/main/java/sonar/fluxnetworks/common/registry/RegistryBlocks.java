@@ -4,21 +4,21 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
-import sonar.fluxnetworks.common.block.*;
+import sonar.fluxnetworks.common.block.FluxControllerBlock;
+import sonar.fluxnetworks.common.block.FluxPlugBlock;
+import sonar.fluxnetworks.common.block.FluxPointBlock;
+import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.core.ContainerConnector;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
-import javax.annotation.Nonnull;
-
 @ObjectHolder("fluxnetworks")
 public class RegistryBlocks {
 
     @ObjectHolder("fluxblock")
     public static Block FLUX_BLOCK;
-
 
 
     @ObjectHolder("connector")

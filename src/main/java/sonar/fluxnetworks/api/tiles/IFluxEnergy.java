@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.tiles;
 
-public interface IFluxEnergy extends IFluxConnector {
+public interface IFluxEnergy extends IFluxDevice {
 
     long addEnergy(long amount, boolean simulate);
 

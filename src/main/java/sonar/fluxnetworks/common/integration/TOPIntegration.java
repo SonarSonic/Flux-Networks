@@ -1,23 +1,5 @@
 package sonar.fluxnetworks.common.integration;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.common.block.FluxNetworkBlock;
-import sonar.fluxnetworks.common.core.FluxUtils;
-
-import java.text.NumberFormat;
-import java.util.function.Function;
-
 //TODO waiting for update
 public class TOPIntegration {/*implements Function<ITheOneProbe, Void> {
 

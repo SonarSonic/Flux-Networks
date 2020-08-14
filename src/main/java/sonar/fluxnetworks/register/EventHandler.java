@@ -30,9 +30,6 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.core.FireItemEntity;
-import sonar.fluxnetworks.common.storage.FluxChunkManager;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.LavaParticlePacket;
@@ -40,6 +37,8 @@ import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
 import sonar.fluxnetworks.common.network.SuperAdminPacket;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
+import sonar.fluxnetworks.common.storage.FluxChunkManager;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -135,7 +134,7 @@ public class EventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onEntityAdded(EntityJoinWorldEvent event) {
-        if (!FluxConfig.enableFluxRecipe || !FluxConfig.enableOldRecipe || event.getWorld().isRemote) {
+        /*if (!FluxConfig.enableFluxRecipe || !FluxConfig.enableOldRecipe || event.getWorld().isRemote) {
             return;
         }
         final Entity entity = event.getEntity();
@@ -148,7 +147,7 @@ public class EventHandler {
                 event.getWorld().addEntity(newEntity);
                 event.setCanceled(true);
             }
-        }
+        }*/
     }
 
     @SubscribeEvent

@@ -24,7 +24,9 @@ public class FluxLootTableProvider extends LootTableProvider {
     @Nonnull
     @Override
     protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
-        return ImmutableList.of(Pair.of(FluxBlockLootTables::new, LootParameterSets.BLOCK));
+        return ImmutableList.of(
+                Pair.of(FluxBlockLootTables::new, LootParameterSets.BLOCK)
+        );
     }
 
     @Nonnull

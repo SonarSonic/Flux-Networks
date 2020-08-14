@@ -2,8 +2,8 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.common.core.CustomValue;
 import sonar.fluxnetworks.api.utils.ICustomValue;
 import sonar.fluxnetworks.api.utils.NBTType;
@@ -22,14 +22,14 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<EnergyType> network_energy = new CustomValue<>();
     public ICustomValue<Integer> network_wireless = new CustomValue<>(0);
 
-    public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
+    public ICustomValue<NetworkStatistics>   network_stats   = new CustomValue<>(new NetworkStatistics(this));
     //TODO Server:
     // 1. Online Connections: getConnections (TileFluxCore)
     // 2. Unloaded Connections: FluxLiteConnector, to record data and send to client
     // Client:
     // All are FluxLiteConnector for gui connections tab
     // Current: as its name (... server and client
-    public ICustomValue<List<IFluxConnector>> all_connectors = new CustomValue<>(new ArrayList<>());
+    public ICustomValue<List<IFluxDevice>>   all_connectors  = new CustomValue<>(new ArrayList<>());
     public ICustomValue<List<NetworkMember>> network_players = new CustomValue<>(new ArrayList<>());
 
     public FluxNetworkBase() {}
@@ -107,8 +107,8 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         }
 
         if(type == NBTType.NETWORK_CONNECTIONS) {
-            all_connectors.getValue().removeIf(IFluxConnector::isChunkLoaded);
-            List<IFluxConnector> connectors = getConnections(FluxCacheType.FLUX);
+            all_connectors.getValue().removeIf(IFluxDevice::isChunkLoaded);
+            List<IFluxDevice> connectors = getConnections(FluxCacheType.FLUX);
             connectors.forEach(f -> all_connectors.getValue().add(new FluxLiteConnector(f)));
             FluxNetworkData.writeAllConnections(this, nbt);
         }

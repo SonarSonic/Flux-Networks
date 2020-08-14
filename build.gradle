@@ -36,10 +36,6 @@ minecraft {
     mappings channel: 'snapshot', version: '20200723-1.16.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
@@ -95,8 +91,9 @@ minecraft {
 
 repositories {
     maven {
-        name 'Forge'
-        url 'https://files.minecraftforge.net/maven'
+        // location of latest mappings from the latest contents of the spreadsheet
+        name 'gigaherz'
+        url 'https://www.dogforce-games.com/maven/'
     }
     maven {
         // location of the maven that hosts JEI files

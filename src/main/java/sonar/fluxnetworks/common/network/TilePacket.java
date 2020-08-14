@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 public class TilePacket extends AbstractPacket {
 
@@ -47,8 +47,8 @@ public class TilePacket extends AbstractPacket {
                 world = server.getWorld(DimensionType.getById(coord4D.getDimension()));
             }*/
             TileEntity tile = world.getTileEntity(coord4D.getPos());
-            if (tile instanceof TileFluxCore) {
-                TileFluxCore flux = (TileFluxCore) tile;
+            if (tile instanceof TileFluxDevice) {
+                TileFluxDevice flux = (TileFluxDevice) tile;
                 return type.handler.handlePacket(flux, player, tag);
             }
         }

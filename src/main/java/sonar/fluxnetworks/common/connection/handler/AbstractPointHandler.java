@@ -1,8 +1,8 @@
 package sonar.fluxnetworks.common.connection.handler;
 
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 
-public abstract class AbstractPointHandler<C extends IFluxConnector> extends AbstractTransferHandler<C> {
+public abstract class AbstractPointHandler<C extends IFluxDevice> extends AbstractTransferHandler<C> {
 
     protected long request;
 

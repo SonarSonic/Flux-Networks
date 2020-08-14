@@ -7,29 +7,30 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.translate.StyleUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Defines the block base class for any flux device
+ */
 //TODO look table with NBT drops.
-public abstract class FluxNetworkBlock extends Block {
+public abstract class FluxDeviceBlock extends Block {
 
-    public FluxNetworkBlock(Properties props) {
+    public FluxDeviceBlock(Properties props) {
         super(props);
     }
 
@@ -46,8 +47,8 @@ public abstract class FluxNetworkBlock extends Block {
 
         TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-        if (tileEntity instanceof TileFluxCore) {
-            TileFluxCore fluxCore = (TileFluxCore) tileEntity;
+        if (tileEntity instanceof TileFluxDevice) {
+            TileFluxDevice fluxCore = (TileFluxDevice) tileEntity;
             if (fluxCore.playerUsing.size() > 0) {
                 player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_OCCUPY_KEY), true);
                 return ActionResultType.SUCCESS;
@@ -65,18 +66,13 @@ public abstract class FluxNetworkBlock extends Block {
         return ActionResultType.SUCCESS;
     }
 
-    /*@Override
-    public ResourceLocation getLootTable() {
-        return null;
-    }*/
-
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         readDataFromStack(stack, pos, worldIn); //doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
         if (!worldIn.isRemote) {
             TileEntity tileEntity = worldIn.getTileEntity(pos);
-            if (tileEntity instanceof TileFluxCore) {
-                TileFluxCore fluxCore = (TileFluxCore) tileEntity;
+            if (tileEntity instanceof TileFluxDevice) {
+                TileFluxDevice fluxCore = (TileFluxDevice) tileEntity;
                 if (placer instanceof PlayerEntity) {
                     fluxCore.playerUUID = PlayerEntity.getUUID(((PlayerEntity) placer).getGameProfile());
                 }
@@ -115,10 +111,12 @@ public abstract class FluxNetworkBlock extends Block {
         }
     }*/
 
+    //TODO see FluxBlockLootTables.class
+    @Deprecated
     public static void writeDataToStack(ItemStack stack, BlockPos pos, World world) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFluxCore) {
-            TileFluxCore t = (TileFluxCore) tile;
+        if (tile instanceof TileFluxDevice) {
+            TileFluxDevice t = (TileFluxDevice) tile;
             CompoundNBT tag = stack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
             t.writeCustomNBT(tag, NBTType.TILE_DROP);
         }
@@ -126,8 +124,8 @@ public abstract class FluxNetworkBlock extends Block {
 
     protected void readDataFromStack(ItemStack stack, BlockPos pos, World world) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFluxCore && stack.hasTag()) {
-            TileFluxCore t = (TileFluxCore) tile;
+        if (tile instanceof TileFluxDevice && stack.hasTag()) {
+            TileFluxDevice t = (TileFluxDevice) tile;
             CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
             if (tag != null) {
                 t.readCustomNBT(tag, NBTType.TILE_DROP);
@@ -139,5 +137,4 @@ public abstract class FluxNetworkBlock extends Block {
     public boolean hasTileEntity(BlockState state) {
         return true;
     }
-
 }

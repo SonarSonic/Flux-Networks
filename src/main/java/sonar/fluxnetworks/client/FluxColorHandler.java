@@ -20,7 +20,7 @@ import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.network.NetworkColourRequestPacket;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -121,8 +121,8 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     public int getColor(@Nonnull BlockState state, @Nullable IBlockDisplayReader world, @Nullable BlockPos pos, int tintIndex) {
         if (tintIndex == 1 && pos != null && world != null) {
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileFluxCore) {
-                TileFluxCore t = (TileFluxCore) tile;
+            if (tile instanceof TileFluxDevice) {
+                TileFluxDevice t = (TileFluxDevice) tile;
                 if (t.getNetworkID() == -1) {
                     return NO_NETWORK_COLOR;
                 }

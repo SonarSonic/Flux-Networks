@@ -4,16 +4,17 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.NBTType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
-public class FluxLiteConnector implements IFluxConnector {
+public class FluxLiteConnector implements IFluxDevice {
 
     public int networkID;
     public int priority;
@@ -31,7 +32,7 @@ public class FluxLiteConnector implements IFluxConnector {
     public long change;
     public ItemStack stack;
 
-    public FluxLiteConnector(IFluxConnector tile) {
+    public FluxLiteConnector(IFluxDevice tile) {
         this.networkID = tile.getNetworkID();
         this.priority = tile.getActualPriority();
         this.playerUUID = tile.getConnectionOwner();
@@ -53,7 +54,7 @@ public class FluxLiteConnector implements IFluxConnector {
         readCustomNBT(tag, NBTType.ALL_SAVE);
     }
 
-    public static CompoundNBT writeCustomNBT(IFluxConnector tile, CompoundNBT tag) {
+    public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
         tile.getCoords().write(tag);
         tag.putInt("type", tile.getConnectionType().ordinal());
         tag.putInt("n_id", tile.getNetworkID());
@@ -170,6 +171,7 @@ public class FluxLiteConnector implements IFluxConnector {
         return null;
     }
 
+    @Nonnull
     @Override
     public World getFluxWorld() {
         return null;

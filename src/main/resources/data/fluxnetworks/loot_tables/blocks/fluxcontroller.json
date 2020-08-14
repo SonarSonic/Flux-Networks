@@ -13,7 +13,7 @@
               "ops": []
             }
           ],
-          "name": "fluxnetworks:fluxplug"
+          "name": "fluxnetworks:fluxcontroller"
         }
       ],
       "conditions": [

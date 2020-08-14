@@ -23,8 +23,7 @@ public class SuperAdminProvider implements ICapabilitySerializable<INBT> {
     private final LazyOptional<ISuperAdmin> handler;
 
     public SuperAdminProvider() {
-        //noinspection ConstantConditions
-        instance = Capabilities.SUPER_ADMIN.getDefaultInstance();
+        instance = new DefaultSuperAdmin();
         handler = LazyOptional.of(this::getInstance);
     }
 

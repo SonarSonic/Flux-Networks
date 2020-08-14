@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.api.network;
 
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.utils.ICustomValue;
 import sonar.fluxnetworks.common.connection.FluxNetworkBase;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
@@ -22,7 +22,7 @@ public class NetworkSettings<T> {
     public static final NetworkSettings<Integer> NETWORK_WIRELESS = new NetworkSettings<>(s -> s.network_wireless);
     public static final NetworkSettings<NetworkStatistics> NETWORK_STATISTICS = new NetworkSettings<>(s -> s.network_stats);
     public static final NetworkSettings<List<NetworkMember>> NETWORK_PLAYERS = new NetworkSettings<>(s -> s.network_players);
-    public static final NetworkSettings<List<IFluxConnector>> ALL_CONNECTORS = new NetworkSettings<>(s -> s.all_connectors);
+    public static final NetworkSettings<List<IFluxDevice>>   ALL_CONNECTORS  = new NetworkSettings<>(s -> s.all_connectors);
 
     public ISettingGetter<T> value;
 

@@ -9,7 +9,7 @@ import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.ChunkPos;
@@ -23,7 +23,7 @@ public class TilePacketHandler {
         return tag;
     }
 
-    public static Object handleSetNetworkPacket(TileFluxCore tile, PlayerEntity player, CompoundNBT tag) {
+    public static Object handleSetNetworkPacket(TileFluxDevice tile, PlayerEntity player, CompoundNBT tag) {
         int id = tag.getInt(FluxNetworkData.NETWORK_ID);
         String pass = tag.getString(FluxNetworkData.NETWORK_PASSWORD);
         if(tile.getNetworkID() == id) {
@@ -58,7 +58,7 @@ public class TilePacketHandler {
         return tag;
     }
 
-    public static Object handleChunkLoadPacket(TileFluxCore tile, PlayerEntity player, CompoundNBT tag) {
+    public static Object handleChunkLoadPacket(TileFluxDevice tile, PlayerEntity player, CompoundNBT tag) {
         boolean load = tag.getBoolean("c");
         if(FluxConfig.enableChunkLoading) {
             if (load) {

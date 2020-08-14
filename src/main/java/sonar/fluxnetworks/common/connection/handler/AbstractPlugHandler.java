@@ -1,10 +1,10 @@
 package sonar.fluxnetworks.common.connection.handler;
 
 import net.minecraft.util.Direction;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 
-public abstract class AbstractPlugHandler<C extends IFluxConnector> extends AbstractTransferHandler<C> {
+public abstract class AbstractPlugHandler<C extends IFluxDevice> extends AbstractTransferHandler<C> {
 
     public AbstractPlugHandler(C fluxConnector) {
         super(fluxConnector);

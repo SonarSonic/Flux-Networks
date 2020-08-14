@@ -7,7 +7,7 @@ import sonar.fluxnetworks.api.tiles.IFluxEnergy;
 import sonar.fluxnetworks.common.connection.handler.FluxControllerHandler;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
-public class TileFluxController extends TileFluxCore implements IFluxController, IFluxEnergy {
+public class TileFluxController extends TileFluxDevice implements IFluxController, IFluxEnergy {
 
     public final FluxControllerHandler handler = new FluxControllerHandler(this);
 

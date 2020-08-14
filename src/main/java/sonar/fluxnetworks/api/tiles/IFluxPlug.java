@@ -1,4 +1,4 @@
 package sonar.fluxnetworks.api.tiles;
 
-public interface IFluxPlug extends IFluxConnector {
+public interface IFluxPlug extends IFluxDevice {
 }

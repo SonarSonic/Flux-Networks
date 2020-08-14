@@ -25,7 +25,7 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkFolder;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.tiles.IFluxConfigurable;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.tiles.ITilePacketBuffer;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.utils.NBTType;
@@ -37,7 +37,7 @@ import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
+import sonar.fluxnetworks.common.item.FluxDeviceItem;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
 
 import javax.annotation.Nonnull;
@@ -48,7 +48,7 @@ import java.util.UUID;
 import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.*;
 
 @SuppressWarnings("ConstantConditions")
-public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
+public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         IFluxConfigurable, ITickableTileEntity, ITilePacketBuffer, INamedContainerProvider {
 
     public HashSet<PlayerEntity> playerUsing = new HashSet<>();
@@ -78,7 +78,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     //// PACKET FLAGS \\\\
     public boolean settings_changed;
 
-    public TileFluxCore(TileEntityType<?> tileEntityTypeIn) {
+    public TileFluxDevice(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
 
@@ -177,6 +177,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         read(state, tag);
     }
 
+    @Nonnull
     @Override
     public World getFluxWorld() {
         return world;
@@ -218,12 +219,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         }
         if (type == NBTType.TILE_DROP) {
             tag.putLong("buffer", getTransferHandler().getBuffer());
-            tag.putInt(FluxConnectorBlockItem.PRIORITY, priority);
-            tag.putLong(FluxConnectorBlockItem.LIMIT, limit);
-            tag.putBoolean(FluxConnectorBlockItem.DISABLE_LIMIT, disableLimit);
-            tag.putBoolean(FluxConnectorBlockItem.SURGE_MODE, surgeMode);
+            tag.putInt(FluxDeviceItem.PRIORITY, priority);
+            tag.putLong(FluxDeviceItem.LIMIT, limit);
+            tag.putBoolean(FluxDeviceItem.DISABLE_LIMIT, disableLimit);
+            tag.putBoolean(FluxDeviceItem.SURGE_MODE, surgeMode);
             tag.putInt(FluxNetworkData.NETWORK_ID, networkID);
-            tag.putString(FluxConnectorBlockItem.CUSTOM_NAME, customName);
+            tag.putString(FluxDeviceItem.CUSTOM_NAME, customName);
             tag.putInt(NetworkFolder.FOLDER_ID, folderID);
         }
 
@@ -254,15 +255,15 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         if (type == NBTType.TILE_DROP) {
             long k;
             ((AbstractTransferHandler<?>) getTransferHandler()).buffer = (k = tag.getLong("buffer")) > 0 ? k : ((AbstractTransferHandler<?>) getTransferHandler()).buffer;
-            priority = tag.getInt(FluxConnectorBlockItem.PRIORITY);
+            priority = tag.getInt(FluxDeviceItem.PRIORITY);
             long l;
-            limit = (l = tag.getLong(FluxConnectorBlockItem.LIMIT)) > 0 ? l : limit;
-            disableLimit = tag.getBoolean(FluxConnectorBlockItem.DISABLE_LIMIT);
-            surgeMode = tag.getBoolean(FluxConnectorBlockItem.SURGE_MODE);
+            limit = (l = tag.getLong(FluxDeviceItem.LIMIT)) > 0 ? l : limit;
+            disableLimit = tag.getBoolean(FluxDeviceItem.DISABLE_LIMIT);
+            surgeMode = tag.getBoolean(FluxDeviceItem.SURGE_MODE);
             int i;
             networkID = (i = tag.getInt(FluxNetworkData.NETWORK_ID)) > 0 ? i : networkID;
             String name;
-            customName = (name = tag.getString(FluxConnectorBlockItem.CUSTOM_NAME)).isEmpty() ? customName : name;
+            customName = (name = tag.getString(FluxDeviceItem.CUSTOM_NAME)).isEmpty() ? customName : name;
             folderID = tag.getInt(NetworkFolder.FOLDER_ID);
         }
     }

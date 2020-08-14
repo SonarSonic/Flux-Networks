@@ -8,19 +8,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -148,7 +147,7 @@ public class FluxUtils {
         return new ItemStack(state.getBlock().asItem());
     }
 
-    public static boolean addConnection(IFluxConnector fluxConnector) {
+    public static boolean addConnection(IFluxDevice fluxConnector) {
         if (fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
             if (!network.isInvalid()) {
@@ -162,7 +161,7 @@ public class FluxUtils {
         return false;
     }
 
-    public static void removeConnection(IFluxConnector fluxConnector, boolean isChunkUnload) {
+    public static void removeConnection(IFluxDevice fluxConnector, boolean isChunkUnload) {
         if (fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
             if (!network.isInvalid()) {
@@ -248,14 +247,14 @@ public class FluxUtils {
         return null;
     }
 
-    public static CompoundNBT copyConfiguration(TileFluxCore flux, CompoundNBT config) {
+    public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {
         for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
             type.copy.copyFromTile(config, type.getNBTName(), flux);
         }
         return config;
     }
 
-    public static void pasteConfiguration(TileFluxCore flux, CompoundNBT config) {
+    public static void pasteConfiguration(TileFluxDevice flux, CompoundNBT config) {
         for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
             if (config.contains(type.getNBTName())) {
                 type.paste.pasteToTile(config, type.getNBTName(), flux);
@@ -265,11 +264,11 @@ public class FluxUtils {
 
     public static CompoundNBT getBatchEditingTag(FluxTextWidget a, FluxTextWidget b, FluxTextWidget c, SlidedSwitchButton d, SlidedSwitchButton e, SlidedSwitchButton f) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putString(FluxConnectorBlockItem.CUSTOM_NAME, a.getText());
-        tag.putInt(FluxConnectorBlockItem.PRIORITY, b.getIntegerFromText(false));
-        tag.putLong(FluxConnectorBlockItem.LIMIT, c.getLongFromText(true));
-        tag.putBoolean(FluxConnectorBlockItem.SURGE_MODE, d != null && d.slideControl);
-        tag.putBoolean(FluxConnectorBlockItem.DISABLE_LIMIT, e != null && e.slideControl);
+        tag.putString(FluxDeviceItem.CUSTOM_NAME, a.getText());
+        tag.putInt(FluxDeviceItem.PRIORITY, b.getIntegerFromText(false));
+        tag.putLong(FluxDeviceItem.LIMIT, c.getLongFromText(true));
+        tag.putBoolean(FluxDeviceItem.SURGE_MODE, d != null && d.slideControl);
+        tag.putBoolean(FluxDeviceItem.DISABLE_LIMIT, e != null && e.slideControl);
         tag.putBoolean("chunkLoad", f != null && f.slideControl);
         return tag;
     }

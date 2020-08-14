@@ -1,11 +1,11 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class TransferIterator<T extends IFluxConnector> {
+public class TransferIterator<T extends IFluxDevice> {
 
     private Iterator<PriorityGroup<T>> groupIterator;
     private PriorityGroup<T> currentGroup;

@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.common.handler.energy.FNEnergyHandler;
 import sonar.fluxnetworks.common.handler.energy.ForgeEnergyHandler;
 import net.minecraft.tileentity.TileEntity;
@@ -44,7 +44,7 @@ public class TileEntityHandler {
 
     @Nullable
     public static ITileEnergyHandler getEnergyHandler(TileEntity tile, Direction dir) {
-        if(tile instanceof IFluxConnector) {
+        if(tile instanceof IFluxDevice) {
             return null;
         }
 
@@ -64,7 +64,7 @@ public class TileEntityHandler {
         if(tile == null) {
             return false;
         }
-        if(tile instanceof IFluxConnector) {
+        if(tile instanceof IFluxDevice) {
             return false;
         }
         ResourceLocation registryName = tile.getBlockState().getBlock().getRegistryName();

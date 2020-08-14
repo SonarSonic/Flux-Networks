@@ -9,14 +9,14 @@ import sonar.fluxnetworks.api.utils.NBTType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * extended by IFluxPoint and IFluxPlug
+ * Defines a tile entity that can be connected to a flux network
  */
-
 ///TODO remove common references
-public interface IFluxConnector extends INetworkConnector {
+public interface IFluxDevice extends INetworkConnector {
 
     CompoundNBT writeCustomNBT(CompoundNBT tag, NBTType type);
 
@@ -52,6 +52,7 @@ public interface IFluxConnector extends INetworkConnector {
 
     ITransferHandler getTransferHandler();
 
+    @Nonnull
     World getFluxWorld();
 
     Coord4D getCoords();

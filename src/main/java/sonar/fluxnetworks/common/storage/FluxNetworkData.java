@@ -16,7 +16,7 @@ import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxLiteConnector;
@@ -190,7 +190,7 @@ public class FluxNetworkData extends WorldSavedData {
         if (!nbt.contains(UNLOADED_CONNECTIONS)) {
             return;
         }
-        List<IFluxConnector> a = new ArrayList<>();
+        List<IFluxDevice> a = new ArrayList<>();
         ListNBT list = nbt.getList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             a.add(new FluxLiteConnector(list.getCompound(i)));
@@ -199,7 +199,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public static void writeConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
-        List<IFluxConnector> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
+        List<IFluxDevice> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
         if (!a.isEmpty()) {
             ListNBT list = new ListNBT();
             a.forEach(s -> {
@@ -215,7 +215,7 @@ public class FluxNetworkData extends WorldSavedData {
         if (!nbt.contains(UNLOADED_CONNECTIONS)) {
             return;
         }
-        List<IFluxConnector> a = new ArrayList<>();
+        List<IFluxDevice> a = new ArrayList<>();
         ListNBT list = nbt.getList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             a.add(new FluxLiteConnector(list.getCompound(i)));
@@ -224,7 +224,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public static void writeAllConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
-        List<IFluxConnector> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
+        List<IFluxDevice> a = network.getSetting(NetworkSettings.ALL_CONNECTORS);
         if (!a.isEmpty()) {
             ListNBT list = new ListNBT();
             a.forEach(s -> list.add(s.writeCustomNBT(new CompoundNBT(), NBTType.DEFAULT)));

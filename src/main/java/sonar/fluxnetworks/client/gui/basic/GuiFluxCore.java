@@ -6,12 +6,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
@@ -116,7 +116,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         RenderSystem.popMatrix();
     }
 
-    protected void renderTransfer(MatrixStack matrixStack, IFluxConnector fluxConnector, int color, int x, int y) {
+    protected void renderTransfer(MatrixStack matrixStack, IFluxDevice fluxConnector, int color, int x, int y) {
         RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
@@ -133,7 +133,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     }
 
 
-    protected List<String> getFluxInfo(IFluxConnector flux) {
+    protected List<String> getFluxInfo(IFluxDevice flux) {
         List<String> list = Lists.newArrayList();
         list.add(TextFormatting.BOLD + flux.getCustomName());
         CompoundNBT tag = flux.getDisplayStack().getChildTag(FluxUtils.FLUX_DATA);
@@ -168,8 +168,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     public void onSuperAdminChanged(){}
 
     public void setConnectedNetwork(int networkID, String password){
-        if(connector instanceof IFluxConnector){
-            PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxConnector)connector).getCoords()));
+        if(connector instanceof IFluxDevice){
+            PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxDevice)connector).getCoords()));
         }
         if(connector instanceof AdminConfiguratorItem.ContainerProvider){
             FluxNetworks.PROXY.setAdminViewingNetworkID(networkID);

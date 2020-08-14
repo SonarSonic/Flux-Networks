@@ -1,9 +1,11 @@
 package sonar.fluxnetworks.common.registry;
 
-import sonar.fluxnetworks.FluxNetworks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import sonar.fluxnetworks.FluxNetworks;
+
+import javax.annotation.Nonnull;
 
 public class RegistrySounds {
 
@@ -13,7 +15,8 @@ public class RegistrySounds {
         BUTTON_CLICK = registerSound(registry, "button");
     }
 
-    public static SoundEvent registerSound(IForgeRegistry<SoundEvent> registry, String soundName) {
+    @Nonnull
+    public static SoundEvent registerSound(@Nonnull IForgeRegistry<SoundEvent> registry, String soundName) {
         ResourceLocation soundID = new ResourceLocation(FluxNetworks.MODID, soundName);
         SoundEvent event = new SoundEvent(soundID).setRegistryName(soundID);
         registry.register(event);

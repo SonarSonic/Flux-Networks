@@ -7,7 +7,7 @@ import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.EnumSecurityType;
 import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import sonar.fluxnetworks.api.utils.EnergyType;
@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
  */
 public class FluxNetworkServer extends FluxNetworkBase {
 
-    private Map<FluxCacheType<? extends IFluxConnector>, List<? extends IFluxConnector>> connections = new HashMap<>();
+    private Map<FluxCacheType<? extends IFluxDevice>, List<? extends IFluxDevice>> connections = new HashMap<>();
 
-    private Queue<IFluxConnector> toAdd = new ConcurrentLinkedQueue<>();
-    private Queue<IFluxConnector> toRemove = new ConcurrentLinkedQueue<>();
+    private Queue<IFluxDevice> toAdd    = new ConcurrentLinkedQueue<>();
+    private Queue<IFluxDevice> toRemove = new ConcurrentLinkedQueue<>();
 
     public boolean needSortConnections = true;
 
@@ -75,10 +75,10 @@ public class FluxNetworkServer extends FluxNetworkBase {
     }*/
 
     private void handleConnections() {
-        IFluxConnector flux;
+        IFluxDevice flux;
         while ((flux = toAdd.poll()) != null) {
             boolean b = false;
-            for (FluxCacheType<IFluxConnector> type : FluxCacheType.getValidTypes(flux)) {
+            for (FluxCacheType<IFluxDevice> type : FluxCacheType.getValidTypes(flux)) {
                 b |= FluxUtils.addWithCheck(getConnections(type), flux);
             }
             if (b) {
@@ -87,7 +87,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
             }
         }
         while ((flux = toRemove.poll()) != null) {
-            for (FluxCacheType<IFluxConnector> type : FluxCacheType.getValidTypes(flux)) {
+            for (FluxCacheType<IFluxDevice> type : FluxCacheType.getValidTypes(flux)) {
                 needSortConnections |= getConnections(type).remove(flux);
             }
         }
@@ -98,7 +98,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IFluxConnector> List<T> getConnections(FluxCacheType<T> type) {
+    public <T extends IFluxDevice> List<T> getConnections(FluxCacheType<T> type) {
         return (List<T>) connections.computeIfAbsent(type, m -> new ArrayList<T>());
     }
 
@@ -111,7 +111,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
         bufferLimiter = 0;
 
-        List<IFluxConnector> fluxConnectors = getConnections(FluxCacheType.FLUX);
+        List<IFluxDevice> fluxConnectors = getConnections(FluxCacheType.FLUX);
         fluxConnectors.forEach(f -> {
             f.getTransferHandler().onStartCycle();
             bufferLimiter += f.getTransferHandler().getRequest();
@@ -181,14 +181,14 @@ public class FluxNetworkServer extends FluxNetworkBase {
     }
 
     @Override
-    public void queueConnectionAddition(IFluxConnector flux) {
+    public void queueConnectionAddition(IFluxDevice flux) {
         toAdd.offer(flux);
         toRemove.remove(flux);
         addToLite(flux);
     }
 
     @Override
-    public void queueConnectionRemoval(IFluxConnector flux, boolean chunkUnload) {
+    public void queueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
         toRemove.offer(flux);
         toAdd.remove(flux);
         if (chunkUnload) {
@@ -198,8 +198,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
         }
     }
 
-    private void addToLite(IFluxConnector flux) {
-        Optional<IFluxConnector> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords())).findFirst();
+    private void addToLite(IFluxDevice flux) {
+        Optional<IFluxDevice> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords())).findFirst();
         if (c.isPresent()) {
             changeChunkLoaded(flux, true);
         } else {
@@ -208,12 +208,12 @@ public class FluxNetworkServer extends FluxNetworkBase {
         }
     }
 
-    private void removeFromLite(IFluxConnector flux) {
+    private void removeFromLite(IFluxDevice flux) {
         all_connectors.getValue().removeIf(f -> f.getCoords().equals(flux.getCoords()));
     }
 
-    private void changeChunkLoaded(IFluxConnector flux, boolean chunkLoaded) {
-        Optional<IFluxConnector> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords())).findFirst();
+    private void changeChunkLoaded(IFluxDevice flux, boolean chunkLoaded) {
+        Optional<IFluxDevice> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords())).findFirst();
         c.ifPresent(fluxConnector -> fluxConnector.setChunkLoaded(chunkLoaded));
     }
 
@@ -235,7 +235,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
         return network_players.getValue().stream().filter(f -> f.getPlayerUUID().equals(player)).findFirst();
     }
 
-    public void markLiteSettingChanged(IFluxConnector flux) {
+    public void markLiteSettingChanged(IFluxDevice flux) {
 
     }
 

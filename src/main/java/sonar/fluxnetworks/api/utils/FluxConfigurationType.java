@@ -3,7 +3,7 @@ package sonar.fluxnetworks.api.utils;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 public class FluxConfigurationType {
     public static FluxConfigurationType NETWORK = new FluxConfigurationType(0,"network", FluxConfigurationType::copyNetwork, FluxConfigurationType::pasteNetwork);
@@ -32,13 +32,13 @@ public class FluxConfigurationType {
 
     //// NETWORK \\\\
 
-    public static void copyNetwork(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void copyNetwork(CompoundNBT nbt, String key, TileFluxDevice tile) {
         if (!tile.getNetwork().isInvalid() && tile.getNetworkID() != -1) {
             nbt.putInt(key, tile.getNetworkID());
         }
     }
 
-    public static void pasteNetwork(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void pasteNetwork(CompoundNBT nbt, String key, TileFluxDevice tile) {
         int storedID = nbt.getInt(key);
         if (storedID != -1) {
             IFluxNetwork newNetwork = FluxNetworkCache.INSTANCE.getNetwork(storedID);
@@ -49,52 +49,52 @@ public class FluxConfigurationType {
 
     //// PRIORITY \\\\
 
-    public static void copyPriority(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void copyPriority(CompoundNBT nbt, String key, TileFluxDevice tile) {
         nbt.putInt(key, tile.priority);
     }
 
-    public static void pastePriority(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void pastePriority(CompoundNBT nbt, String key, TileFluxDevice tile) {
         tile.priority = nbt.getInt(key);
     }
 
     //// PRIORITY SETTING \\\\
 
-    public static void copyPrioritySetting(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void copyPrioritySetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
         nbt.putBoolean(key, tile.surgeMode);
     }
 
-    public static void pastePrioritySetting(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void pastePrioritySetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
         tile.surgeMode = nbt.getBoolean(key);
     }
 
     //// TRANSFER LIMIT \\\\
 
-    public static void copyTransfer(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void copyTransfer(CompoundNBT nbt, String key, TileFluxDevice tile) {
         nbt.putLong(key, tile.limit);
     }
 
-    public static void pasteTransfer(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void pasteTransfer(CompoundNBT nbt, String key, TileFluxDevice tile) {
         tile.limit = nbt.getLong(key);
     }
 
     //// TRANSFER SETTING \\\\
 
-    public static void copyTransferSetting(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void copyTransferSetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
         nbt.putBoolean(key, tile.disableLimit);
     }
 
-    public static void pasteTransferSetting(CompoundNBT nbt, String key, TileFluxCore tile) {
+    public static void pasteTransferSetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
         tile.disableLimit = nbt.getBoolean(key);
     }
 
     @FunctionalInterface
     public interface ICopyMethod {
-        void copyFromTile(CompoundNBT tag, String key, TileFluxCore tile);
+        void copyFromTile(CompoundNBT tag, String key, TileFluxDevice tile);
     }
 
     @FunctionalInterface
     public interface IPasteMethod {
-        void pasteToTile(CompoundNBT tag, String key, TileFluxCore tile);
+        void pasteToTile(CompoundNBT tag, String key, TileFluxDevice tile);
     }
 
 }

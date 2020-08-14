@@ -13,7 +13,7 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.common.network.*;
 
@@ -27,10 +27,10 @@ public class GuiFluxConnectorHome extends GuiTabCore {
 
     public SlidedSwitchButton surge, disableLimit, chunkLoad;
 
-    private TileFluxCore tileEntity;
-    private int timer;
+    private TileFluxDevice tileEntity;
+    private int            timer;
 
-    public GuiFluxConnectorHome(PlayerEntity player, TileFluxCore tileEntity) {
+    public GuiFluxConnectorHome(PlayerEntity player, TileFluxDevice tileEntity) {
         super(player, tileEntity);
         this.tileEntity = tileEntity;
     }

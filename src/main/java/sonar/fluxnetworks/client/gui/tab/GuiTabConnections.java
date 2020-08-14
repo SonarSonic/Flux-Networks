@@ -1,18 +1,17 @@
 package sonar.fluxnetworks.client.gui.tab;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
@@ -32,14 +31,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
+public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     public InvisibleButton redirectButton;
 
     private List<BatchEditButton> editButtons = new ArrayList<>();
 
-    public List<IFluxConnector> batchConnections = new ArrayList<>();
-    public IFluxConnector singleConnection;
+    public List<IFluxDevice> batchConnections = new ArrayList<>();
+    public IFluxDevice       singleConnection;
 
     public BatchEditButton clear, edit, disconnect;
 
@@ -78,7 +77,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
     }
 
     @Override
-    protected void onElementClicked(IFluxConnector element, int mouseButton) {
+    protected void onElementClicked(IFluxDevice element, int mouseButton) {
         if(mouseButton == 0 && batchConnections.size() == 0 && element.isChunkLoaded()) {
             singleConnection = element;
             openPopUp(new PopUpConnectionEdit(this, false, player, connector));
@@ -118,7 +117,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
     }
 
     @Override
-    public void renderElement(MatrixStack matrixStack, IFluxConnector element, int x, int y) {
+    public void renderElement(MatrixStack matrixStack, IFluxDevice element, int x, int y) {
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
         minecraft.getTextureManager().bindTexture(screenUtils.GUI_BAR);
         int fontColor = 0xffffff;
@@ -159,7 +158,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
     }
 
     @Override
-    public void renderElementTooltip(MatrixStack matrixStack, IFluxConnector element, int mouseX, int mouseY) {
+    public void renderElementTooltip(MatrixStack matrixStack, IFluxDevice element, int mouseX, int mouseY) {
         if(!hasActivePopup()) {
             screenUtils.drawHoverTooltip(matrixStack, getFluxInfo(element), mouseX + 4, mouseY - 16);
         }
@@ -180,7 +179,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
                     openPopUp(new PopUpConnectionEdit(this, true, player, connector));
                     break;
                 case 2:
-                    List<Coord4D> list = batchConnections.stream().map(IFluxConnector::getCoords).collect(Collectors.toList());
+                    List<Coord4D> list = batchConnections.stream().map(IFluxDevice::getCoords).collect(Collectors.toList());
                     boolean[] b = {false, false, false, false, false, false, true};
                     PacketHandler.CHANNEL.sendToServer(new BatchEditingPacket(network.getNetworkID(), list, new CompoundNBT(), b));
                     break;
@@ -197,7 +196,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
         }
         if(timer % 5 == 0) {
-            PacketHandler.CHANNEL.sendToServer(new ConnectionUpdateRequestPacket(network.getNetworkID(), current.stream().map(IFluxConnector::getCoords).collect(Collectors.toList())));
+            PacketHandler.CHANNEL.sendToServer(new ConnectionUpdateRequestPacket(network.getNetworkID(), current.stream().map(IFluxDevice::getCoords).collect(Collectors.toList())));
         }
         timer++;
         timer %= 20;
@@ -217,7 +216,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
             edit.clickable = false;
             disconnect.clickable = false;
             refreshPages(network.getSetting(NetworkSettings.ALL_CONNECTORS));
-            if(connector instanceof IFluxConnector && elements.stream().noneMatch(f -> f.getCoords().equals(((IFluxConnector)connector).getCoords()))) {
+            if(connector instanceof IFluxDevice && elements.stream().noneMatch(f -> f.getCoords().equals(((IFluxDevice)connector).getCoords()))) {
                 Minecraft.getInstance().currentScreen = new GuiTabSelection(player, connector);
             }
             page = Math.min(page, pages);
@@ -226,7 +225,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxConnector> {
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(IFluxConnector::isChunkLoaded).reversed().
+        elements.sort(Comparator.comparing(IFluxDevice::isChunkLoaded).reversed().
                 thenComparing(f -> f.getConnectionType().isStorage()).
                 thenComparing(f -> f.getConnectionType().canAddEnergy()).
                 thenComparing(f -> f.getConnectionType().canRemoveEnergy()).

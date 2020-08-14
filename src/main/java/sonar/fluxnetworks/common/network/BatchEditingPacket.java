@@ -14,8 +14,8 @@ import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxConnectorBlockItem;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraft.util.math.ChunkPos;
 
 import java.util.ArrayList;
@@ -74,14 +74,14 @@ public class BatchEditingPacket extends AbstractPacket {
                     boolean editUnlimited = editions[4];
                     boolean editChunkLoad = editions[5];
                     boolean disconnect = editions[6];
-                    String name = tag.getString(FluxConnectorBlockItem.CUSTOM_NAME);
-                    int priority = tag.getInt(FluxConnectorBlockItem.PRIORITY);
-                    long limit = tag.getLong(FluxConnectorBlockItem.LIMIT);
-                    boolean surge = tag.getBoolean(FluxConnectorBlockItem.SURGE_MODE);
-                    boolean unlimited = tag.getBoolean(FluxConnectorBlockItem.DISABLE_LIMIT);
+                    String name = tag.getString(FluxDeviceItem.CUSTOM_NAME);
+                    int priority = tag.getInt(FluxDeviceItem.PRIORITY);
+                    long limit = tag.getLong(FluxDeviceItem.LIMIT);
+                    boolean surge = tag.getBoolean(FluxDeviceItem.SURGE_MODE);
+                    boolean unlimited = tag.getBoolean(FluxDeviceItem.DISABLE_LIMIT);
                     boolean load = tag.getBoolean("chunkLoad");
-                    List<TileFluxCore> onlineConnectors = new ArrayList<>();
-                    network.getConnections(FluxCacheType.FLUX).forEach(e -> onlineConnectors.add((TileFluxCore) e));
+                    List<TileFluxDevice> onlineConnectors = new ArrayList<>();
+                    network.getConnections(FluxCacheType.FLUX).forEach(e -> onlineConnectors.add((TileFluxDevice) e));
                     AtomicBoolean reject = new AtomicBoolean(false);
 
                     for (Coord4D c : coord4DS) {

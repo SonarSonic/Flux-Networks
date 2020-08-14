@@ -49,7 +49,8 @@ public class FluxConfig {
     }
 
     public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
-    public static boolean enableFluxRecipe, enableOldRecipe, enableChunkLoading, enableSuperAdmin;
+    public static boolean enableFluxRecipe, /*enableOldRecipe,*/
+            enableChunkLoading, enableSuperAdmin;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
     public static List<String> blockBlacklistStrings, itemBlackListStrings;
@@ -71,7 +72,7 @@ public class FluxConfig {
         enableSuperAdmin = config.enableSuperAdmin.get();
 
         enableFluxRecipe = config.enableFluxRecipe.get();
-        enableOldRecipe = config.enableOldRecipe.get();
+        //enableOldRecipe = config.enableOldRecipe.get();
         enableChunkLoading = config.enableChunkLoading.get();
 
         blockBlacklistStrings = config.blockBlacklistStrings.get();
@@ -98,7 +99,8 @@ public class FluxConfig {
         public ForgeConfigSpec.BooleanValue enableSuperAdmin;
 
         ////general
-        public ForgeConfigSpec.BooleanValue enableFluxRecipe, enableOldRecipe, enableChunkLoading;
+        public ForgeConfigSpec.BooleanValue enableFluxRecipe, /*enableOldRecipe,*/
+                enableChunkLoading;
 
         //blacklist
         public ForgeConfigSpec.ConfigValue<List<String>> blockBlacklistStrings, itemBlackListStrings;
@@ -151,10 +153,10 @@ public class FluxConfig {
                     .comment("Enables redstones being compressed with the bedrock and obsidian to get flux")
                     .translation(FluxNetworks.MODID + ".config." + "enableFluxRecipe")
                     .define("enableFluxRecipe", true);
-            enableOldRecipe = builder
+            /*enableOldRecipe = builder
                     .comment("Enables redstone being turned into Flux when dropped in fire. (Need \"Enable Flux Recipe\" = true, so the default recipe can't be disabled if turns this on)")
                     .translation(FluxNetworks.MODID + ".config." + "enableOldRecipe")
-                    .define("enableOldRecipe", false);
+                    .define("enableOldRecipe", false);*/
             enableChunkLoading = builder
                     .comment("Allows flux tiles to work as chunk loaders")
                     .translation(FluxNetworks.MODID + ".config." + "enableChunkLoading")

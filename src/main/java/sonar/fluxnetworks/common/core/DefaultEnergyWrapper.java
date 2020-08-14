@@ -2,7 +2,7 @@ package sonar.fluxnetworks.common.core;
 
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
@@ -10,10 +10,10 @@ import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 /**uses forge's own energy wrapper and also IExtendedEnergyStorage*/
 public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
-    public IFluxConnector tileEntity;
-    public Direction side;
+    public IFluxDevice tileEntity;
+    public Direction   side;
 
-    public DefaultEnergyWrapper(IFluxConnector tileEntity, Direction side) {
+    public DefaultEnergyWrapper(IFluxDevice tileEntity, Direction side) {
         this.tileEntity = tileEntity;
         this.side = side;
     }

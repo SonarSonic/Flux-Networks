@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.Optional;
  *
  * @param <T> Flux Point or Plug
  */
-public class PriorityGroup<T extends IFluxConnector> {
+public class PriorityGroup<T extends IFluxDevice> {
 
     private final int priority;
     private final List<T> connectors;
@@ -31,7 +31,7 @@ public class PriorityGroup<T extends IFluxConnector> {
     }
 
     @Nonnull
-    public static <T extends IFluxConnector> PriorityGroup<T> getOrCreateGroup(int priority, @Nonnull List<PriorityGroup<T>> groups) {
+    public static <T extends IFluxDevice> PriorityGroup<T> getOrCreateGroup(int priority, @Nonnull List<PriorityGroup<T>> groups) {
         Optional<PriorityGroup<T>> group = groups.stream().filter(g -> g.priority == priority).findFirst();
         if (!group.isPresent()) {
             PriorityGroup<T> newGroup = new PriorityGroup<>(priority);

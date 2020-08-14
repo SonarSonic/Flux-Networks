@@ -16,7 +16,7 @@ import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;
 import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.*;
 
-public abstract class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy {
+public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage, IFluxEnergy {
 
     public final FluxStorageHandler handler = new FluxStorageHandler(this);
 

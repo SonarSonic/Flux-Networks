@@ -3,7 +3,7 @@ package sonar.fluxnetworks.api.network;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.utils.NBTType;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public interface IFluxNetwork {
     @Deprecated
     default void removeMember(UUID uuid) {}
 
-    default <T extends IFluxConnector> List<T> getConnections(FluxCacheType<T> type) {
+    default <T extends IFluxDevice> List<T> getConnections(FluxCacheType<T> type) {
         return Lists.newArrayList();
     }
 
@@ -50,11 +50,11 @@ public interface IFluxNetwork {
     }
 
     /* Server only */
-    default void queueConnectionAddition(IFluxConnector flux) {
+    default void queueConnectionAddition(IFluxDevice flux) {
     }
 
     /* Server only */
-    default void queueConnectionRemoval(IFluxConnector flux, boolean chunkUnload) {
+    default void queueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
     }
 
     default boolean isInvalid() {

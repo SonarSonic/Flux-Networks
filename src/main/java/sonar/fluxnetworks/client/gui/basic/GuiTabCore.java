@@ -15,7 +15,7 @@ import sonar.fluxnetworks.client.gui.button.NavigationButton;
 import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
-import sonar.fluxnetworks.common.tileentity.TileFluxCore;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import sonar.fluxnetworks.client.gui.tab.*;
 
 import java.util.List;
@@ -74,8 +74,8 @@ public abstract class GuiTabCore extends GuiFluxCore {
     public static void switchTab(EnumNavigationTabs tab, PlayerEntity player, INetworkConnector connector) {
         switch (tab) {
             case TAB_HOME:
-                if(connector instanceof TileFluxCore) {
-                    Minecraft.getInstance().displayGuiScreen(new GuiFluxConnectorHome(player, (TileFluxCore) connector));
+                if(connector instanceof TileFluxDevice) {
+                    Minecraft.getInstance().displayGuiScreen(new GuiFluxConnectorHome(player, (TileFluxDevice) connector));
                 } else if(connector instanceof AdminConfiguratorItem.ContainerProvider) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxAdminHome(player, connector));
                 } else if(connector instanceof FluxConfiguratorItem.ContainerProvider) {

@@ -3,9 +3,9 @@ package sonar.fluxnetworks.common.connection.handler;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.tiles.IFluxDevice;
 
-public abstract class AbstractTransferHandler<C extends IFluxConnector>  implements ITransferHandler {
+public abstract class AbstractTransferHandler<C extends IFluxDevice>  implements ITransferHandler {
 
     public long buffer;
 
