@@ -25,8 +25,21 @@ archivesBaseName = 'FluxNetworks'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 sourceSets {
-    api
+    api {
+        java {
+            srcDir 'src/api/java'
+        }
+    }
     main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            include '**/**'
+            exclude '**/*.psd'
+            srcDirs += 'src/generated/resources'
+            exclude '.cache'
+        }
         compileClasspath += sourceSets.api.output
         runtimeClasspath += sourceSets.api.output
     }
@@ -92,7 +105,7 @@ minecraft {
 repositories {
     maven {
         // location of latest mappings from the latest contents of the spreadsheet
-        name 'gigaherz'
+        name 'Gigaherz'
         url 'https://www.dogforce-games.com/maven/'
     }
     maven {
@@ -115,10 +128,10 @@ dependencies {
 
     /*runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
 
-    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-${top_version}")
+    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-${top_version}")*/
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")*/
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
     // need to be updated
     //compile fg.deobf("curse.maven:modern-ui:2966106")
@@ -129,7 +142,7 @@ jar {
         attributes([
                 "Specification-Title"     : "Flux-Networks",
                 "Specification-Vendor"    : "SonarSonic",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Specification-Version"   : "1",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "SonarSonic",

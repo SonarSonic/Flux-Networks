@@ -1,13 +1,13 @@
 package sonar.fluxnetworks.client.jei;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 
 public class CreatingFluxRecipeType {
 
     public final Block base;
     public final Block crusher;
+
     public final ItemStack input;
     public final ItemStack output;
 
@@ -17,6 +17,7 @@ public class CreatingFluxRecipeType {
         this.input = input;
         this.output = output;
     }
+
     public Block getBase() {
         return base;
     }
@@ -32,6 +33,4 @@ public class CreatingFluxRecipeType {
     public ItemStack getOutput() {
         return output;
     }
-
-
 }
