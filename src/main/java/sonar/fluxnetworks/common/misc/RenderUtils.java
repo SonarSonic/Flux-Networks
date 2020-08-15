@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.core;
+package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;

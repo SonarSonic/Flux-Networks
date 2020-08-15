@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.core;
+package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -147,25 +147,25 @@ public class FluxUtils {
         return new ItemStack(state.getBlock().asItem());
     }
 
-    public static boolean addConnection(IFluxDevice fluxConnector) {
-        if (fluxConnector.getNetworkID() != -1) {
-            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
-            if (!network.isInvalid()) {
-                if (fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
+    public static boolean addConnection(@Nonnull IFluxDevice fluxDevice) {
+        if (fluxDevice.getNetworkID() != -1) {
+            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxDevice.getNetworkID());
+            if (network.isValid()) {
+                if (fluxDevice.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
                     return false;
                 }
-                network.queueConnectionAddition(fluxConnector);
+                network.queueConnectionAddition(fluxDevice);
                 return true;
             }
         }
         return false;
     }
 
-    public static void removeConnection(IFluxDevice fluxConnector, boolean isChunkUnload) {
-        if (fluxConnector.getNetworkID() != -1) {
-            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxConnector.getNetworkID());
-            if (!network.isInvalid()) {
-                network.queueConnectionRemoval(fluxConnector, isChunkUnload);
+    public static void removeConnection(@Nonnull IFluxDevice fluxDevice, boolean isChunkUnload) {
+        if (fluxDevice.getNetworkID() != -1) {
+            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxDevice.getNetworkID());
+            if (network.isValid()) {
+                network.queueConnectionRemoval(fluxDevice, isChunkUnload);
             }
         }
     }
@@ -178,7 +178,7 @@ public class FluxUtils {
         return 0xFF000000 | red | green | blue;
     }
 
-    public static int getBrighterColor(int color, double factor) {
+    public static int getBrighterColor(int color, float factor) {
         int red = (color >> 16) & 0x000000FF;
         int green = (color >> 8) & 0x000000FF;
         int blue = (color) & 0x000000FF;

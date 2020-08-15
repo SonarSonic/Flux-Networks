@@ -16,7 +16,7 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpCore;
 import sonar.fluxnetworks.client.gui.popups.PopUpCustomColour;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import java.util.List;
 

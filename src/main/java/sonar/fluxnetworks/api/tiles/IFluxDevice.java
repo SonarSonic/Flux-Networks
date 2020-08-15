@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.common.core.FluxGuiStack;
+import sonar.fluxnetworks.common.misc.FluxGuiStack;
 import sonar.fluxnetworks.api.utils.NBTType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

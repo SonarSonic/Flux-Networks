@@ -38,8 +38,8 @@ public class FluxNetworkCache {
             return true;
         }
         UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
-        List<IFluxNetwork> created = getAllNetworks().stream().filter(s -> s.getSetting(NetworkSettings.NETWORK_OWNER).equals(uuid)).collect(Collectors.toList());
-        return created.size() < FluxConfig.maximumPerPlayer;
+        long created = getAllNetworks().stream().filter(s -> s.getSetting(NetworkSettings.NETWORK_OWNER).equals(uuid)).count();
+        return created < FluxConfig.maximumPerPlayer;
     }
 
     public void createdNetwork(@Nonnull PlayerEntity player, String name, int color, EnumSecurityType securityType, EnergyType energyType, String password) {

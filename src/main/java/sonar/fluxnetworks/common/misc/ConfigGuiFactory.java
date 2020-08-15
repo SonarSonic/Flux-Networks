@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.core;
+package sonar.fluxnetworks.common.misc;
 /* TODO CONFIG GUI
 import sonar.fluxnetworks.client.gui.GuiModConfig;
 import net.minecraft.client.Minecraft;

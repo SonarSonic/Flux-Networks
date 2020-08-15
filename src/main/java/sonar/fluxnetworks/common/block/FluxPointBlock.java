@@ -14,7 +14,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.common.core.FluxShapes;
+import sonar.fluxnetworks.common.misc.FluxShapes;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
 
 import javax.annotation.Nonnull;

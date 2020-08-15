@@ -17,7 +17,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.translate.StyleUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 

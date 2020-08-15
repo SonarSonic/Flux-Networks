@@ -10,7 +10,7 @@ import sonar.fluxnetworks.api.tiles.IFluxEnergy;
 import sonar.fluxnetworks.api.tiles.IFluxStorage;
 import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;

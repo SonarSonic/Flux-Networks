@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.core;
+package sonar.fluxnetworks.common.misc;
 
 import com.sun.javafx.geom.Vec3d;
 import net.minecraft.util.Direction;

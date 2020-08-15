@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.core;
+package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;

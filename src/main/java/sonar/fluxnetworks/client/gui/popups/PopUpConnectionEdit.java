@@ -15,7 +15,7 @@ import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.tab.GuiTabConnections;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.BatchEditingPacket;
 import net.minecraft.util.text.TextFormatting;

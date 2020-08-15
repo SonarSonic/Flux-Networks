@@ -33,7 +33,7 @@ public class FluxConfigurationType {
     //// NETWORK \\\\
 
     public static void copyNetwork(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        if (!tile.getNetwork().isInvalid() && tile.getNetworkID() != -1) {
+        if (tile.getNetwork().isValid() && tile.getNetworkID() != -1) {
             nbt.putInt(key, tile.getNetworkID());
         }
     }

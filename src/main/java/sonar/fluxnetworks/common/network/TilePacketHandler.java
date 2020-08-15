@@ -30,7 +30,7 @@ public class TilePacketHandler {
             return null;
         }
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
-        if(!network.isInvalid()) {
+        if(network.isValid()) {
             if(tile.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);
             }
@@ -42,7 +42,7 @@ public class TilePacketHandler {
                     return new FeedbackPacket(EnumFeedbackInfo.REJECT);
                 }
             }
-            if(tile.getNetwork() != null && !tile.getNetwork().isInvalid()) {
+            if(tile.getNetwork() != null && tile.getNetwork().isValid()) {
                 tile.getNetwork().queueConnectionRemoval(tile, false);
             }
             tile.playerUUID = PlayerEntity.getUUID(player.getGameProfile());

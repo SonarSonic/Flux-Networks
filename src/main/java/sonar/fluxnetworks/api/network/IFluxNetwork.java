@@ -57,8 +57,8 @@ public interface IFluxNetwork {
     default void queueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
     }
 
-    default boolean isInvalid() {
-        return false;
+    default boolean isValid() {
+        return true;
     }
 
     void readNetworkNBT(CompoundNBT nbt, NBTType type);

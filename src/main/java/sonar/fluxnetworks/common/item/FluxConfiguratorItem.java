@@ -26,8 +26,8 @@ import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.translate.StyleUtils;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
 import sonar.fluxnetworks.client.FluxColorHandler;
-import sonar.fluxnetworks.common.core.ContainerConnector;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -88,7 +88,7 @@ public class FluxConfiguratorItem extends Item {
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (tag != null) {
-            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.getOrRequestNetworkName(tag.getInt(FluxConfigurationType.NETWORK.getNBTName()))));
+            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxColorHandler.INSTANCE.getOrRequestNetworkName(tag.getInt(FluxConfigurationType.NETWORK.getNBTName()))));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }

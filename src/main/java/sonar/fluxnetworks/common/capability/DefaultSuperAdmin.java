@@ -12,7 +12,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.api.utils.Capabilities;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

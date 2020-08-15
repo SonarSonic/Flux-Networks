@@ -16,7 +16,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpNetworkPassword;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import net.minecraft.util.text.TextFormatting;
 
@@ -151,7 +151,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
                networkConnector.networkID = selectedNetwork.getNetworkID();
 
                this.network = selectedNetwork;
-               this.networkValid = !selectedNetwork.isInvalid();
+               this.networkValid = selectedNetwork.isValid();
            }
         }
         if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.PASSWORD_REQUIRE) {

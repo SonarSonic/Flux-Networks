@@ -12,7 +12,7 @@ import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import net.minecraft.item.ItemStack;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
 
@@ -40,7 +40,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
 
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
-        if(!network.isInvalid()) {
+        if(network.isValid()) {
             if (!network.getMemberPermission(player).canAccess()) {
                 if (password.isEmpty()) {
                     return new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE);

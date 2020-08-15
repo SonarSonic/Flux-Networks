@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.client.FluxColorHandler;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
@@ -48,7 +48,7 @@ public class FluxDeviceItem extends BlockItem {
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
         if (tag != null) {
             if (tag.contains(FluxNetworkData.NETWORK_ID))
-                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.RESET + FluxColorHandler.getOrRequestNetworkName(tag.getInt(FluxNetworkData.NETWORK_ID))));
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.RESET + FluxColorHandler.INSTANCE.getOrRequestNetworkName(tag.getInt(FluxNetworkData.NETWORK_ID))));
 
             if (tag.contains(LIMIT))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.RESET + FluxUtils.format(tag.getLong(LIMIT), FluxUtils.TypeNumberFormat.COMMAS, " " + EnergyType.FE.getStorageSuffix())));

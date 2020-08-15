@@ -13,7 +13,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiPopUpHost;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.common.core.ContainerConnector;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 
 import java.util.ArrayList;
 import java.util.List;

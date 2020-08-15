@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.api.tiles.IFluxDevice;
 import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.common.core.CustomValue;
+import sonar.fluxnetworks.common.misc.CustomValue;
 import sonar.fluxnetworks.api.utils.ICustomValue;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;

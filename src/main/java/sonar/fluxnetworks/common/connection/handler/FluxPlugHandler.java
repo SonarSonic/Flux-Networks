@@ -34,7 +34,7 @@ public class FluxPlugHandler extends AbstractPlugHandler<TileFluxPlug> {
 
     @Override
     public long addEnergy(long amount, Direction dir, boolean simulate) {
-        if(getNetwork().isInvalid()) {
+        if(!getNetwork().isValid()) {
             return 0;
         }
         IFluxTransfer transfer = transfers.getTransfer(dir);

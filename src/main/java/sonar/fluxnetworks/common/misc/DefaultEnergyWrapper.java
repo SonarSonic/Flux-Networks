@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.core;
+package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;

@@ -8,7 +8,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
 import net.minecraft.item.ItemStack;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 public class ConfiguratorUpdateSettingsPacket extends AbstractPacket{
 

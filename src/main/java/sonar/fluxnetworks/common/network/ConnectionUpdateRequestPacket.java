@@ -45,7 +45,7 @@ public class ConnectionUpdateRequestPacket extends AbstractPacket{
             return null;
         }
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
-        if(!network.isInvalid()) {
+        if(network.isValid()) {
             PlayerEntity player = PacketHandler.getPlayer(ctx);
             List<CompoundNBT> tags = new ArrayList<>();
             List<IFluxDevice> onlineConnectors = network.getConnections(FluxCacheType.FLUX);

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.core;
+package sonar.fluxnetworks.common.misc;
 /*
 import sonar.fluxnetworks.api.tiles.IFluxPhantomEnergy;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;

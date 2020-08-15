@@ -8,7 +8,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.popups.PopUpCore;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.common.core.ContainerConnector;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 
 import javax.annotation.Nullable;
 

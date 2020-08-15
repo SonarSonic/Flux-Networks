@@ -9,18 +9,22 @@ import net.minecraftforge.fml.common.Mod;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 
+import javax.annotation.Nonnull;
+
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@Mod.EventBusSubscriber
 public class ClientEventHandler {
 
     @SubscribeEvent
-    public static void onClientPlayerLeft(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+    public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         FluxNetworkCache.INSTANCE.clearClientCache();
-        FluxColorHandler.reset();
+        FluxColorHandler.INSTANCE.reset();
     }
 
     @SubscribeEvent
-    public void onRenderTick(TickEvent.RenderTickEvent event) {
-        FluxColorHandler.sendRequests();
+    public static void onClientTick(@Nonnull TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            FluxColorHandler.INSTANCE.tick();
+        }
     }
 }

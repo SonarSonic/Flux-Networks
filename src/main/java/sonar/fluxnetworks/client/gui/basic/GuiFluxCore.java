@@ -24,7 +24,7 @@ import sonar.fluxnetworks.common.network.ConfiguratorNetworkConnectPacket;
 import sonar.fluxnetworks.common.network.TilePacket;
 import sonar.fluxnetworks.common.network.TilePacketHandler;
 import sonar.fluxnetworks.common.network.TilePacketEnum;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import net.minecraft.util.text.TextFormatting;
 
 import java.text.NumberFormat;
@@ -44,7 +44,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     public GuiFluxCore(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
         this.network = FluxNetworkCache.INSTANCE.getClientNetwork(connector.getNetworkID());
-        this.networkValid = !network.isInvalid();
+        this.networkValid = network.isValid();
     }
 
     @Override
@@ -93,7 +93,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         super.tick();
         if(timer1 == 0) {
             this.network = FluxNetworkCache.INSTANCE.getClientNetwork(connector.getNetworkID());
-            this.networkValid = !network.isInvalid();
+            this.networkValid = network.isValid();
         }
         timer1++;
         timer1 %= 20;

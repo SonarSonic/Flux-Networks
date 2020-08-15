@@ -11,7 +11,7 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxCacheType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxDeviceItem;
@@ -65,7 +65,7 @@ public class BatchEditingPacket extends AbstractPacket {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         if (player != null) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
-            if (!network.isInvalid()) {
+            if (network.isValid()) {
                 if (network.getMemberPermission(player).canEdit()) {
                     boolean editName = editions[0];
                     boolean editPriority = editions[1];

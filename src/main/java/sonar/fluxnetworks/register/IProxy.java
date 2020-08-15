@@ -11,8 +11,6 @@ import java.util.Map;
 
 public interface IProxy {
 
-    World getClientWorld();
-
     PlayerEntity getClientPlayer();
 
     EnumFeedbackInfo getFeedback(boolean operation);

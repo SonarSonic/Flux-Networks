@@ -12,7 +12,7 @@ import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 
 import java.util.*;

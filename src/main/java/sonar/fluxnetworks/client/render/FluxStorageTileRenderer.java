@@ -24,7 +24,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
 
     public static final float ALPHA = 150.0f / 255.0f;
 
-    public static final int LIGHT_MAP = 0x00f000f0;
+    public static final int LIGHT_MAP = 0x00f0_00f0; // (240, 240)
 
     public FluxStorageTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);

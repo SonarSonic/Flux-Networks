@@ -7,7 +7,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 

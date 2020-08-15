@@ -16,7 +16,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.common.core.ContainerConnector;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

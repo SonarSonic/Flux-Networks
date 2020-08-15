@@ -32,8 +32,8 @@ import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.connection.handler.AbstractTransferHandler;
-import sonar.fluxnetworks.common.core.ContainerConnector;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -153,45 +153,50 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         return networkID;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
+    public final SUpdateTileEntityPacket getUpdatePacket() {
+        // Server side, write block update data
         return new SUpdateTileEntityPacket(pos, -1, writeCustomNBT(new CompoundNBT(), NBTType.TILE_UPDATE));
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public final void onDataPacket(NetworkManager net, @Nonnull SUpdateTileEntityPacket pkt) {
+        // Client side, read block update data
         readCustomNBT(pkt.getNbtCompound(), NBTType.TILE_UPDATE);
         world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
-
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return write(super.getUpdateTag());
+    public final CompoundNBT getUpdateTag() {
+        // Server side, write NBT when updating chunk data
+        return write(new CompoundNBT());
     }
 
     @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+    public final void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        // Client side, read NBT when updating chunk data
         read(state, tag);
     }
 
     @Nonnull
     @Override
-    public World getFluxWorld() {
+    public final World getFluxWorld() {
+        // Access world with interface
         return world;
     }
 
+    @Nonnull
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
+    public final CompoundNBT write(CompoundNBT compound) {
         super.write(compound);
         writeCustomNBT(compound, NBTType.ALL_SAVE);
         return compound;
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
+    public final void read(BlockState state, CompoundNBT compound) {
         super.read(state, compound);
         readCustomNBT(compound, NBTType.ALL_SAVE);
     }
@@ -269,7 +274,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     public boolean canAccess(PlayerEntity player) {
-        if (!network.isInvalid()) {
+        if (network.isValid()) {
             if (PlayerEntity.getUUID(player.getGameProfile()).equals(playerUUID)) {
                 return true;
             }

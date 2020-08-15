@@ -6,7 +6,6 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.World;
 
 import java.util.Map;
 
@@ -17,11 +16,6 @@ public class ProxyServer implements IProxy {
 
     public int admin_viewing_network_id = -1;
     public IFluxNetwork admin_viewing_network = FluxNetworkInvalid.INSTANCE;
-
-    @Override
-    public World getClientWorld() {
-        throw new IllegalStateException("Only run this on the client");
-    }
 
     @Override
     public PlayerEntity getClientPlayer() {

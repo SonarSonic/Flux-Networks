@@ -10,7 +10,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
-import sonar.fluxnetworks.register.EventHandler;
 import sonar.fluxnetworks.register.IProxy;
 import sonar.fluxnetworks.register.ProxyClient;
 import sonar.fluxnetworks.register.ProxyServer;
@@ -34,7 +33,6 @@ public class FluxNetworks {
 
         FluxConfig.init();
 
-        MinecraftForge.EVENT_BUS.register(EventHandler.class);
         MinecraftForge.EVENT_BUS.register(PROXY);
 
         modernUILoaded = ModList.get().isLoaded("modernui");

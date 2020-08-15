@@ -14,7 +14,7 @@ public class FluxNetworkInvalid extends FluxNetworkBase {
     }
 
     @Override
-    public boolean isInvalid() {
-        return true;
+    public boolean isValid() {
+        return false;
     }
 }

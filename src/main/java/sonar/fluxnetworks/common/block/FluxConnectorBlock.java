@@ -8,7 +8,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.world.IWorldReader;
 import sonar.fluxnetworks.common.tileentity.TileFluxConnector;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

@@ -18,7 +18,7 @@ import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import net.minecraft.util.Tuple;
 
@@ -74,7 +74,7 @@ public class GeneralPacketHandler {
             return new FeedbackPacket(EnumFeedbackInfo.ILLEGAL_PASSWORD);
         }
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
-        if (!network.isInvalid()) {
+        if (network.isValid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 boolean needPacket = false;
                 if(!network.getSetting(NetworkSettings.NETWORK_NAME).equals(newName)) {
@@ -113,7 +113,7 @@ public class GeneralPacketHandler {
     public static Object handleDeleteNetworkPacket(PlayerEntity player, CompoundNBT nbtTag) {
         int id = nbtTag.getInt(FluxNetworkData.NETWORK_ID);
         IFluxNetwork toDelete = FluxNetworkCache.INSTANCE.getNetwork(id);
-        if(!toDelete.isInvalid()) {
+        if(toDelete.isValid()) {
             if(toDelete.getMemberPermission(player).canDelete()) {
                 FluxNetworkData.get().deleteNetwork(toDelete);
                 return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
@@ -138,7 +138,7 @@ public class GeneralPacketHandler {
         String playerName = packetTag.getString("playerName");
 
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
-        if (!network.isInvalid()) {
+        if (network.isValid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 network.addNewMember(playerName);
                 return new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
@@ -163,7 +163,7 @@ public class GeneralPacketHandler {
         UUID playerRemoved = packetTag.getUniqueId("playerRemoved");
 
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
-        if (!network.isInvalid()) {
+        if (network.isValid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 network.removeMember(playerRemoved);
                 return new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
@@ -193,7 +193,7 @@ public class GeneralPacketHandler {
             }*/
 
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
-            if (!network.isInvalid()) {
+            if (network.isValid()) {
                 if (network.getMemberPermission(player).canEdit()) {
                     // Create new member
                     if(type == 0) {
@@ -261,7 +261,7 @@ public class GeneralPacketHandler {
         int networkID = packetTag.getInt(FluxNetworkData.NETWORK_ID);
         int wireless = packetTag.getInt(FluxNetworkData.WIRELESS_MODE);
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
-        if (!network.isInvalid()) {
+        if (network.isValid()) {
             if(network.getMemberPermission(player).canEdit()) {
                 network.setSetting(NetworkSettings.NETWORK_WIRELESS, wireless);
                 PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));

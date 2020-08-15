@@ -5,7 +5,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.energy.FNEnergyCapability;
 import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.common.core.DefaultEnergyWrapper;
+import sonar.fluxnetworks.common.misc.DefaultEnergyWrapper;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;

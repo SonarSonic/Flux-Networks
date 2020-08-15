@@ -22,7 +22,7 @@ import sonar.fluxnetworks.common.network.ConfiguratorUpdateSettingsPacket;
 import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 public class GuiFluxConfiguratorHome extends GuiTabCore {
 
