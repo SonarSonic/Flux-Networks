@@ -60,6 +60,12 @@ public abstract class AbstractTransferHandler<C extends IFluxDevice>  implements
         }
         return 0;
     }
+
+    @Override
+    public void setBuffer(long buffer) {
+        this.buffer = buffer;
+    }
+
     @Override
     public long getBuffer() {
         return buffer;

@@ -8,6 +8,8 @@ import net.minecraft.util.math.GlobalPos;
 
 import javax.annotation.Nonnull;
 
+//TODO make deprecated
+@Deprecated
 public class Coord4D {
 
     private int x, y, z, dimension; //TODO should we change to DimensionType? or perhaps GlobalPos

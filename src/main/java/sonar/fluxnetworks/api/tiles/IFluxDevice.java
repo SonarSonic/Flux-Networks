@@ -55,6 +55,7 @@ public interface IFluxDevice extends INetworkConnector {
     @Nonnull
     World getFluxWorld();
 
+    @Deprecated
     Coord4D getCoords();
 
     int getFolderID();

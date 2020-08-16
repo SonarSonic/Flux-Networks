@@ -9,6 +9,8 @@ public interface ITransferHandler {
 
     void onEndCycle();
 
+    void setBuffer(long buffer);
+
     long getBuffer();
 
     long getChange();

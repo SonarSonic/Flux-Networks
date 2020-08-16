@@ -31,7 +31,8 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
     }
 
     @Override
-    public void render(@Nonnull TileFluxStorage tile, float partialTicks, @Nonnull MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+    public void render(@Nonnull TileFluxStorage tile, float partialTicks, @Nonnull MatrixStack matrixStackIn,
+                       @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
         render(matrixStackIn, bufferIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.color);
     }
 
@@ -51,11 +52,14 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
         renderSide(matrix, builder, Direction.EAST, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
         renderSide(matrix, builder, Direction.WEST, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
         if (energyPercentage < 1.0f) {
-            renderSide(matrix, builder, Direction.DOWN, 1.0f / 16.0f, 1.0f / 16.0f, OFFSET_Z + HEIGHT - renderHeight, 14.0f / 16.0f, 14.0f / 16.0f, r, g, b, overlay, energyPercentage);
+            renderSide(matrix, builder, Direction.DOWN, 1.0f / 16.0f, 1.0f / 16.0f, OFFSET_Z + HEIGHT - renderHeight,
+                    14.0f / 16.0f, 14.0f / 16.0f, r, g, b, overlay, energyPercentage);
         }
     }
 
-    private static void renderSide(@Nonnull MatrixStack matrix, @Nonnull IVertexBuilder builder, @Nonnull Direction dir, float x, float y, float z, float width, float height, float r, float g, float b, int overlay, float fillPercentage) {
+    private static void renderSide(@Nonnull MatrixStack matrix, @Nonnull IVertexBuilder builder, @Nonnull Direction dir,
+                                   float x, float y, float z, float width, float height,
+                                   float r, float g, float b, int overlay, float fillPercentage) {
         float minU = 0, minV = 0, maxU = 1, maxV = 1 * fillPercentage;
         matrix.push();
         matrix.translate(0.5, 0.5, 0.5);
@@ -64,10 +68,14 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
         matrix.translate(-0.5, -0.5, -0.5);
         Matrix4f matrix4f = matrix.getLast().getMatrix();
         Matrix3f normal = matrix.getLast().getNormal();
-        builder.pos(matrix4f, x, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(minU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
-        builder.pos(matrix4f, x + width, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(maxU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
-        builder.pos(matrix4f, x + width, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(maxU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
-        builder.pos(matrix4f, x, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA).tex(minU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
+                .tex(minU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x + width, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
+                .tex(maxU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x + width, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
+                .tex(maxU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
+        builder.pos(matrix4f, x, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
+                .tex(minU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
         matrix.pop();
     }
 

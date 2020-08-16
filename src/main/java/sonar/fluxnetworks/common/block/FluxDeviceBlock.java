@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 /**
  * Defines the block base class for any flux device
  */
-//TODO look table with NBT drops.
 public abstract class FluxDeviceBlock extends Block {
 
     public FluxDeviceBlock(Properties props) {
@@ -111,18 +110,17 @@ public abstract class FluxDeviceBlock extends Block {
         }
     }*/
 
-    //TODO see FluxBlockLootTables.class
-    @Deprecated
-    public static void writeDataToStack(ItemStack stack, BlockPos pos, World world) {
+    // see FluxBlockLootTables
+    /*public static void writeDataToStack(ItemStack stack, BlockPos pos, World world) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFluxDevice) {
             TileFluxDevice t = (TileFluxDevice) tile;
             CompoundNBT tag = stack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
             t.writeCustomNBT(tag, NBTType.TILE_DROP);
         }
-    }
+    }*/
 
-    protected void readDataFromStack(ItemStack stack, BlockPos pos, World world) {
+    public void readDataFromStack(ItemStack stack, BlockPos pos, @Nonnull World world) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFluxDevice && stack.hasTag()) {
             TileFluxDevice t = (TileFluxDevice) tile;

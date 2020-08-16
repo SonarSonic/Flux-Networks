@@ -67,7 +67,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public boolean disableLimit = false;
 
     public boolean connected   = false;
-    public byte[]  connections = new byte[]{0, 0, 0, 0, 0, 0};
+    public byte  connections = 0;
 
     public boolean chunkLoading = false;
 
@@ -213,11 +213,9 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             tag.putInt("7", color);
             tag.putBoolean("8", connected);
             tag.putInt("9", folderID);
-            for (int i = 0; i < connections.length; i++) {
-                tag.putByte('c' + String.valueOf(i), connections[i]);
-            }
-            tag.putLong("buf", getTransferHandler().getBuffer());
-            tag.putBoolean("l", chunkLoading);
+            tag.putByte("a", connections);
+            tag.putLong("b", getTransferHandler().getBuffer());
+            tag.putBoolean("c", chunkLoading);
         }
         if (type == NBTType.TILE_UPDATE) {
             getTransferHandler().writeNetworkedNBT(tag);
@@ -232,7 +230,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             tag.putString(FluxDeviceItem.CUSTOM_NAME, customName);
             tag.putInt(NetworkFolder.FOLDER_ID, folderID);
         }
-
         return tag;
     }
 
@@ -248,20 +245,19 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             color = tag.getInt("7");
             connected = tag.getBoolean("8");
             folderID = tag.getInt("9");
-            for (int i = 0; i < connections.length; i++) {
-                connections[i] = tag.getByte('c' + String.valueOf(i));
-            }
-            ((AbstractTransferHandler<?>) getTransferHandler()).buffer = tag.getLong("buf");
-            chunkLoading = tag.getBoolean("l");
+            connections = tag.getByte("a");
+            getTransferHandler().setBuffer(tag.getLong("b"));
+            chunkLoading = tag.getBoolean("c");
         }
         if (type == NBTType.TILE_UPDATE) {
             getTransferHandler().readNetworkedNBT(tag);
         }
         if (type == NBTType.TILE_DROP) {
-            long k;
-            ((AbstractTransferHandler<?>) getTransferHandler()).buffer = (k = tag.getLong("buffer")) > 0 ? k : ((AbstractTransferHandler<?>) getTransferHandler()).buffer;
-            priority = tag.getInt(FluxDeviceItem.PRIORITY);
             long l;
+            if ((l = tag.getLong("buffer")) > 0) {
+                getTransferHandler().setBuffer(l);
+            }
+            priority = tag.getInt(FluxDeviceItem.PRIORITY);
             limit = (l = tag.getLong(FluxDeviceItem.LIMIT)) > 0 ? l : limit;
             disableLimit = tag.getBoolean(FluxDeviceItem.DISABLE_LIMIT);
             surgeMode = tag.getBoolean(FluxDeviceItem.SURGE_MODE);
@@ -558,7 +554,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     @Nonnull
     @Override
     public ITextComponent getDisplayName() {
-        return new StringTextComponent(getCustomName());
+        return new StringTextComponent("");
     }
 
     @Nullable

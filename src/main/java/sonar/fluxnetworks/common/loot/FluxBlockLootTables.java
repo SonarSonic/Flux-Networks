@@ -3,12 +3,22 @@ package sonar.fluxnetworks.common.loot;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.block.Block;
 import net.minecraft.data.loot.BlockLootTables;
+import net.minecraft.item.ItemStack;
 import net.minecraft.loot.ConstantRange;
 import net.minecraft.loot.ItemLootEntry;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.functions.CopyNbt;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import sonar.fluxnetworks.common.block.FluxDeviceBlock;
+import sonar.fluxnetworks.common.block.FluxStorageBlock;
+import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -31,23 +41,43 @@ public class FluxBlockLootTables extends BlockLootTables {
 
     @Override
     protected void addTables() {
-        registerLootTable(RegistryBlocks.FLUX_PLUG, FluxBlockLootTables::fluxDropping);
-        registerLootTable(RegistryBlocks.FLUX_POINT, FluxBlockLootTables::fluxDropping);
-        registerLootTable(RegistryBlocks.FLUX_CONTROLLER, FluxBlockLootTables::fluxDropping);
-        registerLootTable(RegistryBlocks.BASIC_FLUX_STORAGE, FluxBlockLootTables::fluxDropping);
-        registerLootTable(RegistryBlocks.HERCULEAN_FLUX_STORAGE, FluxBlockLootTables::fluxDropping);
-        registerLootTable(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, FluxBlockLootTables::fluxDropping);
+        registerLootTable(RegistryBlocks.FLUX_PLUG, FluxBlockLootTables::fluxDeviceDropping);
+        registerLootTable(RegistryBlocks.FLUX_POINT, FluxBlockLootTables::fluxDeviceDropping);
+        registerLootTable(RegistryBlocks.FLUX_CONTROLLER, FluxBlockLootTables::fluxDeviceDropping);
+        registerLootTable(RegistryBlocks.BASIC_FLUX_STORAGE, FluxBlockLootTables::fluxDeviceDropping);
+        registerLootTable(RegistryBlocks.HERCULEAN_FLUX_STORAGE, FluxBlockLootTables::fluxDeviceDropping);
+        registerLootTable(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, FluxBlockLootTables::fluxDeviceDropping);
     }
 
+    /**
+     * Pick out needed NBT from {@link TileFluxDevice#write(CompoundNBT)}
+     * Convert them to be readable by {@link FluxDeviceBlock#readDataFromStack(ItemStack, BlockPos, World)}
+     *
+     * @param block flux device block
+     * @return loot table builder
+     */
     @Nonnull
-    protected static LootTable.Builder fluxDropping(Block block) {
-        //TODO Add ops, match TILE_DROP and SAVE_ALL NBT key name in TileEntity#write and #writeCustomNBT
-        // so we can read NBT from the itemStack
+    protected static LootTable.Builder fluxDeviceDropping(Block block) {
+        if (!(block instanceof FluxDeviceBlock)) {
+            throw new IllegalArgumentException();
+        }
+        CopyNbt.Builder copyNbt = CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY);
+        // replace to a sub NBT compound tag to avoid conflicts with vanilla or other mods
+        copyNbt.replaceOperation("0", FluxUtils.FLUX_DATA + "." + FluxDeviceItem.PRIORITY);
+        copyNbt.replaceOperation("1", FluxUtils.FLUX_DATA + "." + FluxDeviceItem.LIMIT);
+        copyNbt.replaceOperation("2", FluxUtils.FLUX_DATA + "." + FluxDeviceItem.DISABLE_LIMIT);
+        copyNbt.replaceOperation("3", FluxUtils.FLUX_DATA + "." + FluxDeviceItem.SURGE_MODE);
+        copyNbt.replaceOperation("4", FluxUtils.FLUX_DATA + "." + FluxNetworkData.NETWORK_ID);
+        copyNbt.replaceOperation("6", FluxUtils.FLUX_DATA + "." + FluxDeviceItem.CUSTOM_NAME);
+        copyNbt.replaceOperation("b", FluxUtils.FLUX_DATA + "." + "buffer");
+        if (block instanceof FluxStorageBlock) {
+            copyNbt.replaceOperation("energy", FluxUtils.FLUX_DATA + "." + "energy");
+        }
         return LootTable.builder().addLootPool(withSurvivesExplosion(block,
                 LootPool.builder()
                         .rolls(ConstantRange.of(1))
                         .addEntry(ItemLootEntry.builder(block)
-                                .acceptFunction(CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY))
+                                .acceptFunction(copyNbt)
                         )
         ));
     }
