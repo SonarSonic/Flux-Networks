@@ -11,9 +11,6 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-plugins {
-    id "com.wynprice.cursemaven" version "2.1.1"
-}
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -114,9 +111,19 @@ repositories {
         url "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
+        // location of the maven that hosts TOP files
+        name 'tterrag maven'
+        url 'https://maven.tterrag.com/'
+    }
+    maven {
         // location of a maven mirror for JEI files, as a fallback
         name "ModMaven"
         url "https://modmaven.k-4u.nl"
+    }
+    maven {
+        // location of a maven that hosts all files on CurseForge
+        name 'CurseMaven'
+        url 'https://www.cursemaven.com/'
     }
     flatDir {
         dirs 'libs'
@@ -126,15 +133,14 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    /*runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")
+    /*runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")*/
 
-    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-${top_version}")*/
+    compile fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
-    // need to be updated
-    //compile fg.deobf("curse.maven:modern-ui:2966106")
+    //compile fg.deobf("curse.maven:ModernUI:2966106")
 }
 
 jar {

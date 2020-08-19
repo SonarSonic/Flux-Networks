@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.tileentity;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityType;
@@ -8,13 +9,16 @@ import sonar.fluxnetworks.api.network.EnumConnectionType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxEnergy;
 import sonar.fluxnetworks.api.tiles.IFluxStorage;
-import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import net.minecraft.item.ItemStack;
-import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.*;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
+
+import javax.annotation.Nonnull;
+
+import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.FLUX_GUI_SYNC;
+import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.FLUX_STORAGE_ENERGY;
 
 public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage, IFluxEnergy {
 
@@ -35,7 +39,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         this.maxEnergyStorage = maxEnergyStorage;
     }
 
-    public static class Basic extends TileFluxStorage{
+    public static class Basic extends TileFluxStorage {
 
         public Basic() {
             super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, FluxConfig.basicCapacity);
@@ -100,9 +104,12 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         return energyExtracted;
     }
 
-    /** on server side **/
+    /**
+     * on server side
+     */
     public void sendPacketIfNeeded() {
         if (energyChanged) {
+            //noinspection ConstantConditions
             if ((world.getWorldInfo().getGameTime() & 3) == 0) {
                 sendTilePacketToNearby(FLUX_STORAGE_ENERGY);
                 energyChanged = false;
@@ -136,7 +143,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         energyStored = tag.getInt("energy");
     }
 
-    public ItemStack writeStorageToDisplayStack(ItemStack stack) {
+    public ItemStack writeStorageToDisplayStack(@Nonnull ItemStack stack) {
         CompoundNBT tag = new CompoundNBT();
 
         CompoundNBT subTag = new CompoundNBT();
@@ -158,7 +165,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     @Override
     public void writePacket(PacketBuffer buf, byte id) {
         super.writePacket(buf, id);
-        switch(id){
+        switch (id) {
             case FLUX_GUI_SYNC:
             case FLUX_STORAGE_ENERGY:
                 buf.writeInt(energyStored);
@@ -169,7 +176,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     @Override
     public void readPacket(PacketBuffer buf, byte id) {
         super.readPacket(buf, id);
-        switch(id){
+        switch (id) {
             case FLUX_GUI_SYNC:
             case FLUX_STORAGE_ENERGY:
                 energyStored = buf.readInt();

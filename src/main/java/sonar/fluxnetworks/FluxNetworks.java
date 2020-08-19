@@ -18,6 +18,7 @@ import sonar.fluxnetworks.register.ProxyServer;
 public class FluxNetworks {
 
     public static final String MODID        = "fluxnetworks";
+    public static final String NAME         = "Flux Networks";
     public static final String NAME_COMPACT = "FluxNetworks";
 
     public static final IProxy PROXY = DistExecutor.safeRunForDist(() -> ProxyClient::new, () -> ProxyServer::new);

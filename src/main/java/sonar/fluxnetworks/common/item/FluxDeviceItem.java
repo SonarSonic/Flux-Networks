@@ -35,7 +35,7 @@ public class FluxDeviceItem extends BlockItem {
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName(ItemStack stack) {
+    public ITextComponent getDisplayName(@Nonnull ItemStack stack) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
         if (tag != null && tag.contains(CUSTOM_NAME)) {
             return new StringTextComponent(tag.getString(CUSTOM_NAME));

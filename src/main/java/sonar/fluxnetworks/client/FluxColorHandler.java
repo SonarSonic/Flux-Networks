@@ -50,6 +50,10 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
     private final List<Integer> requests     = new ArrayList<>();
     private final List<Integer> sentRequests = new ArrayList<>();
 
+    {
+        colorMap.defaultReturnValue(-1);
+    }
+
     public void reset() {
         colorMap.clear();
         nameMap.clear();
@@ -79,7 +83,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             return NO_NETWORK_COLOR;
         }
         int cached = colorMap.get(id);
-        if (cached != 0) {
+        if (cached != -1) {
             return cached;
         }
         placeRequest(id);
@@ -134,13 +138,14 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             }
             return DEFAULT_COLOR;
         }
-        return -1;
+        return ~0;
     }
 
     @Override
     public int getColor(@Nonnull ItemStack stack, int tintIndex) {
         if (tintIndex == 1) {
-            if (stack.hasTag() && stack.getTag().getBoolean(FluxUtils.GUI_COLOR)) {
+            CompoundNBT tag = stack.getTag();
+            if (tag != null && tag.getBoolean(FluxUtils.GUI_COLOR)) {
                 /*if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {
                     return NavigationHome.network.isInvalid() ? NO_NETWORK_COLOR : NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
                 }*/
@@ -150,7 +155,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                     return !guiFluxCore.network.isValid() ? NO_NETWORK_COLOR : guiFluxCore.network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
                 }
             }
-            CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+            tag = stack.getChildTag(FluxUtils.FLUX_DATA);
             if (tag != null) {
                 return getOrRequestNetworkColor(tag.getInt(FluxNetworkData.NETWORK_ID));
             }

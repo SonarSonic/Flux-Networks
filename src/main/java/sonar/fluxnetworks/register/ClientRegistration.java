@@ -78,8 +78,7 @@ public class ClientRegistration {
     @SubscribeEvent
     public static void registerItemColorHandlers(@Nonnull ColorHandlerEvent.Item event) {
         event.getItemColors().register(FluxColorHandler.INSTANCE,
-                RegistryBlocks.FLUX_CONTROLLER, RegistryBlocks.FLUX_POINT, RegistryBlocks.FLUX_PLUG,
-                RegistryBlocks.BASIC_FLUX_STORAGE, RegistryBlocks.HERCULEAN_FLUX_STORAGE, RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
+                RegistryBlocks.FLUX_CONTROLLER, RegistryBlocks.FLUX_POINT, RegistryBlocks.FLUX_PLUG);
         event.getItemColors().register(FluxColorHandler::colorMultiplierForConfigurator, RegistryItems.FLUX_CONFIGURATOR);
     }
 

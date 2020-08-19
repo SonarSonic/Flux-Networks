@@ -57,6 +57,11 @@ public interface IFluxNetwork {
     default void queueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
     }
 
+    /**
+     * Returns whether this network is a valid network.
+     *
+     * @return {@code true} if it is valid, {@code false} otherwise
+     */
     default boolean isValid() {
         return true;
     }

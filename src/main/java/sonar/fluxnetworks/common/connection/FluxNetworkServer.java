@@ -12,11 +12,10 @@ import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -26,15 +25,15 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
     private Map<FluxCacheType<? extends IFluxDevice>, List<? extends IFluxDevice>> connections = new HashMap<>();
 
-    private Queue<IFluxDevice> toAdd    = new ConcurrentLinkedQueue<>();
-    private Queue<IFluxDevice> toRemove = new ConcurrentLinkedQueue<>();
+    private Queue<IFluxDevice> toAdd    = new LinkedList<>();
+    private Queue<IFluxDevice> toRemove = new LinkedList<>();
 
     public boolean needSortConnections = true;
 
-    private List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
+    private List<PriorityGroup<IFluxPlug>>  sortedPlugs  = new ArrayList<>();
     private List<PriorityGroup<IFluxPoint>> sortedPoints = new ArrayList<>();
 
-    private TransferIterator<IFluxPlug> plugTransferIterator = new TransferIterator<>();
+    private TransferIterator<IFluxPlug>  plugTransferIterator  = new TransferIterator<>();
     private TransferIterator<IFluxPoint> pointTransferIterator = new TransferIterator<>();
 
     public long bufferLimiter = 0;

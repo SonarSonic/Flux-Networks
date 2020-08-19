@@ -51,7 +51,7 @@
 
 	"info.fluxnetworks.flux.priority": "优先级",
 	"info.fluxnetworks.flux.surgemode": "涌流模式",
-	"info.fluxnetworks.flux.disablelimit": "禁用限速",
+	"info.fluxnetworks.flux.disablelimit": "不限速率",
 	"info.fluxnetworks.flux.chunkloading": "区块加载",
 	"info.fluxnetworks.flux.name": "名称",
 	"info.fluxnetworks.flux.transferlimit": "传输上限",

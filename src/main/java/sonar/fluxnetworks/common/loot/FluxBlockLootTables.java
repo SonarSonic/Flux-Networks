@@ -2,7 +2,9 @@ package sonar.fluxnetworks.common.loot;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.data.loot.BlockLootTables;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.ConstantRange;
 import net.minecraft.loot.ItemLootEntry;
@@ -51,7 +53,7 @@ public class FluxBlockLootTables extends BlockLootTables {
 
     /**
      * Pick out needed NBT from {@link TileFluxDevice#write(CompoundNBT)}
-     * Convert them to be readable by {@link FluxDeviceBlock#readDataFromStack(ItemStack, BlockPos, World)}
+     * Convert them to be readable by {@link FluxDeviceBlock#onBlockPlacedBy(World, BlockPos, BlockState, LivingEntity, ItemStack)}
      *
      * @param block flux device block
      * @return loot table builder

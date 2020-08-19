@@ -31,14 +31,13 @@ import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.connection.handler.AbstractTransferHandler;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
-import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.storage.FluxChunkManager;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
+import sonar.fluxnetworks.common.storage.FluxChunkManager;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,7 +66,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public boolean disableLimit = false;
 
     public boolean connected   = false;
-    public byte  connections = 0;
+    public byte    connections = 0;
 
     public boolean chunkLoading = false;
 

@@ -17,8 +17,8 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.translate.StyleUtils;
 import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public abstract class FluxDeviceBlock extends Block {
 
     @Nonnull
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
+    public ActionResultType onBlockActivated(BlockState state, @Nonnull World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
         if (worldIn.isRemote) {
             return ActionResultType.SUCCESS;
         }
@@ -44,15 +44,15 @@ public abstract class FluxDeviceBlock extends Block {
             return ActionResultType.FAIL;
         }
 
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        TileEntity tile = worldIn.getTileEntity(pos);
 
-        if (tileEntity instanceof TileFluxDevice) {
-            TileFluxDevice fluxCore = (TileFluxDevice) tileEntity;
-            if (fluxCore.playerUsing.size() > 0) {
+        if (tile instanceof TileFluxDevice) {
+            TileFluxDevice t = (TileFluxDevice) tile;
+            if (t.playerUsing.size() > 0) {
                 player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_OCCUPY_KEY), true);
                 return ActionResultType.SUCCESS;
-            } else if (fluxCore.canAccess(player)) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, fluxCore, buf -> {
+            } else if (t.canAccess(player)) {
+                NetworkHooks.openGui((ServerPlayerEntity) player, t, buf -> {
                     buf.writeBoolean(true);
                     buf.writeBlockPos(pos);
                 });
@@ -66,14 +66,20 @@ public abstract class FluxDeviceBlock extends Block {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        readDataFromStack(stack, pos, worldIn); //doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
-        if (!worldIn.isRemote) {
-            TileEntity tileEntity = worldIn.getTileEntity(pos);
-            if (tileEntity instanceof TileFluxDevice) {
-                TileFluxDevice fluxCore = (TileFluxDevice) tileEntity;
+    public void onBlockPlacedBy(@Nonnull World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile instanceof TileFluxDevice) {
+            TileFluxDevice t = (TileFluxDevice) tile;
+            if (stack.hasTag()) {
+                CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+                if (tag != null) {
+                    // doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
+                    t.readCustomNBT(tag, NBTType.TILE_DROP);
+                }
+            }
+            if (!worldIn.isRemote) {
                 if (placer instanceof PlayerEntity) {
-                    fluxCore.playerUUID = PlayerEntity.getUUID(((PlayerEntity) placer).getGameProfile());
+                    t.playerUUID = PlayerEntity.getUUID(((PlayerEntity) placer).getGameProfile());
                 }
             }
         }
@@ -118,21 +124,14 @@ public abstract class FluxDeviceBlock extends Block {
             CompoundNBT tag = stack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
             t.writeCustomNBT(tag, NBTType.TILE_DROP);
         }
-    }*/
-
-    public void readDataFromStack(ItemStack stack, BlockPos pos, @Nonnull World world) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFluxDevice && stack.hasTag()) {
-            TileFluxDevice t = (TileFluxDevice) tile;
-            CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
-            if (tag != null) {
-                t.readCustomNBT(tag, NBTType.TILE_DROP);
-            }
-        }
     }
 
+    public void readDataFromStack(ItemStack stack, BlockPos pos, @Nonnull World world) {
+
+    }*/
+
     @Override
-    public boolean hasTileEntity(BlockState state) {
+    public final boolean hasTileEntity(BlockState state) {
         return true;
     }
 }
