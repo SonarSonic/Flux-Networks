@@ -1,8 +1,13 @@
-# Flux Network
+# Flux Networks
+### Homepage [CurseForge](https://www.curseforge.com/minecraft/mc-mods/flux-networks)
 For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug]
 ## License
-* GUI designs and GUI resources --- Copyright (C) 2019 BloCamLimb. All rights reserved.
-* Others --- Under MIT License.
+* Flux Networks
+  - Copyright (C) 2017-2020 SonarSonic, BloCamLimb et al.
+  - [![License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+* GUI Designs and GUI Resources
+  -  Copyright (C) 2019-2020 BloCamLimb. All rights reserved.
+  - [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-yellow.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 ### Wiki
 [GitHub Wiki](https://github.com/SonarSonic/Flux-Networks/wiki)
 ### New GUI
@@ -10,9 +15,3 @@ For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug
 ![20190923204400.png](https://i.loli.net/2019/09/23/reLOqVAwiDTaQvx.png)
 ![20190923204505.png](https://i.loli.net/2019/09/23/6FdKngioTEyaB5N.png)
 ![20190923204517.png](https://i.loli.net/2019/09/23/QlBPcfvV15pjzs4.png)
-### Comparison
-![20190825210548.png](https://i.loli.net/2019/08/25/3KGnWsAXlUmdE1Y.png)  
-The lag goggles result with same setup (40 points and 40 plugs)
-### Get Flux
-![20190825213555.png](https://i.loli.net/2019/08/25/xhVraPnkAJoQ7fu.png)  
-Place obsidian above bedrock 1 block high, drop some redstones, then left click the obsidian to obtain Flux.
