@@ -1,11 +1,11 @@
 package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.network.FluxLogicType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.device.IFluxPoint;
 import sonar.fluxnetworks.api.device.IFluxStorage;
+import sonar.fluxnetworks.api.network.FluxLogicType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
@@ -23,8 +23,8 @@ public class NetworkStatistics {
     public int fluxControllerCount;
     public int fluxStorageCount;
 
-    public long energyInput;
-    public long energyOutput;
+    public long       energyInput;
+    public long       energyOutput;
     public List<Long> energyChange = new ArrayList<>();
 
     public long totalBuffer;
@@ -49,12 +49,12 @@ public class NetworkStatistics {
         }
     }
 
-    public void startProfiling(){
+    public void startProfiling() {
         network_nano_time = System.nanoTime();
     }
 
-    public void stopProfiling(){
-        network_tick += (System.nanoTime()-network_nano_time)/1000;
+    public void stopProfiling() {
+        network_tick += (System.nanoTime() - network_nano_time) / 1000;
     }
 
     public void onStartServerTick() {
@@ -62,20 +62,20 @@ public class NetworkStatistics {
     }
 
     public void onEndServerTick() {
-        if(timer == 0) {
+        if (timer == 0) {
             weakestTick();
         }
-        if(timer % 5 == 0) {
+        if (timer % 5 == 0) {
             weakTick();
         }
-        if(timer % 20 == 0) {
+        if (timer % 20 == 0) {
             weakerTick();
         }
 
-        running_total_micro+=network_tick;
-        running_total_count ++;
+        running_total_micro += network_tick;
+        running_total_count++;
 
-        if(running_total_count >= 20) {
+        if (running_total_count >= 20) {
             average_tick_micro = running_total_micro / running_total_count;
 
             running_total_micro = 0;
@@ -92,13 +92,13 @@ public class NetworkStatistics {
     private void weakTick() {
         List<IFluxPlug> plugs = network.getConnections(FluxLogicType.PLUG);
         plugs.forEach(p -> {
-            if(!(p instanceof TileFluxStorage)) {
+            if (!(p instanceof TileFluxStorage)) {
                 energyInput4 += p.getTransferHandler().getChange();
             }
         });
         List<IFluxPoint> points = network.getConnections(FluxLogicType.POINT);
         points.forEach(p -> {
-            if(!(p instanceof TileFluxStorage)) {
+            if (!(p instanceof TileFluxStorage)) {
                 energyOutput4 -= p.getTransferHandler().getChange();
             }
         });
@@ -112,7 +112,7 @@ public class NetworkStatistics {
         totalEnergy = 0;
         List<IFluxPlug> plugs = network.getConnections(FluxLogicType.PLUG);
         plugs.forEach(p -> {
-            if(p instanceof TileFluxPlug) {
+            if (p instanceof TileFluxPlug) {
                 totalBuffer += p.getTransferHandler().getBuffer();
             }
         });
@@ -137,14 +137,14 @@ public class NetworkStatistics {
         long change = energyChange5 / 5;
         energyChange5 = 0;
         for (int i = 0; i < energyChange.size(); i++) {
-            if(i > 0) {
+            if (i > 0) {
                 energyChange.set(i - 1, energyChange.get(i));
             }
         }
         energyChange.set(5, change);
     }
 
-    public int getConnectionCount(){
+    public int getConnectionCount() {
         return this.fluxPlugCount + this.fluxPointCount + this.fluxStorageCount + this.fluxControllerCount;
     }
 

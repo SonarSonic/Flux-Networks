@@ -78,23 +78,12 @@ public class ProxyClient implements IProxy {
     }
 
     @Override
-    public int getAdminViewingNetworkID(){
-        return admin_viewing_network_id;
-    }
-
-    @Override
     public IFluxNetwork getAdminViewingNetwork() {
         return admin_viewing_network;
-    }
-
-    @Override
-    public void setAdminViewingNetworkID(int set){
-        this.admin_viewing_network_id = set;
     }
 
     @Override
     public void setAdminViewingNetwork(IFluxNetwork set){
         this.admin_viewing_network = set;
     }
-
 }

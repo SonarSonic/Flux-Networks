@@ -1,33 +1,34 @@
 package sonar.fluxnetworks.common.connection;
 
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
- * A single group that points, plugs or storages with same priority
+ * A single group that logic points, plugs with same priority
  *
- * @param <T> Flux Point or Plug
+ * @param <T> Logic Flux Point or Plug
  */
 public class PriorityGroup<T extends IFluxDevice> {
 
-    private final int     priority;
-    private final List<T> connectors;
+    private final int priority;
+
+    private final Set<T> devices = new ObjectArraySet<>();
 
     private PriorityGroup(int priority) {
         this.priority = priority;
-        connectors = new ArrayList<>();
     }
 
     public int getPriority() {
         return priority;
     }
 
-    public List<T> getConnectors() {
-        return connectors;
+    public Set<T> getDevices() {
+        return devices;
     }
 
     @Nonnull

@@ -34,7 +34,7 @@ public class TilePacketHandler {
             if(tile.getDeviceType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);
             }
-            if(!network.getMemberPermission(player).canAccess()) {
+            if(!network.getAccessPermission(player).canAccess()) {
                 if(pass.isEmpty()) {
                     return new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }
@@ -42,9 +42,9 @@ public class TilePacketHandler {
                     return new FeedbackPacket(EnumFeedbackInfo.REJECT);
                 }
             }
-            if(tile.getNetwork() != null && tile.getNetwork().isValid()) {
+            /*if(tile.getNetwork() != null && tile.getNetwork().isValid()) {
                 tile.getNetwork().enqueueConnectionRemoval(tile, false);
-            }
+            }*/
             tile.playerUUID = PlayerEntity.getUUID(player.getGameProfile());
             network.enqueueConnectionAddition(tile);
             return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);

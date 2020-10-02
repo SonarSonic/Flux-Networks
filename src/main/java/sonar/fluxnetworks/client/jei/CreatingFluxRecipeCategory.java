@@ -55,13 +55,13 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
 
     public static List<CreatingFluxRecipeType> getRecipes() {
         List<CreatingFluxRecipeType> recipes = new ArrayList<>();
-        recipes.add(new CreatingFluxRecipeType(Blocks.BEDROCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX)));
-        recipes.add(new CreatingFluxRecipeType(RegistryBlocks.FLUX_BLOCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX)));
+        recipes.add(new CreatingFluxRecipeType(Blocks.BEDROCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX_DUST)));
+        recipes.add(new CreatingFluxRecipeType(RegistryBlocks.FLUX_BLOCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX_DUST)));
         return recipes;
     }
 
     public static List<ItemStack> getCatalysts() {
-        return Lists.newArrayList(new ItemStack(RegistryItems.FLUX));
+        return Lists.newArrayList(new ItemStack(RegistryItems.FLUX_DUST));
     }
 
     @Nonnull

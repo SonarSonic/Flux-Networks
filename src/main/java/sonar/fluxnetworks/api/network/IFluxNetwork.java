@@ -1,14 +1,14 @@
 package sonar.fluxnetworks.api.network;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.NBTType;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 public interface IFluxNetwork {
 
@@ -24,21 +24,23 @@ public interface IFluxNetwork {
 
     <T> void setSetting(NetworkSettings<T> settings, T value);
 
-    @Deprecated
+    /*@Deprecated
     default void onStartServerTick() {
-    }
+
+    }*/
 
     default void onEndServerTick() {
+
     }
 
     default void onDeleted() {
+
     }
 
-    default EnumAccessType getMemberPermission(PlayerEntity player) {
-        return EnumAccessType.NONE;
-    }
+    @Nonnull
+    EnumAccessType getAccessPermission(PlayerEntity player);
 
-    @Deprecated
+    /*@Deprecated
     default void addNewMember(String name) {
 
     }
@@ -46,35 +48,34 @@ public interface IFluxNetwork {
     @Deprecated
     default void removeMember(UUID uuid) {
 
-    }
+    }*/
 
-    default <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
-        return Lists.newArrayList();
-    }
+    /**
+     * Get all online devices with given logic type
+     *
+     * @param type logic type
+     * @param <T> device type
+     * @return a list of online devices
+     */
+    @Nonnull
+    <T extends IFluxDevice> List<T> getConnections(FluxLogicType type);
 
-    default Optional<NetworkMember> getNetworkMember(UUID player) {
-        return Optional.empty();
-    }
+    Optional<NetworkMember> getNetworkMember(UUID player);
 
     /* Server only */
-    default void enqueueConnectionAddition(IFluxDevice flux) {
-    }
+    void enqueueConnectionAddition(@Nonnull IFluxDevice device);
 
     /* Server only */
-    default void enqueueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
-    }
+    void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload);
 
     /**
      * Returns whether this network is a valid network.
      *
      * @return {@code true} if it is valid, {@code false} otherwise
      */
-    default boolean isValid() {
-        return true;
-    }
+    boolean isValid();
 
     void readNetworkNBT(CompoundNBT nbt, NBTType type);
 
     void writeNetworkNBT(CompoundNBT nbt, NBTType type);
-
 }

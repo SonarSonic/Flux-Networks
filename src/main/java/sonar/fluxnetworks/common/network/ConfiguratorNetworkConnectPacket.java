@@ -41,7 +41,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
 
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(network.isValid()) {
-            if (!network.getMemberPermission(player).canAccess()) {
+            if (!network.getAccessPermission(player).canAccess()) {
                 if (password.isEmpty()) {
                     return new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }

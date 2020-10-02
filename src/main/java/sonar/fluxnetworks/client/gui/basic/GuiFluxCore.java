@@ -37,7 +37,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
     public IFluxNetwork network;
-    public EnumAccessType accessPermission = EnumAccessType.NONE;
+    public EnumAccessType accessPermission = EnumAccessType.BLOCKED;
     protected boolean networkValid;
     private int timer1;
 
@@ -172,7 +172,6 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
             PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxDevice)connector).getCoords()));
         }
         if(connector instanceof ItemAdminConfigurator.ContainerProvider){
-            FluxNetworks.PROXY.setAdminViewingNetworkID(networkID);
             FluxNetworks.PROXY.setAdminViewingNetwork(FluxNetworkCache.INSTANCE.getClientNetwork(networkID));
         }
         if(connector instanceof ItemFluxConfigurator.ContainerProvider){

@@ -11,9 +11,9 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemFlux extends Item {
+public class ItemFluxDust extends Item {
 
-    public ItemFlux(Item.Properties props) {
+    public ItemFluxDust(Item.Properties props) {
         super(props);
     }
 

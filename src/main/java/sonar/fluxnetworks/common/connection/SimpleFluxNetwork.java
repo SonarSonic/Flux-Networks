@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.connection;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.api.device.IFluxDevice;
@@ -9,9 +10,10 @@ import sonar.fluxnetworks.api.misc.ICustomValue;
 import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
-public abstract class FluxNetworkBase implements IFluxNetwork {
+public class SimpleFluxNetwork implements IFluxNetwork {
 
     public ICustomValue<Integer> network_id = new CustomValue<>();
     public ICustomValue<String> network_name = new CustomValue<>();
@@ -32,9 +34,9 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<List<IFluxDevice>>   all_connectors  = new CustomValue<>(new ArrayList<>());
     public ICustomValue<List<NetworkMember>> network_players = new CustomValue<>(new ArrayList<>());
 
-    public FluxNetworkBase() {}
+    public SimpleFluxNetwork() {}
 
-    public FluxNetworkBase(int id, String name, EnumSecurityType security, int color, UUID owner, EnergyType energy, String password) {
+    public SimpleFluxNetwork(int id, String name, EnumSecurityType security, int color, UUID owner, EnergyType energy, String password) {
         network_id.setValue(id);
         network_name.setValue(name);
         network_security.setValue(security);
@@ -42,6 +44,33 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         network_owner.setValue(owner);
         network_energy.setValue(energy);
         network_password.setValue(password);
+    }
+
+    @Nonnull
+    @Override
+    public EnumAccessType getAccessPermission(PlayerEntity player) {
+        return EnumAccessType.BLOCKED;
+    }
+
+    @Nonnull
+    @Override
+    public <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public Optional<NetworkMember> getNetworkMember(UUID player) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
+        device.getNetwork().enqueueConnectionRemoval(device, false);
+    }
+
+    @Override
+    public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
+        
     }
 
     @Override
@@ -52,6 +81,11 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     @Override
     public <T> void setSetting(NetworkSettings<T> settings, T value) {
         settings.getValue(this).setValue(value);
+    }
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
     @Override

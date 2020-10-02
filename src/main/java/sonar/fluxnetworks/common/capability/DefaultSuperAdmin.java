@@ -9,8 +9,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.api.misc.Capabilities;
+import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -51,8 +51,11 @@ public class DefaultSuperAdmin implements ISuperAdmin {
         if (ServerLifecycleHooks.getCurrentServer().isSinglePlayer()) {
             return true;
         }
-        OpEntry opEntry = ServerLifecycleHooks.getCurrentServer().getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
-        return opEntry != null && opEntry.getPermissionLevel() >= FluxConfig.superAdminRequiredPermission;
+        if (FluxConfig.enableSuperAdmin) {
+            OpEntry opEntry = ServerLifecycleHooks.getCurrentServer().getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
+            return opEntry != null && opEntry.getPermissionLevel() >= FluxConfig.superAdminRequiredPermission;
+        }
+        return false;
     }
 
     public static boolean isPlayerSuperAdmin(@Nonnull PlayerEntity player) {

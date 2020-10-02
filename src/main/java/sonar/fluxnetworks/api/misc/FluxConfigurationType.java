@@ -1,9 +1,12 @@
 package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundNBT;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+
+import javax.annotation.Nonnull;
 
 public class FluxConfigurationType {
     public static FluxConfigurationType NETWORK = new FluxConfigurationType(0,"network", FluxConfigurationType::copyNetwork, FluxConfigurationType::pasteNetwork);
@@ -32,17 +35,16 @@ public class FluxConfigurationType {
 
     //// NETWORK \\\\
 
-    public static void copyNetwork(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        if (tile.getNetwork().isValid() && tile.getNetworkID() != -1) {
-            nbt.putInt(key, tile.getNetworkID());
+    public static void copyNetwork(CompoundNBT nbt, String key, @Nonnull IFluxDevice tile) {
+        if (tile.getNetwork().isValid()) {
+            nbt.putInt(key, tile.getNetwork().getNetworkID());
         }
     }
 
-    public static void pasteNetwork(CompoundNBT nbt, String key, TileFluxDevice tile) {
+    public static void pasteNetwork(@Nonnull CompoundNBT nbt, String key, IFluxDevice tile) {
         int storedID = nbt.getInt(key);
-        if (storedID != -1) {
+        if (storedID > 0) {
             IFluxNetwork newNetwork = FluxNetworkCache.INSTANCE.getNetwork(storedID);
-            tile.getNetwork().enqueueConnectionRemoval(tile, false);
             newNetwork.enqueueConnectionAddition(tile);
         }
     }

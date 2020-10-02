@@ -14,6 +14,7 @@ import sonar.fluxnetworks.common.handler.PacketHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class ConnectionUpdateRequestPacket extends AbstractPacket{
 
@@ -48,8 +49,8 @@ public class ConnectionUpdateRequestPacket extends AbstractPacket{
         if(network.isValid()) {
             PlayerEntity player = PacketHandler.getPlayer(ctx);
             List<CompoundNBT> tags = new ArrayList<>();
-            List<IFluxDevice> onlineConnectors = network.getConnections(FluxLogicType.ANY);
-            coords.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst()
+            List<IFluxDevice> onlineDevices = network.getConnections(FluxLogicType.ANY);
+            coords.forEach(c -> onlineDevices.stream().filter(f -> f.getCoords().equals(c)).findFirst()
                             .ifPresent(f -> tags.add(SimpleFluxDevice.writeCustomNBT(f, new CompoundNBT()))));
             return new ConnectionUpdatePacket(networkID, tags);
         }

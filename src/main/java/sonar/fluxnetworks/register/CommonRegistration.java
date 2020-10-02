@@ -38,7 +38,7 @@ import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
-import sonar.fluxnetworks.common.item.ItemFlux;
+import sonar.fluxnetworks.common.item.ItemFluxDust;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
 import sonar.fluxnetworks.common.recipes.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipes.NBTWipeRecipeSerializer;
@@ -115,7 +115,7 @@ public class CommonRegistration {
         registry.register(new ItemFluxDevice(RegistryBlocks.HERCULEAN_FLUX_STORAGE, storageProps).setRegistryName("herculeanfluxstorage"));
         registry.register(new ItemFluxDevice(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, storageProps).setRegistryName("gargantuanfluxstorage"));
 
-        registry.register(new ItemFlux(props).setRegistryName("flux"));
+        registry.register(new ItemFluxDust(props).setRegistryName("flux"));
         registry.register(new Item(props).setRegistryName("fluxcore"));
         registry.register(new ItemFluxConfigurator(props).setRegistryName("fluxconfigurator"));
         registry.register(new ItemAdminConfigurator(props).setRegistryName("adminconfigurator"));

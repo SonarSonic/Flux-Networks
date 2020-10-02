@@ -134,6 +134,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                 if (t.getNetworkID() == -1) {
                     return NO_NETWORK_COLOR;
                 }
+                //TODO
                 return FluxUtils.getBrighterColor(t.color, 1.2f);
             }
             return DEFAULT_COLOR;

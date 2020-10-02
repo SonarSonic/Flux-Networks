@@ -148,7 +148,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
 
         CompoundNBT subTag = new CompoundNBT();
         subTag.putInt("energy", energyStored);
-        subTag.putInt(FluxNetworkData.NETWORK_ID, networkID);
+        subTag.putInt(FluxNetworkData.NETWORK_ID, getNetworkID());
 
         tag.put(FluxUtils.FLUX_DATA, subTag);
         tag.putBoolean(FluxUtils.GUI_COLOR, true);

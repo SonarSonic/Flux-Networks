@@ -44,15 +44,17 @@ public class PacketHandler {
         CHANNEL.registerMessage(packetID++, LavaParticlePacket.class, LavaParticlePacket::encode, LavaParticlePacket::new, LavaParticlePacket::handle);
     }
 
+    @Deprecated
     public static World getWorld(NetworkEvent.Context context) {
         return getPlayer(context).getEntityWorld();
     }
 
+    @Deprecated
     public static PlayerEntity getPlayer(NetworkEvent.Context context) {
         if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
             return context.getSender();
         }
-        return FluxNetworks.PROXY.getClientPlayer();
+        throw new IllegalStateException();
     }
 
 }

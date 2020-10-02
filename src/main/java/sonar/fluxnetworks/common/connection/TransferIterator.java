@@ -36,7 +36,7 @@ public class TransferIterator<T extends IFluxDevice> {
     private boolean incrementGroup() {
         if (groupIterator.hasNext()) {
             currentGroup = groupIterator.next();
-            fluxIterator = currentGroup.getConnectors().iterator();
+            fluxIterator = currentGroup.getDevices().iterator();
             return incrementFlux();
         }
         finish = true;

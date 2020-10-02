@@ -178,7 +178,7 @@ public class FluxUtils {
         return new ItemStack(state.getBlock().asItem());
     }
 
-    public static boolean addConnection(@Nonnull IFluxDevice fluxDevice) {
+    /*public static boolean addConnection(@Nonnull IFluxDevice fluxDevice) {
         if (fluxDevice.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxDevice.getNetworkID());
             if (network.isValid()) {
@@ -199,7 +199,7 @@ public class FluxUtils {
                 network.enqueueConnectionRemoval(fluxDevice, isChunkUnload);
             }
         }
-    }
+    }*/
 
     public static int getIntFromColor(int red, int green, int blue) {
         red = red << 16 & 0x00FF0000;

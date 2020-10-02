@@ -34,7 +34,7 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
             String text;
             int length;
             int i = 0;
-            if (host.selectedPlayer.getAccessPermission() == EnumAccessType.NONE || host.selectedPlayer.getAccessPermission() == EnumAccessType.SUPER_ADMIN) {
+            if (host.selectedPlayer.getAccessPermission() == EnumAccessType.BLOCKED || host.selectedPlayer.getAccessPermission() == EnumAccessType.SUPER_ADMIN) {
                 text = FluxTranslate.SET_USER.t();
                 length = Math.max(64, font.getStringWidth(text) + 4);
                 popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));

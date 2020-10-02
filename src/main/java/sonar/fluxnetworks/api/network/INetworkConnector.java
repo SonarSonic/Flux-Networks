@@ -4,14 +4,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.text.ITextComponent;
 
-///refers to anything which can be connected to a specific network, flux tiles & configurators
+/**
+ * Refers to anything which can be connected to a specific network, flux tiles & configurators
+ */
 public interface INetworkConnector {
 
-    int getNetworkID();
+    @Deprecated
+    default int getNetworkID() {
+        return getNetwork().getNetworkID();
+    }
 
     IFluxNetwork getNetwork();
 
-    void open(PlayerEntity player);
+    void onContainerOpened(PlayerEntity player);
 
-    void close(PlayerEntity player);
+    void onContainerClosed(PlayerEntity player);
 }

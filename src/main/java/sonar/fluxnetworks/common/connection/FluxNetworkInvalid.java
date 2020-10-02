@@ -5,7 +5,7 @@ import sonar.fluxnetworks.api.misc.EnergyType;
 
 import java.util.UUID;
 
-public class FluxNetworkInvalid extends FluxNetworkBase {
+public class FluxNetworkInvalid extends SimpleFluxNetwork {
 
     public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 

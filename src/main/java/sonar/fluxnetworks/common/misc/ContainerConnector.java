@@ -16,10 +16,10 @@ public class ContainerConnector<T extends INetworkConnector> extends Container {
 
     public T connector;
 
-    public ContainerConnector(int windowId, @Nonnull PlayerInventory inv, T connector) {
+    public ContainerConnector(int windowId, @Nonnull PlayerInventory inv, @Nonnull T connector) {
         super(RegistryBlocks.CONTAINER_CONNECTOR, windowId);
         this.connector = connector;
-        this.connector.open(inv.player);
+        connector.onContainerOpened(inv.player);
     }
 
     @Override
@@ -33,6 +33,6 @@ public class ContainerConnector<T extends INetworkConnector> extends Container {
     @Override
     public void onContainerClosed(PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
-        connector.close(playerIn);
+        connector.onContainerClosed(playerIn);
     }
 }

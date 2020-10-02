@@ -22,13 +22,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.NetworkFolder;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.device.IFluxConfigurable;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.device.ITilePacketBuffer;
 import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.network.FluxLogicType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.NetworkFolder;
+import sonar.fluxnetworks.api.network.NetworkSettings;
+import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -55,7 +57,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public String customName = "";
     public UUID   playerUUID = FluxUtils.UUID_DEFAULT;
 
-    public int networkID = -1;
+    private int savedNetworkID = -1;
+
     public int color     = -1;
     public int folderID  = -1;
 
@@ -87,7 +90,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public void remove() {
         super.remove();
         if (!world.isRemote && load) {
-            FluxUtils.removeConnection(this, false);
+            network.enqueueConnectionRemoval(this, false);
             if (chunkLoading) {
                 FluxChunkManager.removeChunkLoader((ServerWorld) world, new ChunkPos(pos));
             }
@@ -99,7 +102,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
         if (!world.isRemote && load) {
-            FluxUtils.removeConnection(this, true);
+            network.enqueueConnectionRemoval(this, true);
             load = false;
         }
     }
@@ -112,8 +115,13 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
                 settings_changed = false;
             }
             if (!load) {
-                if (!FluxUtils.addConnection(this)) {
-                    networkID = -1;
+                if (savedNetworkID > 0) {
+                    IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(savedNetworkID);
+                    if (network.isValid() && !(getDeviceType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0)) {
+                        network.enqueueConnectionAddition(this);
+                    }
+                } else {
+                    savedNetworkID = -1;
                     connected = false;
                     color = 0xb2b2b2;
                 }
@@ -127,17 +135,17 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     @Override
     public void connect(@Nonnull IFluxNetwork network) {
         this.network = network;
-        this.networkID = network.getNetworkID();
+        this.savedNetworkID = network.getNetworkID();
         this.color = network.getSetting(NetworkSettings.NETWORK_COLOR);
         connected = true;
         sendFullUpdatePacket();
     }
 
     @Override
-    public void disconnect(@Nonnull IFluxNetwork network) {
-        if (network.getNetworkID() == getNetworkID()) {
+    public void disconnect() {
+        if (network.isValid()) {
             this.network = FluxNetworkInvalid.INSTANCE;
-            networkID = -1;
+            savedNetworkID = -1;
             color = 0xb2b2b2;
             connected = false;
             sendFullUpdatePacket();
@@ -147,11 +155,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     @Override
     public IFluxNetwork getNetwork() {
         return network;
-    }
-
-    @Override
-    public int getNetworkID() {
-        return networkID;
     }
 
     @Nonnull
@@ -208,7 +211,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             tag.putLong("1", limit);
             tag.putBoolean("2", disableLimit);
             tag.putBoolean("3", surgeMode);
-            tag.putInt("4", networkID);
+            tag.putInt("4", getNetworkID());
             tag.putUniqueId("5", playerUUID);
             tag.putString("6", customName);
             tag.putInt("7", color);
@@ -227,7 +230,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             tag.putLong(ItemFluxDevice.LIMIT, limit);
             tag.putBoolean(ItemFluxDevice.DISABLE_LIMIT, disableLimit);
             tag.putBoolean(ItemFluxDevice.SURGE_MODE, surgeMode);
-            tag.putInt(FluxNetworkData.NETWORK_ID, networkID);
+            tag.putInt(FluxNetworkData.NETWORK_ID, getNetworkID());
             tag.putString(ItemFluxDevice.CUSTOM_NAME, customName);
             tag.putInt(NetworkFolder.FOLDER_ID, folderID);
         }
@@ -240,7 +243,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             limit = tag.getLong("1");
             disableLimit = tag.getBoolean("2");
             surgeMode = tag.getBoolean("3");
-            networkID = tag.getInt("4");
+            savedNetworkID = tag.getInt("4");
             playerUUID = tag.getUniqueId("5");
             customName = tag.getString("6");
             color = tag.getInt("7");
@@ -263,7 +266,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             disableLimit = tag.getBoolean(ItemFluxDevice.DISABLE_LIMIT);
             surgeMode = tag.getBoolean(ItemFluxDevice.SURGE_MODE);
             int i;
-            networkID = (i = tag.getInt(FluxNetworkData.NETWORK_ID)) > 0 ? i : networkID;
+            savedNetworkID = (i = tag.getInt(FluxNetworkData.NETWORK_ID)) > 0 ? i : savedNetworkID;
             String name;
             customName = (name = tag.getString(ItemFluxDevice.CUSTOM_NAME)).isEmpty() ? customName : name;
             folderID = tag.getInt(NetworkFolder.FOLDER_ID);
@@ -275,7 +278,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             if (PlayerEntity.getUUID(player.getGameProfile()).equals(playerUUID)) {
                 return true;
             }
-            return network.getMemberPermission(player).canAccess();
+            return network.getAccessPermission(player).canAccess();
         }
         return true;
     }
@@ -428,14 +431,14 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         return surgeMode ? Integer.MAX_VALUE : priority;
     }
 
-    public void open(PlayerEntity player) {
+    public void onContainerOpened(PlayerEntity player) {
         if (!world.isRemote) {
             playerUsing.add(player);
             sendFullUpdatePacket();
         }
     }
 
-    public void close(PlayerEntity player) {
+    public void onContainerClosed(PlayerEntity player) {
         if (!world.isRemote) {
             playerUsing.remove(player);
         }

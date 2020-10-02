@@ -36,7 +36,7 @@ public class GUIPermissionRequestPacket extends AbstractPacket {
     public Object handle(NetworkEvent.Context ctx) {
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         PlayerEntity player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid);
-        EnumAccessType accessType = (!network.isValid() || player == null) ? EnumAccessType.NONE : network.getMemberPermission(player);
+        EnumAccessType accessType = (!network.isValid() || player == null) ? EnumAccessType.BLOCKED : network.getAccessPermission(player);
         return new GUIPermissionPacket(accessType);
     }
 }

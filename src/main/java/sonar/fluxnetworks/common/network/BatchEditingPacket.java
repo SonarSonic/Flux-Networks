@@ -11,6 +11,7 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
+import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -66,7 +67,7 @@ public class BatchEditingPacket extends AbstractPacket {
         if (player != null) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
             if (network.isValid()) {
-                if (network.getMemberPermission(player).canEdit()) {
+                if (network.getAccessPermission(player).canEdit()) {
                     boolean editName = editions[0];
                     boolean editPriority = editions[1];
                     boolean editLimit = editions[2];
@@ -80,15 +81,15 @@ public class BatchEditingPacket extends AbstractPacket {
                     boolean surge = tag.getBoolean(ItemFluxDevice.SURGE_MODE);
                     boolean unlimited = tag.getBoolean(ItemFluxDevice.DISABLE_LIMIT);
                     boolean load = tag.getBoolean("chunkLoad");
-                    List<TileFluxDevice> onlineConnectors = new ArrayList<>();
-                    network.getConnections(FluxLogicType.ANY).forEach(e -> onlineConnectors.add((TileFluxDevice) e));
+                    //TODO
+                    List<TileFluxDevice> onlineDevices = new ArrayList<>();
+                    network.getConnections(FluxLogicType.ANY).forEach(e -> onlineDevices.add((TileFluxDevice) e));
                     AtomicBoolean reject = new AtomicBoolean(false);
 
                     for (Coord4D c : coord4DS) {
-                        onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
+                        onlineDevices.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
                             if (disconnect) {
-                                FluxUtils.removeConnection(f, false);
-                                f.disconnect(network);
+                                f.getNetwork().enqueueConnectionRemoval(f, false);
                             } else {
                                 if (editName) {
                                     f.customName = name;

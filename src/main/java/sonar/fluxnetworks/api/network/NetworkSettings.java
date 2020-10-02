@@ -3,7 +3,7 @@ package sonar.fluxnetworks.api.network;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.ICustomValue;
-import sonar.fluxnetworks.common.connection.FluxNetworkBase;
+import sonar.fluxnetworks.common.connection.SimpleFluxNetwork;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 
 import java.util.List;
@@ -30,11 +30,11 @@ public class NetworkSettings<T> {
         this.value = value;
     }
 
-    public ICustomValue<T> getValue(FluxNetworkBase network) {
+    public ICustomValue<T> getValue(SimpleFluxNetwork network) {
         return value.getValue(network);
     }
 
     private interface ISettingGetter<T> {
-        ICustomValue<T> getValue(FluxNetworkBase network);
+        ICustomValue<T> getValue(SimpleFluxNetwork network);
     }
 }

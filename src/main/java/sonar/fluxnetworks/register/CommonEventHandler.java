@@ -27,11 +27,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.LavaParticlePacket;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
@@ -110,7 +109,7 @@ public class CommonEventHandler {
             }
             final int max = MathHelper.clamp(count >> 2, 4, 64);
             if (!event.getWorld().isRemote) {
-                ItemStack stack = new ItemStack(RegistryItems.FLUX, count);
+                ItemStack stack = new ItemStack(RegistryItems.FLUX_DUST, count);
                 validEntities.forEach(Entity::remove);
                 world.removeBlock(pos, false);
                 world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
@@ -161,7 +160,7 @@ public class CommonEventHandler {
 
     //// TILE EVENTS \\\\
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onFluxConnected(@Nonnull FluxConnectionEvent.Connected event) {
         if (!event.flux.getFluxWorld().isRemote) {
             event.flux.connect(event.network);
@@ -173,6 +172,5 @@ public class CommonEventHandler {
         if (!event.flux.getFluxWorld().isRemote) {
             event.flux.disconnect(event.network);
         }
-    }
-
+    }*/
 }

@@ -96,19 +96,13 @@ public class ItemFluxConfigurator extends Item {
     public static class ContainerProvider implements INamedContainerProvider, INetworkConnector {
 
         public ItemStack stack;
-        public int networkID;
         public IFluxNetwork network;
 
         public ContainerProvider(ItemStack stack) {
             this.stack = stack;
             CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
-            networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTName()) : -1;
+            int networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTName()) : -1;
             network = FluxNetworks.PROXY.getNetwork(networkID);
-        }
-
-        @Override
-        public int getNetworkID() {
-            return networkID;
         }
 
         @Override
@@ -117,11 +111,11 @@ public class ItemFluxConfigurator extends Item {
         }
 
         @Override
-        public void open(PlayerEntity player) {
+        public void onContainerOpened(PlayerEntity player) {
         }
 
         @Override
-        public void close(PlayerEntity player) {
+        public void onContainerClosed(PlayerEntity player) {
         }
 
         @Nonnull

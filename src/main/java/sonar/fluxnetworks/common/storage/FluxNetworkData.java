@@ -183,7 +183,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     private static EnumAccessType getPermission(@Nonnull PlayerEntity player) {
-        return DefaultSuperAdmin.isPlayerSuperAdmin(player) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.NONE;
+        return DefaultSuperAdmin.isPlayerSuperAdmin(player) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.BLOCKED;
     }
 
     public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {

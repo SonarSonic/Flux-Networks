@@ -5,13 +5,14 @@ import net.minecraftforge.registries.ObjectHolder;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.item.ItemFlux;
+import sonar.fluxnetworks.common.item.ItemFluxDust;
 
+@SuppressWarnings("unused")
 @ObjectHolder(FluxNetworks.MODID)
 public class RegistryItems {
 
     @ObjectHolder("flux")
-    public static ItemFlux FLUX;
+    public static ItemFluxDust FLUX_DUST;
 
     @ObjectHolder("fluxcore")
     public static Item FLUX_CORE;

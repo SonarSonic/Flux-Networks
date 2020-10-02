@@ -135,10 +135,14 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void open(PlayerEntity player) {}
+    public void onContainerOpened(PlayerEntity player) {
+
+    }
 
     @Override
-    public void close(PlayerEntity player) {}
+    public void onContainerClosed(PlayerEntity player) {
+
+    }
 
     @Override
     public UUID getConnectionOwner() {
@@ -169,7 +173,7 @@ public class SimpleFluxDevice implements IFluxDevice {
     public void connect(IFluxNetwork network) {}
 
     @Override
-    public void disconnect(IFluxNetwork network) {}
+    public void disconnect() {}
 
     @Override
     public ITransferHandler getTransferHandler() {

@@ -51,21 +51,18 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
         }
 
         @Override
-        public int getNetworkID() {
-            return FluxNetworks.PROXY.getAdminViewingNetworkID();
-        }
-
-        @Override
         public IFluxNetwork getNetwork() {
             return FluxNetworks.PROXY.getAdminViewingNetwork();
         }
 
         @Override
-        public void open(PlayerEntity player) {
+        public void onContainerOpened(PlayerEntity player) {
+
         }
 
         @Override
-        public void close(PlayerEntity player) {
+        public void onContainerClosed(PlayerEntity player) {
+
         }
 
         @Nonnull

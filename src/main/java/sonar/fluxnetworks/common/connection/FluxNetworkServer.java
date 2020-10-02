@@ -1,27 +1,25 @@
 package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.common.MinecraftForge;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.EnumAccessType;
-import sonar.fluxnetworks.api.network.EnumSecurityType;
-import sonar.fluxnetworks.api.network.FluxLogicType;
-import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.device.IFluxPoint;
 import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.EnumSecurityType;
+import sonar.fluxnetworks.api.network.FluxLogicType;
+import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
-import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
+import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * This class handles a single flux Network on logic server.
  */
-public class FluxNetworkServer extends FluxNetworkBase {
+public class FluxNetworkServer extends SimpleFluxNetwork {
 
     private Map<FluxLogicType, List<? extends IFluxDevice>> connections = new HashMap<>();
 
@@ -75,20 +73,21 @@ public class FluxNetworkServer extends FluxNetworkBase {
     }*/
 
     private void handleConnectionQueues() {
-        IFluxDevice flux;
-        while ((flux = toAdd.poll()) != null) {
+        IFluxDevice device;
+        while ((device = toAdd.poll()) != null) {
             boolean b = false;
-            for (FluxLogicType type : FluxLogicType.getValidTypes(flux)) {
-                b |= FluxUtils.addWithCheck(getConnections(type), flux);
+            for (FluxLogicType type : FluxLogicType.getValidTypes(device)) {
+                b |= FluxUtils.addWithCheck(getConnections(type), device);
             }
             if (b) {
-                MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(flux, this));
+                //MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(device, this));
+                device.connect(this);
                 sortConnections = true;
             }
         }
-        while ((flux = toRemove.poll()) != null) {
-            for (FluxLogicType type : FluxLogicType.getValidTypes(flux)) {
-                sortConnections |= getConnections(type).remove(flux);
+        while ((device = toRemove.poll()) != null) {
+            for (FluxLogicType type : FluxLogicType.getValidTypes(device)) {
+                sortConnections |= getConnections(type).remove(device);
             }
         }
         if (sortConnections) {
@@ -102,15 +101,17 @@ public class FluxNetworkServer extends FluxNetworkBase {
         sortedPoints.clear();
         List<IFluxPlug> plugs = getConnections(FluxLogicType.PLUG);
         List<IFluxPoint> points = getConnections(FluxLogicType.POINT);
-        plugs.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPlugs).getConnectors().add(p));
-        points.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPoints).getConnectors().add(p));
+        plugs.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPlugs).getDevices().add(p));
+        points.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPoints).getDevices().add(p));
+        // reverse order
         sortedPlugs.sort(Comparator.comparing(p -> -p.getPriority()));
         sortedPoints.sort(Comparator.comparing(p -> -p.getPriority()));
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     public <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
-        return (List<T>) connections.computeIfAbsent(type, m -> new ArrayList<T>());
+        return (List<T>) connections.computeIfAbsent(type, m -> new ArrayList<>());
     }
 
     @Override
@@ -122,8 +123,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
         bufferLimiter = 0;
 
-        List<IFluxDevice> fluxConnectors = getConnections(FluxLogicType.ANY);
-        fluxConnectors.forEach(f -> {
+        List<IFluxDevice> devices = getConnections(FluxLogicType.ANY);
+        devices.forEach(f -> {
             f.getTransferHandler().onStartCycle();
             bufferLimiter += f.getTransferHandler().getRequest();
         });
@@ -162,28 +163,35 @@ public class FluxNetworkServer extends FluxNetworkBase {
                 }
             }
         }
-        fluxConnectors.forEach(f -> f.getTransferHandler().onEndCycle());
+        devices.forEach(f -> f.getTransferHandler().onEndCycle());
 
         network_stats.getValue().stopProfiling();
         network_stats.getValue().onEndServerTick();
     }
 
+    @Nonnull
     @Override
-    public EnumAccessType getMemberPermission(PlayerEntity player) {
+    public EnumAccessType getAccessPermission(PlayerEntity player) {
         if (FluxConfig.enableSuperAdmin) {
             if (DefaultSuperAdmin.isPlayerSuperAdmin(player)) {
                 return EnumAccessType.SUPER_ADMIN;
             }
         }
-        return network_players.getValue()
+        /*return network_players.getValue()
                 .stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getAccessPermission))
                 .getOrDefault(PlayerEntity.getUUID(player.getGameProfile()),
-                        network_security.getValue().isEncrypted() ? EnumAccessType.NONE : EnumAccessType.USER);
+                        network_security.getValue().isEncrypted() ? EnumAccessType.NONE : EnumAccessType.USER);*/
+        UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
+        Optional<NetworkMember> member = getNetworkMember(uuid);
+        if (member.isPresent()) {
+            return member.get().getAccessPermission();
+        }
+        return network_security.getValue().isEncrypted() ? EnumAccessType.BLOCKED : EnumAccessType.USER;
     }
 
     @Override
     public void onDeleted() {
-        getConnections(FluxLogicType.ANY).forEach(flux -> MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Disconnected(flux, this)));
+        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::disconnect);
         connections.clear();
         toAdd.clear();
         toRemove.clear();
@@ -192,20 +200,22 @@ public class FluxNetworkServer extends FluxNetworkBase {
     }
 
     @Override
-    public void enqueueConnectionAddition(IFluxDevice flux) {
-        toAdd.offer(flux);
-        toRemove.remove(flux);
-        addToLite(flux);
+    public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
+        //TODO check if contains
+        device.getNetwork().enqueueConnectionRemoval(device, false);
+        toAdd.offer(device);
+        toRemove.remove(device);
+        addToLite(device);
     }
 
     @Override
-    public void enqueueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
-        toRemove.offer(flux);
-        toAdd.remove(flux);
+    public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
+        toRemove.offer(device);
+        toAdd.remove(device);
         if (chunkUnload) {
-            changeChunkLoaded(flux, false);
+            changeChunkLoaded(device, false);
         } else {
-            removeFromLite(flux);
+            removeFromLite(device);
         }
     }
 
