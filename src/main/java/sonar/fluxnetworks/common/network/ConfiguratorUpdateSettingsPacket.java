@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import net.minecraft.item.ItemStack;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -35,7 +35,7 @@ public class ConfiguratorUpdateSettingsPacket extends AbstractPacket{
     public Object handle(NetworkEvent.Context ctx) {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         ItemStack stack = player.getHeldItemMainhand();
-        if(stack.getItem() instanceof FluxConfiguratorItem){
+        if(stack.getItem() instanceof ItemFluxConfigurator){
             if(!tag.isEmpty()) {
                 stack.setTagInfo(FluxUtils.CONFIGS_TAG, tag);
             }

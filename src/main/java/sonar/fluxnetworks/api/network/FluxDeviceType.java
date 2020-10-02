@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.network;
 
-public enum EnumConnectionType {
+public enum FluxDeviceType {
     POINT(0x882828),
     PLUG(0x609732),
     STORAGE(0x295e8a),
@@ -8,15 +8,15 @@ public enum EnumConnectionType {
 
     public int color;
 
-    EnumConnectionType(int color) {
+    FluxDeviceType(int color) {
         this.color = color;
     }
 
-    public boolean canAddEnergy() {
+    public boolean isPlug() {
         return this == PLUG;
     }
 
-    public boolean canRemoveEnergy() {
+    public boolean isPoint() {
         return this == POINT;
     }
 

@@ -3,8 +3,8 @@ package sonar.fluxnetworks.api.network;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.NBTType;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,36 +25,43 @@ public interface IFluxNetwork {
     <T> void setSetting(NetworkSettings<T> settings, T value);
 
     @Deprecated
-    default void onStartServerTick() {}
+    default void onStartServerTick() {
+    }
 
-    default void onEndServerTick() {}
+    default void onEndServerTick() {
+    }
 
-    default void onDeleted() {}
+    default void onDeleted() {
+    }
 
     default EnumAccessType getMemberPermission(PlayerEntity player) {
         return EnumAccessType.NONE;
     }
 
     @Deprecated
-    default void addNewMember(String name) {}
+    default void addNewMember(String name) {
+
+    }
 
     @Deprecated
-    default void removeMember(UUID uuid) {}
+    default void removeMember(UUID uuid) {
 
-    default <T extends IFluxDevice> List<T> getConnections(FluxCacheType<T> type) {
+    }
+
+    default <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
         return Lists.newArrayList();
     }
 
-    default Optional<NetworkMember> getValidMember(UUID player) {
+    default Optional<NetworkMember> getNetworkMember(UUID player) {
         return Optional.empty();
     }
 
     /* Server only */
-    default void queueConnectionAddition(IFluxDevice flux) {
+    default void enqueueConnectionAddition(IFluxDevice flux) {
     }
 
     /* Server only */
-    default void queueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
+    default void enqueueConnectionRemoval(IFluxDevice flux, boolean chunkUnload) {
     }
 
     /**

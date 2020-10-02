@@ -5,12 +5,12 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.utils.FluxConfigurationType;
+import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import net.minecraft.item.ItemStack;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -50,7 +50,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
                 }
             }
             ItemStack stack = player.getHeldItemMainhand();
-            if(stack.getItem() instanceof FluxConfiguratorItem){
+            if(stack.getItem() instanceof ItemFluxConfigurator){
                 CompoundNBT configs = stack.getOrCreateChildTag(FluxUtils.CONFIGS_TAG);
                 configs.putInt(FluxConfigurationType.NETWORK.getNBTName(), id);
             }

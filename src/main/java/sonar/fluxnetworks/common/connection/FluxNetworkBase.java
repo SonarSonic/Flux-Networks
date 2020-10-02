@@ -2,11 +2,11 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.common.misc.CustomValue;
-import sonar.fluxnetworks.api.utils.ICustomValue;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.ICustomValue;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import java.util.*;
@@ -108,8 +108,8 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
 
         if(type == NBTType.NETWORK_CONNECTIONS) {
             all_connectors.getValue().removeIf(IFluxDevice::isChunkLoaded);
-            List<IFluxDevice> connectors = getConnections(FluxCacheType.FLUX);
-            connectors.forEach(f -> all_connectors.getValue().add(new FluxLiteConnector(f)));
+            List<IFluxDevice> connectors = getConnections(FluxLogicType.ANY);
+            connectors.forEach(f -> all_connectors.getValue().add(new SimpleFluxDevice(f)));
             FluxNetworkData.writeAllConnections(this, nbt);
         }
         if(type == NBTType.NETWORK_STATISTICS) {

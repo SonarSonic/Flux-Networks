@@ -28,7 +28,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 

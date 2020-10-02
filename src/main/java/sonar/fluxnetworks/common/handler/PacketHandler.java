@@ -10,6 +10,10 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.network.*;
 
+/**
+ * @deprecated use {@link NetworkHandler} instead
+ */
+@Deprecated
 public class PacketHandler {
 
     private static final String PROTOCOL_VERSION = "1";

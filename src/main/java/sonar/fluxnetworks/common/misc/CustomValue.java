@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.misc;
 
-import sonar.fluxnetworks.api.utils.ICustomValue;
+import sonar.fluxnetworks.api.misc.ICustomValue;
 
 public class CustomValue<T> implements ICustomValue<T> {
 

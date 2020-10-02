@@ -5,7 +5,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

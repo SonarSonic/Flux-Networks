@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A single group that points or plugs with same priority
+ * A single group that points, plugs or storages with same priority
  *
  * @param <T> Flux Point or Plug
  */
 public class PriorityGroup<T extends IFluxDevice> {
 
-    private final int priority;
+    private final int     priority;
     private final List<T> connectors;
 
     private PriorityGroup(int priority) {

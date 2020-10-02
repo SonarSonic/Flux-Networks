@@ -31,7 +31,7 @@ public class FluxPointHandler extends AbstractPointHandler<TileFluxPoint> {
 
     @Override
     public long removeEnergy(long energy, boolean simulate) {
-        if(!fluxConnector.isActive()) {
+        if(!device.isActive()) {
             return 0;
         }
         long remove = 0;

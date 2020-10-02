@@ -4,11 +4,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.api.network.FluxCacheType;
+import sonar.fluxnetworks.api.misc.Coord4D;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.common.connection.FluxLiteConnector;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.common.connection.SimpleFluxDevice;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 
@@ -48,9 +48,9 @@ public class ConnectionUpdateRequestPacket extends AbstractPacket{
         if(network.isValid()) {
             PlayerEntity player = PacketHandler.getPlayer(ctx);
             List<CompoundNBT> tags = new ArrayList<>();
-            List<IFluxDevice> onlineConnectors = network.getConnections(FluxCacheType.FLUX);
+            List<IFluxDevice> onlineConnectors = network.getConnections(FluxLogicType.ANY);
             coords.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst()
-                            .ifPresent(f -> tags.add(FluxLiteConnector.writeCustomNBT(f, new CompoundNBT()))));
+                            .ifPresent(f -> tags.add(SimpleFluxDevice.writeCustomNBT(f, new CompoundNBT()))));
             return new ConnectionUpdatePacket(networkID, tags);
         }
         return null;

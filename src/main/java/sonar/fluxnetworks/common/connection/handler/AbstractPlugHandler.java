@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.common.connection.handler;
 
 import net.minecraft.util.Direction;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 
 public abstract class AbstractPlugHandler<C extends IFluxDevice> extends AbstractTransferHandler<C> {
@@ -16,7 +16,7 @@ public abstract class AbstractPlugHandler<C extends IFluxDevice> extends Abstrac
 
     @Override
     public long getAddLimit() {
-        return Math.min(getBufferLimiter() - buffer, fluxConnector.getCurrentLimit());
+        return Math.min(getBufferLimiter() - buffer, device.getCurrentLimit());
     }
 
     public abstract long addEnergy(long amount, Direction dir, boolean simulate);

@@ -7,10 +7,12 @@ import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//TODO
 public class SidedTransfers {
 
     protected final TileEntity host;
@@ -18,7 +20,7 @@ public class SidedTransfers {
 
     public SidedTransfers(TileEntity host){
         this.host = host;
-        this.transfers = new HashMap<>();
+        this.transfers = new EnumMap<>(Direction.class);
         for(Direction facing : Direction.values()) {
             transfers.put(facing, null);
         }

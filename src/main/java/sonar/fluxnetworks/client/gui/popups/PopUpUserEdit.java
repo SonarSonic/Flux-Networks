@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.button.NormalButton;

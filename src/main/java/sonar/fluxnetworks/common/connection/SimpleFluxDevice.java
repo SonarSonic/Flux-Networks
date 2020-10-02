@@ -2,25 +2,30 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import net.minecraft.util.math.GlobalPos;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.utils.Coord4D;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-public class FluxLiteConnector implements IFluxDevice {
+/**
+ * A POJO class holds values updated from server for GUI display on client,
+ * or defines unloaded flux devices on both sides
+ */
+public class SimpleFluxDevice implements IFluxDevice {
 
     public int networkID;
     public int priority;
-    public UUID playerUUID;
-    public EnumConnectionType connectionType;
-    public long limit;
+    public UUID           playerUUID;
+    public FluxDeviceType connectionType;
+    public long           limit;
     public Coord4D coord4D;
     public int folderID;
     public String customName;
@@ -32,11 +37,11 @@ public class FluxLiteConnector implements IFluxDevice {
     public long change;
     public ItemStack stack;
 
-    public FluxLiteConnector(IFluxDevice tile) {
+    public SimpleFluxDevice(IFluxDevice tile) {
         this.networkID = tile.getNetworkID();
-        this.priority = tile.getActualPriority();
+        this.priority = tile.getRawPriority();
         this.playerUUID = tile.getConnectionOwner();
-        this.connectionType = tile.getConnectionType();
+        this.connectionType = tile.getDeviceType();
         this.limit = tile.getActualLimit();
         this.coord4D = tile.getCoords();
         this.folderID = tile.getFolderID();
@@ -50,15 +55,15 @@ public class FluxLiteConnector implements IFluxDevice {
         this.stack = tile.getDisplayStack();
     }
 
-    public FluxLiteConnector(CompoundNBT tag) {
+    public SimpleFluxDevice(CompoundNBT tag) {
         readCustomNBT(tag, NBTType.ALL_SAVE);
     }
 
     public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
         tile.getCoords().write(tag);
-        tag.putInt("type", tile.getConnectionType().ordinal());
+        tag.putInt("type", tile.getDeviceType().ordinal());
         tag.putInt("n_id", tile.getNetworkID());
-        tag.putInt("priority", tile.getActualPriority());
+        tag.putInt("priority", tile.getRawPriority());
         tag.putInt("folder_id", tile.getFolderID());
         tag.putLong("limit", tile.getActualLimit());
         tag.putString("name", tile.getCustomName());
@@ -94,7 +99,7 @@ public class FluxLiteConnector implements IFluxDevice {
     @Override
     public void readCustomNBT(CompoundNBT tag, NBTType type) {
         coord4D = new Coord4D(tag);
-        connectionType = EnumConnectionType.values()[tag.getInt("type")];
+        connectionType = FluxDeviceType.values()[tag.getInt("type")];
         networkID = tag.getInt("n_id");
         priority = tag.getInt("priority");
         folderID = tag.getInt("folder_id");
@@ -115,12 +120,12 @@ public class FluxLiteConnector implements IFluxDevice {
     }
 
     @Override
-    public int getPriority() {
+    public int getLogicPriority() {
         return priority;
     }
 
     @Override
-    public int getActualPriority() {
+    public int getRawPriority() {
         return priority;
     }
 
@@ -141,7 +146,7 @@ public class FluxLiteConnector implements IFluxDevice {
     }
 
     @Override
-    public EnumConnectionType getConnectionType() {
+    public FluxDeviceType getDeviceType() {
         return connectionType;
     }
 
@@ -195,6 +200,12 @@ public class FluxLiteConnector implements IFluxDevice {
     @Override
     public Coord4D getCoords() {
         return coord4D;
+    }
+
+    @Nonnull
+    @Override
+    public GlobalPos getGlobalPos() {
+        return null;
     }
 
     @Override

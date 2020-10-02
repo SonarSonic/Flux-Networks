@@ -2,7 +2,7 @@ package sonar.fluxnetworks.common.event;
 
 import net.minecraftforge.eventbus.api.Event;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 
 public class FluxConnectionEvent extends Event {
 

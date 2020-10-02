@@ -12,8 +12,8 @@ import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
-import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import sonar.fluxnetworks.client.gui.tab.*;
@@ -76,16 +76,16 @@ public abstract class GuiTabCore extends GuiFluxCore {
             case TAB_HOME:
                 if(connector instanceof TileFluxDevice) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxConnectorHome(player, (TileFluxDevice) connector));
-                } else if(connector instanceof AdminConfiguratorItem.ContainerProvider) {
+                } else if(connector instanceof ItemAdminConfigurator.ContainerProvider) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxAdminHome(player, connector));
-                } else if(connector instanceof FluxConfiguratorItem.ContainerProvider) {
-                    Minecraft.getInstance().displayGuiScreen(new GuiFluxConfiguratorHome(player, (FluxConfiguratorItem.ContainerProvider)connector));
+                } else if(connector instanceof ItemFluxConfigurator.ContainerProvider) {
+                    Minecraft.getInstance().displayGuiScreen(new GuiFluxConfiguratorHome(player, (ItemFluxConfigurator.ContainerProvider)connector));
                 }else {
                     player.closeScreen();
                 }
                 break;
             case TAB_SELECTION:
-                if(connector instanceof AdminConfiguratorItem.ContainerProvider && FluxNetworks.PROXY.getDetailedNetworkView()) {
+                if(connector instanceof ItemAdminConfigurator.ContainerProvider && FluxNetworks.PROXY.getDetailedNetworkView()) {
                     Minecraft.getInstance().displayGuiScreen(new GuiTabDetailedSelection(player, connector));
                     break;
                 }

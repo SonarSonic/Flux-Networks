@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.utils;
+package sonar.fluxnetworks.api.misc;
 
 public interface ICustomValue<T> {
 

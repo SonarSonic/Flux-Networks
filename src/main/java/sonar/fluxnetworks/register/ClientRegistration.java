@@ -19,8 +19,8 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.mui.MUIIntegration;
 import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
-import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
@@ -65,10 +65,10 @@ public class ClientRegistration {
             if (connector instanceof TileFluxDevice) {
                 return new GuiFluxConnectorHome(inventory.player, (TileFluxDevice) connector);
             }
-            if (connector instanceof FluxConfiguratorItem.ContainerProvider) {
-                return new GuiFluxConfiguratorHome(inventory.player, (FluxConfiguratorItem.ContainerProvider) connector);
+            if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
+                return new GuiFluxConfiguratorHome(inventory.player, (ItemFluxConfigurator.ContainerProvider) connector);
             }
-            if (connector instanceof AdminConfiguratorItem.ContainerProvider) {
+            if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
                 return new GuiFluxAdminHome(inventory.player, connector);
             }
             return null;

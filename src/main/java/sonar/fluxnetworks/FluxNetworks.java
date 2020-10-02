@@ -25,7 +25,11 @@ public class FluxNetworks {
 
     public static final Logger LOGGER = LogManager.getLogger(NAME_COMPACT);
 
-    public static boolean modernUILoaded = false;
+    public static final boolean modernUILoaded;
+
+    static {
+        modernUILoaded = ModList.get().isLoaded("modernui");
+    }
 
     public FluxNetworks() {
         LOGGER.info("FLUX NETWORKS INIT");
@@ -35,8 +39,6 @@ public class FluxNetworks {
         FluxConfig.init();
 
         MinecraftForge.EVENT_BUS.register(PROXY);
-
-        modernUILoaded = ModList.get().isLoaded("modernui");
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

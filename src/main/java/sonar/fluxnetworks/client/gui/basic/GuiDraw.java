@@ -6,18 +6,8 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.ITextComponent;
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
-
-import java.awt.*;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 ////ONLY RENDER METHODS & TEXTURES \\\\

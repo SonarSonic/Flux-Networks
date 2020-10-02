@@ -28,7 +28,7 @@ import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.event.FluxConnectionEvent;

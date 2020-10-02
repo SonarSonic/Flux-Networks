@@ -5,11 +5,11 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityType;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.tiles.IFluxEnergy;
-import sonar.fluxnetworks.api.tiles.IFluxStorage;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.device.IFluxEnergy;
+import sonar.fluxnetworks.api.device.IFluxStorage;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -70,8 +70,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public EnumConnectionType getConnectionType() {
-        return EnumConnectionType.STORAGE;
+    public FluxDeviceType getDeviceType() {
+        return FluxDeviceType.STORAGE;
     }
 
     @Override
@@ -128,7 +128,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public int getPriority() {
+    public int getLogicPriority() {
         return surgeMode ? D : Math.min(priority - C, D);
     }
 

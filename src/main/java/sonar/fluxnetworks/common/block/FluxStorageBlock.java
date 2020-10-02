@@ -9,10 +9,9 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
 import javax.annotation.Nonnull;
@@ -33,7 +32,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new TranslationTextComponent(FluxTranslate.FLUX_STORAGE_TOOLTIP.k()));
+        tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP.getTextComponent());
     }
 
     public abstract int getMaxStorage();

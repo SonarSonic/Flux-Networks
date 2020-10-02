@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.handler.energy.FNEnergyHandler;
 import sonar.fluxnetworks.common.handler.energy.ForgeEnergyHandler;
 

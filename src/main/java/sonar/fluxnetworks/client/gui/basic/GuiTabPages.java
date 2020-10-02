@@ -3,7 +3,7 @@ package sonar.fluxnetworks.client.gui.basic;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.button.PageLabelButton;
 import sonar.fluxnetworks.api.network.NetworkSettings;

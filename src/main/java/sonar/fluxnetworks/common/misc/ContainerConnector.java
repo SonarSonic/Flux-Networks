@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
 import javax.annotation.Nonnull;

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.utils;
+package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -42,8 +42,8 @@ public class FluxConfigurationType {
         int storedID = nbt.getInt(key);
         if (storedID != -1) {
             IFluxNetwork newNetwork = FluxNetworkCache.INSTANCE.getNetwork(storedID);
-            tile.getNetwork().queueConnectionRemoval(tile, false);
-            newNetwork.queueConnectionAddition(tile);
+            tile.getNetwork().enqueueConnectionRemoval(tile, false);
+            newNetwork.enqueueConnectionAddition(tile);
         }
     }
 

@@ -6,9 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.utils.Coord4D;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -19,7 +19,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpConnectionEdit;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.BatchEditingPacket;
 import sonar.fluxnetworks.common.network.ConnectionUpdateRequestPacket;
@@ -121,7 +121,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
         minecraft.getTextureManager().bindTexture(screenUtils.GUI_BAR);
         int fontColor = 0xffffff;
-        int color = element.getConnectionType().color;
+        int color = element.getDeviceType().color;
 
         float red = (float)(color >> 16 & 255) / 255.0F;
         float green = (float)(color >> 8 & 255) / 255.0F;
@@ -147,7 +147,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         if(element.isChunkLoaded()) {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 2, fontColor);
             RenderSystem.scaled(0.625, 0.625, 0.625);
-            font.drawString(matrixStack, FluxUtils.getTransferInfo(element.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
+            font.drawString(matrixStack, FluxUtils.getTransferInfo(element.getDeviceType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
             RenderSystem.scaled(1.6, 1.6, 1.6);
         } else {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 5, 0x808080);
@@ -226,10 +226,10 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     @Override
     protected void sortGrids(SortType sortType) {
         elements.sort(Comparator.comparing(IFluxDevice::isChunkLoaded).reversed().
-                thenComparing(f -> f.getConnectionType().isStorage()).
-                thenComparing(f -> f.getConnectionType().canAddEnergy()).
-                thenComparing(f -> f.getConnectionType().canRemoveEnergy()).
-                thenComparing(p -> -p.getPriority()));
+                thenComparing(f -> f.getDeviceType().isStorage()).
+                thenComparing(f -> f.getDeviceType().isPlug()).
+                thenComparing(f -> f.getDeviceType().isPoint()).
+                thenComparing(p -> -p.getLogicPriority()));
         refreshCurrentPageInternal();
     }
 }

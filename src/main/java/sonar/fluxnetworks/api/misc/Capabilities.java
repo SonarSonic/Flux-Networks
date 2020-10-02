@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.utils;
+package sonar.fluxnetworks.api.misc;
 
 import sonar.fluxnetworks.api.network.ISuperAdmin;
 import net.minecraftforge.common.capabilities.Capability;

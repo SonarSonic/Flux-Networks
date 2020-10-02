@@ -21,9 +21,9 @@ import sonar.fluxnetworks.common.misc.ContainerConnector;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AdminConfiguratorItem extends FluxConfiguratorItem {
+public class ItemAdminConfigurator extends ItemFluxConfigurator {
 
-    public AdminConfiguratorItem(Properties props) {
+    public ItemAdminConfigurator(Properties props) {
         super(props);
     }
 

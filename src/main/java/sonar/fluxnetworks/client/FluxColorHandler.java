@@ -17,10 +17,10 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.utils.FluxConfigurationType;
+import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.NetworkColourRequestPacket;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -169,7 +169,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             Screen screen = Minecraft.getInstance().currentScreen;
             if (screen instanceof GuiFluxCore) {
                 GuiFluxCore guiFluxCore = (GuiFluxCore) screen;
-                if (guiFluxCore.connector instanceof FluxConfiguratorItem.ContainerProvider) {
+                if (guiFluxCore.connector instanceof ItemFluxConfigurator.ContainerProvider) {
                     return guiFluxCore.network.getSetting(NetworkSettings.NETWORK_COLOR);
                 }
             }

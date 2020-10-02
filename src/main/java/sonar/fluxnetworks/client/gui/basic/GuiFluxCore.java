@@ -6,10 +6,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.EnumAccessType;
@@ -18,8 +18,8 @@ import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.network.ConfiguratorNetworkConnectPacket;
 import sonar.fluxnetworks.common.network.TilePacket;
 import sonar.fluxnetworks.common.network.TilePacketHandler;
@@ -121,9 +121,9 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
         screenUtils.resetGuiColouring();
-        font.drawString(matrixStack, FluxUtils.getTransferInfo(fluxConnector.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), fluxConnector.getTransferHandler().getChange()), x, y, color);
+        font.drawString(matrixStack, FluxUtils.getTransferInfo(fluxConnector.getDeviceType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), fluxConnector.getTransferHandler().getChange()), x, y, color);
 
-        font.drawString(matrixStack, (fluxConnector.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
+        font.drawString(matrixStack, (fluxConnector.getDeviceType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
                 ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferHandler().getBuffer(), FluxUtils.TypeNumberFormat.COMMAS,
                 network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
 
@@ -142,8 +142,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
             if(flux.isForcedLoading()) {
                 list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
-            list.add(FluxUtils.getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
-            if(flux.getConnectionType() == EnumConnectionType.STORAGE) {
+            list.add(FluxUtils.getTransferInfo(flux.getDeviceType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
+            if(flux.getDeviceType() == FluxDeviceType.STORAGE) {
                 list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
             } else {
                 list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
@@ -160,7 +160,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         }
 
         list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getCurrentLimit()));
-        list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getPriority()));
+        list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getLogicPriority()));
         list.add(TextFormatting.ITALIC + flux.getCoords().getStringInfo());
         return list;
     }
@@ -171,11 +171,11 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         if(connector instanceof IFluxDevice){
             PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxDevice)connector).getCoords()));
         }
-        if(connector instanceof AdminConfiguratorItem.ContainerProvider){
+        if(connector instanceof ItemAdminConfigurator.ContainerProvider){
             FluxNetworks.PROXY.setAdminViewingNetworkID(networkID);
             FluxNetworks.PROXY.setAdminViewingNetwork(FluxNetworkCache.INSTANCE.getClientNetwork(networkID));
         }
-        if(connector instanceof FluxConfiguratorItem.ContainerProvider){
+        if(connector instanceof ItemFluxConfigurator.ContainerProvider){
             PacketHandler.CHANNEL.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));
         }
     }

@@ -1,10 +1,9 @@
-package sonar.fluxnetworks.api.utils;
+package sonar.fluxnetworks.api.misc;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
 
 import javax.annotation.Nonnull;
 

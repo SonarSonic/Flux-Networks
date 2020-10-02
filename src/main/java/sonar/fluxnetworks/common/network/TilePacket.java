@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.api.utils.Coord4D;
+import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 

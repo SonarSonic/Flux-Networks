@@ -3,7 +3,7 @@ package sonar.fluxnetworks.client.gui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
@@ -11,7 +11,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraft.util.text.TextFormatting;
@@ -82,7 +82,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         switches.add(surge);
         switches.add(disableLimit);
 
-        if(!tileEntity.getConnectionType().isStorage()) {
+        if(!tileEntity.getDeviceType().isStorage()) {
             chunkLoad = new SlidedSwitchButton(140, 144, 3, guiLeft, guiTop, tileEntity.chunkLoading);
             switches.add(chunkLoad);
         }
@@ -99,7 +99,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
 
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        if(!tileEntity.getConnectionType().isStorage()) {
+        if(!tileEntity.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
     }

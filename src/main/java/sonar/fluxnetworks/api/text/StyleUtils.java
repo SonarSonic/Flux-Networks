@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.translate;
+package sonar.fluxnetworks.api.text;
 
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;

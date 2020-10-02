@@ -1,11 +1,12 @@
-package sonar.fluxnetworks.api.tiles;
+package sonar.fluxnetworks.api.device;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.GlobalPos;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.utils.Coord4D;
+import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.common.misc.FluxGuiStack;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -13,7 +14,7 @@ import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * Defines a tile entity that can be connected to a flux network
+ * Defines a device that can be connected to a flux network
  */
 ///TODO remove common references
 public interface IFluxDevice extends INetworkConnector {
@@ -22,13 +23,13 @@ public interface IFluxDevice extends INetworkConnector {
 
     void readCustomNBT(CompoundNBT tag, NBTType type);
 
-    int getPriority();
+    int getLogicPriority(); // consider surge, for transfer on server
 
-    int getActualPriority(); // ignore surge
+    int getRawPriority(); // ignore surge, for numeric display on client
 
     UUID getConnectionOwner();
 
-    EnumConnectionType getConnectionType();
+    FluxDeviceType getDeviceType();
 
     boolean canAccess(PlayerEntity player);
 
@@ -56,7 +57,12 @@ public interface IFluxDevice extends INetworkConnector {
     World getFluxWorld();
 
     @Deprecated
-    Coord4D getCoords();
+    default Coord4D getCoords() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Nonnull
+    GlobalPos getGlobalPos();
 
     int getFolderID();
 
@@ -77,7 +83,7 @@ public interface IFluxDevice extends INetworkConnector {
     default void setChunkLoaded(boolean chunkLoaded) {}
 
     default ItemStack getDisplayStack() {
-        switch (getConnectionType()) {
+        switch (getDeviceType()) {
             case POINT:
                 return FluxGuiStack.FLUX_POINT;
             case PLUG:

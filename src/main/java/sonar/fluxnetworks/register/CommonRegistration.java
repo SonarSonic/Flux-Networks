@@ -31,14 +31,14 @@ import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.handler.CapabilityHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
-import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
-import sonar.fluxnetworks.common.item.FluxDeviceItem;
-import sonar.fluxnetworks.common.item.FluxItem;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.item.ItemFluxDevice;
+import sonar.fluxnetworks.common.item.ItemFlux;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
 import sonar.fluxnetworks.common.recipes.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipes.NBTWipeRecipeSerializer;
@@ -104,21 +104,21 @@ public class CommonRegistration {
         Item.Properties props = new Item.Properties().group(ITEM_GROUP);
 
         registry.register(new BlockItem(RegistryBlocks.FLUX_BLOCK, props).setRegistryName("fluxblock"));
-        registry.register(new FluxDeviceItem(RegistryBlocks.FLUX_PLUG, props).setRegistryName("fluxplug"));
-        registry.register(new FluxDeviceItem(RegistryBlocks.FLUX_POINT, props).setRegistryName("fluxpoint"));
-        registry.register(new FluxDeviceItem(RegistryBlocks.FLUX_CONTROLLER, props).setRegistryName("fluxcontroller"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.FLUX_PLUG, props).setRegistryName("fluxplug"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.FLUX_POINT, props).setRegistryName("fluxpoint"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.FLUX_CONTROLLER, props).setRegistryName("fluxcontroller"));
 
         // the 'new' method is in another class, so there will be no server crash
         Item.Properties storageProps = new Item.Properties().group(ITEM_GROUP).setISTER(() -> FluxStorageItemRenderer::new);
 
-        registry.register(new FluxDeviceItem(RegistryBlocks.BASIC_FLUX_STORAGE, storageProps).setRegistryName("basicfluxstorage"));
-        registry.register(new FluxDeviceItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE, storageProps).setRegistryName("herculeanfluxstorage"));
-        registry.register(new FluxDeviceItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, storageProps).setRegistryName("gargantuanfluxstorage"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.BASIC_FLUX_STORAGE, storageProps).setRegistryName("basicfluxstorage"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.HERCULEAN_FLUX_STORAGE, storageProps).setRegistryName("herculeanfluxstorage"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, storageProps).setRegistryName("gargantuanfluxstorage"));
 
-        registry.register(new FluxItem(props).setRegistryName("flux"));
+        registry.register(new ItemFlux(props).setRegistryName("flux"));
         registry.register(new Item(props).setRegistryName("fluxcore"));
-        registry.register(new FluxConfiguratorItem(props).setRegistryName("fluxconfigurator"));
-        registry.register(new AdminConfiguratorItem(props).setRegistryName("adminconfigurator"));
+        registry.register(new ItemFluxConfigurator(props).setRegistryName("fluxconfigurator"));
+        registry.register(new ItemAdminConfigurator(props).setRegistryName("adminconfigurator"));
 
         FluxNetworks.LOGGER.info("Finished Registering Items");
     }
@@ -165,11 +165,11 @@ public class CommonRegistration {
             } else {
                 ItemStack stack = inventory.player.getHeldItemMainhand();
                 // build a bridge to connect to a flux network
-                if (stack.getItem() instanceof AdminConfiguratorItem) {
-                    return new ContainerConnector<>(windowId, inventory, new AdminConfiguratorItem.ContainerProvider(stack));
+                if (stack.getItem() instanceof ItemAdminConfigurator) {
+                    return new ContainerConnector<>(windowId, inventory, new ItemAdminConfigurator.ContainerProvider(stack));
                 }
-                if (stack.getItem() instanceof FluxConfiguratorItem) {
-                    return new ContainerConnector<>(windowId, inventory, new FluxConfiguratorItem.ContainerProvider(stack));
+                if (stack.getItem() instanceof ItemFluxConfigurator) {
+                    return new ContainerConnector<>(windowId, inventory, new ItemFluxConfigurator.ContainerProvider(stack));
                 }
             }
             // return null, because players have broken some rules, and there's no gui will be opened, and the server container will be closed as well

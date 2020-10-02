@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * List update detective. From SonarCore
  */
+@Deprecated
 public class SimpleObservableList<T> extends ArrayList<T> {
 
     public List<IListWatcher<T>> watchers = new ArrayList<>();

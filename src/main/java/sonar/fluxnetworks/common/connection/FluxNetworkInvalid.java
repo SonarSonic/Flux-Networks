@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.common.connection;
 
 import sonar.fluxnetworks.api.network.EnumSecurityType;
-import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.misc.EnergyType;
 
 import java.util.UUID;
 

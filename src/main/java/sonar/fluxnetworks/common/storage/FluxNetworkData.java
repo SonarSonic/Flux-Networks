@@ -16,10 +16,10 @@ import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
-import sonar.fluxnetworks.common.connection.FluxLiteConnector;
+import sonar.fluxnetworks.common.connection.SimpleFluxDevice;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
@@ -193,7 +193,7 @@ public class FluxNetworkData extends WorldSavedData {
         List<IFluxDevice> a = new ArrayList<>();
         ListNBT list = nbt.getList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
-            a.add(new FluxLiteConnector(list.getCompound(i)));
+            a.add(new SimpleFluxDevice(list.getCompound(i)));
         }
         network.getSetting(NetworkSettings.ALL_CONNECTORS).addAll(a);
     }
@@ -218,7 +218,7 @@ public class FluxNetworkData extends WorldSavedData {
         List<IFluxDevice> a = new ArrayList<>();
         ListNBT list = nbt.getList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
-            a.add(new FluxLiteConnector(list.getCompound(i)));
+            a.add(new SimpleFluxDevice(list.getCompound(i)));
         }
         network.setSetting(NetworkSettings.ALL_CONNECTORS, a);
     }

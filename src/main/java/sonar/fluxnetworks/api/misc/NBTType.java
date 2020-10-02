@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.utils;
+package sonar.fluxnetworks.api.misc;
 
 //TODO remove enum, using int id
 public enum NBTType {

@@ -12,7 +12,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.common.network.SuperAdminRequestPacket;

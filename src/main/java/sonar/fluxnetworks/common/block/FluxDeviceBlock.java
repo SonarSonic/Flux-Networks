@@ -14,10 +14,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.translate.StyleUtils;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.text.StyleUtils;
+import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -40,7 +40,7 @@ public abstract class FluxDeviceBlock extends Block {
             return ActionResultType.SUCCESS;
         }
 
-        if (player.getHeldItem(hand).getItem() instanceof FluxConfiguratorItem) {
+        if (player.getHeldItem(hand).getItem() instanceof ItemFluxConfigurator) {
             return ActionResultType.FAIL;
         }
 

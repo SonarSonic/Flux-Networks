@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.tiles;
+package sonar.fluxnetworks.api.device;
 
 import net.minecraft.network.PacketBuffer;
 

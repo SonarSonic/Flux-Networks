@@ -11,11 +11,11 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
-import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
@@ -54,10 +54,10 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                                 : FluxTranslate.ERROR_NO_SELECTED.getTextComponent().mergeStyle(TextFormatting.AQUA)));
 
                         iProbeInfo.text(new StringTextComponent(
-                                FluxUtils.getTransferInfo(flux.getConnectionType(), EnergyType.FE, flux.getChange())));
+                                FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getChange())));
 
                         if (playerEntity.isSneaking()) {
-                            if (flux.getConnectionType().isStorage()) {
+                            if (flux.getDeviceType().isStorage()) {
                                 iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent().appendString(": ")
                                         .append(new StringTextComponent(FluxUtils.format(flux.getBuffer(),
                                                 FluxUtils.TypeNumberFormat.FULL, EnergyType.FE, false))
@@ -71,7 +71,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                                 );
                             }
                         } else {
-                            if (flux.getConnectionType().isStorage()) {
+                            if (flux.getDeviceType().isStorage()) {
                                 iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent().appendString(": ")
                                         .append(new StringTextComponent(FluxUtils.format(flux.getBuffer(),
                                                 FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false))
@@ -108,7 +108,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                             );
                         } else {
                             iProbeInfo.text(FluxTranslate.PRIORITY.getTextComponent().appendString(": ")
-                                    .append(new StringTextComponent(String.valueOf(flux.getActualPriority()))
+                                    .append(new StringTextComponent(String.valueOf(flux.getRawPriority()))
                                             .mergeStyle(TextFormatting.GREEN))
                             );
                         }
@@ -133,7 +133,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     ItemStack itemStack = flux.getDisplayStack();
                     CompoundNBT tag = itemStack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
                     tag.putInt(FluxNetworkData.NETWORK_ID, flux.getNetworkID());
-                    tag.putString(FluxDeviceItem.CUSTOM_NAME, flux.getCustomName());
+                    tag.putString(ItemFluxDevice.CUSTOM_NAME, flux.getCustomName());
                     iProbeInfo.horizontal().item(itemStack)
                             .vertical().itemLabel(itemStack)
                             .text(new StringTextComponent(TextStyleClass.MODNAME + FluxNetworks.NAME));

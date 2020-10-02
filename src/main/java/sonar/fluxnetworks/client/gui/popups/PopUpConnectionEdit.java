@@ -5,9 +5,9 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.utils.Coord4D;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SimpleToggleButton;
@@ -97,7 +97,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
 
             priority = FluxTextWidget.create( FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 18, guiTop + 47, 140, 12).setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
             priority.setMaxStringLength(5);
-            priority.setText(String.valueOf(host.singleConnection.getPriority()));
+            priority.setText(String.valueOf(host.singleConnection.getLogicPriority()));
             priority.setResponder(string -> apply.clickable = true);
             addButton(priority);
 
@@ -113,7 +113,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
             popSwitches.add(surge);
             popSwitches.add(unlimited);
 
-            if(!host.singleConnection.getConnectionType().isStorage()) {
+            if(!host.singleConnection.getDeviceType().isStorage()) {
                 chunkLoad = new SlidedSwitchButton(140, 106, 3, guiLeft, guiTop, host.singleConnection.isForcedLoading());
                 popSwitches.add(chunkLoad);
             }
@@ -140,7 +140,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         }
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
-        if(batchMode || !host.singleConnection.getConnectionType().isStorage()) {
+        if(batchMode || !host.singleConnection.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
         }
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 155, 0xffffff);

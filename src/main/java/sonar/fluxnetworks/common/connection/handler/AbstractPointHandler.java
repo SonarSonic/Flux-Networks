@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.connection.handler;
 
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 
 public abstract class AbstractPointHandler<C extends IFluxDevice> extends AbstractTransferHandler<C> {
 
@@ -29,7 +29,7 @@ public abstract class AbstractPointHandler<C extends IFluxDevice> extends Abstra
 
     @Override
     public long getAddLimit() {
-        return Math.min(request, fluxConnector.getCurrentLimit());
+        return Math.min(request, device.getCurrentLimit());
     }
 
     public abstract long removeEnergy(long energy, boolean simulate);

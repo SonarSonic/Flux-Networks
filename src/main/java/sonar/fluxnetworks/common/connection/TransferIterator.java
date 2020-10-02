@@ -1,32 +1,39 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 
 public class TransferIterator<T extends IFluxDevice> {
 
     private Iterator<PriorityGroup<T>> groupIterator;
+
     private PriorityGroup<T> currentGroup;
 
     private Iterator<T> fluxIterator;
+
     private T currentFlux;
 
-    private boolean isPoint;
-    public boolean finish = false;
+    private boolean finish;
 
-    public void reset(List<PriorityGroup<T>> list, boolean isPoint) {
+    private final boolean isPoint;
+
+    public TransferIterator(boolean isPoint) {
+        this.isPoint = isPoint;
+    }
+
+    public void reset(@Nonnull List<PriorityGroup<T>> list) {
         groupIterator = list.iterator();
         currentGroup = null;
         fluxIterator = null;
         currentFlux = null;
-        this.isPoint = isPoint;
         finish = false;
         incrementGroup();
     }
 
-    public boolean incrementGroup() {
+    private boolean incrementGroup() {
         if (groupIterator.hasNext()) {
             currentGroup = groupIterator.next();
             fluxIterator = currentGroup.getConnectors().iterator();
@@ -44,7 +51,7 @@ public class TransferIterator<T extends IFluxDevice> {
         return incrementGroup();
     }
 
-    public boolean needTransfer() {
+    private boolean needTransfer() {
         if (!currentFlux.isActive()) {
             return false;
         }

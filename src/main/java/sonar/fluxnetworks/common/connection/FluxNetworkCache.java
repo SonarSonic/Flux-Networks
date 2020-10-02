@@ -4,15 +4,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.Coord4D;
+import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Cached all flux networks

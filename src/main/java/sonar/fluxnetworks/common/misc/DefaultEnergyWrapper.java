@@ -1,20 +1,22 @@
 package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.util.Direction;
-import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import net.minecraftforge.energy.IEnergyStorage;
+import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 
-/**uses forge's own energy wrapper and also IExtendedEnergyStorage*/
+/**
+ * Uses forge's own energy wrapper and also IExtendedEnergyStorage
+ */
 public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
-    public IFluxDevice tileEntity;
-    public Direction   side;
+    public IFluxDevice device;
 
-    public DefaultEnergyWrapper(IFluxDevice tileEntity, Direction side) {
-        this.tileEntity = tileEntity;
+    public Direction side;
+
+    public DefaultEnergyWrapper(IFluxDevice device, Direction side) {
+        this.device = device;
         this.side = side;
     }
 
@@ -22,7 +24,8 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public long receiveEnergyL(long maxReceive, boolean simulate) {
-        return tileEntity instanceof TileFluxPlug ? ((TileFluxPlug) tileEntity).addPhantomEnergyToNetwork(side, maxReceive, simulate) : 0;
+        //TODO
+        return device instanceof TileFluxPlug ? ((TileFluxPlug) device).addPhantomEnergyToNetwork(side, maxReceive, simulate) : 0;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public long getEnergyStoredL() {
-        return tileEntity instanceof IFluxPoint ? Long.MAX_VALUE : 0;
+        return device.getDeviceType().isPoint() ? Long.MAX_VALUE : 0;
     }
 
     @Override
@@ -42,12 +45,12 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public boolean canExtractL() {
-        return tileEntity.getConnectionType().canRemoveEnergy();
+        return false;
     }
 
     @Override
     public boolean canReceiveL() {
-        return tileEntity.getConnectionType().canAddEnergy();
+        return device.getDeviceType().isPlug();
     }
 
     ///// FORGE \\\\\
@@ -64,17 +67,17 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public int getEnergyStored() {
-        return (int)Math.min(getEnergyStoredL(), Integer.MAX_VALUE);
+        return (int) Math.min(getEnergyStoredL(), Integer.MAX_VALUE);
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return (int)Math.min(getMaxEnergyStoredL(), Integer.MAX_VALUE);
+        return (int) Math.min(getMaxEnergyStoredL(), Integer.MAX_VALUE);
     }
 
     @Override
     public boolean canExtract() {
-        return canExtractL();
+        return false;
     }
 
     @Override

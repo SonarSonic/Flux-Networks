@@ -2,8 +2,10 @@ package sonar.fluxnetworks.api.energy;
 
 import net.minecraftforge.energy.IEnergyStorage;
 
-/**functions the same as {@link IEnergyStorage}  but allows Long.MAX_VALUE
- * use the cap in {@link FNEnergyCapability}* to add support to your mod **/
+/**
+ * Functions the same as {@link IEnergyStorage}  but allows Long.MAX_VALUE
+ * use the cap in {@link FNEnergyCapability} to add support to your mod
+ */
 public interface IFNEnergyStorage {
 
     long receiveEnergyL(long maxReceive, boolean simulate);
@@ -17,5 +19,4 @@ public interface IFNEnergyStorage {
     boolean canExtractL();
 
     boolean canReceiveL();
-
 }

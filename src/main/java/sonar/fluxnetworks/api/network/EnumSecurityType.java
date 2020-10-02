@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.network;
 
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 
 public enum EnumSecurityType {
     PUBLIC(FluxTranslate.PUBLIC),

@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.api.utils.Capabilities;
+import sonar.fluxnetworks.api.misc.Capabilities;
 import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 

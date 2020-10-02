@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -17,7 +17,7 @@ import sonar.fluxnetworks.client.gui.popups.PopUpNetworkPassword;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.Comparator;
@@ -145,8 +145,8 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         }
         if(selectedNetwork != null && FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
            closePopUp();
-           if(connector instanceof FluxConfiguratorItem.ContainerProvider){
-               FluxConfiguratorItem.ContainerProvider networkConnector = (FluxConfiguratorItem.ContainerProvider)connector;
+           if(connector instanceof ItemFluxConfigurator.ContainerProvider){
+               ItemFluxConfigurator.ContainerProvider networkConnector = (ItemFluxConfigurator.ContainerProvider)connector;
                networkConnector.network = selectedNetwork;
                networkConnector.networkID = selectedNetwork.getNetworkID();
 

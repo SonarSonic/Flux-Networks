@@ -10,8 +10,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import java.text.NumberFormat;
 import java.util.List;
 
-public class FluxDeviceItem extends BlockItem {
+public class ItemFluxDevice extends BlockItem {
 
     public static String CUSTOM_NAME   = "customName";
     public static String PRIORITY      = "priority";
@@ -29,7 +29,7 @@ public class FluxDeviceItem extends BlockItem {
     public static String LIMIT         = "limit";
     public static String DISABLE_LIMIT = "disableLimit";
 
-    public FluxDeviceItem(Block block, Item.Properties props) {
+    public ItemFluxDevice(Block block, Item.Properties props) {
         super(block, props);
     }
 

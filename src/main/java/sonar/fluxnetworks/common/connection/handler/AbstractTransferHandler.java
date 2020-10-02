@@ -3,43 +3,45 @@ package sonar.fluxnetworks.common.connection.handler;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 
-public abstract class AbstractTransferHandler<C extends IFluxDevice>  implements ITransferHandler {
+public abstract class AbstractTransferHandler<T extends IFluxDevice> implements ITransferHandler {
 
     public long buffer;
 
-    public final C fluxConnector;
+    public final T device;
 
     protected long addedToBuffer;
     protected long removedFromBuffer;
 
-    /**the actual energy transfer change - has no relation to the buffer's usage*/
+    /**
+     * the actual energy transfer change - has no relation to the buffer's usage
+     */
     protected long change;
 
-    public AbstractTransferHandler(C fluxConnector) {
-        this.fluxConnector = fluxConnector;
+    public AbstractTransferHandler(T device) {
+        this.device = device;
     }
 
     public IFluxNetwork getNetwork() {
-        return fluxConnector.getNetwork();
+        return device.getNetwork();
     }
 
-    public void onStartCycle(){
+    public void onStartCycle() {
         change = 0;
         addedToBuffer = 0;
         removedFromBuffer = 0;
     }
 
-    public void onEndCycle(){
+    public void onEndCycle() {
         //do
     }
 
     @Override
     public long addEnergyToBuffer(long energy, boolean simulate) {
         long add = getMaxAdd(energy);
-        if(add > 0) {
-            if(!simulate) {
+        if (add > 0) {
+            if (!simulate) {
                 buffer += add;
                 addedToBuffer += add;
             }
@@ -51,8 +53,8 @@ public abstract class AbstractTransferHandler<C extends IFluxDevice>  implements
     @Override
     public long removeEnergyFromBuffer(long energy, boolean simulate) {
         long remove = getMaxRemove(energy);
-        if(remove > 0) {
-            if(!simulate) {
+        if (remove > 0) {
+            if (!simulate) {
                 buffer -= remove;
                 removedFromBuffer += remove;
             }
@@ -72,7 +74,7 @@ public abstract class AbstractTransferHandler<C extends IFluxDevice>  implements
     }
 
     @Override
-    public long getRequest(){
+    public long getRequest() {
         return 0;
     }
 
@@ -81,15 +83,15 @@ public abstract class AbstractTransferHandler<C extends IFluxDevice>  implements
         return change;
     }
 
-    public long getAddLimit(){
-        return fluxConnector.getCurrentLimit();
+    public long getAddLimit() {
+        return device.getCurrentLimit();
     }
 
-    public long getRemoveLimit(){
-        return fluxConnector.getCurrentLimit();
+    public long getRemoveLimit() {
+        return device.getCurrentLimit();
     }
 
-    public long getMaxAdd(long toAdd){
+    public long getMaxAdd(long toAdd) {
         return Math.max(Math.min(getAddLimit() - addedToBuffer, toAdd), 0);
     }
 

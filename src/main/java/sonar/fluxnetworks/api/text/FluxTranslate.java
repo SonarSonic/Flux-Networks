@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.translate;
+package sonar.fluxnetworks.api.text;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.LanguageMap;
@@ -9,7 +9,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 
 public enum FluxTranslate {
-
     FLUX_TOOLTIP(false, "tooltip.fluxnetworks.flux"),
     FLUX_CONTROLLER_TOOLTIP(false, "tooltip.fluxnetworks.fluxcontroller"),
     FLUX_PLUG_TOOLTIP(false, "tooltip.fluxnetworks.fluxplug"),
@@ -134,7 +133,6 @@ public enum FluxTranslate {
     JEI_CREATING_FLUX(true, "jei.creatingfluxrecipe"),
     JEI_LEFT_CLICK(true, "jei.leftclickhelp");
 
-
     String key;
 
     FluxTranslate(boolean prefix, String key) {
@@ -146,22 +144,21 @@ public enum FluxTranslate {
         return LanguageMap.getInstance().func_230503_a_(key);
     }
 
-    public String k(){
-        return key;
-    }
-
-    @Override
-    public String toString(){
-        return t();
-    }
-
+    @Nonnull
     @OnlyIn(Dist.CLIENT)
-    public String format(Object ...args){
+    public String format(Object... args) {
         return I18n.format(t(), args);
     }
 
-    public TranslationTextComponent getTextComponent(Object... args){
+    @Nonnull
+    public TranslationTextComponent getTextComponent(Object... args) {
         return new TranslationTextComponent(key, args);
     }
 
+    @Nonnull
+    @Override
+    public String toString() {
+        // work on server side which uses en_us
+        return t();
+    }
 }

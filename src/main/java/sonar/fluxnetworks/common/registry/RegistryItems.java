@@ -3,24 +3,24 @@ package sonar.fluxnetworks.common.registry;
 import net.minecraft.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.common.item.AdminConfiguratorItem;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
-import sonar.fluxnetworks.common.item.FluxItem;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.item.ItemFlux;
 
 @ObjectHolder(FluxNetworks.MODID)
 public class RegistryItems {
 
     @ObjectHolder("flux")
-    public static FluxItem FLUX;
+    public static ItemFlux FLUX;
 
     @ObjectHolder("fluxcore")
     public static Item FLUX_CORE;
 
     @ObjectHolder("fluxconfigurator")
-    public static FluxConfiguratorItem FLUX_CONFIGURATOR;
+    public static ItemFluxConfigurator FLUX_CONFIGURATOR;
 
     @ObjectHolder("adminconfigurator")
-    public static AdminConfiguratorItem ADMIN_CONFIGURATOR;
+    public static ItemAdminConfigurator ADMIN_CONFIGURATOR;
 
     //@ObjectHolder("fireitem")
     //public static EntityType<FireItemEntity> FIRE_ITEM_ENTITY;

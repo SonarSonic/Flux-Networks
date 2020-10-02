@@ -4,25 +4,23 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.network.EnumAccessType;
-import sonar.fluxnetworks.api.network.EnumSecurityType;
+import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import net.minecraft.util.Tuple;
+import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class GeneralPacketHandler {
 
@@ -42,10 +40,10 @@ public class GeneralPacketHandler {
         EnumSecurityType security = EnumSecurityType.values()[nbtTag.getInt(FluxNetworkData.SECURITY_TYPE)];
         EnergyType energy = EnergyType.values()[nbtTag.getInt(FluxNetworkData.ENERGY_TYPE)];
         String password = nbtTag.getString(FluxNetworkData.NETWORK_PASSWORD);
-        if(!FluxUtils.checkPassword(password)) {
+        if (!FluxUtils.checkPassword(password)) {
             return new FeedbackPacket(EnumFeedbackInfo.ILLEGAL_PASSWORD);
         }
-        if(FluxNetworkCache.INSTANCE.hasSpaceLeft(player)) {
+        if (FluxNetworkCache.INSTANCE.hasSpaceLeft(player)) {
             FluxNetworkCache.INSTANCE.createdNetwork(player, name, color, security, energy, password);
             return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
         }
@@ -70,24 +68,24 @@ public class GeneralPacketHandler {
         EnumSecurityType security = EnumSecurityType.values()[tag.getInt(FluxNetworkData.SECURITY_TYPE)];
         EnergyType energy = EnergyType.values()[tag.getInt(FluxNetworkData.ENERGY_TYPE)];
         String password = tag.getString(FluxNetworkData.NETWORK_PASSWORD);
-        if(!FluxUtils.checkPassword(password)) {
+        if (!FluxUtils.checkPassword(password)) {
             return new FeedbackPacket(EnumFeedbackInfo.ILLEGAL_PASSWORD);
         }
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         if (network.isValid()) {
             if (network.getMemberPermission(player).canEdit()) {
                 boolean needPacket = false;
-                if(!network.getSetting(NetworkSettings.NETWORK_NAME).equals(newName)) {
+                if (!network.getSetting(NetworkSettings.NETWORK_NAME).equals(newName)) {
                     network.setSetting(NetworkSettings.NETWORK_NAME, newName);
                     needPacket = true;
                 }
-                if(network.getSetting(NetworkSettings.NETWORK_COLOR) != color) {
+                if (network.getSetting(NetworkSettings.NETWORK_COLOR) != color) {
                     network.setSetting(NetworkSettings.NETWORK_COLOR, color);
                     needPacket = true;
-                    List<IFluxDevice> list = network.getConnections(FluxCacheType.FLUX);
+                    List<IFluxDevice> list = network.getConnections(FluxLogicType.ANY);
                     list.forEach(fluxConnector -> fluxConnector.connect(network)); // update color data
                 }
-                if(needPacket) {
+                if (needPacket) {
                     HashMap<Integer, Tuple<Integer, String>> cache = new HashMap<>();
                     cache.put(networkID, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000, network.getSetting(NetworkSettings.NETWORK_NAME)));
                     PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new NetworkColourPacket(cache));
@@ -113,8 +111,8 @@ public class GeneralPacketHandler {
     public static Object handleDeleteNetworkPacket(PlayerEntity player, CompoundNBT nbtTag) {
         int id = nbtTag.getInt(FluxNetworkData.NETWORK_ID);
         IFluxNetwork toDelete = FluxNetworkCache.INSTANCE.getNetwork(id);
-        if(toDelete.isValid()) {
-            if(toDelete.getMemberPermission(player).canDelete()) {
+        if (toDelete.isValid()) {
+            if (toDelete.getMemberPermission(player).canDelete()) {
                 FluxNetworkData.get().deleteNetwork(toDelete);
                 return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
             } else {
@@ -196,10 +194,10 @@ public class GeneralPacketHandler {
             if (network.isValid()) {
                 if (network.getMemberPermission(player).canEdit()) {
                     // Create new member
-                    if(type == 0) {
+                    if (type == 0) {
                         PlayerEntity player1 = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerChanged);
                         //noinspection
-                        if(player1 != null) {
+                        if (player1 != null) {
                             NetworkMember newMember = NetworkMember.createNetworkMember(player1, EnumAccessType.USER);
                             network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
                             PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
@@ -207,16 +205,16 @@ public class GeneralPacketHandler {
                         }
                         return new FeedbackPacket(EnumFeedbackInfo.INVALID_USER);
                     } else {
-                        Optional<NetworkMember> settings = network.getValidMember(playerChanged);
+                        Optional<NetworkMember> settings = network.getNetworkMember(playerChanged);
                         if (settings.isPresent()) {
                             NetworkMember p = settings.get();
                             if (type == 1) {
                                 p.setAccessPermission(EnumAccessType.ADMIN);
-                            } else if(type == 2) {
+                            } else if (type == 2) {
                                 p.setAccessPermission(EnumAccessType.USER);
-                            } else if(type == 3) {
+                            } else if (type == 3) {
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).remove(p);
-                            } else if(type == 4) {
+                            } else if (type == 4) {
                                 /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
                                         .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
@@ -225,10 +223,10 @@ public class GeneralPacketHandler {
                             }
                             PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
                             return new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_PLAYERS);
-                        } else if(type == 4) {
+                        } else if (type == 4) {
                             PlayerEntity player1 = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerChanged);
                             //noinspection
-                            if(player1 != null) {
+                            if (player1 != null) {
                                 /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
                                         .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
@@ -262,7 +260,7 @@ public class GeneralPacketHandler {
         int wireless = packetTag.getInt(FluxNetworkData.WIRELESS_MODE);
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         if (network.isValid()) {
-            if(network.getMemberPermission(player).canEdit()) {
+            if (network.getMemberPermission(player).canEdit()) {
                 network.setSetting(NetworkSettings.NETWORK_WIRELESS, wireless);
                 PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new NetworkUpdatePacket(Lists.newArrayList(network), NBTType.NETWORK_GENERAL));
                 return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);

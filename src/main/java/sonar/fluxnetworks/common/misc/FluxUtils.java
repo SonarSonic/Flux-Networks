@@ -3,28 +3,34 @@ package sonar.fluxnetworks.common.misc;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
-import sonar.fluxnetworks.api.network.FluxCacheType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.utils.FluxConfigurationType;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.UUID;
 
 public class FluxUtils {
@@ -53,8 +59,8 @@ public class FluxUtils {
         return null;
     }
 
-    public static String getTransferInfo(EnumConnectionType type, EnergyType energyType, long change) {
-        if (type.canAddEnergy()) {
+    public static String getTransferInfo(FluxDeviceType type, EnergyType energyType, long change) {
+        if (type.isPlug()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if (change == 0) {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + b;
@@ -62,7 +68,7 @@ public class FluxUtils {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + b;
             }
         }
-        if (type.canRemoveEnergy() || type.isController()) {
+        if (type.isPoint() || type.isController()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if (change == 0) {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
@@ -70,7 +76,7 @@ public class FluxUtils {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + b;
             }
         }
-        if (type == EnumConnectionType.STORAGE) {
+        if (type == FluxDeviceType.STORAGE) {
             if (change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else if (change > 0) {
@@ -133,6 +139,31 @@ public class FluxUtils {
         }
     }*/
 
+    @Nonnull
+    public static GlobalPos getGlobalPos(@Nonnull TileEntity tileEntity) {
+        return GlobalPos.getPosition(Objects.requireNonNull(tileEntity.getWorld()).getDimensionKey(), tileEntity.getPos());
+    }
+
+    public static void writeGlobalPos(@Nonnull CompoundNBT nbt, @Nonnull GlobalPos pos) {
+        BlockPos p = pos.getPos();
+        nbt.putInt("x", p.getX());
+        nbt.putInt("y", p.getY());
+        nbt.putInt("z", p.getZ());
+        nbt.putString("dimension", pos.getDimension().func_240901_a_().toString());
+    }
+
+    @Nonnull
+    public static GlobalPos readGlobalPos(@Nonnull CompoundNBT nbt) {
+        return GlobalPos.getPosition(RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(nbt.getString("dimension"))),
+                new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z")));
+    }
+
+    @Nonnull
+    public static String getDisplayString(@Nonnull GlobalPos pos) {
+        BlockPos p = pos.getPos();
+        return "X: " + p.getX() + " Y: " + p.getY() + " Z: " + p.getZ() + " Dim: " + pos.getDimension().func_240901_a_();
+    }
+
     public static <T> boolean addWithCheck(@Nonnull Collection<T> list, @Nullable T toAdd) {
         if (toAdd != null && !list.contains(toAdd)) {
             list.add(toAdd);
@@ -151,10 +182,10 @@ public class FluxUtils {
         if (fluxDevice.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxDevice.getNetworkID());
             if (network.isValid()) {
-                if (fluxDevice.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
+                if (fluxDevice.getDeviceType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0) {
                     return false;
                 }
-                network.queueConnectionAddition(fluxDevice);
+                network.enqueueConnectionAddition(fluxDevice);
                 return true;
             }
         }
@@ -165,7 +196,7 @@ public class FluxUtils {
         if (fluxDevice.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(fluxDevice.getNetworkID());
             if (network.isValid()) {
-                network.queueConnectionRemoval(fluxDevice, isChunkUnload);
+                network.enqueueConnectionRemoval(fluxDevice, isChunkUnload);
             }
         }
     }
@@ -264,11 +295,11 @@ public class FluxUtils {
 
     public static CompoundNBT getBatchEditingTag(FluxTextWidget a, FluxTextWidget b, FluxTextWidget c, SlidedSwitchButton d, SlidedSwitchButton e, SlidedSwitchButton f) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putString(FluxDeviceItem.CUSTOM_NAME, a.getText());
-        tag.putInt(FluxDeviceItem.PRIORITY, b.getIntegerFromText(false));
-        tag.putLong(FluxDeviceItem.LIMIT, c.getLongFromText(true));
-        tag.putBoolean(FluxDeviceItem.SURGE_MODE, d != null && d.slideControl);
-        tag.putBoolean(FluxDeviceItem.DISABLE_LIMIT, e != null && e.slideControl);
+        tag.putString(ItemFluxDevice.CUSTOM_NAME, a.getText());
+        tag.putInt(ItemFluxDevice.PRIORITY, b.getIntegerFromText(false));
+        tag.putLong(ItemFluxDevice.LIMIT, c.getLongFromText(true));
+        tag.putBoolean(ItemFluxDevice.SURGE_MODE, d != null && d.slideControl);
+        tag.putBoolean(ItemFluxDevice.DISABLE_LIMIT, e != null && e.slideControl);
         tag.putBoolean("chunkLoad", f != null && f.slideControl);
         return tag;
     }

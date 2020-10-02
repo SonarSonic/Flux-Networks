@@ -22,9 +22,9 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.translate.StyleUtils;
-import sonar.fluxnetworks.api.utils.FluxConfigurationType;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.text.StyleUtils;
+import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
@@ -35,9 +35,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class FluxConfiguratorItem extends Item {
+public class ItemFluxConfigurator extends Item {
 
-    public FluxConfiguratorItem(Properties props) {
+    public ItemFluxConfigurator(Properties props) {
         super(props);
     }
 

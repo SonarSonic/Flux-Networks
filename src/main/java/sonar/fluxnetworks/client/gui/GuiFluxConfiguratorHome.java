@@ -5,9 +5,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.utils.FluxConfigurationType;
+import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
@@ -15,9 +15,9 @@ import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxConfiguratorItem;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.network.ConfiguratorUpdateSettingsPacket;
 import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 import net.minecraft.item.ItemStack;
@@ -46,7 +46,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
 
     private int timer;
 
-    public GuiFluxConfiguratorHome(PlayerEntity player, FluxConfiguratorItem.ContainerProvider connector) {
+    public GuiFluxConfiguratorHome(PlayerEntity player, ItemFluxConfigurator.ContainerProvider connector) {
         super(player, connector);
         this.stack = connector.stack;
         updateSettingsFromTag();

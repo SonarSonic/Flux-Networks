@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -24,15 +25,14 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkFolder;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.tiles.IFluxConfigurable;
-import sonar.fluxnetworks.api.tiles.IFluxDevice;
-import sonar.fluxnetworks.api.tiles.ITilePacketBuffer;
-import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.api.device.IFluxConfigurable;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.device.ITilePacketBuffer;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
@@ -69,6 +69,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public byte    connections = 0;
 
     public boolean chunkLoading = false;
+
+    private GlobalPos globalPos;
 
     protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
@@ -221,12 +223,12 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         }
         if (type == NBTType.TILE_DROP) {
             tag.putLong("buffer", getTransferHandler().getBuffer());
-            tag.putInt(FluxDeviceItem.PRIORITY, priority);
-            tag.putLong(FluxDeviceItem.LIMIT, limit);
-            tag.putBoolean(FluxDeviceItem.DISABLE_LIMIT, disableLimit);
-            tag.putBoolean(FluxDeviceItem.SURGE_MODE, surgeMode);
+            tag.putInt(ItemFluxDevice.PRIORITY, priority);
+            tag.putLong(ItemFluxDevice.LIMIT, limit);
+            tag.putBoolean(ItemFluxDevice.DISABLE_LIMIT, disableLimit);
+            tag.putBoolean(ItemFluxDevice.SURGE_MODE, surgeMode);
             tag.putInt(FluxNetworkData.NETWORK_ID, networkID);
-            tag.putString(FluxDeviceItem.CUSTOM_NAME, customName);
+            tag.putString(ItemFluxDevice.CUSTOM_NAME, customName);
             tag.putInt(NetworkFolder.FOLDER_ID, folderID);
         }
         return tag;
@@ -256,14 +258,14 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             if ((l = tag.getLong("buffer")) > 0) {
                 getTransferHandler().setBuffer(l);
             }
-            priority = tag.getInt(FluxDeviceItem.PRIORITY);
-            limit = (l = tag.getLong(FluxDeviceItem.LIMIT)) > 0 ? l : limit;
-            disableLimit = tag.getBoolean(FluxDeviceItem.DISABLE_LIMIT);
-            surgeMode = tag.getBoolean(FluxDeviceItem.SURGE_MODE);
+            priority = tag.getInt(ItemFluxDevice.PRIORITY);
+            limit = (l = tag.getLong(ItemFluxDevice.LIMIT)) > 0 ? l : limit;
+            disableLimit = tag.getBoolean(ItemFluxDevice.DISABLE_LIMIT);
+            surgeMode = tag.getBoolean(ItemFluxDevice.SURGE_MODE);
             int i;
             networkID = (i = tag.getInt(FluxNetworkData.NETWORK_ID)) > 0 ? i : networkID;
             String name;
-            customName = (name = tag.getString(FluxDeviceItem.CUSTOM_NAME)).isEmpty() ? customName : name;
+            customName = (name = tag.getString(ItemFluxDevice.CUSTOM_NAME)).isEmpty() ? customName : name;
             folderID = tag.getInt(NetworkFolder.FOLDER_ID);
         }
     }
@@ -285,7 +287,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
      */
     public void sendFullUpdatePacket() {
         if (!world.isRemote) {
-            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 1 | 2);
         }
     }
 
@@ -389,7 +391,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     protected void sortNetworkConnections() {
         if (network instanceof FluxNetworkServer) {
             FluxNetworkServer fluxNetworkServer = (FluxNetworkServer) network;
-            fluxNetworkServer.needSortConnections = true;
+            fluxNetworkServer.sortConnections = true;
             markLiteSettingChanged();
         }
     }
@@ -422,7 +424,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     @Override
-    public int getPriority() {
+    public int getLogicPriority() {
         return surgeMode ? Integer.MAX_VALUE : priority;
     }
 
@@ -465,7 +467,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     @Override
-    public int getActualPriority() {
+    public int getRawPriority() {
         return priority;
     }
 
@@ -479,13 +481,21 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         return folderID;
     }
 
-    public Coord4D coord4D;
+    /*public Coord4D coord4D;
 
     @Override
     public Coord4D getCoords() {
         if (coord4D == null)
             coord4D = new Coord4D(this);
         return coord4D;
+    }*/
+
+    @Nonnull
+    @Override
+    public final GlobalPos getGlobalPos() {
+        if (globalPos == null)
+            globalPos = FluxUtils.getGlobalPos(this);
+        return globalPos;
     }
 
     @Override

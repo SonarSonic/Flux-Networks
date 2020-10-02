@@ -1,9 +1,9 @@
 package sonar.fluxnetworks.common.tileentity;
 
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.tiles.IFluxController;
-import sonar.fluxnetworks.api.tiles.IFluxEnergy;
+import sonar.fluxnetworks.api.device.IFluxController;
+import sonar.fluxnetworks.api.device.IFluxEnergy;
 import sonar.fluxnetworks.common.connection.handler.FluxControllerHandler;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
@@ -17,8 +17,8 @@ public class TileFluxController extends TileFluxDevice implements IFluxControlle
     }
 
     @Override
-    public EnumConnectionType getConnectionType() {
-        return EnumConnectionType.CONTROLLER;
+    public FluxDeviceType getDeviceType() {
+        return FluxDeviceType.CONTROLLER;
     }
 
     @Override

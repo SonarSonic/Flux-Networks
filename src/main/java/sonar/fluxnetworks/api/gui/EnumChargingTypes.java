@@ -2,7 +2,7 @@ package sonar.fluxnetworks.api.gui;
 
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 
 import javax.annotation.Nonnull;
 

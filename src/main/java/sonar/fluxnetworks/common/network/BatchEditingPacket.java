@@ -6,15 +6,15 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.utils.Coord4D;
+import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheType;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraft.util.math.ChunkPos;
 
@@ -74,14 +74,14 @@ public class BatchEditingPacket extends AbstractPacket {
                     boolean editUnlimited = editions[4];
                     boolean editChunkLoad = editions[5];
                     boolean disconnect = editions[6];
-                    String name = tag.getString(FluxDeviceItem.CUSTOM_NAME);
-                    int priority = tag.getInt(FluxDeviceItem.PRIORITY);
-                    long limit = tag.getLong(FluxDeviceItem.LIMIT);
-                    boolean surge = tag.getBoolean(FluxDeviceItem.SURGE_MODE);
-                    boolean unlimited = tag.getBoolean(FluxDeviceItem.DISABLE_LIMIT);
+                    String name = tag.getString(ItemFluxDevice.CUSTOM_NAME);
+                    int priority = tag.getInt(ItemFluxDevice.PRIORITY);
+                    long limit = tag.getLong(ItemFluxDevice.LIMIT);
+                    boolean surge = tag.getBoolean(ItemFluxDevice.SURGE_MODE);
+                    boolean unlimited = tag.getBoolean(ItemFluxDevice.DISABLE_LIMIT);
                     boolean load = tag.getBoolean("chunkLoad");
                     List<TileFluxDevice> onlineConnectors = new ArrayList<>();
-                    network.getConnections(FluxCacheType.FLUX).forEach(e -> onlineConnectors.add((TileFluxDevice) e));
+                    network.getConnections(FluxLogicType.ANY).forEach(e -> onlineConnectors.add((TileFluxDevice) e));
                     AtomicBoolean reject = new AtomicBoolean(false);
 
                     for (Coord4D c : coord4DS) {
@@ -108,7 +108,7 @@ public class BatchEditingPacket extends AbstractPacket {
                                 if (editChunkLoad) {
                                     if (FluxConfig.enableChunkLoading) {
                                         if (load) {
-                                            if (f.getConnectionType().isStorage()) {
+                                            if (f.getDeviceType().isStorage()) {
                                                 reject.set(true);
                                                 return;
                                             }

@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.world.server.ServerWorld;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheType;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
@@ -31,7 +31,7 @@ public class TilePacketHandler {
         }
         IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
         if(network.isValid()) {
-            if(tile.getConnectionType().isController() && network.getConnections(FluxCacheType.CONTROLLER).size() > 0) {
+            if(tile.getDeviceType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);
             }
             if(!network.getMemberPermission(player).canAccess()) {
@@ -43,10 +43,10 @@ public class TilePacketHandler {
                 }
             }
             if(tile.getNetwork() != null && tile.getNetwork().isValid()) {
-                tile.getNetwork().queueConnectionRemoval(tile, false);
+                tile.getNetwork().enqueueConnectionRemoval(tile, false);
             }
             tile.playerUUID = PlayerEntity.getUUID(player.getGameProfile());
-            network.queueConnectionAddition(tile);
+            network.enqueueConnectionAddition(tile);
             return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
         }
         return null;

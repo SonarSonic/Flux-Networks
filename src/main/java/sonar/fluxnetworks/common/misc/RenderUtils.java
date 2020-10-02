@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
+@Deprecated
 public class RenderUtils {
 
     public static void drawRect(float left, float top, float right, float bottom) {

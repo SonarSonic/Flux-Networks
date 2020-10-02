@@ -11,12 +11,12 @@ public class FluxStorageHandler extends AbstractTransferHandler<TileFluxStorage>
     @Override
     public void onEndCycle() {
         super.onEndCycle();
-        fluxConnector.sendPacketIfNeeded();
+        device.sendPacketIfNeeded();
     }
 
     @Override
     public long addEnergyToBuffer(long energy, boolean simulate) {
-        long amount = fluxConnector.addEnergy(getMaxAdd(energy), simulate);
+        long amount = device.addEnergy(getMaxAdd(energy), simulate);
         if(!simulate) {
             this.addedToBuffer += amount;
             this.change += amount;
@@ -26,7 +26,7 @@ public class FluxStorageHandler extends AbstractTransferHandler<TileFluxStorage>
 
     @Override
     public long removeEnergyFromBuffer(long energy, boolean simulate) {
-        long amount = fluxConnector.removeEnergy(getMaxRemove(energy), simulate);
+        long amount = device.removeEnergy(getMaxRemove(energy), simulate);
         if(!simulate) {
             this.removedFromBuffer += amount;
             this.change -= amount;
@@ -36,11 +36,11 @@ public class FluxStorageHandler extends AbstractTransferHandler<TileFluxStorage>
 
     @Override
     public long getBuffer() {
-        return fluxConnector.getEnergy();
+        return device.getEnergy();
     }
 
     @Override
     public long getRequest() {
-        return Math.min(getAddLimit(), fluxConnector.maxEnergyStorage - fluxConnector.energyStored);
+        return Math.min(getAddLimit(), device.maxEnergyStorage - device.energyStored);
     }
 }

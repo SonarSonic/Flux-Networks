@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.network;
 
-import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import net.minecraft.util.text.TextFormatting;
 
 public enum EnumAccessType {

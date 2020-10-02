@@ -12,12 +12,12 @@ import sonar.fluxnetworks.FluxNetworks;
 import javax.annotation.Nonnull;
 
 @JeiPlugin
-public class JEIIntegration implements IModPlugin {
+public class JeiIntegration implements IModPlugin {
 
     @Nonnull
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(FluxNetworks.MODID);
+        return new ResourceLocation(FluxNetworks.MODID, "jei");
     }
 
     @Override

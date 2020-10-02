@@ -3,11 +3,10 @@ package sonar.fluxnetworks.common.capability;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
-import sonar.fluxnetworks.api.utils.Capabilities;
+import sonar.fluxnetworks.api.misc.Capabilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -10,7 +10,7 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
-import sonar.fluxnetworks.api.utils.Capabilities;
+import sonar.fluxnetworks.api.misc.Capabilities;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
