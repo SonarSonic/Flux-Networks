@@ -29,16 +29,16 @@ public class TilePacketHandler {
         if(tile.getNetworkID() == id) {
             return null;
         }
-        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
+        IFluxNetwork network = FluxNetworkData.getNetwork(id);
         if(network.isValid()) {
             if(tile.getDeviceType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);
             }
-            if(!network.getAccessPermission(player).canAccess()) {
+            if(!network.getPlayerAccess(player).canAccess()) {
                 if(pass.isEmpty()) {
                     return new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }
-                if (!pass.equals(network.getSetting(NetworkSettings.NETWORK_PASSWORD))) {
+                if (!pass.equals(network.getNetworkPassword())) {
                     return new FeedbackPacket(EnumFeedbackInfo.REJECT);
                 }
             }

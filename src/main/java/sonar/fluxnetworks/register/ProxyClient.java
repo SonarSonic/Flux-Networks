@@ -5,6 +5,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
@@ -53,7 +54,7 @@ public class ProxyClient implements IProxy {
 
     @Override
     public void receiveColorCache(Map<Integer, Tuple<Integer, String>> cache) {
-        FluxColorHandler.INSTANCE.receiveCache(cache);
+        //FluxColorHandler.INSTANCE.receiveCache(cache);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ProxyClient implements IProxy {
 
     @Override
     public IFluxNetwork getNetwork(int networkID) {
-        return FluxNetworkCache.INSTANCE.getClientNetwork(networkID);
+        return FluxClientCache.INSTANCE.getNetwork(networkID);
     }
 
     @Override

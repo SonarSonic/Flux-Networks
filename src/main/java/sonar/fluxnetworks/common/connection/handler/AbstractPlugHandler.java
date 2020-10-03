@@ -16,7 +16,7 @@ public abstract class AbstractPlugHandler<C extends IFluxDevice> extends Abstrac
 
     @Override
     public long getAddLimit() {
-        return Math.min(getBufferLimiter() - buffer, device.getCurrentLimit());
+        return Math.min(getBufferLimiter() - buffer, device.getLogicLimit());
     }
 
     public abstract long addEnergy(long amount, Direction dir, boolean simulate);

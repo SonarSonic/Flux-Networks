@@ -50,9 +50,10 @@ public class ControllerTransfer implements IFluxTransfer {
         if(timer % 4 != 0) { //TODO THIS CAUSES FLICKERING INTO GUI, WE COULD SMOOTH THIS OUT
             return 0;
         }
-        if((tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS) & 1) == 0) {
+        //TODO each player
+        /*if((tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS) & 1) == 0) {
             return 0;
-        }
+        }*/
         long received = 0;
         CYCLE:
         for(PlayerEntity player : players) {
@@ -78,7 +79,7 @@ public class ControllerTransfer implements IFluxTransfer {
     }
 
     private void updatePlayers() {
-        List<NetworkMember> m = tile.getNetwork().getSetting(NetworkSettings.NETWORK_PLAYERS);
+        List<NetworkMember> m = tile.getNetwork().getNetworkMembers();
         List<PlayerEntity> players = new ArrayList<>();
         for(NetworkMember p : m) {
             ServerPlayerEntity entity = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(p.getPlayerUUID());
@@ -95,7 +96,8 @@ public class ControllerTransfer implements IFluxTransfer {
         PlayerInventory inv = player.inventory;
         ItemStack heldItem = inv.getCurrentItem();
 
-        int wireless = tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS);
+        //TODO
+        int wireless = 0/*tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS)*/;
         if((wireless >> 1 & 1) == 1) {
             subInventories.put(Lists.newArrayList(heldItem), NOT_EMPTY);
         }

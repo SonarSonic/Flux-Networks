@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.gui.EnumChargingTypes;
+import sonar.fluxnetworks.api.gui.EnumChargingType;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -31,7 +31,7 @@ public class GuiTabWireless extends GuiTabCore {
     public List<InventoryButton> inventoryButtonList = new ArrayList<>();
     public NormalButton apply;
 
-    public boolean[] settings = new boolean[EnumChargingTypes.values().length];
+    public boolean[] settings = new boolean[EnumChargingType.values().length];
 
     public GuiTabWireless(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
@@ -45,7 +45,7 @@ public class GuiTabWireless extends GuiTabCore {
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         if(networkValid) {
-            int colour = network.getSetting(NetworkSettings.NETWORK_COLOR);
+            int colour = network.getNetworkColor();
             drawCenteredString(matrixStack, font, FluxTranslate.TAB_WIRELESS.t(), 88, 12, 0xb4b4b4);
             font.drawString(matrixStack, FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, colour);
             drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 146, 0xffffff);
@@ -62,18 +62,18 @@ public class GuiTabWireless extends GuiTabCore {
         buttonLists.add(inventoryButtonList);
         if(networkValid) {
 
-            int setting = network.getSetting(NetworkSettings.NETWORK_WIRELESS);
-            for(EnumChargingTypes types : EnumChargingTypes.values()){
+            int setting = 0;
+            for(EnumChargingType types : EnumChargingType.values()){
                 settings[types.ordinal()] = types.isActivated(setting);
             }
 
             switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, settings[0]));
-            inventoryButtonList.add(new InventoryButton(EnumChargingTypes.ARMOR_SLOT, this, 24, 32, 0, 80, 52, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingTypes.BAUBLES, this,100, 32, 0, 80, 52, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingTypes.INVENTORY, this,32, 56, 0, 0, 112, 40));
-            inventoryButtonList.add(new InventoryButton(EnumChargingTypes.HOT_BAR, this,32, 104, 112, 0, 112, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingTypes.RIGHT_HAND, this,136, 128, 52, 80, 16, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingTypes.LEFT_HAND, this,24, 128, 52, 80, 16, 16));
+            inventoryButtonList.add(new InventoryButton(EnumChargingType.ARMOR_SLOT, this, 24, 32, 0, 80, 52, 16));
+            inventoryButtonList.add(new InventoryButton(EnumChargingType.BAUBLES, this,100, 32, 0, 80, 52, 16));
+            inventoryButtonList.add(new InventoryButton(EnumChargingType.INVENTORY, this,32, 56, 0, 0, 112, 40));
+            inventoryButtonList.add(new InventoryButton(EnumChargingType.HOT_BAR, this,32, 104, 112, 0, 112, 16));
+            inventoryButtonList.add(new InventoryButton(EnumChargingType.RIGHT_HAND, this,136, 128, 52, 80, 16, 16));
+            inventoryButtonList.add(new InventoryButton(EnumChargingType.LEFT_HAND, this,24, 128, 52, 80, 16, 16));
 
             apply = new NormalButton(FluxTranslate.APPLY.t(), 73, 130, 32, 12, 0).setUnclickable();
             buttons.add(apply);
@@ -99,12 +99,12 @@ public class GuiTabWireless extends GuiTabCore {
         if(button instanceof SlidedSwitchButton){
             ((SlidedSwitchButton)button).switchButton();
             if(((SlidedSwitchButton)button).id == 4) {
-                switchSetting(EnumChargingTypes.ENABLE_WIRELESS);
+                switchSetting(EnumChargingType.ENABLE_WIRELESS);
             }
         }
     }
 
-    public void switchSetting(EnumChargingTypes type){
+    public void switchSetting(EnumChargingType type){
         settings[type.ordinal()] = !settings[type.ordinal()];
         apply.clickable = true;
     }

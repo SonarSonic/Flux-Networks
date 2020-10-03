@@ -1,33 +1,17 @@
 package sonar.fluxnetworks.common.connection;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.Coord4D;
-import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.misc.NBTType;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-
-import javax.annotation.Nonnull;
-import java.util.*;
-
 /**
  * Cached all flux networks
  */
-//TODO make client only, use FluxNetworkData on logic server side
+@Deprecated
 public class FluxNetworkCache {
 
     public static final FluxNetworkCache INSTANCE = new FluxNetworkCache();
 
-    /**
-     * Client Cache
-     */
-    public Map<Integer, IFluxNetwork> networks = new HashMap<>();
+    //public Map<Integer, IFluxNetwork> networks = new HashMap<>();
     public boolean superAdminClient = false;
 
-    public void clearClientCache() {
+    /*public void clearClientCache() {
         networks.clear();
         superAdminClient = false;
     }
@@ -37,16 +21,16 @@ public class FluxNetworkCache {
             return true;
         }
         UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
-        long created = getAllNetworks().stream().filter(s -> s.getSetting(NetworkSettings.NETWORK_OWNER).equals(uuid)).count();
+        long created = getAllNetworks().stream().filter(n -> n.getNetworkOwner().equals(uuid)).count();
         return created < FluxConfig.maximumPerPlayer;
     }
 
-    public void createdNetwork(@Nonnull PlayerEntity player, String name, int color, EnumSecurityType securityType, EnergyType energyType, String password) {
+    public void createdNetwork(@Nonnull PlayerEntity player, String name, int color, SecurityType securityType, EnergyType energyType, String password) {
         UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
 
-        NetworkMember owner = NetworkMember.createNetworkMember(player, EnumAccessType.OWNER);
-        FluxNetworkServer network = new FluxNetworkServer(nextUID(), name, securityType, color, uuid, energyType, password);
-        network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(owner);
+        NetworkMember owner = NetworkMember.createNetworkMember(player, AccessType.OWNER);
+        FluxNetworkServer network = new FluxNetworkServer(nextUID(), name, securityType, color, uuid, password);
+        network.getNetworkMembers().add(owner);
 
         FluxNetworkData.get().addNetwork(network);
     }
@@ -55,9 +39,6 @@ public class FluxNetworkCache {
         return FluxNetworkData.get().uniqueID++;
     }
 
-    /**
-     * Client Only
-     **/
     public void updateClientFromPacket(Map<Integer, CompoundNBT> serverSideNetworks, NBTType type) {
         serverSideNetworks.forEach((i, n) -> {
             IFluxNetwork network = networks.get(i);
@@ -69,15 +50,15 @@ public class FluxNetworkCache {
             }
             if (network == null) {
                 network = new FluxLiteNetwork();
-                network.readNetworkNBT(n, type);
+                network.readCustomNBT(n, type);
                 networks.put(i, network);
             } else {
-                network.readNetworkNBT(n, type);
+                network.readCustomNBT(n, type);
             }
         });
-    }
+    }*/
 
-    public void updateClientConnections(int networkID, List<CompoundNBT> tags) {
+    /*public void updateClientConnections(int networkID, List<CompoundNBT> tags) {
         IFluxNetwork network = networks.get(networkID);
         if (network != null) {
             List<IFluxDevice> connectors = network.getSetting(NetworkSettings.ALL_CONNECTORS);
@@ -86,34 +67,21 @@ public class FluxNetworkCache {
                 connectors.stream().filter(f -> f.getCoords().equals(coord4D)).findFirst().ifPresent(f -> f.readCustomNBT(t, NBTType.DEFAULT));
             });
         }
-    }
+    }*/
 
-    /**
-     * Server Only
-     **/
-    public IFluxNetwork getNetwork(int id) {
+    /*public IFluxNetwork getNetwork(int id) {
         return FluxNetworkData.get().networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
-    }
+    }*/
 
-    /**
-     * Server Only
-     **/
-    public Collection<IFluxNetwork> getAllNetworks() {
+    /*public Collection<IFluxNetwork> getAllNetworks() {
         return FluxNetworkData.get().networks.values();
-    }
+    }*/
 
-    /**
-     * Client Only
-     **/
-    public IFluxNetwork getClientNetwork(int id) {
+    /*public IFluxNetwork getClientNetwork(int id) {
         return networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
-    /**
-     * Client Only
-     **/
     public List<IFluxNetwork> getAllClientNetworks() {
         return new ArrayList<>(networks.values());
-    }
-
+    }*/
 }

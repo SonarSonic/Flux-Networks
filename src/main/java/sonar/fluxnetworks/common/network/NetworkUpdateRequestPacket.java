@@ -6,6 +6,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import java.util.List;
 
@@ -45,13 +46,13 @@ public class NetworkUpdateRequestPacket extends AbstractPacket {
         List<IFluxNetwork> networks = Lists.newArrayList();
 
         for(Integer i : networkIDs){
-            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(i);
+            IFluxNetwork network = FluxNetworkData.getNetwork(i);
             if(network.isValid()) {
                 networks.add(network);
             }
         }
         if(!networks.isEmpty()) {
-            return new NetworkUpdatePacket(Lists.newArrayList(networks), type);
+            return new SNetworkUpdateMessage(Lists.newArrayList(networks), 0);
         }
         return null;
     }

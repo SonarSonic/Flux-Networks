@@ -2,7 +2,7 @@ package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import sonar.fluxnetworks.api.gui.EnumChargingTypes;
+import sonar.fluxnetworks.api.gui.EnumChargingType;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.tab.GuiTabWireless;
@@ -11,11 +11,11 @@ import net.minecraft.client.Minecraft;
 
 public class InventoryButton extends GuiButtonCore {
 
-    public EnumChargingTypes chargeType;
+    public EnumChargingType chargeType;
     private int texX, texY;
     public GuiTabWireless host;
 
-    public InventoryButton(EnumChargingTypes chargeType, GuiTabWireless host, int x, int y, int texX, int texY, int width, int height) {
+    public InventoryButton(EnumChargingType chargeType, GuiTabWireless host, int x, int y, int texX, int texY, int width, int height) {
         super(x, y, width, height, chargeType.ordinal());
         this.chargeType = chargeType;
         this.texX = texX;
@@ -26,7 +26,7 @@ public class InventoryButton extends GuiButtonCore {
 
     public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
         //TODO MINOR - FIX FLICKERING, WHEN HOVERING
-        int colour = host.network.getSetting(NetworkSettings.NETWORK_COLOR);
+        int colour = host.network.getNetworkColor();
         ScreenUtils.INSTANCE.setGuiColouring(colour);
         boolean hover = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
 

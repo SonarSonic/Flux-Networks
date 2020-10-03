@@ -28,7 +28,8 @@ import net.minecraftforge.fml.unsafe.UnsafeHacks;
 import org.apache.commons.lang3.tuple.Pair;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.IMessage;
-import sonar.fluxnetworks.common.network.LavaParticleMessage;
+import sonar.fluxnetworks.common.network.SLavaParticleMessage;
+import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,7 +77,8 @@ public class NetworkHandler {
     }
 
     public static void registerMessages() {
-        INSTANCE.registerMessage(LavaParticleMessage.class);
+        INSTANCE.registerMessage(SLavaParticleMessage.class);
+        INSTANCE.registerMessage(SNetworkUpdateMessage.class);
     }
 
     /**

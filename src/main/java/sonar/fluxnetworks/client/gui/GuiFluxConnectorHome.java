@@ -49,7 +49,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
         addButton(redirectButton);
 
-        int color = network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
+        int color = network.getNetworkColor() | 0xff000000;
         fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 16, guiTop + 28, 144, 12).setOutlineColor(color);
         fluxName.setMaxStringLength(24);
         fluxName.setText(tileEntity.getCustomName());
@@ -93,14 +93,14 @@ public class GuiFluxConnectorHome extends GuiTabCore {
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        screenUtils.renderNetwork(matrixStack, network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
+        screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
         renderTransfer(matrixStack, tileEntity, 0xffffff, 30, 90);
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
-        font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 120, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 120, network.getNetworkColor());
+        font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getNetworkColor());
         if(!tileEntity.getDeviceType().isStorage()) {
-            font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getSetting(NetworkSettings.NETWORK_COLOR));
+            font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getNetworkColor());
         }
     }
 
@@ -121,7 +121,8 @@ public class GuiFluxConnectorHome extends GuiTabCore {
                     tileEntity.sendTilePacketToServer(TilePacketBufferConstants.FLUX_DISABLE_LIMIT);
                     break;
                 case 3:
-                    PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.CHUNK_LOADING, TilePacketHandler.getChunkLoadPacket(!switchButton.slideControl), tileEntity.getCoords()));
+                    //TODO
+                    //PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.CHUNK_LOADING, TilePacketHandler.getChunkLoadPacket(!switchButton.slideControl), tileEntity.getCoords()));
                     break;
             }
         }

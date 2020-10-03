@@ -9,10 +9,7 @@ import net.minecraft.util.text.ITextComponent;
  */
 public interface INetworkConnector {
 
-    @Deprecated
-    default int getNetworkID() {
-        return getNetwork().getNetworkID();
-    }
+    int getNetworkID();
 
     IFluxNetwork getNetwork();
 

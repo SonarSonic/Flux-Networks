@@ -3,7 +3,7 @@ package sonar.fluxnetworks.api.network;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import net.minecraft.util.text.TextFormatting;
 
-public enum EnumAccessType {
+public enum AccessType {
     OWNER(FluxTranslate.OWNER, 0xffaa00, TextFormatting.GOLD),
     ADMIN(FluxTranslate.ADMIN, 0x66cc00, TextFormatting.GREEN),
     USER(FluxTranslate.USER, 0x6699ff, TextFormatting.BLUE),
@@ -14,7 +14,7 @@ public enum EnumAccessType {
     public int color;
     public TextFormatting formatting;
 
-    EnumAccessType(FluxTranslate localization, int color, TextFormatting formatting) {
+    AccessType(FluxTranslate localization, int color, TextFormatting formatting) {
         this.localization = localization;
         this.color = color;
         this.formatting = formatting;

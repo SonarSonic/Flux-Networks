@@ -3,26 +3,54 @@ package sonar.fluxnetworks.api.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.common.connection.NetworkStatistics;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface IFluxNetwork {
 
-    default int getNetworkID() {
-        return getSetting(NetworkSettings.NETWORK_ID);
-    }
+    /**
+     * Returns the network ID
+     *
+     * @return a positive integer or {@link sonar.fluxnetworks.api.misc.FluxConstants#INVALID_NETWORK_ID}
+     */
+    int getNetworkID();
 
-    default String getNetworkName() {
-        return getSetting(NetworkSettings.NETWORK_NAME);
-    }
+    String getNetworkName();
 
+    void setNetworkName(String name);
+
+    /*@Deprecated
     <T> T getSetting(NetworkSettings<T> setting);
 
-    <T> void setSetting(NetworkSettings<T> settings, T value);
+    @Deprecated
+    <T> void setSetting(NetworkSettings<T> settings, T value);*/
+
+    SecurityType getNetworkSecurity();
+
+    @Nullable
+    String getNetworkPassword();
+
+    /**
+     * Returns the network color in 0xRRGGBB format
+     *
+     * @return network color
+     */
+    int getNetworkColor();
+
+    void setNetworkColor(int color);
+
+    UUID getNetworkOwner();
+
+    NetworkStatistics getNetworkStatistics();
+
+    List<NetworkMember> getNetworkMembers();
+
+    List<IFluxDevice> getAllDevices();
 
     /*@Deprecated
     default void onStartServerTick() {
@@ -38,7 +66,7 @@ public interface IFluxNetwork {
     }
 
     @Nonnull
-    EnumAccessType getAccessPermission(PlayerEntity player);
+    AccessType getPlayerAccess(PlayerEntity player);
 
     /*@Deprecated
     default void addNewMember(String name) {
@@ -60,7 +88,7 @@ public interface IFluxNetwork {
     @Nonnull
     <T extends IFluxDevice> List<T> getConnections(FluxLogicType type);
 
-    Optional<NetworkMember> getNetworkMember(UUID player);
+    Optional<NetworkMember> getMemberByUUID(UUID playerUUID);
 
     /* Server only */
     void enqueueConnectionAddition(@Nonnull IFluxDevice device);
@@ -72,10 +100,11 @@ public interface IFluxNetwork {
      * Returns whether this network is a valid network.
      *
      * @return {@code true} if it is valid, {@code false} otherwise
+     * @see sonar.fluxnetworks.api.misc.FluxConstants#INVALID_NETWORK_ID
      */
     boolean isValid();
 
-    void readNetworkNBT(CompoundNBT nbt, NBTType type);
+    void readCustomNBT(CompoundNBT nbt, int flags);
 
-    void writeNetworkNBT(CompoundNBT nbt, NBTType type);
+    void writeCustomNBT(CompoundNBT nbt, int flags);
 }

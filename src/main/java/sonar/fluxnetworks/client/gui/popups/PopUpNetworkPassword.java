@@ -38,7 +38,7 @@ public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
     public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if(host.selectedNetwork != null) {
-            drawCenteredString(matrixStack, font, FluxTranslate.CONNECTING_TO.t() + " " + host.selectedNetwork.getSetting(NetworkSettings.NETWORK_NAME), 88, 50, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxTranslate.CONNECTING_TO.t() + " " + host.selectedNetwork.getNetworkName(), 88, 50, 0xffffff);
         }
         drawCenteredString(matrixStack, font, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
 

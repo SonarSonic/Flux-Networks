@@ -8,7 +8,7 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.EnumSecurityType;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
@@ -25,7 +25,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
     public GuiTabCreate(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
-        securityType = EnumSecurityType.ENCRYPTED;
+        securityType = SecurityType.ENCRYPTED;
         energyType = EnergyType.FE;
     }
 

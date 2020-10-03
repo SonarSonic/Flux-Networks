@@ -6,6 +6,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,14 +38,14 @@ public class NetworkColourRequestPacket extends AbstractPacket {
     @Override
     public Object handle(NetworkEvent.Context ctx) {
         Map<Integer, Tuple<Integer, String>> cache = new HashMap<>();
-        if (!requests.isEmpty()) {
+        /*if (!requests.isEmpty()) {
             for (int id : requests) {
-                IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(id);
+                IFluxNetwork network = FluxNetworkData.getNetwork(id);
                 cache.put(id, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000,
                         !network.isValid() ? "NONE" : network.getSetting(NetworkSettings.NETWORK_NAME)));
             }
             return new NetworkColourPacket(cache);
-        }
+        }*/
         return null;
     }
 }

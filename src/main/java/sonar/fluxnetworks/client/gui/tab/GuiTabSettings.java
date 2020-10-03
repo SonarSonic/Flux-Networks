@@ -7,6 +7,7 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
+import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -29,8 +30,8 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     public GuiTabSettings(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
         if (networkValid) {
-            securityType = network.getSetting(NetworkSettings.NETWORK_SECURITY);
-            energyType = network.getSetting(NetworkSettings.NETWORK_ENERGY);
+            securityType = network.getNetworkSecurity();
+            energyType = EnergyType.FE;
         }
     }
 
@@ -62,8 +63,9 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (networkValid) {
             name.setText(network.getNetworkName());
 
-            password.setText(network.getSetting(NetworkSettings.NETWORK_PASSWORD));
-            password.setVisible(network.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted());
+            //TODO
+            password.setText(network.getNetworkPassword());
+            password.setVisible(network.getNetworkSecurity().isEncrypted());
 
             buttons.add(apply = new NormalButton(FluxTranslate.APPLY.t(), 112, 140, 36, 12, 3).setUnclickable());
             buttons.add(delete = new NormalButton(FluxTranslate.DELETE.t(), 30, 140, 36, 12, 4).setUnclickable());
@@ -73,7 +75,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
             for (EnumNetworkColor color : EnumNetworkColor.values()) {
                 ColorButton b = new ColorButton(48 + ((i >= 7 ? i - 7 : i) * 16), 96 + ((i >= 7 ? 1 : 0) * 16), color.getRGB());
                 colorButtons.add(b);
-                if (!colorSet && color.getRGB() == network.getSetting(NetworkSettings.NETWORK_COLOR)) {
+                if (!colorSet && color.getRGB() == network.getNetworkColor()) {
                     this.color = b;
                     this.color.selected = true;
                     colorSet = true;
@@ -81,7 +83,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 i++;
             }
             if (!colorSet) {
-                ColorButton c = new ColorButton(32, 112, network.getSetting(NetworkSettings.NETWORK_COLOR));
+                ColorButton c = new ColorButton(32, 112, network.getNetworkColor());
                 colorButtons.add(c);
                 this.color = c;
                 this.color.selected = true;

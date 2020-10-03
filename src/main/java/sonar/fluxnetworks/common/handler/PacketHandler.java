@@ -26,7 +26,6 @@ public class PacketHandler {
     public static void registerMessages() {
 
         CHANNEL.registerMessage(packetID++, GeneralPacket.class, GeneralPacket::encode, GeneralPacket::new, GeneralPacket::handle);
-        CHANNEL.registerMessage(packetID++, NetworkUpdatePacket.class, NetworkUpdatePacket::encode, NetworkUpdatePacket::new, NetworkUpdatePacket::handle);
         CHANNEL.registerMessage(packetID++, TilePacketBufferPacket.class, TilePacketBufferPacket::encode, TilePacketBufferPacket::new, TilePacketBufferPacket::handle);
         CHANNEL.registerMessage(packetID++, TilePacket.class, TilePacket::encode, TilePacket::new, TilePacket::handle);
         CHANNEL.registerMessage(packetID++, FeedbackPacket.class, FeedbackPacket::encode, FeedbackPacket::new, FeedbackPacket::handle);

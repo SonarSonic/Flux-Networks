@@ -35,7 +35,7 @@ public class ConnectionUpdatePacket extends AbstractPacket{
 
     @Override
     public Object handle(NetworkEvent.Context ctx) {
-        FluxNetworkCache.INSTANCE.updateClientConnections(networkID, tags);
+        //FluxNetworkCache.INSTANCE.updateClientConnections(networkID, tags);
         return null;
     }
 }

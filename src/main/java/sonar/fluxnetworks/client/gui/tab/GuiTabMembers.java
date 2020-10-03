@@ -100,7 +100,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         GlStateManager.enableBlend();
         GlStateManager.enableAlphaTest();
 
-        int color = element.getAccessPermission().color;
+        int color = element.getPlayerAccess().color;
 
         float f = (float)(color >> 16 & 255) / 255.0F;
         float f1 = (float)(color >> 8 & 255) / 255.0F;
@@ -118,7 +118,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
         font.drawString(matrixStack, TextFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
 
-        String p = element.getAccessPermission().getName();
+        String p = element.getPlayerAccess().getName();
         font.drawString(matrixStack, p, x + 142 - font.getStringWidth(p), y + 2, 0xffffff);
     }
 
@@ -128,7 +128,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             return;
         List<String> strings = new ArrayList<>();
         strings.add(FluxTranslate.USERNAME.t() + ": " + TextFormatting.AQUA + element.getCachedName());
-        String permission = element.getAccessPermission().getName() + (element.getPlayerUUID().equals(player.getUniqueID()) ? " (" + FluxTranslate.YOU.t() + ")" : "");
+        String permission = element.getPlayerAccess().getName() + (element.getPlayerUUID().equals(player.getUniqueID()) ? " (" + FluxTranslate.YOU.t() + ")" : "");
         strings.add(FluxTranslate.ACCESS.t() + ": " + TextFormatting.RESET + permission);
         //strings.add(TextFormatting.GRAY + "UUID: " + TextFormatting.RESET + element.getPlayerUUID().toString());
         /*if(element.getPlayerUUID().equals(player.getUniqueID())) {
@@ -158,7 +158,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             PacketHandler.CHANNEL.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
         }
         if(timer % 2 == 0) {
-            refreshPages(network.getSetting(NetworkSettings.NETWORK_PLAYERS));
+            refreshPages(network.getNetworkMembers());
             if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
                 if(hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
@@ -178,7 +178,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(NetworkMember::getAccessPermission).thenComparing(NetworkMember::getCachedName));
+        elements.sort(Comparator.comparing(NetworkMember::getPlayerAccess).thenComparing(NetworkMember::getCachedName));
         refreshCurrentPageInternal();
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.ITextComponent;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 
@@ -20,9 +21,8 @@ public abstract class GuiDraw<T extends Container> extends ContainerScreen<T> {
     }
 
     public int getGuiColouring(){
-        return FluxColorHandler.NO_NETWORK_COLOR;
+        return FluxConstants.INVALID_NETWORK_COLOR;
     }
-
 
     protected void drawFluxDefaultBackground(MatrixStack matrixStack) {
         RenderSystem.enableAlphaTest();

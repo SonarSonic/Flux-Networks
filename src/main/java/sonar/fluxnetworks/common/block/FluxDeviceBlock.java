@@ -51,7 +51,7 @@ public abstract class FluxDeviceBlock extends Block {
             if (t.playerUsing.size() > 0) {
                 player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_OCCUPY_KEY), true);
                 return ActionResultType.SUCCESS;
-            } else if (t.canAccess(player)) {
+            } else if (t.canPlayerAccess(player)) {
                 NetworkHooks.openGui((ServerPlayerEntity) player, t, buf -> {
                     buf.writeBoolean(true);
                     buf.writeBlockPos(pos);

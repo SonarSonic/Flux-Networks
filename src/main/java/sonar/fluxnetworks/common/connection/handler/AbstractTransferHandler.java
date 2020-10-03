@@ -84,11 +84,11 @@ public abstract class AbstractTransferHandler<T extends IFluxDevice> implements 
     }
 
     public long getAddLimit() {
-        return device.getCurrentLimit();
+        return device.getLogicLimit();
     }
 
     public long getRemoveLimit() {
-        return device.getCurrentLimit();
+        return device.getLogicLimit();
     }
 
     public long getMaxAdd(long toAdd) {

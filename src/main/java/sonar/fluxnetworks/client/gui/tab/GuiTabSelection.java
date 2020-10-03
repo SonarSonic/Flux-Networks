@@ -10,6 +10,7 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
@@ -85,14 +86,14 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
         minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
 
-        int color = element.getSetting(NetworkSettings.NETWORK_COLOR);
+        int color = element.getNetworkColor();
 
         float f = (float)(color >> 16 & 255) / 255.0F;
         float f1 = (float)(color >> 8 & 255) / 255.0F;
         float f2 = (float)(color & 255) / 255.0F;
 
         boolean selected = connector.getNetworkID() == element.getNetworkID();
-        boolean isEncrypted = element.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted();
+        boolean isEncrypted = element.getNetworkSecurity().isEncrypted();
 
         if(isEncrypted) {
             if(selected) {
@@ -102,7 +103,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             }
         }
 
-        String text = element.getSetting(NetworkSettings.NETWORK_NAME);
+        String text = element.getNetworkName();
 
         if(selected) {
             RenderSystem.color3f(f, f1, f2);
@@ -141,7 +142,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     public void tick() {
         super.tick();
         if(timer2 == 0) {
-            refreshPages(FluxNetworkCache.INSTANCE.getAllClientNetworks());
+            refreshPages(FluxClientCache.INSTANCE.getAllNetworks());
         }
         if(selectedNetwork != null && FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
            closePopUp();

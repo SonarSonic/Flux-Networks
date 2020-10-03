@@ -5,11 +5,10 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.device.IFluxPoint;
-import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.network.EnumAccessType;
-import sonar.fluxnetworks.api.network.EnumSecurityType;
+import sonar.fluxnetworks.api.network.AccessType;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -23,26 +22,26 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
 
     private Map<FluxLogicType, List<? extends IFluxDevice>> connections = new HashMap<>();
 
-    private Queue<IFluxDevice> toAdd    = new LinkedList<>();
+    private Queue<IFluxDevice> toAdd = new LinkedList<>();
     private Queue<IFluxDevice> toRemove = new LinkedList<>();
 
     public boolean sortConnections = true;
 
     // storage can work as both plug and point logically
-    private List<PriorityGroup<IFluxPlug>>  sortedPlugs  = new ArrayList<>();
+    private List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
     private List<PriorityGroup<IFluxPoint>> sortedPoints = new ArrayList<>();
 
-    private TransferIterator<IFluxPlug>  plugTransferIterator  = new TransferIterator<>(false);
+    private TransferIterator<IFluxPlug> plugTransferIterator = new TransferIterator<>(false);
     private TransferIterator<IFluxPoint> pointTransferIterator = new TransferIterator<>(true);
 
     public long bufferLimiter = 0;
 
     public FluxNetworkServer() {
-        super();
+
     }
 
-    public FluxNetworkServer(int id, String name, EnumSecurityType security, int color, UUID owner, EnergyType energy, String password) {
-        super(id, name, security, color, owner, energy, password);
+    public FluxNetworkServer(int id, String name, SecurityType security, int color, UUID owner, String password) {
+        super(id, name, security, color, owner, password);
     }
 
     /*public void addConnections() {
@@ -116,8 +115,8 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
 
     @Override
     public void onEndServerTick() {
-        network_stats.getValue().onStartServerTick();
-        network_stats.getValue().startProfiling();
+        statistics.onStartServerTick();
+        statistics.startProfiling();
 
         handleConnectionQueue();
 
@@ -165,16 +164,16 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         }
         devices.forEach(f -> f.getTransferHandler().onEndCycle());
 
-        network_stats.getValue().stopProfiling();
-        network_stats.getValue().onEndServerTick();
+        statistics.stopProfiling();
+        statistics.onEndServerTick();
     }
 
     @Nonnull
     @Override
-    public EnumAccessType getAccessPermission(PlayerEntity player) {
+    public AccessType getPlayerAccess(PlayerEntity player) {
         if (FluxConfig.enableSuperAdmin) {
             if (SuperAdmin.isPlayerSuperAdmin(player)) {
-                return EnumAccessType.SUPER_ADMIN;
+                return AccessType.SUPER_ADMIN;
             }
         }
         /*return network_players.getValue()
@@ -182,11 +181,11 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
                 .getOrDefault(PlayerEntity.getUUID(player.getGameProfile()),
                         network_security.getValue().isEncrypted() ? EnumAccessType.NONE : EnumAccessType.USER);*/
         UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
-        Optional<NetworkMember> member = getNetworkMember(uuid);
+        Optional<NetworkMember> member = getMemberByUUID(uuid);
         if (member.isPresent()) {
-            return member.get().getAccessPermission();
+            return member.get().getPlayerAccess();
         }
-        return network_security.getValue().isEncrypted() ? EnumAccessType.BLOCKED : EnumAccessType.USER;
+        return securityType.isEncrypted() ? AccessType.BLOCKED : AccessType.USER;
     }
 
     @Override
@@ -201,25 +200,38 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
 
     @Override
     public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
-        //TODO check if contains
+        if (device instanceof SimpleFluxDevice) {
+            throw new IllegalStateException();
+        }
+        if (getConnections(FluxLogicType.ANY).contains(device)) {
+            return;
+        }
         device.getNetwork().enqueueConnectionRemoval(device, false);
         toAdd.offer(device);
         toRemove.remove(device);
-        addToLite(device);
+        // remove the offline SimpleFluxDevice
+        allDevices.stream().filter(f -> f.getGlobalPos().equals(device.getGlobalPos()))
+                .findFirst().ifPresent(allDevices::remove);
+        allDevices.add(device);
     }
 
     @Override
     public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
-        toRemove.offer(device);
-        toAdd.remove(device);
-        if (chunkUnload) {
-            changeChunkLoaded(device, false);
-        } else {
-            removeFromLite(device);
+        if (device instanceof SimpleFluxDevice) {
+            throw new IllegalStateException();
+        }
+        if (getConnections(FluxLogicType.ANY).contains(device)) {
+            toRemove.offer(device);
+            toAdd.remove(device);
+            if (chunkUnload) {
+                //changeChunkLoaded(device, false);
+                allDevices.add(new SimpleFluxDevice(device));
+            }
+            allDevices.remove(device);
         }
     }
 
-    private void addToLite(IFluxDevice flux) {
+    /*private void addToLite(IFluxDevice flux) {
         Optional<IFluxDevice> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords())).findFirst();
         if (c.isPresent()) {
             changeChunkLoaded(flux, true);
@@ -238,7 +250,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         c.ifPresent(fluxConnector -> fluxConnector.setChunkLoaded(chunkLoaded));
     }
 
-    /*@Override
+    @Override
     public void addNewMember(String name) {
         NetworkMember a = NetworkMember.createMemberByUsername(name);
         if (network_players.getValue().stream().noneMatch(f -> f.getPlayerUUID().equals(a.getPlayerUUID()))) {
@@ -252,10 +264,11 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
     }*/
 
     @Override
-    public Optional<NetworkMember> getNetworkMember(UUID player) {
-        return network_players.getValue().stream().filter(f -> f.getPlayerUUID().equals(player)).findFirst();
+    public Optional<NetworkMember> getMemberByUUID(UUID playerUUID) {
+        return networkMembers.stream().filter(f -> f.getPlayerUUID().equals(playerUUID)).findFirst();
     }
 
+    @Deprecated
     public void markLiteSettingChanged(IFluxDevice flux) {
 
     }

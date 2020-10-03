@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.AccessType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
@@ -30,15 +30,15 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
         popButtons.clear();
         boolean editPermission = host.accessPermission.canEdit();
         boolean ownerPermission = host.accessPermission.canDelete();
-        if(host.selectedPlayer.getAccessPermission() != EnumAccessType.OWNER && editPermission) {
+        if(host.selectedPlayer.getPlayerAccess() != AccessType.OWNER && editPermission) {
             String text;
             int length;
             int i = 0;
-            if (host.selectedPlayer.getAccessPermission() == EnumAccessType.BLOCKED || host.selectedPlayer.getAccessPermission() == EnumAccessType.SUPER_ADMIN) {
+            if (host.selectedPlayer.getPlayerAccess() == AccessType.BLOCKED || host.selectedPlayer.getPlayerAccess() == AccessType.SUPER_ADMIN) {
                 text = FluxTranslate.SET_USER.t();
                 length = Math.max(64, font.getStringWidth(text) + 4);
                 popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
-                if(host.selectedPlayer.getAccessPermission() == EnumAccessType.SUPER_ADMIN && ownerPermission) {
+                if(host.selectedPlayer.getPlayerAccess() == AccessType.SUPER_ADMIN && ownerPermission) {
                     text = FluxTranslate.TRANSFER_OWNERSHIP.t();
                     length = Math.max(64, font.getStringWidth(text) + 4);
                     transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
@@ -46,17 +46,17 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
                 }
             } else {
                 if(ownerPermission) {
-                    if (host.selectedPlayer.getAccessPermission() == EnumAccessType.USER) {
+                    if (host.selectedPlayer.getPlayerAccess() == AccessType.USER) {
                         text = FluxTranslate.SET_ADMIN.t();
                         length = Math.max(64, font.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
-                    } else if(host.selectedPlayer.getAccessPermission() == EnumAccessType.ADMIN) {
+                    } else if(host.selectedPlayer.getPlayerAccess() == AccessType.ADMIN) {
                         text = FluxTranslate.SET_USER.t();
                         length = Math.max(64, font.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));
                     }
                 }
-                if(!host.selectedPlayer.getAccessPermission().canEdit() || ownerPermission) {
+                if(!host.selectedPlayer.getPlayerAccess().canEdit() || ownerPermission) {
                     text = FluxTranslate.CANCEL_MEMBERSHIP.t();
                     length = Math.max(64, font.getStringWidth(text) + 4);
                     popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 3).setTextColor(0xffff5555));
@@ -76,7 +76,7 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 162, 0xffffff);
         drawCenteredString(matrixStack, font, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
-        drawCenteredString(matrixStack, font, host.selectedPlayer.getAccessPermission().getName(), 88, 48, 0xffffff);
+        drawCenteredString(matrixStack, font, host.selectedPlayer.getPlayerAccess().getName(), 88, 48, 0xffffff);
         String text = host.selectedPlayer.getPlayerUUID().toString();
         GlStateManager.scaled(0.625, 0.625, 0.625);
         drawCenteredString(matrixStack, font, "UUID: " + text.substring(0, 16), (int) (88 * 1.6), (int) (60 * 1.6), 0xffffff);

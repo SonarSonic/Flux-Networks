@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -28,15 +29,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.capability.SuperAdminProvider;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.LavaParticleMessage;
-import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
+import sonar.fluxnetworks.common.network.SLavaParticleMessage;
+import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.SuperAdminPacket;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
@@ -46,7 +46,6 @@ import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber
 public class CommonEventHandler {
@@ -64,7 +63,7 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onServerTick(@Nonnull TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            for (IFluxNetwork network : FluxNetworkCache.INSTANCE.getAllNetworks()) {
+            for (IFluxNetwork network : FluxNetworkData.getAllNetworks()) {
                 network.onEndServerTick();
             }
         }
@@ -116,7 +115,6 @@ public class CommonEventHandler {
                 validEntities.forEach(Entity::remove);
                 world.removeBlock(pos, false);
                 world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
-                //TODO configure this chance
                 if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 4)) {
                     world.setBlockState(pos.down(), Blocks.COBBLESTONE.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -124,12 +122,12 @@ public class CommonEventHandler {
                     world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }
-                NetworkHandler.INSTANCE.sendToTrackingAndSelf(new LavaParticleMessage(pos, max), event.getPlayer());
+                NetworkHandler.INSTANCE.sendToAllTracking(new SLavaParticleMessage(pos, max), event.getPlayer());
             } else {
-                /*for (int i = 0; i < max; i++) {
+                for (int i = 0; i < max; i++) {
                     // speed won't work with lava particle, because its constructor doesn't use these params
                     world.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
-                }*/
+                }
             }
 
             event.setCanceled(true);
@@ -157,13 +155,14 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
-        Supplier<ServerPlayerEntity> s = () -> (ServerPlayerEntity) event.getPlayer();
-        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(s), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
-        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(s), new SuperAdminPacket(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())));
+        NetworkHandler.INSTANCE.sendToPlayer(new SNetworkUpdateMessage(new ArrayList<>(FluxNetworkData.getAllNetworks()),
+                FluxConstants.FLAG_NET_BASIS), event.getPlayer());
+        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
+                new SuperAdminPacket(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())));
     }
 
     @SubscribeEvent
-    public static void attachCapability(@Nonnull AttachCapabilitiesEvent<Entity> event) {
+    public static void onAttachCapability(@Nonnull AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof PlayerEntity) {
             event.addCapability(SuperAdmin.CAP_KEY, new SuperAdminProvider());
         }

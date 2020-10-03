@@ -1,14 +1,16 @@
 package sonar.fluxnetworks.api.device;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
-import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.misc.Coord4D;
-import sonar.fluxnetworks.common.misc.FluxGuiStack;
-import sonar.fluxnetworks.api.misc.NBTType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.ITransferHandler;
+import sonar.fluxnetworks.common.misc.FluxGuiStack;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -16,9 +18,9 @@ import java.util.UUID;
 /**
  * Defines a device that can be connected to a flux network
  */
-///TODO remove common references
 public interface IFluxDevice extends INetworkConnector {
 
+    //TODO
     CompoundNBT writeCustomNBT(CompoundNBT tag, NBTType type);
 
     void readCustomNBT(CompoundNBT tag, NBTType type);
@@ -31,11 +33,11 @@ public interface IFluxDevice extends INetworkConnector {
 
     FluxDeviceType getDeviceType();
 
-    boolean canAccess(PlayerEntity player);
+    boolean canPlayerAccess(PlayerEntity player);
 
-    long getCurrentLimit();
+    long getLogicLimit(); // consider disable limit
 
-    long getActualLimit(); // ignore disable limit
+    long getRawLimit(); // ignore disable limit
 
     default long getMaxTransferLimit() {
         return Long.MAX_VALUE;
@@ -66,15 +68,15 @@ public interface IFluxDevice extends INetworkConnector {
     @Nonnull
     World getFluxWorld();
 
-    @Deprecated
+    /*@Deprecated
     default Coord4D getCoords() {
-        throw new UnsupportedOperationException();
-    }
+        throw new IllegalStateException();
+    }*/
 
     @Nonnull
     GlobalPos getGlobalPos();
 
-    int getFolderID();
+    /*int getFolderID();*/
 
     String getCustomName();
 
@@ -90,7 +92,8 @@ public interface IFluxDevice extends INetworkConnector {
         return getTransferHandler().getChange();
     }
 
-    default void setChunkLoaded(boolean chunkLoaded) {}
+    default void setChunkLoaded(boolean chunkLoaded) {
+    }
 
     default ItemStack getDisplayStack() {
         switch (getDeviceType()) {

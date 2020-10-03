@@ -51,6 +51,11 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
         }
 
         @Override
+        public int getNetworkID() {
+            return FluxNetworks.PROXY.getAdminViewingNetwork().getNetworkID();
+        }
+
+        @Override
         public IFluxNetwork getNetwork() {
             return FluxNetworks.PROXY.getAdminViewingNetwork();
         }

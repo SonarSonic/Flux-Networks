@@ -9,19 +9,20 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.UUID;
 
-public class NetworkMember{
+public class NetworkMember {
 
     private UUID playerUUID;
     private String cachedName;
-    private EnumAccessType accessPermission;
+    private AccessType accessPermission;
 
-    NetworkMember() {}
+    NetworkMember() {
+    }
 
     public NetworkMember(CompoundNBT nbt) {
         readNetworkNBT(nbt);
     }
 
-    public static NetworkMember createNetworkMember(PlayerEntity player, EnumAccessType permissionLevel) {
+    public static NetworkMember createNetworkMember(PlayerEntity player, AccessType permissionLevel) {
         NetworkMember t = new NetworkMember();
         GameProfile profile = player.getGameProfile();
 
@@ -37,20 +38,20 @@ public class NetworkMember{
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         boolean isOffline = !server.isServerInOnlineMode();
 
-        if(!isOffline) {
+        if (!isOffline) {
             PlayerProfileCache cache = server.getPlayerProfileCache();
             GameProfile profile = cache.getGameProfileForUsername(username);
-            if(profile != null) {
+            if (profile != null) {
                 t.playerUUID = profile.getId();
             } else {
                 isOffline = true;
             }
         }
-        if(isOffline) {
+        if (isOffline) {
             t.playerUUID = PlayerEntity.getOfflineUUID(username);
         }
         t.cachedName = username;
-        t.accessPermission = EnumAccessType.USER;
+        t.accessPermission = AccessType.USER;
         return t;
     }
 
@@ -58,7 +59,7 @@ public class NetworkMember{
         return cachedName;
     }
 
-    public EnumAccessType getAccessPermission() {
+    public AccessType getPlayerAccess() {
         return accessPermission;
     }
 
@@ -66,14 +67,14 @@ public class NetworkMember{
         return playerUUID;
     }
 
-    public void setAccessPermission(EnumAccessType accessPermission) {
+    public void setAccessPermission(AccessType accessPermission) {
         this.accessPermission = accessPermission;
     }
 
     public void readNetworkNBT(CompoundNBT nbt) {
         playerUUID = nbt.getUniqueId("playerUUID");
         cachedName = nbt.getString("cachedName");
-        accessPermission = EnumAccessType.values()[nbt.getByte("playerAccess")];
+        accessPermission = AccessType.values()[nbt.getByte("playerAccess")];
     }
 
     public CompoundNBT writeNetworkNBT(CompoundNBT nbt) {

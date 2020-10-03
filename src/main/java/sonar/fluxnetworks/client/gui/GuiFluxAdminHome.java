@@ -3,7 +3,7 @@ package sonar.fluxnetworks.client.gui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.AccessType;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -37,11 +37,11 @@ public class GuiFluxAdminHome extends GuiTabCore {
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        screenUtils.renderNetwork(matrixStack, network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
+        screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
-        font.drawString(matrixStack, EnumAccessType.SUPER_ADMIN.getName(), 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
-        font.drawString(matrixStack, "Detailed Network View", 20, 42, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(matrixStack, AccessType.SUPER_ADMIN.getName(), 20, 30, network.getNetworkColor());
+        font.drawString(matrixStack, "Detailed Network View", 20, 42, network.getNetworkColor());
     }
 
     @Override

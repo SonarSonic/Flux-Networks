@@ -123,7 +123,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public long getCurrentLimit() {
+    public long getLogicLimit() {
         return disableLimit ? maxEnergyStorage : Math.min(limit, maxEnergyStorage);
     }
 

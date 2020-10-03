@@ -49,7 +49,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         apply = new NormalButton(FluxTranslate.APPLY.t(), 100, 140, 36, 12, 12).setUnclickable();
         popButtons.add(apply);
 
-        int color = host.network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
+        int color = host.network.getNetworkColor() | 0xff000000;
         if(batchMode) {
             fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 20, guiTop + 30, 136, 12).setOutlineColor(color);
             fluxName.setMaxStringLength(24);
@@ -103,7 +103,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
 
             limit = FluxTextWidget.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", font, guiLeft + 18, guiTop + 64, 140, 12).setOutlineColor(color).setDigitsOnly().setMaxValue(Long.MAX_VALUE);
             limit.setMaxStringLength(9);
-            limit.setText(String.valueOf(host.singleConnection.getCurrentLimit()));
+            limit.setText(String.valueOf(host.singleConnection.getLogicLimit()));
             limit.setResponder(string -> apply.clickable = true);
             addButton(limit);
 
@@ -133,15 +133,15 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
 
         if(!batchMode) {
             drawCenteredString(matrixStack, font, FluxTranslate.SINGLE_EDIT.t(), 88, 14, 0xffffff);
-            drawCenteredString(matrixStack, font, host.singleConnection.getCoords().getStringInfo(), 88, 122, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxUtils.getDisplayString(host.singleConnection.getGlobalPos()), 88, 122, 0xffffff);
         } else {
             drawCenteredString(matrixStack, font, FluxTranslate.BATCH_EDIT.t(), 88, 14, 0xffffff);
             drawCenteredString(matrixStack, font, FluxTranslate.EDITING.t() + " " + host.batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 88, 122, 0xffffff);
         }
-        font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
-        font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
+        font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getNetworkColor());
+        font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getNetworkColor());
         if(batchMode || !host.singleConnection.getDeviceType().isStorage()) {
-            font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getSetting(NetworkSettings.NETWORK_COLOR));
+            font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getNetworkColor());
         }
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 155, 0xffffff);
     }
@@ -158,9 +158,10 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
                         return true;
                     }
                     if(button.id == 12) {
-                        List<Coord4D> list;
+                        //TODO
+                        List<Coord4D> list = new ArrayList<>();
                         boolean[] b = {true, true, true, true, true, true, false};
-                        if(batchMode) {
+                       /* if(batchMode) {
                             list = host.batchConnections.stream().map(IFluxDevice::getCoords).collect(Collectors.toList());
                             b[0] = editName.on;
                             b[1] = editPriority.on;
@@ -170,7 +171,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
                             b[5] = editChunkLoad.on; // Do!
                         } else {
                             list = Lists.newArrayList(host.singleConnection.getCoords());
-                        }
+                        }*/
                         CompoundNBT tag = FluxUtils.getBatchEditingTag(fluxName, priority, limit, surge, unlimited, chunkLoad);
                         PacketHandler.CHANNEL.sendToServer(new BatchEditingPacket(host.network.getNetworkID(), list, tag, b));
                         return true;

@@ -45,7 +45,7 @@ public class ConnectionUpdateRequestPacket extends AbstractPacket{
         if(coords.isEmpty()) {
             return null;
         }
-        IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
+        /*IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
         if(network.isValid()) {
             PlayerEntity player = PacketHandler.getPlayer(ctx);
             List<CompoundNBT> tags = new ArrayList<>();
@@ -53,7 +53,7 @@ public class ConnectionUpdateRequestPacket extends AbstractPacket{
             coords.forEach(c -> onlineDevices.stream().filter(f -> f.getCoords().equals(c)).findFirst()
                             .ifPresent(f -> tags.add(SimpleFluxDevice.writeCustomNBT(f, new CompoundNBT()))));
             return new ConnectionUpdatePacket(networkID, tags);
-        }
+        }*/
         return null;
     }
 }

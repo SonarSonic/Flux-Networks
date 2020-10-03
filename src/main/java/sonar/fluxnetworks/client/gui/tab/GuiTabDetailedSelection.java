@@ -33,14 +33,14 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
         minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
 
-        int color = element.getSetting(NetworkSettings.NETWORK_COLOR);
+        int color = element.getNetworkColor();
 
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
 
         boolean selected = connector.getNetworkID() == element.getNetworkID();
-        boolean isEncrypted = element.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted();
+        boolean isEncrypted = element.getNetworkSecurity().isEncrypted();
 
         if (isEncrypted) {
             if (selected) {
@@ -50,7 +50,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
             }
         }
 
-        String text = element.getSetting(NetworkSettings.NETWORK_NAME);
+        String text = element.getNetworkName();
 
         if (selected) {
             RenderSystem.color3f(f, f1, f2);
@@ -64,7 +64,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
         matrixStack.push();
         matrixStack.scale(0.625f, 0.625f, 0.625f);
-        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).getConnectionCount() + "  Avg: " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
+        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getNetworkStatistics().getConnectionCount() + "  Avg: " + element.getNetworkStatistics().average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
         matrixStack.pop();
     }
 

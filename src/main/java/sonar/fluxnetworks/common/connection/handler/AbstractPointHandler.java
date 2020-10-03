@@ -29,7 +29,7 @@ public abstract class AbstractPointHandler<C extends IFluxDevice> extends Abstra
 
     @Override
     public long getAddLimit() {
-        return Math.min(request, device.getCurrentLimit());
+        return Math.min(request, device.getLogicLimit());
     }
 
     public abstract long removeEnergy(long energy, boolean simulate);

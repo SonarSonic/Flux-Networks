@@ -96,7 +96,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                             );
                         } else {
                             iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent().appendString(": ")
-                                    .append(new StringTextComponent(String.valueOf(flux.getActualLimit()))
+                                    .append(new StringTextComponent(String.valueOf(flux.getRawLimit()))
                                             .mergeStyle(TextFormatting.GREEN))
                             );
                         }

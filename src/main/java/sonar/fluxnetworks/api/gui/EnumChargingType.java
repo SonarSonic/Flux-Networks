@@ -6,7 +6,7 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 
 import javax.annotation.Nonnull;
 
-public enum EnumChargingTypes {
+public enum EnumChargingType {
     ENABLE_WIRELESS(FluxTranslate.ENABLE_WIRELESS),
     RIGHT_HAND(FluxTranslate.RIGHT_HAND),
     LEFT_HAND(FluxTranslate.LEFT_HAND),
@@ -17,7 +17,7 @@ public enum EnumChargingTypes {
 
     private FluxTranslate typeName;
 
-    EnumChargingTypes(FluxTranslate typeName) {
+    EnumChargingType(FluxTranslate typeName) {
         this.typeName = typeName;
     }
 
@@ -29,7 +29,7 @@ public enum EnumChargingTypes {
     }
 
     public boolean isActivated(@Nonnull IFluxNetwork network) {
-        return isActivated(network.getSetting(NetworkSettings.NETWORK_WIRELESS));
+        return false/*isActivated(network.getSetting(NetworkSettings.NETWORK_WIRELESS))*/;
     }
 
     @Nonnull

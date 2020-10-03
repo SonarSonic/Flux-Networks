@@ -10,12 +10,12 @@ import sonar.fluxnetworks.api.misc.IMessage;
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
-public class LavaParticleMessage implements IMessage {
+public class SLavaParticleMessage implements IMessage {
 
     private BlockPos pos;
     private int count;
 
-    public LavaParticleMessage(BlockPos pos, int count) {
+    public SLavaParticleMessage(BlockPos pos, int count) {
         this.pos = pos;
         this.count = count;
     }
@@ -36,7 +36,8 @@ public class LavaParticleMessage implements IMessage {
     public void handle(@Nonnull Supplier<NetworkEvent.Context> context) {
         if (Minecraft.getInstance().world != null) {
             for (int i = 0; i < count; i++) {
-                Minecraft.getInstance().world.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
+                Minecraft.getInstance().world.addParticle(ParticleTypes.LAVA,
+                        pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
             }
         }
     }

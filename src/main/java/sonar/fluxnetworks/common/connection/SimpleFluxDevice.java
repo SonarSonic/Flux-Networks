@@ -1,16 +1,16 @@
 package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.Coord4D;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.misc.NBTType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.ITransferHandler;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -23,36 +23,37 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     public int networkID;
     public int priority;
-    public UUID           playerUUID;
+    public UUID playerUUID;
     public FluxDeviceType connectionType;
-    public long           limit;
-    public Coord4D coord4D;
-    public int folderID;
+    public long limit;
+    public GlobalPos globalPos;
+    //public int folderID;
     public String customName;
     public boolean surgeMode;
     public boolean disableLimit;
     public boolean isChunkLoaded;
-    public boolean chunkLoading;
+    public boolean forcedLoading;
     public long buffer;
     public long change;
     public ItemStack stack;
 
-    public SimpleFluxDevice(IFluxDevice tile) {
-        this.networkID = tile.getNetworkID();
-        this.priority = tile.getRawPriority();
-        this.playerUUID = tile.getConnectionOwner();
-        this.connectionType = tile.getDeviceType();
-        this.limit = tile.getActualLimit();
+    public SimpleFluxDevice(@Nonnull IFluxDevice device) {
+        this.networkID = device.getNetworkID();
+        this.priority = device.getRawPriority();
+        this.playerUUID = device.getConnectionOwner();
+        this.connectionType = device.getDeviceType();
+        this.limit = device.getRawLimit();
         //this.coord4D = tile.getCoords();
-        this.folderID = tile.getFolderID();
-        this.customName = tile.getCustomName();
-        this.surgeMode = tile.getSurgeMode();
-        this.disableLimit = tile.getDisableLimit();
-        this.isChunkLoaded = tile.isChunkLoaded();
-        this.buffer = tile.getTransferHandler().getBuffer();
-        this.change = tile.getTransferHandler().getChange();
-        this.chunkLoading = tile.isForcedLoading();
-        this.stack = tile.getDisplayStack();
+        this.globalPos = device.getGlobalPos();
+        //this.folderID = tile.getFolderID();
+        this.customName = device.getCustomName();
+        this.surgeMode = device.getSurgeMode();
+        this.disableLimit = device.getDisableLimit();
+        this.isChunkLoaded = device.isChunkLoaded();
+        this.buffer = device.getTransferHandler().getBuffer();
+        this.change = device.getTransferHandler().getChange();
+        this.forcedLoading = device.isForcedLoading();
+        this.stack = device.getDisplayStack();
     }
 
     public SimpleFluxDevice(CompoundNBT tag) {
@@ -60,12 +61,12 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
-        tile.getCoords().write(tag);
+        FluxUtils.writeGlobalPos(tag, tile.getGlobalPos());
         tag.putInt("type", tile.getDeviceType().ordinal());
         tag.putInt("n_id", tile.getNetworkID());
         tag.putInt("priority", tile.getRawPriority());
-        tag.putInt("folder_id", tile.getFolderID());
-        tag.putLong("limit", tile.getActualLimit());
+        //tag.putInt("folder_id", tile.getFolderID());
+        tag.putLong("limit", tile.getRawLimit());
         tag.putString("name", tile.getCustomName());
         tag.putBoolean("dLimit", tile.getDisableLimit());
         tag.putBoolean("surge", tile.getSurgeMode());
@@ -79,11 +80,11 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public CompoundNBT writeCustomNBT(CompoundNBT tag, NBTType type) {
-        coord4D.write(tag);
+        FluxUtils.writeGlobalPos(tag, globalPos);
         tag.putInt("type", connectionType.ordinal());
         tag.putInt("n_id", networkID);
         tag.putInt("priority", priority);
-        tag.putInt("folder_id", folderID);
+        //tag.putInt("folder_id", folderID);
         tag.putLong("limit", limit);
         tag.putString("name", customName);
         tag.putBoolean("dLimit", disableLimit);
@@ -91,18 +92,18 @@ public class SimpleFluxDevice implements IFluxDevice {
         tag.putBoolean("isChunkLoaded", isChunkLoaded);
         tag.putLong("buffer", buffer);
         tag.putLong("change", change);
-        tag.putBoolean("forcedChunk", chunkLoading);
+        tag.putBoolean("forcedChunk", forcedLoading);
         stack.write(tag);
         return tag;
     }
 
     @Override
     public void readCustomNBT(CompoundNBT tag, NBTType type) {
-        coord4D = new Coord4D(tag);
+        globalPos = FluxUtils.readGlobalPos(tag);
         connectionType = FluxDeviceType.values()[tag.getInt("type")];
         networkID = tag.getInt("n_id");
         priority = tag.getInt("priority");
-        folderID = tag.getInt("folder_id");
+        //folderID = tag.getInt("folder_id");
         limit = tag.getLong("limit");
         customName = tag.getString("name");
         disableLimit = tag.getBoolean("dLimit");
@@ -110,7 +111,7 @@ public class SimpleFluxDevice implements IFluxDevice {
         isChunkLoaded = tag.getBoolean("isChunkLoaded");
         buffer = tag.getLong("buffer");
         change = tag.getLong("change");
-        chunkLoading = tag.getBoolean("forcedChunk");
+        forcedLoading = tag.getBoolean("forcedChunk");
         stack = ItemStack.read(tag);
     }
 
@@ -155,7 +156,7 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public boolean canAccess(PlayerEntity player) {
+    public boolean canPlayerAccess(PlayerEntity player) {
         return false;
     }
 
@@ -166,14 +167,16 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public boolean isForcedLoading() {
-        return chunkLoading;
+        return forcedLoading;
     }
 
     @Override
-    public void onConnect(IFluxNetwork network) {}
+    public void onConnect(IFluxNetwork network) {
+    }
 
     @Override
-    public void onDisconnect() {}
+    public void onDisconnect() {
+    }
 
     @Override
     public ITransferHandler getTransferHandler() {
@@ -187,12 +190,12 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public long getCurrentLimit() {
+    public long getLogicLimit() {
         return limit;
     }
 
     @Override
-    public long getActualLimit() {
+    public long getRawLimit() {
         return limit;
     }
 
@@ -201,21 +204,21 @@ public class SimpleFluxDevice implements IFluxDevice {
         return false;
     }
 
-    @Override
+    /*@Override
     public Coord4D getCoords() {
         return coord4D;
-    }
+    }*/
 
     @Nonnull
     @Override
     public GlobalPos getGlobalPos() {
-        return null;
+        return globalPos;
     }
 
-    @Override
+    /*@Override
     public int getFolderID() {
         return folderID;
-    }
+    }*/
 
     @Override
     public String getCustomName() {

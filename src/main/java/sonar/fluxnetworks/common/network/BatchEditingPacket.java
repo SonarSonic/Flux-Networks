@@ -11,11 +11,10 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
+import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraft.util.math.ChunkPos;
 
@@ -65,9 +64,9 @@ public class BatchEditingPacket extends AbstractPacket {
     public Object handle(NetworkEvent.Context ctx) {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         if (player != null) {
-            IFluxNetwork network = FluxNetworkCache.INSTANCE.getNetwork(networkID);
+            IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
             if (network.isValid()) {
-                if (network.getAccessPermission(player).canEdit()) {
+                if (network.getPlayerAccess(player).canEdit()) {
                     boolean editName = editions[0];
                     boolean editPriority = editions[1];
                     boolean editLimit = editions[2];
@@ -86,7 +85,7 @@ public class BatchEditingPacket extends AbstractPacket {
                     network.getConnections(FluxLogicType.ANY).forEach(e -> onlineDevices.add((TileFluxDevice) e));
                     AtomicBoolean reject = new AtomicBoolean(false);
 
-                    for (Coord4D c : coord4DS) {
+                    /*for (Coord4D c : coord4DS) {
                         onlineDevices.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {
                             if (disconnect) {
                                 f.getNetwork().enqueueConnectionRemoval(f, false);
@@ -130,7 +129,7 @@ public class BatchEditingPacket extends AbstractPacket {
                                 f.sendFullUpdatePacket();
                             }
                         });
-                    }
+                    }*/
                     if (reject.get()) {
                         reply(ctx, new FeedbackPacket(EnumFeedbackInfo.REJECT_SOME));
                     }
