@@ -125,7 +125,8 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
     public static class FluxDeviceDisplayOverride implements IBlockDisplayOverride {
 
         @Override
-        public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, @Nonnull BlockState blockState, IProbeHitData iProbeHitData) {
+        public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world,
+                                            @Nonnull BlockState blockState, IProbeHitData iProbeHitData) {
             if (blockState.getBlock() instanceof FluxDeviceBlock) {
                 TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
                 if (tile instanceof IFluxDevice) {

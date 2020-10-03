@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.recipes;
+package sonar.fluxnetworks.common.recipe;
 
 import net.minecraft.block.Block;
 import net.minecraft.inventory.CraftingInventory;

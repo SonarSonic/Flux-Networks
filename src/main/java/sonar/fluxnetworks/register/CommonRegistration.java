@@ -18,30 +18,33 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.energy.FNEnergyCapability;
+import sonar.fluxnetworks.api.energy.FNEnergyStorage;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.render.FluxStorageItemRenderer;
 import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
+import sonar.fluxnetworks.common.capability.SuperAdmin;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.integration.TOPIntegration;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
-import sonar.fluxnetworks.common.handler.CapabilityHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.item.ItemFluxDust;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
-import sonar.fluxnetworks.common.recipes.FluxStorageRecipeSerializer;
-import sonar.fluxnetworks.common.recipes.NBTWipeRecipeSerializer;
+import sonar.fluxnetworks.common.recipe.FluxStorageRecipeSerializer;
+import sonar.fluxnetworks.common.recipe.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
@@ -65,15 +68,20 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        FNEnergyCapability.register();
-
         PacketHandler.registerMessages();
+        NetworkHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
 
-        DefaultSuperAdmin.register();
-        MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+        SuperAdmin.register();
+        FNEnergyStorage.register();
 
         FluxNetworks.LOGGER.info("Finished Common Setup");
+    }
+
+    @SubscribeEvent
+    public static void enqueueIMC(InterModEnqueueEvent event) {
+        InterModComms.sendTo("carryon", "blacklistBlock", () -> FluxNetworks.MODID + ":*");
+        InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration::new);
     }
 
     @SubscribeEvent

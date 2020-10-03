@@ -53,13 +53,13 @@ public interface IFluxDevice extends INetworkConnector {
      *
      * @param network the network invoked this method
      */
-    void connect(IFluxNetwork network);
+    void onConnect(IFluxNetwork network);
 
     /**
      * This method invoked by FluxNetworkServer.
      * To disconnect from any network, call getNetwork().enqueueConnectionRemoval()
      */
-    void disconnect();
+    void onDisconnect();
 
     ITransferHandler getTransferHandler();
 

@@ -2,17 +2,24 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.common.misc.CustomValue;
 import sonar.fluxnetworks.api.misc.ICustomValue;
 import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.common.misc.CustomValue;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+/**
+ * Defines the base class of flux network server or
+ * a class holds values updated from server for GUI display on client
+ */
 public class SimpleFluxNetwork implements IFluxNetwork {
 
     public ICustomValue<Integer> network_id = new CustomValue<>();
@@ -24,17 +31,18 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     public ICustomValue<EnergyType> network_energy = new CustomValue<>();
     public ICustomValue<Integer> network_wireless = new CustomValue<>(0);
 
-    public ICustomValue<NetworkStatistics>   network_stats   = new CustomValue<>(new NetworkStatistics(this));
+    public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
     //TODO Server:
     // 1. Online Connections: getConnections (TileFluxCore)
     // 2. Unloaded Connections: FluxLiteConnector, to record data and send to client
     // Client:
     // All are FluxLiteConnector for gui connections tab
     // Current: as its name (... server and client
-    public ICustomValue<List<IFluxDevice>>   all_connectors  = new CustomValue<>(new ArrayList<>());
+    public ICustomValue<List<IFluxDevice>> all_connectors = new CustomValue<>(new ArrayList<>());
     public ICustomValue<List<NetworkMember>> network_players = new CustomValue<>(new ArrayList<>());
 
-    public SimpleFluxNetwork() {}
+    public SimpleFluxNetwork() {
+    }
 
     public SimpleFluxNetwork(int id, String name, EnumSecurityType security, int color, UUID owner, EnergyType energy, String password) {
         network_id.setValue(id);
@@ -70,11 +78,11 @@ public class SimpleFluxNetwork implements IFluxNetwork {
 
     @Override
     public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
-        
+
     }
 
     @Override
-    public <T> T getSetting(NetworkSettings<T> setting){
+    public <T> T getSetting(NetworkSettings<T> setting) {
         return (T) setting.getValue(this).getValue();
     }
 
@@ -90,7 +98,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
 
     @Override
     public void readNetworkNBT(CompoundNBT nbt, NBTType type) {
-        if(type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
+        if (type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
             network_id.setValue(nbt.getInt(FluxNetworkData.NETWORK_ID));
             network_name.setValue(nbt.getString(FluxNetworkData.NETWORK_NAME));
             network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
@@ -100,27 +108,27 @@ public class SimpleFluxNetwork implements IFluxNetwork {
             network_energy.setValue(EnergyType.values()[nbt.getInt(FluxNetworkData.ENERGY_TYPE)]);
             network_wireless.setValue(nbt.getInt(FluxNetworkData.WIRELESS_MODE));
 
-            if(type == NBTType.ALL_SAVE) {
+            if (type == NBTType.ALL_SAVE) {
                 FluxNetworkData.readPlayers(this, nbt);
                 FluxNetworkData.readConnections(this, nbt);
             }
         }
 
-        if(type == NBTType.NETWORK_PLAYERS) {
+        if (type == NBTType.NETWORK_PLAYERS) {
             FluxNetworkData.readPlayers(this, nbt);
         }
 
-        if(type == NBTType.NETWORK_CONNECTIONS) {
+        if (type == NBTType.NETWORK_CONNECTIONS) {
             FluxNetworkData.readAllConnections(this, nbt);
         }
-        if(type == NBTType.NETWORK_STATISTICS) {
+        if (type == NBTType.NETWORK_STATISTICS) {
             network_stats.getValue().readNBT(nbt);
         }
     }
 
     @Override
     public void writeNetworkNBT(CompoundNBT nbt, NBTType type) {
-        if(type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
+        if (type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
             nbt.putInt(FluxNetworkData.NETWORK_ID, network_id.getValue());
             nbt.putString(FluxNetworkData.NETWORK_NAME, network_name.getValue());
             nbt.putUniqueId(FluxNetworkData.OWNER_UUID, network_owner.getValue());
@@ -130,26 +138,26 @@ public class SimpleFluxNetwork implements IFluxNetwork {
             nbt.putInt(FluxNetworkData.ENERGY_TYPE, network_energy.getValue().ordinal());
             nbt.putInt(FluxNetworkData.WIRELESS_MODE, network_wireless.getValue());
 
-            if(type == NBTType.ALL_SAVE) {
+            if (type == NBTType.ALL_SAVE) {
                 FluxNetworkData.writePlayers(this, nbt);
                 FluxNetworkData.writeConnections(this, nbt);
             }
         }
 
-        if(type == NBTType.NETWORK_PLAYERS) {
+        if (type == NBTType.NETWORK_PLAYERS) {
             FluxNetworkData.writeAllPlayers(this, nbt);
         }
 
-        if(type == NBTType.NETWORK_CONNECTIONS) {
+        if (type == NBTType.NETWORK_CONNECTIONS) {
             all_connectors.getValue().removeIf(IFluxDevice::isChunkLoaded);
             List<IFluxDevice> connectors = getConnections(FluxLogicType.ANY);
             connectors.forEach(f -> all_connectors.getValue().add(new SimpleFluxDevice(f)));
             FluxNetworkData.writeAllConnections(this, nbt);
         }
-        if(type == NBTType.NETWORK_STATISTICS) {
+        if (type == NBTType.NETWORK_STATISTICS) {
             network_stats.getValue().writeNBT(nbt);
         }
-        if(type == NBTType.NETWORK_CLEAR) {
+        if (type == NBTType.NETWORK_CLEAR) {
             nbt.putBoolean("clear", true); // Nothing
         }
 

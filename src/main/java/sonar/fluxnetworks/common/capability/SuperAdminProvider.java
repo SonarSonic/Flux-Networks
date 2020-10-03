@@ -6,7 +6,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
-import sonar.fluxnetworks.api.misc.Capabilities;
+import sonar.fluxnetworks.api.misc.FluxCapabilities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,7 +22,7 @@ public class SuperAdminProvider implements ICapabilitySerializable<INBT> {
     private final LazyOptional<ISuperAdmin> handler;
 
     public SuperAdminProvider() {
-        instance = new DefaultSuperAdmin();
+        instance = new SuperAdmin();
         handler = LazyOptional.of(this::getInstance);
     }
 
@@ -34,16 +34,16 @@ public class SuperAdminProvider implements ICapabilitySerializable<INBT> {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return Capabilities.SUPER_ADMIN.orEmpty(cap, handler);
+        return FluxCapabilities.SUPER_ADMIN.orEmpty(cap, handler);
     }
 
     @Override
     public INBT serializeNBT() {
-        return Capabilities.SUPER_ADMIN.writeNBT(instance, null);
+        return FluxCapabilities.SUPER_ADMIN.writeNBT(instance, null);
     }
 
     @Override
     public void deserializeNBT(INBT nbt) {
-        Capabilities.SUPER_ADMIN.readNBT(instance, null, nbt);
+        FluxCapabilities.SUPER_ADMIN.readNBT(instance, null, nbt);
     }
 }

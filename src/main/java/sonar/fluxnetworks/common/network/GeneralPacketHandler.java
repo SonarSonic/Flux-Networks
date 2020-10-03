@@ -83,7 +83,7 @@ public class GeneralPacketHandler {
                     network.setSetting(NetworkSettings.NETWORK_COLOR, color);
                     needPacket = true;
                     List<IFluxDevice> list = network.getConnections(FluxLogicType.ANY);
-                    list.forEach(device -> device.connect(network)); // update color data
+                    list.forEach(device -> device.onConnect(network)); // update color data
                 }
                 if (needPacket) {
                     HashMap<Integer, Tuple<Integer, String>> cache = new HashMap<>();

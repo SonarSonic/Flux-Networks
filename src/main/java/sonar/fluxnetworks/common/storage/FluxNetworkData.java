@@ -18,7 +18,7 @@ import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.NBTType;
-import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
+import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.connection.SimpleFluxDevice;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -183,7 +183,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     private static EnumAccessType getPermission(@Nonnull PlayerEntity player) {
-        return DefaultSuperAdmin.isPlayerSuperAdmin(player) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.BLOCKED;
+        return SuperAdmin.isPlayerSuperAdmin(player) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.BLOCKED;
     }
 
     public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {

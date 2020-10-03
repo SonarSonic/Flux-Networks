@@ -1,9 +1,7 @@
-package sonar.fluxnetworks.common.recipes;
+package sonar.fluxnetworks.common.recipe;
 
 import com.google.gson.JsonObject;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.item.crafting.ShapelessRecipe;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistryEntry;

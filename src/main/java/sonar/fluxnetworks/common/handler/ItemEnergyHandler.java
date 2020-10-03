@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.common.handler;
 
-import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
 import net.minecraft.item.ItemStack;
+import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -11,17 +11,17 @@ import java.util.Map;
 
 public class ItemEnergyHandler {
 
-    public static List<IItemEnergyHandler> itemEnergyHandlers = new ArrayList<>();
-    public static Map<String, Integer> itemBlackList = new HashMap<>();
+    public static final List<IItemEnergyHandler> ITEM_ENERGY_HANDLERS = new ArrayList<>();
+    public static final Map<String, Integer> ITEM_BLACKLIST = new HashMap<>();
 
     @Nullable
     public static IItemEnergyHandler getEnergyHandler(ItemStack stack) {
         String s = stack.getItem().getRegistryName().toString();
-        if(itemBlackList.containsKey(s)) {
+        if (ITEM_BLACKLIST.containsKey(s)) {
             return null;
         }
-        for(IItemEnergyHandler handler : itemEnergyHandlers) {
-            if(handler.canAddEnergy(stack) || handler.canRemoveEnergy(stack)) {
+        for (IItemEnergyHandler handler : ITEM_ENERGY_HANDLERS) {
+            if (handler.canAddEnergy(stack) || handler.canRemoveEnergy(stack)) {
                 return handler;
             }
         }

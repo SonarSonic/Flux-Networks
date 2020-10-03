@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.recipes;
+package sonar.fluxnetworks.common.recipe;
 
 import com.google.gson.JsonObject;
 import net.minecraft.item.crafting.IRecipeSerializer;

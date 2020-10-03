@@ -10,7 +10,7 @@ import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.EnumSecurityType;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
+import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -72,7 +72,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         }
     }*/
 
-    private void handleConnectionQueues() {
+    private void handleConnectionQueue() {
         IFluxDevice device;
         while ((device = toAdd.poll()) != null) {
             boolean b = false;
@@ -81,7 +81,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
             }
             if (b) {
                 //MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(device, this));
-                device.connect(this);
+                device.onConnect(this);
                 sortConnections = true;
             }
         }
@@ -119,7 +119,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         network_stats.getValue().onStartServerTick();
         network_stats.getValue().startProfiling();
 
-        handleConnectionQueues();
+        handleConnectionQueue();
 
         bufferLimiter = 0;
 
@@ -173,7 +173,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
     @Override
     public EnumAccessType getAccessPermission(PlayerEntity player) {
         if (FluxConfig.enableSuperAdmin) {
-            if (DefaultSuperAdmin.isPlayerSuperAdmin(player)) {
+            if (SuperAdmin.isPlayerSuperAdmin(player)) {
                 return EnumAccessType.SUPER_ADMIN;
             }
         }
@@ -191,7 +191,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
 
     @Override
     public void onDeleted() {
-        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::disconnect);
+        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::onDisconnect);
         connections.clear();
         toAdd.clear();
         toRemove.clear();

@@ -3,8 +3,8 @@ package sonar.fluxnetworks.common.tileentity.energy;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
-import sonar.fluxnetworks.api.energy.FNEnergyCapability;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.FluxCapabilities;
 import sonar.fluxnetworks.common.misc.DefaultEnergyWrapper;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraftforge.common.capabilities.Capability;
@@ -36,7 +36,7 @@ public abstract class TileDefaultEnergy extends TileFluxDevice implements IFluxD
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if(cap == FNEnergyCapability.FN_ENERGY_STORAGE){
+        if(cap == FluxCapabilities.FN_ENERGY_STORAGE){
             return LazyOptional.of(() -> getEnergyWrapper(side)).cast();
         }
         if(cap == CapabilityEnergy.ENERGY){

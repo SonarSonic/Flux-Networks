@@ -43,7 +43,7 @@ public class SimpleFluxDevice implements IFluxDevice {
         this.playerUUID = tile.getConnectionOwner();
         this.connectionType = tile.getDeviceType();
         this.limit = tile.getActualLimit();
-        this.coord4D = tile.getCoords();
+        //this.coord4D = tile.getCoords();
         this.folderID = tile.getFolderID();
         this.customName = tile.getCustomName();
         this.surgeMode = tile.getSurgeMode();
@@ -170,10 +170,10 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void connect(IFluxNetwork network) {}
+    public void onConnect(IFluxNetwork network) {}
 
     @Override
-    public void disconnect() {}
+    public void onDisconnect() {}
 
     @Override
     public ITransferHandler getTransferHandler() {

@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.handler;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -41,7 +42,6 @@ public class PacketHandler {
         CHANNEL.registerMessage(packetID++, SuperAdminRequestPacket.class, SuperAdminRequestPacket::encode, SuperAdminRequestPacket::new, SuperAdminRequestPacket::handle);
         CHANNEL.registerMessage(packetID++, ConfiguratorUpdateSettingsPacket.class, ConfiguratorUpdateSettingsPacket::encode, ConfiguratorUpdateSettingsPacket::new, ConfiguratorUpdateSettingsPacket::handle);
         CHANNEL.registerMessage(packetID++, ConfiguratorNetworkConnectPacket.class, ConfiguratorNetworkConnectPacket::encode, ConfiguratorNetworkConnectPacket::new, ConfiguratorNetworkConnectPacket::handle);
-        CHANNEL.registerMessage(packetID++, LavaParticlePacket.class, LavaParticlePacket::encode, LavaParticlePacket::new, LavaParticlePacket::handle);
     }
 
     @Deprecated
@@ -54,7 +54,7 @@ public class PacketHandler {
         if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
             return context.getSender();
         }
-        throw new IllegalStateException();
+        return Minecraft.getInstance().player;
     }
 
 }

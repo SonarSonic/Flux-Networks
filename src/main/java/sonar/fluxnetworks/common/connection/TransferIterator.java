@@ -8,17 +8,14 @@ import java.util.List;
 
 public class TransferIterator<T extends IFluxDevice> {
 
+    private final boolean isPoint;
+
     private Iterator<PriorityGroup<T>> groupIterator;
-
     private PriorityGroup<T> currentGroup;
-
     private Iterator<T> fluxIterator;
-
     private T currentFlux;
 
     private boolean finish;
-
-    private final boolean isPoint;
 
     public TransferIterator(boolean isPoint) {
         this.isPoint = isPoint;

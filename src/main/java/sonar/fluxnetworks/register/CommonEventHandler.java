@@ -5,10 +5,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -29,10 +30,12 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.capability.DefaultSuperAdmin;
+import sonar.fluxnetworks.common.capability.SuperAdmin;
+import sonar.fluxnetworks.common.capability.SuperAdminProvider;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.LavaParticlePacket;
+import sonar.fluxnetworks.common.network.LavaParticleMessage;
 import sonar.fluxnetworks.common.network.NetworkUpdatePacket;
 import sonar.fluxnetworks.common.network.SuperAdminPacket;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -121,12 +124,12 @@ public class CommonEventHandler {
                     world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }
-                PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(event::getPlayer), new LavaParticlePacket(pos, max));
+                NetworkHandler.INSTANCE.sendToTrackingAndSelf(new LavaParticleMessage(pos, max), event.getPlayer());
             } else {
-                for (int i = 0; i < max; i++) {
+                /*for (int i = 0; i < max; i++) {
                     // speed won't work with lava particle, because its constructor doesn't use these params
                     world.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
-                }
+                }*/
             }
 
             event.setCanceled(true);
@@ -153,9 +156,17 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
+        // this event only fired on server
         Supplier<ServerPlayerEntity> s = () -> (ServerPlayerEntity) event.getPlayer();
         PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(s), new NetworkUpdatePacket(new ArrayList<>(FluxNetworkCache.INSTANCE.getAllNetworks()), NBTType.NETWORK_GENERAL));
-        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(s), new SuperAdminPacket(DefaultSuperAdmin.isPlayerSuperAdmin(event.getPlayer())));
+        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(s), new SuperAdminPacket(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())));
+    }
+
+    @SubscribeEvent
+    public static void attachCapability(@Nonnull AttachCapabilitiesEvent<Entity> event) {
+        if (event.getObject() instanceof PlayerEntity) {
+            event.addCapability(SuperAdmin.CAP_KEY, new SuperAdminProvider());
+        }
     }
 
     //// TILE EVENTS \\\\

@@ -16,11 +16,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
+import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.NetworkColourRequestPacket;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -40,8 +42,8 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     public static final FluxColorHandler INSTANCE = new FluxColorHandler();
 
-    public static final int DEFAULT_COLOR    = FluxUtils.getIntFromColor(41, 94, 138);
-    public static final int NO_NETWORK_COLOR = FluxUtils.getIntFromColor(178, 178, 178);
+    public static final int DEFAULT_COLOR    = EnumNetworkColor.BLUE.getRGB() | 0xff000000;
+    public static final int NO_NETWORK_COLOR = FluxConstants.INVALID_NETWORK_COLOR | 0xff000000;
 
     private final Int2IntMap colorMap = new Int2IntArrayMap();
 

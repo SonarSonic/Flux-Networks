@@ -1,30 +1,30 @@
 package sonar.fluxnetworks.common.handler;
 
-import com.google.common.collect.Lists;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.common.handler.energy.FNEnergyHandler;
 import sonar.fluxnetworks.common.handler.energy.ForgeEnergyHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class TileEntityHandler {
 
-    public static List<ITileEnergyHandler> tileEnergyHandlers = Lists.newArrayList();
-    public static Map<String, Integer>     blockBlacklist     = new HashMap<>();
+    public static final List<ITileEnergyHandler> TILE_ENERGY_HANDLERS = new ArrayList<>();
+    public static final Map<String, Integer> BLOCK_BLACKLIST = new HashMap<>();
 
     public static void registerEnergyHandler() {
-        tileEnergyHandlers.add(FNEnergyHandler.INSTANCE);
-        ItemEnergyHandler.itemEnergyHandlers.add(FNEnergyHandler.INSTANCE);
+        TILE_ENERGY_HANDLERS.add(FNEnergyHandler.INSTANCE);
+        ItemEnergyHandler.ITEM_ENERGY_HANDLERS.add(FNEnergyHandler.INSTANCE);
 
-        tileEnergyHandlers.add(ForgeEnergyHandler.INSTANCE);
-        ItemEnergyHandler.itemEnergyHandlers.add(ForgeEnergyHandler.INSTANCE);
+        TILE_ENERGY_HANDLERS.add(ForgeEnergyHandler.INSTANCE);
+        ItemEnergyHandler.ITEM_ENERGY_HANDLERS.add(ForgeEnergyHandler.INSTANCE);
 
         /* TODO PORT OTHER MOD ENERGY HANDLERS.
         if(Loader.isModLoaded("gregtech")) {
@@ -49,10 +49,10 @@ public class TileEntityHandler {
         }
 
         ResourceLocation registryName = tile.getBlockState().getBlock().getRegistryName();
-        if (registryName != null && blockBlacklist.containsKey(registryName.toString())) {
+        if (registryName != null && BLOCK_BLACKLIST.containsKey(registryName.toString())) {
             return null; //TODO REDO META CHECKS WITH BLOCK STATE CHECKS
         }
-        for (ITileEnergyHandler handler : tileEnergyHandlers) {
+        for (ITileEnergyHandler handler : TILE_ENERGY_HANDLERS) {
             if (handler.canRenderConnection(tile, dir)) {
                 return handler;
             }
@@ -68,11 +68,11 @@ public class TileEntityHandler {
             return false;
         }
         ResourceLocation registryName = tile.getBlockState().getBlock().getRegistryName();
-        if (registryName != null && blockBlacklist.containsKey(registryName.toString())) {
+        if (registryName != null && BLOCK_BLACKLIST.containsKey(registryName.toString())) {
             return false; //TODO REDO META CHECKS WITH BLOCK STATE CHECKS
         }
         ITileEnergyHandler handler = null;
-        for (ITileEnergyHandler handler1 : tileEnergyHandlers) {
+        for (ITileEnergyHandler handler1 : TILE_ENERGY_HANDLERS) {
             if (handler1.canRenderConnection(tile, dir)) {
                 handler = handler1;
             }

@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.misc;
 
-//TODO remove enum, using int id
+@Deprecated
 public enum NBTType {
     DEFAULT,
     TILE_SAVE,

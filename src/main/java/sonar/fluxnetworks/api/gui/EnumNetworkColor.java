@@ -1,17 +1,28 @@
 package sonar.fluxnetworks.api.gui;
 
 public enum EnumNetworkColor {
-    blue(0x295e8a), indigo(0x343477), purple(0x582a72), pink(0x882d60), red(0xaa3939), brown(0xaa6f39),
-    yellow(0xc6b900), green(0x609732), lightBlue(0x87cefa), lilac(0x86608e), lightCoral(0xf08080), lightPink(0xffc0cb),
-    peach(0xffdab9), flax(0xeedc82);
+    BLUE(0x295E8A),
+    INDIGO(0x343477),
+    PURPLE(0x582A72),
+    PINK(0x882D60),
+    RED(0xAA3939),
+    BROWN(0xAA6F39),
+    YELLOW(0xC6B900),
+    GREEN(0x609732),
+    LIGHT_BLUE(0x87CEFA),
+    LILAC(0x86608E),
+    LIGHT_CORAL(0xF08080),
+    LIGHT_PINK(0xFFC0CB),
+    PEACH(0xFFDAB9),
+    FLAX(0xEEDC82);
 
-    public int color;
+    private int color;
 
     EnumNetworkColor(int color) {
         this.color = color;
     }
 
-    public int getColor() {
+    public int getRGB() {
         return color;
     }
 }

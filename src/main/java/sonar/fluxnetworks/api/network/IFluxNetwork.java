@@ -1,14 +1,14 @@
 package sonar.fluxnetworks.api.network;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.NBTType;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface IFluxNetwork {
 

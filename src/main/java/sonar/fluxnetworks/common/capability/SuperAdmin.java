@@ -5,11 +5,13 @@ import net.minecraft.nbt.ByteNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.server.management.OpEntry;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.misc.Capabilities;
+import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.misc.FluxCapabilities;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
@@ -17,7 +19,9 @@ import sonar.fluxnetworks.common.misc.FluxUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DefaultSuperAdmin implements ISuperAdmin {
+public class SuperAdmin implements ISuperAdmin {
+
+    public static final ResourceLocation CAP_KEY = new ResourceLocation(FluxNetworks.MODID, "super_admin");
 
     private byte permission;
 
@@ -42,7 +46,7 @@ public class DefaultSuperAdmin implements ISuperAdmin {
     }
 
     public static void register() {
-        CapabilityManager.INSTANCE.register(ISuperAdmin.class, new SuperAdminStorage(), DefaultSuperAdmin::new);
+        CapabilityManager.INSTANCE.register(ISuperAdmin.class, new SuperAdminStorage(), SuperAdmin::new);
     }
 
     //// UTIL METHODS \\\\
@@ -60,7 +64,7 @@ public class DefaultSuperAdmin implements ISuperAdmin {
 
     public static boolean isPlayerSuperAdmin(@Nonnull PlayerEntity player) {
         if (!player.world.isRemote) {
-            ISuperAdmin instance = FluxUtils.getCap(player.getCapability(Capabilities.SUPER_ADMIN));
+            ISuperAdmin instance = FluxUtils.getCap(player.getCapability(FluxCapabilities.SUPER_ADMIN));
             return instance != null && instance.hasPermission();
         }
         return FluxNetworkCache.INSTANCE.superAdminClient;

@@ -39,7 +39,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         name.setText(minecraft.player.getDisplayName().getString() + "'s Network");
         int i = 0;
         for(EnumNetworkColor color : EnumNetworkColor.values()) {
-            colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 96 + (i >= 7 ? 1 : 0) * 16, color.color));
+            colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 96 + (i >= 7 ? 1 : 0) * 16, color.getRGB()));
             i++;
         }
         color = colorButtons.get(0);

@@ -39,8 +39,6 @@ public class FluxUtils {
     public static final String GUI_COLOR = "GuiColor";
     public static final String CONFIGS_TAG = "Configs";
 
-    public static UUID UUID_DEFAULT = new UUID(-1, -1);
-
     public static <E extends Enum<?>> E incrementEnum(E enumObj, E[] values) {
         int ordinal = enumObj.ordinal() + 1;
         if (ordinal < values.length) {

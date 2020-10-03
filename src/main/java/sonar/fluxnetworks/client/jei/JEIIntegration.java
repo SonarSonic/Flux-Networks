@@ -12,7 +12,7 @@ import sonar.fluxnetworks.FluxNetworks;
 import javax.annotation.Nonnull;
 
 @JeiPlugin
-public class JeiIntegration implements IModPlugin {
+public class JEIIntegration implements IModPlugin {
 
     @Nonnull
     @Override

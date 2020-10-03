@@ -36,6 +36,7 @@ import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
@@ -55,7 +56,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public HashSet<PlayerEntity> playerUsing = new HashSet<>();
 
     public String customName = "";
-    public UUID   playerUUID = FluxUtils.UUID_DEFAULT;
+    public UUID   playerUUID = FluxConstants.DEFAULT_UUID;
 
     private int savedNetworkID = -1;
 
@@ -133,7 +134,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     @Override
-    public void connect(@Nonnull IFluxNetwork network) {
+    public void onConnect(@Nonnull IFluxNetwork network) {
         this.network = network;
         this.savedNetworkID = network.getNetworkID();
         this.color = network.getSetting(NetworkSettings.NETWORK_COLOR);
@@ -142,11 +143,11 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     @Override
-    public void disconnect() {
+    public void onDisconnect() {
         if (network.isValid()) {
-            this.network = FluxNetworkInvalid.INSTANCE;
-            savedNetworkID = -1;
-            color = 0xb2b2b2;
+            network = FluxNetworkInvalid.INSTANCE;
+            savedNetworkID = FluxConstants.INVALID_NETWORK_ID;
+            color = FluxConstants.INVALID_NETWORK_COLOR;
             connected = false;
             sendFullUpdatePacket();
         }

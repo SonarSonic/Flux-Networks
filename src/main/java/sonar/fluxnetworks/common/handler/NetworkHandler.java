@@ -28,6 +28,7 @@ import net.minecraftforge.fml.unsafe.UnsafeHacks;
 import org.apache.commons.lang3.tuple.Pair;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.IMessage;
+import sonar.fluxnetworks.common.network.LavaParticleMessage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +44,7 @@ public class NetworkHandler {
     public static final NetworkHandler INSTANCE = new NetworkHandler(FluxNetworks.MODID, "main_network");
 
     private final Byte2ObjectArrayMap<Class<? extends IMessage>> indices = new Byte2ObjectArrayMap<>();
-    private final Object2ByteArrayMap<Class<? extends IMessage>> types   = new Object2ByteArrayMap<>();
+    private final Object2ByteArrayMap<Class<? extends IMessage>> types = new Object2ByteArrayMap<>();
 
     private NetworkInstance instance;
 
@@ -74,6 +75,10 @@ public class NetworkHandler {
         instance.addListener(this::onC2SMessageReceived);
     }
 
+    public static void registerMessages() {
+        INSTANCE.registerMessage(LavaParticleMessage.class);
+    }
+
     /**
      * Get the protocol version of this channel on current side
      *
@@ -90,7 +95,7 @@ public class NetworkHandler {
      * @return {@code true} to accept the protocol, {@code false} otherwise
      */
     public boolean verifyServerProtocol(@Nonnull String serverProtocol) {
-        return serverProtocol.equals(protocol) || serverProtocol.equals(NetworkRegistry.ABSENT);
+        return serverProtocol.equals(protocol);
     }
 
     /**
@@ -100,8 +105,7 @@ public class NetworkHandler {
      * @return {@code true} to accept the protocol, {@code false} otherwise
      */
     public boolean verifyClientProtocol(@Nonnull String clientProtocol) {
-        return clientProtocol.equals(protocol) || clientProtocol.equals(NetworkRegistry.ABSENT)
-                || clientProtocol.equals(NetworkRegistry.ACCEPTVANILLA);
+        return clientProtocol.equals(protocol) || clientProtocol.equals(NetworkRegistry.ACCEPTVANILLA);
     }
 
     /**

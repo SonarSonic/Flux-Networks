@@ -2,15 +2,15 @@ package sonar.fluxnetworks.common.connection;
 
 import sonar.fluxnetworks.api.network.EnumSecurityType;
 import sonar.fluxnetworks.api.misc.EnergyType;
-
-import java.util.UUID;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 
 public class FluxNetworkInvalid extends SimpleFluxNetwork {
 
     public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 
     private FluxNetworkInvalid() {
-        super(-1, "Please select a network", EnumSecurityType.PUBLIC, 0xb6b6b6, new UUID(-1, -1), EnergyType.FE, "");
+        super(FluxConstants.INVALID_NETWORK_ID, "Please select a network", EnumSecurityType.PUBLIC,
+                FluxConstants.INVALID_NETWORK_COLOR, FluxConstants.DEFAULT_UUID, EnergyType.FE, "");
     }
 
     @Override
