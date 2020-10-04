@@ -29,8 +29,6 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.NetworkFolder;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
@@ -284,7 +282,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             if (PlayerEntity.getUUID(player.getGameProfile()).equals(playerUUID)) {
                 return true;
             }
-            return network.getPlayerAccess(player).canAccess();
+            return network.getPlayerAccess(player).canUse();
         }
         return true;
     }
@@ -428,6 +426,11 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         return playerUUID;
     }
 
+    @Override
+    public void setConnectionOwner(UUID uuid) {
+        playerUUID = uuid;
+    }
+
     public void updateTransfers(Direction... dirs) {
         getTransferHandler().updateTransfers(dirs);
     }
@@ -453,6 +456,11 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     @Override
     public String getCustomName() {
         return customName;
+    }
+
+    @Override
+    public void setCustomName(String customName) {
+        this.customName = customName;
     }
 
     @Override

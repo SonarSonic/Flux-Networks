@@ -7,6 +7,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class NetworkMember {
@@ -15,14 +16,14 @@ public class NetworkMember {
     private String cachedName;
     private AccessType accessPermission;
 
-    NetworkMember() {
+    private NetworkMember() {
     }
 
     public NetworkMember(CompoundNBT nbt) {
         readNetworkNBT(nbt);
     }
 
-    public static NetworkMember createNetworkMember(PlayerEntity player, AccessType permissionLevel) {
+    public static NetworkMember create(PlayerEntity player, AccessType permissionLevel) {
         NetworkMember t = new NetworkMember();
         GameProfile profile = player.getGameProfile();
 
@@ -33,6 +34,7 @@ public class NetworkMember {
         return t;
     }
 
+    @Deprecated
     public static NetworkMember createMemberByUsername(String username) {
         NetworkMember t = new NetworkMember();
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -67,17 +69,17 @@ public class NetworkMember {
         return playerUUID;
     }
 
-    public void setAccessPermission(AccessType accessPermission) {
-        this.accessPermission = accessPermission;
+    public void setAccessPermission(AccessType permissionLevel) {
+        accessPermission = permissionLevel;
     }
 
-    public void readNetworkNBT(CompoundNBT nbt) {
+    public void readNetworkNBT(@Nonnull CompoundNBT nbt) {
         playerUUID = nbt.getUniqueId("playerUUID");
         cachedName = nbt.getString("cachedName");
         accessPermission = AccessType.values()[nbt.getByte("playerAccess")];
     }
 
-    public CompoundNBT writeNetworkNBT(CompoundNBT nbt) {
+    public CompoundNBT writeNetworkNBT(@Nonnull CompoundNBT nbt) {
         nbt.putUniqueId("playerUUID", playerUUID);
         nbt.putString("cachedName", cachedName);
         nbt.putByte("playerAccess", (byte) accessPermission.ordinal());

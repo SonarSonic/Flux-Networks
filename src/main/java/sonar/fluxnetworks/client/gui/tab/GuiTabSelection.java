@@ -142,7 +142,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     public void tick() {
         super.tick();
         if(timer2 == 0) {
-            refreshPages(FluxClientCache.INSTANCE.getAllNetworks());
+            refreshPages(FluxClientCache.getAllNetworks());
         }
         if(selectedNetwork != null && FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
            closePopUp();

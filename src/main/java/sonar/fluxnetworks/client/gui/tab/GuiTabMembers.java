@@ -14,7 +14,6 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpUserEdit;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
@@ -158,7 +157,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             PacketHandler.CHANNEL.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
         }
         if(timer % 2 == 0) {
-            refreshPages(network.getNetworkMembers());
+            refreshPages(network.getMemberList());
             if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
                 if(hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();

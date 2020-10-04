@@ -16,8 +16,10 @@ import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * A POJO class holds values updated from server for GUI display on client,
- * or defines unloaded flux devices on both sides
+ * A POJO class holds values updated from server for GUI display (via Network Connections tab,
+ * because these devices may not exist on client world so there's no TileFluxDevice instance on client,
+ * they just are loaded on server world for other players),
+ * or records unloaded flux devices on server
  */
 public class SimpleFluxDevice implements IFluxDevice {
 
@@ -151,6 +153,11 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
+    public void setConnectionOwner(UUID uuid) {
+        throw new IllegalStateException("Client or unloaded device");
+    }
+
+    @Override
     public FluxDeviceType getDeviceType() {
         return connectionType;
     }
@@ -186,12 +193,12 @@ public class SimpleFluxDevice implements IFluxDevice {
     @Nonnull
     @Override
     public World getFluxWorld() {
-        return null;
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
     public long getLogicLimit() {
-        return limit;
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
@@ -223,6 +230,11 @@ public class SimpleFluxDevice implements IFluxDevice {
     @Override
     public String getCustomName() {
         return customName;
+    }
+
+    @Override
+    public void setCustomName(String customName) {
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override

@@ -8,7 +8,6 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.ItemEnergyHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import net.minecraft.item.ItemStack;
@@ -79,7 +78,7 @@ public class ControllerTransfer implements IFluxTransfer {
     }
 
     private void updatePlayers() {
-        List<NetworkMember> m = tile.getNetwork().getNetworkMembers();
+        List<NetworkMember> m = tile.getNetwork().getMemberList();
         List<PlayerEntity> players = new ArrayList<>();
         for(NetworkMember p : m) {
             ServerPlayerEntity entity = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(p.getPlayerUUID());

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.device.ITilePacketBuffer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 
-//TODO security check
+@Deprecated
 public class TilePacketBufferPacket extends AbstractPacket {
 
     public ITilePacketBuffer tile;

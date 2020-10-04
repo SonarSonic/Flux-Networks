@@ -10,6 +10,7 @@ import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
+@Deprecated
 public class TilePacket extends AbstractPacket {
 
     private final TilePacketEnum type;

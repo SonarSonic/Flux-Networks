@@ -9,6 +9,12 @@ import net.minecraft.util.text.ITextComponent;
  */
 public interface INetworkConnector {
 
+    /**
+     * Returns the network ID that this connector should be, however,
+     * this connector may not be currently connected to the network or waiting to connect
+     *
+     * @return the network ID
+     */
     int getNetworkID();
 
     IFluxNetwork getNetwork();

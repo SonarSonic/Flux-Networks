@@ -11,9 +11,7 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -44,7 +42,7 @@ public class GeneralPacketHandler {
         if (!FluxUtils.checkPassword(password)) {
             return new FeedbackPacket(EnumFeedbackInfo.ILLEGAL_PASSWORD);
         }
-        if (FluxNetworkData.createNetwork(player, name, color, security, password) != null) {
+        if (FluxNetworkData.get().createNetwork(player, name, color, security, password) != null) {
             return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
         }
         return new FeedbackPacket(EnumFeedbackInfo.NO_SPACE);
@@ -199,8 +197,8 @@ public class GeneralPacketHandler {
                         PlayerEntity player1 = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerChanged);
                         //noinspection
                         if (player1 != null) {
-                            NetworkMember newMember = NetworkMember.createNetworkMember(player1, AccessType.USER);
-                            network.getNetworkMembers().add(newMember);
+                            NetworkMember newMember = NetworkMember.create(player1, AccessType.USER);
+                            network.getMemberList().add(newMember);
                             PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new FeedbackPacket(EnumFeedbackInfo.SUCCESS));
                             return new SNetworkUpdateMessage(Lists.newArrayList(network), 0);
                         }
@@ -214,7 +212,7 @@ public class GeneralPacketHandler {
                             } else if (type == 2) {
                                 p.setAccessPermission(AccessType.USER);
                             } else if (type == 3) {
-                                network.getNetworkMembers().remove(p);
+                                network.getMemberList().remove(p);
                             } else if (type == 4) {
                                 /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
                                         .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/

@@ -16,5 +16,5 @@ public class FluxConstants {
     public static final int FLAG_NET_MEMBERS = 0x4;
     public static final int FLAG_NET_DEVICES = 0x8;
     public static final int FLAG_NET_STATS = 0x10;
-    public static final int FLAG_NET_REMOVE = 0x20;
+    public static final int FLAG_NET_DELETE = 0x20;
 }

@@ -5,15 +5,14 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.ChunkPos;
 
+@Deprecated
 public class TilePacketHandler {
 
     public static CompoundNBT getSetNetworkPacket(int id, String password) {
@@ -34,7 +33,7 @@ public class TilePacketHandler {
             if(tile.getDeviceType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0) {
                 return new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER);
             }
-            if(!network.getPlayerAccess(player).canAccess()) {
+            if(!network.getPlayerAccess(player).canUse()) {
                 if(pass.isEmpty()) {
                     return new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }

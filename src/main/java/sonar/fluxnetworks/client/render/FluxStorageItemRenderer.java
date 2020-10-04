@@ -34,7 +34,7 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
         int energy = FluxConstants.INVALID_NETWORK_COLOR;
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
         if (tag != null) {
-            color = FluxClientCache.INSTANCE.getNetwork(tag.getInt(FluxNetworkData.NETWORK_ID)).getNetworkColor();
+            color = FluxClientCache.getNetwork(tag.getInt(FluxNetworkData.NETWORK_ID)).getNetworkColor();
             energy = tag.getInt("energy");
         }
 

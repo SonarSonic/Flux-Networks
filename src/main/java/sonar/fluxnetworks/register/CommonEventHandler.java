@@ -19,11 +19,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
@@ -44,7 +42,6 @@ import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber
@@ -54,8 +51,7 @@ public class CommonEventHandler {
 
     @SubscribeEvent
     public static void onServerStopped(FMLServerStoppedEvent event) {
-        // Mainly used to switch data while changing single-player saves
-        // Useless on dedicated server
+        // mainly used to reload data while changing single-player saves, useless on dedicated server
         FluxNetworkData.release();
         FluxChunkManager.clear();
     }
@@ -77,7 +73,6 @@ public class CommonEventHandler {
             FluxChunkManager.loadWorld((ServerWorld) event.getWorld());
         }
     }
-
 
     //// PLAYER EVENTS \\\\
 
@@ -134,9 +129,9 @@ public class CommonEventHandler {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    /*@SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onEntityAdded(EntityJoinWorldEvent event) {
-        /*if (!FluxConfig.enableFluxRecipe || !FluxConfig.enableOldRecipe || event.getWorld().isRemote) {
+        if (!FluxConfig.enableFluxRecipe || !FluxConfig.enableOldRecipe || event.getWorld().isRemote) {
             return;
         }
         final Entity entity = event.getEntity();
@@ -149,13 +144,13 @@ public class CommonEventHandler {
                 event.getWorld().addEntity(newEntity);
                 event.setCanceled(true);
             }
-        }*/
-    }
+        }
+    }*/
 
     @SubscribeEvent
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
-        NetworkHandler.INSTANCE.sendToPlayer(new SNetworkUpdateMessage(new ArrayList<>(FluxNetworkData.getAllNetworks()),
+        NetworkHandler.INSTANCE.sendToPlayer(new SNetworkUpdateMessage(FluxNetworkData.getAllNetworks(),
                 FluxConstants.FLAG_NET_BASIS), event.getPlayer());
         PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
                 new SuperAdminPacket(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())));

@@ -69,7 +69,7 @@ public class ProxyClient implements IProxy {
 
     @Override
     public IFluxNetwork getNetwork(int networkID) {
-        return FluxClientCache.INSTANCE.getNetwork(networkID);
+        return FluxClientCache.getNetwork(networkID);
     }
 
     @Override

@@ -7,8 +7,6 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import net.minecraft.item.ItemStack;
@@ -42,7 +40,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
 
         IFluxNetwork network = FluxNetworkData.getNetwork(id);
         if(network.isValid()) {
-            if (!network.getPlayerAccess(player).canAccess()) {
+            if (!network.getPlayerAccess(player).canUse()) {
                 if (password.isEmpty()) {
                     return new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }

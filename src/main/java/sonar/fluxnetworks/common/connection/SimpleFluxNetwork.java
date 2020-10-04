@@ -39,7 +39,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     private int networkColor;
 
     protected final NetworkStatistics statistics = new NetworkStatistics(this);
-    // On server: TileFluxCore (online) and SimpleFluxDevice (offline)
+    // On server: TileFluxDevice (loaded) and SimpleFluxDevice (unloaded)
     // On client: SimpleFluxDevice
     protected final List<IFluxDevice> allDevices = new ArrayList<>();
     protected final List<NetworkMember> networkMembers = new ArrayList<>();
@@ -131,7 +131,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public UUID getNetworkOwner() {
+    public UUID getOwnerUUID() {
         return ownerUUID;
     }
 
@@ -141,7 +141,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public List<NetworkMember> getNetworkMembers() {
+    public List<NetworkMember> getMemberList() {
         return networkMembers;
     }
 
@@ -157,7 +157,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
 
     @Override
     public void readCustomNBT(CompoundNBT nbt, int flags) {
-        if ((flags & FluxConstants.FLAG_NET_BASIS) != 0) {
+        if ((flags & FluxConstants.FLAG_NET_BASIS) != 0 || (flags & FluxConstants.FLAG_SAVE_ALL) != 0) {
             networkID = nbt.getInt(FluxNetworkData.NETWORK_ID);
             networkName = nbt.getString(FluxNetworkData.NETWORK_NAME);
             ownerUUID = nbt.getUniqueId(FluxNetworkData.OWNER_UUID);
@@ -194,7 +194,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
 
     @Override
     public void writeCustomNBT(CompoundNBT nbt, int flags) {
-        if ((flags & FluxConstants.FLAG_NET_BASIS) != 0) {
+        if ((flags & FluxConstants.FLAG_NET_BASIS) != 0 || (flags & FluxConstants.FLAG_SAVE_ALL) != 0) {
             nbt.putInt(FluxNetworkData.NETWORK_ID, networkID);
             nbt.putString(FluxNetworkData.NETWORK_NAME, networkName);
             nbt.putUniqueId(FluxNetworkData.OWNER_UUID, ownerUUID);

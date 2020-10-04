@@ -31,6 +31,8 @@ public interface IFluxDevice extends INetworkConnector {
 
     UUID getConnectionOwner();
 
+    void setConnectionOwner(UUID uuid);
+
     FluxDeviceType getDeviceType();
 
     boolean canPlayerAccess(PlayerEntity player);
@@ -79,6 +81,8 @@ public interface IFluxDevice extends INetworkConnector {
     /*int getFolderID();*/
 
     String getCustomName();
+
+    void setCustomName(String customName);
 
     boolean getDisableLimit();
 

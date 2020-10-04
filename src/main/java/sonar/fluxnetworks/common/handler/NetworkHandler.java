@@ -10,8 +10,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -24,10 +26,11 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkInstance;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import net.minecraftforge.fml.unsafe.UnsafeHacks;
 import org.apache.commons.lang3.tuple.Pair;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.IMessage;
+import sonar.fluxnetworks.common.network.CSetNetworkMessage;
 import sonar.fluxnetworks.common.network.SLavaParticleMessage;
 import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
 
@@ -44,7 +47,7 @@ public class NetworkHandler {
 
     public static final NetworkHandler INSTANCE = new NetworkHandler(FluxNetworks.MODID, "main_network");
 
-    private final Byte2ObjectArrayMap<Class<? extends IMessage>> indices = new Byte2ObjectArrayMap<>();
+    private final Byte2ObjectArrayMap<Supplier<? extends IMessage>> indices = new Byte2ObjectArrayMap<>();
     private final Object2ByteArrayMap<Class<? extends IMessage>> types = new Object2ByteArrayMap<>();
 
     private NetworkInstance instance;
@@ -77,8 +80,9 @@ public class NetworkHandler {
     }
 
     public static void registerMessages() {
-        INSTANCE.registerMessage(SLavaParticleMessage.class);
-        INSTANCE.registerMessage(SNetworkUpdateMessage.class);
+        INSTANCE.registerMessage(SLavaParticleMessage.class, SLavaParticleMessage::new);
+        INSTANCE.registerMessage(SNetworkUpdateMessage.class, SNetworkUpdateMessage::new);
+        INSTANCE.registerMessage(CSetNetworkMessage.class, CSetNetworkMessage::new);
     }
 
     /**
@@ -112,12 +116,13 @@ public class NetworkHandler {
 
     /**
      * Register a network message, for example
-     * "registerMessage(MyMessage.class, MyMessage::new, NetworkDirection.PLAY_TO_SERVER)"
+     * {@code registerMessage(MyMessage.class, MyMessage::new)}
      *
-     * @param clazz message class
-     * @param <MSG> message type
+     * @param clazz   message class
+     * @param factory factory to create new instance
+     * @param <MSG>   message type
      */
-    public <MSG extends IMessage> void registerMessage(@Nonnull Class<MSG> clazz) {
+    public <MSG extends IMessage> void registerMessage(@Nonnull Class<MSG> clazz, @Nonnull Supplier<? extends MSG> factory) {
         /*CHANNEL.messageBuilder(type, ++index, direction)
                 .encoder(IMessage::encode)
                 .decoder(buf -> decode(factory, buf))
@@ -127,7 +132,7 @@ public class NetworkHandler {
             if (index == Byte.MAX_VALUE) {
                 throw new IllegalStateException("Maximum index reached when registering message");
             }
-            indices.put(index, clazz);
+            indices.put(index, factory);
             types.put(clazz, index++);
         }
     }
@@ -144,11 +149,11 @@ public class NetworkHandler {
 
     private void handleMessage(PacketBuffer buffer, Supplier<NetworkEvent.Context> ctx) {
         byte index = buffer.readByte();
-        Class<? extends IMessage> clazz = indices.get(index);
-        if (clazz == null) {
+        Supplier<? extends IMessage> factory = indices.get(index);
+        if (factory == null) {
             throw new IllegalStateException("Unregistered message with index: " + index);
         }
-        IMessage message = UnsafeHacks.newInstance(clazz);
+        IMessage message = factory.get();
         message.decode(buffer);
         message.handle(ctx);
         ctx.get().setPacketHandled(true);

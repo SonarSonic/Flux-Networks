@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.network;
 
+@Deprecated
 public class TilePacketBufferConstants {
 
     public static final byte FLUX_CUSTOM_NAME = 0;

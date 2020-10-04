@@ -18,14 +18,13 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.network.CSetNetworkMessage;
 import sonar.fluxnetworks.common.network.ConfiguratorNetworkConnectPacket;
-import sonar.fluxnetworks.common.network.TilePacket;
-import sonar.fluxnetworks.common.network.TilePacketEnum;
-import sonar.fluxnetworks.common.network.TilePacketHandler;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -43,7 +42,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
 
     public GuiFluxCore(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
-        this.network = FluxClientCache.INSTANCE.getNetwork(connector.getNetworkID());
+        this.network = FluxClientCache.getNetwork(connector.getNetworkID());
         this.networkValid = network.isValid();
     }
 
@@ -93,7 +92,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     public void tick() {
         super.tick();
         if (timer1 == 0) {
-            this.network = FluxClientCache.INSTANCE.getNetwork(connector.getNetworkID());
+            this.network = FluxClientCache.getNetwork(connector.getNetworkID());
             this.networkValid = network.isValid();
         }
         timer1++;
@@ -171,13 +170,10 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
 
     public void setConnectedNetwork(int networkID, String password) {
         if (connector instanceof IFluxDevice) {
-            //TODO
-            //PacketHandler.CHANNEL.sendToServer(new TilePacket(TilePacketEnum.SET_NETWORK, TilePacketHandler.getSetNetworkPacket(networkID, password), ((IFluxDevice) connector).getCoords()));
-        }
-        if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
-            FluxNetworks.PROXY.setAdminViewingNetwork(FluxClientCache.INSTANCE.getNetwork(networkID));
-        }
-        if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
+            NetworkHandler.INSTANCE.sendToServer(new CSetNetworkMessage(((IFluxDevice) connector).getGlobalPos().getPos(), networkID, password));
+        } else if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
+            FluxNetworks.PROXY.setAdminViewingNetwork(FluxClientCache.getNetwork(networkID));
+        } else if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
             PacketHandler.CHANNEL.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));
         }
     }

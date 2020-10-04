@@ -28,12 +28,12 @@ public enum AccessType {
         return color;
     }
 
-    public boolean canAccess() {
+    public boolean canUse() {
         return this != BLOCKED;
     }
 
     public boolean canEdit() {
-        return canAccess() && this != USER;
+        return canUse() && this != USER;
     }
 
     public boolean canDelete() {

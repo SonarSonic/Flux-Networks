@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.network;
 
-
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 

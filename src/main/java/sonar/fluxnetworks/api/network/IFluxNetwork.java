@@ -44,11 +44,11 @@ public interface IFluxNetwork {
 
     void setNetworkColor(int color);
 
-    UUID getNetworkOwner();
+    UUID getOwnerUUID();
 
     NetworkStatistics getNetworkStatistics();
 
-    List<NetworkMember> getNetworkMembers();
+    List<NetworkMember> getMemberList();
 
     List<IFluxDevice> getAllDevices();
 
@@ -79,11 +79,11 @@ public interface IFluxNetwork {
     }*/
 
     /**
-     * Get all online devices with given logic type
+     * Get all loaded tile entities with given logic type
      *
      * @param type logic type
      * @param <T> device type
-     * @return a list of online devices
+     * @return a list of connections
      */
     @Nonnull
     <T extends IFluxDevice> List<T> getConnections(FluxLogicType type);

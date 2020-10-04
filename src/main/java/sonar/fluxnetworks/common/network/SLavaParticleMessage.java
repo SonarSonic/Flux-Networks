@@ -15,6 +15,9 @@ public class SLavaParticleMessage implements IMessage {
     private BlockPos pos;
     private int count;
 
+    public SLavaParticleMessage() {
+    }
+
     public SLavaParticleMessage(BlockPos pos, int count) {
         this.pos = pos;
         this.count = count;
