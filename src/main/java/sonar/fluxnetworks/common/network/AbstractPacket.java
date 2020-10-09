@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
+@Deprecated
 public abstract class AbstractPacket {
 
     public AbstractPacket() {

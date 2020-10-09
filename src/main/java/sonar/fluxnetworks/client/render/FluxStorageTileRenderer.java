@@ -33,7 +33,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
     @Override
     public void render(@Nonnull TileFluxStorage tile, float partialTicks, @Nonnull MatrixStack matrixStackIn,
                        @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        render(matrixStackIn, bufferIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.color);
+        render(matrixStackIn, bufferIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.cachedColor);
     }
 
     static void render(MatrixStack matrix, IRenderTypeBuffer bufferIn, int overlay, int energyStored, int energyCapacity, int networkRGB) {

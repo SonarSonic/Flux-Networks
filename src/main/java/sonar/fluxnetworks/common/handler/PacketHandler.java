@@ -27,7 +27,7 @@ public class PacketHandler {
 
         CHANNEL.registerMessage(packetID++, GeneralPacket.class, GeneralPacket::encode, GeneralPacket::new, GeneralPacket::handle);
         CHANNEL.registerMessage(packetID++, TilePacketBufferPacket.class, TilePacketBufferPacket::encode, TilePacketBufferPacket::new, TilePacketBufferPacket::handle);
-        CHANNEL.registerMessage(packetID++, TilePacket.class, TilePacket::encode, TilePacket::new, TilePacket::handle);
+        //CHANNEL.registerMessage(packetID++, TilePacket.class, TilePacket::encode, TilePacket::new, TilePacket::handle);
         CHANNEL.registerMessage(packetID++, FeedbackPacket.class, FeedbackPacket::encode, FeedbackPacket::new, FeedbackPacket::handle);
         CHANNEL.registerMessage(packetID++, NetworkColourRequestPacket.class, NetworkColourRequestPacket::encode, NetworkColourRequestPacket::new, NetworkColourRequestPacket::handle);
         CHANNEL.registerMessage(packetID++, NetworkColourPacket.class, NetworkColourPacket::encode, NetworkColourPacket::new, NetworkColourPacket::handle);

@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.tileentity;
 
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -43,7 +44,7 @@ import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.*;
@@ -52,15 +53,15 @@ import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.*;
 public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         IFluxConfigurable, ITickableTileEntity, ITilePacketBuffer, INamedContainerProvider {
 
-    public HashSet<PlayerEntity> playerUsing = new HashSet<>();
+    public Set<PlayerEntity> playerUsing = new ObjectArraySet<>();
 
     public String customName = "";
     public UUID playerUUID = FluxConstants.DEFAULT_UUID;
 
     private int networkID;
 
-    public int color;
-    //public int folderID  = -1;
+    // 0xRRGGBB, this value only available on client for rendering, updated from server
+    public int cachedColor;
 
     public int priority = 0;
     public long limit = FluxConfig.defaultLimit;
@@ -75,7 +76,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
 
     private GlobalPos globalPos;
 
-    protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
+    private IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
     protected boolean load = false;
 
@@ -124,7 +125,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
                 } else {
                     networkID = FluxConstants.INVALID_NETWORK_ID;
                     connected = false;
-                    color = FluxConstants.INVALID_NETWORK_COLOR;
+                    cachedColor = FluxConstants.INVALID_NETWORK_COLOR;
                 }
                 updateTransfers(Direction.values());
                 sendFullUpdatePacket();
@@ -137,7 +138,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public void onConnect(@Nonnull IFluxNetwork network) {
         this.network = network;
         this.networkID = network.getNetworkID();
-        this.color = network.getNetworkColor();
+        this.cachedColor = network.getNetworkColor();
         connected = true;
         sendFullUpdatePacket();
     }
@@ -147,7 +148,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         if (network.isValid()) {
             network = FluxNetworkInvalid.INSTANCE;
             networkID = FluxConstants.INVALID_NETWORK_ID;
-            color = FluxConstants.INVALID_NETWORK_COLOR;
+            cachedColor = FluxConstants.INVALID_NETWORK_COLOR;
             connected = false;
             sendFullUpdatePacket();
         }
@@ -220,7 +221,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             tag.putInt("4", networkID);
             tag.putUniqueId("5", playerUUID);
             tag.putString("6", customName);
-            tag.putInt("7", color);
+            tag.putInt("7", cachedColor);
             tag.putBoolean("8", connected);
             //tag.putInt("9", folderID);
             tag.putByte("a", connections);
@@ -252,7 +253,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             networkID = tag.getInt("4");
             playerUUID = tag.getUniqueId("5");
             customName = tag.getString("6");
-            color = tag.getInt("7");
+            cachedColor = tag.getInt("7");
             connected = tag.getBoolean("8");
             //folderID = tag.getInt("9");
             connections = tag.getByte("a");
@@ -438,11 +439,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
         getTransferHandler().updateTransfers(dirs);
     }
 
-    @Override
-    public int getLogicPriority() {
-        return surgeMode ? Integer.MAX_VALUE : priority;
-    }
-
     public void onContainerOpened(PlayerEntity player) {
         if (!world.isRemote) {
             playerUsing.add(player);
@@ -482,18 +478,38 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     @Override
-    public long getLogicLimit() {
-        return disableLimit ? Long.MAX_VALUE : limit;
-    }
-
-    @Override
     public int getRawPriority() {
         return priority;
     }
 
     @Override
+    public int getLogicPriority() {
+        return surgeMode ? Integer.MAX_VALUE : priority;
+    }
+
+    @Override
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    @Override
     public long getRawLimit() {
         return limit;
+    }
+
+    @Override
+    public long getLogicLimit() {
+        return disableLimit ? Long.MAX_VALUE : limit;
+    }
+
+    @Override
+    public void setLimit(long limit) {
+        this.limit = limit;
+    }
+
+    @Override
+    public long getMaxTransferLimit() {
+        return Long.MAX_VALUE;
     }
 
     /*@Override
@@ -524,8 +540,18 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     @Override
+    public void setDisableLimit(boolean disableLimit) {
+        this.disableLimit = disableLimit;
+    }
+
+    @Override
     public boolean getSurgeMode() {
         return surgeMode;
+    }
+
+    @Override
+    public void setSurgeMode(boolean surgeMode) {
+        this.surgeMode = surgeMode;
     }
 
     /* TODO - FIX OPEN COMPUTERS INTEGRATION

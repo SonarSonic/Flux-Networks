@@ -47,9 +47,9 @@ public class NetworkHandler {
     private final Byte2ObjectArrayMap<Supplier<? extends IMessage>> indices = new Byte2ObjectArrayMap<>();
     private final Object2ByteArrayMap<Class<? extends IMessage>> types = new Object2ByteArrayMap<>();
 
-    private NetworkInstance instance;
+    private final NetworkInstance network;
 
-    private String protocol;
+    private final String protocol;
 
     private byte index = Byte.MIN_VALUE;
 
@@ -66,14 +66,14 @@ public class NetworkHandler {
                 .clientAcceptedVersions(this::verifyServerProtocol)
                 .serverAcceptedVersions(this::verifyClientProtocol);
         try {
-            instance = (NetworkInstance) ObfuscationReflectionHelper.findMethod(
+            network = (NetworkInstance) ObfuscationReflectionHelper.findMethod(
                     NetworkRegistry.ChannelBuilder.class,
                     "createNetworkInstance").invoke(builder);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
-        instance.addListener(this::onS2CMessageReceived);
-        instance.addListener(this::onC2SMessageReceived);
+        network.addListener(this::onS2CMessageReceived);
+        network.addListener(this::onC2SMessageReceived);
     }
 
     public static void registerMessages() {
@@ -199,11 +199,11 @@ public class NetworkHandler {
     }
 
     private <MSG extends IMessage> IPacket<?> toC2SPacket(MSG message) {
-        return NetworkDirection.PLAY_TO_SERVER.buildPacket(toBufferPair(message), instance.getChannelName()).getThis();
+        return NetworkDirection.PLAY_TO_SERVER.buildPacket(toBufferPair(message), network.getChannelName()).getThis();
     }
 
     private <MSG extends IMessage> IPacket<?> toS2CPacket(MSG message) {
-        return NetworkDirection.PLAY_TO_CLIENT.buildPacket(toBufferPair(message), instance.getChannelName()).getThis();
+        return NetworkDirection.PLAY_TO_CLIENT.buildPacket(toBufferPair(message), network.getChannelName()).getThis();
     }
 
     /**
@@ -214,7 +214,7 @@ public class NetworkHandler {
      * @param <MSG>   message type
      */
     public <MSG extends IMessage> void reply(MSG message, NetworkEvent.Context context) {
-        context.getPacketDispatcher().sendPacket(instance.getChannelName(), toBuffer(message));
+        context.getPacketDispatcher().sendPacket(network.getChannelName(), toBuffer(message));
     }
 
     /**

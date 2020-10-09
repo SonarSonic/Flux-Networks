@@ -21,7 +21,7 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
         for (Direction facing : dirs) {
             //noinspection ConstantConditions
             TileEntity tile = world.getTileEntity(pos.offset(facing));
-            boolean before = (connections >> facing.getIndex()) != 0;
+            boolean before = (connections & 1 << facing.getIndex()) != 0;
             boolean current = TileEntityHandler.canRenderConnection(tile, facing.getOpposite());
             if (before != current) {
                 connections ^= 1 << facing.getIndex();

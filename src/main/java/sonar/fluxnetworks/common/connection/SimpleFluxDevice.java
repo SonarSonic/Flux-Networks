@@ -133,6 +133,11 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
+    public void setPriority(int priority) {
+        throw new IllegalStateException("Client or unloaded device");
+    }
+
+    @Override
     public IFluxNetwork getNetwork() {
         return FluxNetworkInvalid.INSTANCE;
     }
@@ -187,7 +192,7 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public ITransferHandler getTransferHandler() {
-        return null;
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Nonnull
@@ -204,6 +209,16 @@ public class SimpleFluxDevice implements IFluxDevice {
     @Override
     public long getRawLimit() {
         return limit;
+    }
+
+    @Override
+    public void setLimit(long limit) {
+        throw new IllegalStateException("Client or unloaded device");
+    }
+
+    @Override
+    public long getMaxTransferLimit() {
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
@@ -243,8 +258,18 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
+    public void setDisableLimit(boolean disableLimit) {
+        throw new IllegalStateException("Client or unloaded device");
+    }
+
+    @Override
     public boolean getSurgeMode() {
         return surgeMode;
+    }
+
+    @Override
+    public void setSurgeMode(boolean surgeMode) {
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override

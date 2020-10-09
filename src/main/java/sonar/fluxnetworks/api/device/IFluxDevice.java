@@ -29,6 +29,8 @@ public interface IFluxDevice extends INetworkConnector {
 
     int getRawPriority(); // ignore surge, for numeric display on client
 
+    void setPriority(int priority);
+
     UUID getConnectionOwner();
 
     void setConnectionOwner(UUID uuid);
@@ -41,9 +43,9 @@ public interface IFluxDevice extends INetworkConnector {
 
     long getRawLimit(); // ignore disable limit
 
-    default long getMaxTransferLimit() {
-        return Long.MAX_VALUE;
-    }
+    void setLimit(long limit);
+
+    long getMaxTransferLimit();
 
     boolean isActive();
 
@@ -86,8 +88,17 @@ public interface IFluxDevice extends INetworkConnector {
 
     boolean getDisableLimit();
 
+    void setDisableLimit(boolean disableLimit);
+
     boolean getSurgeMode();
 
+    void setSurgeMode(boolean surgeMode);
+
+    /**
+     * Transfer handler is unavailable on client, this method used for GUI display on client
+     *
+     * @return internal buffer
+     */
     default long getBuffer() {
         return getTransferHandler().getBuffer();
     }

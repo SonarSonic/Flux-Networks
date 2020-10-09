@@ -21,26 +21,26 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FluxClientCache {
 
-    private static Int2ObjectMap<IFluxNetwork> networks = new Int2ObjectArrayMap<>();
+    private static final Int2ObjectMap<IFluxNetwork> NETWORKS = new Int2ObjectArrayMap<>();
 
     public static void release() {
-        networks.clear();
+        NETWORKS.clear();
     }
 
     public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundNBT> serverSideNetworks, int flags) {
         for (Int2ObjectMap.Entry<CompoundNBT> entry : serverSideNetworks.int2ObjectEntrySet()) {
             int id = entry.getIntKey();
             CompoundNBT nbt = entry.getValue();
-            IFluxNetwork network = networks.get(id);
+            IFluxNetwork network = NETWORKS.get(id);
             if (flags == FluxConstants.FLAG_NET_DELETE) {
                 if (network != null) {
-                    networks.remove(id);
+                    NETWORKS.remove(id);
                 }
             } else {
                 if (network == null) {
                     network = new SimpleFluxNetwork();
                     network.readCustomNBT(nbt, flags);
-                    networks.put(id, network);
+                    NETWORKS.put(id, network);
                 } else {
                     network.readCustomNBT(nbt, flags);
                 }
@@ -49,7 +49,7 @@ public class FluxClientCache {
     }
 
     public static void updateDevices(int networkID, List<CompoundNBT> tags) {
-        IFluxNetwork network = networks.get(networkID);
+        IFluxNetwork network = NETWORKS.get(networkID);
         if (network != null) {
             List<IFluxDevice> devices = network.getAllDevices();
             tags.forEach(t -> {
@@ -59,11 +59,13 @@ public class FluxClientCache {
         }
     }
 
+    @Nonnull
     public static IFluxNetwork getNetwork(int id) {
-        return networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
+        return NETWORKS.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
+    @Nonnull
     public static List<IFluxNetwork> getAllNetworks() {
-        return new ArrayList<>(networks.values());
+        return new ArrayList<>(NETWORKS.values());
     }
 }
