@@ -15,7 +15,6 @@ import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
-import java.util.function.Supplier;
 
 public class CSetNetworkMessage implements IMessage {
 
@@ -40,15 +39,11 @@ public class CSetNetworkMessage implements IMessage {
     }
 
     @Override
-    public void decode(@Nonnull PacketBuffer buffer) {
+    public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         pos = buffer.readBlockPos();
         networkID = buffer.readVarInt();
         password = buffer.readString(256);
-    }
-
-    @Override
-    public void handle(@Nonnull Supplier<NetworkEvent.Context> context) {
-        PlayerEntity player = NetworkHandler.getPlayer(context.get());
+        PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
             return;
         }
@@ -63,22 +58,22 @@ public class CSetNetworkMessage implements IMessage {
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (network.isValid()) {
             if (flux.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
-                PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER), context.get());
+                PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER), context);
                 return;
             }
             if (!network.getPlayerAccess(player).canUse()) {
                 if (password.isEmpty()) {
-                    PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE), context.get());
+                    PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE), context);
                     return;
                 }
                 if (!password.equals(network.getNetworkPassword())) {
-                    PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.REJECT), context.get());
+                    PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.REJECT), context);
                     return;
                 }
             }
             flux.setConnectionOwner(PlayerEntity.getUUID(player.getGameProfile()));
             network.enqueueConnectionAddition(flux);
-            PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.SUCCESS), context.get());
+            PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.SUCCESS), context);
         }
     }
 }

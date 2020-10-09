@@ -43,12 +43,12 @@ public class FluxBlockLootTables extends BlockLootTables {
 
     @Override
     protected void addTables() {
-        registerLootTable(RegistryBlocks.FLUX_PLUG, FluxBlockLootTables::fluxDeviceDropping);
-        registerLootTable(RegistryBlocks.FLUX_POINT, FluxBlockLootTables::fluxDeviceDropping);
-        registerLootTable(RegistryBlocks.FLUX_CONTROLLER, FluxBlockLootTables::fluxDeviceDropping);
-        registerLootTable(RegistryBlocks.BASIC_FLUX_STORAGE, FluxBlockLootTables::fluxDeviceDropping);
-        registerLootTable(RegistryBlocks.HERCULEAN_FLUX_STORAGE, FluxBlockLootTables::fluxDeviceDropping);
-        registerLootTable(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, FluxBlockLootTables::fluxDeviceDropping);
+        registerLootTable(RegistryBlocks.FLUX_PLUG, FluxBlockLootTables::fluxDropping);
+        registerLootTable(RegistryBlocks.FLUX_POINT, FluxBlockLootTables::fluxDropping);
+        registerLootTable(RegistryBlocks.FLUX_CONTROLLER, FluxBlockLootTables::fluxDropping);
+        registerLootTable(RegistryBlocks.BASIC_FLUX_STORAGE, FluxBlockLootTables::fluxDropping);
+        registerLootTable(RegistryBlocks.HERCULEAN_FLUX_STORAGE, FluxBlockLootTables::fluxDropping);
+        registerLootTable(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, FluxBlockLootTables::fluxDropping);
     }
 
     /**
@@ -59,7 +59,7 @@ public class FluxBlockLootTables extends BlockLootTables {
      * @return loot table builder
      */
     @Nonnull
-    protected static LootTable.Builder fluxDeviceDropping(Block block) {
+    protected static LootTable.Builder fluxDropping(Block block) {
         if (!(block instanceof FluxDeviceBlock)) {
             throw new IllegalArgumentException();
         }

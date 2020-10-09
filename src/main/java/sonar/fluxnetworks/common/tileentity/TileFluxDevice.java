@@ -31,10 +31,12 @@ import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.network.TileMessage;
 import sonar.fluxnetworks.common.network.TilePacketBufferPacket;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -108,8 +110,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     @Override
     public void tick() {
         if (!world.isRemote) {
-            if (playerUsing.size() > 0) {
-                sendTilePacketToUsing(FLUX_GUI_SYNC);
+            if (!playerUsing.isEmpty()) {
+                NetworkHandler.INSTANCE.sendToPlayers(new TileMessage.SGuiSync(this), playerUsing);
                 settings_changed = false;
             }
             if (!load) {
@@ -172,7 +174,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     public final void onDataPacket(NetworkManager net, @Nonnull SUpdateTileEntityPacket pkt) {
         // Client side, read block update data
         readCustomNBT(pkt.getNbtCompound(), NBTType.TILE_UPDATE);
-        world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+        world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 0);
     }
 
     @Nonnull
@@ -215,7 +217,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
             tag.putLong("1", limit);
             tag.putBoolean("2", disableLimit);
             tag.putBoolean("3", surgeMode);
-            tag.putInt("4", getNetworkID());
+            tag.putInt("4", networkID);
             tag.putUniqueId("5", playerUUID);
             tag.putString("6", customName);
             tag.putInt("7", color);
@@ -299,8 +301,9 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     /**
-     * for all simple GUI updates
+     * For all simple GUI updates
      */
+    @Deprecated
     public void sendTilePacketToUsing(byte packetID) {
         if (!world.isRemote) {
             for (PlayerEntity playerEntity : playerUsing) {
@@ -310,7 +313,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice,
     }
 
     /**
-     * for any visual updates - colour / energy storage
+     * For any visual updates - color / energy storage
      */
     public void sendTilePacketToNearby(byte packetID) {
         if (!world.isRemote) {

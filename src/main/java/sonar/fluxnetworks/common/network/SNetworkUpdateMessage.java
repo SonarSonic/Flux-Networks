@@ -11,10 +11,6 @@ import sonar.fluxnetworks.client.FluxClientCache;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class SNetworkUpdateMessage implements IMessage {
 
@@ -55,16 +51,12 @@ public class SNetworkUpdateMessage implements IMessage {
     }
 
     @Override
-    public void decode(@Nonnull PacketBuffer buffer) {
+    public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         flags = buffer.readVarInt();
         final int size = buffer.readVarInt();
         for (int i = 0; i < size; i++) {
             updatedNetworks.put(buffer.readVarInt(), buffer.readCompoundTag());
         }
-    }
-
-    @Override
-    public void handle(@Nonnull Supplier<NetworkEvent.Context> context) {
         FluxClientCache.updateNetworks(updatedNetworks, flags);
     }
 }

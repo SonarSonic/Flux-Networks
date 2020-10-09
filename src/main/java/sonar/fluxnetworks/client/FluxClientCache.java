@@ -17,7 +17,6 @@ import sonar.fluxnetworks.common.misc.FluxUtils;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class FluxClientCache {
@@ -28,9 +27,10 @@ public class FluxClientCache {
         networks.clear();
     }
 
-    public static void updateNetworks(@Nonnull Map<Integer, CompoundNBT> serverSideNetworks, int flags) {
-        serverSideNetworks.forEach((integer, nbt) -> {
-            int id = integer; // unpack
+    public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundNBT> serverSideNetworks, int flags) {
+        for (Int2ObjectMap.Entry<CompoundNBT> entry : serverSideNetworks.int2ObjectEntrySet()) {
+            int id = entry.getIntKey();
+            CompoundNBT nbt = entry.getValue();
             IFluxNetwork network = networks.get(id);
             if (flags == FluxConstants.FLAG_NET_DELETE) {
                 if (network != null) {
@@ -45,7 +45,7 @@ public class FluxClientCache {
                     network.readCustomNBT(nbt, flags);
                 }
             }
-        });
+        }
     }
 
     public static void updateDevices(int networkID, List<CompoundNBT> tags) {

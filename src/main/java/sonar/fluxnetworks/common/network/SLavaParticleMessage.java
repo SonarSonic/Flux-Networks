@@ -8,7 +8,6 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.misc.IMessage;
 
 import javax.annotation.Nonnull;
-import java.util.function.Supplier;
 
 public class SLavaParticleMessage implements IMessage {
 
@@ -30,13 +29,9 @@ public class SLavaParticleMessage implements IMessage {
     }
 
     @Override
-    public void decode(@Nonnull PacketBuffer buffer) {
+    public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         pos = buffer.readBlockPos();
         count = buffer.readVarInt();
-    }
-
-    @Override
-    public void handle(@Nonnull Supplier<NetworkEvent.Context> context) {
         if (Minecraft.getInstance().world != null) {
             for (int i = 0; i < count; i++) {
                 Minecraft.getInstance().world.addParticle(ParticleTypes.LAVA,

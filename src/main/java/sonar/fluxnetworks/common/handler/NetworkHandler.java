@@ -10,10 +10,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.server.ServerWorld;
@@ -28,7 +26,6 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.common.network.CSetNetworkMessage;
 import sonar.fluxnetworks.common.network.SLavaParticleMessage;
@@ -154,8 +151,7 @@ public class NetworkHandler {
             throw new IllegalStateException("Unregistered message with index: " + index);
         }
         IMessage message = factory.get();
-        message.decode(buffer);
-        message.handle(ctx);
+        message.handle(buffer, ctx.get());
         ctx.get().setPacketHandled(true);
     }
 

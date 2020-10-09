@@ -37,6 +37,6 @@ public class FluxLootTableProvider extends LootTableProvider {
 
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
-        //DO NOTHING
+        // DO NOTHING
     }
 }
