@@ -6,8 +6,8 @@ import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 @Deprecated
 public enum TilePacketEnum {
-    SET_NETWORK(TilePacketHandler::handleSetNetworkPacket),
-    CHUNK_LOADING(TilePacketHandler::handleChunkLoadPacket);
+    /*SET_NETWORK(TilePacketHandler::handleSetNetworkPacket),
+    CHUNK_LOADING(TilePacketHandler::handleChunkLoadPacket)*/;
 
     public IPacketTileHandler handler;
 

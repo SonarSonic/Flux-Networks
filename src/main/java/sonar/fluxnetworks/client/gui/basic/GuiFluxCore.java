@@ -160,7 +160,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         }
 
         list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getLogicLimit()));
-        list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getLogicPriority()));
+        list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getRawPriority()));
         list.add(TextFormatting.ITALIC + FluxUtils.getDisplayString(flux.getGlobalPos()));
         return list;
     }

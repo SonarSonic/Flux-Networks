@@ -51,7 +51,7 @@ public class FluxClientCache {
     public static void updateDevices(int networkID, List<CompoundNBT> tags) {
         IFluxNetwork network = NETWORKS.get(networkID);
         if (network != null) {
-            List<IFluxDevice> devices = network.getAllDevices();
+            List<IFluxDevice> devices = network.getAllConnections();
             tags.forEach(t -> {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(t);
                 devices.stream().filter(f -> f.getGlobalPos().equals(globalPos)).findFirst().ifPresent(f -> f.readCustomNBT(t, NBTType.DEFAULT));

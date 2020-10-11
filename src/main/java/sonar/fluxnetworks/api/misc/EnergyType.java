@@ -4,9 +4,9 @@ public enum EnergyType {
     FE("Forge Energy", "FE", "FE/t"),
     EU("Energy Units", "EU", "EU/t");
 
-    private String name;
-    private String storage;
-    private String usage;
+    private final String name;
+    private final String storage;
+    private final String usage;
 
     EnergyType(String name, String storage, String usage) {
         this.name = name;

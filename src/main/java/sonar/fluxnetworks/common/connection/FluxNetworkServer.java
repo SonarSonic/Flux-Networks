@@ -20,19 +20,19 @@ import java.util.*;
  */
 public class FluxNetworkServer extends SimpleFluxNetwork {
 
-    private Map<FluxLogicType, List<? extends IFluxDevice>> connections = new HashMap<>();
+    private final Map<FluxLogicType, List<? extends IFluxDevice>> connections = new HashMap<>();
 
-    private Queue<IFluxDevice> toAdd = new LinkedList<>();
-    private Queue<IFluxDevice> toRemove = new LinkedList<>();
+    private final Queue<IFluxDevice> toAdd = new LinkedList<>();
+    private final Queue<IFluxDevice> toRemove = new LinkedList<>();
 
     public boolean sortConnections = true;
 
     // storage can work as both plug and point logically
-    private List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
-    private List<PriorityGroup<IFluxPoint>> sortedPoints = new ArrayList<>();
+    private final List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
+    private final List<PriorityGroup<IFluxPoint>> sortedPoints = new ArrayList<>();
 
-    private TransferIterator<IFluxPlug> plugTransferIterator = new TransferIterator<>(false);
-    private TransferIterator<IFluxPoint> pointTransferIterator = new TransferIterator<>(true);
+    private final TransferIterator<IFluxPlug> plugTransferIterator = new TransferIterator<>(false);
+    private final TransferIterator<IFluxPoint> pointTransferIterator = new TransferIterator<>(true);
 
     public long bufferLimiter = 0;
 
@@ -210,9 +210,9 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         toAdd.offer(device);
         toRemove.remove(device);
         // remove the offline SimpleFluxDevice
-        allDevices.stream().filter(f -> f.getGlobalPos().equals(device.getGlobalPos()))
-                .findFirst().ifPresent(allDevices::remove);
-        allDevices.add(device);
+        allConnections.stream().filter(f -> f.getGlobalPos().equals(device.getGlobalPos()))
+                .findFirst().ifPresent(allConnections::remove);
+        allConnections.add(device);
     }
 
     @Override
@@ -225,9 +225,9 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
             toAdd.remove(device);
             if (chunkUnload) {
                 //changeChunkLoaded(device, false);
-                allDevices.add(new SimpleFluxDevice(device));
+                allConnections.add(new SimpleFluxDevice(device));
             }
-            allDevices.remove(device);
+            allConnections.remove(device);
         }
     }
 

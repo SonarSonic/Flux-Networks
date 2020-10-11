@@ -14,20 +14,24 @@ public class FluxStorageRenderType extends RenderType {
 
     private static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
 
-    public static final RenderType INSTANCE = FluxStorageRenderType.getGlowType();
+    private static final RenderType INSTANCE;
 
-    private FluxStorageRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
-        super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
-    }
-
-    @Nonnull
-    private static RenderType getGlowType() {
+    static {
         RenderType.State state = RenderType.State.getBuilder()
                 .texture(new RenderState.TextureState(ENERGY_TEXTURE, false, false))
                 .shadeModel(SHADE_ENABLED)
                 .alpha(DEFAULT_ALPHA)
                 .transparency(TRANSLUCENT_TRANSPARENCY)
                 .build(true);
-        return makeType("glow_type", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, true, state);
+        INSTANCE = makeType("glow_type", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, true, state);
+    }
+
+    private FluxStorageRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
+        super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
+    }
+
+    @Nonnull
+    public static RenderType getGlowType() {
+        return INSTANCE;
     }
 }

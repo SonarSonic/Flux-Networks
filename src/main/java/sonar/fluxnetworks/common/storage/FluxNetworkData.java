@@ -1,13 +1,19 @@
 package sonar.fluxnetworks.common.storage;
 
-import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.nbt.LongNBT;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -17,7 +23,10 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.NBTType;
-import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.network.AccessType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
@@ -28,6 +37,7 @@ import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.LongConsumer;
 
 /**
  * Manage all flux network server and save network data to local.
@@ -62,7 +72,7 @@ public class FluxNetworkData extends WorldSavedData {
     public static String OLD_NETWORK_ACCESS = "access";*/
 
     private final Int2ObjectMap<IFluxNetwork> networks = new Int2ObjectArrayMap<>();
-    public final Map<Integer, List<ChunkPos>> loadedChunks = new HashMap<>(); // Forced Chunks
+    private final Map<ResourceLocation, LongSet> forcedChunks = new HashMap<>();
 
     private int uniqueID = 1; // -1 for invalid, 0 for default return value
 
@@ -98,6 +108,18 @@ public class FluxNetworkData extends WorldSavedData {
     @Nonnull
     public static Collection<IFluxNetwork> getAllNetworks() {
         return get().networks.values();
+    }
+
+    /**
+     * Get a set of block pos with given dimension key, a pos represents a flux tile entity
+     * that wants to load the chunk it's in
+     *
+     * @param dim dimension
+     * @return all block pos that want to load chunks they are in
+     */
+    @Nonnull
+    public static LongSet getForcedChunks(@Nonnull RegistryKey<World> dim) {
+        return get().forcedChunks.computeIfAbsent(dim.getLocation(), d -> new LongOpenHashSet());
     }
 
     @Nullable
@@ -139,22 +161,29 @@ public class FluxNetworkData extends WorldSavedData {
     @Override
     public void read(@Nonnull CompoundNBT nbt) {
         uniqueID = nbt.getInt(UNIQUE_ID);
-        if (nbt.contains(NETWORKS)) {
-            ListNBT list = nbt.getList(NETWORKS, Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.size(); i++) {
-                CompoundNBT tag = list.getCompound(i);
-                FluxNetworkServer network = new FluxNetworkServer();
-                /*if(tag.contains(OLD_NETWORK_ID)) {
-                    readOldData(network, tag);
-                } else {*/
-                network.readCustomNBT(tag, FluxConstants.FLAG_SAVE_ALL);
-                //}
-                if (networks.put(network.getNetworkID(), network) != null) {
-                    FluxNetworks.LOGGER.warn("Network IDs are not unique when reading save data");
+
+        ListNBT list = nbt.getList(NETWORKS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.size(); i++) {
+            CompoundNBT tag = list.getCompound(i);
+            FluxNetworkServer network = new FluxNetworkServer();
+            network.readCustomNBT(tag, FluxConstants.FLAG_SAVE_ALL);
+            if (networks.put(network.getNetworkID(), network) != null) {
+                FluxNetworks.LOGGER.warn("Network IDs are not unique when reading save data");
+            }
+        }
+
+        CompoundNBT tag = nbt.getCompound(LOADED_CHUNKS);
+        for (String key : tag.keySet()) {
+            ListNBT l2 = tag.getList(key, Constants.NBT.TAG_COMPOUND);
+            LongSet set = getForcedChunks(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(key)));
+            for (INBT n : l2) {
+                try {
+                    set.add(((LongNBT) n).getLong());
+                } catch (RuntimeException ignored) {
+
                 }
             }
         }
-        readChunks(nbt);
         data = this;
     }
 
@@ -172,7 +201,14 @@ public class FluxNetworkData extends WorldSavedData {
         compound.put(NETWORKS, list);
 
         CompoundNBT tag = new CompoundNBT();
-        loadedChunks.forEach((dim, pos) -> writeChunks(dim, pos, tag));
+        for (Map.Entry<ResourceLocation, LongSet> entry : forcedChunks.entrySet()) {
+            LongSet set = entry.getValue();
+            if (!set.isEmpty()) {
+                ListNBT l2 = new ListNBT();
+                set.forEach((LongConsumer) l -> l2.add(LongNBT.valueOf(l)));
+                tag.put(entry.getKey().toString(), l2);
+            }
+        }
         compound.put(LOADED_CHUNKS, tag);
         return compound;
     }
@@ -220,7 +256,7 @@ public class FluxNetworkData extends WorldSavedData {
         if (!nbt.contains(UNLOADED_CONNECTIONS)) {
             return;
         }
-        List<IFluxDevice> a = network.getAllDevices();
+        List<IFluxDevice> a = network.getAllConnections();
         ListNBT list = nbt.getList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             a.add(new SimpleFluxDevice(list.getCompound(i)));
@@ -228,12 +264,12 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public static void writeConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
-        List<IFluxDevice> a = network.getAllDevices();
+        List<IFluxDevice> a = network.getAllConnections();
         if (!a.isEmpty()) {
             ListNBT list = new ListNBT();
             a.forEach(s -> {
                 if (!s.isChunkLoaded()) {
-                    list.add(s.writeCustomNBT(new CompoundNBT(), NBTType.DEFAULT));
+                    list.add(s.writeCustomNBT(new CompoundNBT(), 0));
                 }
             });
             nbt.put(UNLOADED_CONNECTIONS, list);
@@ -244,7 +280,7 @@ public class FluxNetworkData extends WorldSavedData {
         if (!nbt.contains(UNLOADED_CONNECTIONS)) {
             return;
         }
-        List<IFluxDevice> a = network.getAllDevices();
+        List<IFluxDevice> a = network.getAllConnections();
         ListNBT list = nbt.getList(UNLOADED_CONNECTIONS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             a.add(new SimpleFluxDevice(list.getCompound(i)));
@@ -252,7 +288,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public static void writeAllConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
-        List<IFluxDevice> a = network.getAllDevices();
+        List<IFluxDevice> a = network.getAllConnections();
         if (!a.isEmpty()) {
             ListNBT list = new ListNBT();
             a.forEach(s -> list.add(s.writeCustomNBT(new CompoundNBT(), NBTType.DEFAULT)));
@@ -260,22 +296,22 @@ public class FluxNetworkData extends WorldSavedData {
         }
     }
 
-    private void readChunks(CompoundNBT nbt) {
+    /*private void readChunks(CompoundNBT nbt) {
         if (!nbt.contains(LOADED_CHUNKS)) {
             return;
         }
         CompoundNBT tags = nbt.getCompound(LOADED_CHUNKS);
         for (String key : tags.keySet()) {
             ListNBT list = tags.getList(key, Constants.NBT.TAG_COMPOUND);
-            List<ChunkPos> pos = loadedChunks.computeIfAbsent(Integer.valueOf(key), l -> new ArrayList<>());
+            List<ChunkPos> pos = forcedChunks.computeIfAbsent(Integer.valueOf(key), l -> new ArrayList<>());
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT tag = list.getCompound(i);
                 pos.add(new ChunkPos(tag.getInt("x"), tag.getInt("z")));
             }
         }
-    }
+    }*/
 
-    private void writeChunks(int dim, List<ChunkPos> pos, CompoundNBT nbt) {
+    /*private void writeChunks(int dim, List<ChunkPos> pos, CompoundNBT nbt) {
         if (!pos.isEmpty()) {
             ListNBT list = new ListNBT();
             pos.forEach(p -> {
@@ -286,7 +322,7 @@ public class FluxNetworkData extends WorldSavedData {
             });
             nbt.put(String.valueOf(dim), list);
         }
-    }
+    }*/
 
     /*private static void readOldData(FluxNetworkBase network, CompoundNBT nbt) {
         network.network_id.setValue(nbt.getInt(FluxNetworkData.OLD_NETWORK_ID));

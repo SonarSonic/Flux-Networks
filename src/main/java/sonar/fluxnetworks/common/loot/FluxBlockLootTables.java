@@ -36,7 +36,7 @@ public class FluxBlockLootTables extends BlockLootTables {
     }
 
     @Override
-    protected final void registerLootTable(Block blockIn, @Nonnull LootTable.Builder table) {
+    protected final void registerLootTable(@Nonnull Block blockIn, @Nonnull LootTable.Builder table) {
         super.registerLootTable(blockIn, table);
         knownBlocks.add(blockIn);
     }

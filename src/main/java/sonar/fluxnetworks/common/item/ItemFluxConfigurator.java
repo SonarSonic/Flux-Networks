@@ -20,13 +20,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.text.StyleUtils;
-import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
@@ -54,19 +53,19 @@ public class ItemFluxConfigurator extends Item {
         }
         TileEntity tile = context.getWorld().getTileEntity(context.getPos());
         if (tile instanceof TileFluxDevice) {
-            TileFluxDevice fluxCore = (TileFluxDevice) tile;
-            if (!fluxCore.canPlayerAccess(context.getPlayer())) {
+            TileFluxDevice flux = (TileFluxDevice) tile;
+            if (!flux.canPlayerAccess(context.getPlayer())) {
                 player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_DENIED_KEY), true);
                 return ActionResultType.FAIL;
             }
             ItemStack stack = player.getHeldItem(context.getHand());
             if (player.isSneaking()) {
-                stack.setTagInfo(FluxUtils.CONFIGS_TAG, fluxCore.copyConfiguration(new CompoundNBT()));
+                stack.setTagInfo(FluxUtils.CONFIGS_TAG, FluxUtils.copyConfiguration(flux, new CompoundNBT()));
                 player.sendMessage(new StringTextComponent("Copied Configuration"), UUID.randomUUID());
             } else {
                 CompoundNBT configs = stack.getOrCreateChildTag(FluxUtils.CONFIGS_TAG);
                 if (!configs.isEmpty()) {
-                    fluxCore.pasteConfiguration(configs);
+                    FluxUtils.pasteConfiguration(flux, configs);
                     player.sendMessage(new StringTextComponent("Pasted Configuration"), UUID.randomUUID());
                 }
             }
@@ -78,7 +77,7 @@ public class ItemFluxConfigurator extends Item {
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, PlayerEntity player, @Nonnull Hand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
         if (!world.isRemote) {
             NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
         }
@@ -86,7 +85,7 @@ public class ItemFluxConfigurator extends Item {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (tag != null) {
             tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxClientCache.getNetwork(

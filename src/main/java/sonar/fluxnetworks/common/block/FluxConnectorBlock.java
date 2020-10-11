@@ -55,7 +55,7 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock {
     public static BlockState getConnectedState(BlockState state, @Nonnull World world, BlockPos pos) {
         TileFluxDevice tile = (TileFluxDevice) world.getTileEntity(pos);
         for (Direction dir : Direction.values()) {
-            state = state.with(SIDES_CONNECTED[dir.getIndex()], tile != null && (tile.connections >> dir.getIndex()) == 1);
+            state = state.with(SIDES_CONNECTED[dir.getIndex()], tile != null && (tile.mFlags & 1 << dir.getIndex()) != 0);
         }
         return state;
     }

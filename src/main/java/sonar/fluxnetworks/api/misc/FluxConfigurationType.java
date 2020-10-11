@@ -52,41 +52,41 @@ public class FluxConfigurationType {
     //// PRIORITY \\\\
 
     public static void copyPriority(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        nbt.putInt(key, tile.priority);
+        nbt.putInt(key, tile.getRawPriority());
     }
 
     public static void pastePriority(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        tile.priority = nbt.getInt(key);
+        tile.setPriority(nbt.getInt(key));
     }
 
     //// PRIORITY SETTING \\\\
 
     public static void copyPrioritySetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        nbt.putBoolean(key, tile.surgeMode);
+        nbt.putBoolean(key, tile.getSurgeMode());
     }
 
     public static void pastePrioritySetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        tile.surgeMode = nbt.getBoolean(key);
+        tile.setSurgeMode(nbt.getBoolean(key));
     }
 
     //// TRANSFER LIMIT \\\\
 
     public static void copyTransfer(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        nbt.putLong(key, tile.limit);
+        nbt.putLong(key, tile.getRawLimit());
     }
 
     public static void pasteTransfer(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        tile.limit = nbt.getLong(key);
+        tile.setLimit(nbt.getLong(key));
     }
 
     //// TRANSFER SETTING \\\\
 
     public static void copyTransferSetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        nbt.putBoolean(key, tile.disableLimit);
+        nbt.putBoolean(key, tile.getDisableLimit());
     }
 
     public static void pasteTransferSetting(CompoundNBT nbt, String key, TileFluxDevice tile) {
-        tile.disableLimit = nbt.getBoolean(key);
+        tile.setDisableLimit(nbt.getBoolean(key));
     }
 
     @FunctionalInterface
@@ -98,5 +98,4 @@ public class FluxConfigurationType {
     public interface IPasteMethod {
         void pasteToTile(CompoundNBT tag, String key, TileFluxDevice tile);
     }
-
 }

@@ -30,6 +30,7 @@ import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.common.network.CSetNetworkMessage;
 import sonar.fluxnetworks.common.network.SLavaParticleMessage;
 import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
+import sonar.fluxnetworks.common.network.TileMessage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -80,6 +81,7 @@ public class NetworkHandler {
         INSTANCE.registerMessage(SLavaParticleMessage.class, SLavaParticleMessage::new);
         INSTANCE.registerMessage(SNetworkUpdateMessage.class, SNetworkUpdateMessage::new);
         INSTANCE.registerMessage(CSetNetworkMessage.class, CSetNetworkMessage::new);
+        INSTANCE.registerMessage(TileMessage.class, TileMessage::new);
     }
 
     /**
@@ -337,13 +339,13 @@ public class NetworkHandler {
     }
 
     /**
-     * Send a message to all players in specified chunk
+     * Send a message to all players who loaded the specified chunk
      *
      * @param message message to send
      * @param chunk   chunk that players in
      * @param <MSG>   message type
      */
-    public <MSG extends IMessage> void sendToChunk(MSG message, @Nonnull Chunk chunk) {
+    public <MSG extends IMessage> void sendToChunkTracking(MSG message, @Nonnull Chunk chunk) {
         final IPacket<?> packet = toS2CPacket(message);
         ((ServerWorld) chunk.getWorld()).getChunkProvider().chunkManager.getTrackingPlayers(
                 chunk.getPos(), false).forEach(player -> player.connection.sendPacket(packet));

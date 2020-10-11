@@ -2,7 +2,6 @@ package sonar.fluxnetworks.client.gui.tab;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxNetworks;
@@ -18,19 +17,16 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpConnectionEdit;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.BatchEditingPacket;
-import sonar.fluxnetworks.common.network.ConnectionUpdateRequestPacket;
 import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
@@ -195,7 +191,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         if(!networkValid)
             return;
         if(timer == 4) {
-            refreshPages(network.getAllDevices());
+            refreshPages(network.getAllConnections());
         }
         if(timer % 5 == 0) {
             //TODO
@@ -209,7 +205,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             clear.clickable = false;
             edit.clickable = false;
             disconnect.clickable = false;
-            refreshPages(network.getAllDevices());
+            refreshPages(network.getAllConnections());
         }
         if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
             closePopUp();
@@ -218,7 +214,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             clear.clickable = false;
             edit.clickable = false;
             disconnect.clickable = false;
-            refreshPages(network.getAllDevices());
+            refreshPages(network.getAllConnections());
             //TODO
             /*if(connector instanceof IFluxDevice && elements.stream().noneMatch(f -> f.getCoords().equals(((IFluxDevice)connector).getCoords()))) {
                 Minecraft.getInstance().currentScreen = new GuiTabSelection(player, connector);
@@ -233,7 +229,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
                 thenComparing(f -> f.getDeviceType().isStorage()).
                 thenComparing(f -> f.getDeviceType().isPlug()).
                 thenComparing(f -> f.getDeviceType().isPoint()).
-                thenComparing(p -> -p.getLogicPriority()));
+                thenComparing(p -> -p.getRawPriority()));
         refreshCurrentPageInternal();
     }
 }

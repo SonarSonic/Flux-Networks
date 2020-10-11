@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -12,17 +13,14 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.api.network.FluxLogicType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -31,7 +29,6 @@ import javax.annotation.Nullable;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.UUID;
 
 public class FluxUtils {
 
@@ -74,7 +71,7 @@ public class FluxUtils {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + b;
             }
         }
-        if (type == FluxDeviceType.STORAGE) {
+        if (type.isStorage()) {
             if (change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else if (change > 0) {
@@ -147,19 +144,19 @@ public class FluxUtils {
         nbt.putInt("x", p.getX());
         nbt.putInt("y", p.getY());
         nbt.putInt("z", p.getZ());
-        nbt.putString("dimension", pos.getDimension().func_240901_a_().toString());
+        nbt.putString("dimension", pos.getDimension().getLocation().toString());
     }
 
     @Nonnull
     public static GlobalPos readGlobalPos(@Nonnull CompoundNBT nbt) {
-        return GlobalPos.getPosition(RegistryKey.func_240903_a_(Registry.WORLD_KEY, new ResourceLocation(nbt.getString("dimension"))),
+        return GlobalPos.getPosition(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString("dimension"))),
                 new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z")));
     }
 
     @Nonnull
     public static String getDisplayString(@Nonnull GlobalPos pos) {
         BlockPos p = pos.getPos();
-        return "X: " + p.getX() + " Y: " + p.getY() + " Z: " + p.getZ() + " Dim: " + pos.getDimension().func_240901_a_();
+        return "X: " + p.getX() + " Y: " + p.getY() + " Z: " + p.getZ() + " Dim: " + pos.getDimension().getLocation();
     }
 
     public static <T> boolean addWithCheck(@Nonnull Collection<T> list, @Nullable T toAdd) {
@@ -269,7 +266,8 @@ public class FluxUtils {
     }
 
     @Nullable
-    public static <T> T getCap(@Nonnull LazyOptional<T> lazyOptional) {
+    public static <T> T getCap(@Nonnull PlayerEntity player, Capability<T> capability) {
+        LazyOptional<T> lazyOptional = player.getCapability(capability);
         if (lazyOptional.isPresent()) {
             return lazyOptional.orElseThrow(IllegalStateException::new);
         }

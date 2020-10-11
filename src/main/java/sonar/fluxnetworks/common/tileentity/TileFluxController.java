@@ -12,7 +12,7 @@ public class TileFluxController extends TileFluxDevice implements IFluxControlle
     public final FluxControllerHandler handler = new FluxControllerHandler(this);
 
     public TileFluxController() {
-        super(RegistryBlocks.FLUX_CONTROLLER_TILE);
+        super(RegistryBlocks.FLUX_CONTROLLER_TILE, , );
         customName = "Flux Controller";
     }
 

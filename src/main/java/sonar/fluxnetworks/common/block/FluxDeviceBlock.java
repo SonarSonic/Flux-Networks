@@ -14,9 +14,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.text.StyleUtils;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
@@ -35,7 +35,8 @@ public abstract class FluxDeviceBlock extends Block {
 
     @Nonnull
     @Override
-    public ActionResultType onBlockActivated(BlockState state, @Nonnull World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult result) {
+    public ActionResultType onBlockActivated(@Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos,
+                                             @Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull BlockRayTraceResult result) {
         if (worldIn.isRemote) {
             return ActionResultType.SUCCESS;
         }
@@ -47,12 +48,12 @@ public abstract class FluxDeviceBlock extends Block {
         TileEntity tile = worldIn.getTileEntity(pos);
 
         if (tile instanceof TileFluxDevice) {
-            TileFluxDevice t = (TileFluxDevice) tile;
-            if (t.playerUsing.size() > 0) {
+            TileFluxDevice flux = (TileFluxDevice) tile;
+            if (!flux.playerUsing.isEmpty()) {
                 player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_OCCUPY_KEY), true);
                 return ActionResultType.SUCCESS;
-            } else if (t.canPlayerAccess(player)) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, t, buf -> {
+            } else if (flux.canPlayerAccess(player)) {
+                NetworkHooks.openGui((ServerPlayerEntity) player, flux, buf -> {
                     buf.writeBoolean(true);
                     buf.writeBlockPos(pos);
                 });
@@ -66,21 +67,19 @@ public abstract class FluxDeviceBlock extends Block {
     }
 
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable LivingEntity placer, @Nonnull ItemStack stack) {
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile instanceof TileFluxDevice) {
-            TileFluxDevice t = (TileFluxDevice) tile;
+            TileFluxDevice flux = (TileFluxDevice) tile;
             if (stack.hasTag()) {
                 CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
                 if (tag != null) {
                     // doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
-                    t.readCustomNBT(tag, NBTType.TILE_DROP);
+                    flux.readCustomNBT(tag, FluxConstants.FLAG_TILE_DROP);
                 }
             }
-            if (!worldIn.isRemote) {
-                if (placer instanceof PlayerEntity) {
-                    t.playerUUID = PlayerEntity.getUUID(((PlayerEntity) placer).getGameProfile());
-                }
+            if (placer instanceof ServerPlayerEntity) {
+                flux.setConnectionOwner(PlayerEntity.getUUID(((PlayerEntity) placer).getGameProfile()));
             }
         }
     }

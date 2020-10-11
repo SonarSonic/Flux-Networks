@@ -40,28 +40,31 @@ public class CSetNetworkMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        pos = buffer.readBlockPos();
-        networkID = buffer.readVarInt();
-        password = buffer.readString(256);
         PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
+            buffer.release();
             return;
         }
-        TileEntity tile = player.world.getTileEntity(pos);
+        TileEntity tile = player.world.getTileEntity(buffer.readBlockPos());
         if (!(tile instanceof IFluxDevice)) {
+            buffer.release();
             return;
         }
         IFluxDevice flux = (IFluxDevice) tile;
+        int networkID = buffer.readVarInt();
         if (flux.getNetworkID() == networkID) {
+            buffer.release();
             return;
         }
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (network.isValid()) {
             if (flux.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
                 PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.HAS_CONTROLLER), context);
+                buffer.release();
                 return;
             }
             if (!network.getPlayerAccess(player).canUse()) {
+                String password = buffer.readString(256);
                 if (password.isEmpty()) {
                     PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE), context);
                     return;
@@ -75,5 +78,6 @@ public class CSetNetworkMessage implements IMessage {
             network.enqueueConnectionAddition(flux);
             PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.SUCCESS), context);
         }
+        buffer.release();
     }
 }

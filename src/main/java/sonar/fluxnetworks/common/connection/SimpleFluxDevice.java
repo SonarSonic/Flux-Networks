@@ -29,11 +29,10 @@ public class SimpleFluxDevice implements IFluxDevice {
     public FluxDeviceType connectionType;
     public long limit;
     public GlobalPos globalPos;
-    //public int folderID;
     public String customName;
     public boolean surgeMode;
     public boolean disableLimit;
-    public boolean isChunkLoaded;
+    public boolean chunkLoaded;
     public boolean forcedLoading;
     public long buffer;
     public long change;
@@ -45,21 +44,15 @@ public class SimpleFluxDevice implements IFluxDevice {
         this.playerUUID = device.getConnectionOwner();
         this.connectionType = device.getDeviceType();
         this.limit = device.getRawLimit();
-        //this.coord4D = tile.getCoords();
         this.globalPos = device.getGlobalPos();
-        //this.folderID = tile.getFolderID();
         this.customName = device.getCustomName();
         this.surgeMode = device.getSurgeMode();
         this.disableLimit = device.getDisableLimit();
-        this.isChunkLoaded = device.isChunkLoaded();
+        this.chunkLoaded = device.isChunkLoaded();
         this.buffer = device.getTransferHandler().getBuffer();
         this.change = device.getTransferHandler().getChange();
         this.forcedLoading = device.isForcedLoading();
         this.stack = device.getDisplayStack();
-    }
-
-    public SimpleFluxDevice(CompoundNBT tag) {
-        readCustomNBT(tag, NBTType.ALL_SAVE);
     }
 
     public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
@@ -81,7 +74,7 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public CompoundNBT writeCustomNBT(CompoundNBT tag, NBTType type) {
+    public void writeCustomNBT(CompoundNBT tag, int flag) {
         FluxUtils.writeGlobalPos(tag, globalPos);
         tag.putInt("type", connectionType.ordinal());
         tag.putInt("n_id", networkID);
@@ -91,16 +84,15 @@ public class SimpleFluxDevice implements IFluxDevice {
         tag.putString("name", customName);
         tag.putBoolean("dLimit", disableLimit);
         tag.putBoolean("surge", surgeMode);
-        tag.putBoolean("isChunkLoaded", isChunkLoaded);
+        tag.putBoolean("chunkLoaded", chunkLoaded);
         tag.putLong("buffer", buffer);
         tag.putLong("change", change);
         tag.putBoolean("forcedChunk", forcedLoading);
         stack.write(tag);
-        return tag;
     }
 
     @Override
-    public void readCustomNBT(CompoundNBT tag, NBTType type) {
+    public void readCustomNBT(CompoundNBT tag, int flag) {
         globalPos = FluxUtils.readGlobalPos(tag);
         connectionType = FluxDeviceType.values()[tag.getInt("type")];
         networkID = tag.getInt("n_id");
@@ -110,7 +102,7 @@ public class SimpleFluxDevice implements IFluxDevice {
         customName = tag.getString("name");
         disableLimit = tag.getBoolean("dLimit");
         surgeMode = tag.getBoolean("surge");
-        isChunkLoaded = tag.getBoolean("isChunkLoaded");
+        chunkLoaded = tag.getBoolean("chunkLoaded");
         buffer = tag.getLong("buffer");
         change = tag.getLong("change");
         forcedLoading = tag.getBoolean("forcedChunk");
@@ -124,7 +116,7 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public int getLogicPriority() {
-        return priority;
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
@@ -139,7 +131,7 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public IFluxNetwork getNetwork() {
-        return FluxNetworkInvalid.INSTANCE;
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
@@ -169,12 +161,12 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public boolean canPlayerAccess(PlayerEntity player) {
-        return false;
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
     public boolean isChunkLoaded() {
-        return isChunkLoaded;
+        return chunkLoaded;
     }
 
     @Override
@@ -183,11 +175,18 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
+    public void setForcedLoading(boolean forcedLoading) {
+        throw new IllegalStateException("Client or unloaded device");
+    }
+
+    @Override
     public void onConnect(IFluxNetwork network) {
+
     }
 
     @Override
     public void onDisconnect() {
+
     }
 
     @Override
@@ -285,10 +284,5 @@ public class SimpleFluxDevice implements IFluxDevice {
     @Override
     public long getChange() {
         return change;
-    }
-
-    @Override
-    public void setChunkLoaded(boolean chunkLoaded) {
-        isChunkLoaded = chunkLoaded;
     }
 }

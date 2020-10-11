@@ -33,7 +33,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
     @Override
     public void render(@Nonnull TileFluxStorage tile, float partialTicks, @Nonnull MatrixStack matrixStackIn,
                        @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        render(matrixStackIn, bufferIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.cachedColor);
+        render(matrixStackIn, bufferIn, combinedOverlayIn, tile.energyStored, tile.maxEnergyStorage, tile.clientColor);
     }
 
     static void render(MatrixStack matrix, IRenderTypeBuffer bufferIn, int overlay, int energyStored, int energyCapacity, int networkRGB) {
@@ -46,7 +46,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
         float energyPercentage = Math.min((float) energyStored / energyCapacity, 1.0f);
         float renderHeight = HEIGHT * energyPercentage;
 
-        IVertexBuilder builder = bufferIn.getBuffer(FluxStorageRenderType.INSTANCE);
+        IVertexBuilder builder = bufferIn.getBuffer(FluxStorageRenderType.getGlowType());
         renderSide(matrix, builder, Direction.NORTH, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
         renderSide(matrix, builder, Direction.SOUTH, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);
         renderSide(matrix, builder, Direction.EAST, START_X, START_Y, OFFSET_Z, WIDTH, renderHeight, r, g, b, overlay, energyPercentage);

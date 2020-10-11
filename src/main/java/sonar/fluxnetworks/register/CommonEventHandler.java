@@ -52,8 +52,8 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onServerStopped(FMLServerStoppedEvent event) {
         // mainly used to reload data while changing single-player saves, useless on dedicated server
+        // because once server shut down, all memory deallocated
         FluxNetworkData.release();
-        FluxChunkManager.clear();
     }
 
     @SubscribeEvent
@@ -71,6 +71,16 @@ public class CommonEventHandler {
     public static void onWorldLoad(@Nonnull WorldEvent.Load event) {
         if (!event.getWorld().isRemote()) {
             FluxChunkManager.loadWorld((ServerWorld) event.getWorld());
+        }
+    }
+
+    @SubscribeEvent
+    public static void onWorldTick(@Nonnull TickEvent.WorldTickEvent event) {
+        if (!event.world.isRemote && event.phase == TickEvent.Phase.END) {
+            if (!FluxNetworkData.getForcedChunks(event.world.getDimensionKey()).isEmpty()) {
+                // keep world ticking
+                ((ServerWorld) event.world).resetUpdateEntityTick();
+            }
         }
     }
 

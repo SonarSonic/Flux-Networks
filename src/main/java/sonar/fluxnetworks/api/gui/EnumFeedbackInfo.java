@@ -18,7 +18,7 @@ public enum EnumFeedbackInfo {
     SUCCESS(null),
     SUCCESS_2(null); // Sometimes we need another success to compare to the first one
 
-    private FluxTranslate localization;
+    private final FluxTranslate localization;
 
     EnumFeedbackInfo(FluxTranslate localization) {
         this.localization = localization;

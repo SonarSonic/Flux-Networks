@@ -18,6 +18,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -116,14 +117,15 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     @Override
     public int getColor(@Nonnull BlockState state, @Nullable IBlockDisplayReader world, @Nullable BlockPos pos, int tintIndex) {
+        // update when world.notifyBlockUpdate() on client
         if (tintIndex == 1 && pos != null && world != null) {
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof IFluxDevice) {
+            if (tile instanceof TileFluxDevice) {
                 /*TileFluxDevice t = (TileFluxDevice) tile;
                 if (t.getNetworkID() == -1) {
                     return NO_NETWORK_COLOR;
                 }*/
-                return FluxUtils.getBrighterColor(FluxClientCache.getNetwork(((IFluxDevice) tile).getNetworkID()).getNetworkColor(), 1.2f);
+                return FluxUtils.getBrighterColor(FluxClientCache.getNetwork(((TileFluxDevice) tile).getNetworkID()).getNetworkColor(), 1.2f);
             }
             return DEFAULT_COLOR;
         }
@@ -132,6 +134,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     @Override
     public int getColor(@Nonnull ItemStack stack, int tintIndex) {
+        // update every frame
         if (tintIndex == 1) {
             CompoundNBT tag = stack.getTag();
             if (tag != null && tag.getBoolean(FluxUtils.GUI_COLOR)) {

@@ -41,7 +41,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     protected final NetworkStatistics statistics = new NetworkStatistics(this);
     // On server: TileFluxDevice (loaded) and SimpleFluxDevice (unloaded)
     // On client: SimpleFluxDevice
-    protected final List<IFluxDevice> allDevices = new ArrayList<>();
+    protected final List<IFluxDevice> allConnections = new ArrayList<>();
     protected final List<NetworkMember> networkMembers = new ArrayList<>();
 
     public SimpleFluxNetwork() {
@@ -146,8 +146,8 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public List<IFluxDevice> getAllDevices() {
-        return allDevices;
+    public List<IFluxDevice> getAllConnections() {
+        return allConnections;
     }
 
     @Override

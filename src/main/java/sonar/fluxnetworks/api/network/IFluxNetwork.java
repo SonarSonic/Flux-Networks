@@ -50,7 +50,13 @@ public interface IFluxNetwork {
 
     List<NetworkMember> getMemberList();
 
-    List<IFluxDevice> getAllDevices();
+    /**
+     * Get all connections including loaded tile entities (TileFluxDevice) and unloaded (SimpleFLuxDevice)
+     *
+     * @return the list of all connections
+     * @see #getConnections(FluxLogicType)
+     */
+    List<IFluxDevice> getAllConnections();
 
     /*@Deprecated
     default void onStartServerTick() {
@@ -79,11 +85,11 @@ public interface IFluxNetwork {
     }*/
 
     /**
-     * Get all loaded tile entities with given logic type
+     * Get all loaded connections with given logic type
      *
      * @param type logic type
-     * @param <T> device type
-     * @return a list of connections
+     * @param <T>  device type
+     * @return the list of connections
      */
     @Nonnull
     <T extends IFluxDevice> List<T> getConnections(FluxLogicType type);

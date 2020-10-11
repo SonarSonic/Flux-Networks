@@ -5,46 +5,42 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityType;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.device.IFluxEnergy;
 import sonar.fluxnetworks.api.device.IFluxStorage;
-import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
+import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.network.TileMessage;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
-import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.FLUX_GUI_SYNC;
-import static sonar.fluxnetworks.common.network.TilePacketBufferConstants.FLUX_STORAGE_ENERGY;
-
 public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage, IFluxEnergy {
 
     public final FluxStorageHandler handler = new FluxStorageHandler(this);
 
-    public static final int C = 1000000;
-    public static final int D = -10000;
+    private static final int PRI_DIFF = 1000000;
+    private static final int PRI_UPPER = -10000;
 
     public int energyStored;
     public int maxEnergyStorage;
 
-    private boolean energyChanged = false;
+    private boolean serverEnergyChanged = false;
 
-    public ItemStack stack = ItemStack.EMPTY;
+    protected ItemStack stack = ItemStack.EMPTY;
 
-    public TileFluxStorage(TileEntityType<?> tileEntityTypeIn, int maxEnergyStorage) {
-        super(tileEntityTypeIn);
+    public TileFluxStorage(TileEntityType<?> tileEntityTypeIn, String customName, long limit, int maxEnergyStorage) {
+        super(tileEntityTypeIn, customName, limit);
         this.maxEnergyStorage = maxEnergyStorage;
     }
 
     public static class Basic extends TileFluxStorage {
 
         public Basic() {
-            super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, FluxConfig.basicCapacity);
-            customName = "Basic Storage";
-            limit = FluxConfig.basicTransfer;
+            super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, "Basic Storage", FluxConfig.basicTransfer, FluxConfig.basicCapacity);
             stack = new ItemStack(RegistryBlocks.BASIC_FLUX_STORAGE);
         }
     }
@@ -52,9 +48,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     public static class Herculean extends TileFluxStorage {
 
         public Herculean() {
-            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, FluxConfig.herculeanCapacity);
-            customName = "Herculean Storage";
-            limit = FluxConfig.herculeanTransfer;
+            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, "Herculean Storage", FluxConfig.herculeanTransfer, FluxConfig.herculeanCapacity);
             stack = new ItemStack(RegistryBlocks.HERCULEAN_FLUX_STORAGE);
         }
     }
@@ -62,9 +56,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     public static class Gargantuan extends TileFluxStorage {
 
         public Gargantuan() {
-            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, FluxConfig.gargantuanCapacity);
-            customName = "Gargantuan Storage";
-            limit = FluxConfig.gargantuanTransfer;
+            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, "Gargantuan Storage", FluxConfig.gargantuanTransfer, FluxConfig.gargantuanCapacity);
             stack = new ItemStack(RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
         }
     }
@@ -80,17 +72,16 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public CompoundNBT writeCustomNBT(CompoundNBT tag, NBTType type) {
-        super.writeCustomNBT(tag, type);
+    public void writeCustomNBT(CompoundNBT tag, int flag) {
+        super.writeCustomNBT(tag, flag);
         tag.putInt("energy", energyStored);
-        return tag;
     }
 
     public long addEnergy(long amount, boolean simulate) {
         long energyReceived = Math.min(maxEnergyStorage - energyStored, amount);
         if (!simulate) {
             energyStored += energyReceived;
-            energyChanged = true;
+            serverEnergyChanged = true;
         }
         return energyReceived;
     }
@@ -99,7 +90,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         long energyExtracted = Math.min(energyStored, amount);
         if (!simulate) {
             energyStored -= energyExtracted;
-            energyChanged = true;
+            serverEnergyChanged = true;
         }
         return energyExtracted;
     }
@@ -108,11 +99,11 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
      * on server side
      */
     public void sendPacketIfNeeded() {
-        if (energyChanged) {
+        if (serverEnergyChanged) {
             //noinspection ConstantConditions
             if ((world.getWorldInfo().getGameTime() & 3) == 0) {
-                sendTilePacketToNearby(FLUX_STORAGE_ENERGY);
-                energyChanged = false;
+                NetworkHandler.INSTANCE.sendToChunkTracking(new TileMessage(this, TileMessage.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
+                serverEnergyChanged = false;
             }
         }
     }
@@ -124,12 +115,12 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
 
     @Override
     public long getLogicLimit() {
-        return disableLimit ? maxEnergyStorage : Math.min(limit, maxEnergyStorage);
+        return getDisableLimit() ? maxEnergyStorage : Math.min(limit, maxEnergyStorage);
     }
 
     @Override
     public int getLogicPriority() {
-        return surgeMode ? D : Math.min(priority - C, D);
+        return getSurgeMode() ? PRI_UPPER : Math.min(priority - PRI_DIFF, PRI_UPPER);
     }
 
     @Override
@@ -138,8 +129,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public void readCustomNBT(CompoundNBT tag, NBTType type) {
-        super.readCustomNBT(tag, type);
+    public void readCustomNBT(CompoundNBT tag, int flag) {
+        super.readCustomNBT(tag, flag);
         energyStored = tag.getInt("energy");
     }
 
@@ -166,8 +157,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     public void writePacket(PacketBuffer buf, byte id) {
         super.writePacket(buf, id);
         switch (id) {
-            case FLUX_GUI_SYNC:
-            case FLUX_STORAGE_ENERGY:
+            case TileMessage.S2C_GUI_SYNC:
+            case TileMessage.S2C_STORAGE_ENERGY:
                 buf.writeInt(energyStored);
                 break;
         }
@@ -177,8 +168,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     public void readPacket(PacketBuffer buf, byte id) {
         super.readPacket(buf, id);
         switch (id) {
-            case FLUX_GUI_SYNC:
-            case FLUX_STORAGE_ENERGY:
+            case TileMessage.S2C_GUI_SYNC:
+            case TileMessage.S2C_STORAGE_ENERGY:
                 energyStored = buf.readInt();
                 break;
         }

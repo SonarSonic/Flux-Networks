@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -20,10 +19,9 @@ import java.util.UUID;
  */
 public interface IFluxDevice extends INetworkConnector {
 
-    //TODO
-    CompoundNBT writeCustomNBT(CompoundNBT tag, NBTType type);
+    void writeCustomNBT(CompoundNBT tag, int flag);
 
-    void readCustomNBT(CompoundNBT tag, NBTType type);
+    void readCustomNBT(CompoundNBT tag, int flag);
 
     int getLogicPriority(); // consider surge, for transfer on server
 
@@ -52,6 +50,8 @@ public interface IFluxDevice extends INetworkConnector {
     boolean isChunkLoaded();
 
     boolean isForcedLoading();
+
+    void setForcedLoading(boolean forcedLoading);
 
     /**
      * This method invoked in network queue handling.
@@ -105,9 +105,6 @@ public interface IFluxDevice extends INetworkConnector {
 
     default long getChange() {
         return getTransferHandler().getChange();
-    }
-
-    default void setChunkLoaded(boolean chunkLoaded) {
     }
 
     default ItemStack getDisplayStack() {

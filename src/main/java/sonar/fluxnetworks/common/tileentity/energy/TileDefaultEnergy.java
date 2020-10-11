@@ -26,7 +26,7 @@ public abstract class TileDefaultEnergy extends TileFluxDevice implements IFluxD
     }
 
     public TileDefaultEnergy(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+        super(tileEntityTypeIn, , );
     }
 
     public DefaultEnergyWrapper getEnergyWrapper(Direction facing) {

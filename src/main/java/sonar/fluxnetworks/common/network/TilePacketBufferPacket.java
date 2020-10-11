@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.api.device.ITilePacketBuffer;
+import sonar.fluxnetworks.api.misc.ITilePacketBuffer;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 
 @Deprecated

@@ -10,8 +10,10 @@ public class FluxConstants {
 
     public static UUID DEFAULT_UUID = new UUID(-1, -1);
 
-    // NBT masks
-    public static final int FLAG_SAVE_ALL = 0x1;
+    public static final int FLAG_SAVE_ALL = 1;
+    public static final int FLAG_TILE_UPDATE = 2;
+    public static final int FLAG_TILE_DROP = 11;
+
     public static final int FLAG_NET_BASIS = 0x2;
     public static final int FLAG_NET_MEMBERS = 0x4;
     public static final int FLAG_NET_DEVICES = 0x8;

@@ -15,7 +15,7 @@ import net.minecraft.util.math.ChunkPos;
 @Deprecated
 public class TilePacketHandler {
 
-    public static CompoundNBT getSetNetworkPacket(int id, String password) {
+    /*public static CompoundNBT getSetNetworkPacket(int id, String password) {
         CompoundNBT tag = new CompoundNBT();
         tag.putInt(FluxNetworkData.NETWORK_ID, id);
         tag.putString(FluxNetworkData.NETWORK_PASSWORD, password);
@@ -41,9 +41,9 @@ public class TilePacketHandler {
                     return new FeedbackPacket(EnumFeedbackInfo.REJECT);
                 }
             }
-            /*if(tile.getNetwork() != null && tile.getNetwork().isValid()) {
+            *//*if(tile.getNetwork() != null && tile.getNetwork().isValid()) {
                 tile.getNetwork().enqueueConnectionRemoval(tile, false);
-            }*/
+            }*//*
             tile.playerUUID = PlayerEntity.getUUID(player.getGameProfile());
             network.enqueueConnectionAddition(tile);
             return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
@@ -63,20 +63,20 @@ public class TilePacketHandler {
             if (load) {
                 boolean p = FluxChunkManager.addChunkLoader((ServerWorld)tile.getFluxWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = p;
-                tile.settings_changed = true;
+                tile.serverSettingsChanged = true;
                 if(!p) {
                     return new FeedbackPacket(EnumFeedbackInfo.HAS_LOADER);
                 }
             } else {
                 FluxChunkManager.removeChunkLoader((ServerWorld) tile.getFluxWorld(), new ChunkPos(tile.getPos()));
                 tile.chunkLoading = false;
-                tile.settings_changed = true;
+                tile.serverSettingsChanged = true;
             }
             return null;
         } else {
             tile.chunkLoading = false;
-            tile.settings_changed = true;
+            tile.serverSettingsChanged = true;
         }
         return new FeedbackPacket(EnumFeedbackInfo.BANNED_LOADING);
-    }
+    }*/
 }
