@@ -13,6 +13,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxCapabilities;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -67,7 +68,7 @@ public class SuperAdmin implements ISuperAdmin {
             ISuperAdmin instance = FluxUtils.getCap(player, FluxCapabilities.SUPER_ADMIN);
             return instance != null && instance.hasPermission();
         }
-        return FluxNetworkCache.INSTANCE.superAdminClient;
+        return FluxClientCache.superAdmin;
     }
 
     private static class SuperAdminStorage implements Capability.IStorage<ISuperAdmin> {

@@ -6,7 +6,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
@@ -64,7 +63,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
         matrixStack.push();
         matrixStack.scale(0.625f, 0.625f, 0.625f);
-        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getNetworkStatistics().getConnectionCount() + "  Avg: " + element.getNetworkStatistics().average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
+        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getNetworkStats().getConnectionCount() + "  Avg: " + element.getNetworkStats().average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
         matrixStack.pop();
     }
 

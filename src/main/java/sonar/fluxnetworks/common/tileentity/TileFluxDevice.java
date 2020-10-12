@@ -22,6 +22,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -32,6 +33,7 @@ import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.network.SFeedbackMessage;
 import sonar.fluxnetworks.common.network.TileMessage;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -366,8 +368,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     }
                 } else {
                     setForcedLoading(false);
-                    //TODO
-                    //PacketHandler.CHANNEL.reply(new FeedbackPacket(EnumFeedbackInfo.BANNED_LOADING), context);
+                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.BANNED_LOADING), context);
                 }
                 sSettingsChanged = true;
                 break;

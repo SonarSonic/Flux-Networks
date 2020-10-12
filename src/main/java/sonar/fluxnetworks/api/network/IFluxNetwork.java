@@ -46,7 +46,7 @@ public interface IFluxNetwork {
 
     UUID getOwnerUUID();
 
-    NetworkStatistics getNetworkStatistics();
+    NetworkStatistics getNetworkStats();
 
     List<NetworkMember> getMemberList();
 

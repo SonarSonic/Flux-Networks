@@ -38,5 +38,6 @@ public class SLavaParticleMessage implements IMessage {
                         pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
             }
         }
+        buffer.release();
     }
 }

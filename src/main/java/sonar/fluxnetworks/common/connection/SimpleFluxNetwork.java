@@ -136,7 +136,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public NetworkStatistics getNetworkStatistics() {
+    public NetworkStatistics getNetworkStats() {
         return statistics;
     }
 

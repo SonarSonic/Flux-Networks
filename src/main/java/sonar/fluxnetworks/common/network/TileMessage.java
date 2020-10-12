@@ -42,28 +42,25 @@ public class TileMessage implements IMessage {
     public void encode(@Nonnull PacketBuffer buffer) {
         buffer.writeBlockPos(tile.getPos());
         buffer.writeByte(type);
+        tile.writePacket(buffer, type);
     }
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
-            buffer.release();
             return;
         }
         BlockPos pos = buffer.readBlockPos();
         TileEntity tile = player.world.getTileEntity(pos);
         if (!(tile instanceof TileFluxDevice)) {
-            buffer.release();
             return;
         }
         TileFluxDevice flux = (TileFluxDevice) tile;
         // security check on server
         if (!player.world.isRemote && !flux.canPlayerAccess(player)) {
-            buffer.release();
             return;
         }
         flux.readPacket(buffer, context, buffer.readByte());
-        buffer.release();
     }
 }

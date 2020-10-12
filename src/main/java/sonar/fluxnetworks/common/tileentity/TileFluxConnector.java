@@ -10,8 +10,8 @@ import sonar.fluxnetworks.common.tileentity.energy.TileDefaultEnergy;
 
 public abstract class TileFluxConnector extends TileDefaultEnergy {
 
-    public TileFluxConnector(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public TileFluxConnector(TileEntityType<?> tileEntityTypeIn, String customName, long limit) {
+        super(tileEntityTypeIn, customName, limit);
     }
 
     @Override

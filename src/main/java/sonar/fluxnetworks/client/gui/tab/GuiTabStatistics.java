@@ -10,7 +10,6 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.LineChart;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 import sonar.fluxnetworks.common.misc.FluxUtils;
@@ -25,7 +24,7 @@ public class GuiTabStatistics extends GuiTabCore {
 
     public InvisibleButton redirectButton;
 
-    private NetworkStatistics stats = network.getNetworkStatistics();
+    private NetworkStatistics stats = network.getNetworkStats();
     private LineChart chart;
     private int timer = 0;
     private static CompoundNBT GUI_COLOR_TAG;

@@ -38,5 +38,6 @@ public class SSuperAdminMessage implements IMessage {
                 ((GuiFluxCore) gui).onSuperAdminChanged();
             }
         }
+        buffer.release();
     }
 }

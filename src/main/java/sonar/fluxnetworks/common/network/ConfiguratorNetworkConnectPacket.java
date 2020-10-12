@@ -42,10 +42,10 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
         if(network.isValid()) {
             if (!network.getPlayerAccess(player).canUse()) {
                 if (password.isEmpty()) {
-                    return new FeedbackPacket(EnumFeedbackInfo.PASSWORD_REQUIRE);
+                    return new SFeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE);
                 }
                 if (!password.equals(network.getNetworkPassword())) {
-                    return new FeedbackPacket(EnumFeedbackInfo.REJECT);
+                    return new SFeedbackMessage(EnumFeedbackInfo.REJECT);
                 }
             }
             ItemStack stack = player.getHeldItemMainhand();
@@ -53,7 +53,7 @@ public class ConfiguratorNetworkConnectPacket extends AbstractPacket {
                 CompoundNBT configs = stack.getOrCreateChildTag(FluxUtils.CONFIGS_TAG);
                 configs.putInt(FluxConfigurationType.NETWORK.getNBTName(), id);
             }
-            return new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
+            return new SFeedbackMessage(EnumFeedbackInfo.SUCCESS);
         }
         return null;
     }

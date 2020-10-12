@@ -267,7 +267,11 @@ public class FluxUtils {
 
     @Nullable
     public static <T> T getCap(@Nonnull PlayerEntity player, Capability<T> capability) {
-        LazyOptional<T> lazyOptional = player.getCapability(capability);
+        return getCap(player.getCapability(capability));
+    }
+
+    @Nullable
+    public static <T> T getCap(@Nonnull LazyOptional<T> lazyOptional) {
         if (lazyOptional.isPresent()) {
             return lazyOptional.orElseThrow(IllegalStateException::new);
         }

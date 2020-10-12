@@ -27,7 +27,6 @@ public class CSuperAdminMessage implements IMessage {
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
-            buffer.release();
             return;
         }
         ISuperAdmin superAdmin = FluxUtils.getCap(player, FluxCapabilities.SUPER_ADMIN);
@@ -35,6 +34,5 @@ public class CSuperAdminMessage implements IMessage {
             superAdmin.changePermission();
             NetworkHandler.INSTANCE.reply(new SSuperAdminMessage(superAdmin.hasPermission()), context);
         }
-        buffer.release();
     }
 }

@@ -60,5 +60,6 @@ public class SNetworkUpdateMessage implements IMessage {
             updatedNetworks.put(buffer.readVarInt(), buffer.readCompoundTag());
         }
         FluxClientCache.updateNetworks(updatedNetworks, flags);
+        buffer.release();
     }
 }

@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.tileentity;
 
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.device.IFluxController;
@@ -12,8 +13,7 @@ public class TileFluxController extends TileFluxDevice implements IFluxControlle
     public final FluxControllerHandler handler = new FluxControllerHandler(this);
 
     public TileFluxController() {
-        super(RegistryBlocks.FLUX_CONTROLLER_TILE, , );
-        customName = "Flux Controller";
+        super(RegistryBlocks.FLUX_CONTROLLER_TILE, "Flux Controller", FluxConfig.defaultLimit);
     }
 
     @Override

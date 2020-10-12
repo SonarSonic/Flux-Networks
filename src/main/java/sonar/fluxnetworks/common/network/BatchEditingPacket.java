@@ -3,20 +3,15 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
-import net.minecraft.util.math.ChunkPos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -131,11 +126,11 @@ public class BatchEditingPacket extends AbstractPacket {
                         });
                     }*/
                     if (reject.get()) {
-                        reply(ctx, new FeedbackPacket(EnumFeedbackInfo.REJECT_SOME));
+                        reply(ctx, new SFeedbackMessage(EnumFeedbackInfo.REJECT_SOME));
                     }
-                    return disconnect ? new FeedbackPacket(EnumFeedbackInfo.SUCCESS_2) : new FeedbackPacket(EnumFeedbackInfo.SUCCESS);
+                    return disconnect ? new SFeedbackMessage(EnumFeedbackInfo.SUCCESS_2) : new SFeedbackMessage(EnumFeedbackInfo.SUCCESS);
                 } else {
-                    return new FeedbackPacket(EnumFeedbackInfo.NO_ADMIN);
+                    return new SFeedbackMessage(EnumFeedbackInfo.NO_ADMIN);
                 }
             }
         }

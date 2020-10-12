@@ -77,10 +77,11 @@ public class NetworkHandler {
     public static void registerMessages() {
         INSTANCE.registerMessage(SLavaParticleMessage.class, SLavaParticleMessage::new);
         INSTANCE.registerMessage(SNetworkUpdateMessage.class, SNetworkUpdateMessage::new);
-        INSTANCE.registerMessage(CSetNetworkMessage.class, CSetNetworkMessage::new);
+        INSTANCE.registerMessage(CConnectNetworkMessage.class, CConnectNetworkMessage::new);
         INSTANCE.registerMessage(TileMessage.class, TileMessage::new);
         INSTANCE.registerMessage(SSuperAdminMessage.class, SSuperAdminMessage::new);
         INSTANCE.registerMessage(CSuperAdminMessage.class, CSuperAdminMessage::new);
+        INSTANCE.registerMessage(SFeedbackMessage.class, SFeedbackMessage::new);
     }
 
     /**
