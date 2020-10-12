@@ -88,8 +88,8 @@ public class ItemFluxConfigurator extends Item {
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (tag != null) {
-            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxClientCache.getNetwork(
-                    tag.getInt(FluxConfigurationType.NETWORK.getNBTName())).getNetworkName()));
+            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxClientCache.getNetworkName(
+                    tag.getInt(FluxConfigurationType.NETWORK.getNBTName()))));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }

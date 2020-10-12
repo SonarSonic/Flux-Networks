@@ -25,6 +25,7 @@ import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CSetNetworkMessage;
 import sonar.fluxnetworks.common.network.ConfiguratorNetworkConnectPacket;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -169,8 +170,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     }
 
     public void setConnectedNetwork(int networkID, String password) {
-        if (connector instanceof IFluxDevice) {
-            NetworkHandler.INSTANCE.sendToServer(new CSetNetworkMessage(((IFluxDevice) connector).getGlobalPos().getPos(), networkID, password));
+        if (connector instanceof TileFluxDevice) {
+            NetworkHandler.INSTANCE.sendToServer(new CSetNetworkMessage(((TileFluxDevice) connector).getPos(), networkID, password));
         } else if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
             FluxNetworks.PROXY.setAdminViewingNetwork(FluxClientCache.getNetwork(networkID));
         } else if (connector instanceof ItemFluxConfigurator.ContainerProvider) {

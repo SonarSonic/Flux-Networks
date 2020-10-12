@@ -13,9 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class NetworkColourRequestPacket extends AbstractPacket {
 
-    private List<Integer> requests;
+    private final List<Integer> requests;
 
     public NetworkColourRequestPacket(List<Integer> requests) {
         this.requests = requests;

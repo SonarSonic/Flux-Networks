@@ -20,9 +20,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.AccessType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
@@ -30,7 +28,6 @@ import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.connection.SimpleFluxDevice;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
 
@@ -123,22 +120,22 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     @Nullable
-    public IFluxNetwork createNetwork(@Nonnull PlayerEntity player, String name, int color, SecurityType securityType, @Nullable String password) {
+    public IFluxNetwork createNetwork(@Nonnull PlayerEntity creator, String name, int color, SecurityType securityType, @Nullable String password) {
         final boolean limitReached;
         if (FluxConfig.maximumPerPlayer == -1) {
             limitReached = false;
         } else {
-            UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
+            UUID uuid = PlayerEntity.getUUID(creator.getGameProfile());
             long created = networks.values().stream().filter(n -> n.getOwnerUUID().equals(uuid)).count();
             limitReached = created >= FluxConfig.maximumPerPlayer;
         }
         if (limitReached) {
             return null;
         }
-        UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
+        UUID uuid = PlayerEntity.getUUID(creator.getGameProfile());
 
         FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, securityType, color, uuid, password);
-        network.getMemberList().add(NetworkMember.create(player, AccessType.OWNER));
+        network.getMemberList().add(NetworkMember.create(creator, AccessType.OWNER));
 
         if (networks.put(network.getNetworkID(), network) != null) {
             FluxNetworks.LOGGER.warn("Network IDs are not unique when creating new network");
@@ -252,7 +249,7 @@ public class FluxNetworkData extends WorldSavedData {
         return SuperAdmin.isPlayerSuperAdmin(player) ? AccessType.SUPER_ADMIN : AccessType.BLOCKED;
     }
 
-    public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
+    /*public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {
         if (!nbt.contains(UNLOADED_CONNECTIONS)) {
             return;
         }
@@ -294,7 +291,7 @@ public class FluxNetworkData extends WorldSavedData {
             a.forEach(s -> list.add(s.writeCustomNBT(new CompoundNBT(), NBTType.DEFAULT)));
             nbt.put(UNLOADED_CONNECTIONS, list);
         }
-    }
+    }*/
 
     /*private void readChunks(CompoundNBT nbt) {
         if (!nbt.contains(LOADED_CHUNKS)) {

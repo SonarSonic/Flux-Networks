@@ -210,8 +210,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         toAdd.offer(device);
         toRemove.remove(device);
         // remove the offline SimpleFluxDevice
-        allConnections.stream().filter(f -> f.getGlobalPos().equals(device.getGlobalPos()))
-                .findFirst().ifPresent(allConnections::remove);
+        allConnections.removeIf(f -> f.getGlobalPos().equals(device.getGlobalPos()));
         allConnections.add(device);
     }
 

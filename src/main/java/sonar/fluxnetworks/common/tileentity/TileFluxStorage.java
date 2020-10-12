@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxEnergy;
 import sonar.fluxnetworks.api.device.IFluxStorage;
@@ -154,23 +155,23 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public void writePacket(PacketBuffer buf, byte id) {
-        super.writePacket(buf, id);
+    public void writePacket(PacketBuffer buffer, byte id) {
+        super.writePacket(buffer, id);
         switch (id) {
             case TileMessage.S2C_GUI_SYNC:
             case TileMessage.S2C_STORAGE_ENERGY:
-                buf.writeInt(energyStored);
+                buffer.writeInt(energyStored);
                 break;
         }
     }
 
     @Override
-    public void readPacket(PacketBuffer buf, byte id) {
-        super.readPacket(buf, id);
+    public void readPacket(PacketBuffer buffer, NetworkEvent.Context context, byte id) {
+        super.readPacket(buffer, context, id);
         switch (id) {
             case TileMessage.S2C_GUI_SYNC:
             case TileMessage.S2C_STORAGE_ENERGY:
-                energyStored = buf.readInt();
+                energyStored = buffer.readInt();
                 break;
         }
     }

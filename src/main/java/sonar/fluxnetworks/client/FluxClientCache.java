@@ -23,6 +23,8 @@ public class FluxClientCache {
 
     private static final Int2ObjectMap<IFluxNetwork> NETWORKS = new Int2ObjectArrayMap<>();
 
+    public static boolean superAdmin = false;
+
     public static void release() {
         NETWORKS.clear();
     }
@@ -54,7 +56,7 @@ public class FluxClientCache {
             List<IFluxDevice> devices = network.getAllConnections();
             tags.forEach(t -> {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(t);
-                devices.stream().filter(f -> f.getGlobalPos().equals(globalPos)).findFirst().ifPresent(f -> f.readCustomNBT(t, NBTType.DEFAULT));
+                devices.stream().filter(f -> f.getGlobalPos().equals(globalPos)).findFirst().ifPresent(f -> f.readCustomNBT(t, 0));
             });
         }
     }
@@ -62,6 +64,14 @@ public class FluxClientCache {
     @Nonnull
     public static IFluxNetwork getNetwork(int id) {
         return NETWORKS.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
+    }
+
+    public static String getNetworkName(int id) {
+        IFluxNetwork network = getNetwork(id);
+        if (network.isValid()) {
+            return network.getNetworkName();
+        }
+        return "NONE";
     }
 
     @Nonnull

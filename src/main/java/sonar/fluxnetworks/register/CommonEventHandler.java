@@ -6,7 +6,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
@@ -25,17 +24,15 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.capability.SuperAdminProvider;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
-import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.network.SLavaParticleMessage;
 import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
-import sonar.fluxnetworks.common.network.SuperAdminPacket;
+import sonar.fluxnetworks.common.network.SSuperAdminMessage;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
@@ -162,8 +159,8 @@ public class CommonEventHandler {
         // this event only fired on server
         NetworkHandler.INSTANCE.sendToPlayer(new SNetworkUpdateMessage(FluxNetworkData.getAllNetworks(),
                 FluxConstants.FLAG_NET_BASIS), event.getPlayer());
-        PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()),
-                new SuperAdminPacket(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())));
+        NetworkHandler.INSTANCE.sendToPlayer(new SSuperAdminMessage(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())),
+                event.getPlayer());
     }
 
     @SubscribeEvent

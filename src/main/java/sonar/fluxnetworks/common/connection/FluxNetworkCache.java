@@ -6,10 +6,10 @@ package sonar.fluxnetworks.common.connection;
 @Deprecated
 public class FluxNetworkCache {
 
-    public static final FluxNetworkCache INSTANCE = new FluxNetworkCache();
+    //public static final FluxNetworkCache INSTANCE = new FluxNetworkCache();
 
     //public Map<Integer, IFluxNetwork> networks = new HashMap<>();
-    public boolean superAdminClient = false;
+    //public boolean superAdminClient = false;
 
     /*public void clearClientCache() {
         networks.clear();

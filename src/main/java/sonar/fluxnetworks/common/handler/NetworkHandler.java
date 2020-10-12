@@ -27,10 +27,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.IMessage;
-import sonar.fluxnetworks.common.network.CSetNetworkMessage;
-import sonar.fluxnetworks.common.network.SLavaParticleMessage;
-import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
-import sonar.fluxnetworks.common.network.TileMessage;
+import sonar.fluxnetworks.common.network.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,6 +79,8 @@ public class NetworkHandler {
         INSTANCE.registerMessage(SNetworkUpdateMessage.class, SNetworkUpdateMessage::new);
         INSTANCE.registerMessage(CSetNetworkMessage.class, CSetNetworkMessage::new);
         INSTANCE.registerMessage(TileMessage.class, TileMessage::new);
+        INSTANCE.registerMessage(SSuperAdminMessage.class, SSuperAdminMessage::new);
+        INSTANCE.registerMessage(CSuperAdminMessage.class, CSuperAdminMessage::new);
     }
 
     /**

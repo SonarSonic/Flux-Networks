@@ -8,6 +8,7 @@ import net.minecraft.util.Tuple;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class NetworkColourPacket extends AbstractPacket {
 
     public Map<Integer, Tuple<Integer, String>> cache;

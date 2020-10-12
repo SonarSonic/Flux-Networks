@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.common.network;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -64,7 +63,7 @@ public class TileMessage implements IMessage {
             buffer.release();
             return;
         }
-        flux.readPacket(buffer, buffer.readByte());
+        flux.readPacket(buffer, context, buffer.readByte());
         buffer.release();
     }
 }

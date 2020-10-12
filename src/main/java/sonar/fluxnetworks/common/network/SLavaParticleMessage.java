@@ -30,8 +30,8 @@ public class SLavaParticleMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        pos = buffer.readBlockPos();
-        count = buffer.readVarInt();
+        BlockPos pos = buffer.readBlockPos();
+        int count = buffer.readVarInt();
         if (Minecraft.getInstance().world != null) {
             for (int i = 0; i < count; i++) {
                 Minecraft.getInstance().world.addParticle(ParticleTypes.LAVA,

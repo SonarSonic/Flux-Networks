@@ -14,7 +14,7 @@ import java.util.Collection;
 
 public class SNetworkUpdateMessage implements IMessage {
 
-    private Int2ObjectMap<CompoundNBT> updatedNetworks = new Int2ObjectArrayMap<>();
+    private final Int2ObjectMap<CompoundNBT> updatedNetworks = new Int2ObjectArrayMap<>();
     private int flags;
 
     public SNetworkUpdateMessage() {
@@ -43,6 +43,7 @@ public class SNetworkUpdateMessage implements IMessage {
     @Override
     public void encode(@Nonnull PacketBuffer buffer) {
         buffer.writeVarInt(flags);
+        Int2ObjectMap<CompoundNBT> updatedNetworks = this.updatedNetworks;
         buffer.writeVarInt(updatedNetworks.size());
         updatedNetworks.forEach((i, n) -> {
             buffer.writeVarInt(i);
@@ -52,7 +53,8 @@ public class SNetworkUpdateMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        flags = buffer.readVarInt();
+        int flags = buffer.readVarInt();
+        Int2ObjectMap<CompoundNBT> updatedNetworks = this.updatedNetworks;
         final int size = buffer.readVarInt();
         for (int i = 0; i < size; i++) {
             updatedNetworks.put(buffer.readVarInt(), buffer.readCompoundTag());
