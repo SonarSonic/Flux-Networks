@@ -6,7 +6,7 @@ public enum SecurityType {
     PUBLIC(FluxTranslate.PUBLIC),
     ENCRYPTED(FluxTranslate.ENCRYPTED);
 
-    private FluxTranslate localization;
+    private final FluxTranslate localization;
 
     SecurityType(FluxTranslate localization) {
         this.localization = localization;

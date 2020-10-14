@@ -74,10 +74,7 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onWorldTick(@Nonnull TickEvent.WorldTickEvent event) {
         if (!event.world.isRemote && event.phase == TickEvent.Phase.END) {
-            if (!FluxNetworkData.getForcedChunks(event.world.getDimensionKey()).isEmpty()) {
-                // keep world ticking
-                ((ServerWorld) event.world).resetUpdateEntityTick();
-            }
+            FluxChunkManager.tickWorld((ServerWorld) event.world);
         }
     }
 

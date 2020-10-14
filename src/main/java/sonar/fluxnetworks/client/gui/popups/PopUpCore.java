@@ -8,6 +8,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 import sonar.fluxnetworks.client.gui.basic.GuiPopUpHost;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
@@ -47,7 +48,7 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCon
     public void closePopUp(){
         popButtons.clear();
         popSwitches.clear();
-        FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
+        FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
     }
 
     @Override

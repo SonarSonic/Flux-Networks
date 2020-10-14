@@ -4,25 +4,25 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.FluxNetworks;
+import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.misc.Coord4D;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.misc.Coord4D;
+import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpConnectionEdit;
-import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.BatchEditingPacket;
 import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
-import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,7 +35,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     private List<BatchEditButton> editButtons = new ArrayList<>();
 
     public List<IFluxDevice> batchConnections = new ArrayList<>();
-    public IFluxDevice       singleConnection;
+    public IFluxDevice singleConnection;
 
     public BatchEditButton clear, edit, disconnect;
 
@@ -43,13 +43,16 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     public GuiTabConnections(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
-        gridStartX = 15; gridStartY = 22;
-        gridHeight = 19; gridPerPage = 7;
-        elementHeight = 18; elementWidth = 146;
+        gridStartX = 15;
+        gridStartY = 22;
+        gridHeight = 19;
+        gridPerPage = 7;
+        elementHeight = 18;
+        elementWidth = 146;
         PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_CONNECTIONS));
     }
 
-    public EnumNavigationTabs getNavigationTab(){
+    public EnumNavigationTabs getNavigationTab() {
         return EnumNavigationTabs.TAB_CONNECTION;
     }
 
@@ -60,10 +63,10 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         editButtons.clear();
         buttonLists.add(editButtons);
 
-        if(!networkValid) {
+        if (!networkValid) {
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
             addButton(redirectButton);
-        }else{
+        } else {
             clear = new BatchEditButton(118, 8, 0, FluxTranslate.BATCH_CLEAR_BUTTON.t()).setUnclickable();
             edit = new BatchEditButton(132, 8, 1, FluxTranslate.BATCH_EDIT_BUTTON.t()).setUnclickable();
             disconnect = new BatchEditButton(146, 8, 2, FluxTranslate.BATCH_DISCONNECT_BUTTON.t()).setUnclickable();
@@ -75,19 +78,19 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     @Override
     protected void onElementClicked(IFluxDevice element, int mouseButton) {
-        if(mouseButton == 0 && batchConnections.size() == 0 && element.isChunkLoaded()) {
+        if (mouseButton == 0 && batchConnections.size() == 0 && element.isChunkLoaded()) {
             singleConnection = element;
             openPopUp(new PopUpConnectionEdit(this, false, player, connector));
         }
-        if(mouseButton == 1 || (mouseButton == 0 && batchConnections.size() > 0) ) {
+        if (mouseButton == 1 || (mouseButton == 0 && batchConnections.size() > 0)) {
             if (batchConnections.contains(element)) {
                 batchConnections.remove(element);
-                if(batchConnections.size() <= 0) {
+                if (batchConnections.size() <= 0) {
                     clear.clickable = false;
                     edit.clickable = false;
                     disconnect.clickable = false;
                 }
-            } else if(element.isChunkLoaded()) {
+            } else if (element.isChunkLoaded()) {
                 batchConnections.add(element);
                 clear.clickable = true;
                 edit.clickable = true;
@@ -98,15 +101,15 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        if(networkValid) {
-            if(batchConnections.size() > 0) {
+        if (networkValid) {
+            if (batchConnections.size() > 0) {
                 font.drawString(matrixStack, FluxTranslate.SELECTED.t() + ": " + TextFormatting.AQUA + batchConnections.size(), 20, 10, 0xffffff);
             } else {
                 font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
             }
             super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-            if(!hasActivePopup())
-                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 165, 0xffffff);
+            if (!hasActivePopup())
+                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 88, 165, 0xffffff);
         } else {
             super.drawForegroundLayer(matrixStack, mouseX, mouseY);
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
@@ -120,11 +123,11 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         int fontColor = 0xffffff;
         int color = element.getDeviceType().color;
 
-        float red = (float)(color >> 16 & 255) / 255.0F;
-        float green = (float)(color >> 8 & 255) / 255.0F;
-        float blue = (float)(color & 255) / 255.0F;
+        float red = (float) (color >> 16 & 255) / 255.0F;
+        float green = (float) (color >> 8 & 255) / 255.0F;
+        float blue = (float) (color & 255) / 255.0F;
 
-        if(batchConnections.size() > 0) {
+        if (batchConnections.size() > 0) {
             if (batchConnections.contains(element)) {
                 fill(matrixStack, x - 5, y + 1, x - 3, y + elementHeight - 1, 0xccffffff);
                 fill(matrixStack, x + elementWidth + 3, y + 1, x + elementWidth + 5, y + elementHeight - 1, 0xccffffff);
@@ -141,7 +144,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             RenderSystem.color3f(red, green, blue);
             blit(matrixStack, x, y, 0, 32, elementWidth, elementHeight);
         }
-        if(element.isChunkLoaded()) {
+        if (element.isChunkLoaded()) {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 2, fontColor);
             RenderSystem.scaled(0.625, 0.625, 0.625);
             font.drawString(matrixStack, FluxUtils.getTransferInfo(element.getDeviceType(), EnergyType.FE, element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
@@ -149,22 +152,22 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         } else {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 5, 0x808080);
         }
-        if(currentPopUp == null) { //TODO MINOR - TEMP FIX ! - DEPTH PROBLEM WITH POPUPS DUE TO THE ITEMRENDERER OFFSET I THINK - lets disable when there is no pop up for now.
+        if (currentPopUp == null) { //TODO MINOR - TEMP FIX ! - DEPTH PROBLEM WITH POPUPS DUE TO THE ITEMRENDERER OFFSET I THINK - lets disable when there is no pop up for now.
             screenUtils.renderItemStack(element.getDisplayStack(), x + 2, y + 1);
         }
     }
 
     @Override
     public void renderElementTooltip(MatrixStack matrixStack, IFluxDevice element, int mouseX, int mouseY) {
-        if(!hasActivePopup()) {
+        if (!hasActivePopup()) {
             screenUtils.drawHoverTooltip(matrixStack, getFluxInfo(element), mouseX + 4, mouseY - 16);
         }
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton){
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if(button instanceof BatchEditButton){
+        if (button instanceof BatchEditButton) {
             switch (button.id) {
                 case 0:
                     batchConnections.clear();
@@ -188,18 +191,18 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     @Override
     public void tick() {
         super.tick();
-        if(!networkValid)
+        if (!networkValid)
             return;
-        if(timer == 4) {
+        if (timer == 4) {
             refreshPages(network.getAllConnections());
         }
-        if(timer % 5 == 0) {
+        if (timer % 5 == 0) {
             //TODO
             //PacketHandler.CHANNEL.sendToServer(new ConnectionUpdateRequestPacket(network.getNetworkID(), current.stream().map(IFluxDevice::getCoords).collect(Collectors.toList())));
         }
         timer++;
         timer %= 20;
-        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
             closePopUp();
             batchConnections.clear();
             clear.clickable = false;
@@ -207,7 +210,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             disconnect.clickable = false;
             refreshPages(network.getAllConnections());
         }
-        if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
+        if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
             closePopUp();
             elements.removeAll(batchConnections);
             batchConnections.clear();

@@ -2,6 +2,7 @@ package sonar.fluxnetworks.common.misc;
 
 import sonar.fluxnetworks.api.misc.ICustomValue;
 
+@Deprecated
 public class CustomValue<T> implements ICustomValue<T> {
 
     public T value;

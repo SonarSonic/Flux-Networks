@@ -14,11 +14,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -34,15 +34,15 @@ import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
-import sonar.fluxnetworks.common.integration.TOPIntegration;
-import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
+import sonar.fluxnetworks.common.integration.TOPIntegration;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.item.ItemFluxDust;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.recipe.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipe.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -72,6 +72,7 @@ public class CommonRegistration {
         NetworkHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
 
+        // capabilities
         SuperAdmin.register();
         FNEnergyStorage.register();
 
@@ -80,8 +81,10 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void enqueueIMC(InterModEnqueueEvent event) {
-        InterModComms.sendTo("carryon", "blacklistBlock", () -> FluxNetworks.MODID + ":*");
-        InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration::new);
+        if (ModList.get().isLoaded("carryon"))
+            InterModComms.sendTo("carryon", "blacklistBlock", () -> FluxNetworks.MODID + ":*");
+        if (ModList.get().isLoaded("theoneprobe"))
+            InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration::new);
     }
 
     @SubscribeEvent
@@ -192,7 +195,6 @@ public class CommonRegistration {
         event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "fluxstoragerecipe"));
         event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "nbtwiperecipe"));
     }
-
 
     @SubscribeEvent
     public static void registerSounds(@Nonnull RegistryEvent.Register<SoundEvent> event) {

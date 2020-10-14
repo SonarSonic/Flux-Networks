@@ -10,7 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.tileentity.TileFluxConnector;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -38,9 +37,21 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock {
     }
 
     @Override
+    public void neighborChanged(@Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos,
+                                @Nonnull Block blockIn, @Nonnull BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+        // block changed
+        TileFluxDevice tile = (TileFluxDevice) worldIn.getTileEntity(pos);
+        if (tile != null && !tile.getFluxWorld().isRemote) {
+            tile.updateTransfers(FluxUtils.getBlockDirection(pos, fromPos));
+        }
+    }
+
+    @Override
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(state, world, pos, neighbor);
-        TileFluxConnector tile = (TileFluxConnector) world.getTileEntity(pos);
+        // tile changed, not always being called, because some mods do not call related methods
+        TileFluxDevice tile = (TileFluxDevice) world.getTileEntity(pos);
         if (tile != null && !tile.getFluxWorld().isRemote) {
             tile.updateTransfers(FluxUtils.getBlockDirection(pos, neighbor));
         }

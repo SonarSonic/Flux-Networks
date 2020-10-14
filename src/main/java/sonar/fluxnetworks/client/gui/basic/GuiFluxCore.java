@@ -6,11 +6,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.network.AccessType;
+import sonar.fluxnetworks.api.network.FluxAccessLevel;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -23,7 +22,7 @@ import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.CConnectNetworkMessage;
+import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
 import sonar.fluxnetworks.common.network.ConfiguratorNetworkConnectPacket;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -37,7 +36,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
     public IFluxNetwork network;
-    public AccessType accessPermission = AccessType.BLOCKED;
+    public FluxAccessLevel accessPermission = FluxAccessLevel.BLOCKED;
     protected boolean networkValid;
     private int timer1;
 
@@ -103,8 +102,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     @Override
     public void onClose() {
         super.onClose();
-        FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, false);
-        FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
+        FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, false);
+        FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
     }
 
 
@@ -171,9 +170,9 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
 
     public void setConnectedNetwork(int networkID, String password) {
         if (connector instanceof TileFluxDevice) {
-            NetworkHandler.INSTANCE.sendToServer(new CConnectNetworkMessage(((TileFluxDevice) connector).getPos(), networkID, password));
+            NetworkHandler.INSTANCE.sendToServer(new CSelectNetworkMessage(((TileFluxDevice) connector).getPos(), networkID, password));
         } else if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
-            FluxNetworks.PROXY.setAdminViewingNetwork(FluxClientCache.getNetwork(networkID));
+            FluxClientCache.adminViewingNetwork = FluxClientCache.getNetwork(networkID);
         } else if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
             PacketHandler.CHANNEL.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));
         }

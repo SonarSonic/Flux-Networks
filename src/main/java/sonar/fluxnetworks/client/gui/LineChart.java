@@ -2,18 +2,21 @@ package sonar.fluxnetworks.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import net.minecraft.client.Minecraft;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Line chart that using OpenGL.
+ *
  * @author BloCamLimb
  */
 public class LineChart {
@@ -29,10 +32,10 @@ public class LineChart {
     public long maxUnitY;
     public String suffixUnitY;
 
-    public List<Long> data = new ArrayList<>();
+    public LongList data = new LongArrayList();
 
-    public List<Double> currentHeight;
-    public List<Double> targetHeight;
+    public DoubleList currentHeight;
+    public DoubleList targetHeight;
 
     public LineChart(int x, int y, int height, int linePoints, String displayUnitX, String suffixUnitY) {
         this.x = x;
@@ -42,13 +45,13 @@ public class LineChart {
         this.displayUnitX = displayUnitX;
         this.suffixUnitY = suffixUnitY;
 
-        this.currentHeight = new ArrayList<>(linePoints);
-        for(int i = 0; i < linePoints; i++) {
-            currentHeight.add((double) (y + height));
+        this.currentHeight = new DoubleArrayList(linePoints);
+        for (int i = 0; i < linePoints; i++) {
+            currentHeight.add(y + height);
         }
-        this.targetHeight = new ArrayList<>(linePoints);
-        for(int i = 0; i < linePoints; i++) {
-            targetHeight.add((double) (y + height));
+        this.targetHeight = new DoubleArrayList(linePoints);
+        for (int i = 0; i < linePoints; i++) {
+            targetHeight.add(y + height);
         }
     }
 
@@ -85,12 +88,12 @@ public class LineChart {
         Screen.fill(matrixStack, x - 14, y - 6, x - 13, y + height + 3, 0xffffffff);
 
         RenderSystem.scaled(0.625f, 0.625f, 0.625f);
-        mc.fontRenderer.drawString(matrixStack, suffixUnitY,(float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY), (float) ((y - 7.5) * 1.6), 0xffffff);
-        mc.fontRenderer.drawString(matrixStack, displayUnitY,(float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY), (float) ((y - 2) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, suffixUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY), (float) ((y - 7.5) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, displayUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY), (float) ((y - 2) * 1.6), 0xffffff);
         mc.fontRenderer.drawString(matrixStack, displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)), (float) ((y + height + 1.5) * 1.6), 0xffffff);
         for (int i = 0; i < data.size(); i++) {
-            String d = FluxUtils.format(data.get(i), FluxUtils.TypeNumberFormat.COMPACT, "");
-            mc.fontRenderer.drawString(matrixStack, d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 1.0f, (float) ((currentHeight.get(i) - 7) * 1.6), 0xffffff);
+            String d = FluxUtils.format(data.getLong(i), FluxUtils.TypeNumberFormat.COMPACT, "");
+            mc.fontRenderer.drawString(matrixStack, d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 1.0f, (float) ((currentHeight.getDouble(i) - 7) * 1.6), 0xffffff);
             String c = String.valueOf((5 - i) * 5);
             mc.fontRenderer.drawString(matrixStack, c, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(c) / 2F), (float) ((y + height + 2) * 1.6), 0xffffff);
         }
@@ -101,68 +104,70 @@ public class LineChart {
         RenderSystem.popAttributes();
     }
 
-    public void updateData(List<Long> newData) {
+    public void updateData(LongList newData) {
         this.data = newData;
         calculateUnitY(newData);
         calculateTargetHeight(newData);
     }
 
     public void updateHeight(float partialTick) {
-        if(currentHeight.size() == 0) {
+        if (currentHeight.size() == 0) {
             return;
         }
-        for(int i = 0; i < currentHeight.size(); i++) {
-            double a = targetHeight.get(i) - currentHeight.get(i);
-            if(a == 0) {
+        for (int i = 0; i < currentHeight.size(); i++) {
+            double a = targetHeight.getDouble(i) - currentHeight.getDouble(i);
+            if (a == 0) {
                 continue;
             }
             double c;
             double p = partialTick / 16;
-            if(Math.abs(a) <= p) {
-                c = targetHeight.get(i);
+            if (Math.abs(a) <= p) {
+                c = targetHeight.getDouble(i);
             } else {
-                if(a > 0)
-                    c = currentHeight.get(i) + Math.max(Math.min(a, a / 4 * partialTick), p);
+                if (a > 0)
+                    c = currentHeight.getDouble(i) + Math.max(Math.min(a, a / 4 * partialTick), p);
                 else
-                    c = currentHeight.get(i) + Math.min(Math.max(a, a / 4 * partialTick), -p);
+                    c = currentHeight.getDouble(i) + Math.min(Math.max(a, a / 4 * partialTick), -p);
             }
             currentHeight.set(i, c);
         }
     }
 
     private void calculateUnitY(List<Long> data) {
-        AtomicLong maxValue = new AtomicLong();
-        data.forEach(v -> maxValue.set(Math.max(maxValue.get(), v)));
-        if(maxValue.get() == 0) {
+        long maxValue = 0;
+        for (long v : data) {
+            maxValue = Math.max(maxValue, v);
+        }
+        if (maxValue == 0) {
             maxUnitY = 1;
             displayUnitY = FluxUtils.format(maxUnitY, FluxUtils.TypeNumberFormat.COMPACT, "");
             return;
         }
-        int measureLevel = (int) Math.log10(maxValue.get()); // 0 = 10, 3 = 10000
+        int measureLevel = (int) Math.log10(maxValue); // 0 = 10, 3 = 10000
         switch (measureLevel) {
             case 0:
-                maxUnitY = maxValue.get() + 1;
+                maxUnitY = maxValue + 1;
                 break;
             case 1:
-                maxUnitY = ((maxValue.get() / 5) + 1) * 5;
+                maxUnitY = ((maxValue / 5) + 1) * 5;
                 break;
             case 2:
-                maxUnitY = ((maxValue.get() / 50) + 1) * 50;
+                maxUnitY = ((maxValue / 50) + 1) * 50;
                 break;
             default:
                 int p = (int) Math.pow(10, measureLevel - 1);
-                maxUnitY = ((maxValue.get() / p) + 1) * p;
+                maxUnitY = ((maxValue / p) + 1) * p;
                 break;
         }
         displayUnitY = FluxUtils.format(maxUnitY, FluxUtils.TypeNumberFormat.COMPACT, "");
     }
 
     private void calculateTargetHeight(List<Long> data) {
-        if(data.size() != linePoints) {
+        if (data.size() != linePoints) {
             return;
         }
         int i = 0;
-        for(Long value : data) {
+        for (Long value : data) {
             targetHeight.set(i, y + height * (1 - ((double) value / maxUnitY)));
             i++;
         }

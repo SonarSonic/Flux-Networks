@@ -14,12 +14,12 @@ license="MIT"
 [[dependencies.fluxnetworks]]
     modId="forge"
     mandatory=true
-    versionRange="[33.0.0,)"
+    versionRange="[33.0.61,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.2, 1.17)"
+    versionRange="[1.16.2,)"
     ordering="NONE"
     side="BOTH"

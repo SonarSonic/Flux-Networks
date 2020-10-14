@@ -5,7 +5,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.device.IFluxPoint;
-import sonar.fluxnetworks.api.network.AccessType;
+import sonar.fluxnetworks.api.network.FluxAccessLevel;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.SecurityType;
@@ -170,10 +170,10 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
 
     @Nonnull
     @Override
-    public AccessType getPlayerAccess(PlayerEntity player) {
+    public FluxAccessLevel getPlayerAccess(PlayerEntity player) {
         if (FluxConfig.enableSuperAdmin) {
             if (SuperAdmin.isPlayerSuperAdmin(player)) {
-                return AccessType.SUPER_ADMIN;
+                return FluxAccessLevel.SUPER_ADMIN;
             }
         }
         /*return network_players.getValue()
@@ -185,7 +185,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         if (member.isPresent()) {
             return member.get().getPlayerAccess();
         }
-        return securityType.isEncrypted() ? AccessType.BLOCKED : AccessType.USER;
+        return securityType.isEncrypted() ? FluxAccessLevel.BLOCKED : FluxAccessLevel.USER;
     }
 
     @Override

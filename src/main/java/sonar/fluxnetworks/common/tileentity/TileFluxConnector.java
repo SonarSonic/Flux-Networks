@@ -39,8 +39,7 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
         //noinspection ConstantConditions
         if (!world.isRemote) {
             BlockState newState = FluxConnectorBlock.getConnectedState(getBlockState(), getFluxWorld(), getPos());
-            world.setBlockState(pos, newState, 3);
-            world.notifyBlockUpdate(pos, getBlockState(), newState, 3);
+            world.setBlockState(pos, newState, 1 | 2);
         }
     }
 

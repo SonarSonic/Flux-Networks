@@ -2,9 +2,9 @@ package sonar.fluxnetworks.common.network;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
+import sonar.fluxnetworks.client.FluxClientCache;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +27,7 @@ public class SFeedbackMessage implements IMessage {
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         EnumFeedbackInfo info = EnumFeedbackInfo.values()[buffer.readVarInt()];
-        FluxNetworks.PROXY.setFeedback(info, info == EnumFeedbackInfo.SUCCESS
+        FluxClientCache.setFeedback(info, info == EnumFeedbackInfo.SUCCESS
                 || info == EnumFeedbackInfo.SUCCESS_2 || info == EnumFeedbackInfo.PASSWORD_REQUIRE);
         buffer.release();
     }

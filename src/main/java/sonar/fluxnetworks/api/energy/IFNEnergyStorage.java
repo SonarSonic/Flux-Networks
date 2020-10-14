@@ -4,7 +4,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 /**
  * Functions the same as {@link IEnergyStorage}  but allows Long.MAX_VALUE
- * use the cap in {@link FNEnergyCapability} to add support to your mod
+ * use the cap in {@link sonar.fluxnetworks.api.misc.FluxCapabilities} to add support to your mod
  */
 public interface IFNEnergyStorage {
 

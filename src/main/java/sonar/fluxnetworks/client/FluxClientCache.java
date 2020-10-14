@@ -2,13 +2,14 @@ package sonar.fluxnetworks.client;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.SimpleFluxNetwork;
@@ -21,9 +22,17 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FluxClientCache {
 
-    private static final Int2ObjectMap<IFluxNetwork> NETWORKS = new Int2ObjectArrayMap<>();
+    private static final Int2ObjectMap<IFluxNetwork> NETWORKS = new Int2ObjectOpenHashMap<>();
 
     public static boolean superAdmin = false;
+    public static boolean detailedNetworkView = false;
+
+    public static IFluxNetwork adminViewingNetwork = FluxNetworkInvalid.INSTANCE;
+
+    private static EnumFeedbackInfo feedback = EnumFeedbackInfo.NONE; // Text message.
+    private static EnumFeedbackInfo feedbackAction = EnumFeedbackInfo.NONE; // Special operation.
+
+    private static int feedbackTimer = 0;
 
     public static void release() {
         NETWORKS.clear();
@@ -66,12 +75,35 @@ public class FluxClientCache {
         return NETWORKS.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
-    public static String getNetworkName(int id) {
+    public static String getDisplayNetworkName(int id) {
         IFluxNetwork network = getNetwork(id);
         if (network.isValid()) {
             return network.getNetworkName();
         }
         return "NONE";
+    }
+
+    public static EnumFeedbackInfo getFeedback(boolean action) {
+        return action ? feedbackAction : feedback;
+    }
+
+    public static void setFeedback(EnumFeedbackInfo info, boolean action) {
+        if (action) {
+            feedbackAction = info;
+        } else {
+            feedback = info;
+        }
+        feedbackTimer = 0;
+    }
+
+    public static void tick() {
+        if (feedback.hasFeedback()) {
+            feedbackTimer++;
+            if (feedbackTimer >= 60) {
+                feedbackTimer = 0;
+                setFeedback(EnumFeedbackInfo.NONE, false);
+            }
+        }
     }
 
     @Nonnull

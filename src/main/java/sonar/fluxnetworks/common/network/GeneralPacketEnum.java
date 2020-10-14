@@ -3,8 +3,9 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
+@Deprecated
 public enum GeneralPacketEnum {
-    CREATE_NETWORK(GeneralPacketHandler::handleCreateNetworkPacket),
+    //CREATE_NETWORK(GeneralPacketHandler::handleCreateNetworkPacket),
     EDIT_NETWORK(GeneralPacketHandler::handleNetworkEditPacket),
     DELETE_NETWORK(GeneralPacketHandler::handleDeleteNetworkPacket),
     /*ADD_MEMBER(PacketGeneralHandler::handleAddMemberPacket),

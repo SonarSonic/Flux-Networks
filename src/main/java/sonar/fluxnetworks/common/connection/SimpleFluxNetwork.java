@@ -8,7 +8,6 @@ import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +33,6 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     private String networkName;
     private UUID ownerUUID;
     protected SecurityType securityType;
-    @Nullable
     private String networkPassword;
     private int networkColor;
 
@@ -48,7 +46,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
 
     }
 
-    public SimpleFluxNetwork(int id, String name, SecurityType security, int color, UUID owner, @Nullable String password) {
+    public SimpleFluxNetwork(int id, String name, SecurityType security, int color, UUID owner, String password) {
         networkID = id;
         networkName = name;
         securityType = security;
@@ -59,8 +57,8 @@ public class SimpleFluxNetwork implements IFluxNetwork {
 
     @Nonnull
     @Override
-    public AccessType getPlayerAccess(PlayerEntity player) {
-        return AccessType.BLOCKED;
+    public FluxAccessLevel getPlayerAccess(PlayerEntity player) {
+        return FluxAccessLevel.BLOCKED;
     }
 
     @Nonnull
@@ -114,7 +112,6 @@ public class SimpleFluxNetwork implements IFluxNetwork {
         return securityType;
     }
 
-    @Nullable
     @Override
     public String getNetworkPassword() {
         return networkPassword;
@@ -136,7 +133,7 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public NetworkStatistics getNetworkStats() {
+    public NetworkStatistics getNetworkStatistics() {
         return statistics;
     }
 

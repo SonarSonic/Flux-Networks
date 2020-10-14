@@ -1,14 +1,13 @@
 package sonar.fluxnetworks.common.tileentity;
 
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.device.IFluxController;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.device.IFluxController;
-import sonar.fluxnetworks.api.device.IFluxEnergy;
 import sonar.fluxnetworks.common.connection.handler.FluxControllerHandler;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
-public class TileFluxController extends TileFluxDevice implements IFluxController, IFluxEnergy {
+public class TileFluxController extends TileFluxDevice implements IFluxController/*, IFluxEnergy*/ {
 
     public final FluxControllerHandler handler = new FluxControllerHandler(this);
 
@@ -26,7 +25,7 @@ public class TileFluxController extends TileFluxDevice implements IFluxControlle
         return handler;
     }
 
-    @Override
+    /*@Override
     public long addEnergy(long amount, boolean simulate) {
         return 0;
     }
@@ -39,5 +38,5 @@ public class TileFluxController extends TileFluxDevice implements IFluxControlle
     @Override
     public long getEnergy() {
         return 0;
-    }
+    }*/
 }

@@ -1,5 +1,7 @@
 package sonar.fluxnetworks.common.connection;
 
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.device.IFluxPoint;
@@ -9,7 +11,6 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NetworkStatistics {
@@ -23,9 +24,10 @@ public class NetworkStatistics {
     public int fluxControllerCount;
     public int fluxStorageCount;
 
-    public long       energyInput;
-    public long       energyOutput;
-    public List<Long> energyChange = new ArrayList<>();
+    public long energyInput;
+    public long energyOutput;
+
+    public LongList energyChange = new LongArrayList();
 
     public long totalBuffer;
     public long totalEnergy;
@@ -138,7 +140,7 @@ public class NetworkStatistics {
         energyChange5 = 0;
         for (int i = 0; i < energyChange.size(); i++) {
             if (i > 0) {
-                energyChange.set(i - 1, energyChange.get(i));
+                energyChange.set(i - 1, energyChange.getLong(i));
             }
         }
         energyChange.set(5, change);
@@ -160,7 +162,7 @@ public class NetworkStatistics {
         tag.putLong("l5", average_tick_micro);
 
         for (int i = 0; i < energyChange.size(); i++) {
-            tag.putLong("a" + i, energyChange.get(i));
+            tag.putLong("a" + i, energyChange.getLong(i));
         }
         return tag;
     }

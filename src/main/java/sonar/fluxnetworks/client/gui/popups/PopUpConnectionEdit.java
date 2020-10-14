@@ -9,6 +9,7 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SimpleToggleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
@@ -143,7 +144,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         if(batchMode || !host.singleConnection.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getNetworkColor());
         }
-        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 88, 155, 0xffffff);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 88, 155, 0xffffff);
     }
 
 

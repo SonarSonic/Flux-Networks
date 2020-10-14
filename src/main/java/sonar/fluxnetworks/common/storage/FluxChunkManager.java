@@ -55,6 +55,13 @@ public class FluxChunkManager {
                 dim.getLocation(), tickets.size());
     }
 
+    public static void tickWorld(@Nonnull ServerWorld world) {
+        if (!FluxNetworkData.getForcedChunks(world.getDimensionKey()).isEmpty()) {
+            // keep world ticking
+            world.resetUpdateEntityTick();
+        }
+    }
+
     public static void addChunkLoader(@Nonnull ServerWorld world, @Nonnull TileFluxDevice tile) {
         RegistryKey<World> dim = world.getDimensionKey();
         BlockPos blockPos = tile.getPos();
@@ -62,7 +69,7 @@ public class FluxChunkManager {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunk(blockPos); // loads the chunk
             world.getChunkProvider().registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Added Chunk Loader in Dim: {}, Chunk: {} at {}",
+            FluxNetworks.LOGGER.debug("Added Chunk Loader in Dim: {}, Chunk: {} by {}",
                     dim.getLocation(), chunkPos, blockPos);
         }
     }
@@ -73,7 +80,7 @@ public class FluxChunkManager {
         if (FluxNetworkData.getForcedChunks(dim).remove(blockPos.toLong())) {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunkProvider().releaseTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Removed Chunk Loader in Dim: {}, Chunk: {} at {}",
+            FluxNetworks.LOGGER.debug("Removed Chunk Loader in Dim: {}, Chunk: {} by {}",
                     dim.getLocation(), chunkPos, blockPos);
         }
     }

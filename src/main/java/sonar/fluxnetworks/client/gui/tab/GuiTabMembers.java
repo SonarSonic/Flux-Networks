@@ -4,21 +4,21 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpUserEdit;
-import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 import sonar.fluxnetworks.common.network.GUIPermissionRequestPacket;
-import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,13 +44,13 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
     }
 
-    public EnumNavigationTabs getNavigationTab(){
+    public EnumNavigationTabs getNavigationTab() {
         return EnumNavigationTabs.TAB_MEMBER;
     }
 
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        if(networkValid) {
+        if (networkValid) {
             String str2 = accessPermission.getName();
             font.drawString(matrixStack, str2, 158 - font.getStringWidth(str2), 10, 0xffffff);
             font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
@@ -75,7 +75,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
         super.init();
         configureNavigationButtons(EnumNavigationTabs.TAB_MEMBER, navigationTabs);
-        if(!networkValid) {
+        if (!networkValid) {
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
             addButton(redirectButton);
         }
@@ -88,7 +88,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         } else if(mouseButton == 1) {
             PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.REMOVE_MEMBER, PacketGeneralHandler.getRemoveMemberPacket(network.getNetworkID(), element.getPlayerUUID())));
         }*/
-        if(mouseButton == 0) {
+        if (mouseButton == 0) {
             selectedPlayer = element;
             openPopUp(new PopUpUserEdit(this, player, connector));
         }
@@ -101,16 +101,16 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
         int color = element.getPlayerAccess().color;
 
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
 
         RenderSystem.color4f(f, f1, f2, 0.8f);
 
         minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
         blit(matrixStack, x, y, 0, 16, elementWidth, elementHeight);
 
-        if(element.getPlayerUUID().equals(player.getUniqueID())) {
+        if (element.getPlayerUUID().equals(player.getUniqueID())) {
             fill(matrixStack, x - 4, y + 1, x - 2, y + elementHeight - 1, 0xccffffff);
             fill(matrixStack, x + elementWidth + 2, y + 1, x + elementWidth + 4, y + elementHeight - 1, 0xccffffff);
         }
@@ -123,7 +123,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     @Override
     public void renderElementTooltip(MatrixStack matrixStack, NetworkMember element, int mouseX, int mouseY) {
-        if(hasActivePopup())
+        if (hasActivePopup())
             return;
         List<String> strings = new ArrayList<>();
         strings.add(FluxTranslate.USERNAME.t() + ": " + TextFormatting.AQUA + element.getCachedName());
@@ -137,7 +137,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    public boolean mouseClickedMain(double mouseX, double mouseY, int mouseButton)  {
+    public boolean mouseClickedMain(double mouseX, double mouseY, int mouseButton) {
         super.mouseClickedMain(mouseX, mouseY, mouseButton);
         /*for(NormalButton button : buttons) {
             if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
@@ -153,13 +153,13 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     public void tick() {
         super.tick();
-        if(timer == 0) {
+        if (timer == 0) {
             PacketHandler.CHANNEL.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
         }
-        if(timer % 2 == 0) {
+        if (timer % 2 == 0) {
             refreshPages(network.getMemberList());
-            if(FluxNetworks.PROXY.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
-                if(hasActivePopup()) {
+            if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+                if (hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
                     if (n.isPresent()) {
                         selectedPlayer = n.get();
@@ -168,7 +168,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                         closePopUp();
                     }
                 }
-                FluxNetworks.PROXY.setFeedback(EnumFeedbackInfo.NONE, true);
+                FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
             }
         }
         timer++;

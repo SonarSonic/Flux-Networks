@@ -4,10 +4,12 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.network.ITransferHandler;
+import sonar.fluxnetworks.common.connection.handler.AbstractPlugHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 
 /**
- * Uses forge's own energy wrapper and also IExtendedEnergyStorage
+ * Uses forge's own energy wrapper and also IFNEnergyStorage
  */
 public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
@@ -24,8 +26,11 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public long receiveEnergyL(long maxReceive, boolean simulate) {
-        //TODO
-        return device instanceof TileFluxPlug ? ((TileFluxPlug) device).addPhantomEnergyToNetwork(side, maxReceive, simulate) : 0;
+        ITransferHandler handler = device.getTransferHandler();
+        if (device.isActive() && handler instanceof AbstractPlugHandler) {
+            return ((AbstractPlugHandler<?>) handler).addEnergy(maxReceive, side, simulate);
+        }
+        return 0;
     }
 
     @Override

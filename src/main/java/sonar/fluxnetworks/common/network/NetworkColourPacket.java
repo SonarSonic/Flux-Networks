@@ -40,7 +40,7 @@ public class NetworkColourPacket extends AbstractPacket {
 
     @Override
     public Object handle(NetworkEvent.Context ctx) {
-        FluxNetworks.PROXY.receiveColorCache(cache);
+        //FluxNetworks.PROXY.receiveColorCache(cache);
         return null;
     }
 

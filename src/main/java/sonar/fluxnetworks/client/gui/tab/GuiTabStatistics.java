@@ -24,7 +24,7 @@ public class GuiTabStatistics extends GuiTabCore {
 
     public InvisibleButton redirectButton;
 
-    private NetworkStatistics stats = network.getNetworkStats();
+    private NetworkStatistics stats = network.getNetworkStatistics();
     private LineChart chart;
     private int timer = 0;
     private static CompoundNBT GUI_COLOR_TAG;

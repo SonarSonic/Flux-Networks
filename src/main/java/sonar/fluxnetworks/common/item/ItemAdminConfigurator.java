@@ -13,9 +13,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 
 import javax.annotation.Nonnull;
@@ -52,12 +52,12 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
 
         @Override
         public int getNetworkID() {
-            return FluxNetworks.PROXY.getAdminViewingNetwork().getNetworkID();
+            return FluxClientCache.adminViewingNetwork.getNetworkID();
         }
 
         @Override
         public IFluxNetwork getNetwork() {
-            return FluxNetworks.PROXY.getAdminViewingNetwork();
+            return FluxClientCache.adminViewingNetwork;
         }
 
         @Override

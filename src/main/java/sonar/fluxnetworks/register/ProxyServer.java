@@ -1,16 +1,9 @@
 package sonar.fluxnetworks.register;
 
-import net.minecraft.util.Tuple;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-
-import java.util.Map;
-
+@Deprecated
 public class ProxyServer implements IProxy {
 
-    public EnumFeedbackInfo getFeedback(boolean operation) {
+    /*public EnumFeedbackInfo getFeedback(boolean operation) {
         return null;
     }
 
@@ -23,5 +16,5 @@ public class ProxyServer implements IProxy {
     @Override
     public IFluxNetwork getNetwork(int networkID) {
         return FluxNetworkData.getNetwork(networkID);
-    }
+    }*/
 }

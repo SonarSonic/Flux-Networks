@@ -3,10 +3,9 @@ package sonar.fluxnetworks.client.gui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.misc.NBTType;
-import sonar.fluxnetworks.api.network.AccessType;
+import sonar.fluxnetworks.api.network.FluxAccessLevel;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -24,7 +23,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public InvisibleButton redirectButton;
 
     private int timer;
-    public SlidedSwitchButton detailed_network_view, superAdmin;
+    public SlidedSwitchButton detailedNetworkView, superAdmin;
 
     public GuiFluxAdminHome(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
@@ -38,9 +37,9 @@ public class GuiFluxAdminHome extends GuiTabCore {
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxNetworks.PROXY.getFeedback(false).getInfo(), 89, 150, 0xffffff);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
-        font.drawString(matrixStack, AccessType.SUPER_ADMIN.getName(), 20, 30, network.getNetworkColor());
+        font.drawString(matrixStack, FluxAccessLevel.SUPER_ADMIN.getName(), 20, 30, network.getNetworkColor());
         font.drawString(matrixStack, "Detailed Network View", 20, 42, network.getNetworkColor());
     }
 
@@ -55,8 +54,8 @@ public class GuiFluxAdminHome extends GuiTabCore {
         superAdmin = new SlidedSwitchButton(140, 30, 0, guiLeft, guiTop, FluxClientCache.superAdmin);
         switches.add(superAdmin);
 
-        detailed_network_view = new SlidedSwitchButton(140, 42, 1, guiLeft, guiTop, FluxNetworks.PROXY.getDetailedNetworkView());
-        switches.add(detailed_network_view);
+        detailedNetworkView = new SlidedSwitchButton(140, 42, 1, guiLeft, guiTop, FluxClientCache.detailedNetworkView);
+        switches.add(detailedNetworkView);
     }
 
 
@@ -75,7 +74,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
                     NetworkHandler.INSTANCE.sendToServer(new CSuperAdminMessage());
                     break;
                 case 1:
-                    FluxNetworks.PROXY.setDetailedNetworkView(switchButton.slideControl);
+                    FluxClientCache.detailedNetworkView = switchButton.slideControl;
                     break;
             }
         }

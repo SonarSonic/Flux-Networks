@@ -147,7 +147,7 @@ public enum FluxTranslate {
     @Nonnull
     @OnlyIn(Dist.CLIENT)
     public String format(Object... args) {
-        return I18n.format(t(), args);
+        return I18n.format(key, args);
     }
 
     @Nonnull

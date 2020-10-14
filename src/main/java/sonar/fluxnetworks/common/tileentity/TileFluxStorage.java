@@ -31,34 +31,35 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
 
     private boolean serverEnergyChanged = false;
 
-    protected ItemStack stack = ItemStack.EMPTY;
+    private final ItemStack stack;
 
-    public TileFluxStorage(TileEntityType<?> tileEntityTypeIn, String customName, long limit, int maxEnergyStorage) {
+    public TileFluxStorage(TileEntityType<?> tileEntityTypeIn, String customName, long limit, int maxEnergyStorage, ItemStack stack) {
         super(tileEntityTypeIn, customName, limit);
         this.maxEnergyStorage = maxEnergyStorage;
+        this.stack = stack;
     }
 
     public static class Basic extends TileFluxStorage {
 
         public Basic() {
-            super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, "Basic Storage", FluxConfig.basicTransfer, FluxConfig.basicCapacity);
-            stack = new ItemStack(RegistryBlocks.BASIC_FLUX_STORAGE);
+            super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, "Basic Storage", FluxConfig.basicTransfer, FluxConfig.basicCapacity,
+                    new ItemStack(RegistryBlocks.BASIC_FLUX_STORAGE));
         }
     }
 
     public static class Herculean extends TileFluxStorage {
 
         public Herculean() {
-            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, "Herculean Storage", FluxConfig.herculeanTransfer, FluxConfig.herculeanCapacity);
-            stack = new ItemStack(RegistryBlocks.HERCULEAN_FLUX_STORAGE);
+            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, "Herculean Storage", FluxConfig.herculeanTransfer, FluxConfig.herculeanCapacity,
+                    new ItemStack(RegistryBlocks.HERCULEAN_FLUX_STORAGE));
         }
     }
 
     public static class Gargantuan extends TileFluxStorage {
 
         public Gargantuan() {
-            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, "Gargantuan Storage", FluxConfig.gargantuanTransfer, FluxConfig.gargantuanCapacity);
-            stack = new ItemStack(RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
+            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, "Gargantuan Storage", FluxConfig.gargantuanTransfer, FluxConfig.gargantuanCapacity,
+                    new ItemStack(RegistryBlocks.GARGANTUAN_FLUX_STORAGE));
         }
     }
 
@@ -135,7 +136,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         energyStored = tag.getInt("energy");
     }
 
-    public ItemStack writeStorageToDisplayStack(@Nonnull ItemStack stack) {
+    @Nonnull
+    private ItemStack writeStorageToDisplayStack(@Nonnull ItemStack stack) {
         CompoundNBT tag = new CompoundNBT();
 
         CompoundNBT subTag = new CompoundNBT();

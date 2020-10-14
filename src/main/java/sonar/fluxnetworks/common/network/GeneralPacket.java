@@ -7,6 +7,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 
 /** Gui operation packets.*/
+@Deprecated
 public class GeneralPacket extends AbstractPacket {
 
     public GeneralPacketEnum handler;

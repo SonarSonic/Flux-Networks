@@ -276,7 +276,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
      */
     public void sendFullUpdatePacket() {
         if (!world.isRemote) {
-            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 1 | 2);
+            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 0);
         }
     }
 

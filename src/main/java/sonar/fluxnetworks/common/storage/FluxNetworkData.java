@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.common.storage;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +21,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.AccessType;
+import sonar.fluxnetworks.api.network.FluxAccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.SecurityType;
@@ -68,7 +68,7 @@ public class FluxNetworkData extends WorldSavedData {
     public static String OLD_NETWORK_COLOR = "colour";
     public static String OLD_NETWORK_ACCESS = "access";*/
 
-    private final Int2ObjectMap<IFluxNetwork> networks = new Int2ObjectArrayMap<>();
+    private final Int2ObjectMap<IFluxNetwork> networks = new Int2ObjectOpenHashMap<>();
     private final Map<ResourceLocation, LongSet> forcedChunks = new HashMap<>();
 
     private int uniqueID = 1; // -1 for invalid, 0 for default return value
@@ -120,7 +120,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     @Nullable
-    public IFluxNetwork createNetwork(@Nonnull PlayerEntity creator, String name, int color, SecurityType securityType, @Nullable String password) {
+    public IFluxNetwork createNetwork(@Nonnull PlayerEntity creator, String name, int color, SecurityType securityType, String password) {
         final boolean limitReached;
         if (FluxConfig.maximumPerPlayer == -1) {
             limitReached = false;
@@ -135,7 +135,7 @@ public class FluxNetworkData extends WorldSavedData {
         UUID uuid = PlayerEntity.getUUID(creator.getGameProfile());
 
         FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, securityType, color, uuid, password);
-        network.getMemberList().add(NetworkMember.create(creator, AccessType.OWNER));
+        network.getMemberList().add(NetworkMember.create(creator, FluxAccessLevel.OWNER));
 
         if (networks.put(network.getNetworkID(), network) != null) {
             FluxNetworks.LOGGER.warn("Network IDs are not unique when creating new network");
@@ -171,7 +171,7 @@ public class FluxNetworkData extends WorldSavedData {
 
         CompoundNBT tag = nbt.getCompound(LOADED_CHUNKS);
         for (String key : tag.keySet()) {
-            ListNBT l2 = tag.getList(key, Constants.NBT.TAG_COMPOUND);
+            ListNBT l2 = tag.getList(key, Constants.NBT.TAG_LONG);
             LongSet set = getForcedChunks(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(key)));
             for (INBT n : l2) {
                 try {
@@ -245,8 +245,8 @@ public class FluxNetworkData extends WorldSavedData {
         nbt.put(PLAYER_LIST, list);
     }
 
-    private static AccessType getPermission(@Nonnull PlayerEntity player) {
-        return SuperAdmin.isPlayerSuperAdmin(player) ? AccessType.SUPER_ADMIN : AccessType.BLOCKED;
+    private static FluxAccessLevel getPermission(@Nonnull PlayerEntity player) {
+        return SuperAdmin.isPlayerSuperAdmin(player) ? FluxAccessLevel.SUPER_ADMIN : FluxAccessLevel.BLOCKED;
     }
 
     /*public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {

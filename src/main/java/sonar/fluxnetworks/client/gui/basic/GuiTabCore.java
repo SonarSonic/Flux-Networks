@@ -5,22 +5,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
+import sonar.fluxnetworks.client.gui.tab.*;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
-import sonar.fluxnetworks.client.gui.tab.*;
 
 import java.util.List;
 
-/**for guis which have navigation tabs along the top */
+/**
+ * for guis which have navigation tabs along the top
+ */
 public abstract class GuiTabCore extends GuiFluxCore {
 
     protected List<NavigationButton> navigationButtons = Lists.newArrayList();
@@ -40,31 +42,31 @@ public abstract class GuiTabCore extends GuiFluxCore {
 
     public abstract EnumNavigationTabs getNavigationTab();
 
-    public void setDefaultTabs(){
+    public void setDefaultTabs() {
         this.navigationTabs = EnumNavigationTabs.values();
     }
 
-    public void setNavigationTabs(EnumNavigationTabs[] navigationTabs){
+    public void setNavigationTabs(EnumNavigationTabs[] navigationTabs) {
         this.navigationTabs = navigationTabs;
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton){
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if(mouseButton == 0 && button instanceof NavigationButton){
-            switchTab(((NavigationButton)button).tab, player, connector);
+        if (mouseButton == 0 && button instanceof NavigationButton) {
+            switchTab(((NavigationButton) button).tab, player, connector);
             if (FluxConfig.enableButtonSound)
                 minecraft.getSoundHandler().play(SimpleSound.master(RegistrySounds.BUTTON_CLICK, 1.0F));
         }
     }
 
-    public void configureNavigationButtons(EnumNavigationTabs currentTab, EnumNavigationTabs[] availableTabs){
+    public void configureNavigationButtons(EnumNavigationTabs currentTab, EnumNavigationTabs[] availableTabs) {
         int posCount = 0;
-        for(EnumNavigationTabs tab : availableTabs){
-            if(tab != EnumNavigationTabs.TAB_CREATE){
+        for (EnumNavigationTabs tab : availableTabs) {
+            if (tab != EnumNavigationTabs.TAB_CREATE) {
                 navigationButtons.add(new NavigationButton(12 + (18 * posCount), -16, tab));
                 posCount++;
-            }else {
+            } else {
                 navigationButtons.add(new NavigationButton(148, -16, tab));
             }
         }
@@ -74,18 +76,18 @@ public abstract class GuiTabCore extends GuiFluxCore {
     public static void switchTab(EnumNavigationTabs tab, PlayerEntity player, INetworkConnector connector) {
         switch (tab) {
             case TAB_HOME:
-                if(connector instanceof TileFluxDevice) {
+                if (connector instanceof TileFluxDevice) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxConnectorHome(player, (TileFluxDevice) connector));
-                } else if(connector instanceof ItemAdminConfigurator.ContainerProvider) {
+                } else if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxAdminHome(player, connector));
-                } else if(connector instanceof ItemFluxConfigurator.ContainerProvider) {
-                    Minecraft.getInstance().displayGuiScreen(new GuiFluxConfiguratorHome(player, (ItemFluxConfigurator.ContainerProvider)connector));
-                }else {
+                } else if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
+                    Minecraft.getInstance().displayGuiScreen(new GuiFluxConfiguratorHome(player, (ItemFluxConfigurator.ContainerProvider) connector));
+                } else {
                     player.closeScreen();
                 }
                 break;
             case TAB_SELECTION:
-                if(connector instanceof ItemAdminConfigurator.ContainerProvider && FluxNetworks.PROXY.getDetailedNetworkView()) {
+                if (connector instanceof ItemAdminConfigurator.ContainerProvider && FluxClientCache.detailedNetworkView) {
                     Minecraft.getInstance().displayGuiScreen(new GuiTabDetailedSelection(player, connector));
                     break;
                 }

@@ -107,8 +107,12 @@ repositories {
     }
     maven {
         // location of the maven that hosts JEI files
-        name "Progwml6 maven"
-        url "https://dvs1.progwml6.com/files/maven/"
+        name 'Progwml6 maven'
+        url 'https://dvs1.progwml6.com/files/maven/'
+    }
+    maven {
+        name 'FTB maven'
+        url 'https://maven.latmod.com/'
     }
     maven {
         // location of the maven that hosts TOP files

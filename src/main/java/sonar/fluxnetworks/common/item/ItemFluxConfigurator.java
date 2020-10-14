@@ -19,7 +19,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -88,7 +87,7 @@ public class ItemFluxConfigurator extends Item {
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (tag != null) {
-            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxClientCache.getNetworkName(
+            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxClientCache.getDisplayNetworkName(
                     tag.getInt(FluxConfigurationType.NETWORK.getNBTName()))));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
@@ -96,24 +95,23 @@ public class ItemFluxConfigurator extends Item {
 
     public static class ContainerProvider implements INamedContainerProvider, INetworkConnector {
 
-        public ItemStack stack;
-        public IFluxNetwork network;
+        public final ItemStack stack;
+        private final int networkID;
 
-        public ContainerProvider(ItemStack stack) {
+        public ContainerProvider(@Nonnull ItemStack stack) {
             this.stack = stack;
             CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
-            int networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTName()) : -1;
-            network = FluxNetworks.PROXY.getNetwork(networkID);
+            networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTName()) : -1;
         }
 
         @Override
         public int getNetworkID() {
-            return network.getNetworkID();
+            return networkID;
         }
 
         @Override
         public IFluxNetwork getNetwork() {
-            return network;
+            throw new UnsupportedOperationException();
         }
 
         @Override

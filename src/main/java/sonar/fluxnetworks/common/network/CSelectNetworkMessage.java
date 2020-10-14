@@ -15,16 +15,16 @@ import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
-public class CConnectNetworkMessage implements IMessage {
+public class CSelectNetworkMessage implements IMessage {
 
     private BlockPos pos;
     private int networkID;
     private String password;
 
-    public CConnectNetworkMessage() {
+    public CSelectNetworkMessage() {
     }
 
-    public CConnectNetworkMessage(BlockPos pos, int networkID, String password) {
+    public CSelectNetworkMessage(BlockPos pos, int networkID, String password) {
         this.pos = pos;
         this.networkID = networkID;
         this.password = password;
@@ -40,24 +40,25 @@ public class CConnectNetworkMessage implements IMessage {
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         PlayerEntity player = NetworkHandler.getPlayer(context);
-        if (player == null) {
+        if (player == null)
             return;
-        }
+
         TileEntity tile = player.world.getTileEntity(buffer.readBlockPos());
-        if (!(tile instanceof IFluxDevice)) {
+        if (!(tile instanceof IFluxDevice))
             return;
-        }
+
         IFluxDevice flux = (IFluxDevice) tile;
         int networkID = buffer.readVarInt();
-        if (flux.getNetworkID() == networkID) {
+        if (flux.getNetworkID() == networkID)
             return;
-        }
+
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
-        if (network.isValid()) {
-            if (flux.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
-                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.HAS_CONTROLLER), context);
-                return;
-            }
+        if (!network.isValid())
+            return;
+
+        if (flux.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
+            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.HAS_CONTROLLER), context);
+        } else {
             if (!network.getPlayerAccess(player).canUse()) {
                 String password = buffer.readString(256);
                 if (password.isEmpty()) {

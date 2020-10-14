@@ -6,7 +6,6 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +19,12 @@ public interface IFluxNetwork {
      */
     int getNetworkID();
 
+    /**
+     * Returns the network name
+     *
+     * @return the name of this network
+     * @see sonar.fluxnetworks.client.FluxClientCache#getDisplayNetworkName(int)
+     */
     String getNetworkName();
 
     void setNetworkName(String name);
@@ -32,7 +37,6 @@ public interface IFluxNetwork {
 
     SecurityType getNetworkSecurity();
 
-    @Nullable
     String getNetworkPassword();
 
     /**
@@ -46,7 +50,7 @@ public interface IFluxNetwork {
 
     UUID getOwnerUUID();
 
-    NetworkStatistics getNetworkStats();
+    NetworkStatistics getNetworkStatistics();
 
     List<NetworkMember> getMemberList();
 
@@ -72,7 +76,7 @@ public interface IFluxNetwork {
     }
 
     @Nonnull
-    AccessType getPlayerAccess(PlayerEntity player);
+    FluxAccessLevel getPlayerAccess(PlayerEntity player);
 
     /*@Deprecated
     default void addNewMember(String name) {
