@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.storage;
 
+import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
@@ -43,15 +44,19 @@ public class FluxChunkManager {
                 .distinct().collect(Collectors.toList());
         chunks.forEach(pos -> registerTicket(world, pos));*/
         ServerChunkProvider chunkProvider = world.getChunkProvider();
-        for (long p : tickets) {
-            BlockPos blockPos = BlockPos.fromLong(p);
+        LongIterator iterator = tickets.iterator();
+        while (iterator.hasNext()) {
+            BlockPos blockPos = BlockPos.fromLong(iterator.nextLong());
             TileEntity tile = world.getTileEntity(blockPos); // loads the chunk
             if (tile instanceof TileFluxDevice) {
                 ChunkPos chunkPos = new ChunkPos(blockPos);
                 chunkProvider.registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, (TileFluxDevice) tile);
+            } else {
+                // remove invalid tickets
+                iterator.remove();
             }
         }
-        FluxNetworks.LOGGER.info("Chunks Loaded in Dim: {}, Tickets Count: {}",
+        FluxNetworks.LOGGER.info("Chunks Loaded in {}, Tickets Count: {}",
                 dim.getLocation(), tickets.size());
     }
 
@@ -69,7 +74,7 @@ public class FluxChunkManager {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunk(blockPos); // loads the chunk
             world.getChunkProvider().registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Added Chunk Loader in Dim: {}, Chunk: {} by {}",
+            FluxNetworks.LOGGER.debug("Added Chunk Loader in {}, Chunk: {} by {}",
                     dim.getLocation(), chunkPos, blockPos);
         }
     }
@@ -80,7 +85,7 @@ public class FluxChunkManager {
         if (FluxNetworkData.getForcedChunks(dim).remove(blockPos.toLong())) {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunkProvider().releaseTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Removed Chunk Loader in Dim: {}, Chunk: {} by {}",
+            FluxNetworks.LOGGER.debug("Removed Chunk Loader in {}, Chunk: {} by {}",
                     dim.getLocation(), chunkPos, blockPos);
         }
     }

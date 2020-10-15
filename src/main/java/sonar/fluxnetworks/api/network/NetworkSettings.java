@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.api.network;
 
 import sonar.fluxnetworks.api.misc.ICustomValue;
-import sonar.fluxnetworks.common.connection.SimpleFluxNetwork;
+import sonar.fluxnetworks.common.connection.BasicFluxNetwork;
 
 @Deprecated
 public class NetworkSettings<T> {
@@ -24,11 +24,11 @@ public class NetworkSettings<T> {
         this.value = value;
     }
 
-    public ICustomValue<T> getValue(SimpleFluxNetwork network) {
+    public ICustomValue<T> getValue(BasicFluxNetwork network) {
         return value.getValue(network);
     }
 
     private interface ISettingGetter<T> {
-        ICustomValue<T> getValue(SimpleFluxNetwork network);
+        ICustomValue<T> getValue(BasicFluxNetwork network);
     }
 }

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.network.FluxAccessLevel;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
@@ -30,15 +30,15 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
         popButtons.clear();
         boolean editPermission = host.accessPermission.canEdit();
         boolean ownerPermission = host.accessPermission.canDelete();
-        if(host.selectedPlayer.getPlayerAccess() != FluxAccessLevel.OWNER && editPermission) {
+        if(host.selectedPlayer.getPlayerAccess() != AccessLevel.OWNER && editPermission) {
             String text;
             int length;
             int i = 0;
-            if (host.selectedPlayer.getPlayerAccess() == FluxAccessLevel.BLOCKED || host.selectedPlayer.getPlayerAccess() == FluxAccessLevel.SUPER_ADMIN) {
+            if (host.selectedPlayer.getPlayerAccess() == AccessLevel.BLOCKED || host.selectedPlayer.getPlayerAccess() == AccessLevel.SUPER_ADMIN) {
                 text = FluxTranslate.SET_USER.t();
                 length = Math.max(64, font.getStringWidth(text) + 4);
                 popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
-                if(host.selectedPlayer.getPlayerAccess() == FluxAccessLevel.SUPER_ADMIN && ownerPermission) {
+                if(host.selectedPlayer.getPlayerAccess() == AccessLevel.SUPER_ADMIN && ownerPermission) {
                     text = FluxTranslate.TRANSFER_OWNERSHIP.t();
                     length = Math.max(64, font.getStringWidth(text) + 4);
                     transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
@@ -46,11 +46,11 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
                 }
             } else {
                 if(ownerPermission) {
-                    if (host.selectedPlayer.getPlayerAccess() == FluxAccessLevel.USER) {
+                    if (host.selectedPlayer.getPlayerAccess() == AccessLevel.USER) {
                         text = FluxTranslate.SET_ADMIN.t();
                         length = Math.max(64, font.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
-                    } else if(host.selectedPlayer.getPlayerAccess() == FluxAccessLevel.ADMIN) {
+                    } else if(host.selectedPlayer.getPlayerAccess() == AccessLevel.ADMIN) {
                         text = FluxTranslate.SET_USER.t();
                         length = Math.max(64, font.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));

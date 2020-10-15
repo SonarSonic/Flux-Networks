@@ -1,47 +1,99 @@
 {
-    "loader": "forge:composite",
-    "parent": "forge:block/default",
-    "parts": {
-        "centre": {
-            "parent": "fluxnetworks:block/fluxpoint"
-        },
-        "bottom": {
-            "parent": "fluxnetworks:block/fluxconnection"
-        },
-        "up": {
-            "parent": "fluxnetworks:block/fluxconnection",
-            "transform": {
-                "rotation": [{"x": 180}],
-                "translation": [0, -1, -1]
-            }
-        },
-        "north": {
-            "parent": "fluxnetworks:block/fluxconnection",
-            "transform": {
-                "rotation": [{"x": 90}, {"z": 180}],
-                "translation": [-1, -1, -1]
-            }
-        },
-        "east": {
-            "parent": "fluxnetworks:block/fluxconnection",
-            "transform": {
-                "rotation": [{"x": 90}, {"z": 90}],
-                "translation": [-1, -1, 0]
-            }
-        },
-        "south": {
-            "parent": "fluxnetworks:block/fluxconnection",
-            "transform": {
-                "rotation": [{"x": 90}, {"z": 0}],
-                "translation": [0, -1, 0]
-            }
-        },
-        "west": {
-            "parent": "fluxnetworks:block/fluxconnection",
-            "transform": {
-                "rotation": [{"x": 90}, {"z": 270}],
-                "translation": [0, -1, -1]
-            }
-        }
+  "loader": "forge:composite",
+  "parent": "forge:block/default",
+  "parts": {
+    "centre": {
+      "parent": "fluxnetworks:block/fluxpoint"
+    },
+    "bottom": {
+      "parent": "fluxnetworks:block/fluxconnection"
+    },
+    "up": {
+      "parent": "fluxnetworks:block/fluxconnection",
+      "transform": {
+        "rotation": [
+          {
+            "x": 180
+          }
+        ],
+        "translation": [
+          0,
+          -1,
+          -1
+        ]
+      }
+    },
+    "north": {
+      "parent": "fluxnetworks:block/fluxconnection",
+      "transform": {
+        "rotation": [
+          {
+            "x": 90
+          },
+          {
+            "z": 180
+          }
+        ],
+        "translation": [
+          -1,
+          -1,
+          -1
+        ]
+      }
+    },
+    "east": {
+      "parent": "fluxnetworks:block/fluxconnection",
+      "transform": {
+        "rotation": [
+          {
+            "x": 90
+          },
+          {
+            "z": 90
+          }
+        ],
+        "translation": [
+          -1,
+          -1,
+          0
+        ]
+      }
+    },
+    "south": {
+      "parent": "fluxnetworks:block/fluxconnection",
+      "transform": {
+        "rotation": [
+          {
+            "x": 90
+          },
+          {
+            "z": 0
+          }
+        ],
+        "translation": [
+          0,
+          -1,
+          0
+        ]
+      }
+    },
+    "west": {
+      "parent": "fluxnetworks:block/fluxconnection",
+      "transform": {
+        "rotation": [
+          {
+            "x": 90
+          },
+          {
+            "z": 270
+          }
+        ],
+        "translation": [
+          0,
+          -1,
+          -1
+        ]
+      }
     }
+  }
 }

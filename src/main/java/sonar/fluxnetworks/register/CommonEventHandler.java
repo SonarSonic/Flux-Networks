@@ -121,7 +121,7 @@ public class CommonEventHandler {
                     world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }
-                NetworkHandler.INSTANCE.sendToAllTracking(new SLavaParticleMessage(pos, max), event.getPlayer());
+                NetworkHandler.INSTANCE.sendToEntityTracking(new SLavaParticleMessage(pos, max), event.getPlayer());
             } else {
                 for (int i = 0; i < max; i++) {
                     // speed won't work with lava particle, because its constructor doesn't use these params

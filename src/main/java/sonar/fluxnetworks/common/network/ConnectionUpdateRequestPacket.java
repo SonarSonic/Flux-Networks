@@ -1,20 +1,11 @@
 package sonar.fluxnetworks.common.network;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.misc.Coord4D;
-import sonar.fluxnetworks.api.network.FluxLogicType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.common.connection.SimpleFluxDevice;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.handler.PacketHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ConnectionUpdateRequestPacket extends AbstractPacket{
 

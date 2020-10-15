@@ -21,7 +21,7 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.FluxAccessLevel;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.SecurityType;
@@ -135,7 +135,7 @@ public class FluxNetworkData extends WorldSavedData {
         UUID uuid = PlayerEntity.getUUID(creator.getGameProfile());
 
         FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, securityType, color, uuid, password);
-        network.getMemberList().add(NetworkMember.create(creator, FluxAccessLevel.OWNER));
+        network.getMemberList().add(NetworkMember.create(creator, AccessLevel.OWNER));
 
         if (networks.put(network.getNetworkID(), network) != null) {
             FluxNetworks.LOGGER.warn("Network IDs are not unique when creating new network");
@@ -245,8 +245,8 @@ public class FluxNetworkData extends WorldSavedData {
         nbt.put(PLAYER_LIST, list);
     }
 
-    private static FluxAccessLevel getPermission(@Nonnull PlayerEntity player) {
-        return SuperAdmin.isPlayerSuperAdmin(player) ? FluxAccessLevel.SUPER_ADMIN : FluxAccessLevel.BLOCKED;
+    private static AccessLevel getPermission(@Nonnull PlayerEntity player) {
+        return SuperAdmin.isPlayerSuperAdmin(player) ? AccessLevel.SUPER_ADMIN : AccessLevel.BLOCKED;
     }
 
     /*public static void readConnections(IFluxNetwork network, @Nonnull CompoundNBT nbt) {

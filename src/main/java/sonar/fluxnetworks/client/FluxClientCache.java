@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.client;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.nbt.CompoundNBT;
@@ -12,7 +11,7 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.connection.SimpleFluxNetwork;
+import sonar.fluxnetworks.common.connection.BasicFluxNetwork;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -49,7 +48,7 @@ public class FluxClientCache {
                 }
             } else {
                 if (network == null) {
-                    network = new SimpleFluxNetwork();
+                    network = new BasicFluxNetwork();
                     network.readCustomNBT(nbt, flags);
                     NETWORKS.put(id, network);
                 } else {

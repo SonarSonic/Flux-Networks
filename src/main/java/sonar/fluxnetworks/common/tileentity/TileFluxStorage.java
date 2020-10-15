@@ -6,7 +6,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.device.IFluxEnergy;
 import sonar.fluxnetworks.api.device.IFluxStorage;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
@@ -19,15 +18,15 @@ import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
-public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage, IFluxEnergy {
+public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage {
 
     public final FluxStorageHandler handler = new FluxStorageHandler(this);
 
     private static final int PRI_DIFF = 1000000;
     private static final int PRI_UPPER = -10000;
 
-    public int energyStored;
-    public int maxEnergyStorage;
+    private int energyStored;
+    private final int maxEnergyStorage; //TODO dynamic update when common config changed, int to long
 
     private boolean serverEnergyChanged = false;
 
@@ -64,6 +63,18 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
+    protected void sTick() {
+        super.sTick();
+        if (serverEnergyChanged) {
+            //noinspection ConstantConditions
+            if ((world.getWorldInfo().getGameTime() & 3) == 0) {
+                NetworkHandler.INSTANCE.sendToChunkTracking(new TileMessage(this, TileMessage.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
+                serverEnergyChanged = false;
+            }
+        }
+    }
+
+    @Override
     public FluxDeviceType getDeviceType() {
         return FluxDeviceType.STORAGE;
     }
@@ -79,6 +90,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         tag.putInt("energy", energyStored);
     }
 
+    @Override
     public long addEnergy(long amount, boolean simulate) {
         long energyReceived = Math.min(maxEnergyStorage - energyStored, amount);
         if (!simulate) {
@@ -88,6 +100,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         return energyReceived;
     }
 
+    @Override
     public long removeEnergy(long amount, boolean simulate) {
         long energyExtracted = Math.min(energyStored, amount);
         if (!simulate) {
@@ -97,22 +110,14 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         return energyExtracted;
     }
 
-    /**
-     * on server side
-     */
-    public void sendPacketIfNeeded() {
-        if (serverEnergyChanged) {
-            //noinspection ConstantConditions
-            if ((world.getWorldInfo().getGameTime() & 3) == 0) {
-                NetworkHandler.INSTANCE.sendToChunkTracking(new TileMessage(this, TileMessage.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
-                serverEnergyChanged = false;
-            }
-        }
+    @Override
+    public long getEnergyStored() {
+        return energyStored;
     }
 
     @Override
-    public long getEnergy() {
-        return energyStored;
+    public long getMaxEnergyStorage() {
+        return maxEnergyStorage;
     }
 
     @Override

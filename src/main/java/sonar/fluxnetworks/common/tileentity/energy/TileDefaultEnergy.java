@@ -13,10 +13,11 @@ import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
+import java.util.Map;
 
-public abstract class TileDefaultEnergy extends TileFluxDevice implements IFluxDevice {
+public abstract class TileDefaultEnergy extends TileFluxDevice {
 
-    private final EnumMap<Direction, LazyOptional<DefaultEnergyWrapper>> wrappers = new EnumMap<>(Direction.class);
+    private final Map<Direction, LazyOptional<DefaultEnergyWrapper>> wrappers = new EnumMap<>(Direction.class);
 
     public TileDefaultEnergy(TileEntityType<?> tileEntityTypeIn, String customName, long limit) {
         super(tileEntityTypeIn, customName, limit);

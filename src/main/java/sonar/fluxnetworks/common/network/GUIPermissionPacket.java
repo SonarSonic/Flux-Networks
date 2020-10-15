@@ -4,20 +4,20 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.api.network.FluxAccessLevel;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import net.minecraft.client.Minecraft;
 
 public class GUIPermissionPacket extends AbstractPacket {
 
-    public FluxAccessLevel accessPermission;
+    public AccessLevel accessPermission;
 
     public GUIPermissionPacket(PacketBuffer buf) {
-        accessPermission = FluxAccessLevel.values()[buf.readInt()];
+        accessPermission = AccessLevel.values()[buf.readInt()];
     }
 
-    public GUIPermissionPacket(FluxAccessLevel permission) {
+    public GUIPermissionPacket(AccessLevel permission) {
         this.accessPermission = permission;
     }
 

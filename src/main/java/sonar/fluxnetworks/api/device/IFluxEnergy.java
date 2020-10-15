@@ -1,7 +1,8 @@
 package sonar.fluxnetworks.api.device;
 
 /**
- * Defines a device can transfer FN energy (an internal energy type used in Flux Storages)
+ * Defines a device can transfer flux energy (an internal energy
+ * type used in Flux Storages across flux networks)
  */
 //TODO request or buffer
 public interface IFluxEnergy extends IFluxDevice {
@@ -10,5 +11,7 @@ public interface IFluxEnergy extends IFluxDevice {
 
     long removeEnergy(long amount, boolean simulate);
 
-    long getEnergy();
+    long getEnergyStored();
+
+    long getMaxEnergyStorage();
 }

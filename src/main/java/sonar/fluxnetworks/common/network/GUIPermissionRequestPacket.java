@@ -4,7 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import sonar.fluxnetworks.api.network.FluxAccessLevel;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
@@ -36,7 +36,7 @@ public class GUIPermissionRequestPacket extends AbstractPacket {
     public Object handle(NetworkEvent.Context ctx) {
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         PlayerEntity player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(uuid);
-        FluxAccessLevel accessType = (!network.isValid() || player == null) ? FluxAccessLevel.BLOCKED : network.getPlayerAccess(player);
+        AccessLevel accessType = (!network.isValid() || player == null) ? AccessLevel.BLOCKED : network.getPlayerAccess(player);
         return new GUIPermissionPacket(accessType);
     }
 }

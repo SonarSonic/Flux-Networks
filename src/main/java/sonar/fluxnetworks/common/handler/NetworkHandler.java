@@ -304,7 +304,7 @@ public class NetworkHandler {
      * @param dimension dimension that players in
      * @param <MSG>     message type
      */
-    public <MSG extends IMessage> void sendToNearby(MSG message, @Nullable ServerPlayerEntity excluded,
+    public <MSG extends IMessage> void sendToRadius(MSG message, @Nullable ServerPlayerEntity excluded,
                                                     double x, double y, double z, double radius,
                                                     @Nonnull RegistryKey<World> dimension) {
         ServerLifecycleHooks.getCurrentServer().getPlayerList().sendToAllNearExcept(
@@ -320,7 +320,7 @@ public class NetworkHandler {
      * @param entity  entity is tracking
      * @param <MSG>   message type
      */
-    public <MSG extends IMessage> void sendToAllTracking(MSG message, @Nonnull Entity entity) {
+    public <MSG extends IMessage> void sendToEntityTracking(MSG message, @Nonnull Entity entity) {
         ((ServerWorld) entity.getEntityWorld()).getChunkProvider().sendToAllTracking(
                 entity, toS2CPacket(message));
     }

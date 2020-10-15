@@ -5,7 +5,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.device.IFluxPoint;
-import sonar.fluxnetworks.api.network.FluxAccessLevel;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.SecurityType;
@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * This class handles a single flux Network on logic server.
  */
-public class FluxNetworkServer extends SimpleFluxNetwork {
+public class FluxNetworkServer extends BasicFluxNetwork {
 
     private final Map<FluxLogicType, List<? extends IFluxDevice>> connections = new HashMap<>();
 
@@ -135,8 +135,8 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
                 CYCLE:
                 while (pointTransferIterator.hasNext()) {
                     while (plugTransferIterator.hasNext()) {
-                        IFluxPlug plug = plugTransferIterator.getCurrentFlux();
-                        IFluxPoint point = pointTransferIterator.getCurrentFlux();
+                        IFluxPlug plug = plugTransferIterator.next();
+                        IFluxPoint point = pointTransferIterator.next();
                         if (plug.getDeviceType() == point.getDeviceType()) {
                             break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                         }
@@ -170,10 +170,10 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
 
     @Nonnull
     @Override
-    public FluxAccessLevel getPlayerAccess(PlayerEntity player) {
+    public AccessLevel getPlayerAccess(PlayerEntity player) {
         if (FluxConfig.enableSuperAdmin) {
             if (SuperAdmin.isPlayerSuperAdmin(player)) {
-                return FluxAccessLevel.SUPER_ADMIN;
+                return AccessLevel.SUPER_ADMIN;
             }
         }
         /*return network_players.getValue()
@@ -185,7 +185,7 @@ public class FluxNetworkServer extends SimpleFluxNetwork {
         if (member.isPresent()) {
             return member.get().getPlayerAccess();
         }
-        return securityType.isEncrypted() ? FluxAccessLevel.BLOCKED : FluxAccessLevel.USER;
+        return securityType.isEncrypted() ? AccessLevel.BLOCKED : AccessLevel.USER;
     }
 
     @Override

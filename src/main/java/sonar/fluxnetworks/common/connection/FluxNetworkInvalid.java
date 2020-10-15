@@ -1,10 +1,9 @@
 package sonar.fluxnetworks.common.connection;
 
 import sonar.fluxnetworks.api.network.SecurityType;
-import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 
-public class FluxNetworkInvalid extends SimpleFluxNetwork {
+public class FluxNetworkInvalid extends BasicFluxNetwork {
 
     public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 

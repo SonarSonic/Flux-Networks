@@ -76,7 +76,7 @@ public interface IFluxNetwork {
     }
 
     @Nonnull
-    FluxAccessLevel getPlayerAccess(PlayerEntity player);
+    AccessLevel getPlayerAccess(PlayerEntity player);
 
     /*@Deprecated
     default void addNewMember(String name) {

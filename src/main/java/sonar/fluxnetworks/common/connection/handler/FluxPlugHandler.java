@@ -21,7 +21,6 @@ public class FluxPlugHandler extends AbstractPlugHandler<TileFluxPlug> {
     public void onStartCycle() {
         super.onStartCycle();
         transfers.getTransfers().stream().filter(Objects::nonNull).forEach(IFluxTransfer::onStartCycle);
-
     }
 
     @Override
@@ -34,13 +33,13 @@ public class FluxPlugHandler extends AbstractPlugHandler<TileFluxPlug> {
 
     @Override
     public long addEnergy(long amount, Direction dir, boolean simulate) {
-        if(!getNetwork().isValid()) {
+        if (!getNetwork().isValid()) {
             return 0;
         }
         IFluxTransfer transfer = transfers.getTransfer(dir);
-        if(transfer != null) {
+        if (transfer != null) {
             long a = addEnergyToBuffer(amount, simulate);
-            if(!simulate) {
+            if (!simulate) {
                 transfer.onEnergyRemoved(a);
                 addedExternally += a;
             }

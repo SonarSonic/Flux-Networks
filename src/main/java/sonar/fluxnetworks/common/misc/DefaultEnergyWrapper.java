@@ -2,20 +2,18 @@ package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
-import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.handler.AbstractPlugHandler;
-import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 
 /**
  * Uses forge's own energy wrapper and also IFNEnergyStorage
  */
 public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
-    public IFluxDevice device;
-
-    public Direction side;
+    private final IFluxDevice device;
+    private final Direction side;
 
     public DefaultEnergyWrapper(IFluxDevice device, Direction side) {
         this.device = device;
@@ -30,17 +28,17 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
         if (device.isActive() && handler instanceof AbstractPlugHandler) {
             return ((AbstractPlugHandler<?>) handler).addEnergy(maxReceive, side, simulate);
         }
-        return 0;
+        return 0L;
     }
 
     @Override
     public long extractEnergyL(long maxExtract, boolean simulate) {
-        return 0;
+        return 0L;
     }
 
     @Override
     public long getEnergyStoredL() {
-        return device.getDeviceType().isPoint() ? Long.MAX_VALUE : 0;
+        return device.getDeviceType().isPoint() ? Long.MAX_VALUE : 0L;
     }
 
     @Override
@@ -62,22 +60,26 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return (int) receiveEnergyL(maxReceive, simulate);
+        ITransferHandler handler = device.getTransferHandler();
+        if (device.isActive() && handler instanceof AbstractPlugHandler) {
+            return (int) ((AbstractPlugHandler<?>) handler).addEnergy(maxReceive, side, simulate);
+        }
+        return 0;
     }
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        return (int) extractEnergyL(maxExtract, simulate);
+        return 0;
     }
 
     @Override
     public int getEnergyStored() {
-        return (int) Math.min(getEnergyStoredL(), Integer.MAX_VALUE);
+        return device.getDeviceType().isPoint() ? Integer.MAX_VALUE : 0;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return (int) Math.min(getMaxEnergyStoredL(), Integer.MAX_VALUE);
+        return Integer.MAX_VALUE;
     }
 
     @Override
@@ -87,6 +89,6 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public boolean canReceive() {
-        return canReceiveL();
+        return device.getDeviceType().isPlug();
     }
 }

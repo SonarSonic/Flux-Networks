@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model":  "fluxnetworks:block/fluxblock"}
+    "": {
+      "model": "fluxnetworks:block/fluxblock"
+    }
   }
 }

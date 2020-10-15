@@ -9,7 +9,7 @@ import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.network.FluxAccessLevel;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -36,7 +36,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
     public IFluxNetwork network;
-    public FluxAccessLevel accessPermission = FluxAccessLevel.BLOCKED;
+    public AccessLevel accessPermission = AccessLevel.BLOCKED;
     protected boolean networkValid;
     private int timer1;
 

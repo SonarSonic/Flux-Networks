@@ -15,7 +15,7 @@ public class StorageTransfer implements IFluxTransfer {
 
     @Override
     public void onStartCycle() {
-        tile.sendPacketIfNeeded();
+        //tile.sendPacketIfNeeded();
     }
 
     @Override

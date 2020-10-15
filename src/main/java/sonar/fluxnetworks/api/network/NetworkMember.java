@@ -14,7 +14,7 @@ public class NetworkMember {
 
     private UUID playerUUID;
     private String cachedName;
-    private FluxAccessLevel accessPermission;
+    private AccessLevel accessPermission;
 
     private NetworkMember() {
     }
@@ -23,7 +23,7 @@ public class NetworkMember {
         readNetworkNBT(nbt);
     }
 
-    public static NetworkMember create(PlayerEntity player, FluxAccessLevel permissionLevel) {
+    public static NetworkMember create(PlayerEntity player, AccessLevel permissionLevel) {
         NetworkMember t = new NetworkMember();
         GameProfile profile = player.getGameProfile();
 
@@ -53,7 +53,7 @@ public class NetworkMember {
             t.playerUUID = PlayerEntity.getOfflineUUID(username);
         }
         t.cachedName = username;
-        t.accessPermission = FluxAccessLevel.USER;
+        t.accessPermission = AccessLevel.USER;
         return t;
     }
 
@@ -61,7 +61,7 @@ public class NetworkMember {
         return cachedName;
     }
 
-    public FluxAccessLevel getPlayerAccess() {
+    public AccessLevel getPlayerAccess() {
         return accessPermission;
     }
 
@@ -69,14 +69,14 @@ public class NetworkMember {
         return playerUUID;
     }
 
-    public void setAccessPermission(FluxAccessLevel permissionLevel) {
+    public void setAccessPermission(AccessLevel permissionLevel) {
         accessPermission = permissionLevel;
     }
 
     public void readNetworkNBT(@Nonnull CompoundNBT nbt) {
         playerUUID = nbt.getUniqueId("playerUUID");
         cachedName = nbt.getString("cachedName");
-        accessPermission = FluxAccessLevel.values()[nbt.getByte("playerAccess")];
+        accessPermission = AccessLevel.values()[nbt.getByte("playerAccess")];
     }
 
     public CompoundNBT writeNetworkNBT(@Nonnull CompoundNBT nbt) {

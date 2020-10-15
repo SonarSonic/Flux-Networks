@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 
-public class TransferIterator<T extends IFluxDevice> {
+public class TransferIterator<T extends IFluxDevice> implements Iterator<T> {
 
     private final boolean isPoint;
 
@@ -59,14 +59,16 @@ public class TransferIterator<T extends IFluxDevice> {
         }
     }
 
-    public T getCurrentFlux() {
-        return currentFlux;
-    }
-
+    @Override
     public boolean hasNext() {
         if (finish) {
             return false;
         }
         return needTransfer() || incrementFlux();
+    }
+
+    @Override
+    public T next() {
+        return currentFlux;
     }
 }

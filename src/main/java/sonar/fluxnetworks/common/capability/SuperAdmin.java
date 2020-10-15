@@ -14,7 +14,6 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxCapabilities;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -81,7 +80,9 @@ public class SuperAdmin implements ISuperAdmin {
 
         @Override
         public void readNBT(Capability<ISuperAdmin> capability, @Nonnull ISuperAdmin instance, Direction side, @Nonnull INBT nbt) {
-            instance.readNBT((ByteNBT) nbt);
+            if (nbt.getType() == ByteNBT.TYPE) {
+                instance.readNBT((ByteNBT) nbt);
+            }
         }
     }
 }

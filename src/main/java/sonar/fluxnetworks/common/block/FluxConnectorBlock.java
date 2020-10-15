@@ -2,10 +2,8 @@ package sonar.fluxnetworks.common.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -13,7 +11,6 @@ import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import static net.minecraft.state.properties.BlockStateProperties.*;
 
@@ -55,20 +52,6 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock {
         if (tile != null && !tile.getFluxWorld().isRemote) {
             tile.updateTransfers(FluxUtils.getBlockDirection(pos, neighbor));
         }
-    }
-
-    @Nullable
-    @Override
-    public BlockState getStateForPlacement(@Nonnull BlockItemUseContext context) {
-        return getConnectedState(getDefaultState(), context.getWorld(), context.getPos());
-    }
-
-    public static BlockState getConnectedState(BlockState state, @Nonnull World world, BlockPos pos) {
-        TileFluxDevice tile = (TileFluxDevice) world.getTileEntity(pos);
-        for (Direction dir : Direction.values()) {
-            state = state.with(SIDES_CONNECTED[dir.getIndex()], tile != null && (tile.mFlags & 1 << dir.getIndex()) != 0);
-        }
-        return state;
     }
 
     @Override

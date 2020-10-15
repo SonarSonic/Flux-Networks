@@ -60,7 +60,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     protected int priority;
     protected long limit;
 
-    public int mFlags;
+    public int flags;
 
     private GlobalPos globalPos;
 
@@ -99,26 +99,30 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }
 
     @Override
-    public void tick() {
+    public final void tick() {
         if (!world.isRemote) {
-            if (!playerUsing.isEmpty()) {
-                NetworkHandler.INSTANCE.sendToPlayers(new TileMessage(this, TileMessage.S2C_GUI_SYNC), playerUsing);
-                sSettingsChanged = false;
-            }
-            if (!sLoad) {
-                if (networkID > 0) {
-                    IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
-                    if (network.isValid() && !(getDeviceType().isController() &&
-                            network.getConnections(FluxLogicType.CONTROLLER).size() > 0)) {
-                        network.enqueueConnectionAddition(this);
-                    }
-                } else {
-                    networkID = FluxConstants.INVALID_NETWORK_ID;
+            sTick();
+        }
+    }
+
+    protected void sTick() {
+        if (!playerUsing.isEmpty()) {
+            NetworkHandler.INSTANCE.sendToPlayers(new TileMessage(this, TileMessage.S2C_GUI_SYNC), playerUsing);
+            sSettingsChanged = false;
+        }
+        if (!sLoad) {
+            if (networkID > 0) {
+                IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
+                if (network.isValid() && !(getDeviceType().isController() &&
+                        network.getConnections(FluxLogicType.CONTROLLER).size() > 0)) {
+                    network.enqueueConnectionAddition(this);
                 }
-                updateTransfers(Direction.values());
-                sendFullUpdatePacket();
-                sLoad = true;
+            } else {
+                networkID = FluxConstants.INVALID_NETWORK_ID;
             }
+            updateTransfers(Direction.values());
+            sendFullUpdatePacket();
+            sLoad = true;
         }
     }
 
@@ -202,7 +206,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         if (flag <= FluxConstants.FLAG_TILE_UPDATE) {
             tag.putInt("0", priority);
             tag.putLong("1", limit);
-            tag.putInt("2", mFlags);
+            tag.putInt("2", flags);
             tag.putLong("3", getTransferHandler().getBuffer());
             tag.putInt("4", networkID);
             tag.putUniqueId("5", playerUUID);
@@ -228,7 +232,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         if (flag <= FluxConstants.FLAG_TILE_UPDATE) {
             priority = tag.getInt("0");
             limit = tag.getLong("1");
-            mFlags = tag.getInt("2");
+            flags = tag.getInt("2");
             getTransferHandler().setBuffer(tag.getLong("3"));
             networkID = tag.getInt("4");
             playerUUID = tag.getUniqueId("5");
@@ -327,7 +331,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     buffer.writeString(customName, 256);
                     buffer.writeInt(priority);
                     buffer.writeLong(limit);
-                    buffer.writeByte(mFlags >> 6);
+                    buffer.writeByte(flags >> 6);
                 }
                 buffer.writeCompoundTag(getTransferHandler().writeNetworkedNBT(new CompoundNBT()));
                 break;
@@ -377,7 +381,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     customName = buffer.readString(256);
                     priority = buffer.readInt();
                     limit = buffer.readLong();
-                    mFlags = (mFlags & 0x3f) | buffer.readByte() << 6;
+                    flags = (flags & 0x3f) | buffer.readByte() << 6;
                 }
                 getTransferHandler().readNetworkedNBT(buffer.readCompoundTag());
                 break;
@@ -461,15 +465,15 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Override
     public boolean isForcedLoading() {
-        return (mFlags & 1 << 8) != 0;
+        return (flags & 1 << 8) != 0;
     }
 
     @Override
     public void setForcedLoading(boolean forcedLoading) {
         if (forcedLoading) {
-            mFlags |= 1 << 8;
+            flags |= 1 << 8;
         } else {
-            mFlags &= ~(1 << 8);
+            flags &= ~(1 << 8);
         }
     }
 
@@ -532,29 +536,29 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Override
     public boolean getDisableLimit() {
-        return (mFlags & 1 << 7) != 0;
+        return (flags & 1 << 7) != 0;
     }
 
     @Override
     public void setDisableLimit(boolean disableLimit) {
         if (disableLimit) {
-            mFlags |= 1 << 7;
+            flags |= 1 << 7;
         } else {
-            mFlags &= ~(1 << 7);
+            flags &= ~(1 << 7);
         }
     }
 
     @Override
     public boolean getSurgeMode() {
-        return (mFlags & 1 << 6) != 0;
+        return (flags & 1 << 6) != 0;
     }
 
     @Override
     public void setSurgeMode(boolean surgeMode) {
         if (surgeMode) {
-            mFlags |= 1 << 6;
+            flags |= 1 << 6;
         } else {
-            mFlags &= ~(1 << 6);
+            flags &= ~(1 << 6);
         }
     }
 

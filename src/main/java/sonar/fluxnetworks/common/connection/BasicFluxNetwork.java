@@ -17,7 +17,7 @@ import java.util.UUID;
  * Defines the base class of flux network server or
  * a class holds values updated from server for GUI display on client
  */
-public class SimpleFluxNetwork implements IFluxNetwork {
+public class BasicFluxNetwork implements IFluxNetwork {
 
     //public ICustomValue<Integer> network_id = new CustomValue<>();
     //public ICustomValue<String> network_name = new CustomValue<>();
@@ -42,11 +42,11 @@ public class SimpleFluxNetwork implements IFluxNetwork {
     protected final List<IFluxDevice> allConnections = new ArrayList<>();
     protected final List<NetworkMember> networkMembers = new ArrayList<>();
 
-    public SimpleFluxNetwork() {
+    public BasicFluxNetwork() {
 
     }
 
-    public SimpleFluxNetwork(int id, String name, SecurityType security, int color, UUID owner, String password) {
+    public BasicFluxNetwork(int id, String name, SecurityType security, int color, UUID owner, String password) {
         networkID = id;
         networkName = name;
         securityType = security;
@@ -57,8 +57,8 @@ public class SimpleFluxNetwork implements IFluxNetwork {
 
     @Nonnull
     @Override
-    public FluxAccessLevel getPlayerAccess(PlayerEntity player) {
-        return FluxAccessLevel.BLOCKED;
+    public AccessLevel getPlayerAccess(PlayerEntity player) {
+        return AccessLevel.BLOCKED;
     }
 
     @Nonnull

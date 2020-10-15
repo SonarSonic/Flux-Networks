@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model":  "fluxnetworks:block/basicfluxstorage"}
+    "": {
+      "model": "fluxnetworks:block/basicfluxstorage"
+    }
   }
 }

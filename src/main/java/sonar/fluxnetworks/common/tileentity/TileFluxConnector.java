@@ -22,10 +22,10 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
             //noinspection ConstantConditions
             TileEntity neighbor = world.getTileEntity(pos.offset(facing));
             int mask = 1 << facing.getIndex();
-            boolean before = (mFlags & mask) == mask;
+            boolean before = (flags & mask) == mask;
             boolean current = TileEntityHandler.canRenderConnection(neighbor, facing.getOpposite());
             if (before != current) {
-                mFlags ^= mask;
+                flags ^= mask;
                 sendUpdate = true;
             }
         }
@@ -38,8 +38,12 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
     public void sendFullUpdatePacket() {
         //noinspection ConstantConditions
         if (!world.isRemote) {
-            BlockState newState = FluxConnectorBlock.getConnectedState(getBlockState(), getFluxWorld(), getPos());
-            world.setBlockState(pos, newState, 1 | 2);
+            BlockState state = getBlockState();
+            for (Direction dir : Direction.values()) {
+                state = state.with(FluxConnectorBlock.SIDES_CONNECTED[dir.getIndex()],
+                        (flags & 1 << dir.getIndex()) != 0);
+            }
+            world.setBlockState(pos, state, 1 | 2);
         }
     }
 
