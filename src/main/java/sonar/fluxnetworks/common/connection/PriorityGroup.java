@@ -4,6 +4,7 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,8 @@ import java.util.Optional;
  * @param <T> Logic Flux Point or Plug
  */
 public class PriorityGroup<T extends IFluxDevice> {
+
+    public static final Comparator<PriorityGroup<?>> DESCENDING_ORDER = Comparator.comparingInt(p -> -p.getPriority());
 
     private final int priority;
 

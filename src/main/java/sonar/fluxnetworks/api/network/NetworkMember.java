@@ -20,7 +20,7 @@ public class NetworkMember {
     }
 
     public NetworkMember(CompoundNBT nbt) {
-        readNetworkNBT(nbt);
+        readNBT(nbt);
     }
 
     public static NetworkMember create(PlayerEntity player, AccessLevel permissionLevel) {
@@ -73,16 +73,15 @@ public class NetworkMember {
         accessPermission = permissionLevel;
     }
 
-    public void readNetworkNBT(@Nonnull CompoundNBT nbt) {
+    public void readNBT(@Nonnull CompoundNBT nbt) {
         playerUUID = nbt.getUniqueId("playerUUID");
         cachedName = nbt.getString("cachedName");
         accessPermission = AccessLevel.values()[nbt.getByte("playerAccess")];
     }
 
-    public CompoundNBT writeNetworkNBT(@Nonnull CompoundNBT nbt) {
+    public void writeNBT(@Nonnull CompoundNBT nbt) {
         nbt.putUniqueId("playerUUID", playerUUID);
         nbt.putString("cachedName", cachedName);
         nbt.putByte("playerAccess", (byte) accessPermission.ordinal());
-        return nbt;
     }
 }

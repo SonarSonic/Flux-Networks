@@ -36,7 +36,7 @@ public class FluxChunkManager {
             return;
         }
         RegistryKey<World> dim = world.getDimensionKey();
-        LongSet tickets = FluxNetworkData.getForcedChunks(dim);
+        LongSet tickets = FluxNetworkData.getTickets(dim);
         if (tickets.isEmpty()) {
             return;
         }
@@ -61,7 +61,7 @@ public class FluxChunkManager {
     }
 
     public static void tickWorld(@Nonnull ServerWorld world) {
-        if (!FluxNetworkData.getForcedChunks(world.getDimensionKey()).isEmpty()) {
+        if (!FluxNetworkData.getTickets(world.getDimensionKey()).isEmpty()) {
             // keep world ticking
             world.resetUpdateEntityTick();
         }
@@ -70,7 +70,7 @@ public class FluxChunkManager {
     public static void addChunkLoader(@Nonnull ServerWorld world, @Nonnull TileFluxDevice tile) {
         RegistryKey<World> dim = world.getDimensionKey();
         BlockPos blockPos = tile.getPos();
-        if (FluxNetworkData.getForcedChunks(dim).add(blockPos.toLong())) {
+        if (FluxNetworkData.getTickets(dim).add(blockPos.toLong())) {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunk(blockPos); // loads the chunk
             world.getChunkProvider().registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
@@ -82,7 +82,7 @@ public class FluxChunkManager {
     public static void removeChunkLoader(@Nonnull ServerWorld world, @Nonnull TileFluxDevice tile) {
         RegistryKey<World> dim = world.getDimensionKey();
         BlockPos blockPos = tile.getPos();
-        if (FluxNetworkData.getForcedChunks(dim).remove(blockPos.toLong())) {
+        if (FluxNetworkData.getTickets(dim).remove(blockPos.toLong())) {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunkProvider().releaseTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
             FluxNetworks.LOGGER.debug("Removed Chunk Loader in {}, Chunk: {} by {}",

@@ -2,10 +2,13 @@ package sonar.fluxnetworks.api.network;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.GlobalPos;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,16 +32,6 @@ public interface IFluxNetwork {
 
     void setNetworkName(String name);
 
-    /*@Deprecated
-    <T> T getSetting(NetworkSettings<T> setting);
-
-    @Deprecated
-    <T> void setSetting(NetworkSettings<T> settings, T value);*/
-
-    SecurityType getNetworkSecurity();
-
-    String getNetworkPassword();
-
     /**
      * Returns the network color in 0xRRGGBB format
      *
@@ -50,17 +43,30 @@ public interface IFluxNetwork {
 
     UUID getOwnerUUID();
 
-    NetworkStatistics getNetworkStatistics();
+    NetworkSecurity getSecurity();
+
+    NetworkStatistics getStatistics();
 
     List<NetworkMember> getMemberList();
 
     /**
-     * Get all connections including loaded tile entities (TileFluxDevice) and unloaded (SimpleFLuxDevice)
+     * Get all connections including loaded tile entities (TileFluxDevice) and unloaded (SimpleFluxDevice)
+     * On client, all are SimpleFluxDevice
      *
      * @return the list of all connections
      * @see #getConnections(FluxLogicType)
      */
-    List<IFluxDevice> getAllConnections();
+    Collection<IFluxDevice> getAllConnections();
+
+    /**
+     * Get connection by global pos from all connections collection
+     *
+     * @param pos global pos
+     * @return possible device
+     * @see #getAllConnections()
+     */
+    @Nullable
+    IFluxDevice getConnectionByPos(GlobalPos pos);
 
     /*@Deprecated
     default void onStartServerTick() {
@@ -89,7 +95,8 @@ public interface IFluxNetwork {
     }*/
 
     /**
-     * Get all loaded connections with given logic type
+     * Get all loaded connections with given logic type,
+     * this method should be only invoked on server side
      *
      * @param type logic type
      * @param <T>  device type
@@ -114,7 +121,7 @@ public interface IFluxNetwork {
      */
     boolean isValid();
 
-    void readCustomNBT(CompoundNBT nbt, int flags);
-
     void writeCustomNBT(CompoundNBT nbt, int flags);
+
+    void readCustomNBT(CompoundNBT nbt, int flags);
 }

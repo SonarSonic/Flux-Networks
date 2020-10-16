@@ -12,12 +12,12 @@ import net.minecraft.world.World;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -133,7 +133,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     IFluxDevice flux = (IFluxDevice) tile;
                     ItemStack itemStack = flux.getDisplayStack();
                     CompoundNBT tag = itemStack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
-                    tag.putInt(FluxNetworkData.NETWORK_ID, flux.getNetworkID());
+                    tag.putInt(FluxConstants.NETWORK_ID, flux.getNetworkID());
                     tag.putString(ItemFluxDevice.CUSTOM_NAME, flux.getCustomName());
                     iProbeInfo.horizontal().item(itemStack)
                             .vertical().itemLabel(itemStack)

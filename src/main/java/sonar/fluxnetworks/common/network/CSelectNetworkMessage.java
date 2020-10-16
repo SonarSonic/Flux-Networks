@@ -65,7 +65,7 @@ public class CSelectNetworkMessage implements IMessage {
                     NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE), context);
                     return;
                 }
-                if (!password.equals(network.getNetworkPassword())) {
+                if (!password.equals(network.getSecurity().getPassword())) {
                     NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.REJECT), context);
                     return;
                 }

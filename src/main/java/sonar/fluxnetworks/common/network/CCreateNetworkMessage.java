@@ -5,7 +5,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
-import sonar.fluxnetworks.api.network.SecurityType;
+import sonar.fluxnetworks.api.network.NetworkSecurity;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -16,13 +16,13 @@ public class CCreateNetworkMessage implements IMessage {
 
     private String name;
     private int color;
-    private SecurityType security;
+    private NetworkSecurity.Type security;
     private String password;
 
     public CCreateNetworkMessage() {
     }
 
-    public CCreateNetworkMessage(String name, int color, SecurityType security, String password) {
+    public CCreateNetworkMessage(String name, int color, NetworkSecurity.Type security, String password) {
         this.name = name;
         this.color = color;
         this.security = security;
@@ -38,18 +38,25 @@ public class CCreateNetworkMessage implements IMessage {
     }
 
     @Override
-    public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
+    public final void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
             return;
         }
         String name = buffer.readString(256);
         int color = buffer.readInt();
-        SecurityType security = SecurityType.values()[buffer.readVarInt()];
+        NetworkSecurity.Type security = NetworkSecurity.Type.values()[buffer.readVarInt()];
         String password = buffer.readString(256);
-        if (!FluxUtils.checkPassword(password)) {
+        if (FluxUtils.checkPassword(password)) {
+            handle(buffer, context, player, name, color, security, password);
+        } else {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.ILLEGAL_PASSWORD), context);
-        } else if (FluxNetworkData.get().createNetwork(player, name, color, security, password) != null) {
+        }
+    }
+
+    protected void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player,
+                          String name, int color, NetworkSecurity.Type security, String password) {
+        if (FluxNetworkData.get().createNetwork(player, name, color, security, password) != null) {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS), context);
         } else {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.NO_SPACE), context);

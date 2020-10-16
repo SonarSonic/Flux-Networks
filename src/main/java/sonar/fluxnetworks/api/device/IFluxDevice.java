@@ -54,8 +54,8 @@ public interface IFluxDevice extends INetworkConnector {
     void setForcedLoading(boolean forcedLoading);
 
     /**
-     * This method invoked in network queue handling.
-     * To connect to a network, call network.enqueueConnectionAddition()
+     * This method invoked by FluxNetworkServer.
+     * To connect to a network, call {@link IFluxNetwork#enqueueConnectionAddition(IFluxDevice)}
      *
      * @param network the network invoked this method
      */
@@ -63,7 +63,7 @@ public interface IFluxDevice extends INetworkConnector {
 
     /**
      * This method invoked by FluxNetworkServer.
-     * To disconnect from any network, call getNetwork().enqueueConnectionRemoval()
+     * To disconnect from current network, call getNetwork().enqueueConnectionRemoval()
      */
     void onDisconnect();
 

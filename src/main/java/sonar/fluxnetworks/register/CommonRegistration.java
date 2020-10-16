@@ -207,5 +207,6 @@ public class CommonRegistration {
         if (event.includeServer()) {
             generator.addProvider(new FluxLootTableProvider(generator));
         }
+        // language provider?
     }
 }

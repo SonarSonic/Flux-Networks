@@ -8,7 +8,6 @@ import sonar.fluxnetworks.api.device.IFluxPoint;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -20,7 +19,7 @@ import java.util.*;
  */
 public class FluxNetworkServer extends BasicFluxNetwork {
 
-    private final Map<FluxLogicType, List<? extends IFluxDevice>> connections = new HashMap<>();
+    private final Map<FluxLogicType, List<? extends IFluxDevice>> connections = new EnumMap<>(FluxLogicType.class);
 
     private final Queue<IFluxDevice> toAdd = new LinkedList<>();
     private final Queue<IFluxDevice> toRemove = new LinkedList<>();
@@ -40,8 +39,8 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     }
 
-    public FluxNetworkServer(int id, String name, SecurityType security, int color, UUID owner, String password) {
-        super(id, name, security, color, owner, password);
+    public FluxNetworkServer(int id, String name, int color, UUID owner) {
+        super(id, name, color, owner);
     }
 
     /*public void addConnections() {
@@ -102,12 +101,12 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         List<IFluxPoint> points = getConnections(FluxLogicType.POINT);
         plugs.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPlugs).getDevices().add(p));
         points.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPoints).getDevices().add(p));
-        // reverse order
-        sortedPlugs.sort(Comparator.comparing(p -> -p.getPriority()));
-        sortedPoints.sort(Comparator.comparing(p -> -p.getPriority()));
+        sortedPlugs.sort(PriorityGroup.DESCENDING_ORDER);
+        sortedPoints.sort(PriorityGroup.DESCENDING_ORDER);
     }
 
     @Nonnull
+    @Override
     @SuppressWarnings("unchecked")
     public <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
         return (List<T>) connections.computeIfAbsent(type, m -> new ArrayList<>());
@@ -185,7 +184,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         if (member.isPresent()) {
             return member.get().getPlayerAccess();
         }
-        return securityType.isEncrypted() ? AccessLevel.BLOCKED : AccessLevel.USER;
+        return security.isEncrypted() ? AccessLevel.BLOCKED : AccessLevel.USER;
     }
 
     @Override
@@ -207,26 +206,30 @@ public class FluxNetworkServer extends BasicFluxNetwork {
             return;
         }
         device.getNetwork().enqueueConnectionRemoval(device, false);
-        toAdd.offer(device);
-        toRemove.remove(device);
-        // remove the offline SimpleFluxDevice
-        allConnections.removeIf(f -> f.getGlobalPos().equals(device.getGlobalPos()));
-        allConnections.add(device);
+        if (!toAdd.contains(device)) {
+            toAdd.offer(device);
+            toRemove.remove(device);
+            // remove the offline SimpleFluxDevice
+            allConnections.remove(device.getGlobalPos());
+            allConnections.put(device.getGlobalPos(), device);
+        }
     }
 
     @Override
     public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
         if (device instanceof SimpleFluxDevice) {
-            throw new IllegalStateException();
+            throw new IllegalArgumentException();
         }
-        if (getConnections(FluxLogicType.ANY).contains(device)) {
+        if (getConnections(FluxLogicType.ANY).contains(device) && !toRemove.contains(device)) {
             toRemove.offer(device);
             toAdd.remove(device);
             if (chunkUnload) {
-                //changeChunkLoaded(device, false);
-                allConnections.add(new SimpleFluxDevice(device));
+                // create a fake device on server side, representing it has ever connected to
+                // this network but currently unloaded
+                allConnections.put(device.getGlobalPos(), new SimpleFluxDevice(device));
             }
-            allConnections.remove(device);
+            // remove the tile entity
+            allConnections.remove(device.getGlobalPos());
         }
     }
 
@@ -264,7 +267,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     @Override
     public Optional<NetworkMember> getMemberByUUID(UUID playerUUID) {
-        return networkMembers.stream().filter(f -> f.getPlayerUUID().equals(playerUUID)).findFirst();
+        return memberList.stream().filter(f -> f.getPlayerUUID().equals(playerUUID)).findFirst();
     }
 
     @Deprecated

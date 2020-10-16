@@ -52,11 +52,11 @@ public class GeneralPacketHandler {
         return null;
     }*/
 
-    public static CompoundNBT getNetworkEditPacket(int networkID, String networkName, int color, SecurityType security, EnergyType energy, String password) {
+    /*public static CompoundNBT getNetworkEditPacket(int networkID, String networkName, int color, NetworkSecurity.Type security, EnergyType energy, String password) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putInt(FluxNetworkData.NETWORK_ID, networkID);
-        tag.putString(FluxNetworkData.NETWORK_NAME, networkName);
-        tag.putInt(FluxNetworkData.NETWORK_COLOR, color);
+        tag.putInt(FluxConstants.NETWORK_ID, networkID);
+        tag.putString(FluxConstants.NETWORK_NAME, networkName);
+        tag.putInt(FluxConstants.NETWORK_COLOR, color);
         tag.putInt(FluxNetworkData.SECURITY_TYPE, security.ordinal());
         tag.putInt(FluxNetworkData.ENERGY_TYPE, energy.ordinal());
         tag.putString(FluxNetworkData.NETWORK_PASSWORD, password);
@@ -64,10 +64,10 @@ public class GeneralPacketHandler {
     }
 
     public static Object handleNetworkEditPacket(PlayerEntity player, CompoundNBT tag) {
-        int networkID = tag.getInt(FluxNetworkData.NETWORK_ID);
-        String newName = tag.getString(FluxNetworkData.NETWORK_NAME);
-        int color = tag.getInt(FluxNetworkData.NETWORK_COLOR);
-        SecurityType security = SecurityType.values()[tag.getInt(FluxNetworkData.SECURITY_TYPE)];
+        int networkID = tag.getInt(FluxConstants.NETWORK_ID);
+        String newName = tag.getString(FluxConstants.NETWORK_NAME);
+        int color = tag.getInt(FluxConstants.NETWORK_COLOR);
+        NetworkSecurity.Type security = NetworkSecurity.Type.values()[tag.getInt(FluxNetworkData.SECURITY_TYPE)];
         EnergyType energy = EnergyType.values()[tag.getInt(FluxNetworkData.ENERGY_TYPE)];
         String password = tag.getString(FluxNetworkData.NETWORK_PASSWORD);
         if (!FluxUtils.checkPassword(password)) {
@@ -93,9 +93,9 @@ public class GeneralPacketHandler {
                     PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new NetworkColourPacket(cache));
                 }
                 //TODO
-                /*network.setSetting(NetworkSettings.NETWORK_SECURITY, security);
+                *//*network.setSetting(NetworkSettings.NETWORK_SECURITY, security);
                 network.setSetting(NetworkSettings.NETWORK_ENERGY, energy);
-                network.setSetting(NetworkSettings.NETWORK_PASSWORD, password);*/
+                network.setSetting(NetworkSettings.NETWORK_PASSWORD, password);*//*
                 PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SNetworkUpdateMessage(Lists.newArrayList(network), FluxConstants.FLAG_NET_BASIS));
                 return new SFeedbackMessage(EnumFeedbackInfo.SUCCESS_2);
             } else {
@@ -103,16 +103,16 @@ public class GeneralPacketHandler {
             }
         }
         return null;
-    }
+    }*/
 
     public static CompoundNBT getDeleteNetworkPacket(int networkID) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putInt(FluxNetworkData.NETWORK_ID, networkID);
+        tag.putInt(FluxConstants.NETWORK_ID, networkID);
         return tag;
     }
 
     public static Object handleDeleteNetworkPacket(PlayerEntity player, CompoundNBT nbtTag) {
-        int id = nbtTag.getInt(FluxNetworkData.NETWORK_ID);
+        int id = nbtTag.getInt(FluxConstants.NETWORK_ID);
         IFluxNetwork toDelete = FluxNetworkData.getNetwork(id);
         if (toDelete.isValid()) {
             if (toDelete.getPlayerAccess(player).canDelete()) {
@@ -177,14 +177,14 @@ public class GeneralPacketHandler {
 
     public static CompoundNBT getChangePermissionPacket(int networkID, UUID playerChanged, int type) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putInt(FluxNetworkData.NETWORK_ID, networkID);
+        tag.putInt(FluxConstants.NETWORK_ID, networkID);
         tag.putUniqueId("playerChanged", playerChanged);
         tag.putInt("t", type);
         return tag;
     }
 
     public static Object handleChangePermissionPacket(PlayerEntity player, CompoundNBT packetTag) {
-        int networkID = packetTag.getInt(FluxNetworkData.NETWORK_ID);
+        int networkID = packetTag.getInt(FluxConstants.NETWORK_ID);
         UUID playerChanged = packetTag.getUniqueId("playerChanged");
         int type = packetTag.getInt("t");
         if (playerChanged != null) {
@@ -255,13 +255,13 @@ public class GeneralPacketHandler {
 
     public static CompoundNBT getChangeWirelessPacket(int networkID, int wirelessMode) {
         CompoundNBT tag = new CompoundNBT();
-        tag.putInt(FluxNetworkData.NETWORK_ID, networkID);
+        tag.putInt(FluxConstants.NETWORK_ID, networkID);
         tag.putInt(FluxNetworkData.WIRELESS_MODE, wirelessMode);
         return tag;
     }
 
     public static Object handleChangeWirelessPacket(PlayerEntity player, CompoundNBT packetTag) {
-        int networkID = packetTag.getInt(FluxNetworkData.NETWORK_ID);
+        int networkID = packetTag.getInt(FluxConstants.NETWORK_ID);
         int wireless = packetTag.getInt(FluxNetworkData.WIRELESS_MODE);
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (network.isValid()) {

@@ -126,6 +126,7 @@
 
 	"info.fluxnetworks.security.encrypted": "Encrypted",
 	"info.fluxnetworks.security.public": "Public",
+	"info.fluxnetworks.security.private": "Private",
 
 	"info.fluxnetworks.access.owner": "Owner",
 	"info.fluxnetworks.access.admin": "Admin",

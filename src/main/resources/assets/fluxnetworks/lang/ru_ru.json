@@ -126,10 +126,14 @@
 
 	"info.fluxnetworks.security.encrypted": "Зашифрованная",
 	"info.fluxnetworks.security.public": "Общественная",
+	"info.fluxnetworks.security.private": "Private",
 
 	"info.fluxnetworks.access.owner": "Владелец",
 	"info.fluxnetworks.access.admin": "Администратор",
 	"info.fluxnetworks.access.user": "Пользователь",
 	"info.fluxnetworks.access.blocked": "Заблокирован",
-	"info.fluxnetworks.access.superadmin": "Супер администратор"
+	"info.fluxnetworks.access.superadmin": "Супер администратор",
+
+	"info.fluxnetworks.jei.creatingfluxrecipe": "Creating Flux",
+	"info.fluxnetworks.jei.leftclickhelp": "Left click the %s"
 }

@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxStorage;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
@@ -14,7 +15,6 @@ import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.TileMessage;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
@@ -147,7 +147,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
 
         CompoundNBT subTag = new CompoundNBT();
         subTag.putInt("energy", energyStored);
-        subTag.putInt(FluxNetworkData.NETWORK_ID, getNetworkID());
+        subTag.putInt(FluxConstants.NETWORK_ID, getNetworkID());
 
         tag.put(FluxUtils.FLUX_DATA, subTag);
         tag.putBoolean(FluxUtils.GUI_COLOR, true);

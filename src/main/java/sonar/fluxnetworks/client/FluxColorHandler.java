@@ -10,14 +10,12 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
-import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -149,7 +147,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             }
             tag = stack.getChildTag(FluxUtils.FLUX_DATA);
             if (tag != null) {
-                return FluxClientCache.getNetwork(tag.getInt(FluxNetworkData.NETWORK_ID)).getNetworkColor() | 0xff000000;
+                return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor() | 0xff000000;
             }
             return NO_NETWORK_COLOR;
         }

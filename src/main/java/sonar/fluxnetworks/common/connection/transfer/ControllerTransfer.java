@@ -4,15 +4,16 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.server.management.PlayerList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.items.IItemHandler;
 import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.common.handler.ItemEnergyHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -20,7 +21,7 @@ import java.util.function.Predicate;
 public class ControllerTransfer implements IFluxTransfer {
 
     public final TileFluxController tile;
-    private List<PlayerEntity> players = new ArrayList<>();
+    private final List<ServerPlayerEntity> players = new ArrayList<>();
     private int timer;
 
     public ControllerTransfer(TileFluxController tile) {
@@ -29,15 +30,15 @@ public class ControllerTransfer implements IFluxTransfer {
 
     @Override
     public void onStartCycle() {
-        if(timer == 0) {
+        if (timer == 0) {
             updatePlayers();
         }
-        timer++;
-        timer %= 20;
+        timer = ++timer & 0x1f;
     }
 
     @Override
-    public void onEndCycle() {}
+    public void onEndCycle() {
+    }
 
     @Override
     public long removeEnergy(long amount, boolean simulate) {
@@ -46,7 +47,7 @@ public class ControllerTransfer implements IFluxTransfer {
 
     @Override
     public long addEnergy(long amount, boolean simulate) {
-        if(timer % 4 != 0) { //TODO THIS CAUSES FLICKERING INTO GUI, WE COULD SMOOTH THIS OUT
+        if ((timer & 3) > 0) { //TODO THIS CAUSES FLICKERING INTO GUI, WE COULD SMOOTH THIS OUT (on client side)
             return 0;
         }
         //TODO each player
@@ -55,15 +56,16 @@ public class ControllerTransfer implements IFluxTransfer {
         }*/
         long received = 0;
         CYCLE:
-        for(PlayerEntity player : players) {
-            if(player == null || !player.isAlive()) {
+        for (ServerPlayerEntity player : players) {
+            // dead, or quit game
+            if (!player.isAlive()) {
                 continue;
             }
             Map<Iterable<ItemStack>, Predicate<ItemStack>> inventories = getSubInventories(new HashMap<>(), player);
-            for(Map.Entry<Iterable<ItemStack>, Predicate<ItemStack>> inventory : inventories.entrySet()){
-                for(ItemStack stack : inventory.getKey()){
+            for (Map.Entry<Iterable<ItemStack>, Predicate<ItemStack>> inventory : inventories.entrySet()) {
+                for (ItemStack stack : inventory.getKey()) {
                     IItemEnergyHandler handler;
-                    if(!inventory.getValue().test(stack) || (handler = ItemEnergyHandler.getEnergyHandler(stack)) == null) {
+                    if (!inventory.getValue().test(stack) || (handler = ItemEnergyHandler.getEnergyHandler(stack)) == null) {
                         continue;
                     }
                     long receive = handler.addEnergy(amount - received, stack, simulate);
@@ -78,15 +80,14 @@ public class ControllerTransfer implements IFluxTransfer {
     }
 
     private void updatePlayers() {
-        List<NetworkMember> m = tile.getNetwork().getMemberList();
-        List<PlayerEntity> players = new ArrayList<>();
-        for(NetworkMember p : m) {
-            ServerPlayerEntity entity = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(p.getPlayerUUID());
-            if (entity != null) {
-                players.add(entity);
+        players.clear();
+        PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
+        for (NetworkMember p : tile.getNetwork().getMemberList()) {
+            ServerPlayerEntity player = playerList.getPlayerByUUID(p.getPlayerUUID());
+            if (player != null) {
+                players.add(player);
             }
         }
-        this.players = players;
     }
 
     private static final Predicate<ItemStack> NOT_EMPTY = STACK -> !STACK.isEmpty();
@@ -97,19 +98,19 @@ public class ControllerTransfer implements IFluxTransfer {
 
         //TODO
         int wireless = 0/*tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS)*/;
-        if((wireless >> 1 & 1) == 1) {
+        if ((wireless >> 1 & 1) == 1) {
             subInventories.put(Lists.newArrayList(heldItem), NOT_EMPTY);
         }
-        if((wireless >> 2 & 1) == 1) {
+        if ((wireless >> 2 & 1) == 1) {
             subInventories.put(inv.offHandInventory, NOT_EMPTY);
         }
-        if((wireless >> 3 & 1) == 1) {
+        if ((wireless >> 3 & 1) == 1) {
             subInventories.put(inv.mainInventory.subList(0, 9), stack -> !stack.isEmpty() && (heldItem.isEmpty() || heldItem != stack));
         }
-        if((wireless >> 4 & 1) == 1) {
+        if ((wireless >> 4 & 1) == 1) {
             subInventories.put(inv.armorInventory, NOT_EMPTY);
         }
-        if((wireless >> 5 & 1) == 1) {
+        if ((wireless >> 5 & 1) == 1) {
             /* TODO BAUBLES!
             if(FluxNetworks.proxy.baublesLoaded) {
                 if(player.hasCapability(BaublesCapabilities.CAPABILITY_BAUBLES, null)){
@@ -128,7 +129,7 @@ public class ControllerTransfer implements IFluxTransfer {
         private final IItemHandler handler;
         private int count = 0;
 
-        ItemHandlerIterator(IItemHandler handler){
+        ItemHandlerIterator(IItemHandler handler) {
             this.handler = handler;
         }
 

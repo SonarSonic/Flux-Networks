@@ -8,8 +8,8 @@ import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
@@ -32,7 +32,7 @@ public class FluxStorageRecipe extends ShapedRecipe {
             CompoundNBT subTag = stack.getChildTag(FluxUtils.FLUX_DATA);
             if (subTag != null) {
                 if (networkID == -1) {
-                    networkID = subTag.getInt(FluxNetworkData.NETWORK_ID);
+                    networkID = subTag.getInt(FluxConstants.NETWORK_ID);
                 }
                 energyTotal += subTag.getInt("energy");
             }
@@ -41,7 +41,7 @@ public class FluxStorageRecipe extends ShapedRecipe {
         if (energyTotal > 0 || networkID != -1) {
             CompoundNBT subTag = stack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
             if (networkID != -1)
-                subTag.putInt(FluxNetworkData.NETWORK_ID, networkID);
+                subTag.putInt(FluxConstants.NETWORK_ID, networkID);
             if (energyTotal > 0)
                 subTag.putInt("energy", energyTotal);
         }

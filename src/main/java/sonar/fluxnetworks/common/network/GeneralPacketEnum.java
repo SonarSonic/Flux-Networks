@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundNBT;
 @Deprecated
 public enum GeneralPacketEnum {
     //CREATE_NETWORK(GeneralPacketHandler::handleCreateNetworkPacket),
-    EDIT_NETWORK(GeneralPacketHandler::handleNetworkEditPacket),
+    //EDIT_NETWORK(GeneralPacketHandler::handleNetworkEditPacket),
     DELETE_NETWORK(GeneralPacketHandler::handleDeleteNetworkPacket),
     /*ADD_MEMBER(PacketGeneralHandler::handleAddMemberPacket),
     REMOVE_MEMBER(PacketGeneralHandler::handleRemoveMemberPacket),*/

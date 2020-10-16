@@ -126,10 +126,14 @@
 
 	"info.fluxnetworks.security.encrypted": "Criptografado",
 	"info.fluxnetworks.security.public": "Público",
+	"info.fluxnetworks.security.private": "Private",
 
 	"info.fluxnetworks.access.owner": "Dono",
 	"info.fluxnetworks.access.admin": "Administrador",
 	"info.fluxnetworks.access.user": "Usuário",
 	"info.fluxnetworks.access.blocked": "Bloqueado",
-	"info.fluxnetworks.access.superadmin": "Super Administrador"
+	"info.fluxnetworks.access.superadmin": "Super Administrador",
+
+	"info.fluxnetworks.jei.creatingfluxrecipe": "Creating Flux",
+	"info.fluxnetworks.jei.leftclickhelp": "Left click the %s"
 }

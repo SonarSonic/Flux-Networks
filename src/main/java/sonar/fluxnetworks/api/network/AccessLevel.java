@@ -39,5 +39,4 @@ public enum AccessLevel {
     public boolean canDelete() {
         return this == OWNER || this == SUPER_ADMIN;
     }
-
 }

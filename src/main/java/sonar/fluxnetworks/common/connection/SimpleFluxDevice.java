@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.ITransferHandler;
@@ -55,7 +54,12 @@ public class SimpleFluxDevice implements IFluxDevice {
         this.stack = device.getDisplayStack();
     }
 
-    public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
+    public SimpleFluxDevice(@Nonnull GlobalPos globalPos, CompoundNBT tag) {
+        this.globalPos = globalPos;
+        readWithoutPos(tag);
+    }
+
+    /*public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
         FluxUtils.writeGlobalPos(tag, tile.getGlobalPos());
         tag.putInt("type", tile.getDeviceType().ordinal());
         tag.putInt("n_id", tile.getNetworkID());
@@ -71,6 +75,22 @@ public class SimpleFluxDevice implements IFluxDevice {
         tag.putBoolean("forcedChunk", tile.isForcedLoading());
         tile.getDisplayStack().write(tag);
         return tag;
+    }*/
+
+    private void readWithoutPos(CompoundNBT tag) {
+        connectionType = FluxDeviceType.values()[tag.getInt("type")];
+        networkID = tag.getInt("n_id");
+        priority = tag.getInt("priority");
+        //folderID = tag.getInt("folder_id");
+        limit = tag.getLong("limit");
+        customName = tag.getString("name");
+        disableLimit = tag.getBoolean("dLimit");
+        surgeMode = tag.getBoolean("surge");
+        chunkLoaded = tag.getBoolean("chunkLoaded");
+        buffer = tag.getLong("buffer");
+        change = tag.getLong("change");
+        forcedLoading = tag.getBoolean("forcedChunk");
+        stack = ItemStack.read(tag);
     }
 
     @Override
@@ -94,19 +114,7 @@ public class SimpleFluxDevice implements IFluxDevice {
     @Override
     public void readCustomNBT(CompoundNBT tag, int flag) {
         globalPos = FluxUtils.readGlobalPos(tag);
-        connectionType = FluxDeviceType.values()[tag.getInt("type")];
-        networkID = tag.getInt("n_id");
-        priority = tag.getInt("priority");
-        //folderID = tag.getInt("folder_id");
-        limit = tag.getLong("limit");
-        customName = tag.getString("name");
-        disableLimit = tag.getBoolean("dLimit");
-        surgeMode = tag.getBoolean("surge");
-        chunkLoaded = tag.getBoolean("chunkLoaded");
-        buffer = tag.getLong("buffer");
-        change = tag.getLong("change");
-        forcedLoading = tag.getBoolean("forcedChunk");
-        stack = ItemStack.read(tag);
+        readWithoutPos(tag);
     }
 
     @Override

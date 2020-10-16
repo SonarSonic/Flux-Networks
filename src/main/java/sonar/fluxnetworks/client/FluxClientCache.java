@@ -10,12 +10,13 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.BasicFluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
@@ -61,11 +62,13 @@ public class FluxClientCache {
     public static void updateDevices(int networkID, List<CompoundNBT> tags) {
         IFluxNetwork network = NETWORKS.get(networkID);
         if (network != null) {
-            List<IFluxDevice> devices = network.getAllConnections();
-            tags.forEach(t -> {
-                GlobalPos globalPos = FluxUtils.readGlobalPos(t);
-                devices.stream().filter(f -> f.getGlobalPos().equals(globalPos)).findFirst().ifPresent(f -> f.readCustomNBT(t, 0));
-            });
+            for (CompoundNBT tag : tags) {
+                GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
+                IFluxDevice device = network.getConnectionByPos(globalPos);
+                if (device != null) {
+                    device.readCustomNBT(tag, 0);
+                }
+            }
         }
     }
 

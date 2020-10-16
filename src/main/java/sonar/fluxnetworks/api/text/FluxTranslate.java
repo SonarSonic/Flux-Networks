@@ -129,6 +129,7 @@ public enum FluxTranslate {
 
     ENCRYPTED(true, "security.encrypted"),
     PUBLIC(true, "security.public"),
+    PRIVATE(true, "security.private"),
 
     JEI_CREATING_FLUX(true, "jei.creatingfluxrecipe"),
     JEI_LEFT_CLICK(true, "jei.leftclickhelp");
@@ -148,6 +149,11 @@ public enum FluxTranslate {
     @OnlyIn(Dist.CLIENT)
     public String format(Object... args) {
         return I18n.format(key, args);
+    }
+
+    @Nonnull
+    public TranslationTextComponent getTextComponent() {
+        return new TranslationTextComponent(key);
     }
 
     @Nonnull

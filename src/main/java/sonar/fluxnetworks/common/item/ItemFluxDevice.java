@@ -10,11 +10,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,8 +47,8 @@ public class ItemFluxDevice extends BlockItem {
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
         if (tag != null) {
-            if (tag.contains(FluxNetworkData.NETWORK_ID))
-                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.RESET + FluxClientCache.getDisplayNetworkName(tag.getInt(FluxNetworkData.NETWORK_ID))));
+            if (tag.contains(FluxConstants.NETWORK_ID))
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.RESET + FluxClientCache.getDisplayNetworkName(tag.getInt(FluxConstants.NETWORK_ID))));
 
             if (tag.contains(LIMIT))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.RESET + FluxUtils.format(tag.getLong(LIMIT), FluxUtils.TypeNumberFormat.COMMAS, " " + EnergyType.FE.getStorageSuffix())));

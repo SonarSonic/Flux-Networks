@@ -8,7 +8,7 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.SecurityType;
+import sonar.fluxnetworks.api.network.NetworkSecurity;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -23,7 +23,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
     public GuiTabCreate(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
-        securityType = SecurityType.ENCRYPTED;
+        securityType = NetworkSecurity.Type.ENCRYPTED;
         energyType = EnergyType.FE;
     }
 
@@ -68,7 +68,8 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     public void onEditSettingsChanged() {
         if (create != null) {
-            create.clickable = (!securityType.isEncrypted() || passwordField.getText().length() != 0) && nameField.getText().length() != 0;
+            create.clickable = (securityType != NetworkSecurity.Type.ENCRYPTED
+                    || passwordField.getText().length() != 0) && nameField.getText().length() != 0;
         }
     }
 

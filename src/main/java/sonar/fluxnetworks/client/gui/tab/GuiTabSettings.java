@@ -10,13 +10,16 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.NetworkSecurity;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.network.CEditNetworkMessage;
 import sonar.fluxnetworks.common.network.GeneralPacket;
 import sonar.fluxnetworks.common.network.GeneralPacketEnum;
 import sonar.fluxnetworks.common.network.GeneralPacketHandler;
@@ -31,7 +34,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     public GuiTabSettings(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
         if (networkValid) {
-            securityType = network.getNetworkSecurity();
+            securityType = network.getSecurity().getType();
             energyType = EnergyType.FE;
         }
     }
@@ -64,9 +67,9 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (networkValid) {
             nameField.setText(network.getNetworkName());
 
-            //TODO
-            passwordField.setText(network.getNetworkPassword());
-            passwordField.setVisible(network.getNetworkSecurity().isEncrypted());
+            //TODO only players that have permission can receive password from server
+            //passwordField.setText(network.getNetworkPassword());
+            passwordField.setVisible(network.getSecurity().isEncrypted());
 
             buttons.add(apply = new NormalButton(FluxTranslate.APPLY.t(), 112, 140, 36, 12, 3).setUnclickable());
             buttons.add(delete = new NormalButton(FluxTranslate.DELETE.t(), 30, 140, 36, 12, 4).setUnclickable());
@@ -100,7 +103,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void onEditSettingsChanged() {
         if (networkValid && apply != null) {
-            apply.clickable = ((!securityType.isEncrypted() || passwordField.getText().length() != 0) && nameField.getText().length() != 0);
+            apply.clickable = ((securityType != NetworkSecurity.Type.ENCRYPTED || passwordField.getText().length() != 0) && nameField.getText().length() != 0);
         }
     }
 
@@ -110,7 +113,8 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (networkValid && button instanceof NormalButton) {
             switch (button.id) {
                 case 3:
-                    PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.EDIT_NETWORK, GeneralPacketHandler.getNetworkEditPacket(network.getNetworkID(), nameField.getText(), colorBtn.color, securityType, energyType, passwordField.getText())));
+                    NetworkHandler.INSTANCE.sendToServer(new CEditNetworkMessage(
+                            nameField.getText(), colorBtn.color, securityType, passwordField.getText(), network.getNetworkID()));
                     break;
                 case 4:
                     PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.DELETE_NETWORK, GeneralPacketHandler.getDeleteNetworkPacket(connector.getNetworkID())));

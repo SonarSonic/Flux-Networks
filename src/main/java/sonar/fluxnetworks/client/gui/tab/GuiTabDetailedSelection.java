@@ -39,7 +39,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         float f2 = (float) (color & 255) / 255.0F;
 
         boolean selected = connector.getNetworkID() == element.getNetworkID();
-        boolean isEncrypted = element.getNetworkSecurity().isEncrypted();
+        boolean isEncrypted = element.getSecurity().isEncrypted();
 
         if (isEncrypted) {
             if (selected) {
@@ -63,7 +63,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
         matrixStack.push();
         matrixStack.scale(0.625f, 0.625f, 0.625f);
-        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getNetworkStatistics().getConnectionCount() + "  Avg: " + element.getNetworkStatistics().average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
+        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getStatistics().getConnectionCount() + "  Avg: " + element.getStatistics().average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
         matrixStack.pop();
     }
 

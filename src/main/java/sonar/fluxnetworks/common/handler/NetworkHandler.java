@@ -83,6 +83,7 @@ public class NetworkHandler {
         INSTANCE.registerMessage(CSuperAdminMessage.class, CSuperAdminMessage::new);
         INSTANCE.registerMessage(SFeedbackMessage.class, SFeedbackMessage::new);
         INSTANCE.registerMessage(CCreateNetworkMessage.class, CCreateNetworkMessage::new);
+        INSTANCE.registerMessage(CEditNetworkMessage.class, CEditNetworkMessage::new);
     }
 
     /**

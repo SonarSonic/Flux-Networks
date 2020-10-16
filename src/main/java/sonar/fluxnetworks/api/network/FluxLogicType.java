@@ -3,8 +3,8 @@ package sonar.fluxnetworks.api.network;
 import sonar.fluxnetworks.api.device.*;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * Logic types in flux networks
@@ -26,11 +26,11 @@ public enum FluxLogicType {
      * Get valid logic types for a flux device
      *
      * @param tile the tile entity that extends IFluxDevice
-     * @return a list of logic types that the given device can work as
+     * @return a set of logic types that the given device can work as
      */
     @Nonnull
-    public static List<FluxLogicType> getValidTypes(IFluxDevice tile) {
-        List<FluxLogicType> valid = new ArrayList<>();
+    public static Set<FluxLogicType> getValidTypes(IFluxDevice tile) {
+        Set<FluxLogicType> valid = EnumSet.noneOf(FluxLogicType.class);
         for (FluxLogicType type : FluxLogicType.values()) {
             if (type.clazz.isInstance(tile)) {
                 valid.add(type);

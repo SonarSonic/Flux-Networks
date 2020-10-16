@@ -20,7 +20,6 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
@@ -33,7 +32,7 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
         int energy;
         CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
         if (tag != null) {
-            color = FluxClientCache.getNetwork(tag.getInt(FluxNetworkData.NETWORK_ID)).getNetworkColor();
+            color = FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             energy = tag.getInt("energy");
         } else {
             color = FluxConstants.INVALID_NETWORK_COLOR;

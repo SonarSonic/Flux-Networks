@@ -1,17 +1,20 @@
 package sonar.fluxnetworks.common.connection;
 
+import it.unimi.dsi.fastutil.objects.AbstractObject2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraftforge.common.util.Constants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import javax.annotation.Nullable;
+import java.util.*;
 
 /**
  * Defines the base class of flux network server or
@@ -31,28 +34,81 @@ public class BasicFluxNetwork implements IFluxNetwork {
 
     private int networkID;
     private String networkName;
-    private UUID ownerUUID;
-    protected SecurityType securityType;
-    private String networkPassword;
     private int networkColor;
+    private UUID ownerUUID;
 
+    protected final NetworkSecurity security = new NetworkSecurity();
     protected final NetworkStatistics statistics = new NetworkStatistics(this);
+    protected final List<NetworkMember> memberList = new ArrayList<>();
     // On server: TileFluxDevice (loaded) and SimpleFluxDevice (unloaded)
     // On client: SimpleFluxDevice
-    protected final List<IFluxDevice> allConnections = new ArrayList<>();
-    protected final List<NetworkMember> networkMembers = new ArrayList<>();
+    protected final AbstractObject2ObjectMap<GlobalPos, IFluxDevice> allConnections = new Object2ObjectOpenHashMap<>();
 
     public BasicFluxNetwork() {
 
     }
 
-    public BasicFluxNetwork(int id, String name, SecurityType security, int color, UUID owner, String password) {
+    protected BasicFluxNetwork(int id, String name, int color, UUID owner) {
         networkID = id;
         networkName = name;
-        securityType = security;
         networkColor = color;
         ownerUUID = owner;
-        networkPassword = password;
+    }
+
+    @Override
+    public int getNetworkID() {
+        return networkID;
+    }
+
+    @Override
+    public String getNetworkName() {
+        return networkName;
+    }
+
+    @Override
+    public void setNetworkName(String name) {
+        networkName = name;
+    }
+
+    @Override
+    public int getNetworkColor() {
+        return networkColor;
+    }
+
+    @Override
+    public void setNetworkColor(int color) {
+        networkColor = color;
+    }
+
+    @Override
+    public UUID getOwnerUUID() {
+        return ownerUUID;
+    }
+
+    @Override
+    public NetworkSecurity getSecurity() {
+        return security;
+    }
+
+    @Override
+    public NetworkStatistics getStatistics() {
+        return statistics;
+    }
+
+    @Override
+    public List<NetworkMember> getMemberList() {
+        return memberList;
+    }
+
+    @Override
+    public Collection<IFluxDevice> getAllConnections() {
+        return allConnections.values();
+    }
+
+    @Nullable
+    @Override
+    public IFluxDevice getConnectionByPos(GlobalPos pos) {
+        return allConnections.get(pos);
     }
 
     @Nonnull
@@ -82,21 +138,6 @@ public class BasicFluxNetwork implements IFluxNetwork {
 
     }
 
-    @Override
-    public int getNetworkID() {
-        return networkID;
-    }
-
-    @Override
-    public String getNetworkName() {
-        return networkName;
-    }
-
-    @Override
-    public void setNetworkName(String name) {
-        networkName = name;
-    }
-
     /*@Override
     public <T> T getSetting(NetworkSettings<T> setting) {
         return setting.getValue(this).getValue();
@@ -108,95 +149,59 @@ public class BasicFluxNetwork implements IFluxNetwork {
     }*/
 
     @Override
-    public SecurityType getNetworkSecurity() {
-        return securityType;
-    }
-
-    @Override
-    public String getNetworkPassword() {
-        return networkPassword;
-    }
-
-    @Override
-    public int getNetworkColor() {
-        return networkColor;
-    }
-
-    @Override
-    public void setNetworkColor(int color) {
-        networkColor = color;
-    }
-
-    @Override
-    public UUID getOwnerUUID() {
-        return ownerUUID;
-    }
-
-    @Override
-    public NetworkStatistics getNetworkStatistics() {
-        return statistics;
-    }
-
-    @Override
-    public List<NetworkMember> getMemberList() {
-        return networkMembers;
-    }
-
-    @Override
-    public List<IFluxDevice> getAllConnections() {
-        return allConnections;
-    }
-
-    @Override
     public boolean isValid() {
         return true;
     }
 
     @Override
-    public void readCustomNBT(CompoundNBT nbt, int flags) {
-        if ((flags & FluxConstants.FLAG_NET_BASIS) != 0 || (flags & FluxConstants.FLAG_SAVE_ALL) != 0) {
-            networkID = nbt.getInt(FluxNetworkData.NETWORK_ID);
-            networkName = nbt.getString(FluxNetworkData.NETWORK_NAME);
-            ownerUUID = nbt.getUniqueId(FluxNetworkData.OWNER_UUID);
-            securityType = SecurityType.values()[nbt.getInt(FluxNetworkData.SECURITY_TYPE)];
-            networkColor = nbt.getInt(FluxNetworkData.NETWORK_COLOR);
+    public void writeCustomNBT(CompoundNBT nbt, int flags) {
+        if (flags == FluxConstants.FLAG_NET_BASIS || flags == FluxConstants.FLAG_SAVE_ALL) {
+            nbt.putInt(FluxConstants.NETWORK_ID, networkID);
+            nbt.putString(FluxConstants.NETWORK_NAME, networkName);
+            nbt.putInt(FluxConstants.NETWORK_COLOR, networkColor);
+            nbt.putUniqueId(FluxConstants.OWNER_UUID, ownerUUID);
+            security.writeNBT(nbt, flags == FluxConstants.FLAG_SAVE_ALL);
+            //nbt.putInt(FluxNetworkData.SECURITY_TYPE, securityType.ordinal());
         }
-        /*if (flags == NBTType.NETWORK_GENERAL || flags == NBTType.ALL_SAVE) {
-            network_id.setValue(nbt.getInt(FluxNetworkData.NETWORK_ID));
-            network_name.setValue(nbt.getString(FluxNetworkData.NETWORK_NAME));
-            network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
-            network_security.setValue(SecurityType.values()[nbt.getInt(FluxNetworkData.SECURITY_TYPE)]);
-            network_password.setValue(nbt.getString(FluxNetworkData.NETWORK_PASSWORD));
-            network_color.setValue(nbt.getInt(FluxNetworkData.NETWORK_COLOR));
-            network_energy.setValue(EnergyType.values()[nbt.getInt(FluxNetworkData.ENERGY_TYPE)]);
-            network_wireless.setValue(nbt.getInt(FluxNetworkData.WIRELESS_MODE));
+        if (flags == FluxConstants.FLAG_SAVE_ALL) {
+            List<NetworkMember> members = memberList;
+            if (!members.isEmpty()) {
+                ListNBT list = new ListNBT();
+                for (NetworkMember m : members) {
+                    CompoundNBT t1 = new CompoundNBT();
+                    m.writeNBT(t1);
+                    list.add(t1);
+                }
+                nbt.put(FluxConstants.PLAYER_LIST, list);
+            }
 
-            if (flags == NBTType.ALL_SAVE) {
-                FluxNetworkData.readPlayers(this, nbt);
-                FluxNetworkData.readConnections(this, nbt);
+            Collection<IFluxDevice> connections = allConnections.values();
+            if (!connections.isEmpty()) {
+                ListNBT list = new ListNBT();
+                for (IFluxDevice d : connections) {
+                    if (!d.isChunkLoaded()) {
+                        CompoundNBT t1 = new CompoundNBT();
+                        d.writeCustomNBT(t1, FluxConstants.FLAG_SAVE_ALL);
+                        list.add(t1);
+                    }
+                }
+                nbt.put(FluxConstants.CONNECTIONS, list);
             }
         }
-
-        if (flags == NBTType.NETWORK_PLAYERS) {
-            FluxNetworkData.readPlayers(this, nbt);
+        if (flags == FluxConstants.FLAG_NET_CONNECTIONS) {
+            Collection<IFluxDevice> connections = allConnections.values();
+            if (!connections.isEmpty()) {
+                ListNBT list = new ListNBT();
+                for (IFluxDevice d : connections) {
+                    CompoundNBT t1 = new CompoundNBT();
+                    d.writeCustomNBT(t1, FluxConstants.FLAG_SAVE_ALL);
+                    list.add(t1);
+                }
+                nbt.put(FluxConstants.CONNECTIONS, list);
+            }
         }
-
-        if (flags == NBTType.NETWORK_CONNECTIONS) {
-            FluxNetworkData.readAllConnections(this, nbt);
-        }
-        if (flags == NBTType.NETWORK_STATISTICS) {
-            network_stats.getValue().readNBT(nbt);
-        }*/
-    }
-
-    @Override
-    public void writeCustomNBT(CompoundNBT nbt, int flags) {
-        if ((flags & FluxConstants.FLAG_NET_BASIS) != 0 || (flags & FluxConstants.FLAG_SAVE_ALL) != 0) {
-            nbt.putInt(FluxNetworkData.NETWORK_ID, networkID);
-            nbt.putString(FluxNetworkData.NETWORK_NAME, networkName);
-            nbt.putUniqueId(FluxNetworkData.OWNER_UUID, ownerUUID);
-            nbt.putInt(FluxNetworkData.SECURITY_TYPE, securityType.ordinal());
-            nbt.putInt(FluxNetworkData.NETWORK_COLOR, networkColor);
+        if (flags == FluxConstants.FLAG_NET_STATISTICS) {
+            statistics.writeNBT(nbt);
         }
         /*if (flags == NBTType.NETWORK_GENERAL || flags == NBTType.ALL_SAVE) {
             nbt.putInt(FluxNetworkData.NETWORK_ID, network_id.getValue());
@@ -230,6 +235,66 @@ public class BasicFluxNetwork implements IFluxNetwork {
         if (flags == NBTType.NETWORK_CLEAR) {
             nbt.putBoolean("clear", true); // Nothing
         }*/
+    }
 
+    @Override
+    public void readCustomNBT(CompoundNBT nbt, int flags) {
+        if (flags == FluxConstants.FLAG_NET_BASIS || flags == FluxConstants.FLAG_SAVE_ALL) {
+            networkID = nbt.getInt(FluxConstants.NETWORK_ID);
+            networkName = nbt.getString(FluxConstants.NETWORK_NAME);
+            networkColor = nbt.getInt(FluxConstants.NETWORK_COLOR);
+            ownerUUID = nbt.getUniqueId(FluxConstants.OWNER_UUID);
+            security.readNBT(nbt);
+        }
+        if (flags == FluxConstants.FLAG_SAVE_ALL) {
+            ListNBT list = nbt.getList(FluxConstants.PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundNBT c = list.getCompound(i);
+                memberList.add(new NetworkMember(c));
+            }
+            list = nbt.getList(FluxConstants.CONNECTIONS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundNBT c = list.getCompound(i);
+                GlobalPos pos = FluxUtils.readGlobalPos(c);
+                allConnections.put(pos, new SimpleFluxDevice(pos, c));
+            }
+        }
+        if (flags == FluxConstants.FLAG_NET_CONNECTIONS) {
+            ListNBT list = nbt.getList(FluxConstants.CONNECTIONS, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundNBT c = list.getCompound(i);
+                GlobalPos pos = FluxUtils.readGlobalPos(c);
+                allConnections.put(pos, new SimpleFluxDevice(pos, c));
+            }
+        }
+        if (flags == FluxConstants.FLAG_NET_STATISTICS) {
+            statistics.readNBT(nbt);
+        }
+        /*if (flags == NBTType.NETWORK_GENERAL || flags == NBTType.ALL_SAVE) {
+            network_id.setValue(nbt.getInt(FluxNetworkData.NETWORK_ID));
+            network_name.setValue(nbt.getString(FluxNetworkData.NETWORK_NAME));
+            network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
+            network_security.setValue(SecurityType.values()[nbt.getInt(FluxNetworkData.SECURITY_TYPE)]);
+            network_password.setValue(nbt.getString(FluxNetworkData.NETWORK_PASSWORD));
+            network_color.setValue(nbt.getInt(FluxNetworkData.NETWORK_COLOR));
+            network_energy.setValue(EnergyType.values()[nbt.getInt(FluxNetworkData.ENERGY_TYPE)]);
+            network_wireless.setValue(nbt.getInt(FluxNetworkData.WIRELESS_MODE));
+
+            if (flags == NBTType.ALL_SAVE) {
+                FluxNetworkData.readPlayers(this, nbt);
+                FluxNetworkData.readConnections(this, nbt);
+            }
+        }
+
+        if (flags == NBTType.NETWORK_PLAYERS) {
+            FluxNetworkData.readPlayers(this, nbt);
+        }
+
+        if (flags == NBTType.NETWORK_CONNECTIONS) {
+            FluxNetworkData.readAllConnections(this, nbt);
+        }
+        if (flags == NBTType.NETWORK_STATISTICS) {
+            network_stats.getValue().readNBT(nbt);
+        }*/
     }
 }

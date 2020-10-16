@@ -14,12 +14,12 @@ import net.minecraft.loot.functions.CopyNbt;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -69,7 +69,7 @@ public class FluxBlockLootTables extends BlockLootTables {
         copyNbt.replaceOperation("1", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.LIMIT);
         copyNbt.replaceOperation("2", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.DISABLE_LIMIT);
         copyNbt.replaceOperation("3", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.SURGE_MODE);
-        copyNbt.replaceOperation("4", FluxUtils.FLUX_DATA + "." + FluxNetworkData.NETWORK_ID);
+        copyNbt.replaceOperation("4", FluxUtils.FLUX_DATA + "." + FluxConstants.NETWORK_ID);
         copyNbt.replaceOperation("6", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.CUSTOM_NAME);
         copyNbt.replaceOperation("b", FluxUtils.FLUX_DATA + "." + "buffer");
         if (block instanceof FluxStorageBlock) {

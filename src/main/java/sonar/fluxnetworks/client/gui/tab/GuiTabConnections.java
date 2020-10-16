@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -194,7 +195,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         if (!networkValid)
             return;
         if (timer == 4) {
-            refreshPages(network.getAllConnections());
+            refreshPages(Lists.newArrayList(network.getAllConnections()));
         }
         if (timer % 5 == 0) {
             //TODO
@@ -208,7 +209,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             clear.clickable = false;
             edit.clickable = false;
             disconnect.clickable = false;
-            refreshPages(network.getAllConnections());
+            refreshPages(Lists.newArrayList(network.getAllConnections()));
         }
         if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
             closePopUp();
@@ -217,7 +218,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             clear.clickable = false;
             edit.clickable = false;
             disconnect.clickable = false;
-            refreshPages(network.getAllConnections());
+            refreshPages(Lists.newArrayList(network.getAllConnections()));
             //TODO
             /*if(connector instanceof IFluxDevice && elements.stream().noneMatch(f -> f.getCoords().equals(((IFluxDevice)connector).getCoords()))) {
                 Minecraft.getInstance().currentScreen = new GuiTabSelection(player, connector);

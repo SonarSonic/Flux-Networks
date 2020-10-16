@@ -126,6 +126,7 @@
 
 	"info.fluxnetworks.security.encrypted": "加密",
 	"info.fluxnetworks.security.public": "公共",
+	"info.fluxnetworks.security.private": "私人",
 
 	"info.fluxnetworks.access.owner": "所有人",
 	"info.fluxnetworks.access.admin": "管理员",

@@ -222,7 +222,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             tag.putLong(ItemFluxDevice.LIMIT, limit);
             tag.putBoolean(ItemFluxDevice.DISABLE_LIMIT, getDisableLimit());
             tag.putBoolean(ItemFluxDevice.SURGE_MODE, getSurgeMode());
-            tag.putInt(FluxNetworkData.NETWORK_ID, getNetworkID());
+            tag.putInt(FluxConstants.NETWORK_ID, getNetworkID());
             tag.putString(ItemFluxDevice.CUSTOM_NAME, customName);
         }
     }
@@ -252,7 +252,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 limit = l;
             setDisableLimit(tag.getBoolean(ItemFluxDevice.DISABLE_LIMIT));
             setSurgeMode(tag.getBoolean(ItemFluxDevice.SURGE_MODE));
-            int i = tag.getInt(FluxNetworkData.NETWORK_ID);
+            int i = tag.getInt(FluxConstants.NETWORK_ID);
             if (i > 0)
                 networkID = i;
             String name = tag.getString(ItemFluxDevice.CUSTOM_NAME);
