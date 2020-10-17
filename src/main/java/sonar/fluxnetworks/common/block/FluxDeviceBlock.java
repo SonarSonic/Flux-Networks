@@ -75,7 +75,7 @@ public abstract class FluxDeviceBlock extends Block {
                 CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
                 if (tag != null) {
                     // doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
-                    flux.readCustomNBT(tag, FluxConstants.FLAG_TILE_DROP);
+                    flux.readCustomNBT(tag, FluxConstants.TYPE_TILE_DROP);
                 }
             }
             if (placer instanceof ServerPlayerEntity) {

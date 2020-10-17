@@ -45,13 +45,13 @@ public class FluxNetworkData extends WorldSavedData {
 
     private static FluxNetworkData data;
 
-    public static String NETWORKS = "networks";
-    public static String TICKETS = "tickets";
-    public static String UNIQUE_ID = "uniqueID";
+    private static final String NETWORKS = "networks";
+    private static final String TICKETS = "tickets";
+    private static final String UNIQUE_ID = "uniqueID";
 
-    public static String NETWORK_PASSWORD = "networkPassword";
+    /*public static String NETWORK_PASSWORD = "networkPassword";
     public static String SECURITY_TYPE = "networkSecurity";
-    public static String ENERGY_TYPE = "networkEnergy";
+    public static String ENERGY_TYPE = "networkEnergy";*/
     public static String WIRELESS_MODE = "wirelessMode";
 
     /*public static String NETWORK_FOLDERS = "folders";
@@ -136,14 +136,14 @@ public class FluxNetworkData extends WorldSavedData {
         if (networks.put(network.getNetworkID(), network) != null) {
             FluxNetworks.LOGGER.warn("Network IDs are not unique when creating network");
         }
-        NetworkHandler.INSTANCE.sendToAll(new SNetworkUpdateMessage(network, FluxConstants.FLAG_NET_BASIS));
+        NetworkHandler.INSTANCE.sendToAll(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_BASIC));
         return network;
     }
 
     public void deleteNetwork(@Nonnull IFluxNetwork network) {
         network.onDeleted();
         networks.remove(network.getNetworkID());
-        NetworkHandler.INSTANCE.sendToAll(new SNetworkUpdateMessage(network, FluxConstants.FLAG_NET_DELETE));
+        NetworkHandler.INSTANCE.sendToAll(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_DELETE));
     }
 
     @Override
@@ -159,7 +159,7 @@ public class FluxNetworkData extends WorldSavedData {
         for (int i = 0; i < list.size(); i++) {
             CompoundNBT tag = list.getCompound(i);
             FluxNetworkServer network = new FluxNetworkServer();
-            network.readCustomNBT(tag, FluxConstants.FLAG_SAVE_ALL);
+            network.readCustomNBT(tag, FluxConstants.TYPE_SAVE_ALL);
             if (networks.put(network.getNetworkID(), network) != null) {
                 FluxNetworks.LOGGER.warn("Network IDs are not unique when reading data");
             }
@@ -188,7 +188,7 @@ public class FluxNetworkData extends WorldSavedData {
         ListNBT list = new ListNBT();
         for (IFluxNetwork network : networks.values()) {
             CompoundNBT tag = new CompoundNBT();
-            network.writeCustomNBT(tag, FluxConstants.FLAG_SAVE_ALL);
+            network.writeCustomNBT(tag, FluxConstants.TYPE_SAVE_ALL);
             list.add(tag);
         }
         compound.put(NETWORKS, list);

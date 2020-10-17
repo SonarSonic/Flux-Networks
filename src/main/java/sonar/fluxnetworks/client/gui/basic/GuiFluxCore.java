@@ -18,12 +18,11 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
-import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.network.CConfiguratorConnectMessage;
 import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
-import sonar.fluxnetworks.common.network.ConfiguratorNetworkConnectPacket;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import java.text.NumberFormat;
@@ -142,11 +141,11 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
             if (flux.isForcedLoading()) {
                 list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
-            list.add(FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getChange()));
+            list.add(FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getTransferChange()));
             if (flux.getDeviceType() == FluxDeviceType.STORAGE) {
-                list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
             } else {
-                list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
             }
         } else {
             list.add(TextFormatting.RED + FluxTranslate.CHUNK_UNLOADED.t());
@@ -174,7 +173,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         } else if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
             FluxClientCache.adminViewingNetwork = FluxClientCache.getNetwork(networkID);
         } else if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
-            PacketHandler.CHANNEL.sendToServer(new ConfiguratorNetworkConnectPacket(networkID, password));
+            NetworkHandler.INSTANCE.sendToServer(new CConfiguratorConnectMessage(networkID, password));
         }
     }
 }

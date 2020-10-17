@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.connection.handler;
 
-import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.common.connection.transfer.ControllerTransfer;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 
@@ -29,5 +28,4 @@ public class FluxControllerHandler extends AbstractPointHandler<TileFluxControll
     public long removeEnergy(long energy, boolean simulate) {
         return transfer.addEnergy(energy, simulate);
     }
-
 }

@@ -1,41 +1,75 @@
 package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 
-public class FluxConfigurationType {
-    public static FluxConfigurationType NETWORK = new FluxConfigurationType(0, "network", FluxConfigurationType::copyNetwork, FluxConfigurationType::pasteNetwork);
-    public static FluxConfigurationType PRIORITY = new FluxConfigurationType(2, "priority", FluxConfigurationType::copyPriority, FluxConfigurationType::pastePriority);
-    public static FluxConfigurationType PRIORITY_SETTING = new FluxConfigurationType(3, "p_setting", FluxConfigurationType::copyPrioritySetting, FluxConfigurationType::pastePrioritySetting);
-    public static FluxConfigurationType TRANSFER = new FluxConfigurationType(4, "transfer", FluxConfigurationType::copyTransfer, FluxConfigurationType::pasteTransfer);
-    public static FluxConfigurationType TRANSFER_SETTING = new FluxConfigurationType(5, "t_setting", FluxConfigurationType::copyTransferSetting, FluxConfigurationType::pasteTransferSetting);
+public enum FluxConfigurationType {
+    NETWORK("network"),
+    PRIORITY("priority"),
+    PRIORITY_SETTING("p_setting"),
+    TRANSFER("transfer"),
+    TRANSFER_SETTING("t_setting");
 
-    public static FluxConfigurationType[] VALUES = new FluxConfigurationType[]{NETWORK, PRIORITY, PRIORITY_SETTING, TRANSFER, TRANSFER_SETTING};
+    private final String key;
 
-    public int ordinal;
-    public String key;
-    public ICopyMethod copy;
-    public IPasteMethod paste;
-
-    public FluxConfigurationType(int ordinal, String key, ICopyMethod copy, IPasteMethod paste) {
-        this.ordinal = ordinal;
+    FluxConfigurationType(String key) {
         this.key = key;
-        this.copy = copy;
-        this.paste = paste;
     }
 
-    public String getNBTName() {
+    public String getNBTKey() {
         return key;
+    }
+
+    public void copy(CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
+        switch (this) {
+            case NETWORK:
+                if (tile.getNetwork().isValid()) {
+                    nbt.putInt(key, tile.getNetwork().getNetworkID());
+                }
+                break;
+            case PRIORITY:
+                nbt.putInt(key, tile.getRawPriority());
+                break;
+            case PRIORITY_SETTING:
+                nbt.putBoolean(key, tile.getSurgeMode());
+                break;
+            case TRANSFER:
+                nbt.putLong(key, tile.getRawLimit());
+                break;
+            case TRANSFER_SETTING:
+                nbt.putBoolean(key, tile.getDisableLimit());
+                break;
+        }
+    }
+
+    public void paste(@Nonnull CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
+        if (nbt.contains(key)) {
+            switch (this) {
+                case NETWORK:
+                    FluxNetworkData.getNetwork(nbt.getInt(key)).enqueueConnectionAddition(tile);
+                    break;
+                case PRIORITY:
+                    tile.setPriority(nbt.getInt(key));
+                    break;
+                case PRIORITY_SETTING:
+                    tile.setSurgeMode(nbt.getBoolean(key));
+                    break;
+                case TRANSFER:
+                    tile.setTransferLimit(nbt.getLong(key));
+                    break;
+                case TRANSFER_SETTING:
+                    tile.setDisableLimit(nbt.getBoolean(key));
+                    break;
+            }
+        }
     }
 
     //// NETWORK \\\\
 
-    public static void copyNetwork(CompoundNBT nbt, String key, @Nonnull IFluxDevice tile) {
+    /*public static void copyNetwork(CompoundNBT nbt, String key, @Nonnull IFluxDevice tile) {
         if (tile.getNetwork().isValid()) {
             nbt.putInt(key, tile.getNetwork().getNetworkID());
         }
@@ -97,5 +131,5 @@ public class FluxConfigurationType {
     @FunctionalInterface
     public interface IPasteMethod {
         void pasteToTile(CompoundNBT tag, String key, TileFluxDevice tile);
-    }
+    }*/
 }

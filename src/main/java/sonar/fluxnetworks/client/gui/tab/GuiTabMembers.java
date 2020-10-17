@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -16,9 +16,9 @@ import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpUserEdit;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.GUIPermissionRequestPacket;
-import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
+import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,7 +41,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         gridPerPage = 10;
         elementHeight = 12;
         elementWidth = 146;
-        PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_PLAYERS));
+        NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_MEMBERS));
     }
 
     public EnumNavigationTabs getNavigationTab() {
@@ -154,7 +154,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            PacketHandler.CHANNEL.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
+            NetworkHandler.INSTANCE.sendToServer(new CGuiPermissionMessage(network.getNetworkID()));
         }
         if (timer % 2 == 0) {
             refreshPages(network.getMemberList());

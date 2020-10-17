@@ -23,7 +23,7 @@ public class CEditNetworkMessage extends CCreateNetworkMessage {
     public CEditNetworkMessage() {
     }
 
-    public CEditNetworkMessage(String name, int color, NetworkSecurity.Type security, String password, int networkID) {
+    public CEditNetworkMessage(int networkID, String name, int color, NetworkSecurity.Type security, String password) {
         super(name, color, security, password);
         this.networkID = networkID;
     }
@@ -35,8 +35,7 @@ public class CEditNetworkMessage extends CCreateNetworkMessage {
     }
 
     @Override
-    protected void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player,
-                          String name, int color, NetworkSecurity.Type security, String password) {
+    protected void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player) {
         int networkID = buffer.readVarInt();
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (!network.isValid()) {
@@ -56,7 +55,7 @@ public class CEditNetworkMessage extends CCreateNetworkMessage {
                 }); // update color data
             }
             network.getSecurity().set(security, password);
-            NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.FLAG_NET_BASIS), context);
+            NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_BASIC), context);
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS_2), context);
         } else {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.NO_ADMIN), context);

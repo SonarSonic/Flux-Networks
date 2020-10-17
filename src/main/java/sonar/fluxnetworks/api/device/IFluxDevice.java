@@ -19,9 +19,9 @@ import java.util.UUID;
  */
 public interface IFluxDevice extends INetworkConnector {
 
-    void writeCustomNBT(CompoundNBT tag, int flag);
+    void writeCustomNBT(CompoundNBT tag, int type);
 
-    void readCustomNBT(CompoundNBT tag, int flag);
+    void readCustomNBT(CompoundNBT tag, int type);
 
     int getLogicPriority(); // consider surge, for transfer on server
 
@@ -41,7 +41,7 @@ public interface IFluxDevice extends INetworkConnector {
 
     long getRawLimit(); // ignore disable limit
 
-    void setLimit(long limit);
+    void setTransferLimit(long limit);
 
     long getMaxTransferLimit();
 
@@ -99,11 +99,11 @@ public interface IFluxDevice extends INetworkConnector {
      *
      * @return internal buffer
      */
-    default long getBuffer() {
+    default long getTransferBuffer() {
         return getTransferHandler().getBuffer();
     }
 
-    default long getChange() {
+    default long getTransferChange() {
         return getTransferHandler().getChange();
     }
 

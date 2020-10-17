@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 
 public class SimpleToggleButton extends GuiButtonCore {
 
-    public boolean on = false;
+    public boolean checked;
     public int color, guiLeft, guiTop;
 
     public SimpleToggleButton(int x, int y, int guiLeft, int guiTop, int id) {
@@ -30,7 +30,7 @@ public class SimpleToggleButton extends GuiButtonCore {
         drawRect(x - 1, y + height, x + width + 1, y + height + 1, color);
         drawRect(x - 1, y, x, y + height, color);
         drawRect(x + width, y, x + width + 1, y + height, color);
-        if(on)
+        if(checked)
             drawRect(x + 1, y + 1, x + width - 1, y + height - 1, 0xddffffff);
 
         GlStateManager.popMatrix();

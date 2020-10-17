@@ -75,15 +75,25 @@ public class NetworkHandler {
     }
 
     public static void registerMessages() {
-        INSTANCE.registerMessage(SLavaParticleMessage.class, SLavaParticleMessage::new);
-        INSTANCE.registerMessage(SNetworkUpdateMessage.class, SNetworkUpdateMessage::new);
-        INSTANCE.registerMessage(CSelectNetworkMessage.class, CSelectNetworkMessage::new);
-        INSTANCE.registerMessage(TileMessage.class, TileMessage::new);
+        INSTANCE.registerMessage(FluxTileMessage.class, FluxTileMessage::new);
+        INSTANCE.registerMessage(SFeedbackMessage.class, SFeedbackMessage::new);
         INSTANCE.registerMessage(SSuperAdminMessage.class, SSuperAdminMessage::new);
         INSTANCE.registerMessage(CSuperAdminMessage.class, CSuperAdminMessage::new);
-        INSTANCE.registerMessage(SFeedbackMessage.class, SFeedbackMessage::new);
-        INSTANCE.registerMessage(CCreateNetworkMessage.class, CCreateNetworkMessage::new);
+        INSTANCE.registerMessage(CEditMemberMessage.class, CEditMemberMessage::new);
         INSTANCE.registerMessage(CEditNetworkMessage.class, CEditNetworkMessage::new);
+        INSTANCE.registerMessage(SLavaParticleMessage.class, SLavaParticleMessage::new);
+        INSTANCE.registerMessage(CNetworkUpdateMessage.class, CNetworkUpdateMessage::new);
+        INSTANCE.registerMessage(SNetworkUpdateMessage.class, SNetworkUpdateMessage::new);
+        INSTANCE.registerMessage(CSelectNetworkMessage.class, CSelectNetworkMessage::new);
+        INSTANCE.registerMessage(CCreateNetworkMessage.class, CCreateNetworkMessage::new);
+        INSTANCE.registerMessage(CDeleteNetworkMessage.class, CDeleteNetworkMessage::new);
+        INSTANCE.registerMessage(CGuiPermissionMessage.class, CGuiPermissionMessage::new);
+        INSTANCE.registerMessage(SGuiPermissionMessage.class, SGuiPermissionMessage::new);
+        INSTANCE.registerMessage(CEditConnectionsMessage.class, CEditConnectionsMessage::new);
+        INSTANCE.registerMessage(CConnectionUpdateMessage.class, CConnectionUpdateMessage::new);
+        INSTANCE.registerMessage(SConnectionUpdateMessage.class, SConnectionUpdateMessage::new);
+        INSTANCE.registerMessage(CConfiguratorConnectMessage.class, CConfiguratorConnectMessage::new);
+        INSTANCE.registerMessage(CConfiguratorSettingMessage.class, CConfiguratorSettingMessage::new);
     }
 
     /**
@@ -134,7 +144,9 @@ public class NetworkHandler {
                 throw new IllegalStateException("Maximum index reached when registering message");
             }
             indices.put(index, factory);
-            types.put(clazz, index++);
+            if (types.put(clazz, index++) != Byte.MAX_VALUE) {
+                throw new IllegalStateException("Duplicated registration when registering message");
+            }
         }
     }
 

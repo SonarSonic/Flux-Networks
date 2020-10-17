@@ -13,7 +13,7 @@ import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.TileMessage;
+import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
 import javax.annotation.Nonnull;
@@ -68,7 +68,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         if (serverEnergyChanged) {
             //noinspection ConstantConditions
             if ((world.getWorldInfo().getGameTime() & 3) == 0) {
-                NetworkHandler.INSTANCE.sendToChunkTracking(new TileMessage(this, TileMessage.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
+                NetworkHandler.INSTANCE.sendToChunkTracking(new FluxTileMessage(this, FluxTileMessage.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
                 serverEnergyChanged = false;
             }
         }
@@ -85,8 +85,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public void writeCustomNBT(CompoundNBT tag, int flag) {
-        super.writeCustomNBT(tag, flag);
+    public void writeCustomNBT(CompoundNBT tag, int type) {
+        super.writeCustomNBT(tag, type);
         tag.putInt("energy", energyStored);
     }
 
@@ -136,8 +136,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public void readCustomNBT(CompoundNBT tag, int flag) {
-        super.readCustomNBT(tag, flag);
+    public void readCustomNBT(CompoundNBT tag, int type) {
+        super.readCustomNBT(tag, type);
         energyStored = tag.getInt("energy");
     }
 
@@ -165,8 +165,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     public void writePacket(PacketBuffer buffer, byte id) {
         super.writePacket(buffer, id);
         switch (id) {
-            case TileMessage.S2C_GUI_SYNC:
-            case TileMessage.S2C_STORAGE_ENERGY:
+            case FluxTileMessage.S2C_GUI_SYNC:
+            case FluxTileMessage.S2C_STORAGE_ENERGY:
                 buffer.writeInt(energyStored);
                 break;
         }
@@ -176,8 +176,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     public void readPacket(PacketBuffer buffer, NetworkEvent.Context context, byte id) {
         super.readPacket(buffer, context, id);
         switch (id) {
-            case TileMessage.S2C_GUI_SYNC:
-            case TileMessage.S2C_STORAGE_ENERGY:
+            case FluxTileMessage.S2C_GUI_SYNC:
+            case FluxTileMessage.S2C_STORAGE_ENERGY:
                 energyStored = buffer.readInt();
                 break;
         }

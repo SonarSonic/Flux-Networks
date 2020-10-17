@@ -146,7 +146,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             closePopUp();
             if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
                 ItemFluxConfigurator.ContainerProvider networkConnector = (ItemFluxConfigurator.ContainerProvider) connector;
-                //TODO
+                //TODO need test
                 //networkConnector.network = selectedNetwork;
 
                 this.network = selectedNetwork;

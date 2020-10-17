@@ -155,7 +155,7 @@ public class CommonEventHandler {
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
         NetworkHandler.INSTANCE.sendToPlayer(new SNetworkUpdateMessage(FluxNetworkData.getAllNetworks(),
-                FluxConstants.FLAG_NET_BASIS), event.getPlayer());
+                FluxConstants.TYPE_NET_BASIC), event.getPlayer());
         NetworkHandler.INSTANCE.sendToPlayer(new SSuperAdminMessage(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())),
                 event.getPlayer());
     }

@@ -60,7 +60,8 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         if (button instanceof NormalButton) {
             if (mouseButton == 0 && button.id == 3) {
                 //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK, GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
-                NetworkHandler.INSTANCE.sendToServer(new CCreateNetworkMessage(nameField.getText(), colorBtn.color, securityType, passwordField.getText()));
+                NetworkHandler.INSTANCE.sendToServer(new CCreateNetworkMessage(
+                        nameField.getText(), colorBtn.color, securityType, passwordField.getText()));
             }
         }
     }

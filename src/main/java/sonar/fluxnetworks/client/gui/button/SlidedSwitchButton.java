@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft;
 public class SlidedSwitchButton extends GuiButtonCore {
 
     // switch on/off
-    public boolean slideControl = false;
+    public boolean toggled = false;
 
     // control movement
     protected float center;
@@ -23,7 +23,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
     public SlidedSwitchButton(int x, int y, int id, int guiLeft, int guiTop, boolean defaultControl) {
         super(x, y, 16, 8, id);
         if(defaultControl) {
-            slideControl = true;
+            toggled = true;
             center = 8;
         }
         this.guiLeft = guiLeft;
@@ -58,17 +58,17 @@ public class SlidedSwitchButton extends GuiButtonCore {
     }
 
     private int getState(Minecraft mc, int mouseX, int mouseY) {
-        return slideControl || isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop) ? 0 : 1;
+        return toggled || isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop) ? 0 : 1;
     }
 
     public void switchButton() {
-        slideControl = !slideControl;
+        toggled = !toggled;
     }
 
 
     public void updateButton(float partialTicks, int mouseX, int mouseY) {
         float par = partialTicks*4;
-        if(slideControl) {
+        if(toggled) {
             if(center <= 8 - par) {
                 center += par;
             } else {

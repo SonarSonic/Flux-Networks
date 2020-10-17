@@ -6,7 +6,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -16,7 +15,6 @@ import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
@@ -43,7 +41,7 @@ public class FluxClientCache {
             int id = entry.getIntKey();
             CompoundNBT nbt = entry.getValue();
             IFluxNetwork network = NETWORKS.get(id);
-            if (flags == FluxConstants.FLAG_NET_DELETE) {
+            if (flags == FluxConstants.TYPE_NET_DELETE) {
                 if (network != null) {
                     NETWORKS.remove(id);
                 }
@@ -59,15 +57,14 @@ public class FluxClientCache {
         }
     }
 
-    public static void updateDevices(int networkID, List<CompoundNBT> tags) {
+    public static void updateConnections(int networkID, List<CompoundNBT> tags) {
         IFluxNetwork network = NETWORKS.get(networkID);
         if (network != null) {
             for (CompoundNBT tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
-                IFluxDevice device = network.getConnectionByPos(globalPos);
-                if (device != null) {
-                    device.readCustomNBT(tag, 0);
-                }
+                network.getConnectionByPos(globalPos).ifPresent(c -> {
+                    c.readCustomNBT(tag, 0);
+                });
             }
         }
     }

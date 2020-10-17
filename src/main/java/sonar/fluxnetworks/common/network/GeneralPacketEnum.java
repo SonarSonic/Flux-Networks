@@ -7,11 +7,12 @@ import net.minecraft.nbt.CompoundNBT;
 public enum GeneralPacketEnum {
     //CREATE_NETWORK(GeneralPacketHandler::handleCreateNetworkPacket),
     //EDIT_NETWORK(GeneralPacketHandler::handleNetworkEditPacket),
-    DELETE_NETWORK(GeneralPacketHandler::handleDeleteNetworkPacket),
+    //DELETE_NETWORK(GeneralPacketHandler::handleDeleteNetworkPacket),
     /*ADD_MEMBER(PacketGeneralHandler::handleAddMemberPacket),
     REMOVE_MEMBER(PacketGeneralHandler::handleRemoveMemberPacket),*/
-    CHANGE_PERMISSION(GeneralPacketHandler::handleChangePermissionPacket),
-    CHANGE_WIRELESS(GeneralPacketHandler::handleChangeWirelessPacket);
+    //CHANGE_PERMISSION(GeneralPacketHandler::handleChangePermissionPacket);
+    //CHANGE_WIRELESS(GeneralPacketHandler::handleChangeWirelessPacket);
+    ;
 
     public IPacketGeneralHandler handler;
 

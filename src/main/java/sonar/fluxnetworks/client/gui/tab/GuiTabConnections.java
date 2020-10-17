@@ -3,15 +3,15 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.misc.Coord4D;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
@@ -20,14 +20,16 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpConnectionEdit;
-import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.BatchEditingPacket;
-import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
+import sonar.fluxnetworks.common.network.CConnectionUpdateMessage;
+import sonar.fluxnetworks.common.network.CEditConnectionsMessage;
+import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
@@ -50,7 +52,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         gridPerPage = 7;
         elementHeight = 18;
         elementWidth = 146;
-        PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_CONNECTIONS));
+        NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_CONNECTIONS));
     }
 
     public EnumNavigationTabs getNavigationTab() {
@@ -148,7 +150,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         if (element.isChunkLoaded()) {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 2, fontColor);
             RenderSystem.scaled(0.625, 0.625, 0.625);
-            font.drawString(matrixStack, FluxUtils.getTransferInfo(element.getDeviceType(), EnergyType.FE, element.getChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
+            font.drawString(matrixStack, FluxUtils.getTransferInfo(element.getDeviceType(), EnergyType.FE, element.getTransferChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
             RenderSystem.scaled(1.6, 1.6, 1.6);
         } else {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 5, 0x808080);
@@ -180,10 +182,9 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
                     openPopUp(new PopUpConnectionEdit(this, true, player, connector));
                     break;
                 case 2:
-                    //TODO
-                    List<Coord4D> list = new ArrayList<>();/*batchConnections.stream().map(IFluxDevice::getCoords).collect(Collectors.toList());*/
-                    boolean[] b = {false, false, false, false, false, false, true};
-                    PacketHandler.CHANNEL.sendToServer(new BatchEditingPacket(network.getNetworkID(), list, new CompoundNBT(), b));
+                    List<GlobalPos> list = batchConnections.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList());
+                    NetworkHandler.INSTANCE.sendToServer(new CEditConnectionsMessage(network.getNetworkID(), list,
+                            FluxConstants.FLAG_EDIT_DISCONNECT));
                     break;
             }
         }
@@ -198,8 +199,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             refreshPages(Lists.newArrayList(network.getAllConnections()));
         }
         if (timer % 5 == 0) {
-            //TODO
-            //PacketHandler.CHANNEL.sendToServer(new ConnectionUpdateRequestPacket(network.getNetworkID(), current.stream().map(IFluxDevice::getCoords).collect(Collectors.toList())));
+            NetworkHandler.INSTANCE.sendToServer(new CConnectionUpdateMessage(network.getNetworkID(), current.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList())));
         }
         timer++;
         timer %= 20;
@@ -219,10 +219,12 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             edit.clickable = false;
             disconnect.clickable = false;
             refreshPages(Lists.newArrayList(network.getAllConnections()));
-            //TODO
-            /*if(connector instanceof IFluxDevice && elements.stream().noneMatch(f -> f.getCoords().equals(((IFluxDevice)connector).getCoords()))) {
-                Minecraft.getInstance().currentScreen = new GuiTabSelection(player, connector);
-            }*/
+            if (connector instanceof IFluxDevice) {
+                GlobalPos g = ((IFluxDevice) connector).getGlobalPos();
+                if (elements.stream().noneMatch(f -> f.getGlobalPos().equals(g))) {
+                    Minecraft.getInstance().currentScreen = new GuiTabSelection(player, connector);
+                }
+            }
             page = Math.min(page, pages);
         }
     }

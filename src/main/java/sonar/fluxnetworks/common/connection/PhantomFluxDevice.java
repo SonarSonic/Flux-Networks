@@ -17,10 +17,10 @@ import java.util.UUID;
 /**
  * A POJO class holds values updated from server for GUI display (via Network Connections tab,
  * because these devices may not exist on client world so there's no TileFluxDevice instance on client,
- * they just are loaded on server world for other players),
- * or records unloaded flux devices on server
+ * they just are loaded on server world for other players), or records unloaded flux devices on server.
+ * Logical operations are not allowed here.
  */
-public class SimpleFluxDevice implements IFluxDevice {
+public class PhantomFluxDevice implements IFluxDevice {
 
     public int networkID;
     public int priority;
@@ -37,7 +37,10 @@ public class SimpleFluxDevice implements IFluxDevice {
     public long change;
     public ItemStack stack;
 
-    public SimpleFluxDevice(@Nonnull IFluxDevice device) {
+    public PhantomFluxDevice(@Nonnull IFluxDevice device) {
+        if (device instanceof PhantomFluxDevice) {
+            throw new IllegalArgumentException();
+        }
         this.networkID = device.getNetworkID();
         this.priority = device.getRawPriority();
         this.playerUUID = device.getConnectionOwner();
@@ -54,9 +57,9 @@ public class SimpleFluxDevice implements IFluxDevice {
         this.stack = device.getDisplayStack();
     }
 
-    public SimpleFluxDevice(@Nonnull GlobalPos globalPos, CompoundNBT tag) {
+    public PhantomFluxDevice(@Nonnull GlobalPos globalPos, CompoundNBT tag) {
         this.globalPos = globalPos;
-        readWithoutPos(tag);
+        readExcludePos(tag);
     }
 
     /*public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
@@ -77,24 +80,8 @@ public class SimpleFluxDevice implements IFluxDevice {
         return tag;
     }*/
 
-    private void readWithoutPos(CompoundNBT tag) {
-        connectionType = FluxDeviceType.values()[tag.getInt("type")];
-        networkID = tag.getInt("n_id");
-        priority = tag.getInt("priority");
-        //folderID = tag.getInt("folder_id");
-        limit = tag.getLong("limit");
-        customName = tag.getString("name");
-        disableLimit = tag.getBoolean("dLimit");
-        surgeMode = tag.getBoolean("surge");
-        chunkLoaded = tag.getBoolean("chunkLoaded");
-        buffer = tag.getLong("buffer");
-        change = tag.getLong("change");
-        forcedLoading = tag.getBoolean("forcedChunk");
-        stack = ItemStack.read(tag);
-    }
-
     @Override
-    public void writeCustomNBT(CompoundNBT tag, int flag) {
+    public void writeCustomNBT(CompoundNBT tag, int type) {
         FluxUtils.writeGlobalPos(tag, globalPos);
         tag.putInt("type", connectionType.ordinal());
         tag.putInt("n_id", networkID);
@@ -112,9 +99,25 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void readCustomNBT(CompoundNBT tag, int flag) {
+    public void readCustomNBT(CompoundNBT tag, int type) {
         globalPos = FluxUtils.readGlobalPos(tag);
-        readWithoutPos(tag);
+        readExcludePos(tag);
+    }
+
+    private void readExcludePos(@Nonnull CompoundNBT tag) {
+        connectionType = FluxDeviceType.values()[tag.getInt("type")];
+        networkID = tag.getInt("n_id");
+        priority = tag.getInt("priority");
+        //folderID = tag.getInt("folder_id");
+        limit = tag.getLong("limit");
+        customName = tag.getString("name");
+        disableLimit = tag.getBoolean("dLimit");
+        surgeMode = tag.getBoolean("surge");
+        chunkLoaded = tag.getBoolean("chunkLoaded");
+        buffer = tag.getLong("buffer");
+        change = tag.getLong("change");
+        forcedLoading = tag.getBoolean("forcedChunk");
+        stack = ItemStack.read(tag);
     }
 
     @Override
@@ -144,12 +147,12 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public void onContainerOpened(PlayerEntity player) {
-
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
     public void onContainerClosed(PlayerEntity player) {
-
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
@@ -189,12 +192,12 @@ public class SimpleFluxDevice implements IFluxDevice {
 
     @Override
     public void onConnect(IFluxNetwork network) {
-
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
     public void onDisconnect() {
-
+        throw new IllegalStateException("Client or unloaded device");
     }
 
     @Override
@@ -219,7 +222,7 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void setLimit(long limit) {
+    public void setTransferLimit(long limit) {
         throw new IllegalStateException("Client or unloaded device");
     }
 
@@ -285,12 +288,12 @@ public class SimpleFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public long getBuffer() {
+    public long getTransferBuffer() {
         return buffer;
     }
 
     @Override
-    public long getChange() {
+    public long getTransferChange() {
         return change;
     }
 }

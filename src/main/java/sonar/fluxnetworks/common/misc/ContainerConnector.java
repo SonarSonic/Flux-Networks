@@ -31,7 +31,7 @@ public class ContainerConnector<T extends INetworkConnector> extends Container {
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
+    public void onContainerClosed(@Nonnull PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
         connector.onContainerClosed(playerIn);
     }

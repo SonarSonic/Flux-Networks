@@ -3,23 +3,21 @@ package sonar.fluxnetworks.client.gui.popups;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.FluxNetworks;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.misc.Coord4D;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SimpleToggleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.tab.GuiTabConnections;
-import sonar.fluxnetworks.api.network.NetworkSettings;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.BatchEditingPacket;
-import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.common.network.CEditConnectionsMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +27,12 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
 
     public NormalButton apply;
     public FluxTextWidget fluxName, priority, limit;
-    public SlidedSwitchButton surge, unlimited, chunkLoad;
-    public SimpleToggleButton editName, editPriority, editLimit, editSurge, editUnlimited, editChunkLoad;
+    public SlidedSwitchButton surgeMode, disableLimit, chunkLoading;
+    public SimpleToggleButton editName, editPriority, editLimit, editSurgeMode, editDisableLimit, editChunkLoading;
 
     public boolean batchMode;
 
-    private List<SimpleToggleButton> toggleButtons = new ArrayList<>();
+    private final List<SimpleToggleButton> toggleButtons = new ArrayList<>();
 
     public PopUpConnectionEdit(GuiTabConnections host, boolean batchMode, PlayerEntity player, INetworkConnector connector) {
         super(host, player, connector);
@@ -51,7 +49,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         popButtons.add(apply);
 
         int color = host.network.getNetworkColor() | 0xff000000;
-        if(batchMode) {
+        if (batchMode) {
             fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 20, guiTop + 30, 136, 12).setOutlineColor(color);
             fluxName.setMaxStringLength(24);
             addButton(fluxName);
@@ -71,32 +69,32 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
             editPriority = new SimpleToggleButton(10, 50, guiLeft, guiTop, 1);
             editLimit = new SimpleToggleButton(10, 67, guiLeft, guiTop, 2);
 
-            editSurge = new SimpleToggleButton(10, 82, guiLeft, guiTop, 3);
-            editUnlimited = new SimpleToggleButton(10, 94, guiLeft, guiTop, 4);
-            editChunkLoad = new SimpleToggleButton(10, 106, guiLeft, guiTop, 5);
+            editSurgeMode = new SimpleToggleButton(10, 82, guiLeft, guiTop, 3);
+            editDisableLimit = new SimpleToggleButton(10, 94, guiLeft, guiTop, 4);
+            editChunkLoading = new SimpleToggleButton(10, 106, guiLeft, guiTop, 5);
 
             toggleButtons.add(editName);
             toggleButtons.add(editPriority);
             toggleButtons.add(editLimit);
 
-            toggleButtons.add(editSurge);
-            toggleButtons.add(editUnlimited);
-            toggleButtons.add(editChunkLoad);
+            toggleButtons.add(editSurgeMode);
+            toggleButtons.add(editDisableLimit);
+            toggleButtons.add(editChunkLoading);
 
-            surge = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, false);
-            unlimited = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, false);
-            chunkLoad = new SlidedSwitchButton(140, 106, 3, guiLeft, guiTop, false);
-            popSwitches.add(surge);
-            popSwitches.add(unlimited);
-            popSwitches.add(chunkLoad);
+            surgeMode = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, false);
+            disableLimit = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, false);
+            chunkLoading = new SlidedSwitchButton(140, 106, 3, guiLeft, guiTop, false);
+            popSwitches.add(surgeMode);
+            popSwitches.add(disableLimit);
+            popSwitches.add(chunkLoading);
         } else {
-            fluxName = FluxTextWidget.create( FluxTranslate.NAME.t() + ": ", font, guiLeft + 18, guiTop + 30, 140, 12).setOutlineColor(color);
+            fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 18, guiTop + 30, 140, 12).setOutlineColor(color);
             fluxName.setMaxStringLength(24);
             fluxName.setText(host.singleConnection.getCustomName());
             fluxName.setResponder(string -> apply.clickable = true);
             addButton(fluxName);
 
-            priority = FluxTextWidget.create( FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 18, guiTop + 47, 140, 12).setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
+            priority = FluxTextWidget.create(FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 18, guiTop + 47, 140, 12).setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
             priority.setMaxStringLength(5);
             priority.setText(String.valueOf(host.singleConnection.getLogicPriority()));
             priority.setResponder(string -> apply.clickable = true);
@@ -108,15 +106,15 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
             limit.setResponder(string -> apply.clickable = true);
             addButton(limit);
 
-            surge = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, host.singleConnection.getSurgeMode());
-            unlimited = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, host.singleConnection.getDisableLimit());
+            surgeMode = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, host.singleConnection.getSurgeMode());
+            disableLimit = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, host.singleConnection.getDisableLimit());
 
-            popSwitches.add(surge);
-            popSwitches.add(unlimited);
+            popSwitches.add(surgeMode);
+            popSwitches.add(disableLimit);
 
-            if(!host.singleConnection.getDeviceType().isStorage()) {
-                chunkLoad = new SlidedSwitchButton(140, 106, 3, guiLeft, guiTop, host.singleConnection.isForcedLoading());
-                popSwitches.add(chunkLoad);
+            if (!host.singleConnection.getDeviceType().isStorage()) {
+                chunkLoading = new SlidedSwitchButton(140, 106, 3, guiLeft, guiTop, host.singleConnection.isForcedLoading());
+                popSwitches.add(chunkLoading);
             }
         }
 
@@ -125,14 +123,14 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
     @Override
     public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        for(SlidedSwitchButton button : popSwitches) {
+        for (SlidedSwitchButton button : popSwitches) {
             button.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop);
         }
-        for(SimpleToggleButton button : toggleButtons) {
+        for (SimpleToggleButton button : toggleButtons) {
             button.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop);
         }
 
-        if(!batchMode) {
+        if (!batchMode) {
             drawCenteredString(matrixStack, font, FluxTranslate.SINGLE_EDIT.t(), 88, 14, 0xffffff);
             drawCenteredString(matrixStack, font, FluxUtils.getDisplayString(host.singleConnection.getGlobalPos()), 88, 122, 0xffffff);
         } else {
@@ -141,7 +139,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         }
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getNetworkColor());
-        if(batchMode || !host.singleConnection.getDeviceType().isStorage()) {
+        if (batchMode || !host.singleConnection.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getNetworkColor());
         }
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 88, 155, 0xffffff);
@@ -151,47 +149,63 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        if(mouseButton == 0) {
-            for(NormalButton button : popButtons) {
-                if(button.clickable && button.isMouseHovered(minecraft, (int)mouseX - guiLeft, (int)mouseY - guiTop)) {
-                    if(button.id == 11) {
+        if (mouseButton == 0) {
+            for (NormalButton button : popButtons) {
+                if (button.clickable && button.isMouseHovered(minecraft, (int) mouseX - guiLeft, (int) mouseY - guiTop)) {
+                    if (button.id == 11) {
                         host.closePopUp();
                         return true;
                     }
-                    if(button.id == 12) {
-                        //TODO
-                        List<Coord4D> list = new ArrayList<>();
-                        boolean[] b = {true, true, true, true, true, true, false};
-                       /* if(batchMode) {
-                            list = host.batchConnections.stream().map(IFluxDevice::getCoords).collect(Collectors.toList());
-                            b[0] = editName.on;
-                            b[1] = editPriority.on;
-                            b[2] = editLimit.on;
-                            b[3] = editSurge.on;
-                            b[4] = editUnlimited.on;
-                            b[5] = editChunkLoad.on; // Do!
+                    if (button.id == 12) {
+                        List<GlobalPos> list;
+                        int flags = 0;
+                        if (batchMode) {
+                            list = host.batchConnections.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList());
+                            if (editName.checked) {
+                                flags |= FluxConstants.FLAG_EDIT_NAME;
+                            }
+                            if (editPriority.checked) {
+                                flags |= FluxConstants.FLAG_EDIT_PRIORITY;
+                            }
+                            if (editLimit.checked) {
+                                flags |= FluxConstants.FLAG_EDIT_LIMIT;
+                            }
+                            if (editSurgeMode.checked) {
+                                flags |= FluxConstants.FLAG_EDIT_SURGE_MODE;
+                            }
+                            if (editDisableLimit.checked) {
+                                flags |= FluxConstants.FLAG_EDIT_DISABLE_LIMIT;
+                            }
+                            if (editChunkLoading.checked) {
+                                flags |= FluxConstants.FLAG_EDIT_CHUNK_LOADING;
+                            }
                         } else {
-                            list = Lists.newArrayList(host.singleConnection.getCoords());
-                        }*/
-                        CompoundNBT tag = FluxUtils.getBatchEditingTag(fluxName, priority, limit, surge, unlimited, chunkLoad);
-                        PacketHandler.CHANNEL.sendToServer(new BatchEditingPacket(host.network.getNetworkID(), list, tag, b));
+                            list = Lists.newArrayList(host.singleConnection.getGlobalPos());
+                        }
+                        //CompoundNBT tag = FluxUtils.getBatchEditingTag(fluxName, priority, limit, surgeMode, disableLimit, chunkLoading);
+                        NetworkHandler.INSTANCE.sendToServer(new CEditConnectionsMessage(host.network.getNetworkID(), list, flags,
+                                fluxName.getText(), priority.getIntegerFromText(false), limit.getLongFromText(true),
+                                surgeMode != null && surgeMode.toggled,
+                                disableLimit != null && disableLimit.toggled,
+                                chunkLoading != null && chunkLoading.toggled));
+                        //PacketHandler.CHANNEL.sendToServer(new CEditConnectionsMessage(host.network.getNetworkID(), list, tag, b));
                         return true;
                     }
                 }
             }
-            for(SlidedSwitchButton s : popSwitches) {
-                if (s.isMouseHovered(minecraft, (int)mouseX - guiLeft, (int)mouseY - guiTop)) {
+            for (SlidedSwitchButton s : popSwitches) {
+                if (s.isMouseHovered(minecraft, (int) mouseX - guiLeft, (int) mouseY - guiTop)) {
                     s.switchButton();
-                    if(!batchMode) {
+                    if (!batchMode) {
                         apply.clickable = true;
                     }
                     return true;
                 }
             }
-            for(SimpleToggleButton s : toggleButtons) {
-                if(s.isMouseHovered(minecraft, (int)mouseX - guiLeft, (int)mouseY - guiTop)) {
-                    s.on = !s.on;
-                    apply.clickable = toggleButtons.stream().anyMatch(b -> b.on);
+            for (SimpleToggleButton s : toggleButtons) {
+                if (s.isMouseHovered(minecraft, (int) mouseX - guiLeft, (int) mouseY - guiTop)) {
+                    s.checked = !s.checked;
+                    apply.clickable = toggleButtons.stream().anyMatch(b -> b.checked);
                     return true;
                 }
             }

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
@@ -18,11 +17,8 @@ import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
-import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.network.CDeleteNetworkMessage;
 import sonar.fluxnetworks.common.network.CEditNetworkMessage;
-import sonar.fluxnetworks.common.network.GeneralPacket;
-import sonar.fluxnetworks.common.network.GeneralPacketEnum;
-import sonar.fluxnetworks.common.network.GeneralPacketHandler;
 
 public class GuiTabSettings extends GuiTabEditAbstract {
 
@@ -113,11 +109,11 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (networkValid && button instanceof NormalButton) {
             switch (button.id) {
                 case 3:
-                    NetworkHandler.INSTANCE.sendToServer(new CEditNetworkMessage(
-                            nameField.getText(), colorBtn.color, securityType, passwordField.getText(), network.getNetworkID()));
+                    NetworkHandler.INSTANCE.sendToServer(new CEditNetworkMessage(network.getNetworkID(),
+                            nameField.getText(), colorBtn.color, securityType, passwordField.getText()));
                     break;
                 case 4:
-                    PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.DELETE_NETWORK, GeneralPacketHandler.getDeleteNetworkPacket(connector.getNetworkID())));
+                    NetworkHandler.INSTANCE.sendToServer(new CDeleteNetworkMessage(connector.getNetworkID()));
                     break;
             }
         }

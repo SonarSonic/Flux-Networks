@@ -4,22 +4,12 @@ import com.google.common.collect.Lists;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Deprecated
 public class GeneralPacketHandler {
@@ -92,7 +82,6 @@ public class GeneralPacketHandler {
                     cache.put(networkID, new Tuple<>(network.getNetworkColor() | 0xff000000, network.getNetworkName()));
                     PacketHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new NetworkColourPacket(cache));
                 }
-                //TODO
                 *//*network.setSetting(NetworkSettings.NETWORK_SECURITY, security);
                 network.setSetting(NetworkSettings.NETWORK_ENERGY, energy);
                 network.setSetting(NetworkSettings.NETWORK_PASSWORD, password);*//*
@@ -105,7 +94,7 @@ public class GeneralPacketHandler {
         return null;
     }*/
 
-    public static CompoundNBT getDeleteNetworkPacket(int networkID) {
+    /*public static CompoundNBT getDeleteNetworkPacket(int networkID) {
         CompoundNBT tag = new CompoundNBT();
         tag.putInt(FluxConstants.NETWORK_ID, networkID);
         return tag;
@@ -123,7 +112,7 @@ public class GeneralPacketHandler {
             }
         }
         return null;
-    }
+    }*/
 
     /*@Deprecated
     public static CompoundNBT getAddMemberPacket(int networkID, String playerName) {
@@ -175,7 +164,7 @@ public class GeneralPacketHandler {
         return null;
     }*/
 
-    public static CompoundNBT getChangePermissionPacket(int networkID, UUID playerChanged, int type) {
+    /*public static CompoundNBT getChangePermissionPacket(int networkID, UUID playerChanged, int type) {
         CompoundNBT tag = new CompoundNBT();
         tag.putInt(FluxConstants.NETWORK_ID, networkID);
         tag.putUniqueId("playerChanged", playerChanged);
@@ -188,10 +177,10 @@ public class GeneralPacketHandler {
         UUID playerChanged = packetTag.getUniqueId("playerChanged");
         int type = packetTag.getInt("t");
         if (playerChanged != null) {
-            /*if (PlayerEntity.getUUID(player.getGameProfile()).equals(playerChanged)) {
+            *//*if (PlayerEntity.getUUID(player.getGameProfile()).equals(playerChanged)) {
                 //don't allow editing of their own permissions...
                 return null;
-            }*/
+            }*//*
 
             IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
             if (network.isValid()) {
@@ -218,28 +207,28 @@ public class GeneralPacketHandler {
                             } else if (type == 3) {
                                 network.getMemberList().remove(p);
                             } else if (type == 4) {
-                                /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
-                                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
+                                *//*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
+                                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*//*
                                 //network.getNetworkMembers().removeIf(f -> f.getAccessPermission().canDelete());
                                 //TODO
                                 //network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);
                                 p.setAccessPermission(AccessLevel.OWNER);
                             }
                             PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFeedbackMessage(EnumFeedbackInfo.SUCCESS));
-                            return new SNetworkUpdateMessage(Lists.newArrayList(network), 0/*NBTType.NETWORK_PLAYERS*/);
+                            return new SNetworkUpdateMessage(Lists.newArrayList(network), 0*//*NBTType.NETWORK_PLAYERS*//*);
                         } else if (type == 4) {
                             PlayerEntity player1 = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerChanged);
                             //noinspection
                             if (player1 != null) {
-                                /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
-                                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
+                                *//*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
+                                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*//*
                                 //TODO
-                                /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
+                                *//*network.getSetting(NetworkSettings.NETWORK_PLAYERS).removeIf(f -> f.getAccessPermission().canDelete());
                                 NetworkMember newMember = NetworkMember.createNetworkMember(player1, AccessType.OWNER);
                                 network.getSetting(NetworkSettings.NETWORK_PLAYERS).add(newMember);
-                                network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);*/
+                                network.setSetting(NetworkSettings.NETWORK_OWNER, playerChanged);*//*
                                 PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SFeedbackMessage(EnumFeedbackInfo.SUCCESS));
-                                return new SNetworkUpdateMessage(Lists.newArrayList(network), 0/*NBTType.NETWORK_PLAYERS*/);
+                                return new SNetworkUpdateMessage(Lists.newArrayList(network), 0*//*NBTType.NETWORK_PLAYERS*//*);
                             }
                             return new SFeedbackMessage(EnumFeedbackInfo.INVALID_USER);
                         }
@@ -251,7 +240,7 @@ public class GeneralPacketHandler {
             }
         }
         return null;
-    }
+    }*/
 
     public static CompoundNBT getChangeWirelessPacket(int networkID, int wirelessMode) {
         CompoundNBT tag = new CompoundNBT();
@@ -267,7 +256,7 @@ public class GeneralPacketHandler {
         if (network.isValid()) {
             if (network.getPlayerAccess(player).canEdit()) {
                 //network.setSetting(NetworkSettings.NETWORK_WIRELESS, wireless);
-                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SNetworkUpdateMessage(Lists.newArrayList(network), FluxConstants.FLAG_NET_BASIS));
+                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new SNetworkUpdateMessage(Lists.newArrayList(network), FluxConstants.TYPE_NET_BASIC));
                 return new SFeedbackMessage(EnumFeedbackInfo.SUCCESS);
             } else {
                 return new SFeedbackMessage(EnumFeedbackInfo.NO_ADMIN);

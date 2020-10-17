@@ -165,7 +165,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             }
             CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
             if (tag != null) {
-                return FluxClientCache.getNetwork(tag.getInt(FluxConfigurationType.NETWORK.getNBTName())).getNetworkColor() | 0xff000000;
+                return FluxClientCache.getNetwork(tag.getInt(FluxConfigurationType.NETWORK.getNBTKey())).getNetworkColor() | 0xff000000;
             }
             return NO_NETWORK_COLOR;
         }

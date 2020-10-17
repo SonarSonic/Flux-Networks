@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxClientCache;
@@ -13,10 +13,9 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
-import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
+import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.CSuperAdminMessage;
-import sonar.fluxnetworks.common.network.GUIPermissionRequestPacket;
-import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
 
 public class GuiFluxAdminHome extends GuiTabCore {
 
@@ -61,7 +60,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
 
     public void onSuperAdminChanged() {
         super.onSuperAdminChanged();
-        superAdmin.slideControl = FluxClientCache.superAdmin;
+        superAdmin.toggled = FluxClientCache.superAdmin;
     }
 
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
@@ -74,7 +73,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
                     NetworkHandler.INSTANCE.sendToServer(new CSuperAdminMessage());
                     break;
                 case 1:
-                    FluxClientCache.detailedNetworkView = switchButton.slideControl;
+                    FluxClientCache.detailedNetworkView = switchButton.toggled;
                     break;
             }
         }
@@ -85,8 +84,8 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_GENERAL));
-            PacketHandler.CHANNEL.sendToServer(new GUIPermissionRequestPacket(network.getNetworkID(), player.getUniqueID()));
+            NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_BASIC));
+            NetworkHandler.INSTANCE.sendToServer(new CGuiPermissionMessage(network.getNetworkID()));
         }
         timer++;
         timer %= 100;

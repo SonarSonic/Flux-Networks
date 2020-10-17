@@ -4,6 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
@@ -16,13 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
-import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.item.ItemFluxDevice;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -149,8 +145,21 @@ public class FluxUtils {
 
     @Nonnull
     public static GlobalPos readGlobalPos(@Nonnull CompoundNBT nbt) {
-        return GlobalPos.getPosition(RegistryKey.getOrCreateKey(Registry.WORLD_KEY, new ResourceLocation(nbt.getString("dimension"))),
+        return GlobalPos.getPosition(RegistryKey.getOrCreateKey(Registry.WORLD_KEY,
+                new ResourceLocation(nbt.getString("dimension"))),
                 new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z")));
+    }
+
+    public static void writeGlobalPos(@Nonnull PacketBuffer buffer, @Nonnull GlobalPos pos) {
+        buffer.writeString(pos.getDimension().getLocation().toString(), 0x100);
+        buffer.writeBlockPos(pos.getPos());
+    }
+
+    @Nonnull
+    public static GlobalPos readGlobalPos(@Nonnull PacketBuffer buffer) {
+        RegistryKey<World> dim = RegistryKey.getOrCreateKey(Registry.WORLD_KEY,
+                new ResourceLocation(buffer.readString(0x100)));
+        return GlobalPos.getPosition(dim, buffer.readBlockPos());
     }
 
     @Nonnull
@@ -278,30 +287,29 @@ public class FluxUtils {
         return null;
     }
 
-    public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {
+    /*public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {
         for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
-            type.copy.copyFromTile(config, type.getNBTName(), flux);
+            type.copy.copyFromTile(config, type.getNBTKey(), flux);
         }
         return config;
     }
 
     public static void pasteConfiguration(TileFluxDevice flux, CompoundNBT config) {
         for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
-            if (config.contains(type.getNBTName())) {
-                type.paste.pasteToTile(config, type.getNBTName(), flux);
+            if (config.contains(type.getNBTKey())) {
+                type.paste.pasteToTile(config, type.getNBTKey(), flux);
             }
         }
-    }
+    }*/
 
-    public static CompoundNBT getBatchEditingTag(FluxTextWidget a, FluxTextWidget b, FluxTextWidget c, SlidedSwitchButton d, SlidedSwitchButton e, SlidedSwitchButton f) {
+    /*public static CompoundNBT getBatchEditingTag(FluxTextWidget a, FluxTextWidget b, FluxTextWidget c, SlidedSwitchButton d, SlidedSwitchButton e, SlidedSwitchButton f) {
         CompoundNBT tag = new CompoundNBT();
         tag.putString(ItemFluxDevice.CUSTOM_NAME, a.getText());
         tag.putInt(ItemFluxDevice.PRIORITY, b.getIntegerFromText(false));
         tag.putLong(ItemFluxDevice.LIMIT, c.getLongFromText(true));
-        tag.putBoolean(ItemFluxDevice.SURGE_MODE, d != null && d.slideControl);
-        tag.putBoolean(ItemFluxDevice.DISABLE_LIMIT, e != null && e.slideControl);
-        tag.putBoolean("chunkLoad", f != null && f.slideControl);
+        tag.putBoolean(ItemFluxDevice.SURGE_MODE, d != null && d.toggled);
+        tag.putBoolean(ItemFluxDevice.DISABLE_LIMIT, e != null && e.toggled);
+        tag.putBoolean("chunkLoad", f != null && f.toggled);
         return tag;
-    }
-
+    }*/
 }

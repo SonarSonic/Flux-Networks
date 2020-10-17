@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -12,10 +13,9 @@ import sonar.fluxnetworks.client.gui.LineChart;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.api.misc.NBTType;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
+import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
@@ -114,7 +114,7 @@ public class GuiTabStatistics extends GuiTabCore {
         super.tick();
         if (networkValid) {
             if (timer == 0) {
-                PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_STATISTICS));
+                NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_STATISTICS));
             }
             if (timer == 1) {
                 chart.updateData(stats.energyChange);

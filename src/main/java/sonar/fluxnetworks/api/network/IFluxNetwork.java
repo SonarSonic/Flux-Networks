@@ -7,7 +7,6 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +42,8 @@ public interface IFluxNetwork {
 
     UUID getOwnerUUID();
 
+    void setOwnerUUID(UUID uuid);
+
     NetworkSecurity getSecurity();
 
     NetworkStatistics getStatistics();
@@ -65,8 +66,7 @@ public interface IFluxNetwork {
      * @return possible device
      * @see #getAllConnections()
      */
-    @Nullable
-    IFluxDevice getConnectionByPos(GlobalPos pos);
+    Optional<IFluxDevice> getConnectionByPos(GlobalPos pos);
 
     /*@Deprecated
     default void onStartServerTick() {
@@ -121,7 +121,7 @@ public interface IFluxNetwork {
      */
     boolean isValid();
 
-    void writeCustomNBT(CompoundNBT nbt, int flags);
+    void writeCustomNBT(CompoundNBT nbt, int type);
 
-    void readCustomNBT(CompoundNBT nbt, int flags);
+    void readCustomNBT(CompoundNBT nbt, int type);
 }

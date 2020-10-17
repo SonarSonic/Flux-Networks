@@ -3,17 +3,16 @@ package sonar.fluxnetworks.client.gui.popups;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.GeneralPacket;
-import sonar.fluxnetworks.common.network.GeneralPacketHandler;
-import sonar.fluxnetworks.common.network.GeneralPacketEnum;
-import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.network.CEditMemberMessage;
 
 public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
 
@@ -30,46 +29,51 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
         popButtons.clear();
         boolean editPermission = host.accessPermission.canEdit();
         boolean ownerPermission = host.accessPermission.canDelete();
-        if(host.selectedPlayer.getPlayerAccess() != AccessLevel.OWNER && editPermission) {
+        if (host.selectedPlayer.getPlayerAccess() != AccessLevel.OWNER && editPermission) {
             String text;
             int length;
             int i = 0;
             if (host.selectedPlayer.getPlayerAccess() == AccessLevel.BLOCKED || host.selectedPlayer.getPlayerAccess() == AccessLevel.SUPER_ADMIN) {
                 text = FluxTranslate.SET_USER.t();
                 length = Math.max(64, font.getStringWidth(text) + 4);
-                popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
-                if(host.selectedPlayer.getPlayerAccess() == AccessLevel.SUPER_ADMIN && ownerPermission) {
+                popButtons.add(new NormalButton(text, 88 - length / 2, 76, length, 12, FluxConstants.TYPE_NEW_MEMBER));
+                ++i;
+                if (host.selectedPlayer.getPlayerAccess() == AccessLevel.SUPER_ADMIN && ownerPermission) {
                     text = FluxTranslate.TRANSFER_OWNERSHIP.t();
                     length = Math.max(64, font.getStringWidth(text) + 4);
-                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
+                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
                     popButtons.add(transferOwnership);
                 }
             } else {
-                if(ownerPermission) {
+                if (ownerPermission) {
                     if (host.selectedPlayer.getPlayerAccess() == AccessLevel.USER) {
                         text = FluxTranslate.SET_ADMIN.t();
                         length = Math.max(64, font.getStringWidth(text) + 4);
-                        popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
-                    } else if(host.selectedPlayer.getPlayerAccess() == AccessLevel.ADMIN) {
+                        popButtons.add(new NormalButton(text, 88 - length / 2, 76, length, 12, FluxConstants.TYPE_SET_ADMIN));
+                    } else if (host.selectedPlayer.getPlayerAccess() == AccessLevel.ADMIN) {
                         text = FluxTranslate.SET_USER.t();
                         length = Math.max(64, font.getStringWidth(text) + 4);
-                        popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));
+                        popButtons.add(new NormalButton(text, 88 - length / 2, 76, length, 12, FluxConstants.TYPE_SET_USER));
                     }
+                    ++i;
                 }
-                if(!host.selectedPlayer.getPlayerAccess().canEdit() || ownerPermission) {
+                if (!host.selectedPlayer.getPlayerAccess().canEdit() || ownerPermission) {
                     text = FluxTranslate.CANCEL_MEMBERSHIP.t();
                     length = Math.max(64, font.getStringWidth(text) + 4);
-                    popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 3).setTextColor(0xffff5555));
+                    popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12,
+                            FluxConstants.TYPE_CANCEL_MEMBERSHIP).setTextColor(0xffff5555));
                 }
-                if(ownerPermission) {
+                if (ownerPermission) {
                     text = FluxTranslate.TRANSFER_OWNERSHIP.t();
                     length = Math.max(64, font.getStringWidth(text) + 4);
-                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
+                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i, length, 12,
+                            FluxConstants.TYPE_TRANSFER_OWNERSHIP).setUnclickable().setTextColor(0xffaa00aa);
                     popButtons.add(transferOwnership);
                 }
             }
         }
     }
+
     @Override
     public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         //screenUtils.drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
@@ -87,9 +91,9 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        for(NormalButton button : popButtons) {
-            if(button.clickable && button.isMouseHovered(minecraft, (int)mouseX - guiLeft, (int)mouseY - guiTop)) {
-                PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CHANGE_PERMISSION, GeneralPacketHandler.getChangePermissionPacket(host.network.getNetworkID(), host.selectedPlayer.getPlayerUUID(), button.id)));
+        for (NormalButton button : popButtons) {
+            if (button.clickable && button.isMouseHovered(minecraft, (int) mouseX - guiLeft, (int) mouseY - guiTop)) {
+                NetworkHandler.INSTANCE.sendToServer(new CEditMemberMessage(host.network.getNetworkID(), host.selectedPlayer.getPlayerUUID(), button.id));
                 return true;
             }
         }
@@ -98,7 +102,7 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(transferOwnership != null) {
+        if (transferOwnership != null) {
             if (scanCode == 42) {
                 transferOwnershipCount++;
                 if (transferOwnershipCount > 1) {

@@ -34,7 +34,6 @@ import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.handler.NetworkHandler;
-import sonar.fluxnetworks.common.handler.PacketHandler;
 import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
@@ -68,7 +67,6 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        PacketHandler.registerMessages();
         NetworkHandler.registerMessages();
         TileEntityHandler.registerEnergyHandler();
 

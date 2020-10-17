@@ -54,18 +54,18 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                                 : FluxTranslate.ERROR_NO_SELECTED.getTextComponent().mergeStyle(TextFormatting.AQUA)));
 
                         iProbeInfo.text(new StringTextComponent(
-                                FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getChange())));
+                                FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getTransferChange())));
 
                         if (playerEntity.isSneaking()) {
                             if (flux.getDeviceType().isStorage()) {
                                 iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getBuffer(),
+                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.FULL, EnergyType.FE, false))
                                                 .mergeStyle(TextFormatting.GREEN))
                                 );
                             } else {
                                 iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getBuffer(),
+                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.FULL, EnergyType.FE, false))
                                                 .mergeStyle(TextFormatting.GREEN))
                                 );
@@ -73,13 +73,13 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                         } else {
                             if (flux.getDeviceType().isStorage()) {
                                 iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getBuffer(),
+                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false))
                                                 .mergeStyle(TextFormatting.GREEN))
                                 );
                             } else {
                                 iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getBuffer(),
+                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false))
                                                 .mergeStyle(TextFormatting.GREEN))
                                 );

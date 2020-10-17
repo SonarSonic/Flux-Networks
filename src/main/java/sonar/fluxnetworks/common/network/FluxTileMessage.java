@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
  * Two-way tile entity message, the player should be in the same world as the tile entity.
  * The client-to-server way should do security check.
  */
-public class TileMessage implements IMessage {
+public class FluxTileMessage implements IMessage {
 
     public static final byte C2S_CUSTOM_NAME = 1;
     public static final byte C2S_PRIORITY = 2;
@@ -30,10 +30,10 @@ public class TileMessage implements IMessage {
     private TileFluxDevice tile; // origination side
     private byte id;
 
-    public TileMessage() {
+    public FluxTileMessage() {
     }
 
-    public TileMessage(@Nonnull TileFluxDevice tile, byte id) {
+    public FluxTileMessage(@Nonnull TileFluxDevice tile, byte id) {
         this.tile = tile;
         this.id = id;
     }

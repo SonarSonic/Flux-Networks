@@ -6,10 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
-import sonar.fluxnetworks.api.misc.NBTType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -18,11 +17,11 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.ConfiguratorUpdateSettingsPacket;
-import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
+import sonar.fluxnetworks.common.network.CConfiguratorSettingMessage;
+import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 
 public class GuiFluxConfiguratorHome extends GuiTabCore {
 
@@ -120,28 +119,28 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
                 switchButton.switchButton();
                 switch (switchButton.id) {
                     case 1:
-                        stackSurgeMode = switchButton.slideControl;
+                        stackSurgeMode = switchButton.toggled;
                         onSettingsChanged();
                         break;
                     case 2:
-                        stackDisableLimit = switchButton.slideControl;
+                        stackDisableLimit = switchButton.toggled;
                         onSettingsChanged();
                         break;
                     case 3:
-                        stackChunkLoading = switchButton.slideControl;
+                        stackChunkLoading = switchButton.toggled;
                         break;
                 }
             }
             if (button == apply) {
                 ///send changes to server.
                 CompoundNBT tag = new CompoundNBT();
-                tag.putInt(FluxConfigurationType.NETWORK.getNBTName(), network.getNetworkID());
-                tag.putInt(FluxConfigurationType.PRIORITY.getNBTName(), stackPriority);
-                tag.putLong(FluxConfigurationType.TRANSFER.getNBTName(), stackLimit);
-                tag.putBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName(), stackSurgeMode);
-                tag.putBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTName(), stackDisableLimit);
+                tag.putInt(FluxConfigurationType.NETWORK.getNBTKey(), network.getNetworkID());
+                tag.putInt(FluxConfigurationType.PRIORITY.getNBTKey(), stackPriority);
+                tag.putLong(FluxConfigurationType.TRANSFER.getNBTKey(), stackLimit);
+                tag.putBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTKey(), stackSurgeMode);
+                tag.putBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTKey(), stackDisableLimit);
 
-                PacketHandler.CHANNEL.sendToServer(new ConfiguratorUpdateSettingsPacket(stackCustomName, tag));
+                NetworkHandler.INSTANCE.sendToServer(new CConfiguratorSettingMessage(stackCustomName, tag));
                 stack.setTagInfo(FluxUtils.CONFIGS_TAG, tag);
                 updateSettingsFromTag();
                 apply.setUnclickable();
@@ -153,10 +152,10 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
         configTag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (configTag != null) {
             stackCustomName = stack.getDisplayName().getString();
-            stackPriority = configTag.getInt(FluxConfigurationType.PRIORITY.getNBTName());
-            stackSurgeMode = configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName());
-            stackLimit = configTag.getLong(FluxConfigurationType.TRANSFER.getNBTName());
-            stackDisableLimit = configTag.getBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTName());
+            stackPriority = configTag.getInt(FluxConfigurationType.PRIORITY.getNBTKey());
+            stackSurgeMode = configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTKey());
+            stackLimit = configTag.getLong(FluxConfigurationType.TRANSFER.getNBTKey());
+            stackDisableLimit = configTag.getBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTKey());
             stackChunkLoading = false; //disabled.
         } else {
             stackCustomName = stack.getDisplayName().getString();
@@ -173,11 +172,11 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
             apply.clickable = true;
         } else {
             apply.clickable =
-                    network.getNetworkID() != configTag.getInt(FluxConfigurationType.NETWORK.getNBTName()) ||
-                            stackPriority != configTag.getInt(FluxConfigurationType.PRIORITY.getNBTName()) ||
-                            stackLimit != configTag.getLong(FluxConfigurationType.TRANSFER.getNBTName()) ||
-                            stackSurgeMode != configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTName()) ||
-                            stackDisableLimit != configTag.getBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTName()) ||
+                    network.getNetworkID() != configTag.getInt(FluxConfigurationType.NETWORK.getNBTKey()) ||
+                            stackPriority != configTag.getInt(FluxConfigurationType.PRIORITY.getNBTKey()) ||
+                            stackLimit != configTag.getLong(FluxConfigurationType.TRANSFER.getNBTKey()) ||
+                            stackSurgeMode != configTag.getBoolean(FluxConfigurationType.PRIORITY_SETTING.getNBTKey()) ||
+                            stackDisableLimit != configTag.getBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTKey()) ||
                             !stackCustomName.equals(stack.getDisplayName());
         }
     }
@@ -186,7 +185,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(network.getNetworkID(), NBTType.NETWORK_GENERAL));
+            NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_BASIC));
         }
         timer++;
         timer %= 100;

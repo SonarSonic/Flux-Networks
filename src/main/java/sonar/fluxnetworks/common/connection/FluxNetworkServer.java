@@ -199,7 +199,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     @Override
     public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
-        if (device instanceof SimpleFluxDevice) {
+        if (device instanceof PhantomFluxDevice) {
             throw new IllegalStateException();
         }
         if (getConnections(FluxLogicType.ANY).contains(device)) {
@@ -217,7 +217,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     @Override
     public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
-        if (device instanceof SimpleFluxDevice) {
+        if (device instanceof PhantomFluxDevice) {
             throw new IllegalArgumentException();
         }
         if (getConnections(FluxLogicType.ANY).contains(device) && !toRemove.contains(device)) {
@@ -226,7 +226,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
             if (chunkUnload) {
                 // create a fake device on server side, representing it has ever connected to
                 // this network but currently unloaded
-                allConnections.put(device.getGlobalPos(), new SimpleFluxDevice(device));
+                allConnections.put(device.getGlobalPos(), new PhantomFluxDevice(device));
             }
             // remove the tile entity
             allConnections.remove(device.getGlobalPos());

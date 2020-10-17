@@ -59,12 +59,18 @@ public class ItemFluxConfigurator extends Item {
             }
             ItemStack stack = player.getHeldItem(context.getHand());
             if (player.isSneaking()) {
-                stack.setTagInfo(FluxUtils.CONFIGS_TAG, FluxUtils.copyConfiguration(flux, new CompoundNBT()));
+                CompoundNBT configs = new CompoundNBT();
+                for (FluxConfigurationType type : FluxConfigurationType.values()) {
+                    type.copy(configs, flux);
+                }
+                stack.setTagInfo(FluxUtils.CONFIGS_TAG, configs);
                 player.sendMessage(new StringTextComponent("Copied Configuration"), UUID.randomUUID());
             } else {
-                CompoundNBT configs = stack.getOrCreateChildTag(FluxUtils.CONFIGS_TAG);
-                if (!configs.isEmpty()) {
-                    FluxUtils.pasteConfiguration(flux, configs);
+                CompoundNBT configs = stack.getChildTag(FluxUtils.CONFIGS_TAG);
+                if (configs != null) {
+                    for (FluxConfigurationType type : FluxConfigurationType.values()) {
+                        type.paste(configs, flux);
+                    }
                     player.sendMessage(new StringTextComponent("Pasted Configuration"), UUID.randomUUID());
                 }
             }
@@ -88,7 +94,7 @@ public class ItemFluxConfigurator extends Item {
         CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (tag != null) {
             tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxClientCache.getDisplayNetworkName(
-                    tag.getInt(FluxConfigurationType.NETWORK.getNBTName()))));
+                    tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()))));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
@@ -101,7 +107,7 @@ public class ItemFluxConfigurator extends Item {
         public ContainerProvider(@Nonnull ItemStack stack) {
             this.stack = stack;
             CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
-            networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTName()) : -1;
+            networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()) : -1;
         }
 
         @Override

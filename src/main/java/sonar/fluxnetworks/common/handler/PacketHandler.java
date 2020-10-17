@@ -9,7 +9,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.common.network.*;
+import sonar.fluxnetworks.common.network.GeneralPacket;
 
 /**
  * @deprecated use {@link NetworkHandler} instead
@@ -24,22 +24,22 @@ public class PacketHandler {
     public static int packetID = 0;
 
     public static void registerMessages() {
-        CHANNEL.registerMessage(packetID++, GeneralPacket.class, GeneralPacket::encode, GeneralPacket::new, GeneralPacket::handle);
+        //CHANNEL.registerMessage(packetID++, GeneralPacket.class, GeneralPacket::encode, GeneralPacket::new, GeneralPacket::handle);
         //CHANNEL.registerMessage(packetID++, TilePacketBufferPacket.class, TilePacketBufferPacket::encode, TilePacketBufferPacket::new, TilePacketBufferPacket::handle);
         //CHANNEL.registerMessage(packetID++, TilePacket.class, TilePacket::encode, TilePacket::new, TilePacket::handle);
         //CHANNEL.registerMessage(packetID++, FeedbackPacket.class, FeedbackPacket::encode, FeedbackPacket::new, FeedbackPacket::handle);
         //CHANNEL.registerMessage(packetID++, NetworkColourRequestPacket.class, NetworkColourRequestPacket::encode, NetworkColourRequestPacket::new, NetworkColourRequestPacket::handle);
         //CHANNEL.registerMessage(packetID++, NetworkColourPacket.class, NetworkColourPacket::encode, NetworkColourPacket::new, NetworkColourPacket::handle);
-        CHANNEL.registerMessage(packetID++, NetworkUpdateRequestPacket.class, NetworkUpdateRequestPacket::encode, NetworkUpdateRequestPacket::new, NetworkUpdateRequestPacket::handle);
-        CHANNEL.registerMessage(packetID++, ConnectionUpdatePacket.class, ConnectionUpdatePacket::encode, ConnectionUpdatePacket::new, ConnectionUpdatePacket::handle);
-        CHANNEL.registerMessage(packetID++, ConnectionUpdateRequestPacket.class, ConnectionUpdateRequestPacket::encode, ConnectionUpdateRequestPacket::new, ConnectionUpdateRequestPacket::handle);
-        CHANNEL.registerMessage(packetID++, BatchEditingPacket.class, BatchEditingPacket::encode, BatchEditingPacket::new, BatchEditingPacket::handle);
-        CHANNEL.registerMessage(packetID++, GUIPermissionRequestPacket.class, GUIPermissionRequestPacket::encode, GUIPermissionRequestPacket::new, GUIPermissionRequestPacket::handle);
-        CHANNEL.registerMessage(packetID++, GUIPermissionPacket.class, GUIPermissionPacket::encode, GUIPermissionPacket::new, GUIPermissionPacket::handle);
+        //CHANNEL.registerMessage(packetID++, CNetworkUpdateMessage.class, CNetworkUpdateMessage::encode, CNetworkUpdateMessage::new, CNetworkUpdateMessage::handle);
+        //CHANNEL.registerMessage(packetID++, SConnectionUpdateMessage.class, SConnectionUpdateMessage::encode, SConnectionUpdateMessage::new, SConnectionUpdateMessage::handle);
+        //CHANNEL.registerMessage(packetID++, CConnectionUpdateMessage.class, CConnectionUpdateMessage::encode, CConnectionUpdateMessage::new, CConnectionUpdateMessage::handle);
+        //CHANNEL.registerMessage(packetID++, CEditConnectionsMessage.class, CEditConnectionsMessage::encode, CEditConnectionsMessage::new, CEditConnectionsMessage::handle);
+        //CHANNEL.registerMessage(packetID++, CGuiPermissionMessage.class, CGuiPermissionMessage::encode, CGuiPermissionMessage::new, CGuiPermissionMessage::handle);
+        //CHANNEL.registerMessage(packetID++, SGuiPermissionMessage.class, SGuiPermissionMessage::encode, SGuiPermissionMessage::new, SGuiPermissionMessage::handle);
         //CHANNEL.registerMessage(packetID++, SSuperAdminMessage.class, SSuperAdminMessage::encode, SSuperAdminMessage::new, SSuperAdminMessage::handle);
         //CHANNEL.registerMessage(packetID++, CSuperAdminMessage.class, CSuperAdminMessage::encode, CSuperAdminMessage::new, CSuperAdminMessage::handle);
-        CHANNEL.registerMessage(packetID++, ConfiguratorUpdateSettingsPacket.class, ConfiguratorUpdateSettingsPacket::encode, ConfiguratorUpdateSettingsPacket::new, ConfiguratorUpdateSettingsPacket::handle);
-        CHANNEL.registerMessage(packetID++, ConfiguratorNetworkConnectPacket.class, ConfiguratorNetworkConnectPacket::encode, ConfiguratorNetworkConnectPacket::new, ConfiguratorNetworkConnectPacket::handle);
+        //CHANNEL.registerMessage(packetID++, CConfiguratorSettingsMsg.class, CConfiguratorSettingsMsg::encode, CConfiguratorSettingsMsg::new, CConfiguratorSettingsMsg::handle);
+        //CHANNEL.registerMessage(packetID++, CConfiguratorConnectMsg.class, CConfiguratorConnectMsg::encode, CConfiguratorConnectMsg::new, CConfiguratorConnectMsg::handle);
     }
 
     @Deprecated

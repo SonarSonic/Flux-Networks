@@ -14,10 +14,10 @@ import javax.annotation.Nonnull;
 
 public class CCreateNetworkMessage implements IMessage {
 
-    private String name;
-    private int color;
-    private NetworkSecurity.Type security;
-    private String password;
+    protected String name;
+    protected int color;
+    protected NetworkSecurity.Type security;
+    protected String password;
 
     public CCreateNetworkMessage() {
     }
@@ -43,19 +43,18 @@ public class CCreateNetworkMessage implements IMessage {
         if (player == null) {
             return;
         }
-        String name = buffer.readString(256);
-        int color = buffer.readInt();
-        NetworkSecurity.Type security = NetworkSecurity.Type.values()[buffer.readVarInt()];
-        String password = buffer.readString(256);
+        name = buffer.readString(256);
+        color = buffer.readInt();
+        security = NetworkSecurity.Type.values()[buffer.readVarInt()];
+        password = buffer.readString(256);
         if (FluxUtils.checkPassword(password)) {
-            handle(buffer, context, player, name, color, security, password);
+            handle(buffer, context, player);
         } else {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.ILLEGAL_PASSWORD), context);
         }
     }
 
-    protected void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player,
-                          String name, int color, NetworkSecurity.Type security, String password) {
+    protected void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player) {
         if (FluxNetworkData.get().createNetwork(player, name, color, security, password) != null) {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS), context);
         } else {

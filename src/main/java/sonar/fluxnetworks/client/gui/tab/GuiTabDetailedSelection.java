@@ -4,13 +4,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.misc.NBTType;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.NetworkUpdateRequestPacket;
+import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 
 public class GuiTabDetailedSelection extends GuiTabSelection {
 
@@ -70,7 +70,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
     @Override
     public void tick() {
         if (timer2 == 1) {
-            PacketHandler.CHANNEL.sendToServer(new NetworkUpdateRequestPacket(current, NBTType.NETWORK_STATISTICS));
+            NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(current, FluxConstants.TYPE_NET_STATISTICS));
         }
         super.tick();
     }
