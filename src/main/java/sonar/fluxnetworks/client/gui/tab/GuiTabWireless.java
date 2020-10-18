@@ -15,10 +15,6 @@ import sonar.fluxnetworks.client.gui.button.InventoryButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.GeneralPacket;
-import sonar.fluxnetworks.common.network.GeneralPacketEnum;
-import sonar.fluxnetworks.common.network.GeneralPacketHandler;
 
 import java.util.ArrayList;
 import java.util.List;

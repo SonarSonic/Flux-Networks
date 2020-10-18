@@ -3,36 +3,36 @@ package sonar.fluxnetworks.common.connection.handler;
 import sonar.fluxnetworks.api.device.IFluxStorage;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
-public class FluxStorageHandler extends AbstractTransferHandler<IFluxStorage> {
+public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
 
     public FluxStorageHandler(TileFluxStorage fluxStorage) {
         super(fluxStorage);
     }
 
     @Override
-    public void onEndCycle() {
-        super.onEndCycle();
+    public void onCycleEnd() {
+        super.onCycleEnd();
         //device.sendPacketIfNeeded();
     }
 
     @Override
-    public long addEnergyToBuffer(long energy, boolean simulate) {
-        long amount = device.addEnergy(getMaxAdd(energy), simulate);
+    public long addToBuffer(long amount, boolean simulate) {
+        long add = device.addEnergy(getMaxAdd(amount), simulate);
         if(!simulate) {
-            this.addedToBuffer += amount;
-            this.change += amount;
+            this.addedToBuffer += add;
+            this.change += add;
         }
-        return amount;
+        return add;
     }
 
     @Override
-    public long removeEnergyFromBuffer(long energy, boolean simulate) {
-        long amount = device.removeEnergy(getMaxRemove(energy), simulate);
+    public long removeFromBuffer(long energy, boolean simulate) {
+        long renive = device.removeEnergy(getMaxRemove(energy), simulate);
         if(!simulate) {
-            this.removedFromBuffer += amount;
-            this.change -= amount;
+            this.removedFromBuffer += renive;
+            this.change -= renive;
         }
-        return amount;
+        return renive;
     }
 
     @Override

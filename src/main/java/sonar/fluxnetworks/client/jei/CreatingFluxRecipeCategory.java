@@ -112,7 +112,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
 
     @Nonnull
     @Override
-    public List<ITextComponent> getTooltipStrings(CreatingFluxRecipeType recipe, double mouseX, double mouseY) {
+    public List<ITextComponent> getTooltipStrings(@Nonnull CreatingFluxRecipeType recipe, double mouseX, double mouseY) {
         if (mouseX > 40 && mouseX < 80 && mouseY < 64) {
             return Lists.newArrayList(
                     new StringTextComponent("Y+2 = ").append(recipe.getCrusher().getBlock().getTranslatedName()),

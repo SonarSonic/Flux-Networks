@@ -1,12 +1,12 @@
 {
-  "type": "fluxnetworks:nbtwiperecipe",
+  "type": "fluxnetworks:nbt_wipe_recipe",
   "group": "fluxnetworks",
   "ingredients": [
     {
-      "item": "fluxnetworks:herculeanfluxstorage"
+      "item": "fluxnetworks:herculean_flux_storage"
     }
   ],
   "result": {
-    "item": "fluxnetworks:herculeanfluxstorage"
+    "item": "fluxnetworks:herculean_flux_storage"
   }
 }

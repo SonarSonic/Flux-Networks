@@ -7,7 +7,7 @@ import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.NetworkSecurity;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
@@ -29,7 +29,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
     protected List<ColorButton> colorButtons = Lists.newArrayList();
 
-    protected NetworkSecurity.Type securityType;
+    protected SecurityType securityType;
     public EnergyType energyType;
     public ColorButton colorBtn;
     public FluxTextWidget nameField;
@@ -77,7 +77,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             drawCenteredString(matrixStack, font, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
             font.drawString(matrixStack, FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
             font.drawString(matrixStack, FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
-            if (securityType == NetworkSecurity.Type.ENCRYPTED)
+            if (securityType == SecurityType.ENCRYPTED)
                 font.drawString(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 64, 0x606060);
             font.drawString(matrixStack, FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
             font.drawString(matrixStack, FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
@@ -90,7 +90,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         ////TODO MINOR replace with "text buttons
         if (mouseButton == 0) {
             if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
-                securityType = FluxUtils.incrementEnum(securityType, NetworkSecurity.Type.values());
+                securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
                 passwordField.setText("");
                 passwordField.setVisible(!passwordField.getVisible());
                 onEditSettingsChanged();

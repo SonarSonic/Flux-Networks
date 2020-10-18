@@ -8,13 +8,13 @@
   ],
   "key": {
     "c": {
-      "item": "fluxnetworks:fluxcore"
+      "item": "fluxnetworks:flux_core"
     },
     "b": {
       "item": "minecraft:redstone_block"
     }
   },
   "result": {
-    "item": "fluxnetworks:fluxpoint"
+    "item": "fluxnetworks:flux_point"
   }
 }

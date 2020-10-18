@@ -11,14 +11,14 @@
       "item": "minecraft:obsidian"
     },
     "f": {
-      "item": "fluxnetworks:flux"
+      "item": "fluxnetworks:flux_dust"
     },
     "e": {
       "item": "minecraft:ender_eye"
     }
   },
   "result": {
-    "item": "fluxnetworks:fluxcore",
+    "item": "fluxnetworks:flux_core",
     "count": 4
   }
 }

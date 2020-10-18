@@ -2,7 +2,9 @@
 
 * Fix some packets without security check
 * Fix chunk loading system
-* Improve server-client data synchronization
+* Fix blacklist system
+* Optimize data synchronization and cache
+* More code standardizing and optimization
 
 #### Changelog 5.0.3
 

@@ -25,7 +25,7 @@ public interface IFluxNetwork {
      * Returns the network name
      *
      * @return the name of this network
-     * @see sonar.fluxnetworks.client.FluxClientCache#getDisplayNetworkName(int)
+     * @see sonar.fluxnetworks.client.FluxClientCache#getDisplayName(int)
      */
     String getNetworkName();
 
@@ -106,6 +106,8 @@ public interface IFluxNetwork {
     <T extends IFluxDevice> List<T> getConnections(FluxLogicType type);
 
     Optional<NetworkMember> getMemberByUUID(UUID playerUUID);
+
+    long getBufferLimiter();
 
     /* Server only */
     void enqueueConnectionAddition(@Nonnull IFluxDevice device);

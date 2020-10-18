@@ -9,7 +9,6 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -44,17 +43,8 @@ public class CConfiguratorConnectMessage implements IMessage {
         int networkID = buffer.readVarInt();
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (network.isValid()) {
-            if (!network.getPlayerAccess(player).canUse()) {
-                String password = buffer.readString(256);
-                if (password.isEmpty()) {
-                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE), context);
-                    return;
-                }
-                if (!password.equals(network.getSecurity().getPassword())) {
-                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.REJECT), context);
-                    return;
-                }
-            }
+            if (CSelectNetworkMessage.checkAccessFailed(buffer, context, player, network))
+                return;
             ItemStack stack = player.getHeldItemMainhand();
             if (stack.getItem() instanceof ItemFluxConfigurator) {
                 CompoundNBT configs = stack.getOrCreateChildTag(FluxUtils.CONFIGS_TAG);

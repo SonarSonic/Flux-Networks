@@ -11,7 +11,7 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.network.CEditMemberMessage;
 
 public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {

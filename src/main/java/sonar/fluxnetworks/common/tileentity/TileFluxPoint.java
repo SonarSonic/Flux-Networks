@@ -7,6 +7,8 @@ import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.handler.FluxPointHandler;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
+import javax.annotation.Nonnull;
+
 public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
 
     public final FluxPointHandler handler = new FluxPointHandler(this);
@@ -20,6 +22,7 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
         return FluxDeviceType.POINT;
     }
 
+    @Nonnull
     @Override
     public ITransferHandler getTransferHandler() {
         return handler;

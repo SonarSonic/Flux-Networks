@@ -21,21 +21,21 @@ public class JEIIntegration implements IModPlugin {
     }
 
     @Override
-    public void registerRecipes(IRecipeRegistration registration) {
+    public void registerRecipes(@Nonnull IRecipeRegistration registration) {
         if (FluxConfig.enableFluxRecipe) {
             registration.addRecipes(CreatingFluxRecipeCategory.getRecipes(), CreatingFluxRecipeCategory.CATEGORY_UUID);
         }
     }
 
     @Override
-    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+    public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         if (FluxConfig.enableFluxRecipe) {
             CreatingFluxRecipeCategory.getCatalysts().forEach(c -> registration.addRecipeCatalyst(c, CreatingFluxRecipeCategory.CATEGORY_UUID));
         }
     }
 
     @Override
-    public void registerCategories(IRecipeCategoryRegistration registration) {
+    public void registerCategories(@Nonnull IRecipeCategoryRegistration registration) {
         if (FluxConfig.enableFluxRecipe) {
             registration.addRecipeCategories(new CreatingFluxRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         }

@@ -6,7 +6,6 @@ import sonar.fluxnetworks.api.gui.EnumChargingType;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.tab.GuiTabWireless;
-import sonar.fluxnetworks.api.network.NetworkSettings;
 import net.minecraft.client.Minecraft;
 
 public class InventoryButton extends GuiButtonCore {

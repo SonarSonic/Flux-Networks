@@ -12,7 +12,7 @@ import net.minecraftforge.items.IItemHandler;
 import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.common.handler.ItemEnergyHandler;
+import sonar.fluxnetworks.common.misc.EnergyUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 
 import java.util.*;
@@ -65,7 +65,7 @@ public class ControllerTransfer implements IFluxTransfer {
             for (Map.Entry<Iterable<ItemStack>, Predicate<ItemStack>> inventory : inventories.entrySet()) {
                 for (ItemStack stack : inventory.getKey()) {
                     IItemEnergyHandler handler;
-                    if (!inventory.getValue().test(stack) || (handler = ItemEnergyHandler.getEnergyHandler(stack)) == null) {
+                    if (!inventory.getValue().test(stack) || (handler = EnergyUtils.getEnergyHandler(stack)) == null) {
                         continue;
                     }
                     long receive = handler.addEnergy(amount - received, stack, simulate);

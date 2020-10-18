@@ -8,16 +8,16 @@
   ],
   "key": {
     "c": {
-      "item": "fluxnetworks:fluxcore"
+      "item": "fluxnetworks:flux_core"
     },
     "b": {
-      "item": "fluxnetworks:fluxblock"
+      "item": "fluxnetworks:flux_block"
     },
     "f": {
-      "item": "fluxnetworks:flux"
+      "item": "fluxnetworks:flux_dust"
     }
   },
   "result": {
-    "item": "fluxnetworks:fluxcontroller"
+    "item": "fluxnetworks:flux_controller"
   }
 }

@@ -13,13 +13,13 @@ public class FluxShapes {
     //// flux connectors
 
     public static final VoxelShape FLUX_POINT_CENTRE_VOXEL = VoxelShapes.create(getBBFromPixels(5.5, 5.5, 5.5, 10.5, 10.5, 10.5));
-    public static final VoxelShape FLUX_PLUG_CENTRE_VOXEL  = VoxelShapes.create(getBBFromPixels(4, 4, 4, 12, 12, 12));
+    public static final VoxelShape FLUX_PLUG_CENTRE_VOXEL = VoxelShapes.create(getBBFromPixels(4, 4, 4, 12, 12, 12));
 
-    public static final AxisAlignedBB CONNECTOR_CABLE_BB_SHAPE                = getBBFromPixels(7, 1, 7, 9, 6, 9);
-    public static final VoxelShape[]  CONNECTOR_CABLE_BB_SHAPE_ROTATED_VOXELS = getRotatedVoxels(CONNECTOR_CABLE_BB_SHAPE, Direction.values());
+    public static final AxisAlignedBB CONNECTOR_CABLE_BB_SHAPE = getBBFromPixels(7, 1, 7, 9, 6, 9);
+    public static final VoxelShape[] CONNECTOR_CABLE_BB_SHAPE_ROTATED_VOXELS = getRotatedVoxels(CONNECTOR_CABLE_BB_SHAPE, Direction.values());
 
-    public static final AxisAlignedBB CONNECTOR_PLATE_BB_SHAPE                = getBBFromPixels(5, 0, 5, 11, 1, 11);
-    public static final VoxelShape[]  CONNECTOR_PLATE_BB_SHAPE_ROTATED_VOXELS = getRotatedVoxels(CONNECTOR_PLATE_BB_SHAPE, Direction.values());
+    public static final AxisAlignedBB CONNECTOR_PLATE_BB_SHAPE = getBBFromPixels(5, 0, 5, 11, 1, 11);
+    public static final VoxelShape[] CONNECTOR_PLATE_BB_SHAPE_ROTATED_VOXELS = getRotatedVoxels(CONNECTOR_PLATE_BB_SHAPE, Direction.values());
 
     public static final VoxelShape[] CONNECTORS_ROTATED_VOXELS = new VoxelShape[]{
             VoxelShapes.combine(CONNECTOR_CABLE_BB_SHAPE_ROTATED_VOXELS[0], CONNECTOR_PLATE_BB_SHAPE_ROTATED_VOXELS[0], IBooleanFunction.OR),

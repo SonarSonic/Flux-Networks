@@ -26,7 +26,7 @@ public class FluxStorageRecipe extends ShapedRecipe {
     @Nonnull
     @Override
     public ItemStack getCraftingResult(@Nonnull CraftingInventory inventory) {
-        int energyTotal = 0, networkID = -1;
+        int totalEnergy = 0, networkID = -1;
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
             CompoundNBT subTag = stack.getChildTag(FluxUtils.FLUX_DATA);
@@ -34,16 +34,16 @@ public class FluxStorageRecipe extends ShapedRecipe {
                 if (networkID == -1) {
                     networkID = subTag.getInt(FluxConstants.NETWORK_ID);
                 }
-                energyTotal += subTag.getInt("energy");
+                totalEnergy += subTag.getInt("energy");
             }
         }
         ItemStack stack = getRecipeOutput().copy();
-        if (energyTotal > 0 || networkID != -1) {
+        if (totalEnergy > 0 || networkID != -1) {
             CompoundNBT subTag = stack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
             if (networkID != -1)
                 subTag.putInt(FluxConstants.NETWORK_ID, networkID);
-            if (energyTotal > 0)
-                subTag.putInt("energy", energyTotal);
+            if (totalEnergy > 0)
+                subTag.putInt("energy", totalEnergy);
         }
         return stack;
     }

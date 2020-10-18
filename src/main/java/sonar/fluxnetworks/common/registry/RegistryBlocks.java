@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
@@ -14,54 +15,54 @@ import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
-@ObjectHolder("fluxnetworks")
+@ObjectHolder(FluxNetworks.MODID)
 public class RegistryBlocks {
 
-    @ObjectHolder("fluxblock")
+    @ObjectHolder("flux_block")
     public static Block FLUX_BLOCK;
 
 
     @ObjectHolder("connector")
     public static ContainerType<ContainerConnector<?>> CONTAINER_CONNECTOR;
 
-    @ObjectHolder("fluxplug")
+    @ObjectHolder("flux_plug")
     public static FluxPlugBlock FLUX_PLUG;
 
-    @ObjectHolder("fluxplug")
+    @ObjectHolder("flux_plug")
     public static TileEntityType<TileFluxPlug> FLUX_PLUG_TILE;
 
 
-    @ObjectHolder("fluxpoint")
+    @ObjectHolder("flux_point")
     public static FluxPointBlock FLUX_POINT;
 
-    @ObjectHolder("fluxpoint")
+    @ObjectHolder("flux_point")
     public static TileEntityType<TileFluxPoint> FLUX_POINT_TILE;
 
 
-    @ObjectHolder("fluxcontroller")
+    @ObjectHolder("flux_controller")
     public static FluxControllerBlock FLUX_CONTROLLER;
 
-    @ObjectHolder("fluxcontroller")
+    @ObjectHolder("flux_controller")
     public static TileEntityType<TileFluxController> FLUX_CONTROLLER_TILE;
 
 
-    @ObjectHolder("basicfluxstorage")
+    @ObjectHolder("basic_flux_storage")
     public static FluxStorageBlock BASIC_FLUX_STORAGE;
 
-    @ObjectHolder("basicfluxstorage")
+    @ObjectHolder("basic_flux_storage")
     public static TileEntityType<TileFluxStorage.Basic> BASIC_FLUX_STORAGE_TILE;
 
 
-    @ObjectHolder("herculeanfluxstorage")
+    @ObjectHolder("herculean_flux_storage")
     public static FluxStorageBlock.Herculean HERCULEAN_FLUX_STORAGE;
 
-    @ObjectHolder("herculeanfluxstorage")
+    @ObjectHolder("herculean_flux_storage")
     public static TileEntityType<TileFluxStorage.Herculean> HERCULEAN_FLUX_STORAGE_TILE;
 
 
-    @ObjectHolder("gargantuanfluxstorage")
+    @ObjectHolder("gargantuan_flux_storage")
     public static FluxStorageBlock.Gargantuan GARGANTUAN_FLUX_STORAGE;
 
-    @ObjectHolder("gargantuanfluxstorage")
+    @ObjectHolder("gargantuan_flux_storage")
     public static TileEntityType<TileFluxStorage.Gargantuan> GARGANTUAN_FLUX_STORAGE_TILE;
 }

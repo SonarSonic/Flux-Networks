@@ -19,13 +19,10 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.network.NetworkSecurity;
+import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
 
 import javax.annotation.Nonnull;
@@ -51,8 +48,8 @@ public class FluxNetworkData extends WorldSavedData {
 
     /*public static String NETWORK_PASSWORD = "networkPassword";
     public static String SECURITY_TYPE = "networkSecurity";
-    public static String ENERGY_TYPE = "networkEnergy";*/
-    public static String WIRELESS_MODE = "wirelessMode";
+    public static String ENERGY_TYPE = "networkEnergy";
+    public static String WIRELESS_MODE = "wirelessMode";*/
 
     /*public static String NETWORK_FOLDERS = "folders";
     public static String UNLOADED_CONNECTIONS = "unloaded";*/
@@ -115,7 +112,7 @@ public class FluxNetworkData extends WorldSavedData {
 
     @Nullable
     public IFluxNetwork createNetwork(@Nonnull PlayerEntity creator, String name, int color,
-                                      NetworkSecurity.Type securityType, String password) {
+                                      SecurityType securityType, String password) {
         final boolean limitReached;
         if (FluxConfig.maximumPerPlayer == -1) {
             limitReached = false;

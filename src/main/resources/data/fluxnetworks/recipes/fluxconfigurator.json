@@ -11,13 +11,13 @@
       "item": "minecraft:obsidian"
     },
     "f": {
-      "item": "fluxnetworks:flux"
+      "item": "fluxnetworks:flux_dust"
     },
     "e": {
       "item": "minecraft:ender_eye"
     }
   },
   "result": {
-    "item": "fluxnetworks:fluxconfigurator"
+    "item": "fluxnetworks:flux_configurator"
   }
 }

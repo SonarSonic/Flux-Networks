@@ -15,25 +15,25 @@ import java.util.Collection;
 public class SNetworkUpdateMessage implements IMessage {
 
     private final Int2ObjectMap<CompoundNBT> updatedNetworks = new Int2ObjectArrayMap<>();
-    private int flags;
+    private int type;
 
     public SNetworkUpdateMessage() {
     }
 
-    public SNetworkUpdateMessage(@Nonnull IFluxNetwork toSend, int flags) {
-        this.flags = flags;
+    public SNetworkUpdateMessage(@Nonnull IFluxNetwork toSend, int type) {
+        this.type = type;
         CompoundNBT tag = new CompoundNBT();
-        toSend.writeCustomNBT(tag, flags);
+        toSend.writeCustomNBT(tag, type);
         if (!tag.isEmpty()) {
             updatedNetworks.put(toSend.getNetworkID(), tag);
         }
     }
 
-    public SNetworkUpdateMessage(@Nonnull Collection<IFluxNetwork> toSend, int flags) {
-        this.flags = flags;
+    public SNetworkUpdateMessage(@Nonnull Collection<IFluxNetwork> toSend, int type) {
+        this.type = type;
         toSend.forEach(network -> {
             CompoundNBT tag = new CompoundNBT();
-            network.writeCustomNBT(tag, flags);
+            network.writeCustomNBT(tag, type);
             if (!tag.isEmpty()) {
                 updatedNetworks.put(network.getNetworkID(), tag);
             }
@@ -42,7 +42,7 @@ public class SNetworkUpdateMessage implements IMessage {
 
     @Override
     public void encode(@Nonnull PacketBuffer buffer) {
-        buffer.writeVarInt(flags);
+        buffer.writeVarInt(type);
         Int2ObjectMap<CompoundNBT> updatedNetworks = this.updatedNetworks;
         buffer.writeVarInt(updatedNetworks.size());
         updatedNetworks.forEach((i, n) -> {
@@ -53,13 +53,13 @@ public class SNetworkUpdateMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        int flags = buffer.readVarInt();
+        int type = buffer.readVarInt();
         Int2ObjectMap<CompoundNBT> updatedNetworks = this.updatedNetworks;
         final int size = buffer.readVarInt();
         for (int i = 0; i < size; i++) {
             updatedNetworks.put(buffer.readVarInt(), buffer.readCompoundTag());
         }
-        FluxClientCache.updateNetworks(updatedNetworks, flags);
+        FluxClientCache.updateNetworks(updatedNetworks, type);
         buffer.release();
     }
 }

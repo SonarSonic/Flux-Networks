@@ -1,13 +1,12 @@
 package sonar.fluxnetworks.api.network;
 
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.text.FluxTranslate;
 
 import javax.annotation.Nonnull;
 
 public class NetworkSecurity {
 
-    private Type type = Type.PUBLIC;
+    private SecurityType type = SecurityType.PUBLIC;
 
     @Nonnull
     private String password = "";
@@ -16,16 +15,16 @@ public class NetworkSecurity {
 
     }
 
-    public void set(Type type, @Nonnull String password) {
+    public void set(SecurityType type, @Nonnull String password) {
         this.type = type;
         this.password = password;
     }
 
-    public Type getType() {
+    public SecurityType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(SecurityType type) {
         this.type = type;
     }
 
@@ -39,7 +38,7 @@ public class NetworkSecurity {
     }
 
     public boolean isEncrypted() {
-        return type != Type.PUBLIC;
+        return type != SecurityType.PUBLIC;
     }
 
     public void writeNBT(@Nonnull CompoundNBT nbt, boolean writePassword) {
@@ -52,24 +51,7 @@ public class NetworkSecurity {
 
     public void readNBT(@Nonnull CompoundNBT nbt) {
         CompoundNBT tag = nbt.getCompound("security");
-        type = Type.values()[tag.getByte("type")];
+        type = SecurityType.values()[tag.getByte("type")];
         password = tag.getString("password");
-    }
-
-    public enum Type {
-        PUBLIC(FluxTranslate.PUBLIC),
-        ENCRYPTED(FluxTranslate.ENCRYPTED),
-        PRIVATE(FluxTranslate.PRIVATE);
-
-        private final FluxTranslate localization;
-
-        Type(FluxTranslate localization) {
-            this.localization = localization;
-        }
-
-        @Nonnull
-        public String getName() {
-            return localization.t();
-        }
     }
 }

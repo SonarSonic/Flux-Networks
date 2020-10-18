@@ -36,22 +36,22 @@ public class FluxClientCache {
         NETWORKS.clear();
     }
 
-    public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundNBT> serverSideNetworks, int flags) {
+    public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundNBT> serverSideNetworks, int type) {
         for (Int2ObjectMap.Entry<CompoundNBT> entry : serverSideNetworks.int2ObjectEntrySet()) {
             int id = entry.getIntKey();
             CompoundNBT nbt = entry.getValue();
             IFluxNetwork network = NETWORKS.get(id);
-            if (flags == FluxConstants.TYPE_NET_DELETE) {
+            if (type == FluxConstants.TYPE_NET_DELETE) {
                 if (network != null) {
                     NETWORKS.remove(id);
                 }
             } else {
                 if (network == null) {
                     network = new BasicFluxNetwork();
-                    network.readCustomNBT(nbt, flags);
+                    network.readCustomNBT(nbt, type);
                     NETWORKS.put(id, network);
                 } else {
-                    network.readCustomNBT(nbt, flags);
+                    network.readCustomNBT(nbt, type);
                 }
             }
         }
@@ -62,9 +62,7 @@ public class FluxClientCache {
         if (network != null) {
             for (CompoundNBT tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
-                network.getConnectionByPos(globalPos).ifPresent(c -> {
-                    c.readCustomNBT(tag, 0);
-                });
+                network.getConnectionByPos(globalPos).ifPresent(c -> c.readCustomNBT(tag, 0));
             }
         }
     }
@@ -74,8 +72,8 @@ public class FluxClientCache {
         return NETWORKS.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
-    public static String getDisplayNetworkName(int id) {
-        IFluxNetwork network = getNetwork(id);
+    public static String getDisplayName(int networkID) {
+        IFluxNetwork network = getNetwork(networkID);
         if (network.isValid()) {
             return network.getNetworkName();
         }

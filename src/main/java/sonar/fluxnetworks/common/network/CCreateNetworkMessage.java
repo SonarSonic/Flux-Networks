@@ -5,8 +5,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
-import sonar.fluxnetworks.api.network.NetworkSecurity;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
@@ -16,13 +15,13 @@ public class CCreateNetworkMessage implements IMessage {
 
     protected String name;
     protected int color;
-    protected NetworkSecurity.Type security;
+    protected SecurityType security;
     protected String password;
 
     public CCreateNetworkMessage() {
     }
 
-    public CCreateNetworkMessage(String name, int color, NetworkSecurity.Type security, String password) {
+    public CCreateNetworkMessage(String name, int color, SecurityType security, String password) {
         this.name = name;
         this.color = color;
         this.security = security;
@@ -45,7 +44,7 @@ public class CCreateNetworkMessage implements IMessage {
         }
         name = buffer.readString(256);
         color = buffer.readInt();
-        security = NetworkSecurity.Type.values()[buffer.readVarInt()];
+        security = SecurityType.values()[buffer.readVarInt()];
         password = buffer.readString(256);
         if (FluxUtils.checkPassword(password)) {
             handle(buffer, context, player);

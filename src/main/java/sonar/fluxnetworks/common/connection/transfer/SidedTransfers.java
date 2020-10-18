@@ -5,10 +5,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.network.IFluxTransfer;
-import sonar.fluxnetworks.common.handler.TileEntityHandler;
+import sonar.fluxnetworks.common.misc.EnergyUtils;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +39,7 @@ public class SidedTransfers {
             IFluxTransfer transfer = transfers.get(dir);
             ITileEnergyHandler handler;
 
-            if(tile == null || (handler = TileEntityHandler.getEnergyHandler(tile, dir.getOpposite())) == null) {
+            if(tile == null || (handler = EnergyUtils.getEnergyHandler(tile, dir.getOpposite())) == null) {
                 transfers.put(dir, null);
             } else if (transfer == null || transfer.getTile() != tile) {
                 transfers.put(dir, new ConnectionTransfer(handler, tile, dir));

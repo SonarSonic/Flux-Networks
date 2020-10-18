@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import sonar.fluxnetworks.common.block.FluxConnectorBlock;
-import sonar.fluxnetworks.common.handler.TileEntityHandler;
+import sonar.fluxnetworks.common.misc.EnergyUtils;
 import sonar.fluxnetworks.common.tileentity.energy.TileDefaultEnergy;
 
 public abstract class TileFluxConnector extends TileDefaultEnergy {
@@ -24,7 +24,7 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
             TileEntity neighbor = world.getTileEntity(pos.offset(facing));
             int mask = 1 << facing.getIndex();
             boolean before = (flags & mask) == mask;
-            boolean current = TileEntityHandler.canRenderConnection(neighbor, facing.getOpposite());
+            boolean current = EnergyUtils.canRenderConnection(neighbor, facing.getOpposite());
             if (before != current) {
                 flags ^= mask;
                 sendUpdate = true;

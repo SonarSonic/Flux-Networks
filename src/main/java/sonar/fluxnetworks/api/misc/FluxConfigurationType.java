@@ -1,6 +1,8 @@
 package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundNBT;
+import sonar.fluxnetworks.api.network.FluxLogicType;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -49,7 +51,10 @@ public enum FluxConfigurationType {
         if (nbt.contains(key)) {
             switch (this) {
                 case NETWORK:
-                    FluxNetworkData.getNetwork(nbt.getInt(key)).enqueueConnectionAddition(tile);
+                    IFluxNetwork network = FluxNetworkData.getNetwork(nbt.getInt(key));
+                    if (!(tile.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty())) {
+                        network.enqueueConnectionAddition(tile);
+                    }
                     break;
                 case PRIORITY:
                     tile.setPriority(nbt.getInt(key));

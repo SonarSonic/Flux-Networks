@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -18,7 +19,8 @@ public class ItemFluxDust extends Item {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip,
+                               @Nonnull ITooltipFlag flagIn) {
         if (FluxConfig.enableFluxRecipe) {
             tooltip.add(FluxTranslate.FLUX_TOOLTIP.getTextComponent());
         }

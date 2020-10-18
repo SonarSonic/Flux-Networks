@@ -10,7 +10,6 @@ import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;

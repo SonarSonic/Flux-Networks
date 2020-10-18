@@ -11,7 +11,7 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.handler.FluxStorageHandler;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -79,6 +79,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         return FluxDeviceType.STORAGE;
     }
 
+    @Nonnull
     @Override
     public ITransferHandler getTransferHandler() {
         return handler;

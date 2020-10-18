@@ -150,7 +150,7 @@ public class NetworkStatistics {
         return this.fluxPlugCount + this.fluxPointCount + this.fluxStorageCount + this.fluxControllerCount;
     }
 
-    public CompoundNBT writeNBT(CompoundNBT tag) {
+    public void writeNBT(CompoundNBT tag) {
         tag.putInt("i1", fluxPlugCount);
         tag.putInt("i2", fluxPointCount);
         tag.putInt("i3", fluxControllerCount);
@@ -164,7 +164,6 @@ public class NetworkStatistics {
         for (int i = 0; i < energyChange.size(); i++) {
             tag.putLong("a" + i, energyChange.getLong(i));
         }
-        return tag;
     }
 
     public void readNBT(CompoundNBT tag) {

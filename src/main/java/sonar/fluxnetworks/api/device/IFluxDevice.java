@@ -67,6 +67,7 @@ public interface IFluxDevice extends INetworkConnector {
      */
     void onDisconnect();
 
+    @Nonnull
     ITransferHandler getTransferHandler();
 
     @Nonnull

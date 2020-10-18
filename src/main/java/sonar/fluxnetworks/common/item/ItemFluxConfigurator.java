@@ -76,7 +76,8 @@ public class ItemFluxConfigurator extends Item {
             }
             return ActionResultType.SUCCESS;
         }
-        NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player.getHeldItem(context.getHand())), buf -> buf.writeBoolean(false));
+        NetworkHooks.openGui((ServerPlayerEntity) player,
+                new ContainerProvider(player.getHeldItem(context.getHand())), buf -> buf.writeBoolean(false));
         return ActionResultType.SUCCESS;
     }
 
@@ -84,17 +85,19 @@ public class ItemFluxConfigurator extends Item {
     @Override
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
         if (!world.isRemote) {
-            NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
+            NetworkHooks.openGui((ServerPlayerEntity) player,
+                    new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
         }
         return ActionResult.resultSuccess(player.getHeldItem(hand));
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip,
+                               @Nonnull ITooltipFlag flagIn) {
         CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
         if (tag != null) {
-            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE + FluxClientCache.getDisplayNetworkName(
-                    tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()))));
+            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE +
+                    FluxClientCache.getDisplayName(tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()))));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }

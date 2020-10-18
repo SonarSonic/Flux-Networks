@@ -18,6 +18,7 @@ import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -46,8 +47,8 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
             }
             if (blockState.getBlock() instanceof FluxDeviceBlock) {
                 TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
-                if (tile instanceof IFluxDevice) {
-                    IFluxDevice flux = (IFluxDevice) tile;
+                if (tile instanceof TileFluxDevice) {
+                    TileFluxDevice flux = (TileFluxDevice) tile;
                     if (FluxConfig.enableOneProbeBasicInfo) {
                         iProbeInfo.text((flux.getNetwork().isValid() ?
                                 new StringTextComponent(flux.getNetwork().getNetworkName()).mergeStyle(TextFormatting.AQUA)

@@ -5,16 +5,17 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import sonar.fluxnetworks.common.misc.EnergyUtils;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
 public class FluxConfig {
 
-    private static final ClientConfig    CLIENT_CONFIG;
+    private static final ClientConfig CLIENT_CONFIG;
     private static final ForgeConfigSpec CLIENT_SPEC;
 
-    private static final CommonConfig    COMMON_CONFIG;
+    private static final CommonConfig COMMON_CONFIG;
     private static final ForgeConfigSpec COMMON_SPEC;
 
     static {
@@ -39,8 +40,8 @@ public class FluxConfig {
         final ForgeConfigSpec spec = event.getConfig().getSpec();
         if (spec == FluxConfig.COMMON_SPEC) {
             bakeCommonConfig();
-            verifyAndReadBlacklist();
-            generateFluxChunkConfig();
+            EnergyUtils.reloadBlacklist();
+            //generateFluxChunkConfig();
             FluxNetworks.LOGGER.info("COMMON CONFIG LOADED");
         } else if (spec == FluxConfig.CLIENT_SPEC) {
             bakeClientConfig();
@@ -49,8 +50,7 @@ public class FluxConfig {
     }
 
     public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
-    public static boolean enableFluxRecipe, /*enableOldRecipe,*/
-            enableChunkLoading, enableSuperAdmin;
+    public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
     public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
     public static List<String> blockBlacklistStrings, itemBlackListStrings;
@@ -72,7 +72,6 @@ public class FluxConfig {
         enableSuperAdmin = config.enableSuperAdmin.get();
 
         enableFluxRecipe = config.enableFluxRecipe.get();
-        //enableOldRecipe = config.enableOldRecipe.get();
         enableChunkLoading = config.enableChunkLoading.get();
 
         blockBlacklistStrings = config.blockBlacklistStrings.get();
@@ -89,24 +88,23 @@ public class FluxConfig {
         enableGuiDebug = config.enableGuiDebug.get();
     }
 
-    public static class CommonConfig {
+    private static class CommonConfig {
 
-        ///energy
-        public ForgeConfigSpec.IntValue defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
+        // energy
+        private final ForgeConfigSpec.IntValue defaultLimit, basicCapacity, basicTransfer, herculeanCapacity,
+                herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
 
-        //networks
-        public ForgeConfigSpec.IntValue maximumPerPlayer, superAdminRequiredPermission;
-        public ForgeConfigSpec.BooleanValue enableSuperAdmin;
+        // networks
+        private final ForgeConfigSpec.IntValue maximumPerPlayer, superAdminRequiredPermission;
+        private final ForgeConfigSpec.BooleanValue enableSuperAdmin;
 
-        ////general
-        public ForgeConfigSpec.BooleanValue enableFluxRecipe, /*enableOldRecipe,*/
-                enableChunkLoading;
+        // general
+        private final ForgeConfigSpec.BooleanValue enableFluxRecipe, enableChunkLoading;
 
-        //blacklist
-        public ForgeConfigSpec.ConfigValue<List<String>> blockBlacklistStrings, itemBlackListStrings;
+        // blacklist
+        private final ForgeConfigSpec.ConfigValue<List<String>> blockBlacklistStrings, itemBlackListStrings;
 
-
-        public CommonConfig(ForgeConfigSpec.Builder builder) {
+        CommonConfig(@Nonnull ForgeConfigSpec.Builder builder) {
             builder.push("energy");
             defaultLimit = builder
                     .comment("The default transfer limit of a flux connector")
@@ -150,13 +148,9 @@ public class FluxConfig {
 
             builder.push("general");
             enableFluxRecipe = builder
-                    .comment("Enables redstones being compressed with the bedrock and obsidian to get flux")
+                    .comment("Enables redstone being compressed with the bedrock and obsidian to get flux")
                     .translation(FluxNetworks.MODID + ".config." + "enableFluxRecipe")
                     .define("enableFluxRecipe", true);
-            /*enableOldRecipe = builder
-                    .comment("Enables redstone being turned into Flux when dropped in fire. (Need \"Enable Flux Recipe\" = true, so the default recipe can't be disabled if turns this on)")
-                    .translation(FluxNetworks.MODID + ".config." + "enableOldRecipe")
-                    .define("enableOldRecipe", false);*/
             enableChunkLoading = builder
                     .comment("Allows flux tiles to work as chunk loaders")
                     .translation(FluxNetworks.MODID + ".config." + "enableChunkLoading")
@@ -165,27 +159,25 @@ public class FluxConfig {
             builder.pop();
             builder.push("blacklist");
             blockBlacklistStrings = builder
-                    .comment("a blacklist for blocks which flux connections shouldn't connect to, use format 'modid:name@blockstate'")
+                    .comment("A blacklist for blocks which flux devices shouldn't connect to, use format 'modid:registry_name'")
                     .translation(FluxNetworks.MODID + ".config." + "blockBlacklistStrings")
                     .define("blockBlacklistStrings", Lists.newArrayList("actuallyadditions:block_phantom_energyface"));
 
             itemBlackListStrings = builder
-                    .comment("a blacklist for items which the Flux Controller shouldn't transfer to, use format 'modid:name@blockstate'")
+                    .comment("A blacklist for items which wireless charging shouldn't charge to, use format 'modid:registry_name'")
                     .translation(FluxNetworks.MODID + ".config." + "itemBlackListStrings")
                     .define("itemBlackListStrings", Lists.newArrayList(""));
             builder.pop();
         }
-
     }
 
+    private static class ClientConfig {
 
-    public static class ClientConfig {
+        private final ForgeConfigSpec.BooleanValue enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo,
+                enableOneProbeSneaking;
+        private final ForgeConfigSpec.BooleanValue enableGuiDebug;
 
-        public ForgeConfigSpec.BooleanValue enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
-        public ForgeConfigSpec.BooleanValue enableGuiDebug;
-
-        public ClientConfig(ForgeConfigSpec.Builder builder) {
-
+        ClientConfig(@Nonnull ForgeConfigSpec.Builder builder) {
             builder.push("gui");
             enableButtonSound = builder
                     .comment("Enable navigation buttons sound when pressing it")
@@ -212,64 +204,14 @@ public class FluxConfig {
                     .define("enableOneProbeSneaking", true);
 
             builder.pop();
-
         }
     }
 
-    public static void verifyAndReadBlacklist() {
-        //TODO FIX BLACK LIST VERIFICATION
-        /*
-        TileEntityHandler.blockBlacklist.clear();
-        for(String str : blockBlacklistStrings) {
-            if(!str.contains(":")) {
-                FluxNetworks.LOGGER.error("BLACKLIST ERROR: " + str + " has incorrect formatting, please use 'modid:name@meta'");
-            }
-            String root = str;
-            int meta = -1;
-            if(str.contains("@")) {
-                String[] split = str.split("@");
-                root = split[0];
-                try {
-                    meta = Integer.parseInt(split[1]);
-                    TileEntityHandler.blockBlacklist.put(root, meta);
-                } catch (Exception e) {
-                    FluxNetworks.LOGGER.error("BLACKLIST ERROR: " + str + " has incorrect formatting, meta must be positive integer'");
-                }
-            } else {
-                TileEntityHandler.blockBlacklist.put(root, meta);
-            }
-        }
-        ItemEnergyHandler.itemBlackList.clear();
-        for(String str : itemBlackListStrings) {
-            if(!str.contains(":")) {
-                FluxNetworks.LOGGER.error("BLACKLIST ERROR: " + str + " has incorrect formatting, please use 'modid:name@meta'");
-            }
-            String root = str;
-            int meta = -1;
-            if(str.contains("@")) {
-                String[] split = str.split("@");
-                root = split[0];
-                try {
-                    meta = Integer.parseInt(split[1]);
-                    ItemEnergyHandler.itemBlackList.put(root, meta);
-                } catch (Exception e) {
-                    FluxNetworks.LOGGER.error("BLACKLIST ERROR: " + str + " has incorrect formatting, meta must be positive integer'");
-                }
-            } else {
-                ItemEnergyHandler.itemBlackList.put(root, meta);
-            }
-        }
-
-         */
-    }
-
-    public static void generateFluxChunkConfig() {
-        /* TODO CHUNK LOADING!
+    /*public static void generateFluxChunkConfig() {
         if(!ForgeChunkManager.getConfig().hasCategory(FluxNetworks.MODID)) {
             ForgeChunkManager.getConfig().get(FluxNetworks.MODID, "maximumChunksPerTicket", 1000000).setMinValue(0);
             ForgeChunkManager.getConfig().get(FluxNetworks.MODID, "maximumTicketCount", 1000000).setMinValue(0);
             ForgeChunkManager.getConfig().save();
         }
-        */
-    }
+    }*/
 }

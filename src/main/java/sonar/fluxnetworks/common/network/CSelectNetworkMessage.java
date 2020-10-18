@@ -10,7 +10,6 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
@@ -59,20 +58,26 @@ public class CSelectNetworkMessage implements IMessage {
         if (flux.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.HAS_CONTROLLER), context);
         } else {
-            if (!network.getPlayerAccess(player).canUse()) {
-                String password = buffer.readString(256);
-                if (password.isEmpty()) {
-                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE), context);
-                    return;
-                }
-                if (!password.equals(network.getSecurity().getPassword())) {
-                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.REJECT), context);
-                    return;
-                }
-            }
+            if (checkAccessFailed(buffer, context, player, network))
+                return;
             flux.setConnectionOwner(PlayerEntity.getUUID(player.getGameProfile()));
             network.enqueueConnectionAddition(flux);
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS), context);
         }
+    }
+
+    static boolean checkAccessFailed(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player, @Nonnull IFluxNetwork network) {
+        if (!network.getPlayerAccess(player).canUse()) {
+            String password = buffer.readString(256);
+            if (password.isEmpty()) {
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE), context);
+                return true;
+            }
+            if (!password.equals(network.getSecurity().getPassword())) {
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.REJECT), context);
+                return true;
+            }
+        }
+        return false;
     }
 }

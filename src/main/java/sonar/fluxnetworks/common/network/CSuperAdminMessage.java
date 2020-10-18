@@ -7,7 +7,6 @@ import sonar.fluxnetworks.api.misc.FluxCapabilities;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;

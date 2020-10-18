@@ -8,13 +8,13 @@
   ],
   "key": {
     "b": {
-      "item": "fluxnetworks:fluxblock"
+      "item": "fluxnetworks:flux_block"
     },
     "g": {
       "tag": "forge:glass_panes"
     }
   },
   "result": {
-    "item": "fluxnetworks:basicfluxstorage"
+    "item": "fluxnetworks:basic_flux_storage"
   }
 }

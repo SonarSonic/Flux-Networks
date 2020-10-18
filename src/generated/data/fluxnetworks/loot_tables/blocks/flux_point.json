@@ -1,0 +1,62 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_nbt",
+              "source": "block_entity",
+              "ops": [
+                {
+                  "source": "0",
+                  "target": "FluxData.priority",
+                  "op": "replace"
+                },
+                {
+                  "source": "1",
+                  "target": "FluxData.limit",
+                  "op": "replace"
+                },
+                {
+                  "source": "2",
+                  "target": "FluxData.disableLimit",
+                  "op": "replace"
+                },
+                {
+                  "source": "3",
+                  "target": "FluxData.surgeMode",
+                  "op": "replace"
+                },
+                {
+                  "source": "4",
+                  "target": "FluxData.networkID",
+                  "op": "replace"
+                },
+                {
+                  "source": "6",
+                  "target": "FluxData.customName",
+                  "op": "replace"
+                },
+                {
+                  "source": "b",
+                  "target": "FluxData.buffer",
+                  "op": "replace"
+                }
+              ]
+            }
+          ],
+          "name": "fluxnetworks:flux_point"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ]
+}

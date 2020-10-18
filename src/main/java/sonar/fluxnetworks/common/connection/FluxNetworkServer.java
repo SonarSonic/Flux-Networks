@@ -33,7 +33,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     private final TransferIterator<IFluxPlug> plugTransferIterator = new TransferIterator<>(false);
     private final TransferIterator<IFluxPoint> pointTransferIterator = new TransferIterator<>(true);
 
-    public long bufferLimiter = 0;
+    private long bufferLimiter = 0;
 
     public FluxNetworkServer() {
 
@@ -123,7 +123,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
         List<IFluxDevice> devices = getConnections(FluxLogicType.ANY);
         devices.forEach(f -> {
-            f.getTransferHandler().onStartCycle();
+            f.getTransferHandler().onCycleStart();
             bufferLimiter += f.getTransferHandler().getRequest();
         });
 
@@ -139,10 +139,10 @@ public class FluxNetworkServer extends BasicFluxNetwork {
                         if (plug.getDeviceType() == point.getDeviceType()) {
                             break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                         }
-                        long operate = plug.getTransferHandler().removeEnergyFromBuffer(point.getTransferHandler().getRequest(), true);
-                        long removed = point.getTransferHandler().addEnergyToBuffer(operate, false);
+                        long operate = plug.getTransferHandler().removeFromBuffer(point.getTransferHandler().getRequest(), true);
+                        long removed = point.getTransferHandler().addToBuffer(operate, false);
                         if (removed > 0) {
-                            plug.getTransferHandler().removeEnergyFromBuffer(removed, false);
+                            plug.getTransferHandler().removeFromBuffer(removed, false);
                             if (point.getTransferHandler().getRequest() <= 0) {
                                 continue CYCLE;
                             }
@@ -161,10 +161,15 @@ public class FluxNetworkServer extends BasicFluxNetwork {
                 }
             }
         }
-        devices.forEach(f -> f.getTransferHandler().onEndCycle());
+        devices.forEach(f -> f.getTransferHandler().onCycleEnd());
 
         statistics.stopProfiling();
         statistics.onEndServerTick();
+    }
+
+    @Override
+    public long getBufferLimiter() {
+        return bufferLimiter;
     }
 
     @Nonnull

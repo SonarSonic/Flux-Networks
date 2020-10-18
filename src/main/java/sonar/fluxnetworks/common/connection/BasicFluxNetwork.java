@@ -134,6 +134,11 @@ public class BasicFluxNetwork implements IFluxNetwork {
     }
 
     @Override
+    public long getBufferLimiter() {
+        return 0;
+    }
+
+    @Override
     public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
         device.getNetwork().enqueueConnectionRemoval(device, false);
     }

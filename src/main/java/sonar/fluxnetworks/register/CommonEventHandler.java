@@ -29,7 +29,7 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.capability.SuperAdminProvider;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.network.SLavaParticleMessage;
 import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.SSuperAdminMessage;

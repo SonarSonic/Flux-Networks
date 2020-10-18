@@ -37,7 +37,8 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
     @Override
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
         if (!world.isRemote) {
-            NetworkHooks.openGui((ServerPlayerEntity) player, new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
+            NetworkHooks.openGui((ServerPlayerEntity) player,
+                    new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
         }
         return ActionResult.resultSuccess(player.getHeldItem(hand));
     }

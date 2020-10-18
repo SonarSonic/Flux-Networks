@@ -1,12 +1,12 @@
 {
-  "type": "fluxnetworks:nbtwiperecipe",
+  "type": "fluxnetworks:nbt_wipe_recipe",
   "group": "fluxnetworks",
   "ingredients": [
     {
-      "item": "fluxnetworks:fluxplug"
+      "item": "fluxnetworks:flux_plug"
     }
   ],
   "result": {
-    "item": "fluxnetworks:fluxplug"
+    "item": "fluxnetworks:flux_plug"
   }
 }

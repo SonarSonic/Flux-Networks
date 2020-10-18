@@ -8,8 +8,7 @@ import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.NetworkSecurity;
-import sonar.fluxnetworks.common.handler.NetworkHandler;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -23,7 +22,7 @@ public class CEditNetworkMessage extends CCreateNetworkMessage {
     public CEditNetworkMessage() {
     }
 
-    public CEditNetworkMessage(int networkID, String name, int color, NetworkSecurity.Type security, String password) {
+    public CEditNetworkMessage(int networkID, String name, int color, SecurityType security, String password) {
         super(name, color, security, password);
         this.networkID = networkID;
     }

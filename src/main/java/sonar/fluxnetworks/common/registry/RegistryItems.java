@@ -11,16 +11,16 @@ import sonar.fluxnetworks.common.item.ItemFluxDust;
 @ObjectHolder(FluxNetworks.MODID)
 public class RegistryItems {
 
-    @ObjectHolder("flux")
+    @ObjectHolder("flux_dust")
     public static ItemFluxDust FLUX_DUST;
 
-    @ObjectHolder("fluxcore")
+    @ObjectHolder("flux_core")
     public static Item FLUX_CORE;
 
-    @ObjectHolder("fluxconfigurator")
+    @ObjectHolder("flux_configurator")
     public static ItemFluxConfigurator FLUX_CONFIGURATOR;
 
-    @ObjectHolder("adminconfigurator")
+    @ObjectHolder("admin_configurator")
     public static ItemAdminConfigurator ADMIN_CONFIGURATOR;
 
     //@ObjectHolder("fireitem")

@@ -34,7 +34,7 @@ sourceSets {
         resources {
             include '**/**'
             exclude '**/*.psd'
-            srcDirs += 'src/generated/resources'
+            srcDirs += 'src/generated'
             exclude '.cache'
         }
         compileClasspath += sourceSets.api.output

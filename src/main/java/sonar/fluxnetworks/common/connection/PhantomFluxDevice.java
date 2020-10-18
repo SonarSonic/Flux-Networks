@@ -200,6 +200,7 @@ public class PhantomFluxDevice implements IFluxDevice {
         throw new IllegalStateException("Client or unloaded device");
     }
 
+    @Nonnull
     @Override
     public ITransferHandler getTransferHandler() {
         throw new IllegalStateException("Client or unloaded device");

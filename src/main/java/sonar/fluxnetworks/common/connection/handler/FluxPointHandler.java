@@ -7,7 +7,7 @@ import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
 
 import java.util.Objects;
 
-public class FluxPointHandler extends AbstractPointHandler<TileFluxPoint> {
+public class FluxPointHandler extends BasicPointHandler<TileFluxPoint> {
 
     public SidedTransfers transfers;
 
@@ -17,20 +17,20 @@ public class FluxPointHandler extends AbstractPointHandler<TileFluxPoint> {
     }
 
     @Override
-    public void onStartCycle() {
-        super.onStartCycle();
+    public void onCycleStart() {
+        super.onCycleStart();
         transfers.getTransfers().stream().filter(Objects::nonNull).forEach(IFluxTransfer::onStartCycle);
 
     }
 
     @Override
-    public void onEndCycle() {
-        super.onEndCycle();
+    public void onCycleEnd() {
+        super.onCycleEnd();
         transfers.getTransfers().stream().filter(Objects::nonNull).forEach(IFluxTransfer::onEndCycle);
     }
 
     @Override
-    public long removeEnergy(long energy, boolean simulate) {
+    public long sendToConsumers(long energy, boolean simulate) {
         if(!device.isActive()) {
             return 0;
         }

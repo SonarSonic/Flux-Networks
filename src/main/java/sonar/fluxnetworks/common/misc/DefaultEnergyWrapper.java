@@ -5,7 +5,6 @@ import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.common.connection.handler.AbstractPlugHandler;
 
 /**
  * Uses forge's own energy wrapper and also IFNEnergyStorage
@@ -25,20 +24,20 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
     @Override
     public long receiveEnergyL(long maxReceive, boolean simulate) {
         ITransferHandler handler = device.getTransferHandler();
-        if (device.isActive() && handler instanceof AbstractPlugHandler) {
-            return ((AbstractPlugHandler<?>) handler).addEnergy(maxReceive, side, simulate);
+        if (device.isActive()) {
+            return handler.receiveFromAdjacency(maxReceive, side, simulate);
         }
-        return 0L;
+        return 0;
     }
 
     @Override
     public long extractEnergyL(long maxExtract, boolean simulate) {
-        return 0L;
+        return 0;
     }
 
     @Override
     public long getEnergyStoredL() {
-        return device.getDeviceType().isPoint() ? Long.MAX_VALUE : 0L;
+        return device.getDeviceType().isPoint() ? Long.MAX_VALUE : 0;
     }
 
     @Override
@@ -61,8 +60,8 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         ITransferHandler handler = device.getTransferHandler();
-        if (device.isActive() && handler instanceof AbstractPlugHandler) {
-            return (int) ((AbstractPlugHandler<?>) handler).addEnergy(maxReceive, side, simulate);
+        if (device.isActive()) {
+            return (int) handler.receiveFromAdjacency(maxReceive, side, simulate);
         }
         return 0;
     }

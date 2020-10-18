@@ -3,6 +3,8 @@ package sonar.fluxnetworks.api.network;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nonnull;
+
 public enum AccessLevel {
     OWNER(FluxTranslate.OWNER, 0xffaa00, TextFormatting.GOLD),
     ADMIN(FluxTranslate.ADMIN, 0x66cc00, TextFormatting.GREEN),
@@ -20,6 +22,7 @@ public enum AccessLevel {
         this.formatting = formatting;
     }
 
+    @Nonnull
     public String getName() {
         return formatting + localization.t();
     }

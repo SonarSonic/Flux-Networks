@@ -50,7 +50,8 @@ public class FluxUtils {
         return null;
     }
 
-    public static String getTransferInfo(FluxDeviceType type, EnergyType energyType, long change) {
+    @Nonnull
+    public static String getTransferInfo(@Nonnull FluxDeviceType type, EnergyType energyType, long change) {
         if (type.isPlug()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if (change == 0) {
@@ -266,9 +267,22 @@ public class FluxUtils {
         return format(in, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
     }
 
-    public static boolean checkPassword(String str) {
+    public static boolean checkPassword(@Nonnull String str) {
         for (int i = 0; i < str.length(); i++) {
-            if (!Character.isLetterOrDigit(str.charAt(i)))
+            int codePoint;
+            char c1 = str.charAt(i);
+            if (Character.isHighSurrogate(c1) && i + 1 < str.length()) {
+                char c2 = str.charAt(i + 1);
+                if (Character.isLowSurrogate(c2)) {
+                    codePoint = Character.toCodePoint(c1, c2);
+                    ++i;
+                } else {
+                    codePoint = c1;
+                }
+            } else {
+                codePoint = c1;
+            }
+            if (codePoint < 0x21 || codePoint >= 0x7f)
                 return false;
         }
         return true;
