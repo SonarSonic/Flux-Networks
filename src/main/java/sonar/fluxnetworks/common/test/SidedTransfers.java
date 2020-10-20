@@ -1,17 +1,14 @@
-package sonar.fluxnetworks.common.connection.transfer;
+package sonar.fluxnetworks.common.test;
 
 import com.google.common.collect.Lists;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
-import sonar.fluxnetworks.api.network.IFluxTransfer;
-import sonar.fluxnetworks.common.misc.EnergyUtils;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO
+@Deprecated
 public class SidedTransfers {
 
     protected final TileEntity host;
@@ -33,7 +30,7 @@ public class SidedTransfers {
         return transfers.get(dir);
     }
 
-    public void updateTransfers(Direction... faces) {
+    /*public void updateTransfers(Direction... faces) {
         for(Direction dir : faces) {
             TileEntity tile = host.getWorld().getTileEntity(host.getPos().offset(dir));
             IFluxTransfer transfer = transfers.get(dir);
@@ -47,5 +44,5 @@ public class SidedTransfers {
                 transfers.put(dir, null);
             }
         }
-    }
+    }*/
 }

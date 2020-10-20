@@ -16,10 +16,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -28,12 +26,12 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
 
     @Override
     public void func_239207_a_(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
-        int color;
-        int energy;
-        CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+        int color; // 0xRRGGBB
+        long energy;
+        CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
         if (tag != null) {
-            color = FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
-            energy = tag.getInt("energy");
+            color = tag.getInt(FluxConstants.CLIENT_COLOR);
+            energy = tag.getLong(FluxConstants.ENERGY);
         } else {
             color = FluxConstants.INVALID_NETWORK_COLOR;
             energy = 0;

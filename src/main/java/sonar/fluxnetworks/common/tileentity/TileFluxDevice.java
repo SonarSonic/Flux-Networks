@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
@@ -22,19 +23,19 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.network.NetworkHandler;
-import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.SFeedbackMessage;
 import sonar.fluxnetworks.common.network.FluxTileMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.SFeedbackMessage;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
@@ -94,6 +95,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         super.onChunkUnloaded();
         if (!world.isRemote && sLoad) {
             network.enqueueConnectionRemoval(this, true);
+
             sLoad = false;
         }
     }
@@ -166,7 +168,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     public final void onDataPacket(NetworkManager net, @Nonnull SUpdateTileEntityPacket pkt) {
         // Client side, read block update data
         readCustomNBT(pkt.getNbtCompound(), FluxConstants.TYPE_TILE_UPDATE);
-        world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 0);
+        world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), -1);
     }
 
     @Nonnull
@@ -204,63 +206,67 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Override
     public void writeCustomNBT(CompoundNBT tag, int type) {
-        if (type <= FluxConstants.TYPE_TILE_UPDATE) {
-            tag.putInt("0", priority);
-            tag.putLong("1", limit);
-            tag.putInt("2", flags);
-            tag.putLong("3", getTransferHandler().getBuffer());
-            tag.putInt("4", networkID);
-            tag.putUniqueId("5", playerUUID);
-            tag.putString("6", customName);
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_UPDATE) {
+            tag.putInt(FluxConstants.NETWORK_ID, networkID);
+            tag.putString(FluxConstants.CUSTOM_NAME, customName);
+            tag.putInt(FluxConstants.PRIORITY, priority);
+            tag.putLong(FluxConstants.LIMIT, limit);
+            tag.putInt(FluxConstants.FLAGS, flags);
+            tag.putUniqueId(FluxConstants.PLAYER_UUID, playerUUID);
         }
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
-            tag.putInt("7", network.getNetworkColor());
-            getTransferHandler().writeNetworkedNBT(tag);
+            tag.putInt(FluxConstants.CLIENT_COLOR, network.getNetworkColor());
         }
         if (type == FluxConstants.TYPE_TILE_DROP) {
-            tag.putLong("buffer", getTransferHandler().getBuffer());
-            tag.putInt(ItemFluxDevice.PRIORITY, priority);
-            tag.putLong(ItemFluxDevice.LIMIT, limit);
-            tag.putBoolean(ItemFluxDevice.DISABLE_LIMIT, getDisableLimit());
-            tag.putBoolean(ItemFluxDevice.SURGE_MODE, getSurgeMode());
-            tag.putInt(FluxConstants.NETWORK_ID, getNetworkID());
-            tag.putString(ItemFluxDevice.CUSTOM_NAME, customName);
+            tag.putInt(FluxConstants.NETWORK_ID, networkID);
+            tag.putString(FluxConstants.CUSTOM_NAME, customName);
+            tag.putInt(FluxConstants.PRIORITY, priority);
+            tag.putLong(FluxConstants.LIMIT, limit);
+            tag.putBoolean(FluxConstants.SURGE_MODE, getSurgeMode());
+            tag.putBoolean(FluxConstants.DISABLE_LIMIT, getDisableLimit());
         }
+        if (type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+            FluxUtils.writeGlobalPos(tag, globalPos);
+            tag.putInt(FluxConstants.NETWORK_ID, networkID);
+            tag.putByte(FluxConstants.DEVICE_TYPE, (byte) getDeviceType().ordinal());
+            tag.putString(FluxConstants.CUSTOM_NAME, customName);
+            tag.putInt(FluxConstants.PRIORITY, priority);
+            tag.putLong(FluxConstants.LIMIT, limit);
+            tag.putUniqueId(FluxConstants.PLAYER_UUID, playerUUID);
+            tag.putBoolean(FluxConstants.SURGE_MODE, getSurgeMode());
+            tag.putBoolean(FluxConstants.DISABLE_LIMIT, getDisableLimit());
+            tag.putBoolean(FluxConstants.FORCED_LOADING, isForcedLoading());
+            tag.putBoolean(FluxConstants.CHUNK_LOADED, isChunkLoaded());
+            getDisplayStack().write(tag);
+        }
+        getTransferHandler().writeCustomNBT(tag, type);
     }
 
     @Override
     public void readCustomNBT(CompoundNBT tag, int type) {
-        if (type <= FluxConstants.TYPE_TILE_UPDATE) {
-            priority = tag.getInt("0");
-            limit = tag.getLong("1");
-            flags = tag.getInt("2");
-            getTransferHandler().setBuffer(tag.getLong("3"));
-            networkID = tag.getInt("4");
-            playerUUID = tag.getUniqueId("5");
-            customName = tag.getString("6");
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_UPDATE) {
+            networkID = tag.getInt(FluxConstants.NETWORK_ID);
+            customName = tag.getString(FluxConstants.CUSTOM_NAME);
+            priority = tag.getInt(FluxConstants.PRIORITY);
+            limit = tag.getLong(FluxConstants.LIMIT);
+            flags = tag.getInt(FluxConstants.FLAGS);
+            playerUUID = tag.getUniqueId(FluxConstants.PLAYER_UUID);
         }
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
-            clientColor = tag.getInt("7");
-            getTransferHandler().readNetworkedNBT(tag);
+            clientColor = tag.getInt(FluxConstants.CLIENT_COLOR);
         }
         if (type == FluxConstants.TYPE_TILE_DROP) {
-            long l = tag.getLong("buffer");
-            if (l > 0)
-                getTransferHandler().setBuffer(l);
-            priority = tag.getInt(ItemFluxDevice.PRIORITY);
-            l = tag.getLong(ItemFluxDevice.LIMIT);
-            if (l > 0)
-                limit = l;
-            setDisableLimit(tag.getBoolean(ItemFluxDevice.DISABLE_LIMIT));
-            setSurgeMode(tag.getBoolean(ItemFluxDevice.SURGE_MODE));
-            int i = tag.getInt(FluxConstants.NETWORK_ID);
-            if (i > 0)
-                networkID = i;
-            String name = tag.getString(ItemFluxDevice.CUSTOM_NAME);
-            if (!name.isEmpty())
-                customName = name;
-            clientColor = FluxClientCache.getNetwork(networkID).getNetworkColor();
+            networkID = tag.getInt(FluxConstants.NETWORK_ID);
+            customName = tag.getString(FluxConstants.CUSTOM_NAME);
+            priority = tag.getInt(FluxConstants.PRIORITY);
+            limit = tag.getLong(FluxConstants.LIMIT);
+            setSurgeMode(tag.getBoolean(FluxConstants.SURGE_MODE));
+            setDisableLimit(tag.getBoolean(FluxConstants.DISABLE_LIMIT));
+            if (world.isRemote) {
+                clientColor = FluxClientCache.getNetwork(networkID).getNetworkColor();
+            }
         }
+        getTransferHandler().readCustomNBT(tag, type);
     }
 
     @Override
@@ -281,7 +287,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
      */
     public void sendFullUpdatePacket() {
         if (!world.isRemote) {
-            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 0);
+            world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), -1);
         }
     }
 
@@ -307,6 +313,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }*/
 
     public void writePacket(PacketBuffer buffer, byte id) {
+        getTransferHandler().writePacket(buffer, id);
         switch (id) {
             case FluxTileMessage.C2S_CUSTOM_NAME:
                 buffer.writeString(customName, 256);
@@ -334,12 +341,12 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     buffer.writeLong(limit);
                     buffer.writeByte(flags >> 6);
                 }
-                buffer.writeCompoundTag(getTransferHandler().writeNetworkedNBT(new CompoundNBT()));
                 break;
         }
     }
 
     public void readPacket(PacketBuffer buffer, NetworkEvent.Context context, byte id) {
+        getTransferHandler().readPacket(buffer, id);
         switch (id) {
             case FluxTileMessage.C2S_CUSTOM_NAME:
                 customName = buffer.readString(256);
@@ -373,7 +380,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     }
                 } else {
                     setForcedLoading(false);
-                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.BANNED_LOADING), context);
+                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.BANNED_LOADING), context);
                 }
                 sSettingsChanged = true;
                 break;
@@ -384,7 +391,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     limit = buffer.readLong();
                     flags = (flags & 0x3f) | buffer.readByte() << 6;
                 }
-                getTransferHandler().readNetworkedNBT(buffer.readCompoundTag());
                 break;
         }
     }

@@ -1,17 +1,5 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.world.server.ServerWorld;
-import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxLogicType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.storage.FluxChunkManager;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.ChunkPos;
-
 @Deprecated
 public class TilePacketHandler {
 

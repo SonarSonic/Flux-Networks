@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.EnergyType;
@@ -138,13 +138,13 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void tick() {
         super.tick();
-        if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTabs.TAB_HOME, player, connector);
-            FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
-        if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
+        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
             apply.clickable = false;
-            FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
     }
 }

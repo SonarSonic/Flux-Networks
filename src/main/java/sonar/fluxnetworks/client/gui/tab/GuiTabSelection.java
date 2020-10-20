@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -142,7 +142,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         if (timer2 == 0) {
             refreshPages(FluxClientCache.getAllNetworks());
         }
-        if (selectedNetwork != null && FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if (selectedNetwork != null && FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
             closePopUp();
             if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
                 ItemFluxConfigurator.ContainerProvider networkConnector = (ItemFluxConfigurator.ContainerProvider) connector;
@@ -153,9 +153,9 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
                 this.networkValid = selectedNetwork.isValid();
             }
         }
-        if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.PASSWORD_REQUIRE) {
+        if (FluxClientCache.getFeedback(true) == FeedbackInfo.PASSWORD_REQUIRE) {
             openPopUp(new PopUpNetworkPassword(this, player, connector));
-            FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
         timer2++;
         timer2 %= 10;

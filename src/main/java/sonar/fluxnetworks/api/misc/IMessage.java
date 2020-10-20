@@ -7,7 +7,7 @@ import sonar.fluxnetworks.common.network.NetworkHandler;
 import javax.annotation.Nonnull;
 
 /**
- * This class copied from Modern UI
+ * Network message, this class copied from Modern UI
  */
 public interface IMessage {
 

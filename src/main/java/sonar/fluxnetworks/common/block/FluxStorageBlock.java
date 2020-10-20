@@ -24,18 +24,12 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         super(props);
     }
 
-    @Nonnull
     @Override
-    public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-        return VoxelShapes.fullCube();
-    }
-
-    @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP.getTextComponent());
     }
 
-    public abstract int getMaxStorage();
+    public abstract long getMaxStorage();
 
     public static class Basic extends FluxStorageBlock {
 
@@ -44,7 +38,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         }
 
         @Override
-        public int getMaxStorage() {
+        public long getMaxStorage() {
             return FluxConfig.basicCapacity;
         }
 
@@ -62,7 +56,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         }
 
         @Override
-        public int getMaxStorage() {
+        public long getMaxStorage() {
             return FluxConfig.herculeanCapacity;
         }
 
@@ -80,7 +74,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         }
 
         @Override
-        public int getMaxStorage() {
+        public long getMaxStorage() {
             return FluxConfig.gargantuanCapacity;
         }
 

@@ -22,12 +22,6 @@ import java.util.List;
 
 public class ItemFluxDevice extends BlockItem {
 
-    public static String CUSTOM_NAME = "customName";
-    public static String PRIORITY = "priority";
-    public static String SURGE_MODE = "surgeMode";
-    public static String LIMIT = "limit";
-    public static String DISABLE_LIMIT = "disableLimit";
-
     public ItemFluxDevice(Block block, Item.Properties props) {
         super(block, props);
     }
@@ -35,9 +29,9 @@ public class ItemFluxDevice extends BlockItem {
     @Nonnull
     @Override
     public ITextComponent getDisplayName(@Nonnull ItemStack stack) {
-        CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
-        if (tag != null && tag.contains(CUSTOM_NAME)) {
-            return new StringTextComponent(tag.getString(CUSTOM_NAME));
+        CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
+        if (tag != null && tag.contains(FluxConstants.CUSTOM_NAME)) {
+            return new StringTextComponent(tag.getString(FluxConstants.CUSTOM_NAME));
         }
         return super.getDisplayName(stack);
     }
@@ -45,30 +39,30 @@ public class ItemFluxDevice extends BlockItem {
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip,
                                @Nonnull ITooltipFlag flagIn) {
-        CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+        CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
         if (tag != null) {
             if (tag.contains(FluxConstants.NETWORK_ID))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " +
                         TextFormatting.RESET + FluxClientCache.getDisplayName(tag.getInt(FluxConstants.NETWORK_ID))));
 
-            if (tag.contains(LIMIT))
+            if (tag.contains(FluxConstants.LIMIT))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " +
-                        TextFormatting.RESET + FluxUtils.format(tag.getLong(LIMIT),
-                        FluxUtils.TypeNumberFormat.COMMAS, " " + EnergyType.FE.getStorageSuffix())));
+                        TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.LIMIT),
+                        FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
 
-            if (tag.contains(PRIORITY))
+            if (tag.contains(FluxConstants.PRIORITY))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.PRIORITY.t() + ": " +
-                        TextFormatting.RESET + tag.getInt(PRIORITY)));
+                        TextFormatting.RESET + tag.getInt(FluxConstants.PRIORITY)));
 
-            if (tag.contains("energy"))
+            if (tag.contains(FluxConstants.BUFFER))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " +
-                        TextFormatting.RESET + FluxUtils.format(tag.getInt("energy"),
-                        FluxUtils.TypeNumberFormat.COMMAS, " " + EnergyType.FE.getStorageSuffix())));
+                        TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.BUFFER),
+                        FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
 
-            if (tag.contains("buffer"))
+            if (tag.contains(FluxConstants.ENERGY))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.t() + ": " +
-                        TextFormatting.RESET + FluxUtils.format(tag.getLong("buffer"),
-                        FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE.getStorageSuffix())));
+                        TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.ENERGY),
+                        FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
 
         } else {
             super.addInformation(stack, worldIn, tooltip, flagIn);

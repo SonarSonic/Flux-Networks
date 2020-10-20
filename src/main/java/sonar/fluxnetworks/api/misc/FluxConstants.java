@@ -16,6 +16,8 @@ public class FluxConstants {
     public static final int TYPE_TILE_UPDATE = 11;
     public static final int TYPE_TILE_DROP = 19;
 
+    public static final int TYPE_CONNECTION_UPDATE = 20;
+
     // NBT access, network data-sync or operation
     public static final int TYPE_NET_BASIC = 21;
     public static final int TYPE_NET_MEMBERS = 22;
@@ -39,11 +41,30 @@ public class FluxConstants {
     public static final int TYPE_CANCEL_MEMBERSHIP = 4;
     public static final int TYPE_TRANSFER_OWNERSHIP = 5;
 
-    // NBT tag key, network
-    public static final String NETWORK_ID = "networkID";
-    public static final String NETWORK_NAME = "networkName";
-    public static final String NETWORK_COLOR = "networkColor";
-    public static final String OWNER_UUID = "ownerUUID";
-    public static final String PLAYER_LIST = "playerList";
-    public static final String CONNECTIONS = "connections";
+    // NBT tag key
+    public static final String TAG_FLUX_DATA = "FluxData"; // item stack of device
+    public static final String TAG_FLUX_CONFIG = "FluxConfig"; // configurator
+
+    // NBT tag key, root
+    public static final String FLUX_COLOR = "FluxColor";
+
+    // NBT tag key
+    public static final String NETWORK_ID = "1";
+    public static final String CUSTOM_NAME = "2";
+    public static final String PRIORITY = "3";
+    public static final String LIMIT = "4";
+    public static final String FLAGS = "5";
+    public static final String PLAYER_UUID = "6";
+    public static final String CLIENT_COLOR = "7";
+
+    public static final String SURGE_MODE = "21";
+    public static final String DISABLE_LIMIT = "22";
+    public static final String DEVICE_TYPE = "23";
+
+    public static final String FORCED_LOADING = "29";
+    public static final String CHUNK_LOADED = "31";
+
+    public static final String BUFFER = "71";
+    public static final String ENERGY = "72"; // equals to buffer, but with different display text
+    public static final String CHANGE = "73";
 }

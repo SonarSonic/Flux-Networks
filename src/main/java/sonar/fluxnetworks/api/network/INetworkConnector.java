@@ -5,7 +5,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.util.text.ITextComponent;
 
 /**
- * Refers to anything which can be connected to a specific network, flux tiles & configurators
+ * Refers to anything which can be connected to a specific network, flux tiles or configurators
  */
 public interface INetworkConnector {
 

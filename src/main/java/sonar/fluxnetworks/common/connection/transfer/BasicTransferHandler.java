@@ -1,9 +1,12 @@
-package sonar.fluxnetworks.common.connection.handler;
+package sonar.fluxnetworks.common.connection.transfer;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.ITransferHandler;
+import sonar.fluxnetworks.common.network.FluxTileMessage;
 
 import javax.annotation.Nonnull;
 
@@ -25,12 +28,14 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
         this.device = device;
     }
 
+    @Override
     public void onCycleStart() {
         change = 0;
         addedToBuffer = 0;
         removedFromBuffer = 0;
     }
 
+    @Override
     public void onCycleEnd() {
 
     }
@@ -111,14 +116,47 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
         return Math.max(Math.min(getRemoveLimit() - removedFromBuffer, Math.min(toRemove, getBuffer())), 0);
     }
 
-    public CompoundNBT writeNetworkedNBT(CompoundNBT tag) {
-        tag.putLong("71", change);
-        tag.putLong("72", buffer);
-        return tag;
+    @Override
+    public void writeCustomNBT(CompoundNBT tag, int type) {
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
+            tag.putLong(FluxConstants.BUFFER, buffer);
+        }
+        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+            tag.putLong(FluxConstants.BUFFER, buffer);
+            tag.putLong(FluxConstants.CHANGE, change);
+        }
     }
 
-    public void readNetworkedNBT(CompoundNBT tag) {
-        change = tag.getLong("71");
-        buffer = tag.getLong("72");
+    @Override
+    public void readCustomNBT(CompoundNBT tag, int type) {
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
+            buffer = tag.getLong(FluxConstants.BUFFER);
+        }
+        if (type == FluxConstants.TYPE_TILE_UPDATE) {
+            buffer = tag.getLong(FluxConstants.BUFFER);
+            change = tag.getLong(FluxConstants.CHANGE);
+        }
+    }
+
+    @Override
+    public void writePacket(@Nonnull PacketBuffer buffer, byte id) {
+        if (id == FluxTileMessage.S2C_GUI_SYNC) {
+            buffer.writeLong(change);
+            buffer.writeLong(this.buffer);
+        }
+        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
+            buffer.writeLong(this.buffer);
+        }
+    }
+
+    @Override
+    public void readPacket(@Nonnull PacketBuffer buffer, byte id) {
+        if (id == FluxTileMessage.S2C_GUI_SYNC) {
+            change = buffer.readLong();
+            this.buffer = buffer.readLong();
+        }
+        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
+            this.buffer = buffer.readLong();
+        }
     }
 }

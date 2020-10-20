@@ -18,7 +18,6 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.text.StyleUtils;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -72,7 +71,7 @@ public abstract class FluxDeviceBlock extends Block {
         if (tile instanceof TileFluxDevice) {
             TileFluxDevice flux = (TileFluxDevice) tile;
             if (stack.hasTag()) {
-                CompoundNBT tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+                CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
                 if (tag != null) {
                     // doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
                     flux.readCustomNBT(tag, FluxConstants.TYPE_TILE_DROP);

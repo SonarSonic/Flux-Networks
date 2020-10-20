@@ -17,8 +17,6 @@ import net.minecraft.world.World;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.item.ItemFluxDevice;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -65,16 +63,16 @@ public class FluxBlockLootTables extends BlockLootTables {
         }
         CopyNbt.Builder copyNbt = CopyNbt.builder(CopyNbt.Source.BLOCK_ENTITY);
         // replace to a sub NBT compound tag to avoid conflicts with vanilla or other mods
-        copyNbt.replaceOperation("0", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.PRIORITY);
-        copyNbt.replaceOperation("1", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.LIMIT);
-        copyNbt.replaceOperation("2", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.DISABLE_LIMIT);
-        copyNbt.replaceOperation("3", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.SURGE_MODE);
-        copyNbt.replaceOperation("4", FluxUtils.FLUX_DATA + "." + FluxConstants.NETWORK_ID);
-        copyNbt.replaceOperation("6", FluxUtils.FLUX_DATA + "." + ItemFluxDevice.CUSTOM_NAME);
-        copyNbt.replaceOperation("b", FluxUtils.FLUX_DATA + "." + "buffer");
-        if (block instanceof FluxStorageBlock) {
-            copyNbt.replaceOperation("energy", FluxUtils.FLUX_DATA + "." + "energy");
-        }
+        copyNbt.replaceOperation(FluxConstants.NETWORK_ID, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.NETWORK_ID);
+        copyNbt.replaceOperation(FluxConstants.CUSTOM_NAME, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.CUSTOM_NAME);
+        copyNbt.replaceOperation(FluxConstants.PRIORITY, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.PRIORITY);
+        copyNbt.replaceOperation(FluxConstants.LIMIT, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.LIMIT);
+        copyNbt.replaceOperation(FluxConstants.SURGE_MODE, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.SURGE_MODE);
+        copyNbt.replaceOperation(FluxConstants.DISABLE_LIMIT, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.DISABLE_LIMIT);
+        if (block instanceof FluxStorageBlock)
+            copyNbt.replaceOperation(FluxConstants.ENERGY, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.ENERGY);
+        else
+            copyNbt.replaceOperation(FluxConstants.BUFFER, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.BUFFER);
         return LootTable.builder().addLootPool(withSurvivesExplosion(block,
                 LootPool.builder()
                         .rolls(ConstantRange.of(1))

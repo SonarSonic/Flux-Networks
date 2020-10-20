@@ -7,7 +7,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -88,7 +88,7 @@ public class CEditConnectionsMessage implements IMessage {
         }
         IFluxNetwork network = FluxNetworkData.getNetwork(buffer.readVarInt());
         if (network.getPlayerAccess(player).canEdit()) {
-            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.NO_ADMIN), context);
+            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.NO_ADMIN), context);
             return;
         }
         int flags = buffer.readVarInt();
@@ -105,7 +105,7 @@ public class CEditConnectionsMessage implements IMessage {
         }
         if ((flags & FluxConstants.FLAG_EDIT_DISCONNECT) != 0) {
             toEdit.forEach(d -> d.getNetwork().enqueueConnectionRemoval(d, false));
-            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS_2), context);
+            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS_2), context);
         } else {
             boolean editName = (flags & FluxConstants.FLAG_EDIT_NAME) != 0;
             boolean editPriority = (flags & FluxConstants.FLAG_EDIT_PRIORITY) != 0;
@@ -174,9 +174,9 @@ public class CEditConnectionsMessage implements IMessage {
                 }
                 t.sendFullUpdatePacket();
             }
-            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS), context);
+            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS), context);
             if (sendBannedLoading) {
-                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.BANNED_LOADING), context);
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.BANNED_LOADING), context);
             }
         }
     }

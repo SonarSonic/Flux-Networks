@@ -22,6 +22,13 @@ import java.util.*;
  */
 public class BasicFluxNetwork implements IFluxNetwork {
 
+    private static final String NETWORK_ID = "networkID";
+    private static final String NETWORK_NAME = "networkName";
+    private static final String NETWORK_COLOR = "networkColor";
+    private static final String OWNER_UUID = "ownerUUID";
+    private static final String PLAYER_LIST = "playerList";
+    private static final String CONNECTIONS = "connections";
+
     //public ICustomValue<Integer> network_id = new CustomValue<>();
     //public ICustomValue<String> network_name = new CustomValue<>();
     //public ICustomValue<UUID> network_owner = new CustomValue<>();
@@ -166,10 +173,10 @@ public class BasicFluxNetwork implements IFluxNetwork {
     @Override
     public void writeCustomNBT(CompoundNBT nbt, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
-            nbt.putInt(FluxConstants.NETWORK_ID, networkID);
-            nbt.putString(FluxConstants.NETWORK_NAME, networkName);
-            nbt.putInt(FluxConstants.NETWORK_COLOR, networkColor);
-            nbt.putUniqueId(FluxConstants.OWNER_UUID, ownerUUID);
+            nbt.putInt(NETWORK_ID, networkID);
+            nbt.putString(NETWORK_NAME, networkName);
+            nbt.putInt(NETWORK_COLOR, networkColor);
+            nbt.putUniqueId(OWNER_UUID, ownerUUID);
             security.writeNBT(nbt, type == FluxConstants.TYPE_SAVE_ALL);
             //nbt.putInt(FluxNetworkData.SECURITY_TYPE, securityType.ordinal());
         }
@@ -182,10 +189,11 @@ public class BasicFluxNetwork implements IFluxNetwork {
                     m.writeNBT(t1);
                     list.add(t1);
                 }
-                nbt.put(FluxConstants.PLAYER_LIST, list);
+                nbt.put(PLAYER_LIST, list);
             }
 
             Collection<IFluxDevice> connections = allConnections.values();
+            // all unloaded
             if (!connections.isEmpty()) {
                 ListNBT list = new ListNBT();
                 for (IFluxDevice d : connections) {
@@ -195,7 +203,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
                         list.add(t1);
                     }
                 }
-                nbt.put(FluxConstants.CONNECTIONS, list);
+                nbt.put(CONNECTIONS, list);
             }
         }
         if (type == FluxConstants.TYPE_NET_CONNECTIONS) {
@@ -204,10 +212,10 @@ public class BasicFluxNetwork implements IFluxNetwork {
                 ListNBT list = new ListNBT();
                 for (IFluxDevice d : connections) {
                     CompoundNBT t1 = new CompoundNBT();
-                    d.writeCustomNBT(t1, FluxConstants.TYPE_SAVE_ALL);
+                    d.writeCustomNBT(t1, FluxConstants.TYPE_CONNECTION_UPDATE);
                     list.add(t1);
                 }
-                nbt.put(FluxConstants.CONNECTIONS, list);
+                nbt.put(CONNECTIONS, list);
             }
         }
         if (type == FluxConstants.TYPE_NET_STATISTICS) {
@@ -250,31 +258,42 @@ public class BasicFluxNetwork implements IFluxNetwork {
     @Override
     public void readCustomNBT(CompoundNBT nbt, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
-            networkID = nbt.getInt(FluxConstants.NETWORK_ID);
-            networkName = nbt.getString(FluxConstants.NETWORK_NAME);
-            networkColor = nbt.getInt(FluxConstants.NETWORK_COLOR);
-            ownerUUID = nbt.getUniqueId(FluxConstants.OWNER_UUID);
+            networkID = nbt.getInt(NETWORK_ID);
+            networkName = nbt.getString(NETWORK_NAME);
+            networkColor = nbt.getInt(NETWORK_COLOR);
+            ownerUUID = nbt.getUniqueId(OWNER_UUID);
             security.readNBT(nbt);
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
-            ListNBT list = nbt.getList(FluxConstants.PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
+            ListNBT list = nbt.getList(PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT c = list.getCompound(i);
                 memberList.add(new NetworkMember(c));
             }
-            list = nbt.getList(FluxConstants.CONNECTIONS, Constants.NBT.TAG_COMPOUND);
+            list = nbt.getList(CONNECTIONS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT c = list.getCompound(i);
-                GlobalPos pos = FluxUtils.readGlobalPos(c);
-                allConnections.put(pos, new PhantomFluxDevice(pos, c));
+                IFluxDevice f = new PhantomFluxDevice();
+                f.readCustomNBT(c, FluxConstants.TYPE_SAVE_ALL);
+                allConnections.put(f.getGlobalPos(), f);
             }
         }
         if (type == FluxConstants.TYPE_NET_CONNECTIONS) {
-            ListNBT list = nbt.getList(FluxConstants.CONNECTIONS, Constants.NBT.TAG_COMPOUND);
+            //TODO waiting for new GUI system, see GuiTabConnections, we request a full connections update
+            // when we (re)open the gui, but if a tile removed by someone or on world unloads, this won't send
+            // to player, so calling clear() here as a temporary solution, (f != null) is always false
+            allConnections.clear();
+
+            ListNBT list = nbt.getList(CONNECTIONS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT c = list.getCompound(i);
                 GlobalPos pos = FluxUtils.readGlobalPos(c);
-                allConnections.put(pos, new PhantomFluxDevice(pos, c));
+                IFluxDevice f = allConnections.get(pos);
+                if (f != null) {
+                    f.readCustomNBT(c, FluxConstants.TYPE_CONNECTION_UPDATE);
+                } else {
+                    allConnections.put(pos, new PhantomFluxDevice(pos, c));
+                }
             }
         }
         if (type == FluxConstants.TYPE_NET_STATISTICS) {

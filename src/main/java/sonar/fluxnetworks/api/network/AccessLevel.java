@@ -12,9 +12,9 @@ public enum AccessLevel {
     BLOCKED(FluxTranslate.BLOCKED, 0xa9a9a9, TextFormatting.GRAY),
     SUPER_ADMIN(FluxTranslate.SUPER_ADMIN, 0x4b0082, TextFormatting.DARK_PURPLE);
 
-    public FluxTranslate localization;
-    public int color;
-    public TextFormatting formatting;
+    private final FluxTranslate localization;
+    private final int color;
+    private final TextFormatting formatting;
 
     AccessLevel(FluxTranslate localization, int color, TextFormatting formatting) {
         this.localization = localization;

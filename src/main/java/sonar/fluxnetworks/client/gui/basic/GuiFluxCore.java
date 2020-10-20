@@ -7,8 +7,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -101,8 +102,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     @Override
     public void onClose() {
         super.onClose();
-        FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, false);
-        FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
+        FluxClientCache.setFeedback(FeedbackInfo.NONE, false);
+        FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
     }
 
 
@@ -135,30 +136,24 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected List<String> getFluxInfo(IFluxDevice flux) {
         List<String> list = Lists.newArrayList();
         list.add(TextFormatting.BOLD + flux.getCustomName());
-        CompoundNBT tag = flux.getDisplayStack().getChildTag(FluxUtils.FLUX_DATA);
 
         if (flux.isChunkLoaded()) {
             if (flux.isForcedLoading()) {
                 list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
             list.add(FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getTransferChange()));
-            if (flux.getDeviceType() == FluxDeviceType.STORAGE) {
-                list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
-            } else {
-                list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
-            }
         } else {
             list.add(TextFormatting.RED + FluxTranslate.CHUNK_UNLOADED.t());
-            if (tag != null) {
-                if (tag.contains("energy")) {
-                    list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getInt("energy")) + "RF");
-                } else {
-                    list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getLong("buffer")) + "RF");
-                }
-            }
+        }
+        if (flux.getDeviceType() == FluxDeviceType.STORAGE) {
+            list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE +
+                    FluxUtils.format(flux.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false));
+        } else {
+            list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE +
+                    FluxUtils.format(flux.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false));
         }
 
-        list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getLogicLimit()));
+        list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getRawLimit()));
         list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getRawPriority()));
         list.add(TextFormatting.ITALIC + FluxUtils.getDisplayString(flux.getGlobalPos()));
         return list;

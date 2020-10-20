@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -26,24 +25,25 @@ public class FluxStorageRecipe extends ShapedRecipe {
     @Nonnull
     @Override
     public ItemStack getCraftingResult(@Nonnull CraftingInventory inventory) {
-        int totalEnergy = 0, networkID = -1;
+        long totalEnergy = 0;
+        int networkID = -1;
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
             ItemStack stack = inventory.getStackInSlot(i);
-            CompoundNBT subTag = stack.getChildTag(FluxUtils.FLUX_DATA);
+            CompoundNBT subTag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
             if (subTag != null) {
                 if (networkID == -1) {
                     networkID = subTag.getInt(FluxConstants.NETWORK_ID);
                 }
-                totalEnergy += subTag.getInt("energy");
+                totalEnergy += subTag.getLong(FluxConstants.ENERGY);
             }
         }
         ItemStack stack = getRecipeOutput().copy();
         if (totalEnergy > 0 || networkID != -1) {
-            CompoundNBT subTag = stack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
+            CompoundNBT subTag = stack.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
             if (networkID != -1)
                 subTag.putInt(FluxConstants.NETWORK_ID, networkID);
             if (totalEnergy > 0)
-                subTag.putInt("energy", totalEnergy);
+                subTag.putLong(FluxConstants.ENERGY, totalEnergy);
         }
         return stack;
     }

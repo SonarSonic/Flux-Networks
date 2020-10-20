@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.BasicFluxNetwork;
@@ -27,8 +27,8 @@ public class FluxClientCache {
 
     public static IFluxNetwork adminViewingNetwork = FluxNetworkInvalid.INSTANCE;
 
-    private static EnumFeedbackInfo feedback = EnumFeedbackInfo.NONE; // Text message.
-    private static EnumFeedbackInfo feedbackAction = EnumFeedbackInfo.NONE; // Special operation.
+    private static FeedbackInfo feedback = FeedbackInfo.NONE; // Text message.
+    private static FeedbackInfo feedbackAction = FeedbackInfo.NONE; // Special operation.
 
     private static int feedbackTimer = 0;
 
@@ -62,7 +62,7 @@ public class FluxClientCache {
         if (network != null) {
             for (CompoundNBT tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
-                network.getConnectionByPos(globalPos).ifPresent(c -> c.readCustomNBT(tag, 0));
+                network.getConnectionByPos(globalPos).ifPresent(c -> c.readCustomNBT(tag, FluxConstants.TYPE_CONNECTION_UPDATE));
             }
         }
     }
@@ -80,11 +80,11 @@ public class FluxClientCache {
         return "NONE";
     }
 
-    public static EnumFeedbackInfo getFeedback(boolean action) {
+    public static FeedbackInfo getFeedback(boolean action) {
         return action ? feedbackAction : feedback;
     }
 
-    public static void setFeedback(EnumFeedbackInfo info, boolean action) {
+    public static void setFeedback(FeedbackInfo info, boolean action) {
         if (action) {
             feedbackAction = info;
         } else {
@@ -98,7 +98,7 @@ public class FluxClientCache {
             feedbackTimer++;
             if (feedbackTimer >= 60) {
                 feedbackTimer = 0;
-                setFeedback(EnumFeedbackInfo.NONE, false);
+                setFeedback(FeedbackInfo.NONE, false);
             }
         }
     }

@@ -6,11 +6,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.management.PlayerList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.IItemHandler;
 import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
-import sonar.fluxnetworks.api.network.IFluxTransfer;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.common.misc.EnergyUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
@@ -18,18 +16,18 @@ import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class ControllerTransfer implements IFluxTransfer {
+public class FluxControllerHandler extends BasicPointHandler<TileFluxController> {
 
-    public final TileFluxController tile;
     private final List<ServerPlayerEntity> players = new ArrayList<>();
     private int timer;
 
-    public ControllerTransfer(TileFluxController tile) {
-        this.tile = tile;
+    public FluxControllerHandler(TileFluxController fluxController) {
+        super(fluxController);
     }
 
     @Override
-    public void onStartCycle() {
+    public void onCycleStart() {
+        super.onCycleStart();
         if (timer == 0) {
             updatePlayers();
         }
@@ -37,16 +35,7 @@ public class ControllerTransfer implements IFluxTransfer {
     }
 
     @Override
-    public void onEndCycle() {
-    }
-
-    @Override
-    public long removeEnergy(long amount, boolean simulate) {
-        return 0; // we don't extract energy from items
-    }
-
-    @Override
-    public long addEnergy(long amount, boolean simulate) {
+    public long sendToConsumers(long energy, boolean simulate) {
         if ((timer & 3) > 0) { //TODO THIS CAUSES FLICKERING INTO GUI, WE COULD SMOOTH THIS OUT (on client side)
             return 0;
         }
@@ -68,9 +57,9 @@ public class ControllerTransfer implements IFluxTransfer {
                     if (!inventory.getValue().test(stack) || (handler = EnergyUtils.getEnergyHandler(stack)) == null) {
                         continue;
                     }
-                    long receive = handler.addEnergy(amount - received, stack, simulate);
+                    long receive = handler.addEnergy(energy - received, stack, simulate);
                     received += receive;
-                    if (amount - received <= 0) {
+                    if (energy - received <= 0) {
                         break CYCLE;
                     }
                 }
@@ -82,7 +71,7 @@ public class ControllerTransfer implements IFluxTransfer {
     private void updatePlayers() {
         players.clear();
         PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
-        for (NetworkMember p : tile.getNetwork().getMemberList()) {
+        for (NetworkMember p : device.getNetwork().getMemberList()) {
             ServerPlayerEntity player = playerList.getPlayerByUUID(p.getPlayerUUID());
             if (player != null) {
                 players.add(player);
@@ -144,30 +133,5 @@ public class ControllerTransfer implements IFluxTransfer {
             count++;
             return next;
         }
-    }
-
-    @Override
-    public void onEnergyAdded(long amount) {
-
-    }
-
-    @Override
-    public void onEnergyRemoved(long amount) {
-
-    }
-
-    @Override
-    public TileEntity getTile() {
-        return tile;
-    }
-
-    @Override
-    public ItemStack getDisplayStack() {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean isInvalid() {
-        return tile.isRemoved();
     }
 }

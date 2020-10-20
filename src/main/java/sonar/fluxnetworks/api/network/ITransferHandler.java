@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.api.network;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 
 import javax.annotation.Nonnull;
@@ -35,12 +36,15 @@ public interface ITransferHandler {
 
     long receiveFromAdjacency(long amount, @Nonnull Direction side, boolean simulate);
 
-    CompoundNBT writeNetworkedNBT(CompoundNBT tag);
+    void writeCustomNBT(CompoundNBT tag, int type);
 
-    void readNetworkedNBT(CompoundNBT tag);
+    void readCustomNBT(CompoundNBT tag, int type);
 
-    default void updateTransfers(Direction... faces) {
+    void writePacket(PacketBuffer buffer, byte id);
+
+    void readPacket(PacketBuffer buffer, byte id);
+
+    default void updateTransfers(@Nonnull Direction... faces) {
 
     }
-
 }

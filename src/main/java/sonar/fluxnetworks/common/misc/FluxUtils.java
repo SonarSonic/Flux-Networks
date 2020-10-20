@@ -1,8 +1,6 @@
 package sonar.fluxnetworks.common.misc;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -27,10 +25,6 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class FluxUtils {
-
-    public static final String FLUX_DATA = "FluxData";
-    public static final String GUI_COLOR = "GuiColor";
-    public static final String CONFIGS_TAG = "Configs";
 
     public static <E extends Enum<?>> E incrementEnum(E enumObj, E[] values) {
         int ordinal = enumObj.ordinal() + 1;
@@ -141,13 +135,13 @@ public class FluxUtils {
         nbt.putInt("x", p.getX());
         nbt.putInt("y", p.getY());
         nbt.putInt("z", p.getZ());
-        nbt.putString("dimension", pos.getDimension().getLocation().toString());
+        nbt.putString("dim", pos.getDimension().getLocation().toString());
     }
 
     @Nonnull
     public static GlobalPos readGlobalPos(@Nonnull CompoundNBT nbt) {
         return GlobalPos.getPosition(RegistryKey.getOrCreateKey(Registry.WORLD_KEY,
-                new ResourceLocation(nbt.getString("dimension"))),
+                new ResourceLocation(nbt.getString("dim"))),
                 new BlockPos(nbt.getInt("x"), nbt.getInt("y"), nbt.getInt("z")));
     }
 
@@ -177,11 +171,14 @@ public class FluxUtils {
         return false;
     }
 
-    @Nonnull
-    public static ItemStack createItemStackFromBlock(@Nonnull World world, BlockPos pos) {
+    /*@Nonnull
+    public static ItemStack createItemStackFromBlock(@Nullable World world, BlockPos pos) {
+        if (world == null) {
+            return new ItemStack(null);
+        }
         BlockState state = world.getBlockState(pos);
         return new ItemStack(state.getBlock().asItem());
-    }
+    }*/
 
     /*public static boolean addConnection(@Nonnull IFluxDevice fluxDevice) {
         if (fluxDevice.getNetworkID() != -1) {

@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.fml.network.NetworkEvent;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.misc.FluxUtils;
@@ -46,7 +47,7 @@ public class CConnectionUpdateMessage implements IMessage {
             GlobalPos pos = FluxUtils.readGlobalPos(buffer);
             network.getConnectionByPos(pos).ifPresent(c -> {
                 CompoundNBT tag = new CompoundNBT();
-                c.writeCustomNBT(tag, 0);
+                c.writeCustomNBT(tag, FluxConstants.TYPE_CONNECTION_UPDATE);
                 tags.add(tag);
             });
         }

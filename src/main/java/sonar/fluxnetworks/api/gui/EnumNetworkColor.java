@@ -16,7 +16,7 @@ public enum EnumNetworkColor {
     PEACH(0xFFDAB9),
     FLAX(0xEEDC82);
 
-    private int color;
+    private final int color;
 
     EnumNetworkColor(int color) {
         this.color = color;

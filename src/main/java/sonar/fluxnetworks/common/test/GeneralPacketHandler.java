@@ -1,17 +1,5 @@
 package sonar.fluxnetworks.common.test;
 
-import com.google.common.collect.Lists;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.fml.network.PacketDistributor;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.network.SFeedbackMessage;
-import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-
 @Deprecated
 public class GeneralPacketHandler {
 

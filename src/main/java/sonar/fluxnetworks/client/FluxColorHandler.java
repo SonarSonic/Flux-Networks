@@ -123,7 +123,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                 if (t.getNetworkID() == -1) {
                     return NO_NETWORK_COLOR;
                 }*/
-                return FluxUtils.getBrighterColor(FluxClientCache.getNetwork(((TileFluxDevice) tile).getNetworkID()).getNetworkColor(), 1.2f);
+                return FluxUtils.getBrighterColor(((TileFluxDevice) tile).clientColor, 1.2f);
             }
             return DEFAULT_COLOR;
         }
@@ -135,7 +135,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
         // update every frame
         if (tintIndex == 1) {
             CompoundNBT tag = stack.getTag();
-            if (tag != null && tag.getBoolean(FluxUtils.GUI_COLOR)) {
+            if (tag != null && tag.getBoolean(FluxConstants.FLUX_COLOR)) {
                 /*if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {
                     return NavigationHome.network.isInvalid() ? NO_NETWORK_COLOR : NavigationHome.network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000;
                 }*/
@@ -145,7 +145,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                     return gui.network.getNetworkColor() | 0xff000000;
                 }
             }
-            tag = stack.getChildTag(FluxUtils.FLUX_DATA);
+            tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
             if (tag != null) {
                 return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor() | 0xff000000;
             }
@@ -163,7 +163,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                     return guiFluxCore.network.getNetworkColor();
                 }
             }
-            CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
+            CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
             if (tag != null) {
                 return FluxClientCache.getNetwork(tag.getInt(FluxConfigurationType.NETWORK.getNBTKey())).getNetworkColor() | 0xff000000;
             }

@@ -19,7 +19,6 @@ import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CConfiguratorSettingMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 
@@ -141,7 +140,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
                 tag.putBoolean(FluxConfigurationType.TRANSFER_SETTING.getNBTKey(), stackDisableLimit);
 
                 NetworkHandler.INSTANCE.sendToServer(new CConfiguratorSettingMessage(stackCustomName, tag));
-                stack.setTagInfo(FluxUtils.CONFIGS_TAG, tag);
+                stack.setTagInfo(FluxConstants.TAG_FLUX_CONFIG, tag);
                 updateSettingsFromTag();
                 apply.setUnclickable();
             }
@@ -149,7 +148,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     }
 
     public void updateSettingsFromTag() {
-        configTag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
+        configTag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
         if (configTag != null) {
             stackCustomName = stack.getDisplayName().getString();
             stackPriority = configTag.getInt(FluxConfigurationType.PRIORITY.getNBTKey());

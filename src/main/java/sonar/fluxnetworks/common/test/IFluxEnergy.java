@@ -1,10 +1,8 @@
-package sonar.fluxnetworks.api.device;
+package sonar.fluxnetworks.common.test;
 
-/**
- * Defines a device can transfer flux energy (an internal energy
- * type used in Flux Storages across flux networks)
- */
-//TODO request or buffer
+import sonar.fluxnetworks.api.device.IFluxDevice;
+
+@Deprecated
 public interface IFluxEnergy extends IFluxDevice {
 
     long addEnergy(long amount, boolean simulate);

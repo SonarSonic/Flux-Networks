@@ -16,7 +16,6 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
-import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -133,9 +132,9 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                 if (tile instanceof IFluxDevice) {
                     IFluxDevice flux = (IFluxDevice) tile;
                     ItemStack itemStack = flux.getDisplayStack();
-                    CompoundNBT tag = itemStack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
+                    CompoundNBT tag = itemStack.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
                     tag.putInt(FluxConstants.NETWORK_ID, flux.getNetworkID());
-                    tag.putString(ItemFluxDevice.CUSTOM_NAME, flux.getCustomName());
+                    tag.putString(FluxConstants.CUSTOM_NAME, flux.getCustomName());
                     iProbeInfo.horizontal().item(itemStack)
                             .vertical().itemLabel(itemStack)
                             .text(new StringTextComponent(TextStyleClass.MODNAME + FluxNetworks.NAME));

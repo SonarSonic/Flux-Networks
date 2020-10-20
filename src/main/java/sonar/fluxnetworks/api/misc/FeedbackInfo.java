@@ -1,8 +1,8 @@
-package sonar.fluxnetworks.api.gui;
+package sonar.fluxnetworks.api.misc;
 
 import sonar.fluxnetworks.api.text.FluxTranslate;
 
-public enum EnumFeedbackInfo {
+public enum FeedbackInfo {
     NONE(null),
     REJECT(FluxTranslate.REJECT),
     NO_OWNER(FluxTranslate.NO_OWNER),
@@ -20,7 +20,7 @@ public enum EnumFeedbackInfo {
 
     private final FluxTranslate localization;
 
-    EnumFeedbackInfo(FluxTranslate localization) {
+    FeedbackInfo(FluxTranslate localization) {
         this.localization = localization;
     }
 

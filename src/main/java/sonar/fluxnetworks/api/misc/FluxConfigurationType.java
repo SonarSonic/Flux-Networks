@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundNBT;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -9,11 +10,11 @@ import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import javax.annotation.Nonnull;
 
 public enum FluxConfigurationType {
-    NETWORK("network"),
-    PRIORITY("priority"),
-    PRIORITY_SETTING("p_setting"),
-    TRANSFER("transfer"),
-    TRANSFER_SETTING("t_setting");
+    NETWORK(FluxConstants.NETWORK_ID),
+    PRIORITY(FluxConstants.PRIORITY),
+    PRIORITY_SETTING(FluxConstants.SURGE_MODE),
+    TRANSFER(FluxConstants.LIMIT),
+    TRANSFER_SETTING(FluxConstants.DISABLE_LIMIT);
 
     private final String key;
 

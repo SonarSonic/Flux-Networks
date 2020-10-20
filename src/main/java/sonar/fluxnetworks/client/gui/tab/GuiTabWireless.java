@@ -4,7 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumChargingType;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -108,9 +108,9 @@ public class GuiTabWireless extends GuiTabCore {
     @Override
     public void tick() {
         super.tick();
-        if (apply != null && FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if (apply != null && FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
             apply.clickable = false;
-            FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
+            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
     }
 }

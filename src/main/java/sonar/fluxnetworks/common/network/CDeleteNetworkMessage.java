@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -42,9 +42,9 @@ public class CDeleteNetworkMessage implements IMessage {
         if (network.isValid()) {
             if (network.getPlayerAccess(player).canDelete()) {
                 FluxNetworkData.get().deleteNetwork(network);
-                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS), context);
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS), context);
             } else {
-                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.NO_OWNER), context);
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.NO_OWNER), context);
             }
         }
     }

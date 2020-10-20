@@ -43,6 +43,12 @@ public interface IFluxDevice extends INetworkConnector {
 
     void setTransferLimit(long limit);
 
+    /**
+     * If this device is storage, this method returns the max energy storage of it,
+     * or Long.MAX_VALUE otherwise
+     *
+     * @return max transfer limit
+     */
     long getMaxTransferLimit();
 
     boolean isActive();
@@ -96,9 +102,10 @@ public interface IFluxDevice extends INetworkConnector {
     void setSurgeMode(boolean surgeMode);
 
     /**
-     * Transfer handler is unavailable on client, this method used for GUI display on client
+     * Transfer handler is unavailable on client, this method is mainly used for gui display on client
+     * If this device is storage, this method returns the energy stored of it
      *
-     * @return internal buffer
+     * @return internal buffer or energy stored
      */
     default long getTransferBuffer() {
         return getTransferHandler().getBuffer();

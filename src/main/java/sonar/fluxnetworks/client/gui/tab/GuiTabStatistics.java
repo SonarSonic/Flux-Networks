@@ -35,7 +35,7 @@ public class GuiTabStatistics extends GuiTabCore {
 
     static {
         GUI_COLOR_TAG = new CompoundNBT();
-        GUI_COLOR_TAG.putBoolean(FluxUtils.GUI_COLOR, true);
+        GUI_COLOR_TAG.putBoolean(FluxConstants.FLUX_COLOR, true);
         plug = new ItemStack(RegistryBlocks.FLUX_PLUG);
         plug.setTag(GUI_COLOR_TAG);
         point = new ItemStack(RegistryBlocks.FLUX_POINT);

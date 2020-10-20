@@ -51,7 +51,7 @@ public class FluxConfig {
 
     public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
     public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
-    public static int defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
+    public static long defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
     public static List<String> blockBlacklistStrings, itemBlackListStrings;
     public static boolean enableGuiDebug;
@@ -91,7 +91,7 @@ public class FluxConfig {
     private static class CommonConfig {
 
         // energy
-        private final ForgeConfigSpec.IntValue defaultLimit, basicCapacity, basicTransfer, herculeanCapacity,
+        private final ForgeConfigSpec.LongValue defaultLimit, basicCapacity, basicTransfer, herculeanCapacity,
                 herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
 
         // networks
@@ -109,25 +109,25 @@ public class FluxConfig {
             defaultLimit = builder
                     .comment("The default transfer limit of a flux connector")
                     .translation(FluxNetworks.MODID + ".config." + "defaultLimit")
-                    .defineInRange("defaultLimit", 800000, 0, Integer.MAX_VALUE);
+                    .defineInRange("defaultLimit", 800000, 0, Long.MAX_VALUE);
             basicCapacity = builder
                     .translation(FluxNetworks.MODID + ".config." + "basicCapacity")
-                    .defineInRange("basicCapacity", 1000000, 0, Integer.MAX_VALUE);
+                    .defineInRange("basicCapacity", 1000000, 0, Long.MAX_VALUE);
             basicTransfer = builder
                     .translation(FluxNetworks.MODID + ".config." + "basicTransfer")
-                    .defineInRange("basicTransfer", 20000, 0, Integer.MAX_VALUE);
+                    .defineInRange("basicTransfer", 20000, 0, Long.MAX_VALUE);
             herculeanCapacity = builder
                     .translation(FluxNetworks.MODID + ".config." + "herculeanCapacity")
-                    .defineInRange("herculeanCapacity", 8000000, 0, Integer.MAX_VALUE);
+                    .defineInRange("herculeanCapacity", 8000000, 0, Long.MAX_VALUE);
             herculeanTransfer = builder
                     .translation(FluxNetworks.MODID + ".config." + "herculeanTransfer")
-                    .defineInRange("herculeanTransfer", 120000, 0, Integer.MAX_VALUE);
+                    .defineInRange("herculeanTransfer", 120000, 0, Long.MAX_VALUE);
             gargantuanCapacity = builder
                     .translation(FluxNetworks.MODID + ".config." + "gargantuanCapacity")
-                    .defineInRange("gargantuanCapacity", 128000000, 0, Integer.MAX_VALUE);
+                    .defineInRange("gargantuanCapacity", 128000000, 0, Long.MAX_VALUE);
             gargantuanTransfer = builder
                     .translation(FluxNetworks.MODID + ".config." + "gargantuanTransfer")
-                    .defineInRange("gargantuanTransfer", 1440000, 0, Integer.MAX_VALUE);
+                    .defineInRange("gargantuanTransfer", 1440000, 0, Long.MAX_VALUE);
 
             builder.pop();
 

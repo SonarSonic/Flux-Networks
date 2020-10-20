@@ -5,8 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
@@ -48,7 +47,7 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCon
     public void closePopUp(){
         popButtons.clear();
         popSwitches.clear();
-        FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
+        FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
     }
 
     @Override

@@ -6,9 +6,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -42,7 +42,7 @@ public class CConfiguratorSettingMessage implements IMessage {
         ItemStack stack = player.getHeldItemMainhand();
         if (stack.getItem() instanceof ItemFluxConfigurator) {
             if (tag != null && !tag.isEmpty()) {
-                stack.setTagInfo(FluxUtils.CONFIGS_TAG, tag);
+                stack.setTagInfo(FluxConstants.TAG_FLUX_CONFIG, tag);
             }
             stack.setDisplayName(new StringTextComponent(customName));
         }

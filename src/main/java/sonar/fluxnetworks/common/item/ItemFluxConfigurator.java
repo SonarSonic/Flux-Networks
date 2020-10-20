@@ -20,13 +20,13 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.text.StyleUtils;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -63,10 +63,10 @@ public class ItemFluxConfigurator extends Item {
                 for (FluxConfigurationType type : FluxConfigurationType.values()) {
                     type.copy(configs, flux);
                 }
-                stack.setTagInfo(FluxUtils.CONFIGS_TAG, configs);
+                stack.setTagInfo(FluxConstants.TAG_FLUX_CONFIG, configs);
                 player.sendMessage(new StringTextComponent("Copied Configuration"), UUID.randomUUID());
             } else {
-                CompoundNBT configs = stack.getChildTag(FluxUtils.CONFIGS_TAG);
+                CompoundNBT configs = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
                 if (configs != null) {
                     for (FluxConfigurationType type : FluxConfigurationType.values()) {
                         type.paste(configs, flux);
@@ -94,7 +94,7 @@ public class ItemFluxConfigurator extends Item {
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip,
                                @Nonnull ITooltipFlag flagIn) {
-        CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
+        CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
             tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE +
                     FluxClientCache.getDisplayName(tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()))));
@@ -109,7 +109,7 @@ public class ItemFluxConfigurator extends Item {
 
         public ContainerProvider(@Nonnull ItemStack stack) {
             this.stack = stack;
-            CompoundNBT tag = stack.getChildTag(FluxUtils.CONFIGS_TAG);
+            CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
             networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()) : -1;
         }
 

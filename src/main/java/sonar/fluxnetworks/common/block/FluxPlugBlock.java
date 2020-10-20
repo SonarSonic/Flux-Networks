@@ -28,7 +28,7 @@ public class FluxPlugBlock extends FluxConnectorBlock {
 
     @Nonnull
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader world, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
         VoxelShape shape = FluxShapes.FLUX_PLUG_CENTRE_VOXEL;
         for (Direction dir : Direction.values()) {
             if (state.get(SIDES_CONNECTED[dir.ordinal()])) {
@@ -39,7 +39,7 @@ public class FluxPlugBlock extends FluxConnectorBlock {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(FluxTranslate.FLUX_PLUG_TOOLTIP.getTextComponent());
     }
 

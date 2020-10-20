@@ -1,24 +1,24 @@
 {
     "itemGroup.fluxnetworks": "Flux Networks",
 
-    "block.fluxnetworks.fluxblock": "Flux Block",
-    "block.fluxnetworks.fluxcontroller": "Flux Controller",
-    "block.fluxnetworks.fluxpoint": "Flux Zugangspunkt",
-    "block.fluxnetworks.fluxplug": "Flux Stecker",
-    "block.fluxnetworks.basicfluxstorage": "Basis Flux Speicher",
-    "block.fluxnetworks.herculeanfluxstorage": "Herkulischer Flux Speicher",
-    "block.fluxnetworks.gargantuanfluxstorage": "Gigantischer Flux Speicher",
+    "block.fluxnetworks.flux_block": "Flux Block",
+    "block.fluxnetworks.flux_controller": "Flux Controller",
+    "block.fluxnetworks.flux_point": "Flux Zugangspunkt",
+    "block.fluxnetworks.flux_plug": "Flux Stecker",
+    "block.fluxnetworks.basic_flux_storage": "Basis Flux Speicher",
+    "block.fluxnetworks.herculean_flux_storage": "Herkulischer Flux Speicher",
+    "block.fluxnetworks.gargantuan_flux_storage": "Gigantischer Flux Speicher",
 
-    "item.fluxnetworks.flux": "Flux",
-    "item.fluxnetworks.fluxcore": "Flux Kern",
-    "item.fluxnetworks.fluxconfigurator": "Flux Konfigurator",
-    "item.fluxnetworks.adminconfigurator": "Admin Konfigurator",
+    "item.fluxnetworks.flux_dust": "Flux",
+    "item.fluxnetworks.flux_core": "Flux Kern",
+    "item.fluxnetworks.flux_configurator": "Flux Konfigurator",
+    "item.fluxnetworks.admin_configurator": "Admin Konfigurator",
 
-    "tooltip.fluxnetworks.flux": "Erhält man, in dem man Redstone mit Bedrock und Obsidian verdichtet",
-    "tooltip.fluxnetworks.fluxcontroller": "Verwaltet Netzwerk und Drahtlos-Laden",
-    "tooltip.fluxnetworks.fluxplug": "Um Energie in das Flux Netzwerk zu leiten",
-    "tooltip.fluxnetworks.fluxpoint": "Um Energie aus dem Flux Netzwerk zu leiten",
-    "tooltip.fluxnetworks.fluxstorage": "Speichert Energie im Flux Netzwerk",
+    "tooltip.fluxnetworks.flux_dust": "Erhält man, in dem man Redstone mit Bedrock und Obsidian verdichtet",
+    "tooltip.fluxnetworks.flux_controller": "Verwaltet Netzwerk und Drahtlos-Laden",
+    "tooltip.fluxnetworks.flux_plug": "Um Energie in das Flux Netzwerk zu leiten",
+    "tooltip.fluxnetworks.flux_point": "Um Energie aus dem Flux Netzwerk zu leiten",
+    "tooltip.fluxnetworks.flux_storage": "Speichert Energie im Flux Netzwerk",
 
     "info.fluxnetworks.tab.home": "Home",
     "info.fluxnetworks.tab.selection": "Netzwerkauswahl",
@@ -135,5 +135,5 @@
     "info.fluxnetworks.access.superadmin": "Super Admin",
 
     "info.fluxnetworks.jei.creatingfluxrecipe": "Creating Flux",
-    "info.fluxnetworks.jei.leftclickhelp": "Left click the %s",
+    "info.fluxnetworks.jei.leftclickhelp": "Left click the %s"
 }

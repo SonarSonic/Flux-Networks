@@ -8,7 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
@@ -203,7 +203,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         }
         timer++;
         timer %= 20;
-        if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
             closePopUp();
             batchConnections.clear();
             clear.clickable = false;
@@ -211,7 +211,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             disconnect.clickable = false;
             refreshPages(Lists.newArrayList(network.getAllConnections()));
         }
-        if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS_2) {
+        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
             closePopUp();
             elements.removeAll(batchConnections);
             batchConnections.clear();

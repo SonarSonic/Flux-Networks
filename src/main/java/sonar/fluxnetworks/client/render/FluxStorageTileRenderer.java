@@ -16,15 +16,15 @@ import javax.annotation.Nonnull;
 
 public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage> {
 
-    public static final float START_X  = 2.0f / 16.0f;
-    public static final float START_Y  = 2.0f / 16.0f;
-    public static final float OFFSET_Z = 1.0f / 16.0f;
-    public static final float WIDTH    = 12.0f / 16.0f;
-    public static final float HEIGHT   = 13.0f / 16.0f;
+    private static final float START_X  = 2.0f / 16.0f;
+    private static final float START_Y  = 2.0f / 16.0f;
+    private static final float OFFSET_Z = 1.0f / 16.0f;
+    private static final float WIDTH    = 12.0f / 16.0f;
+    private static final float HEIGHT   = 13.0f / 16.0f;
 
-    public static final float ALPHA = 150.0f / 255.0f;
+    private static final float ALPHA = 150.0f / 255.0f;
 
-    public static final int LIGHT_MAP = 0x00f0_00f0; // (240, 240)
+    private static final int LIGHT_MAP = 0x00f000f0; // (240, 240)
 
     public FluxStorageTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
         super(rendererDispatcherIn);
@@ -33,7 +33,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
     @Override
     public void render(@Nonnull TileFluxStorage tile, float partialTicks, @Nonnull MatrixStack matrixStackIn,
                        @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        render(matrixStackIn, bufferIn, combinedOverlayIn, tile.getEnergyStored(), tile.getMaxEnergyStorage(), tile.clientColor);
+        render(matrixStackIn, bufferIn, combinedOverlayIn, tile.getTransferBuffer(), tile.getMaxTransferLimit(), tile.clientColor);
     }
 
     static void render(MatrixStack matrix, IRenderTypeBuffer bufferIn, int overlay, long energyStored, long energyCapacity, int networkRGB) {
@@ -78,5 +78,4 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
                 .tex(minU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.LIGHT_MAP).normal(normal, 0, 0, 0).endVertex();
         matrix.pop();
     }
-
 }

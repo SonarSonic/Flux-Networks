@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.ITransferHandler;
@@ -19,105 +20,96 @@ import java.util.UUID;
  * because these devices may not exist on client world so there's no TileFluxDevice instance on client,
  * they just are loaded on server world for other players), or records unloaded flux devices on server.
  * Logical operations are not allowed here.
+ *
+ * @see sonar.fluxnetworks.common.tileentity.TileFluxDevice
  */
 public class PhantomFluxDevice implements IFluxDevice {
 
-    public int networkID;
-    public int priority;
-    public UUID playerUUID;
-    public FluxDeviceType connectionType;
-    public long limit;
-    public GlobalPos globalPos;
-    public String customName;
-    public boolean surgeMode;
-    public boolean disableLimit;
-    public boolean chunkLoaded;
-    public boolean forcedLoading;
-    public long buffer;
-    public long change;
-    public ItemStack stack;
+    private int networkID;
+    private String customName;
+    private int priority;
+    private long limit;
+    private UUID playerUUID;
+    private FluxDeviceType deviceType;
+    private GlobalPos globalPos;
+    private boolean surgeMode;
+    private boolean disableLimit;
+    private boolean chunkLoaded;
+    private boolean forcedLoading;
+    private long buffer;
+    private long change;
+    private ItemStack stack;
 
+    public PhantomFluxDevice() {
+    }
+
+    /**
+     * Copy data from TileFluxDevice on server
+     *
+     * @param device loaded device
+     */
     public PhantomFluxDevice(@Nonnull IFluxDevice device) {
         if (device instanceof PhantomFluxDevice) {
             throw new IllegalArgumentException();
         }
         this.networkID = device.getNetworkID();
-        this.priority = device.getRawPriority();
-        this.playerUUID = device.getConnectionOwner();
-        this.connectionType = device.getDeviceType();
-        this.limit = device.getRawLimit();
-        this.globalPos = device.getGlobalPos();
         this.customName = device.getCustomName();
+        this.priority = device.getRawPriority();
+        this.limit = device.getRawLimit();
+        this.playerUUID = device.getConnectionOwner();
+        this.deviceType = device.getDeviceType();
+        this.globalPos = device.getGlobalPos();
         this.surgeMode = device.getSurgeMode();
         this.disableLimit = device.getDisableLimit();
-        this.chunkLoaded = device.isChunkLoaded();
-        this.buffer = device.getTransferHandler().getBuffer();
-        this.change = device.getTransferHandler().getChange();
-        this.forcedLoading = device.isForcedLoading();
+        this.buffer = device.getTransferBuffer();
         this.stack = device.getDisplayStack();
     }
 
+    // client update only
     public PhantomFluxDevice(@Nonnull GlobalPos globalPos, CompoundNBT tag) {
         this.globalPos = globalPos;
-        readExcludePos(tag);
+        readCustomNBT(tag, FluxConstants.TYPE_CONNECTION_UPDATE);
     }
-
-    /*public static CompoundNBT writeCustomNBT(IFluxDevice tile, CompoundNBT tag) {
-        FluxUtils.writeGlobalPos(tag, tile.getGlobalPos());
-        tag.putInt("type", tile.getDeviceType().ordinal());
-        tag.putInt("n_id", tile.getNetworkID());
-        tag.putInt("priority", tile.getRawPriority());
-        //tag.putInt("folder_id", tile.getFolderID());
-        tag.putLong("limit", tile.getRawLimit());
-        tag.putString("name", tile.getCustomName());
-        tag.putBoolean("dLimit", tile.getDisableLimit());
-        tag.putBoolean("surge", tile.getSurgeMode());
-        tag.putBoolean("isChunkLoaded", tile.isChunkLoaded());
-        tag.putLong("buffer", tile.getBuffer());
-        tag.putLong("change", tile.getChange());
-        tag.putBoolean("forcedChunk", tile.isForcedLoading());
-        tile.getDisplayStack().write(tag);
-        return tag;
-    }*/
 
     @Override
     public void writeCustomNBT(CompoundNBT tag, int type) {
-        FluxUtils.writeGlobalPos(tag, globalPos);
-        tag.putInt("type", connectionType.ordinal());
-        tag.putInt("n_id", networkID);
-        tag.putInt("priority", priority);
-        //tag.putInt("folder_id", folderID);
-        tag.putLong("limit", limit);
-        tag.putString("name", customName);
-        tag.putBoolean("dLimit", disableLimit);
-        tag.putBoolean("surge", surgeMode);
-        tag.putBoolean("chunkLoaded", chunkLoaded);
-        tag.putLong("buffer", buffer);
-        tag.putLong("change", change);
-        tag.putBoolean("forcedChunk", forcedLoading);
-        stack.write(tag);
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+            FluxUtils.writeGlobalPos(tag, globalPos);
+            tag.putInt(FluxConstants.NETWORK_ID, networkID);
+            tag.putByte(FluxConstants.DEVICE_TYPE, (byte) deviceType.ordinal());
+            tag.putString(FluxConstants.CUSTOM_NAME, customName);
+            tag.putInt(FluxConstants.PRIORITY, priority);
+            tag.putLong(FluxConstants.LIMIT, limit);
+            tag.putUniqueId(FluxConstants.PLAYER_UUID, playerUUID);
+            tag.putBoolean(FluxConstants.SURGE_MODE, surgeMode);
+            tag.putBoolean(FluxConstants.DISABLE_LIMIT, disableLimit);
+            tag.putLong(FluxConstants.BUFFER, buffer);
+            stack.write(tag);
+        }
     }
 
     @Override
     public void readCustomNBT(CompoundNBT tag, int type) {
-        globalPos = FluxUtils.readGlobalPos(tag);
-        readExcludePos(tag);
-    }
-
-    private void readExcludePos(@Nonnull CompoundNBT tag) {
-        connectionType = FluxDeviceType.values()[tag.getInt("type")];
-        networkID = tag.getInt("n_id");
-        priority = tag.getInt("priority");
-        //folderID = tag.getInt("folder_id");
-        limit = tag.getLong("limit");
-        customName = tag.getString("name");
-        disableLimit = tag.getBoolean("dLimit");
-        surgeMode = tag.getBoolean("surge");
-        chunkLoaded = tag.getBoolean("chunkLoaded");
-        buffer = tag.getLong("buffer");
-        change = tag.getLong("change");
-        forcedLoading = tag.getBoolean("forcedChunk");
-        stack = ItemStack.read(tag);
+        if (type == FluxConstants.TYPE_SAVE_ALL) {
+            globalPos = FluxUtils.readGlobalPos(tag);
+        }
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+            networkID = tag.getInt(FluxConstants.NETWORK_ID);
+            deviceType = FluxDeviceType.values()[tag.getByte(FluxConstants.DEVICE_TYPE)];
+            customName = tag.getString(FluxConstants.CUSTOM_NAME);
+            priority = tag.getInt(FluxConstants.PRIORITY);
+            limit = tag.getLong(FluxConstants.LIMIT);
+            playerUUID = tag.getUniqueId(FluxConstants.PLAYER_UUID);
+            surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
+            disableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
+            buffer = tag.getLong(FluxConstants.BUFFER);
+            stack = ItemStack.read(tag);
+        }
+        if (type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+            forcedLoading = tag.getBoolean(FluxConstants.FORCED_LOADING);
+            chunkLoaded = tag.getBoolean(FluxConstants.CHUNK_LOADED);
+            change = tag.getLong(FluxConstants.CHANGE);
+        }
     }
 
     @Override
@@ -127,7 +119,7 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public int getLogicPriority() {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
@@ -137,22 +129,22 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void setPriority(int priority) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public IFluxNetwork getNetwork() {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public void onContainerOpened(PlayerEntity player) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public void onContainerClosed(PlayerEntity player) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
@@ -162,17 +154,17 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void setConnectionOwner(UUID uuid) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public FluxDeviceType getDeviceType() {
-        return connectionType;
+        return deviceType;
     }
 
     @Override
     public boolean canPlayerAccess(PlayerEntity player) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
@@ -187,34 +179,34 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void setForcedLoading(boolean forcedLoading) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public void onConnect(IFluxNetwork network) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public void onDisconnect() {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Nonnull
     @Override
     public ITransferHandler getTransferHandler() {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Nonnull
     @Override
     public World getFluxWorld() {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public long getLogicLimit() {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
@@ -224,12 +216,12 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void setTransferLimit(long limit) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public long getMaxTransferLimit() {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
@@ -237,21 +229,11 @@ public class PhantomFluxDevice implements IFluxDevice {
         return false;
     }
 
-    /*@Override
-    public Coord4D getCoords() {
-        return coord4D;
-    }*/
-
     @Nonnull
     @Override
     public GlobalPos getGlobalPos() {
         return globalPos;
     }
-
-    /*@Override
-    public int getFolderID() {
-        return folderID;
-    }*/
 
     @Override
     public String getCustomName() {
@@ -260,7 +242,7 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void setCustomName(String customName) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
@@ -270,7 +252,7 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void setDisableLimit(boolean disableLimit) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
@@ -280,7 +262,7 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void setSurgeMode(boolean surgeMode) {
-        throw new IllegalStateException("Client or unloaded device");
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override

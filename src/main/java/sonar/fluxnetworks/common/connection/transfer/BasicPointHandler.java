@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.connection.handler;
+package sonar.fluxnetworks.common.connection.transfer;
 
 import sonar.fluxnetworks.api.device.IFluxPoint;
 

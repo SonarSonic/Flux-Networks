@@ -12,38 +12,38 @@
               "source": "block_entity",
               "ops": [
                 {
-                  "source": "0",
-                  "target": "FluxData.priority",
-                  "op": "replace"
-                },
-                {
                   "source": "1",
-                  "target": "FluxData.limit",
+                  "target": "FluxData.1",
                   "op": "replace"
                 },
                 {
                   "source": "2",
-                  "target": "FluxData.disableLimit",
+                  "target": "FluxData.2",
                   "op": "replace"
                 },
                 {
                   "source": "3",
-                  "target": "FluxData.surgeMode",
+                  "target": "FluxData.3",
                   "op": "replace"
                 },
                 {
                   "source": "4",
-                  "target": "FluxData.networkID",
+                  "target": "FluxData.4",
                   "op": "replace"
                 },
                 {
-                  "source": "6",
-                  "target": "FluxData.customName",
+                  "source": "21",
+                  "target": "FluxData.21",
                   "op": "replace"
                 },
                 {
-                  "source": "b",
-                  "target": "FluxData.buffer",
+                  "source": "22",
+                  "target": "FluxData.22",
+                  "op": "replace"
+                },
+                {
+                  "source": "71",
+                  "target": "FluxData.71",
                   "op": "replace"
                 }
               ]

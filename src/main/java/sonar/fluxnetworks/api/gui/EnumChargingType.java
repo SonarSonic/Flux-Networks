@@ -14,7 +14,7 @@ public enum EnumChargingType {
     BAUBLES(FluxTranslate.BAUBLES),
     INVENTORY(FluxTranslate.INVENTORY);
 
-    private FluxTranslate typeName;
+    private final FluxTranslate typeName;
 
     EnumChargingType(FluxTranslate typeName) {
         this.typeName = typeName;

@@ -9,11 +9,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 
 public enum FluxTranslate {
-    FLUX_TOOLTIP(false, "tooltip.fluxnetworks.flux"),
-    FLUX_CONTROLLER_TOOLTIP(false, "tooltip.fluxnetworks.fluxcontroller"),
-    FLUX_PLUG_TOOLTIP(false, "tooltip.fluxnetworks.fluxplug"),
-    FLUX_POINT_TOOLTIP(false, "tooltip.fluxnetworks.fluxpoint"),
-    FLUX_STORAGE_TOOLTIP(false, "tooltip.fluxnetworks.fluxstorage"),
+    FLUX_DUST_TOOLTIP(false, "tooltip.fluxnetworks.flux_dust"),
+    FLUX_CONTROLLER_TOOLTIP(false, "tooltip.fluxnetworks.flux_controller"),
+    FLUX_PLUG_TOOLTIP(false, "tooltip.fluxnetworks.flux_plug"),
+    FLUX_POINT_TOOLTIP(false, "tooltip.fluxnetworks.flux_point"),
+    FLUX_STORAGE_TOOLTIP(false, "tooltip.fluxnetworks.flux_storage"),
 
     TAB_HOME(true, "tab.home"),
     TAB_SELECTION(true, "tab.selection"),
@@ -154,11 +154,6 @@ public enum FluxTranslate {
     @Nonnull
     public TranslationTextComponent getTextComponent() {
         return new TranslationTextComponent(key);
-    }
-
-    @Nonnull
-    public TranslationTextComponent getTextComponent(Object... args) {
-        return new TranslationTextComponent(key, args);
     }
 
     @Nonnull

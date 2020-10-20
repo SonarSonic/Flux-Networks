@@ -22,7 +22,7 @@ public class ItemFluxDust extends Item {
     public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip,
                                @Nonnull ITooltipFlag flagIn) {
         if (FluxConfig.enableFluxRecipe) {
-            tooltip.add(FluxTranslate.FLUX_TOOLTIP.getTextComponent());
+            tooltip.add(FluxTranslate.FLUX_DUST_TOOLTIP.getTextComponent());
         }
     }
 }

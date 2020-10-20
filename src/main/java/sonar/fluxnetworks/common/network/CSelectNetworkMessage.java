@@ -6,7 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -56,13 +56,13 @@ public class CSelectNetworkMessage implements IMessage {
             return;
 
         if (flux.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
-            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.HAS_CONTROLLER), context);
+            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.HAS_CONTROLLER), context);
         } else {
             if (checkAccessFailed(buffer, context, player, network))
                 return;
             flux.setConnectionOwner(PlayerEntity.getUUID(player.getGameProfile()));
             network.enqueueConnectionAddition(flux);
-            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.SUCCESS), context);
+            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS), context);
         }
     }
 
@@ -70,11 +70,11 @@ public class CSelectNetworkMessage implements IMessage {
         if (!network.getPlayerAccess(player).canUse()) {
             String password = buffer.readString(256);
             if (password.isEmpty()) {
-                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.PASSWORD_REQUIRE), context);
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.PASSWORD_REQUIRE), context);
                 return true;
             }
             if (!password.equals(network.getSecurity().getPassword())) {
-                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(EnumFeedbackInfo.REJECT), context);
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.REJECT), context);
                 return true;
             }
         }

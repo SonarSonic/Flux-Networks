@@ -10,8 +10,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -30,7 +30,7 @@ public class NBTWipeRecipe extends ShapelessRecipe {
 
     @Nonnull
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inventory) {
+    public ItemStack getCraftingResult(@Nonnull CraftingInventory inventory) {
         ItemStack originalStack = null;
 
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
@@ -43,14 +43,14 @@ public class NBTWipeRecipe extends ShapelessRecipe {
         if (originalStack != null) {
             ItemStack output = getRecipeOutput().copy();
             if (Block.getBlockFromItem(output.getItem()) instanceof FluxStorageBlock) {
-                CompoundNBT fluxData = originalStack.getChildTag(FluxUtils.FLUX_DATA);
-                int energy = 0;
+                CompoundNBT fluxData = originalStack.getChildTag(FluxConstants.TAG_FLUX_DATA);
+                long energy = 0;
                 if (fluxData != null) {
-                    energy = fluxData.getInt("energy");
+                    energy = fluxData.getLong(FluxConstants.ENERGY);
                 }
                 if (energy != 0) {
-                    CompoundNBT newTag = output.getOrCreateChildTag(FluxUtils.FLUX_DATA);
-                    newTag.putInt("energy", energy);
+                    CompoundNBT newTag = output.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
+                    newTag.putLong(FluxConstants.ENERGY, energy);
                 }
             }
             return output;
@@ -58,7 +58,7 @@ public class NBTWipeRecipe extends ShapelessRecipe {
         return super.getCraftingResult(inventory);
     }
 
-    public boolean matches(CraftingInventory inv, World worldIn) {
+    public boolean matches(@Nonnull CraftingInventory inv, @Nonnull World worldIn) {
         return super.matches(inv, worldIn);
     }
 

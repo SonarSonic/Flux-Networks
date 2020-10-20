@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -99,7 +99,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         GlStateManager.enableBlend();
         GlStateManager.enableAlphaTest();
 
-        int color = element.getPlayerAccess().color;
+        int color = element.getPlayerAccess().getColor();
 
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
@@ -158,7 +158,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }
         if (timer % 2 == 0) {
             refreshPages(network.getMemberList());
-            if (FluxClientCache.getFeedback(true) == EnumFeedbackInfo.SUCCESS) {
+            if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
                 if (hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
                     if (n.isPresent()) {
@@ -168,7 +168,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                         closePopUp();
                     }
                 }
-                FluxClientCache.setFeedback(EnumFeedbackInfo.NONE, true);
+                FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
             }
         }
         timer++;
