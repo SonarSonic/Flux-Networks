@@ -67,7 +67,7 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
     }
 
     @Override
-    public long receiveFromAdjacency(long amount, @Nonnull Direction side, boolean simulate) {
+    public long receiveFromSupplier(long amount, @Nonnull Direction side, boolean simulate) {
         return 0;
     }
 
@@ -139,18 +139,12 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
             buffer.writeLong(change);
             buffer.writeLong(this.buffer);
         }
-        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
-            buffer.writeLong(this.buffer);
-        }
     }
 
     @Override
     public void readPacket(@Nonnull PacketBuffer buffer, byte id) {
         if (id == FluxTileMessage.S2C_GUI_SYNC) {
             change = buffer.readLong();
-            this.buffer = buffer.readLong();
-        }
-        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
             this.buffer = buffer.readLong();
         }
     }

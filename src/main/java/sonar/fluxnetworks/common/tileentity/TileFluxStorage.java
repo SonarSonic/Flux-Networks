@@ -24,7 +24,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
 
     private final long maxEnergyStorage;
 
-    public boolean serverEnergyChanged = false;
+    private boolean serverEnergyChanged;
 
     private final ItemStack stack;
 
@@ -68,6 +68,10 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
                 serverEnergyChanged = false;
             }
         }
+    }
+
+    public void markServerEnergyChanged() {
+        serverEnergyChanged = true;
     }
 
     @Override
@@ -123,19 +127,6 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         return writeStorageToDisplayStack(stack);
     }
 
-    /* TODO IBigPower - One Probe
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public long getStoredPower(){
-        return this.energyStored;
-    }
-
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public long getCapacity(){
-        return this.maxEnergyStorage;
-    }
-    */
     /* TODO OPEN COMPUTERS INTEGRATION
     @Override
     public String getPeripheralName() {

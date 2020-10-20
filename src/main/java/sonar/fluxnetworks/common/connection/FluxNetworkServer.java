@@ -24,7 +24,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     private final Queue<IFluxDevice> toAdd = new LinkedList<>();
     private final Queue<IFluxDevice> toRemove = new LinkedList<>();
 
-    public boolean sortConnections = true;
+    private boolean sortConnections = true;
 
     // storage can work as both plug and point logically
     private final List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
@@ -146,17 +146,19 @@ public class FluxNetworkServer extends BasicFluxNetwork {
                                 continue CYCLE;
                             }
                         } else {
-                            // If we can only transfer 3RF, it returns 0 (3RF < 1EU), but this plug still need transfer (3RF > 0), and can't afford current point,
+                            /*// If we can only transfer 3RF, it returns 0 (3RF < 1EU), but this plug still need transfer (3RF > 0), and can't afford current point,
                             // So manually increment plug to prevent dead loop. (hasNext detect if it need transfer)
                             if (plug.getTransferHandler().getBuffer() < 4) {
                                 plugTransferIterator.incrementFlux();
                             } else {
                                 pointTransferIterator.incrementFlux();
                                 continue CYCLE;
-                            }
+                            }*/
+                            pointTransferIterator.incrementFlux();
+                            continue CYCLE;
                         }
                     }
-                    break; //all plugs have been used
+                    break; // all plugs have been used
                 }
             }
         }
@@ -168,6 +170,11 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     @Override
     public long getBufferLimiter() {
         return bufferLimiter;
+    }
+
+    @Override
+    public void markSortConnections() {
+        sortConnections = true;
     }
 
     @Nonnull
@@ -270,10 +277,5 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     @Override
     public Optional<NetworkMember> getMemberByUUID(UUID playerUUID) {
         return memberList.stream().filter(f -> f.getPlayerUUID().equals(playerUUID)).findFirst();
-    }
-
-    @Deprecated
-    public void markLiteSettingChanged(IFluxDevice flux) {
-
     }
 }

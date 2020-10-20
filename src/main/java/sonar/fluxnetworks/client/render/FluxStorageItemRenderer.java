@@ -16,6 +16,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 
@@ -31,6 +32,9 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
         CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
         if (tag != null) {
             color = tag.getInt(FluxConstants.CLIENT_COLOR);
+            if (color == 0) {
+                color = FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
+            }
             energy = tag.getLong(FluxConstants.ENERGY);
         } else {
             color = FluxConstants.INVALID_NETWORK_COLOR;

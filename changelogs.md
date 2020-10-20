@@ -3,6 +3,7 @@
 * Fix some packets without security check
 * Fix chunk loading system
 * Fix blacklist system
+* Fix minor bugs
 * Enhance flux storage capacity limit to Long.MAX_VALUE
 * Optimize data synchronization and cache
 * More code standardizing and optimization

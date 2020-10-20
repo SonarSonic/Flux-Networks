@@ -10,7 +10,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 
 public class FluxShapes {
 
-    //// flux connectors
+    // flux connectors
 
     public static final VoxelShape FLUX_POINT_CENTRE_VOXEL = VoxelShapes.create(getBBFromPixels(5.5, 5.5, 5.5, 10.5, 10.5, 10.5));
     public static final VoxelShape FLUX_PLUG_CENTRE_VOXEL = VoxelShapes.create(getBBFromPixels(4, 4, 4, 12, 12, 12));
@@ -30,7 +30,7 @@ public class FluxShapes {
             VoxelShapes.combine(CONNECTOR_CABLE_BB_SHAPE_ROTATED_VOXELS[5], CONNECTOR_PLATE_BB_SHAPE_ROTATED_VOXELS[5], IBooleanFunction.OR)
     };
 
-    /// flux controller
+    // flux controller
 
     public static VoxelShape FLUX_CONTROLLER_VOXEL = combineAll(
             VoxelShapes.create(getBBFromPixels(0, 1, 0, 16, 15, 16)), // bottom
@@ -39,7 +39,6 @@ public class FluxShapes {
             VoxelShapes.create(getBBFromPixels(13, 0, 1, 15, 16, 3)), // strut 3
             VoxelShapes.create(getBBFromPixels(13, 0, 13, 15, 16, 15)) // strut 4
     );
-
 
     public static final double PIXEL = 0.0625;
 
@@ -106,6 +105,4 @@ public class FluxShapes {
         }
         return shape;
     }
-
-
 }

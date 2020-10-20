@@ -25,7 +25,7 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
     public long receiveEnergyL(long maxReceive, boolean simulate) {
         ITransferHandler handler = device.getTransferHandler();
         if (device.isActive()) {
-            return handler.receiveFromAdjacency(maxReceive, side, simulate);
+            return handler.receiveFromSupplier(maxReceive, side, simulate);
         }
         return 0;
     }
@@ -37,12 +37,12 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public long getEnergyStoredL() {
-        return device.getDeviceType().isPoint() ? Long.MAX_VALUE : 0;
+        return device.getTransferBuffer();
     }
 
     @Override
     public long getMaxEnergyStoredL() {
-        return Long.MAX_VALUE;
+        return device.getMaxTransferLimit();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
     public int receiveEnergy(int maxReceive, boolean simulate) {
         ITransferHandler handler = device.getTransferHandler();
         if (device.isActive()) {
-            return (int) handler.receiveFromAdjacency(maxReceive, side, simulate);
+            return (int) handler.receiveFromSupplier(maxReceive, side, simulate);
         }
         return 0;
     }
@@ -73,12 +73,12 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public int getEnergyStored() {
-        return device.getDeviceType().isPoint() ? Integer.MAX_VALUE : 0;
+        return (int) Math.min(device.getTransferBuffer(), Integer.MAX_VALUE);
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return Integer.MAX_VALUE;
+        return (int) Math.min(device.getMaxTransferLimit(), Integer.MAX_VALUE);
     }
 
     @Override

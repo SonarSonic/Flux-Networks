@@ -48,18 +48,4 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
             world.notifyBlockUpdate(pos, getBlockState(), state, -1);
         }
     }
-
-    /* TODO - FIX ONE PROBE "IBIGPOWER"
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public long getStoredPower(){
-        return getBuffer();
-    }
-
-    @Override
-    @Optional.Method(modid = "theoneprobe")
-    public long getCapacity(){
-        return getBuffer();
-    }
-    */
 }

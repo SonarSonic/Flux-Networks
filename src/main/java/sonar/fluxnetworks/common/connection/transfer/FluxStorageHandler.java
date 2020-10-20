@@ -1,8 +1,12 @@
 package sonar.fluxnetworks.common.connection.transfer;
 
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
+
+import javax.annotation.Nonnull;
 
 public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
 
@@ -18,7 +22,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
                 buffer += add;
                 addedToBuffer += add;
                 change += add;
-                device.serverEnergyChanged = true;
+                device.markServerEnergyChanged();
             }
             return add;
         }
@@ -33,7 +37,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
                 buffer += remove;
                 removedFromBuffer += remove;
                 change -= remove;
-                device.serverEnergyChanged = true;
+                device.markServerEnergyChanged();
             }
             return remove;
         }
@@ -41,29 +45,45 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
     }
 
     @Override
+    public long getRequest() {
+        return Math.min(getAddLimit(), device.getMaxTransferLimit() - buffer);
+    }
+
+    @Override
     public void writeCustomNBT(CompoundNBT tag, int type) {
+        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+            super.writeCustomNBT(tag, type); // read by PhantomFluxDevice
+        }
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
             tag.putLong(FluxConstants.ENERGY, buffer);
-        }
-        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
-            tag.putLong(FluxConstants.ENERGY, buffer);
-            tag.putLong(FluxConstants.CHANGE, change);
         }
     }
 
     @Override
     public void readCustomNBT(CompoundNBT tag, int type) {
+        if (type == FluxConstants.TYPE_TILE_UPDATE) {
+            super.readCustomNBT(tag, type);
+        }
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
             buffer = tag.getLong(FluxConstants.ENERGY);
-        }
-        if (type == FluxConstants.TYPE_TILE_UPDATE) {
-            buffer = tag.getLong(FluxConstants.ENERGY);
-            change = tag.getLong(FluxConstants.CHANGE);
         }
     }
 
     @Override
-    public long getRequest() {
-        return Math.min(getAddLimit(), device.getMaxTransferLimit() - buffer);
+    public void writePacket(@Nonnull PacketBuffer buffer, byte id) {
+        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
+            buffer.writeLong(this.buffer);
+        } else {
+            super.writePacket(buffer, id);
+        }
+    }
+
+    @Override
+    public void readPacket(@Nonnull PacketBuffer buffer, byte id) {
+        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
+            this.buffer = buffer.readLong();
+        } else {
+            super.readPacket(buffer, id);
+        }
     }
 }

@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -13,6 +14,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -81,6 +83,22 @@ public abstract class FluxDeviceBlock extends Block {
                 flux.setConnectionOwner(PlayerEntity.getUUID(((PlayerEntity) placer).getGameProfile()));
             }
         }
+    }
+
+    @Override
+    public boolean removedByPlayer(BlockState state, @Nonnull World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
+        if (!world.isRemote) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof TileFluxDevice) {
+                TileFluxDevice flux = (TileFluxDevice) tile;
+                if (!flux.canPlayerAccess(player)) {
+                    return false;
+                }
+            }
+        }
+        onBlockHarvested(world, pos, state, player);
+        return world.setBlockState(pos, fluid.getBlockState(), world.isRemote ?
+                Constants.BlockFlags.DEFAULT_AND_RERENDER : Constants.BlockFlags.DEFAULT);
     }
 
     /*@Override

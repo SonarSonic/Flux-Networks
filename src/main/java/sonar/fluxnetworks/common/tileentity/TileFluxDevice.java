@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.common.tileentity;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import mcjty.lib.api.power.IBigPower;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -28,7 +29,6 @@ import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.FluxTileMessage;
@@ -43,7 +43,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
-public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, ITickableTileEntity, INamedContainerProvider {
+public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, ITickableTileEntity,
+        INamedContainerProvider, IBigPower {
 
     public final Set<PlayerEntity> playerUsing = new ObjectArraySet<>();
 
@@ -54,7 +55,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     private int networkID;
 
     // 0xRRGGBB, this value only available on client for rendering, updated from server
-    public int clientColor;
+    public int clientColor = FluxConstants.INVALID_NETWORK_COLOR;
 
     protected int priority;
     protected long limit;
@@ -68,7 +69,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     private boolean sLoad = false;
 
     // packet flag
-    private boolean sSettingsChanged;
+    private boolean serverSettingsChanged;
 
     public TileFluxDevice(TileEntityType<?> tileEntityTypeIn, String customName, long limit) {
         super(tileEntityTypeIn);
@@ -93,7 +94,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         super.onChunkUnloaded();
         if (!world.isRemote && sLoad) {
             network.enqueueConnectionRemoval(this, true);
-
             sLoad = false;
         }
     }
@@ -109,7 +109,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     protected void sTick() {
         if (!playerUsing.isEmpty()) {
             NetworkHandler.INSTANCE.sendToPlayers(new FluxTileMessage(this, FluxTileMessage.S2C_GUI_SYNC), playerUsing);
-            sSettingsChanged = false;
+            serverSettingsChanged = false;
         }
         if (!sLoad) {
             if (networkID > 0) {
@@ -334,8 +334,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 buffer.writeBoolean(isForcedLoading());
                 break;
             case FluxTileMessage.S2C_GUI_SYNC:
-                buffer.writeBoolean(sSettingsChanged);
-                if (sSettingsChanged) {
+                buffer.writeBoolean(serverSettingsChanged);
+                if (serverSettingsChanged) {
                     buffer.writeString(customName, 256);
                     buffer.writeInt(priority);
                     buffer.writeLong(limit);
@@ -350,23 +350,20 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         switch (id) {
             case FluxTileMessage.C2S_CUSTOM_NAME:
                 customName = buffer.readString(256);
-                markLiteSettingChanged();
                 break;
             case FluxTileMessage.C2S_PRIORITY:
                 priority = buffer.readInt();
-                sortNetworkConnections();
+                network.markSortConnections();
                 break;
             case FluxTileMessage.C2S_LIMIT:
                 limit = Math.min(buffer.readLong(), getMaxTransferLimit());
-                markLiteSettingChanged();
                 break;
             case FluxTileMessage.C2S_SURGE_MODE:
                 setSurgeMode(buffer.readBoolean());
-                sortNetworkConnections();
+                network.markSortConnections();
                 break;
             case FluxTileMessage.C2S_DISABLE_LIMIT:
                 setDisableLimit(buffer.readBoolean());
-                markLiteSettingChanged();
                 break;
             case FluxTileMessage.C2S_CHUNK_LOADING:
                 boolean toLoad = buffer.readBoolean();
@@ -382,7 +379,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     setForcedLoading(false);
                     NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.BANNED_LOADING), context);
                 }
-                sSettingsChanged = true;
                 break;
             case FluxTileMessage.S2C_GUI_SYNC:
                 if (buffer.readBoolean()) {
@@ -393,21 +389,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 }
                 break;
         }
-    }
-
-    protected void sortNetworkConnections() {
-        if (network instanceof FluxNetworkServer) {
-            FluxNetworkServer fluxNetworkServer = (FluxNetworkServer) network;
-            fluxNetworkServer.sortConnections = true;
-            markLiteSettingChanged();
-        }
-    }
-
-    protected void markLiteSettingChanged() {
-        if (network instanceof FluxNetworkServer) {
-            FluxNetworkServer fluxNetworkServer = (FluxNetworkServer) network;
-            fluxNetworkServer.markLiteSettingChanged(this);
-            sSettingsChanged = true;
+        if (id > 0) { // C2S
+            serverSettingsChanged = true;
         }
     }
 
@@ -567,6 +550,16 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         } else {
             flags &= ~(1 << 6);
         }
+    }
+
+    @Override
+    public long getStoredPower() {
+        return getTransferBuffer();
+    }
+
+    @Override
+    public long getCapacity() {
+        return getMaxTransferLimit();
     }
 
     /* TODO - FIX OPEN COMPUTERS INTEGRATION

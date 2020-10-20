@@ -76,6 +76,8 @@ public class FluxChunkManager {
             world.getChunkProvider().registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
             FluxNetworks.LOGGER.debug("Added Chunk Loader in {}, Chunk: {} by {}",
                     dim.getLocation(), chunkPos, blockPos);
+        } else {
+            FluxNetworks.LOGGER.warn("Failed to Add Chunk Loader at {} in {}", blockPos, dim.getLocation());
         }
     }
 
@@ -87,6 +89,8 @@ public class FluxChunkManager {
             world.getChunkProvider().releaseTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
             FluxNetworks.LOGGER.debug("Removed Chunk Loader in {}, Chunk: {} by {}",
                     dim.getLocation(), chunkPos, blockPos);
+        } else {
+            FluxNetworks.LOGGER.warn("Failed to Remove Chunk Loader at {} in {}", blockPos, dim.getLocation());
         }
     }
 

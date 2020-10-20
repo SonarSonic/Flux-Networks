@@ -165,10 +165,10 @@ public class CEditConnectionsMessage implements IMessage {
                             t.setForcedLoading(true);
                         } else if (!chunkLoading && t.isForcedLoading()) {
                             FluxChunkManager.removeChunkLoader((ServerWorld) t.getFluxWorld(), t);
-                            t.setForcedLoading(true);
+                            t.setForcedLoading(false);
                         }
                     } else {
-                        t.setForcedLoading(true);
+                        t.setForcedLoading(false);
                         sendBannedLoading = true;
                     }
                 }

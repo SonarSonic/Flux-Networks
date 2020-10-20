@@ -109,6 +109,8 @@ public interface IFluxNetwork {
 
     long getBufferLimiter();
 
+    void markSortConnections();
+
     /* Server only */
     void enqueueConnectionAddition(@Nonnull IFluxDevice device);
 

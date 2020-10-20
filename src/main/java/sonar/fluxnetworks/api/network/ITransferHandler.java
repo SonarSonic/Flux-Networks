@@ -31,7 +31,7 @@ public interface ITransferHandler {
 
     long removeFromBuffer(long amount, boolean simulate);
 
-    long receiveFromAdjacency(long amount, @Nonnull Direction side, boolean simulate);
+    long receiveFromSupplier(long amount, @Nonnull Direction side, boolean simulate);
 
     void writeCustomNBT(CompoundNBT tag, int type);
 

@@ -233,7 +233,7 @@ public class FluxUtils {
             case COMPACT: {
                 int unit = 1000;
                 if (in < unit) {
-                    return in + " " + suffix;
+                    return in + suffix;
                 }
                 int exp = (int) (Math.log(in) / Math.log(unit));
                 char pre;
@@ -260,7 +260,7 @@ public class FluxUtils {
 
     public static String format(long in, TypeNumberFormat style, EnergyType energy, boolean usage) {
         if (energy == EnergyType.EU) {
-            return format(in / 4, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
+            return format(in >> 2, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
         }
         return format(in, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
     }

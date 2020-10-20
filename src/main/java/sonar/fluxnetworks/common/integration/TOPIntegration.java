@@ -12,9 +12,9 @@ import net.minecraft.world.World;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
@@ -50,38 +50,34 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     TileFluxDevice flux = (TileFluxDevice) tile;
                     if (FluxConfig.enableOneProbeBasicInfo) {
                         iProbeInfo.text((flux.getNetwork().isValid() ?
-                                new StringTextComponent(flux.getNetwork().getNetworkName()).mergeStyle(TextFormatting.AQUA)
-                                : FluxTranslate.ERROR_NO_SELECTED.getTextComponent().mergeStyle(TextFormatting.AQUA)));
+                                new StringTextComponent(TextFormatting.AQUA + flux.getNetwork().getNetworkName())
+                                : new StringTextComponent(TextFormatting.AQUA + FluxTranslate.ERROR_NO_SELECTED.t())));
 
                         iProbeInfo.text(new StringTextComponent(
                                 FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getTransferChange())));
 
                         if (playerEntity.isSneaking()) {
                             if (flux.getDeviceType().isStorage()) {
-                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
+                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
+                                        .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.FULL, EnergyType.FE, false))
-                                                .mergeStyle(TextFormatting.GREEN))
                                 );
                             } else {
-                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
+                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
+                                        .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.FULL, EnergyType.FE, false))
-                                                .mergeStyle(TextFormatting.GREEN))
                                 );
                             }
                         } else {
                             if (flux.getDeviceType().isStorage()) {
-                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
+                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
+                                        .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false))
-                                                .mergeStyle(TextFormatting.GREEN))
                                 );
                             } else {
-                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent().appendString(": ")
-                                        .append(new StringTextComponent(FluxUtils.format(flux.getTransferBuffer(),
+                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
+                                        .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
                                                 FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false))
-                                                .mergeStyle(TextFormatting.GREEN))
                                 );
                             }
                         }
@@ -90,31 +86,27 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                             (!FluxConfig.enableOneProbeSneaking || playerEntity.isSneaking())) {
 
                         if (flux.getDisableLimit()) {
-                            iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent().appendString(": ")
-                                    .append(FluxTranslate.UNLIMITED.getTextComponent()
-                                            .mergeStyle(TextFormatting.GREEN))
+                            iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
+                                    .appendString(": " + TextFormatting.GREEN + FluxTranslate.UNLIMITED)
                             );
                         } else {
-                            iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent().appendString(": ")
-                                    .append(new StringTextComponent(String.valueOf(flux.getRawLimit()))
-                                            .mergeStyle(TextFormatting.GREEN))
+                            iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
+                                    .appendString(": " + TextFormatting.GREEN + flux.getRawLimit())
                             );
                         }
 
                         if (flux.getSurgeMode()) {
-                            iProbeInfo.text(FluxTranslate.PRIORITY.getTextComponent().appendString(": ")
-                                    .append(FluxTranslate.SURGE.getTextComponent()
-                                            .mergeStyle(TextFormatting.GREEN))
+                            iProbeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
+                                    .appendString(": " + TextFormatting.GREEN + FluxTranslate.SURGE)
                             );
                         } else {
-                            iProbeInfo.text(FluxTranslate.PRIORITY.getTextComponent().appendString(": ")
-                                    .append(new StringTextComponent(String.valueOf(flux.getRawPriority()))
-                                            .mergeStyle(TextFormatting.GREEN))
+                            iProbeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
+                                    .appendString(": " + TextFormatting.GREEN + flux.getRawPriority())
                             );
                         }
 
                         if (flux.isForcedLoading()) {
-                            iProbeInfo.text(FluxTranslate.FORCED_LOADING.getTextComponent().mergeStyle(TextFormatting.GOLD));
+                            iProbeInfo.text(new StringTextComponent(TextFormatting.GOLD + FluxTranslate.FORCED_LOADING.t()));
                         }
                     }
                 }
@@ -133,7 +125,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     IFluxDevice flux = (IFluxDevice) tile;
                     ItemStack itemStack = flux.getDisplayStack();
                     CompoundNBT tag = itemStack.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
-                    tag.putInt(FluxConstants.NETWORK_ID, flux.getNetworkID());
+                    tag.putInt(FluxConstants.CLIENT_COLOR, flux.getNetwork().getNetworkColor());
                     tag.putString(FluxConstants.CUSTOM_NAME, flux.getCustomName());
                     iProbeInfo.horizontal().item(itemStack)
                             .vertical().itemLabel(itemStack)

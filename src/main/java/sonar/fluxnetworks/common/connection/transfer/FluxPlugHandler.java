@@ -46,7 +46,7 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
     }
 
     @Override
-    public long receiveFromAdjacency(long amount, @Nonnull Direction side, boolean simulate) {
+    public long receiveFromSupplier(long amount, @Nonnull Direction side, boolean simulate) {
         if (!device.getNetwork().isValid()) {
             return 0;
         }
@@ -67,9 +67,9 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
         updateSidedTransfers(device.getFluxWorld(), device.getPos(), transfers, faces);
     }
 
-    static void updateSidedTransfers(World fluxWorld, BlockPos pos, Map<Direction, ConnectionTransfer> transfers, @Nonnull Direction[] faces) {
+    static void updateSidedTransfers(World world, BlockPos pos, Map<Direction, ConnectionTransfer> transfers, @Nonnull Direction[] faces) {
         for (Direction dir : faces) {
-            TileEntity tile = fluxWorld.getTileEntity(pos.offset(dir));
+            TileEntity tile = world.getTileEntity(pos.offset(dir));
             ConnectionTransfer transfer = transfers.get(dir);
             ITileEnergyHandler handler;
             if (tile == null || (handler = EnergyUtils.getEnergyHandler(tile, dir.getOpposite())) == null) {

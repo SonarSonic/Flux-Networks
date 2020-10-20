@@ -55,12 +55,12 @@ public class ItemFluxDevice extends BlockItem {
                         TextFormatting.RESET + tag.getInt(FluxConstants.PRIORITY)));
 
             if (tag.contains(FluxConstants.BUFFER))
-                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " +
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.t() + ": " +
                         TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.BUFFER),
                         FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
 
             if (tag.contains(FluxConstants.ENERGY))
-                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.t() + ": " +
+                tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " +
                         TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.ENERGY),
                         FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
 

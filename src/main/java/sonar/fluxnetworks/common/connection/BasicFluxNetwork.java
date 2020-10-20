@@ -146,6 +146,11 @@ public class BasicFluxNetwork implements IFluxNetwork {
     }
 
     @Override
+    public void markSortConnections() {
+
+    }
+
+    @Override
     public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
         device.getNetwork().enqueueConnectionRemoval(device, false);
     }
