@@ -72,11 +72,6 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
     }
 
     @Override
-    public void setBuffer(long buffer) {
-        this.buffer = buffer;
-    }
-
-    @Override
     public long getBuffer() {
         return buffer;
     }
@@ -113,7 +108,7 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
     }
 
     protected long getMaxRemove(long toRemove) {
-        return Math.max(Math.min(getRemoveLimit() - removedFromBuffer, Math.min(toRemove, getBuffer())), 0);
+        return Math.max(Math.min(getRemoveLimit() - removedFromBuffer, Math.min(toRemove, buffer)), 0);
     }
 
     @Override

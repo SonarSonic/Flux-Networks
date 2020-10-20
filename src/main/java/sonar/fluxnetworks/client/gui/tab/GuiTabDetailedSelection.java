@@ -63,7 +63,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
         matrixStack.push();
         matrixStack.scale(0.625f, 0.625f, 0.625f);
-        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getStatistics().getConnectionCount() + "  Avg: " + element.getStatistics().average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
+        font.drawString(matrixStack, FluxTranslate.CONNECTIONS.t() + ": " + element.getStatistics().getConnectionCount() + "  Avg: " + element.getStatistics().averageTickMicro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
         matrixStack.pop();
     }
 

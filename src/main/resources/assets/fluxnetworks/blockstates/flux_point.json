@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "fluxnetworks:block/fluxpoint"
+        "model": "fluxnetworks:block/flux_point"
       }
     },
     {
@@ -10,7 +10,7 @@
         "down": "true"
       },
       "apply": {
-        "model": "fluxnetworks:block/fluxconnection"
+        "model": "fluxnetworks:block/flux_connection"
       }
     },
     {
@@ -18,7 +18,7 @@
         "up": "true"
       },
       "apply": {
-        "model": "fluxnetworks:block/fluxconnection",
+        "model": "fluxnetworks:block/flux_connection",
         "x": 180
       }
     },
@@ -27,7 +27,7 @@
         "north": "true"
       },
       "apply": {
-        "model": "fluxnetworks:block/fluxconnection",
+        "model": "fluxnetworks:block/flux_connection",
         "x": 90,
         "y": 180
       }
@@ -37,7 +37,7 @@
         "east": "true"
       },
       "apply": {
-        "model": "fluxnetworks:block/fluxconnection",
+        "model": "fluxnetworks:block/flux_connection",
         "x": 90,
         "y": -90
       }
@@ -47,7 +47,7 @@
         "south": "true"
       },
       "apply": {
-        "model": "fluxnetworks:block/fluxconnection",
+        "model": "fluxnetworks:block/flux_connection",
         "x": 90,
         "y": 0
       }
@@ -57,7 +57,7 @@
         "west": "true"
       },
       "apply": {
-        "model": "fluxnetworks:block/fluxconnection",
+        "model": "fluxnetworks:block/flux_connection",
         "x": 90,
         "y": 90
       }

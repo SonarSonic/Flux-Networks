@@ -114,7 +114,6 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     @Override
     public void onEndServerTick() {
-        statistics.onStartServerTick();
         statistics.startProfiling();
 
         handleConnectionQueue();
@@ -164,7 +163,6 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         devices.forEach(f -> f.getTransferHandler().onCycleEnd());
 
         statistics.stopProfiling();
-        statistics.onEndServerTick();
     }
 
     @Override
@@ -214,8 +212,6 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         if (!toAdd.contains(device)) {
             toAdd.offer(device);
             toRemove.remove(device);
-            // remove the offline SimpleFluxDevice
-            allConnections.remove(device.getGlobalPos());
             allConnections.put(device.getGlobalPos(), device);
         }
     }
@@ -232,9 +228,10 @@ public class FluxNetworkServer extends BasicFluxNetwork {
                 // create a fake device on server side, representing it has ever connected to
                 // this network but currently unloaded
                 allConnections.put(device.getGlobalPos(), new PhantomFluxDevice(device));
+            } else {
+                // remove the tile entity
+                allConnections.remove(device.getGlobalPos());
             }
-            // remove the tile entity
-            allConnections.remove(device.getGlobalPos());
         }
     }
 

@@ -11,7 +11,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
-import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
@@ -115,7 +114,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     @Override
     public int getColor(@Nonnull BlockState state, @Nullable IBlockDisplayReader world, @Nullable BlockPos pos, int tintIndex) {
-        // update when world.notifyBlockUpdate() on client
+        // called when renderer updated
         if (tintIndex == 1 && pos != null && world != null) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileFluxDevice) {
@@ -132,7 +131,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     @Override
     public int getColor(@Nonnull ItemStack stack, int tintIndex) {
-        // update every frame
+        // called every frame
         if (tintIndex == 1) {
             CompoundNBT tag = stack.getTag();
             if (tag != null && tag.getBoolean(FluxConstants.FLUX_COLOR)) {
@@ -158,14 +157,14 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
         if (tintIndex == 1) {
             Screen screen = Minecraft.getInstance().currentScreen;
             if (screen instanceof GuiFluxCore) {
-                GuiFluxCore guiFluxCore = (GuiFluxCore) screen;
-                if (guiFluxCore.connector instanceof ItemFluxConfigurator.ContainerProvider) {
-                    return guiFluxCore.network.getNetworkColor();
+                GuiFluxCore gui = (GuiFluxCore) screen;
+                if (gui.connector instanceof ItemFluxConfigurator.ContainerProvider) {
+                    return gui.network.getNetworkColor() | 0xff000000;
                 }
             }
             CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
             if (tag != null) {
-                return FluxClientCache.getNetwork(tag.getInt(FluxConfigurationType.NETWORK.getNBTKey())).getNetworkColor() | 0xff000000;
+                return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor() | 0xff000000;
             }
             return NO_NETWORK_COLOR;
         }

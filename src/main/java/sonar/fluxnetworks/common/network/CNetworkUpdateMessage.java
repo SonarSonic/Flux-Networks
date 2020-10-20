@@ -47,7 +47,7 @@ public class CNetworkUpdateMessage implements IMessage {
         int size = buffer.readVarInt();
         List<IFluxNetwork> networks = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            IFluxNetwork network = FluxNetworkData.getNetwork(i);
+            IFluxNetwork network = FluxNetworkData.getNetwork(buffer.readVarInt());
             if (network.isValid()) {
                 networks.add(network);
             }

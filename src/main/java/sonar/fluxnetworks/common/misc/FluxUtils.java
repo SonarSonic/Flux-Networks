@@ -26,10 +26,11 @@ import java.util.Objects;
 
 public class FluxUtils {
 
-    public static <E extends Enum<?>> E incrementEnum(E enumObj, E[] values) {
-        int ordinal = enumObj.ordinal() + 1;
-        if (ordinal < values.length) {
-            return values[ordinal];
+    @Nonnull
+    public static <E extends Enum<?>> E incrementEnum(@Nonnull E v, @Nonnull E[] values) {
+        int next = v.ordinal() + 1;
+        if (next < values.length) {
+            return values[next];
         } else {
             return values[0];
         }

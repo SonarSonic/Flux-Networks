@@ -69,7 +69,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     public void init() {
         super.init();
         configureNavigationButtons(EnumNavigationTabs.TAB_SELECTION, navigationTabs);
-        if (!networkValid) {
+        if (FluxClientCache.getAllNetworks().isEmpty()) {
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_CREATE.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_CREATE, player, connector));
             addButton(redirectButton);
         }

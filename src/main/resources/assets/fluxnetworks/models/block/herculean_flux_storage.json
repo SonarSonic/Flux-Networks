@@ -1,5 +1,5 @@
 {
-  "parent": "fluxnetworks:block/basicfluxstorage",
+  "parent": "fluxnetworks:block/basic_flux_storage",
   "textures": {
     "gray": "fluxnetworks:model/gray",
     "top": "fluxnetworks:model/tier2",

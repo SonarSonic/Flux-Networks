@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
@@ -25,7 +24,6 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.FluxClientCache;
@@ -119,12 +117,11 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 if (network.isValid() && !(getDeviceType().isController() &&
                         !network.getConnections(FluxLogicType.CONTROLLER).isEmpty())) {
                     network.enqueueConnectionAddition(this);
+                } else {
+                    networkID = FluxConstants.INVALID_NETWORK_ID;
                 }
-            } else {
-                networkID = FluxConstants.INVALID_NETWORK_ID;
             }
             updateTransfers(Direction.values());
-            sendFullUpdatePacket();
             sLoad = true;
         }
     }
@@ -175,12 +172,15 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Override
     public final CompoundNBT getUpdateTag() {
         // Server side, write NBT when updating chunk data
-        return write(new CompoundNBT());
+        CompoundNBT tag = new CompoundNBT();
+        tag.putInt(FluxConstants.CLIENT_COLOR, network.getNetworkColor());
+        return write(tag);
     }
 
     @Override
-    public final void handleUpdateTag(BlockState state, CompoundNBT tag) {
+    public final void handleUpdateTag(BlockState state, @Nonnull CompoundNBT tag) {
         // Client side, read NBT when updating chunk data
+        clientColor = tag.getInt(FluxConstants.CLIENT_COLOR);
         read(state, tag);
     }
 

@@ -79,7 +79,7 @@ public class GuiTabStatistics extends GuiTabCore {
                     FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false), 12, 84, color);
 
             GlStateManager.scaled(0.75, 0.75, 0.75);
-            drawCenteredString(matrixStack, font, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.average_tick_micro + " " + "\u00B5" + "s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
+            drawCenteredString(matrixStack, font, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.averageTickMicro + " " + "\u00B5" + "s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
             GlStateManager.scaled(1 / 0.75, 1 / 0.75, 1 / 0.75);
 
         } else {

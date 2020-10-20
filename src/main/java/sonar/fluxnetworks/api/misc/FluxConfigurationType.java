@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
@@ -22,6 +21,7 @@ public enum FluxConfigurationType {
         this.key = key;
     }
 
+    @Deprecated
     public String getNBTKey() {
         return key;
     }
@@ -29,6 +29,7 @@ public enum FluxConfigurationType {
     public void copy(CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
         switch (this) {
             case NETWORK:
+                //TODO currently we don't allow to connect to the invalid network, this may produce SYNC bugs
                 if (tile.getNetwork().isValid()) {
                     nbt.putInt(key, tile.getNetwork().getNetworkID());
                 }
@@ -49,27 +50,28 @@ public enum FluxConfigurationType {
     }
 
     public void paste(@Nonnull CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
-        if (nbt.contains(key)) {
-            switch (this) {
-                case NETWORK:
-                    IFluxNetwork network = FluxNetworkData.getNetwork(nbt.getInt(key));
-                    if (!(tile.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty())) {
-                        network.enqueueConnectionAddition(tile);
-                    }
-                    break;
-                case PRIORITY:
-                    tile.setPriority(nbt.getInt(key));
-                    break;
-                case PRIORITY_SETTING:
-                    tile.setSurgeMode(nbt.getBoolean(key));
-                    break;
-                case TRANSFER:
-                    tile.setTransferLimit(nbt.getLong(key));
-                    break;
-                case TRANSFER_SETTING:
-                    tile.setDisableLimit(nbt.getBoolean(key));
-                    break;
-            }
+        if (!nbt.contains(key)) {
+            return;
+        }
+        switch (this) {
+            case NETWORK:
+                IFluxNetwork network = FluxNetworkData.getNetwork(nbt.getInt(key));
+                if (!(tile.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty())) {
+                    network.enqueueConnectionAddition(tile);
+                }
+                break;
+            case PRIORITY:
+                tile.setPriority(nbt.getInt(key));
+                break;
+            case PRIORITY_SETTING:
+                tile.setSurgeMode(nbt.getBoolean(key));
+                break;
+            case TRANSFER:
+                tile.setTransferLimit(nbt.getLong(key));
+                break;
+            case TRANSFER_SETTING:
+                tile.setDisableLimit(nbt.getBoolean(key));
+                break;
         }
     }
 

@@ -12,9 +12,6 @@ public interface ITransferHandler {
 
     void onCycleEnd();
 
-    @Deprecated
-    void setBuffer(long buffer);
-
     long getBuffer();
 
     long getRequest();

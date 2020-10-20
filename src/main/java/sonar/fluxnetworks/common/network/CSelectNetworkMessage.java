@@ -58,7 +58,7 @@ public class CSelectNetworkMessage implements IMessage {
         if (flux.getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.HAS_CONTROLLER), context);
         } else {
-            if (checkAccessFailed(buffer, context, player, network))
+            if (checkAccess(buffer, context, player, network))
                 return;
             flux.setConnectionOwner(PlayerEntity.getUUID(player.getGameProfile()));
             network.enqueueConnectionAddition(flux);
@@ -66,7 +66,7 @@ public class CSelectNetworkMessage implements IMessage {
         }
     }
 
-    static boolean checkAccessFailed(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player, @Nonnull IFluxNetwork network) {
+    static boolean checkAccess(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player, @Nonnull IFluxNetwork network) {
         if (!network.getPlayerAccess(player).canUse()) {
             String password = buffer.readString(256);
             if (password.isEmpty()) {

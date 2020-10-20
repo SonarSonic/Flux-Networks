@@ -43,7 +43,7 @@ public class CConfiguratorConnectMessage implements IMessage {
         int networkID = buffer.readVarInt();
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (network.isValid()) {
-            if (CSelectNetworkMessage.checkAccessFailed(buffer, context, player, network))
+            if (CSelectNetworkMessage.checkAccess(buffer, context, player, network))
                 return;
             ItemStack stack = player.getHeldItemMainhand();
             if (stack.getItem() instanceof ItemFluxConfigurator) {

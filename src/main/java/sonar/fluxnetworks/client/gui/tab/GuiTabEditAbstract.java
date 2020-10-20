@@ -92,7 +92,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
                 securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
                 passwordField.setText("");
-                passwordField.setVisible(!passwordField.getVisible());
+                passwordField.setVisible(securityType == SecurityType.ENCRYPTED);
                 onEditSettingsChanged();
                 return true;
             }
@@ -119,11 +119,10 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         }
     }
 
-    public void onPopUpClose(PopUpCore popUp) {
+    public void onPopUpClose(PopUpCore<?> popUp) {
         super.onPopUpClose(popUp);
         if (popUp instanceof PopUpCustomColour) {
             this.colorBtn.color = ((PopUpCustomColour) popUp).currentColour;
         }
     }
-
 }

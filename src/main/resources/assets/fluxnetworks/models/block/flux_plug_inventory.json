@@ -3,13 +3,13 @@
   "parent": "forge:block/default",
   "parts": {
     "centre": {
-      "parent": "fluxnetworks:block/fluxplug"
+      "parent": "fluxnetworks:block/flux_plug"
     },
     "bottom": {
-      "parent": "fluxnetworks:block/fluxconnection"
+      "parent": "fluxnetworks:block/flux_connection"
     },
     "up": {
-      "parent": "fluxnetworks:block/fluxconnection",
+      "parent": "fluxnetworks:block/flux_connection",
       "transform": {
         "rotation": [
           {
@@ -24,7 +24,7 @@
       }
     },
     "north": {
-      "parent": "fluxnetworks:block/fluxconnection",
+      "parent": "fluxnetworks:block/flux_connection",
       "transform": {
         "rotation": [
           {
@@ -42,7 +42,7 @@
       }
     },
     "east": {
-      "parent": "fluxnetworks:block/fluxconnection",
+      "parent": "fluxnetworks:block/flux_connection",
       "transform": {
         "rotation": [
           {
@@ -60,7 +60,7 @@
       }
     },
     "south": {
-      "parent": "fluxnetworks:block/fluxconnection",
+      "parent": "fluxnetworks:block/flux_connection",
       "transform": {
         "rotation": [
           {
@@ -78,7 +78,7 @@
       }
     },
     "west": {
-      "parent": "fluxnetworks:block/fluxconnection",
+      "parent": "fluxnetworks:block/flux_connection",
       "transform": {
         "rotation": [
           {

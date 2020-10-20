@@ -44,7 +44,8 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
                 state = state.with(FluxConnectorBlock.SIDES_CONNECTED[dir.getIndex()],
                         (flags & 1 << dir.getIndex()) != 0);
             }
-            world.setBlockState(pos, state, Constants.BlockFlags.NOTIFY_NEIGHBORS | Constants.BlockFlags.BLOCK_UPDATE);
+            world.setBlockState(pos, state, Constants.BlockFlags.NOTIFY_NEIGHBORS);
+            world.notifyBlockUpdate(pos, getBlockState(), state, -1);
         }
     }
 

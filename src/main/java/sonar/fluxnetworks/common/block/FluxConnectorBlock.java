@@ -24,6 +24,14 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock {
 
     public FluxConnectorBlock(Properties props) {
         super(props);
+        setDefaultState(getDefaultState()
+                .with(DOWN, false)
+                .with(UP, false)
+                .with(NORTH, false)
+                .with(SOUTH, false)
+                .with(WEST, false)
+                .with(EAST, false)
+        );
     }
 
     @Override
