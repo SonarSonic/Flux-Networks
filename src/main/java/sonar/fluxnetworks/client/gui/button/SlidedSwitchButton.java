@@ -3,9 +3,9 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import net.minecraft.client.Minecraft;
 
 /**
  * A sliding switch button
@@ -22,7 +22,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
     public SlidedSwitchButton(int x, int y, int id, int guiLeft, int guiTop, boolean defaultControl) {
         super(x, y, 16, 8, id);
-        if(defaultControl) {
+        if (defaultControl) {
             toggled = true;
             center = 8;
         }
@@ -31,7 +31,7 @@ public class SlidedSwitchButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop){
+    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
         GlStateManager.pushMatrix();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableBlend();
@@ -67,15 +67,15 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
 
     public void updateButton(float partialTicks, int mouseX, int mouseY) {
-        float par = partialTicks*4;
-        if(toggled) {
-            if(center <= 8 - par) {
+        float par = partialTicks * 4;
+        if (toggled) {
+            if (center <= 8 - par) {
                 center += par;
             } else {
                 center = 8;
             }
         } else {
-            if(center >= par) {
+            if (center >= par) {
                 center -= par;
             } else {
                 center = 0;

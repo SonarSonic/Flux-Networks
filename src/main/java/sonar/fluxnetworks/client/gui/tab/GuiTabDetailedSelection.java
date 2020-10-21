@@ -24,7 +24,6 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         elementWidth = 146;
     }
 
-
     @Override
     public void renderElement(MatrixStack matrixStack, IFluxNetwork element, int x, int y) {
         GlStateManager.enableBlend();

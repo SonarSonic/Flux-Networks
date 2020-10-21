@@ -78,7 +78,6 @@
 	"info.fluxnetworks.feedback.illegalpassword": "Formato de senha errado, tem de ser um dígito ou letra",
 	"info.fluxnetworks.feedback.hasloader": "Esse chunk já possui um Carregador de Chunk",
 	"info.fluxnetworks.feedback.bannedloading": "Carregamento de Chunks foi banido desse servidor",
-	"info.fluxnetworks.feedback.rejectsome": "O servidor rejeitou algumas mudanças",
 
 	"info.fluxnetworks.gui.sortby": "Ordenar por",
 	"info.fluxnetworks.gui.selected": "Selecionado",

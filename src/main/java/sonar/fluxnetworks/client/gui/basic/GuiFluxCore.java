@@ -33,7 +33,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
     public IFluxNetwork network;
-    public AccessLevel accessPermission = AccessLevel.BLOCKED;
+    public AccessLevel accessLevel = AccessLevel.BLOCKED;
     protected boolean networkValid;
     private int timer1;
 
@@ -41,6 +41,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         super(player, connector);
         this.network = FluxClientCache.getNetwork(connector.getNetworkID());
         this.networkValid = network.isValid();
+        network.getMemberByUUID(PlayerEntity.getUUID(player.getGameProfile())).ifPresent(m -> accessLevel = m.getPlayerAccess());
     }
 
     @Override
@@ -102,7 +103,6 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         FluxClientCache.setFeedback(FeedbackInfo.NONE, false);
         FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
     }
-
 
     protected void renderNavigationPrompt(MatrixStack matrixStack, String error, String prompt) {
         RenderSystem.pushMatrix();

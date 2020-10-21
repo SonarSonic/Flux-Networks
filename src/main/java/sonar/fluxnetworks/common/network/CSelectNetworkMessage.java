@@ -10,6 +10,7 @@ import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -69,6 +70,10 @@ public class CSelectNetworkMessage implements IMessage {
 
     static boolean checkAccess(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context, PlayerEntity player, @Nonnull IFluxNetwork network) {
         if (!network.getPlayerAccess(player).canUse()) {
+            if (network.getSecurity().getType() == SecurityType.PRIVATE) {
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.REJECT), context);
+                return true;
+            }
             String password = buffer.readString(256);
             if (password.isEmpty()) {
                 NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.PASSWORD_REQUIRE), context);

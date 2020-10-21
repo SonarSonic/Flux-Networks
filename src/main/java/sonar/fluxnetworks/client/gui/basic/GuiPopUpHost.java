@@ -7,7 +7,7 @@ import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.client.gui.popups.PopUpCore;
+import sonar.fluxnetworks.client.gui.popup.PopUpCore;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 
 import javax.annotation.Nullable;

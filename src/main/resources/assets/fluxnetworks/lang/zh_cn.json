@@ -78,7 +78,6 @@
 	"info.fluxnetworks.feedback.illegalpassword": "密码格式错误, 只能使用字母或数字",
 	"info.fluxnetworks.feedback.hasloader": "该区块已经进行了区块加载",
 	"info.fluxnetworks.feedback.bannedloading": "服务器禁用了区块加载",
-	"info.fluxnetworks.feedback.rejectsome": "服务器拒绝了部分改动",
 
 	"info.fluxnetworks.gui.sortby": "分类方式",
 	"info.fluxnetworks.gui.selected": "已选择",

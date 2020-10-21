@@ -19,7 +19,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popups.PopUpConnectionEdit;
+import sonar.fluxnetworks.client.gui.popup.PopUpConnectionEdit;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CConnectionUpdateMessage;
@@ -53,7 +53,6 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         elementHeight = 18;
         elementWidth = 146;
         NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_CONNECTIONS));
-        refreshPages(Lists.newArrayList(network.getAllConnections()));
     }
 
     public EnumNavigationTabs getNavigationTab() {
@@ -78,6 +77,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             editButtons.add(edit);
             editButtons.add(disconnect);
         }
+        refreshPages(Lists.newArrayList(network.getAllConnections()));
     }
 
     @Override
@@ -194,16 +194,6 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     @Override
     public void tick() {
         super.tick();
-        if (!networkValid)
-            return;
-        if (timer == 19) {
-            refreshPages(Lists.newArrayList(network.getAllConnections()));
-        }
-        if (timer % 5 == 0) {
-            NetworkHandler.INSTANCE.sendToServer(new CConnectionUpdateMessage(network.getNetworkID(), current.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList())));
-        }
-        timer++;
-        timer %= 20;
         if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
             closePopUp();
             batchConnections.clear();
@@ -228,6 +218,16 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             }
             page = Math.min(page, pages);
         }
+        if (!networkValid)
+            return;
+        if (timer == 4 || timer == 14) {
+            refreshPages(Lists.newArrayList(network.getAllConnections()));
+        }
+        if (timer % 5 == 0) {
+            NetworkHandler.INSTANCE.sendToServer(new CConnectionUpdateMessage(network.getNetworkID(), current.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList())));
+        }
+        timer++;
+        timer %= 20;
     }
 
     @Override

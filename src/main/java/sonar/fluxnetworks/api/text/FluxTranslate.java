@@ -119,7 +119,6 @@ public enum FluxTranslate {
     ILLEGAL_PASSWORD(true, "feedback.illegalpassword"),
     HAS_LOADER(true, "feedback.hasloader"),
     BANNED_LOADING(true, "feedback.bannedloading"),
-    REJECT_SOME(true, "feedback.rejectsome"),
 
     OWNER(true, "access.owner"),
     ADMIN(true, "access.admin"),

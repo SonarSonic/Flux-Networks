@@ -38,7 +38,7 @@ public class SGuiPermissionMessage implements IMessage {
         Screen gui = Minecraft.getInstance().currentScreen;
         if (gui instanceof GuiFluxCore) {
             GuiFluxCore guiFluxCore = (GuiFluxCore) gui;
-            guiFluxCore.accessPermission = access;
+            guiFluxCore.accessLevel = access;
             guiFluxCore.onSuperAdminChanged();
         }
         buffer.release();

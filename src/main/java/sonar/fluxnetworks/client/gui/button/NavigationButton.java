@@ -3,11 +3,11 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 
 public class NavigationButton extends GuiButtonCore {
 
@@ -21,7 +21,6 @@ public class NavigationButton extends GuiButtonCore {
 
     @Override
     public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
-
         GlStateManager.pushMatrix();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableBlend();
@@ -29,17 +28,15 @@ public class NavigationButton extends GuiButtonCore {
         mc.getTextureManager().bindTexture(ScreenUtils.BUTTONS);
         blit(matrixStack, x, y, 16 * tab.ordinal(), 16 * getHoverState(isCurrentTab || isMouseHovered(mc, mouseX, mouseY)), 16, 16);
 
-        if(isMouseHovered(mc, mouseX-guiLeft, mouseY-guiTop)) {
+        if (isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
             FontRenderer fontRenderer = mc.fontRenderer;
             String text = tab.getTranslatedName();
-            fontRenderer.drawString(matrixStack, text, x - fontRenderer.getStringWidth(text) / 2 + 8,  + y - 10, 0xFFFFFF);
+            fontRenderer.drawString(matrixStack, text, x - fontRenderer.getStringWidth(text) / 2f + 8, y - 10, 0xFFFFFF);
         }
         GlStateManager.popMatrix();
     }
 
-    public NavigationButton setMain() {
+    public void setMain() {
         isCurrentTab = true;
-        return this;
     }
-
 }

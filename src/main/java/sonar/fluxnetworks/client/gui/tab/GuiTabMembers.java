@@ -16,7 +16,7 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popups.PopUpUserEdit;
+import sonar.fluxnetworks.client.gui.popup.PopUpUserEdit;
 import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
@@ -52,7 +52,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         if (networkValid) {
-            String str2 = accessPermission.getName();
+            String str2 = accessLevel.getName();
             font.drawString(matrixStack, str2, 158 - font.getStringWidth(str2), 10, 0xffffff);
             font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
             super.drawForegroundLayer(matrixStack, mouseX, mouseY);
@@ -80,6 +80,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
             addButton(redirectButton);
         }
+        refreshPages(Lists.newArrayList(network.getAllMembers()));
     }
 
     @Override
@@ -157,8 +158,10 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         if (timer == 0) {
             NetworkHandler.INSTANCE.sendToServer(new CGuiPermissionMessage(network.getNetworkID()));
         }
-        if (timer % 8 == 0) {
+        if (timer == 4 || timer == 14) {
             refreshPages(Lists.newArrayList(network.getAllMembers()));
+        }
+        if (timer % 2 == 0) {
             if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
                 if (hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();

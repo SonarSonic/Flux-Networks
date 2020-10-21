@@ -27,6 +27,5 @@ public class ColorButton extends GuiButtonCore {
             drawRect(x + width, y, x + width + 1, y + height, 0xffffffff);
         }
         drawRect(x ,y , x + width, y + height, color | 0xaa000000);
-
     }
 }

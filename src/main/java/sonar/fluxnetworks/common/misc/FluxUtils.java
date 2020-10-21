@@ -163,7 +163,7 @@ public class FluxUtils {
     @Nonnull
     public static String getDisplayString(@Nonnull GlobalPos pos) {
         BlockPos p = pos.getPos();
-        return "X: " + p.getX() + " Y: " + p.getY() + " Z: " + p.getZ() + " Dim: " + pos.getDimension().getLocation();
+        return "X: " + p.getX() + " Y: " + p.getY() + " Z: " + p.getZ() + " (" + pos.getDimension().getLocation() + ")";
     }
 
     public static <T> boolean addWithCheck(@Nonnull Collection<T> list, @Nullable T toAdd) {

@@ -78,7 +78,6 @@
 	"info.fluxnetworks.feedback.illegalpassword": "Неверный формат пароля, должен быть цифрой или буквой",
 	"info.fluxnetworks.feedback.hasloader": "Этот чанк уже имеет загрузчик чанка",
 	"info.fluxnetworks.feedback.bannedloading": "Загрузка чанка была заблокирована с сервера",
-	"info.fluxnetworks.feedback.rejectsome": "Сервер отклонил некоторые изменения",
 
 	"info.fluxnetworks.gui.sortby": "Сортировать по",
 	"info.fluxnetworks.gui.selected": "Выбрано",

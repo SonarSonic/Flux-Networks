@@ -9,7 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
-import sonar.fluxnetworks.client.gui.popups.PopUpCore;
+import sonar.fluxnetworks.client.gui.popup.PopUpCore;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
 
 import javax.annotation.Nullable;

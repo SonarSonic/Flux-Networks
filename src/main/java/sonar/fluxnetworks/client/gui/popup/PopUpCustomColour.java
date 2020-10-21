@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.client.gui.popups;
+package sonar.fluxnetworks.client.gui.popup;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;

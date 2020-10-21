@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.client.gui.popups;
+package sonar.fluxnetworks.client.gui.popup;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -27,8 +27,8 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
     public void init() {
         super.init();
         popButtons.clear();
-        boolean editPermission = host.accessPermission.canEdit();
-        boolean ownerPermission = host.accessPermission.canDelete();
+        boolean editPermission = host.accessLevel.canEdit();
+        boolean ownerPermission = host.accessLevel.canDelete();
         if (host.selectedPlayer.getPlayerAccess() != AccessLevel.OWNER && editPermission) {
             String text;
             int length;

@@ -78,7 +78,6 @@
 	"info.fluxnetworks.feedback.illegalpassword": "Wrong password format, must be digit or letter",
 	"info.fluxnetworks.feedback.hasloader": "This chunk already has a chunk loader",
 	"info.fluxnetworks.feedback.bannedloading": "Chunk loading is banned on this server",
-	"info.fluxnetworks.feedback.rejectsome": "The server rejected some changes",
 
 	"info.fluxnetworks.gui.sortby": "Sort by",
 	"info.fluxnetworks.gui.selected": "Selected",

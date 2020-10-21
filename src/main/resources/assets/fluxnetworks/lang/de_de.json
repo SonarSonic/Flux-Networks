@@ -78,7 +78,6 @@
     "info.fluxnetworks.feedback.illegalpassword": "Falsches Passwort Format. Benutze nur Buchstaben und Zahlen",
     "info.fluxnetworks.feedback.hasloader": "Dieser Chunk hat bereits einen Chunkloader",
     "info.fluxnetworks.feedback.bannedloading": "Chunk laden wurde vom Server verweigert",
-    "info.fluxnetworks.feedback.rejectsome": "Der Server hat einige Änderungen verweigert",
 
     "info.fluxnetworks.gui.sortby": "Sortiere nach",
     "info.fluxnetworks.gui.selected": "Ausgewählt",

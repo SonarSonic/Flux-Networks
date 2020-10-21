@@ -86,7 +86,7 @@ public class CEditConnectionsMessage implements IMessage {
             return;
         }
         IFluxNetwork network = FluxNetworkData.getNetwork(buffer.readVarInt());
-        if (network.getPlayerAccess(player).canEdit()) {
+        if (!network.getPlayerAccess(player).canEdit()) {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.NO_ADMIN), context);
             return;
         }
@@ -103,7 +103,11 @@ public class CEditConnectionsMessage implements IMessage {
             return;
         }
         if ((flags & FluxConstants.FLAG_EDIT_DISCONNECT) != 0) {
-            toEdit.forEach(d -> d.getNetwork().enqueueConnectionRemoval(d, false));
+            toEdit.forEach(d -> {
+                d.getNetwork().enqueueConnectionRemoval(d, false);
+                d.onDisconnect();
+            });
+            NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_CONNECTIONS), context);
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS_2), context);
         } else {
             boolean editName = (flags & FluxConstants.FLAG_EDIT_NAME) != 0;
@@ -161,11 +165,10 @@ public class CEditConnectionsMessage implements IMessage {
                     if (FluxConfig.enableChunkLoading) {
                         if (chunkLoading && !t.isForcedLoading()) {
                             FluxChunkManager.addChunkLoader(t);
-                            t.setForcedLoading(true);
                         } else if (!chunkLoading && t.isForcedLoading()) {
                             FluxChunkManager.removeChunkLoader(t);
-                            t.setForcedLoading(false);
                         }
+                        t.setForcedLoading(FluxChunkManager.isChunkLoader(t));
                     } else {
                         t.setForcedLoading(false);
                         sendBannedLoading = true;

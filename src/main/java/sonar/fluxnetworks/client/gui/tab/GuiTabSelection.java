@@ -14,7 +14,7 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popups.PopUpNetworkPassword;
+import sonar.fluxnetworks.client.gui.popup.PopUpNetworkPassword;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -73,6 +73,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_CREATE.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_CREATE, player, connector));
             addButton(redirectButton);
         }
+        refreshPages(FluxClientCache.getAllNetworks());
     }
 
     @Override
@@ -139,7 +140,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     @Override
     public void tick() {
         super.tick();
-        if (timer2 == 0) {
+        if (timer2 == 9) {
             refreshPages(FluxClientCache.getAllNetworks());
         }
         if (selectedNetwork != null && FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {

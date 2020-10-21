@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.client.gui.popups;
+package sonar.fluxnetworks.client.gui.popup;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -143,7 +143,6 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         }
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 88, 155, 0xffffff);
     }
-
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
