@@ -11,7 +11,7 @@ import sonar.fluxnetworks.common.tileentity.energy.TileDefaultEnergy;
 
 public abstract class TileFluxConnector extends TileDefaultEnergy {
 
-    public TileFluxConnector(TileEntityType<?> tileEntityTypeIn, String customName, long limit) {
+    public TileFluxConnector(TileEntityType<? extends TileFluxConnector> tileEntityTypeIn, String customName, long limit) {
         super(tileEntityTypeIn, customName, limit);
     }
 
@@ -45,6 +45,7 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
                         (flags & 1 << dir.getIndex()) != 0);
             }
             world.setBlockState(pos, state, Constants.BlockFlags.NOTIFY_NEIGHBORS);
+            // send update packet whether state changed or not
             world.notifyBlockUpdate(pos, getBlockState(), state, -1);
         }
     }

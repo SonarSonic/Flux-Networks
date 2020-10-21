@@ -17,6 +17,7 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.misc.NumberFormatType;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -60,24 +61,24 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                             if (flux.getDeviceType().isStorage()) {
                                 iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
                                         .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
-                                                FluxUtils.TypeNumberFormat.FULL, EnergyType.FE, false))
+                                                NumberFormatType.FULL, EnergyType.FE, false))
                                 );
                             } else {
                                 iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
                                         .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
-                                                FluxUtils.TypeNumberFormat.FULL, EnergyType.FE, false))
+                                                NumberFormatType.FULL, EnergyType.FE, false))
                                 );
                             }
                         } else {
                             if (flux.getDeviceType().isStorage()) {
                                 iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
                                         .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
-                                                FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false))
+                                                NumberFormatType.COMPACT, EnergyType.FE, false))
                                 );
                             } else {
                                 iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
                                         .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
-                                                FluxUtils.TypeNumberFormat.COMPACT, EnergyType.FE, false))
+                                                NumberFormatType.COMPACT, EnergyType.FE, false))
                                 );
                             }
                         }
@@ -125,7 +126,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     IFluxDevice flux = (IFluxDevice) tile;
                     ItemStack itemStack = flux.getDisplayStack();
                     CompoundNBT tag = itemStack.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
-                    tag.putInt(FluxConstants.CLIENT_COLOR, flux.getNetwork().getNetworkColor());
+                    tag.putInt(FluxConstants.NETWORK_ID, flux.getNetworkID());
                     tag.putString(FluxConstants.CUSTOM_NAME, flux.getCustomName());
                     iProbeInfo.horizontal().item(itemStack)
                             .vertical().itemLabel(itemStack)

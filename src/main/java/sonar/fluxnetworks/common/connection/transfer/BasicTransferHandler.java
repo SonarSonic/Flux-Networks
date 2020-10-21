@@ -6,7 +6,6 @@ import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.common.network.FluxTileMessage;
 
 import javax.annotation.Nonnull;
 
@@ -135,7 +134,7 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
 
     @Override
     public void writePacket(@Nonnull PacketBuffer buffer, byte id) {
-        if (id == FluxTileMessage.S2C_GUI_SYNC) {
+        if (id == FluxConstants.S2C_GUI_SYNC) {
             buffer.writeLong(change);
             buffer.writeLong(this.buffer);
         }
@@ -143,7 +142,7 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
 
     @Override
     public void readPacket(@Nonnull PacketBuffer buffer, byte id) {
-        if (id == FluxTileMessage.S2C_GUI_SYNC) {
+        if (id == FluxConstants.S2C_GUI_SYNC) {
             change = buffer.readLong();
             this.buffer = buffer.readLong();
         }

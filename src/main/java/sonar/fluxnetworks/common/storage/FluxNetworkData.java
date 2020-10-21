@@ -127,7 +127,7 @@ public class FluxNetworkData extends WorldSavedData {
         UUID uuid = PlayerEntity.getUUID(creator.getGameProfile());
 
         FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, color, uuid);
-        network.getMemberList().add(NetworkMember.create(creator, AccessLevel.OWNER));
+        network.getAllMembers().add(NetworkMember.create(creator, AccessLevel.OWNER));
         network.getSecurity().set(securityType, password);
 
         if (networks.put(network.getNetworkID(), network) != null) {
@@ -169,8 +169,8 @@ public class FluxNetworkData extends WorldSavedData {
             for (INBT n : l2) {
                 try {
                     set.add(((LongNBT) n).getLong());
-                } catch (RuntimeException e) {
-                    FluxNetworks.LOGGER.error("An error occurred when reading data", e);
+                } catch (RuntimeException ignored) {
+
                 }
             }
         }

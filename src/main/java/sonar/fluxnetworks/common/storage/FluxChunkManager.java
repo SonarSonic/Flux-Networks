@@ -67,31 +67,39 @@ public class FluxChunkManager {
         }
     }
 
-    public static void addChunkLoader(@Nonnull ServerWorld world, @Nonnull TileFluxDevice tile) {
+    public static void addChunkLoader(@Nonnull TileFluxDevice tile) {
+        ServerWorld world = (ServerWorld) tile.getFluxWorld();
         RegistryKey<World> dim = world.getDimensionKey();
         BlockPos blockPos = tile.getPos();
         if (FluxNetworkData.getTickets(dim).add(blockPos.toLong())) {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunk(blockPos); // loads the chunk
             world.getChunkProvider().registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Added Chunk Loader in {}, Chunk: {} by {}",
+            FluxNetworks.LOGGER.debug("Added Chunk Loader in {}, Chunk: {} at {}",
                     dim.getLocation(), chunkPos, blockPos);
         } else {
-            FluxNetworks.LOGGER.warn("Failed to Add Chunk Loader at {} in {}", blockPos, dim.getLocation());
+            FluxNetworks.LOGGER.warn("There's already a Chunk Loader added in {} at {}", dim.getLocation(), blockPos);
         }
     }
 
-    public static void removeChunkLoader(@Nonnull ServerWorld world, @Nonnull TileFluxDevice tile) {
+    public static void removeChunkLoader(@Nonnull TileFluxDevice tile) {
+        ServerWorld world = (ServerWorld) tile.getFluxWorld();
         RegistryKey<World> dim = world.getDimensionKey();
         BlockPos blockPos = tile.getPos();
         if (FluxNetworkData.getTickets(dim).remove(blockPos.toLong())) {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunkProvider().releaseTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Removed Chunk Loader in {}, Chunk: {} by {}",
+            FluxNetworks.LOGGER.debug("Removed Chunk Loader in {}, Chunk: {} at {}",
                     dim.getLocation(), chunkPos, blockPos);
         } else {
-            FluxNetworks.LOGGER.warn("Failed to Remove Chunk Loader at {} in {}", blockPos, dim.getLocation());
+            FluxNetworks.LOGGER.warn("There's no such a Chunk Loader to remove in {} at {}", dim.getLocation(), blockPos);
         }
+    }
+
+    public static boolean isChunkLoader(@Nonnull TileFluxDevice tile) {
+        RegistryKey<World> dim = tile.getFluxWorld().getDimensionKey();
+        BlockPos blockPos = tile.getPos();
+        return FluxNetworkData.getTickets(dim).contains(blockPos.toLong());
     }
 
     /*private static void registerTicket(@Nonnull ServerWorld world, @Nonnull ChunkPos pos) {

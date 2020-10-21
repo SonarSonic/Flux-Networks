@@ -252,7 +252,7 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector<?>> {
 
     @Override
     protected final void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+        //super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         drawForegroundLayer(matrixStack, mouseX, mouseY);
 
         float partialTicks = Minecraft.getInstance().getRenderPartialTicks();

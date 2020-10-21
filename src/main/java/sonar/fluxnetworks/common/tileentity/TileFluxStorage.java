@@ -3,12 +3,14 @@ package sonar.fluxnetworks.common.tileentity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.MathHelper;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxStorage;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.transfer.FluxStorageHandler;
+import sonar.fluxnetworks.common.misc.FluxGuiStack;
 import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -17,61 +19,87 @@ import javax.annotation.Nonnull;
 
 public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage {
 
-    public final FluxStorageHandler handler = new FluxStorageHandler(this);
-
     public static final int PRI_DIFF = 1000000;
     public static final int PRI_UPPER = -10000;
 
-    private final long maxEnergyStorage;
+    private static final int FLAG_ENERGY_CHANGED = 1 << 9;
 
-    private boolean serverEnergyChanged;
+    private final FluxStorageHandler handler = new FluxStorageHandler(this);
 
-    private final ItemStack stack;
-
-    public TileFluxStorage(TileEntityType<?> tileEntityTypeIn, String customName, long limit, long maxEnergyStorage, ItemStack stack) {
+    public TileFluxStorage(TileEntityType<? extends TileFluxStorage> tileEntityTypeIn, String customName, long limit) {
         super(tileEntityTypeIn, customName, limit);
-        this.maxEnergyStorage = maxEnergyStorage;
-        this.stack = stack;
     }
 
     public static class Basic extends TileFluxStorage {
 
         public Basic() {
-            super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, "Basic Storage", FluxConfig.basicTransfer, FluxConfig.basicCapacity,
-                    new ItemStack(RegistryBlocks.BASIC_FLUX_STORAGE));
+            super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, "Basic Storage", FluxConfig.basicTransfer);
+        }
+
+        @Override
+        public long getMaxTransferLimit() {
+            return FluxConfig.basicCapacity;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack getDisplayStack() {
+            return writeToDisplayStack(FluxGuiStack.BASIC_STORAGE);
         }
     }
 
     public static class Herculean extends TileFluxStorage {
 
         public Herculean() {
-            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, "Herculean Storage", FluxConfig.herculeanTransfer, FluxConfig.herculeanCapacity,
-                    new ItemStack(RegistryBlocks.HERCULEAN_FLUX_STORAGE));
+            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, "Herculean Storage", FluxConfig.herculeanTransfer);
+        }
+
+        @Override
+        public long getMaxTransferLimit() {
+            return FluxConfig.herculeanCapacity;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack getDisplayStack() {
+            return writeToDisplayStack(FluxGuiStack.HERCULEAN_STORAGE);
         }
     }
 
     public static class Gargantuan extends TileFluxStorage {
 
         public Gargantuan() {
-            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, "Gargantuan Storage", FluxConfig.gargantuanTransfer, FluxConfig.gargantuanCapacity,
-                    new ItemStack(RegistryBlocks.GARGANTUAN_FLUX_STORAGE));
+            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, "Gargantuan Storage", FluxConfig.gargantuanTransfer);
+        }
+
+        @Override
+        public long getMaxTransferLimit() {
+            return FluxConfig.gargantuanCapacity;
+        }
+
+        @Nonnull
+        @Override
+        public ItemStack getDisplayStack() {
+            return writeToDisplayStack(FluxGuiStack.GARGANTUAN_STORAGE);
         }
     }
 
     @Override
     protected void sTick() {
         super.sTick();
-        if (serverEnergyChanged) {
+        if ((flags & FLAG_ENERGY_CHANGED) == FLAG_ENERGY_CHANGED) {
             //noinspection ConstantConditions
-            if ((world.getWorldInfo().getGameTime() & 3) == 0) {
-                NetworkHandler.INSTANCE.sendToChunkTracking(new FluxTileMessage(this, FluxTileMessage.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
-                serverEnergyChanged = false;
+            if ((world.getWorldInfo().getGameTime() & 0x3) == 0) {
+                // update model data to players who can see it
+                NetworkHandler.INSTANCE.sendToChunkTracking(new FluxTileMessage(
+                        this, FluxConstants.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
+                flags &= ~FLAG_ENERGY_CHANGED;
             }
         }
     }
 
     public void markServerEnergyChanged() {
-        serverEnergyChanged = true;
+        flags |= FLAG_ENERGY_CHANGED;
     }
 
     @Override
@@ -86,45 +114,31 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     @Override
-    public long getLogicLimit() {
-        return getDisableLimit() ? maxEnergyStorage : Math.min(limit, maxEnergyStorage);
-    }
-
-    @Override
     public int getLogicPriority() {
-        return getSurgeMode() ? PRI_UPPER : Math.min(priority - PRI_DIFF, PRI_UPPER);
+        return surgeMode ? PRI_UPPER : priority - PRI_DIFF;
     }
 
     @Override
-    public long getMaxTransferLimit() {
-        return maxEnergyStorage;
+    public void setPriority(int priority) {
+        this.priority = MathHelper.clamp(priority, Integer.MIN_VALUE + PRI_DIFF, PRI_UPPER + PRI_DIFF - 1);
     }
 
     /**
      * Write data for client
      *
-     * @param stack stack
      * @return item stack with NBT
      * @see sonar.fluxnetworks.client.render.FluxStorageItemRenderer
      */
     @Nonnull
-    private ItemStack writeStorageToDisplayStack(@Nonnull ItemStack stack) {
-        CompoundNBT tag = new CompoundNBT();
-
-        CompoundNBT subTag = new CompoundNBT();
-        subTag.putInt(FluxConstants.CLIENT_COLOR, getNetwork().getNetworkColor());
+    protected ItemStack writeToDisplayStack(@Nonnull ItemStack stack) {
+        CompoundNBT subTag = stack.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
+        //noinspection ConstantConditions
+        if (world.isRemote)
+            subTag.putInt(FluxConstants.CLIENT_COLOR, clientColor);
+        else
+            subTag.putInt(FluxConstants.CLIENT_COLOR, getNetwork().getNetworkColor());
         subTag.putLong(FluxConstants.ENERGY, getTransferBuffer());
-
-        tag.put(FluxConstants.TAG_FLUX_DATA, subTag);
-        tag.putBoolean(FluxConstants.FLUX_COLOR, true);
-
-        stack.setTag(tag);
         return stack;
-    }
-
-    @Override
-    public ItemStack getDisplayStack() {
-        return writeStorageToDisplayStack(stack);
     }
 
     /* TODO OPEN COMPUTERS INTEGRATION

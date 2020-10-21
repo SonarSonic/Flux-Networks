@@ -35,7 +35,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     public InvisibleButton redirectButton;
 
-    private List<BatchEditButton> editButtons = new ArrayList<>();
+    private final List<BatchEditButton> editButtons = new ArrayList<>();
 
     public List<IFluxDevice> batchConnections = new ArrayList<>();
     public IFluxDevice singleConnection;
@@ -53,6 +53,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         elementHeight = 18;
         elementWidth = 146;
         NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_CONNECTIONS));
+        refreshPages(Lists.newArrayList(network.getAllConnections()));
     }
 
     public EnumNavigationTabs getNavigationTab() {
@@ -195,7 +196,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         super.tick();
         if (!networkValid)
             return;
-        if (timer == 4) {
+        if (timer == 19) {
             refreshPages(Lists.newArrayList(network.getAllConnections()));
         }
         if (timer % 5 == 0) {

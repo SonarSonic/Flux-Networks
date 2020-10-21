@@ -19,7 +19,7 @@ public abstract class TileDefaultEnergy extends TileFluxDevice {
 
     private final Map<Direction, LazyOptional<DefaultEnergyWrapper>> wrappers = new EnumMap<>(Direction.class);
 
-    public TileDefaultEnergy(TileEntityType<?> tileEntityTypeIn, String customName, long limit) {
+    public TileDefaultEnergy(TileEntityType<? extends TileDefaultEnergy> tileEntityTypeIn, String customName, long limit) {
         super(tileEntityTypeIn, customName, limit);
     }
 

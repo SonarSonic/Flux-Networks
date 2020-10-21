@@ -4,20 +4,18 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
+import sonar.fluxnetworks.common.misc.NumberFormatType;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
@@ -26,7 +24,6 @@ import sonar.fluxnetworks.common.network.CConfiguratorConnectMessage;
 import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
-import java.text.NumberFormat;
 import java.util.List;
 
 public abstract class GuiFluxCore extends GuiPopUpHost {
@@ -124,7 +121,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         font.drawString(matrixStack, FluxUtils.getTransferInfo(fluxConnector.getDeviceType(), EnergyType.FE, fluxConnector.getTransferChange()), x, y, color);
 
         font.drawString(matrixStack, (fluxConnector.getDeviceType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
-                ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMMAS,
+                ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferBuffer(), NumberFormatType.COMMAS,
                 EnergyType.FE, false), x, y + 10, 0xffffff);
 
         screenUtils.renderItemStack(fluxConnector.getDisplayStack(), x - 20, y + 1);
@@ -145,12 +142,12 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         } else {
             list.add(TextFormatting.RED + FluxTranslate.CHUNK_UNLOADED.t());
         }
-        if (flux.getDeviceType() == FluxDeviceType.STORAGE) {
+        if (flux.getDeviceType().isStorage()) {
             list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE +
-                    FluxUtils.format(flux.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false));
+                    FluxUtils.format(flux.getTransferBuffer(), NumberFormatType.COMMAS, EnergyType.FE, false));
         } else {
             list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE +
-                    FluxUtils.format(flux.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false));
+                    FluxUtils.format(flux.getTransferBuffer(), NumberFormatType.COMMAS, EnergyType.FE, false));
         }
 
         list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getRawLimit()));

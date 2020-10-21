@@ -3,7 +3,6 @@ package sonar.fluxnetworks.common.connection.transfer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
 import javax.annotation.Nonnull;
@@ -71,7 +70,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
 
     @Override
     public void writePacket(@Nonnull PacketBuffer buffer, byte id) {
-        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
+        if (id == FluxConstants.S2C_STORAGE_ENERGY) {
             buffer.writeLong(this.buffer);
         } else {
             super.writePacket(buffer, id);
@@ -80,7 +79,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
 
     @Override
     public void readPacket(@Nonnull PacketBuffer buffer, byte id) {
-        if (id == FluxTileMessage.S2C_STORAGE_ENERGY) {
+        if (id == FluxConstants.S2C_STORAGE_ENERGY) {
             this.buffer = buffer.readLong();
         } else {
             super.readPacket(buffer, id);

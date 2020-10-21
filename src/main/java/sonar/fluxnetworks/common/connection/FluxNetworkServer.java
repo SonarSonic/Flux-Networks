@@ -273,9 +273,4 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     public void removeMember(UUID uuid) {
         network_players.getValue().removeIf(p -> p.getPlayerUUID().equals(uuid) && !p.getAccessPermission().canDelete());
     }*/
-
-    @Override
-    public Optional<NetworkMember> getMemberByUUID(UUID playerUUID) {
-        return memberList.stream().filter(f -> f.getPlayerUUID().equals(playerUUID)).findFirst();
-    }
 }

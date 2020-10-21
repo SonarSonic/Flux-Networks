@@ -48,28 +48,30 @@ public class FluxUtils {
     @Nonnull
     public static String getTransferInfo(@Nonnull FluxDeviceType type, EnergyType energyType, long change) {
         if (type.isPlug()) {
-            String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if (change == 0) {
-                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + b;
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + b;
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" +
+                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
             }
         }
         if (type.isPoint() || type.isController()) {
-            String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if (change == 0) {
-                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + b;
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED +
+                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
             }
         }
         if (type.isStorage()) {
             if (change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else if (change > 0) {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" +
+                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
             } else {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED +
+                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
             }
         }
         return "";
@@ -213,42 +215,30 @@ public class FluxUtils {
     }
 
     public static int getBrighterColor(int color, float factor) {
-        int red = (color >> 16) & 0x000000FF;
-        int green = (color >> 8) & 0x000000FF;
-        int blue = (color) & 0x000000FF;
-        return getIntFromColor((int) Math.min(red * factor, 255), (int) Math.min(green * factor, 255), (int) Math.min(blue * factor, 255));
+        int red = (color >> 16) & 0xff;
+        int green = (color >> 8) & 0xff;
+        int blue = color & 0xff;
+        red = (int) Math.min(red * factor, 0xff);
+        green = (int) Math.min(green * factor, 0xff);
+        blue = (int) Math.min(blue * factor, 0xff);
+        return red << 16 | green << 8 | blue;
     }
 
-    public enum TypeNumberFormat {
-        FULL,                   // Full format
-        COMPACT,                // Compact format (like 3.5M)
-        COMMAS,                 // Language dependent comma separated format
-        NONE                    // No output (empty string)
-    }
-
-    public static String format(long in, TypeNumberFormat style, String suffix) {
+    public static String format(long in, @Nonnull NumberFormatType style, String suffix) {
         switch (style) {
             case FULL:
                 return in + suffix;
             case COMPACT: {
-                int unit = 1000;
-                if (in < unit) {
+                if (in < 1000) {
                     return in + suffix;
                 }
-                int exp = (int) (Math.log(in) / Math.log(unit));
-                char pre;
-                if (suffix.startsWith("m")) {
-                    suffix = suffix.substring(1);
-                    if (exp - 2 >= 0) {
-                        pre = "kMGTPE".charAt(exp - 2);
-                        return String.format("%.1f%s", in / Math.pow(unit, exp), pre) + suffix;
-                    } else {
-                        return String.format("%.1f%s", in / Math.pow(unit, exp), suffix);
-                    }
-                } else {
-                    pre = "kMGTPE".charAt(exp - 1);
-                    return String.format("%.1f%s", in / Math.pow(unit, exp), pre) + suffix;
+                int exp = (int) (Math.log10(in) / 3);
+                char pre = "kMGTPE".charAt(exp - 1);
+                long base = 1000;
+                for (int i = 1; i < exp; i++) {
+                    base *= 1000;
                 }
+                return String.format("%.1f%s", in / (double) base, pre) + suffix;
             }
             case COMMAS:
                 return NumberFormat.getInstance().format(in) + suffix;
@@ -258,11 +248,8 @@ public class FluxUtils {
         return Long.toString(in);
     }
 
-    public static String format(long in, TypeNumberFormat style, EnergyType energy, boolean usage) {
-        if (energy == EnergyType.EU) {
-            return format(in >> 2, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
-        }
-        return format(in, style, usage ? energy.getUsageSuffix() : energy.getStorageSuffix());
+    public static String format(long in, NumberFormatType style, EnergyType energy, boolean usage) {
+        return format(energy == EnergyType.EU ? in >> 2 : in, style, " " + (usage ? energy.getUsageSuffix() : energy.getStorageSuffix()));
     }
 
     public static boolean checkPassword(@Nonnull String str) {

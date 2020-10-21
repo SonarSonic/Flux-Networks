@@ -55,7 +55,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         fluxName.setText(tileEntity.getCustomName());
         fluxName.setResponder(string -> {
             tileEntity.setCustomName(fluxName.getText());
-            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxTileMessage.C2S_CUSTOM_NAME));
+            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_CUSTOM_NAME));
         });
         addButton(fluxName);
 
@@ -64,7 +64,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         priority.setText(String.valueOf(tileEntity.getRawPriority()));
         priority.setResponder(string -> {
             tileEntity.setPriority(priority.getValidInt());
-            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxTileMessage.C2S_PRIORITY));
+            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_PRIORITY));
         });
         addButton(priority);
 
@@ -73,7 +73,7 @@ public class GuiFluxConnectorHome extends GuiTabCore {
         limit.setText(String.valueOf(tileEntity.getRawLimit()));
         limit.setResponder(string -> {
             tileEntity.setTransferLimit(limit.getValidLong());
-            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxTileMessage.C2S_LIMIT));
+            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_LIMIT));
         });
         addButton(limit);
 
@@ -112,16 +112,16 @@ public class GuiFluxConnectorHome extends GuiTabCore {
                 case 1:
                     switchButton.switchButton();
                     tileEntity.setSurgeMode(switchButton.toggled);
-                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxTileMessage.C2S_SURGE_MODE));
+                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_SURGE_MODE));
                     break;
                 case 2:
                     switchButton.switchButton();
                     tileEntity.setDisableLimit(switchButton.toggled);
-                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxTileMessage.C2S_DISABLE_LIMIT));
+                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_DISABLE_LIMIT));
                     break;
                 case 3:
                     tileEntity.setForcedLoading(!switchButton.toggled); // delayed updating value
-                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxTileMessage.C2S_CHUNK_LOADING));
+                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_CHUNK_LOADING));
                     break;
             }
         }

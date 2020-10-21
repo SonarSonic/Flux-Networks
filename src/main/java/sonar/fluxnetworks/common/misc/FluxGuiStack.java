@@ -1,26 +1,38 @@
 package sonar.fluxnetworks.common.misc;
 
 import net.minecraft.nbt.CompoundNBT;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.item.ItemStack;
 
 public class FluxGuiStack {
 
-    public static ItemStack FLUX_PLUG;
-    public static ItemStack FLUX_POINT;
-    public static ItemStack FLUX_CONTROLLER;
+    public static final ItemStack FLUX_PLUG;
+    public static final ItemStack FLUX_POINT;
+    public static final ItemStack FLUX_CONTROLLER;
+
+    public static final ItemStack BASIC_STORAGE;
+    public static final ItemStack HERCULEAN_STORAGE;
+    public static final ItemStack GARGANTUAN_STORAGE;
 
     static {
-        CompoundNBT tag = new CompoundNBT();
-        tag.putBoolean("GuiColor", true);
         ItemStack stack1 = new ItemStack(RegistryBlocks.FLUX_PLUG);
         ItemStack stack2 = new ItemStack(RegistryBlocks.FLUX_POINT);
         ItemStack stack3 = new ItemStack(RegistryBlocks.FLUX_CONTROLLER);
-        stack1.setTag(tag);
-        stack2.setTag(tag);
-        stack3.setTag(tag);
+        ItemStack stack4 = new ItemStack(RegistryBlocks.BASIC_FLUX_STORAGE);
+        ItemStack stack5 = new ItemStack(RegistryBlocks.HERCULEAN_FLUX_STORAGE);
+        ItemStack stack6 = new ItemStack(RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
+        CompoundNBT tag = stack1.getOrCreateTag();
+        tag.putBoolean(FluxConstants.FLUX_COLOR, true);
+        tag = stack2.getOrCreateTag();
+        tag.putBoolean(FluxConstants.FLUX_COLOR, true);
+        tag = stack3.getOrCreateTag();
+        tag.putBoolean(FluxConstants.FLUX_COLOR, true);
         FLUX_PLUG = stack1;
         FLUX_POINT = stack2;
         FLUX_CONTROLLER = stack3;
+        BASIC_STORAGE = stack4;
+        HERCULEAN_STORAGE = stack5;
+        GARGANTUAN_STORAGE = stack6;
     }
 }

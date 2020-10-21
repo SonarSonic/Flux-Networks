@@ -16,10 +16,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
@@ -46,9 +46,13 @@ import java.util.UUID;
 public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, ITickableTileEntity,
         INamedContainerProvider, IBigPower {
 
+    private static final int FLAG_LOAD = 1 << 6;
+    private static final int FLAG_SETTING_CHANGED = 1 << 7;
+    private static final int FLAG_FORCED_LOADING = 1 << 8;
+
     public final Set<PlayerEntity> playerUsing = new ObjectArraySet<>();
 
-    //TODO keep empty when created and client can use translated name as default
+    //TODO keep empty when created and client can use translated name as default, waiting for new UI framework
     private String customName;
     private UUID playerUUID = FluxConstants.DEFAULT_UUID;
 
@@ -58,20 +62,17 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     public int clientColor = FluxConstants.INVALID_NETWORK_COLOR;
 
     protected int priority;
-    protected long limit;
+    protected boolean surgeMode;
+    private long limit;
+    private boolean disableLimit;
 
-    public int flags;
+    protected int flags;
 
     private GlobalPos globalPos;
 
     private IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
-    private boolean sLoad = false;
-
-    // packet flag
-    private boolean serverSettingsChanged;
-
-    public TileFluxDevice(TileEntityType<?> tileEntityTypeIn, String customName, long limit) {
+    public TileFluxDevice(TileEntityType<? extends TileFluxDevice> tileEntityTypeIn, String customName, long limit) {
         super(tileEntityTypeIn);
         this.customName = customName;
         this.limit = limit;
@@ -80,21 +81,21 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Override
     public void remove() {
         super.remove();
-        if (!world.isRemote && sLoad) {
+        if (!world.isRemote && (flags & FLAG_LOAD) == FLAG_LOAD) {
             network.enqueueConnectionRemoval(this, false);
             if (isForcedLoading()) {
-                FluxChunkManager.removeChunkLoader((ServerWorld) world, this);
+                FluxChunkManager.removeChunkLoader(this);
             }
-            sLoad = false;
+            flags &= ~FLAG_LOAD;
         }
     }
 
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        if (!world.isRemote && sLoad) {
+        if (!world.isRemote && (flags & FLAG_LOAD) == FLAG_LOAD) {
             network.enqueueConnectionRemoval(this, true);
-            sLoad = false;
+            flags &= ~FLAG_LOAD;
         }
     }
 
@@ -108,10 +109,10 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     // server tick
     protected void sTick() {
         if (!playerUsing.isEmpty()) {
-            NetworkHandler.INSTANCE.sendToPlayers(new FluxTileMessage(this, FluxTileMessage.S2C_GUI_SYNC), playerUsing);
-            serverSettingsChanged = false;
+            NetworkHandler.INSTANCE.sendToPlayers(new FluxTileMessage(this, FluxConstants.S2C_GUI_SYNC), playerUsing);
+            flags &= ~FLAG_SETTING_CHANGED;
         }
-        if (!sLoad) {
+        if ((flags & FLAG_LOAD) == 0) {
             if (networkID > 0) {
                 IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
                 if (network.isValid() && !(getDeviceType().isController() &&
@@ -122,7 +123,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 }
             }
             updateTransfers(Direction.values());
-            sLoad = true;
+            flags |= FLAG_LOAD;
         }
     }
 
@@ -206,35 +207,27 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Override
     public void writeCustomNBT(CompoundNBT tag, int type) {
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_UPDATE) {
+        if (type <= FluxConstants.TYPE_CONNECTION_UPDATE) {
+            // TYPE_SAVE_ALL, TYPE_TILE_UPDATE, TYPE_TILE_DROP, TYPE_CONNECTION_UPDATE
             tag.putInt(FluxConstants.NETWORK_ID, networkID);
             tag.putString(FluxConstants.CUSTOM_NAME, customName);
             tag.putInt(FluxConstants.PRIORITY, priority);
             tag.putLong(FluxConstants.LIMIT, limit);
-            tag.putInt(FluxConstants.FLAGS, flags);
+            tag.putBoolean(FluxConstants.SURGE_MODE, surgeMode);
+            tag.putBoolean(FluxConstants.DISABLE_LIMIT, disableLimit);
+        }
+        if (type <= FluxConstants.TYPE_TILE_UPDATE) {
+            // TYPE_SAVE_ALL, TYPE_TILE_UPDATE
             tag.putUniqueId(FluxConstants.PLAYER_UUID, playerUUID);
         }
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
             tag.putInt(FluxConstants.CLIENT_COLOR, network.getNetworkColor());
-        }
-        if (type == FluxConstants.TYPE_TILE_DROP) {
-            tag.putInt(FluxConstants.NETWORK_ID, networkID);
-            tag.putString(FluxConstants.CUSTOM_NAME, customName);
-            tag.putInt(FluxConstants.PRIORITY, priority);
-            tag.putLong(FluxConstants.LIMIT, limit);
-            tag.putBoolean(FluxConstants.SURGE_MODE, getSurgeMode());
-            tag.putBoolean(FluxConstants.DISABLE_LIMIT, getDisableLimit());
+            tag.putInt(FluxConstants.FLAGS, flags);
         }
         if (type == FluxConstants.TYPE_CONNECTION_UPDATE) {
             FluxUtils.writeGlobalPos(tag, globalPos);
-            tag.putInt(FluxConstants.NETWORK_ID, networkID);
             tag.putByte(FluxConstants.DEVICE_TYPE, (byte) getDeviceType().ordinal());
-            tag.putString(FluxConstants.CUSTOM_NAME, customName);
-            tag.putInt(FluxConstants.PRIORITY, priority);
-            tag.putLong(FluxConstants.LIMIT, limit);
             tag.putUniqueId(FluxConstants.PLAYER_UUID, playerUUID);
-            tag.putBoolean(FluxConstants.SURGE_MODE, getSurgeMode());
-            tag.putBoolean(FluxConstants.DISABLE_LIMIT, getDisableLimit());
             tag.putBoolean(FluxConstants.FORCED_LOADING, isForcedLoading());
             tag.putBoolean(FluxConstants.CHUNK_LOADED, isChunkLoaded());
             getDisplayStack().write(tag);
@@ -244,24 +237,22 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Override
     public void readCustomNBT(CompoundNBT tag, int type) {
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_UPDATE) {
+        if (type <= FluxConstants.TYPE_TILE_DROP) {
             networkID = tag.getInt(FluxConstants.NETWORK_ID);
             customName = tag.getString(FluxConstants.CUSTOM_NAME);
             priority = tag.getInt(FluxConstants.PRIORITY);
             limit = tag.getLong(FluxConstants.LIMIT);
-            flags = tag.getInt(FluxConstants.FLAGS);
+            surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
+            disableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
+        }
+        if (type <= FluxConstants.TYPE_TILE_UPDATE) {
             playerUUID = tag.getUniqueId(FluxConstants.PLAYER_UUID);
         }
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
             clientColor = tag.getInt(FluxConstants.CLIENT_COLOR);
+            flags = tag.getInt(FluxConstants.FLAGS);
         }
         if (type == FluxConstants.TYPE_TILE_DROP) {
-            networkID = tag.getInt(FluxConstants.NETWORK_ID);
-            customName = tag.getString(FluxConstants.CUSTOM_NAME);
-            priority = tag.getInt(FluxConstants.PRIORITY);
-            limit = tag.getLong(FluxConstants.LIMIT);
-            setSurgeMode(tag.getBoolean(FluxConstants.SURGE_MODE));
-            setDisableLimit(tag.getBoolean(FluxConstants.DISABLE_LIMIT));
             if (world.isRemote) {
                 clientColor = FluxClientCache.getNetwork(networkID).getNetworkColor();
             }
@@ -315,27 +306,27 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     public void writePacket(PacketBuffer buffer, byte id) {
         getTransferHandler().writePacket(buffer, id);
         switch (id) {
-            case FluxTileMessage.C2S_CUSTOM_NAME:
+            case FluxConstants.C2S_CUSTOM_NAME:
                 buffer.writeString(customName, 256);
                 break;
-            case FluxTileMessage.C2S_PRIORITY:
+            case FluxConstants.C2S_PRIORITY:
                 buffer.writeInt(priority);
                 break;
-            case FluxTileMessage.C2S_LIMIT:
+            case FluxConstants.C2S_LIMIT:
                 buffer.writeLong(limit);
                 break;
-            case FluxTileMessage.C2S_SURGE_MODE:
-                buffer.writeBoolean(getSurgeMode());
+            case FluxConstants.C2S_SURGE_MODE:
+                buffer.writeBoolean(surgeMode);
                 break;
-            case FluxTileMessage.C2S_DISABLE_LIMIT:
-                buffer.writeBoolean(getDisableLimit());
+            case FluxConstants.C2S_DISABLE_LIMIT:
+                buffer.writeBoolean(disableLimit);
                 break;
-            case FluxTileMessage.C2S_CHUNK_LOADING:
+            case FluxConstants.C2S_CHUNK_LOADING:
                 buffer.writeBoolean(isForcedLoading());
                 break;
-            case FluxTileMessage.S2C_GUI_SYNC:
-                buffer.writeBoolean(serverSettingsChanged);
-                if (serverSettingsChanged) {
+            case FluxConstants.S2C_GUI_SYNC:
+                buffer.writeBoolean((flags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED);
+                if ((flags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
                     buffer.writeString(customName, 256);
                     buffer.writeInt(priority);
                     buffer.writeLong(limit);
@@ -348,39 +339,38 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     public void readPacket(PacketBuffer buffer, NetworkEvent.Context context, byte id) {
         getTransferHandler().readPacket(buffer, id);
         switch (id) {
-            case FluxTileMessage.C2S_CUSTOM_NAME:
+            case FluxConstants.C2S_CUSTOM_NAME:
                 customName = buffer.readString(256);
                 break;
-            case FluxTileMessage.C2S_PRIORITY:
-                priority = buffer.readInt();
+            case FluxConstants.C2S_PRIORITY:
+                setPriority(buffer.readInt());
                 network.markSortConnections();
                 break;
-            case FluxTileMessage.C2S_LIMIT:
-                limit = Math.min(buffer.readLong(), getMaxTransferLimit());
+            case FluxConstants.C2S_LIMIT:
+                setTransferLimit(buffer.readLong());
                 break;
-            case FluxTileMessage.C2S_SURGE_MODE:
-                setSurgeMode(buffer.readBoolean());
+            case FluxConstants.C2S_SURGE_MODE:
+                surgeMode = buffer.readBoolean();
                 network.markSortConnections();
                 break;
-            case FluxTileMessage.C2S_DISABLE_LIMIT:
-                setDisableLimit(buffer.readBoolean());
+            case FluxConstants.C2S_DISABLE_LIMIT:
+                disableLimit = buffer.readBoolean();
                 break;
-            case FluxTileMessage.C2S_CHUNK_LOADING:
+            case FluxConstants.C2S_CHUNK_LOADING:
                 boolean toLoad = buffer.readBoolean();
-                if (FluxConfig.enableChunkLoading) {
+                if (FluxConfig.enableChunkLoading && !getDeviceType().isStorage()) {
                     if (toLoad && !isForcedLoading()) {
-                        FluxChunkManager.addChunkLoader((ServerWorld) world, this);
-                        setForcedLoading(true);
+                        FluxChunkManager.addChunkLoader(this);
                     } else if (!toLoad && isForcedLoading()) {
-                        FluxChunkManager.removeChunkLoader((ServerWorld) world, this);
-                        setForcedLoading(false);
+                        FluxChunkManager.removeChunkLoader(this);
                     }
+                    setForcedLoading(FluxChunkManager.isChunkLoader(this));
                 } else {
                     setForcedLoading(false);
                     NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.BANNED_LOADING), context);
                 }
                 break;
-            case FluxTileMessage.S2C_GUI_SYNC:
+            case FluxConstants.S2C_GUI_SYNC:
                 if (buffer.readBoolean()) {
                     customName = buffer.readString(256);
                     priority = buffer.readInt();
@@ -390,7 +380,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 break;
         }
         if (id > 0) { // C2S
-            serverSettingsChanged = true;
+            flags |= FLAG_SETTING_CHANGED;
         }
     }
 
@@ -409,8 +399,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         return playerUUID;
     }
 
-    @Override
-    public void setConnectionOwner(UUID uuid) {
+    public final void setConnectionOwner(UUID uuid) {
         playerUUID = uuid;
     }
 
@@ -455,51 +444,61 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Override
     public boolean isForcedLoading() {
-        return (flags & 1 << 8) != 0;
+        return (flags & FLAG_FORCED_LOADING) == FLAG_FORCED_LOADING;
     }
 
     @Override
     public void setForcedLoading(boolean forcedLoading) {
         if (forcedLoading) {
-            flags |= 1 << 8;
+            flags |= FLAG_FORCED_LOADING;
         } else {
-            flags &= ~(1 << 8);
+            flags &= ~FLAG_FORCED_LOADING;
         }
     }
 
     @Override
-    public int getRawPriority() {
+    public final int getRawPriority() {
         return priority;
     }
 
     @Override
     public int getLogicPriority() {
-        return getSurgeMode() ? Integer.MAX_VALUE : priority;
+        return surgeMode ? Integer.MAX_VALUE : priority;
     }
 
     @Override
     public void setPriority(int priority) {
-        this.priority = priority;
+        this.priority = MathHelper.clamp(priority, TileFluxStorage.PRI_UPPER + 1, Integer.MAX_VALUE - 1);
     }
 
     @Override
-    public long getRawLimit() {
+    public final long getRawLimit() {
         return limit;
     }
 
     @Override
-    public long getLogicLimit() {
-        return getDisableLimit() ? Long.MAX_VALUE : limit;
+    public final long getLogicLimit() {
+        return disableLimit ? getMaxTransferLimit() : limit;
     }
 
     @Override
-    public void setTransferLimit(long limit) {
+    public final void setTransferLimit(long limit) {
         this.limit = Math.min(limit, getMaxTransferLimit());
     }
 
     @Override
     public long getMaxTransferLimit() {
         return Long.MAX_VALUE;
+    }
+
+    @Override
+    public final long getTransferBuffer() {
+        return getTransferHandler().getBuffer();
+    }
+
+    @Override
+    public final long getTransferChange() {
+        return getTransferHandler().getChange();
     }
 
     /*@Override
@@ -525,40 +524,32 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }
 
     @Override
-    public boolean getDisableLimit() {
-        return (flags & 1 << 7) != 0;
+    public final boolean getDisableLimit() {
+        return disableLimit;
     }
 
     @Override
-    public void setDisableLimit(boolean disableLimit) {
-        if (disableLimit) {
-            flags |= 1 << 7;
-        } else {
-            flags &= ~(1 << 7);
-        }
+    public final void setDisableLimit(boolean disableLimit) {
+        this.disableLimit = disableLimit;
     }
 
     @Override
-    public boolean getSurgeMode() {
-        return (flags & 1 << 6) != 0;
+    public final boolean getSurgeMode() {
+        return surgeMode;
     }
 
     @Override
-    public void setSurgeMode(boolean surgeMode) {
-        if (surgeMode) {
-            flags |= 1 << 6;
-        } else {
-            flags &= ~(1 << 6);
-        }
+    public final void setSurgeMode(boolean surgeMode) {
+        this.surgeMode = surgeMode;
     }
 
     @Override
-    public long getStoredPower() {
+    public final long getStoredPower() {
         return getTransferBuffer();
     }
 
     @Override
-    public long getCapacity() {
+    public final long getCapacity() {
         return getMaxTransferLimit();
     }
 
@@ -616,12 +607,12 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName() {
-        return new StringTextComponent("");
+    public final ITextComponent getDisplayName() {
+        return StringTextComponent.EMPTY;
     }
 
     @Nullable
-    public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity entity) {
+    public final Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity entity) {
         return new ContainerConnector<>(windowID, playerInventory, this);
     }
 }

@@ -11,6 +11,7 @@ import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 
@@ -43,10 +44,10 @@ public class CSelectNetworkMessage implements IMessage {
             return;
 
         TileEntity tile = player.world.getTileEntity(buffer.readBlockPos());
-        if (!(tile instanceof IFluxDevice))
+        if (!(tile instanceof TileFluxDevice))
             return;
 
-        IFluxDevice flux = (IFluxDevice) tile;
+        TileFluxDevice flux = (TileFluxDevice) tile;
         int networkID = buffer.readVarInt();
         if (flux.getNetworkID() == networkID)
             return;

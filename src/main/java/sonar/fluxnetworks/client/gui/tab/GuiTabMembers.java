@@ -1,12 +1,13 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.NetworkMember;
@@ -16,9 +17,9 @@ import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popups.PopUpUserEdit;
-import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -156,8 +157,8 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         if (timer == 0) {
             NetworkHandler.INSTANCE.sendToServer(new CGuiPermissionMessage(network.getNetworkID()));
         }
-        if (timer % 2 == 0) {
-            refreshPages(network.getMemberList());
+        if (timer % 8 == 0) {
+            refreshPages(Lists.newArrayList(network.getAllMembers()));
             if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
                 if (hasActivePopup()) {
                     Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();

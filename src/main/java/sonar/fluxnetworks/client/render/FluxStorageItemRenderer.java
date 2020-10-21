@@ -31,8 +31,9 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
         long energy;
         CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
         if (tag != null) {
-            color = tag.getInt(FluxConstants.CLIENT_COLOR);
-            if (color == 0) {
+            if (tag.contains(FluxConstants.CLIENT_COLOR)) {
+                color = tag.getInt(FluxConstants.CLIENT_COLOR);
+            } else {
                 color = FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
             energy = tag.getLong(FluxConstants.ENERGY);
@@ -48,7 +49,11 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
         IBakedModel ibakedmodel = dispatcher.getModelForState(renderState);
 
         float r = ScreenUtils.getRed(color), g = ScreenUtils.getGreen(color), b = ScreenUtils.getBlue(color);
-        dispatcher.getBlockModelRenderer().renderModel(matrix.getLast(), buffer.getBuffer(RenderType.getCutout()), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
+        dispatcher.getBlockModelRenderer().
+
+                renderModel(matrix.getLast(), buffer.
+
+                        getBuffer(RenderType.getCutout()), renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
         //TODO minor issue - the renderer culls parts of the block model, could it have something to do with the Renderers render type.
         FluxStorageTileRenderer.render(matrix, buffer, overlay, energy, block.getMaxStorage(), color);
     }

@@ -15,6 +15,7 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.misc.NumberFormatType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,7 +49,7 @@ public class ItemFluxDevice extends BlockItem {
             if (tag.contains(FluxConstants.LIMIT))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " +
                         TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.LIMIT),
-                        FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
+                        NumberFormatType.COMMAS, EnergyType.FE, false)));
 
             if (tag.contains(FluxConstants.PRIORITY))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.PRIORITY.t() + ": " +
@@ -57,12 +58,11 @@ public class ItemFluxDevice extends BlockItem {
             if (tag.contains(FluxConstants.BUFFER))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.t() + ": " +
                         TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.BUFFER),
-                        FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
-
-            if (tag.contains(FluxConstants.ENERGY))
+                        NumberFormatType.COMMAS, EnergyType.FE, false)));
+            else if (tag.contains(FluxConstants.ENERGY))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " +
                         TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.ENERGY),
-                        FluxUtils.TypeNumberFormat.COMMAS, EnergyType.FE, false)));
+                        NumberFormatType.COMMAS, EnergyType.FE, false)));
 
         } else {
             super.addInformation(stack, worldIn, tooltip, flagIn);

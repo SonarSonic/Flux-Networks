@@ -16,16 +16,6 @@ import javax.annotation.Nonnull;
  */
 public class FluxTileMessage implements IMessage {
 
-    public static final byte C2S_CUSTOM_NAME = 1;
-    public static final byte C2S_PRIORITY = 2;
-    public static final byte C2S_LIMIT = 3;
-    public static final byte C2S_SURGE_MODE = 4;
-    public static final byte C2S_DISABLE_LIMIT = 5;
-    public static final byte C2S_CHUNK_LOADING = 6;
-
-    public static final byte S2C_GUI_SYNC = -1;
-    public static final byte S2C_STORAGE_ENERGY = -2; // update model data to players who can see it
-
     private TileFluxDevice tile; // origination side
     private byte id;
 

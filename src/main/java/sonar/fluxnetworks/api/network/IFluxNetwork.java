@@ -48,7 +48,9 @@ public interface IFluxNetwork {
 
     NetworkStatistics getStatistics();
 
-    List<NetworkMember> getMemberList();
+    Collection<NetworkMember> getAllMembers();
+
+    Optional<NetworkMember> getMemberByUUID(UUID playerUUID);
 
     /**
      * Get all connections including loaded tile entities (TileFluxDevice) and unloaded (SimpleFluxDevice)
@@ -105,10 +107,10 @@ public interface IFluxNetwork {
     @Nonnull
     <T extends IFluxDevice> List<T> getConnections(FluxLogicType type);
 
-    Optional<NetworkMember> getMemberByUUID(UUID playerUUID);
-
+    /* Server only */
     long getBufferLimiter();
 
+    /* Server only */
     void markSortConnections();
 
     /* Server only */

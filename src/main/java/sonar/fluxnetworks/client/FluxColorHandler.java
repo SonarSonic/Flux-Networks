@@ -10,6 +10,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
@@ -23,12 +25,13 @@ import javax.annotation.Nullable;
 /**
  * Render network color on blocks and items.
  */
+@OnlyIn(Dist.CLIENT)
 public class FluxColorHandler implements IBlockColor, IItemColor {
 
     public static final FluxColorHandler INSTANCE = new FluxColorHandler();
 
-    public static final int DEFAULT_COLOR = EnumNetworkColor.BLUE.getRGB() | 0xff000000;
-    public static final int NO_NETWORK_COLOR = FluxConstants.INVALID_NETWORK_COLOR | 0xff000000;
+    public static final int DEFAULT_COLOR = EnumNetworkColor.BLUE.getRGB();
+    public static final int NO_NETWORK_COLOR = FluxConstants.INVALID_NETWORK_COLOR;
 
     /*private final Int2IntMap colorMap = new Int2IntArrayMap();
 
@@ -141,12 +144,12 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                 Screen screen = Minecraft.getInstance().currentScreen;
                 if (screen instanceof GuiFluxCore) {
                     GuiFluxCore gui = (GuiFluxCore) screen;
-                    return gui.network.getNetworkColor() | 0xff000000;
+                    return gui.network.getNetworkColor();
                 }
             }
             tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
             if (tag != null) {
-                return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor() | 0xff000000;
+                return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
             return NO_NETWORK_COLOR;
         }
@@ -159,12 +162,12 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             if (screen instanceof GuiFluxCore) {
                 GuiFluxCore gui = (GuiFluxCore) screen;
                 if (gui.connector instanceof ItemFluxConfigurator.ContainerProvider) {
-                    return gui.network.getNetworkColor() | 0xff000000;
+                    return gui.network.getNetworkColor();
                 }
             }
             CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
             if (tag != null) {
-                return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor() | 0xff000000;
+                return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
             return NO_NETWORK_COLOR;
         }

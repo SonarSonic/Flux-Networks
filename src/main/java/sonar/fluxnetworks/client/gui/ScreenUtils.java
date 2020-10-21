@@ -10,9 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 
-import java.awt.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ScreenUtils extends AbstractGui {
 
@@ -23,7 +21,7 @@ public class ScreenUtils extends AbstractGui {
     @Deprecated
     public static final ResourceLocation GUI_BAR = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_bar.png");
     @Deprecated
-    public static final ResourceLocation BUTTONS = new ResourceLocation(FluxNetworks.MODID , "textures/gui/gui_button.png");
+    public static final ResourceLocation BUTTONS = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_button.png");
 
 
     public static final ResourceLocation INVENTORY = new ResourceLocation(FluxNetworks.MODID, "textures/gui/inventory_configuration.png");
@@ -33,30 +31,31 @@ public class ScreenUtils extends AbstractGui {
     protected Minecraft minecraft;
     protected ItemRenderer itemRenderer;
     protected FontRenderer font;
+
     {
         minecraft = Minecraft.getInstance();
         itemRenderer = minecraft.getItemRenderer();
         font = minecraft.fontRenderer;
     }
 
-    public static float getRed(int colour){
+    public static float getRed(int colour) {
         return (float) (colour >> 16 & 255) / 255.0F;
     }
 
-    public static float getGreen(int colour){
+    public static float getGreen(int colour) {
         return (float) (colour >> 8 & 255) / 255.0F;
     }
 
-    public static float getBlue(int colour){
+    public static float getBlue(int colour) {
         return (float) (colour & 255) / 255.0F;
     }
 
-    public void setGuiColouring(int colour){
+    public void setGuiColouring(int colour) {
         RenderSystem.color3f(getRed(colour), getGreen(colour), getBlue(colour));
     }
 
-    public void resetGuiColouring(){
-        RenderSystem.color4f(1,1,1, 1);
+    public void resetGuiColouring() {
+        RenderSystem.color4f(1, 1, 1, 1);
     }
 
     public void renderNetwork(MatrixStack matrixStack, String name, int color, int x, int y) {
@@ -64,9 +63,9 @@ public class ScreenUtils extends AbstractGui {
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
 
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
         RenderSystem.color3f(f, f1, f2);
 
         Minecraft.getInstance().getTextureManager().bindTexture(GUI_BAR);
@@ -104,21 +103,21 @@ public class ScreenUtils extends AbstractGui {
     }*/
 
     public void drawRectWithBackground(MatrixStack matrixStack, int x, int y, int height, int width, int frameColor, int backColor) {
-       // fill(x - 1, y - 1, x + width + 1, y, frameColor);
-        //fill(x - 1, y + height, x + width + 1, y + height + 1, frameColor);
-        //fill(x - 1, y, x, y + height, frameColor);
-       // fill(x + width, y, x + width + 1, y + height, frameColor);
+        fill(matrixStack, x - 1, y - 1, x + width + 1, y, frameColor);
+        fill(matrixStack, x - 1, y + height, x + width + 1, y + height + 1, frameColor);
+        //fill(matrixStack, x - 1, y, x, y + height, frameColor);
+        //fill(matrixStack, x + width, y, x + width + 1, y + height, frameColor);
         fill(matrixStack, x, y, x + width, y + height, backColor);
     }
 
     public void drawHoverTooltip(MatrixStack matrixStack, List<String> strings, int x, int y) {
-        AtomicInteger maxLength = new AtomicInteger();
-        strings.forEach(a -> maxLength.set(Math.max(font.getStringWidth(a), maxLength.get())));
-        drawRectWithBackground(matrixStack, x, y, strings.size() * 9 + 3, maxLength.get() + 4, 0x80ffffff, 0xc0000000);
-        int i = 0;
-        for(String s : strings) {
-            font.drawString(matrixStack, s, x + 2, y + 2 + 9 * i, 0xffffff);
-            i++;
+        int maxLength = 0;
+        for (String s : strings) {
+            maxLength = Math.max(font.getStringWidth(s), maxLength);
+        }
+        drawRectWithBackground(matrixStack, x, y, strings.size() * 9 + 3, maxLength + 4, 0x80ffffff, 0xc0000000);
+        for (int i = 0; i < strings.size(); i++) {
+            font.drawString(matrixStack, strings.get(i), x + 2, y + 2 + 9 * i, 0xffffff);
         }
     }
 

@@ -1,15 +1,18 @@
 package sonar.fluxnetworks.common.connection;
 
-import it.unimi.dsi.fastutil.objects.AbstractObject2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -46,10 +49,10 @@ public class BasicFluxNetwork implements IFluxNetwork {
 
     protected final NetworkSecurity security = new NetworkSecurity();
     protected final NetworkStatistics statistics = new NetworkStatistics(this);
-    protected final List<NetworkMember> memberList = new ArrayList<>();
-    // On server: TileFluxDevice (loaded) and SimpleFluxDevice (unloaded)
-    // On client: SimpleFluxDevice
-    protected final AbstractObject2ObjectMap<GlobalPos, IFluxDevice> allConnections = new Object2ObjectOpenHashMap<>();
+    protected final Object2ObjectMap<UUID, NetworkMember> allMembers = new Object2ObjectOpenHashMap<>();
+    // On server: TileFluxDevice (loaded) and PhantomFluxDevice (unloaded)
+    // On client: PhantomFluxDevice
+    protected final Object2ObjectMap<GlobalPos, IFluxDevice> allConnections = new Object2ObjectOpenHashMap<>();
 
     public BasicFluxNetwork() {
 
@@ -108,8 +111,8 @@ public class BasicFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public List<NetworkMember> getMemberList() {
-        return memberList;
+    public Collection<NetworkMember> getAllMembers() {
+        return allMembers.values();
     }
 
     @Override
@@ -137,7 +140,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
 
     @Override
     public Optional<NetworkMember> getMemberByUUID(UUID playerUUID) {
-        return Optional.empty();
+        return Optional.ofNullable(allMembers.get(playerUUID));
     }
 
     @Override
@@ -186,7 +189,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
             //nbt.putInt(FluxNetworkData.SECURITY_TYPE, securityType.ordinal());
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
-            List<NetworkMember> members = memberList;
+            Collection<NetworkMember> members = allMembers.values();
             if (!members.isEmpty()) {
                 ListNBT list = new ListNBT();
                 for (NetworkMember m : members) {
@@ -210,6 +213,27 @@ public class BasicFluxNetwork implements IFluxNetwork {
                 }
                 nbt.put(CONNECTIONS, list);
             }
+        }
+        if (type == FluxConstants.TYPE_NET_MEMBERS) {
+            Collection<NetworkMember> members = allMembers.values();
+            ListNBT list = new ListNBT();
+            for (NetworkMember m : members) {
+                CompoundNBT t1 = new CompoundNBT();
+                m.writeNBT(t1);
+                list.add(t1);
+            }
+            List<ServerPlayerEntity> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+            if (!players.isEmpty()) {
+                players.stream().filter(p -> members.stream().noneMatch(c -> c.getPlayerUUID().equals(p.getUniqueID())))
+                        .forEach(valid -> {
+                            CompoundNBT t1 = new CompoundNBT();
+                            NetworkMember m = NetworkMember.create(valid,
+                                    SuperAdmin.isPlayerSuperAdmin(valid) ? AccessLevel.SUPER_ADMIN : AccessLevel.BLOCKED);
+                            m.writeNBT(t1);
+                            list.add(t1);
+                        });
+            }
+            nbt.put(PLAYER_LIST, list);
         }
         if (type == FluxConstants.TYPE_NET_CONNECTIONS) {
             Collection<IFluxDevice> connections = allConnections.values();
@@ -273,7 +297,8 @@ public class BasicFluxNetwork implements IFluxNetwork {
             ListNBT list = nbt.getList(PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT c = list.getCompound(i);
-                memberList.add(new NetworkMember(c));
+                NetworkMember m = new NetworkMember(c);
+                allMembers.put(m.getPlayerUUID(), m);
             }
             list = nbt.getList(CONNECTIONS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
@@ -281,6 +306,15 @@ public class BasicFluxNetwork implements IFluxNetwork {
                 IFluxDevice f = new PhantomFluxDevice();
                 f.readCustomNBT(c, FluxConstants.TYPE_SAVE_ALL);
                 allConnections.put(f.getGlobalPos(), f);
+            }
+        }
+        if (type == FluxConstants.TYPE_NET_MEMBERS) {
+            allMembers.clear();
+            ListNBT list = nbt.getList(PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundNBT c = list.getCompound(i);
+                NetworkMember m = new NetworkMember(c);
+                allMembers.put(m.getPlayerUUID(), m);
             }
         }
         if (type == FluxConstants.TYPE_NET_CONNECTIONS) {

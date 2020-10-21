@@ -3,7 +3,6 @@ package sonar.fluxnetworks.common.network;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
@@ -161,10 +160,10 @@ public class CEditConnectionsMessage implements IMessage {
                 if (editChunkLoading) {
                     if (FluxConfig.enableChunkLoading) {
                         if (chunkLoading && !t.isForcedLoading()) {
-                            FluxChunkManager.addChunkLoader((ServerWorld) t.getFluxWorld(), t);
+                            FluxChunkManager.addChunkLoader(t);
                             t.setForcedLoading(true);
                         } else if (!chunkLoading && t.isForcedLoading()) {
-                            FluxChunkManager.removeChunkLoader((ServerWorld) t.getFluxWorld(), t);
+                            FluxChunkManager.removeChunkLoader(t);
                             t.setForcedLoading(false);
                         }
                     } else {

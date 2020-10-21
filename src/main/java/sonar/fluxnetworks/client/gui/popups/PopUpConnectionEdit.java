@@ -96,13 +96,13 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
 
             priority = FluxTextWidget.create(FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 18, guiTop + 47, 140, 12).setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
             priority.setMaxStringLength(5);
-            priority.setText(String.valueOf(host.singleConnection.getLogicPriority()));
+            priority.setText(String.valueOf(host.singleConnection.getRawPriority()));
             priority.setResponder(string -> apply.clickable = true);
             addButton(priority);
 
             limit = FluxTextWidget.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", font, guiLeft + 18, guiTop + 64, 140, 12).setOutlineColor(color).setDigitsOnly().setMaxValue(Long.MAX_VALUE);
             limit.setMaxStringLength(9);
-            limit.setText(String.valueOf(host.singleConnection.getLogicLimit()));
+            limit.setText(String.valueOf(host.singleConnection.getRawLimit()));
             limit.setResponder(string -> apply.clickable = true);
             addButton(limit);
 
@@ -117,7 +117,6 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
                 popSwitches.add(chunkLoading);
             }
         }
-
     }
 
     @Override
@@ -184,7 +183,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
                         }
                         //CompoundNBT tag = FluxUtils.getBatchEditingTag(fluxName, priority, limit, surgeMode, disableLimit, chunkLoading);
                         NetworkHandler.INSTANCE.sendToServer(new CEditConnectionsMessage(host.network.getNetworkID(), list, flags,
-                                fluxName.getText(), priority.getIntegerFromText(false), limit.getLongFromText(true),
+                                fluxName.getText(), priority.getIntegerFromText(true), limit.getLongFromText(false),
                                 surgeMode != null && surgeMode.toggled,
                                 disableLimit != null && disableLimit.toggled,
                                 chunkLoading != null && chunkLoading.toggled));

@@ -71,7 +71,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     private void updatePlayers() {
         players.clear();
         PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
-        for (NetworkMember p : device.getNetwork().getMemberList()) {
+        for (NetworkMember p : device.getNetwork().getAllMembers()) {
             ServerPlayerEntity player = playerList.getPlayerByUUID(p.getPlayerUUID());
             if (player != null) {
                 players.add(player);
