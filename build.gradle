@@ -111,40 +111,43 @@ repositories {
         url 'https://dvs1.progwml6.com/files/maven/'
     }
     maven {
-        name 'FTB maven'
-        url 'https://maven.latmod.com/'
-    }
-    maven {
-        // location of the maven that hosts TOP files
+        // The One Probe
         name 'tterrag maven'
         url 'https://maven.tterrag.com/'
     }
     maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name "ModMaven"
-        url "https://modmaven.k-4u.nl"
+        // Curios
+        name 'TheIllusiveC4 maven'
+        url 'https://maven.theillusivec4.top/'
+    }
+    maven {
+        // JEI, Mekanism
+        name 'ModMaven'
+        url 'https://modmaven.k-4u.nl'
     }
     maven {
         // location of a maven that hosts all files on CurseForge
         name 'CurseMaven'
         url 'https://www.cursemaven.com/'
     }
-    flatDir {
+    /*flatDir {
         dirs 'libs'
-    }
+    }*/
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    /*runtimeOnly fg.deobf("mekanism:Mekanism-${minecraft_version}:${mekanism_version}")*/
+    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     compile fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
-    //compile fg.deobf("curse.maven:ModernUI:2966106")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 }
 
 jar {

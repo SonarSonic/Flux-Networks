@@ -16,8 +16,8 @@
 
 	"tooltip.fluxnetworks.flux_dust": "通过基岩与黑曜石压缩红石获得",
 	"tooltip.fluxnetworks.flux_controller": "给你的网络带来无线充电功能",
-	"tooltip.fluxnetworks.flux_plug": "用于向能量网络中增加能量(从相邻方块中被动接收能量)",
-	"tooltip.fluxnetworks.flux_point": "用于从能量网络中移除能量(主动为相邻方块供给能量)",
+	"tooltip.fluxnetworks.flux_plug": "用于向能量网络增加能量(被动接收相邻方块的能量)",
+	"tooltip.fluxnetworks.flux_point": "用于从能量网络移除能量(主动为相邻方块供给能量)",
 	"tooltip.fluxnetworks.flux_storage": "为你的能量网络存储能量",
 
 	"info.fluxnetworks.tab.home": "主页",
@@ -41,7 +41,7 @@
 
 	"info.fluxnetworks.denied.access": "拒绝访问: 无权限",
 	"info.fluxnetworks.denied.occupy": "拒绝访问: 另一名玩家正在使用",
-	"info.fluxnetworks.denied.removal": "拒绝移除: 无权限",
+	"info.fluxnetworks.denied.removal": "拒绝拆除: 无权限",
 
 	"info.fluxnetworks.click": "点击上方的",
 	"info.fluxnetworks.above": "",
@@ -75,13 +75,12 @@
 	"info.fluxnetworks.feedback.nospace": "你无法创建更多的网络",
 	"info.fluxnetworks.feedback.hascontroller": "该网络已经连接了控制器",
 	"info.fluxnetworks.feedback.invaliduser": "选择了无效的用户",
-	"info.fluxnetworks.feedback.illegalpassword": "密码格式错误, 只能使用字母或数字",
-	"info.fluxnetworks.feedback.hasloader": "该区块已经进行了区块加载",
+	"info.fluxnetworks.feedback.illegalpassword": "密码格式错误, 只能使用字母,数字或常用符号",
 	"info.fluxnetworks.feedback.bannedloading": "服务器禁用了区块加载",
 
 	"info.fluxnetworks.gui.sortby": "分类方式",
 	"info.fluxnetworks.gui.selected": "已选择",
-	"info.fluxnetworks.gui.singleedit": "单个编辑模式",
+	"info.fluxnetworks.gui.singleedit": "单点编辑模式",
 	"info.fluxnetworks.gui.batchedit": "批量编辑模式",
 	"info.fluxnetworks.gui.editing": "正在编辑",
 	"info.fluxnetworks.gui.connections": "个连接点",
@@ -94,9 +93,9 @@
 	"info.fluxnetworks.gui.setuser": "设为用户",
 	"info.fluxnetworks.gui.setadmin": "设为管理员",
 	"info.fluxnetworks.gui.playername": "玩家名字",
-	"info.fluxnetworks.gui.playeraccess": "访问权限",
+	"info.fluxnetworks.gui.playeraccess": "访问等级",
 	"info.fluxnetworks.gui.cancelmembership": "撤销成员权限",
-	"info.fluxnetworks.gui.you": "你",
+	"info.fluxnetworks.gui.you": "你自己",
 
 	"info.fluxnetworks.gui.sort.smart": "智能",
 	"info.fluxnetworks.gui.sort.id": "ID",
@@ -113,10 +112,10 @@
 
 	"info.fluxnetworks.slot.main": "主物品栏(已禁用)",
 	"info.fluxnetworks.slot.hotbar": "快捷栏",
-	"info.fluxnetworks.slot.righthand": "右手",
-	"info.fluxnetworks.slot.lefthand": "左手",
-	"info.fluxnetworks.slot.armor": "护甲栏",
-	"info.fluxnetworks.slot.baubles": "饰品栏",
+	"info.fluxnetworks.slot.mainhand": "主手",
+	"info.fluxnetworks.slot.offhand": "副手",
+	"info.fluxnetworks.slot.armor": "盔甲槽",
+	"info.fluxnetworks.slot.curios": "饰品槽",
 
 	"info.fluxnetworks.stat.plug": "接入点",
 	"info.fluxnetworks.stat.point": "接出点",

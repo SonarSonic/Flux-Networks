@@ -1,7 +1,5 @@
 package sonar.fluxnetworks.api.misc;
 
-import java.util.UUID;
-
 /**
  * Revision: 6.0.0
  */
@@ -9,8 +7,6 @@ public class FluxConstants {
 
     public static final int INVALID_NETWORK_ID = -1;
     public static final int INVALID_NETWORK_COLOR = 0xb2b2b2;
-
-    public static final UUID DEFAULT_UUID = new UUID(-1, -1);
 
     // NBT access type, store data on server disk
     public static final int TYPE_SAVE_ALL = 1;

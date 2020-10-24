@@ -20,7 +20,7 @@ import java.util.Comparator;
 public class FluxChunkManager {
 
     private static final TicketType<TileFluxDevice> FLUX_TICKET_TYPE
-            = TicketType.create("fluxnetworks:chunk_loading", Comparator.comparing(TileFluxDevice::getPos));
+            = TicketType.create("fluxnetworks:chunk_loading", Comparator.comparing(TileEntity::getPos));
 
     // level = 33 - distance = 31, TileEntity, Entity's ticking and all game logic will run
     private static final int LOAD_DISTANCE = 2;

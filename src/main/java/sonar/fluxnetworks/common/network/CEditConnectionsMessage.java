@@ -81,7 +81,7 @@ public class CEditConnectionsMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = NetworkHandler.getPlayer(context);
+        PlayerEntity player = FluxUtils.getPlayer(context);
         if (player == null) {
             return;
         }
@@ -161,7 +161,7 @@ public class CEditConnectionsMessage implements IMessage {
                 if (editDisableLimit) {
                     t.setDisableLimit(disableLimit);
                 }
-                if (editChunkLoading) {
+                if (editChunkLoading && !t.getDeviceType().isStorage()) {
                     if (FluxConfig.enableChunkLoading) {
                         if (chunkLoading && !t.isForcedLoading()) {
                             FluxChunkManager.addChunkLoader(t);

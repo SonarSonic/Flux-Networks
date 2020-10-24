@@ -15,9 +15,11 @@ public class FluxNetworks {
     public static final Logger LOGGER = LogManager.getLogger(NAME_COMPACT);
 
     public static boolean modernUILoaded;
+    public static boolean curiosLoaded;
 
     public FluxNetworks() {
         modernUILoaded = ModList.get().isLoaded("modernui");
+        curiosLoaded = ModList.get().isLoaded("curios");
 
         FluxConfig.init();
     }

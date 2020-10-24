@@ -11,7 +11,7 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientEventHandler {
 
     @SubscribeEvent

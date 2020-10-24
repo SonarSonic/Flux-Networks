@@ -3,7 +3,7 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumChargingType;
+import sonar.fluxnetworks.api.network.ChargingType;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -15,6 +15,9 @@ import sonar.fluxnetworks.client.gui.button.InventoryButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
+import sonar.fluxnetworks.common.network.CEditMemberMessage;
+import sonar.fluxnetworks.common.network.CEditWirelessMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +29,7 @@ public class GuiTabWireless extends GuiTabCore {
     public List<InventoryButton> inventoryButtonList = new ArrayList<>();
     public NormalButton apply;
 
-    public boolean[] settings = new boolean[EnumChargingType.values().length];
+    public int settings;
 
     public GuiTabWireless(PlayerEntity player, INetworkConnector connector) {
         super(player, connector);
@@ -57,18 +60,15 @@ public class GuiTabWireless extends GuiTabCore {
         buttonLists.add(inventoryButtonList);
         if (networkValid) {
 
-            int setting = 0;
-            for (EnumChargingType types : EnumChargingType.values()) {
-                settings[types.ordinal()] = types.isActivated(setting);
-            }
+            settings = network.getWirelessMode();
 
-            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, settings[0]));
-            inventoryButtonList.add(new InventoryButton(EnumChargingType.ARMOR_SLOT, this, 24, 32, 0, 80, 52, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingType.BAUBLES, this, 100, 32, 0, 80, 52, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingType.INVENTORY, this, 32, 56, 0, 0, 112, 40));
-            inventoryButtonList.add(new InventoryButton(EnumChargingType.HOT_BAR, this, 32, 104, 112, 0, 112, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingType.RIGHT_HAND, this, 136, 128, 52, 80, 16, 16));
-            inventoryButtonList.add(new InventoryButton(EnumChargingType.LEFT_HAND, this, 24, 128, 52, 80, 16, 16));
+            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, ChargingType.ENABLE_WIRELESS.isActivated(settings)));
+            inventoryButtonList.add(new InventoryButton(ChargingType.ARMOR, this, 24, 32, 0, 80, 52, 16));
+            inventoryButtonList.add(new InventoryButton(ChargingType.CURIOS, this, 100, 32, 0, 80, 52, 16));
+            inventoryButtonList.add(new InventoryButton(ChargingType.INVENTORY, this, 32, 56, 0, 0, 112, 40));
+            inventoryButtonList.add(new InventoryButton(ChargingType.HOT_BAR, this, 32, 104, 112, 0, 112, 16));
+            inventoryButtonList.add(new InventoryButton(ChargingType.MAIN_HAND, this, 136, 128, 52, 80, 16, 16));
+            inventoryButtonList.add(new InventoryButton(ChargingType.OFF_HAND, this, 24, 128, 52, 80, 16, 16));
 
             apply = new NormalButton(FluxTranslate.APPLY.t(), 73, 130, 32, 12, 0).setUnclickable();
             buttons.add(apply);
@@ -88,20 +88,18 @@ public class GuiTabWireless extends GuiTabCore {
             switchSetting(((InventoryButton) button).chargeType);
         }
         if (button instanceof NormalButton && button.id == 0) {
-            //TODO new wireless system
-            //int wireless = (settings[0] ? 1 : 0) | (settings[1] ? 1 : 0) << 1 | (settings[2] ? 1 : 0) << 2 | (settings[3] ? 1 : 0) << 3 | (settings[4] ? 1 : 0) << 4 | (settings[5] ? 1 : 0) << 5;
-            //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CHANGE_WIRELESS, GeneralPacketHandler.getChangeWirelessPacket(network.getNetworkID(), wireless)));
+            NetworkHandler.INSTANCE.sendToServer(new CEditWirelessMessage(network.getNetworkID(), settings));
         }
         if (button instanceof SlidedSwitchButton) {
             ((SlidedSwitchButton) button).switchButton();
             if (button.id == 4) {
-                switchSetting(EnumChargingType.ENABLE_WIRELESS);
+                switchSetting(ChargingType.ENABLE_WIRELESS);
             }
         }
     }
 
-    public void switchSetting(EnumChargingType type) {
-        settings[type.ordinal()] = !settings[type.ordinal()];
+    public void switchSetting(ChargingType type) {
+        settings ^= 1 << type.ordinal();
         apply.clickable = true;
     }
 

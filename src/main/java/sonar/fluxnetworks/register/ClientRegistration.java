@@ -3,6 +3,8 @@ package sonar.fluxnetworks.register;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -14,7 +16,7 @@ import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
-import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
+import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.mui.MUIIntegration;
 import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
@@ -27,7 +29,8 @@ import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 
-@Mod.EventBusSubscriber(modid = FluxNetworks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@OnlyIn(Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = FluxNetworks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistration {
 
     @SubscribeEvent
@@ -63,7 +66,7 @@ public class ClientRegistration {
             }
             INetworkConnector connector = container.connector;
             if (connector instanceof TileFluxDevice) {
-                return new GuiFluxConnectorHome(inventory.player, (TileFluxDevice) connector);
+                return new GuiFluxDeviceHome(inventory.player, (TileFluxDevice) connector);
             }
             if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
                 return new GuiFluxConfiguratorHome(inventory.player, (ItemFluxConfigurator.ContainerProvider) connector);

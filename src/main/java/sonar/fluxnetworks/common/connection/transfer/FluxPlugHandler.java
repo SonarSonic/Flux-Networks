@@ -16,6 +16,8 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
 
     private final Map<Direction, ConnectionTransfer> transfers = new EnumMap<>(Direction.class);
 
+    private long removed;
+
     public FluxPlugHandler(TileFluxPlug fluxPlug) {
         super(fluxPlug);
     }
@@ -32,17 +34,18 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
 
     @Override
     public void onCycleEnd() {
-        super.onCycleEnd();
-        for (ConnectionTransfer transfer : transfers.values()) {
-            if (transfer != null) {
-                transfer.onCycleEnd();
-            }
-        }
+        removed = 0;
     }
 
     @Override
-    public long getAddLimit() {
-        return Math.min(device.getNetwork().getBufferLimiter() - buffer, device.getLogicLimit());
+    public long removeFromBuffer(long energy) {
+        long a = Math.min(Math.min(energy, buffer), device.getLogicLimit() - removed);
+        if (a <= 0) {
+            return 0;
+        }
+        buffer -= a;
+        removed += a;
+        return a;
     }
 
     @Override
@@ -52,10 +55,18 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
         }
         ConnectionTransfer transfer = transfers.get(side);
         if (transfer != null) {
-            long a = addToBuffer(amount, simulate);
+            long a = device.getNetwork().getBufferLimiter() - buffer;
+            if (a <= 0) {
+                return 0;
+            }
+            a = Math.min(amount, Math.min(a, device.getLogicLimit()) - buffer);
+            if (a <= 0) {
+                return 0;
+            }
             if (!simulate) {
-                transfer.onEnergyReceived(a);
+                buffer += a;
                 change += a; // external additions happen outside the transfer cycle.
+                transfer.onEnergyReceived(a);
             }
             return a;
         }

@@ -8,6 +8,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +30,7 @@ public class SGuiPermissionMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = NetworkHandler.getPlayer(context);
+        PlayerEntity player = FluxUtils.getPlayer(context);
         if (player == null) {
             buffer.release();
             return;

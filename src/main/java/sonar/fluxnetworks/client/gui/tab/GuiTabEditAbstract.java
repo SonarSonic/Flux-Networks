@@ -59,6 +59,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             passwordField = FluxTextWidget.create("", font, guiLeft + 20 + l, guiTop + 62, 140 - l, 12).setTextInvisible();
             passwordField.setMaxStringLength(16);
             passwordField.setResponder(string -> onEditSettingsChanged());
+            passwordField.setVisible(securityType == SecurityType.ENCRYPTED);
 
             addButton(nameField);
             addButton(passwordField);

@@ -15,9 +15,6 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
 
     protected long buffer;
 
-    protected long addedToBuffer;
-    protected long removedFromBuffer;
-
     /**
      * the actual energy transfer change - has no relation to the buffer's usage
      */
@@ -30,48 +27,25 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
     @Override
     public void onCycleStart() {
         change = 0;
-        addedToBuffer = 0;
-        removedFromBuffer = 0;
     }
 
     @Override
-    public void onCycleEnd() {
-
+    public void addToBuffer(long energy) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public long addToBuffer(long energy, boolean simulate) {
-        long add = getMaxAdd(energy);
-        if (add > 0) {
-            if (!simulate) {
-                buffer += add;
-                addedToBuffer += add;
-            }
-            return add;
-        }
-        return 0;
-    }
-
-    @Override
-    public long removeFromBuffer(long energy, boolean simulate) {
-        long remove = getMaxRemove(energy);
-        if (remove > 0) {
-            if (!simulate) {
-                buffer -= remove;
-                removedFromBuffer += remove;
-            }
-            return remove;
-        }
-        return 0;
+    public long removeFromBuffer(long energy) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public long receiveFromSupplier(long amount, @Nonnull Direction side, boolean simulate) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public long getBuffer() {
+    public final long getBuffer() {
         return buffer;
     }
 
@@ -90,24 +64,8 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
      * @return energy change
      */
     @Override
-    public long getChange() {
+    public final long getChange() {
         return change;
-    }
-
-    protected long getAddLimit() {
-        return device.getLogicLimit();
-    }
-
-    protected long getRemoveLimit() {
-        return device.getLogicLimit();
-    }
-
-    protected long getMaxAdd(long toAdd) {
-        return Math.max(Math.min(getAddLimit() - addedToBuffer, toAdd), 0);
-    }
-
-    protected long getMaxRemove(long toRemove) {
-        return Math.max(Math.min(getRemoveLimit() - removedFromBuffer, Math.min(toRemove, buffer)), 0);
     }
 
     @Override

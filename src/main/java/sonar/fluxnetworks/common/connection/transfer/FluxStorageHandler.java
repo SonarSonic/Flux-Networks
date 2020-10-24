@@ -2,6 +2,7 @@ package sonar.fluxnetworks.common.connection.transfer;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.MathHelper;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
@@ -13,39 +14,39 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
         super(fluxStorage);
     }
 
+    private long removed;
+
     @Override
-    public long addToBuffer(long amount, boolean simulate) {
-        long add = getMaxAdd(amount);
-        if (add > 0) {
-            if (!simulate) {
-                buffer += add;
-                addedToBuffer += add;
-                change += add;
-                device.markServerEnergyChanged();
-            }
-            return add;
-        }
-        return 0;
+    public void onCycleEnd() {
+        removed = 0;
     }
 
     @Override
-    public long removeFromBuffer(long energy, boolean simulate) {
-        long remove = getMaxRemove(energy);
-        if (remove > 0) {
-            if (!simulate) {
-                buffer += remove;
-                removedFromBuffer += remove;
-                change -= remove;
-                device.markServerEnergyChanged();
-            }
-            return remove;
+    public void addToBuffer(long energy) {
+        if (energy <= 0) {
+            return;
         }
-        return 0;
+        buffer += energy;
+        change += energy;
+        device.markServerEnergyChanged();
+    }
+
+    @Override
+    public long removeFromBuffer(long energy) {
+        long a = Math.min(Math.min(energy, buffer), device.getLogicLimit() - removed);
+        if (a <= 0) {
+            return 0;
+        }
+        buffer -= a;
+        change -= a;
+        removed += a;
+        device.markServerEnergyChanged();
+        return a;
     }
 
     @Override
     public long getRequest() {
-        return Math.min(getAddLimit(), device.getMaxTransferLimit() - buffer);
+        return MathHelper.clamp(device.getMaxTransferLimit() - buffer, 0, device.getLogicLimit());
     }
 
     @Override

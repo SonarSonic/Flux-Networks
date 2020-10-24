@@ -124,10 +124,7 @@ public class FluxNetworkData extends WorldSavedData {
         if (limitReached) {
             return null;
         }
-        UUID uuid = PlayerEntity.getUUID(creator.getGameProfile());
-
-        FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, color, uuid);
-        network.getAllMembers().add(NetworkMember.create(creator, AccessLevel.OWNER));
+        FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, color, creator);
         network.getSecurity().set(securityType, password);
 
         if (networks.put(network.getNetworkID(), network) != null) {
@@ -138,7 +135,7 @@ public class FluxNetworkData extends WorldSavedData {
     }
 
     public void deleteNetwork(@Nonnull IFluxNetwork network) {
-        network.onDeleted();
+        network.onDelete();
         networks.remove(network.getNetworkID());
         NetworkHandler.INSTANCE.sendToAll(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_DELETE));
     }

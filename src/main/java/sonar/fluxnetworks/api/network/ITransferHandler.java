@@ -27,9 +27,9 @@ public interface ITransferHandler {
      */
     long getChange();
 
-    long addToBuffer(long amount, boolean simulate);
+    void addToBuffer(long amount);
 
-    long removeFromBuffer(long amount, boolean simulate);
+    long removeFromBuffer(long amount);
 
     long receiveFromSupplier(long amount, @Nonnull Direction side, boolean simulate);
 

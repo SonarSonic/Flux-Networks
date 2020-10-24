@@ -20,12 +20,11 @@ public class ConnectionTransfer {
     public ConnectionTransfer(ITileEnergyHandler energyHandler, @Nonnull TileEntity tile, @Nonnull Direction dir) {
         this.energyHandler = energyHandler;
         this.tile = tile;
-        this.side = dir.getOpposite();
+        this.side = dir.getOpposite(); // the tile is on our north side, we charge it from its south side
         this.displayStack = new ItemStack(tile.getBlockState().getBlock().asItem());
     }
 
     public long sendToTile(long amount, boolean simulate) {
-        // we only receive energy from nearby tiles passively.
         if (energyHandler.canAddEnergy(tile, side)) {
             long added = energyHandler.addEnergy(amount, tile, side, simulate);
             if (!simulate) {
@@ -43,10 +42,6 @@ public class ConnectionTransfer {
     public void onCycleStart() {
         outbound = 0;
         inbound = 0;
-    }
-
-    public void onCycleEnd() {
-
     }
 
     public TileEntity getTile() {

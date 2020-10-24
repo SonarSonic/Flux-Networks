@@ -51,7 +51,7 @@ public abstract class FluxDeviceBlock extends Block {
         if (tile instanceof TileFluxDevice) {
             TileFluxDevice flux = (TileFluxDevice) tile;
             if (!flux.playerUsing.isEmpty()) {
-                player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_OCCUPY_KEY), true);
+                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_OCCUPY_KEY), true);
                 return ActionResultType.SUCCESS;
             } else if (flux.canPlayerAccess(player)) {
                 NetworkHooks.openGui((ServerPlayerEntity) player, flux, buf -> {
@@ -60,7 +60,7 @@ public abstract class FluxDeviceBlock extends Block {
                 });
                 return ActionResultType.SUCCESS;
             } else {
-                player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_DENIED_KEY), true);
+                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_DENIED_KEY), true);
             }
         }
 
@@ -90,8 +90,10 @@ public abstract class FluxDeviceBlock extends Block {
         if (!world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileFluxDevice)
-                if (!((TileFluxDevice) tile).canPlayerAccess(player))
+                if (!((TileFluxDevice) tile).canPlayerAccess(player)) {
+                    player.sendStatusMessage(StyleUtils.error(FluxTranslate.REMOVAL_DENIED_KEY), true);
                     return false;
+                }
         }
         onBlockHarvested(world, pos, state, player);
         return world.setBlockState(pos, fluid.getBlockState(), world.isRemote ?

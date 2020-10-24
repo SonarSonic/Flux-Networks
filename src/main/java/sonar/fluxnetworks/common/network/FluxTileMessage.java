@@ -5,7 +5,11 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
+import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
+import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -36,7 +40,7 @@ public class FluxTileMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = NetworkHandler.getPlayer(context);
+        PlayerEntity player = FluxUtils.getPlayer(context);
         if (player == null) {
             if (context.getDirection().getOriginationSide().isServer()) {
                 buffer.release();
@@ -56,7 +60,11 @@ public class FluxTileMessage implements IMessage {
         if (!player.world.isRemote && !flux.canPlayerAccess(player)) {
             return;
         }
-        flux.readPacket(buffer, context, buffer.readByte());
+        byte type = buffer.readByte();
+        flux.readPacket(buffer, type);
+        if (type == FluxConstants.C2S_CHUNK_LOADING && !FluxConfig.enableChunkLoading) {
+            NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.BANNED_LOADING), context);
+        }
         if (player.world.isRemote) {
             buffer.release();
         }

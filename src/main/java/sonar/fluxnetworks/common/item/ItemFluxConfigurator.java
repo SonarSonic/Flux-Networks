@@ -54,7 +54,7 @@ public class ItemFluxConfigurator extends Item {
         if (tile instanceof TileFluxDevice) {
             TileFluxDevice flux = (TileFluxDevice) tile;
             if (!flux.canPlayerAccess(context.getPlayer())) {
-                player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.ACCESS_DENIED_KEY), true);
+                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_DENIED_KEY), true);
                 return ActionResultType.FAIL;
             }
             ItemStack stack = player.getHeldItem(context.getHand());

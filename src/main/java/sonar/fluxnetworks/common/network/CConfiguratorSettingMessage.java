@@ -9,6 +9,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -33,7 +34,7 @@ public class CConfiguratorSettingMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = NetworkHandler.getPlayer(context);
+        PlayerEntity player = FluxUtils.getPlayer(context);
         if (player == null) {
             return;
         }

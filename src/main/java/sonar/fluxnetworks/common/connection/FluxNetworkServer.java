@@ -39,8 +39,8 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     }
 
-    public FluxNetworkServer(int id, String name, int color, UUID owner) {
-        super(id, name, color, owner);
+    public FluxNetworkServer(int id, String name, int color, PlayerEntity creator) {
+        super(id, name, color, creator);
     }
 
     /*public void addConnections() {
@@ -121,48 +121,39 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         bufferLimiter = 0;
 
         List<IFluxDevice> devices = getConnections(FluxLogicType.ANY);
-        devices.forEach(f -> {
+        for (IFluxDevice f : devices) {
             f.getTransferHandler().onCycleStart();
             bufferLimiter += f.getTransferHandler().getRequest();
-        });
+        }
 
-        if (!sortedPoints.isEmpty()) {
-            if (bufferLimiter > 0 && !sortedPlugs.isEmpty()) {
-                plugTransferIterator.reset(sortedPlugs);
-                pointTransferIterator.reset(sortedPoints);
-                CYCLE:
-                while (pointTransferIterator.hasNext()) {
-                    while (plugTransferIterator.hasNext()) {
-                        IFluxPlug plug = plugTransferIterator.next();
-                        IFluxPoint point = pointTransferIterator.next();
-                        if (plug.getDeviceType() == point.getDeviceType()) {
-                            break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
-                        }
-                        long operate = plug.getTransferHandler().removeFromBuffer(point.getTransferHandler().getRequest(), true);
-                        long removed = point.getTransferHandler().addToBuffer(operate, false);
-                        if (removed > 0) {
-                            plug.getTransferHandler().removeFromBuffer(removed, false);
-                            if (point.getTransferHandler().getRequest() <= 0) {
-                                continue CYCLE;
-                            }
-                        } else {
-                            /*// If we can only transfer 3RF, it returns 0 (3RF < 1EU), but this plug still need transfer (3RF > 0), and can't afford current point,
-                            // So manually increment plug to prevent dead loop. (hasNext detect if it need transfer)
-                            if (plug.getTransferHandler().getBuffer() < 4) {
-                                plugTransferIterator.incrementFlux();
-                            } else {
-                                pointTransferIterator.incrementFlux();
-                                continue CYCLE;
-                            }*/
-                            pointTransferIterator.incrementFlux();
-                            continue CYCLE;
-                        }
+        if (bufferLimiter > 0 && !sortedPoints.isEmpty() && !sortedPlugs.isEmpty()) {
+            plugTransferIterator.reset(sortedPlugs);
+            pointTransferIterator.reset(sortedPoints);
+            CYCLE:
+            while (pointTransferIterator.hasNext()) {
+                while (plugTransferIterator.hasNext()) {
+                    IFluxPlug plug = plugTransferIterator.next();
+                    IFluxPoint point = pointTransferIterator.next();
+                    if (plug.getDeviceType() == point.getDeviceType()) {
+                        break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                     }
-                    break; // all plugs have been used
+                    // we don't need to simulate this action
+                    long operate = plug.getTransferHandler().removeFromBuffer(point.getTransferHandler().getRequest());
+                    if (operate > 0) {
+                        point.getTransferHandler().addToBuffer(operate);
+                        continue CYCLE;
+                    } else {
+                        // although the plug still need transfer (buffer > 0)
+                        // but it reached max transfer limit, so we use next plug
+                        plugTransferIterator.incrementFlux();
+                    }
                 }
+                break; // all plugs have been used
             }
         }
-        devices.forEach(f -> f.getTransferHandler().onCycleEnd());
+        for (IFluxDevice f : devices) {
+            f.getTransferHandler().onCycleEnd();
+        }
 
         statistics.stopProfiling();
     }
@@ -192,19 +183,19 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
         Optional<NetworkMember> member = getMemberByUUID(uuid);
         if (member.isPresent()) {
-            return member.get().getPlayerAccess();
+            return member.get().getAccessLevel();
         }
         return security.isEncrypted() ? AccessLevel.BLOCKED : AccessLevel.USER;
     }
 
     @Override
-    public void onDeleted() {
+    public void onDelete() {
         getConnections(FluxLogicType.ANY).forEach(IFluxDevice::onDisconnect);
         connections.clear();
         toAdd.clear();
         toRemove.clear();
-        sortedPoints.clear();
         sortedPlugs.clear();
+        sortedPoints.clear();
     }
 
     @Override

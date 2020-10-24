@@ -6,8 +6,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
@@ -15,13 +15,13 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.misc.NumberFormatType;
-import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.misc.NumberFormatType;
 import sonar.fluxnetworks.common.network.CConfiguratorConnectMessage;
 import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         super(player, connector);
         this.network = FluxClientCache.getNetwork(connector.getNetworkID());
         this.networkValid = network.isValid();
-        network.getMemberByUUID(PlayerEntity.getUUID(player.getGameProfile())).ifPresent(m -> accessLevel = m.getPlayerAccess());
+        network.getMemberByUUID(PlayerEntity.getUUID(player.getGameProfile())).ifPresent(m -> accessLevel = m.getAccessLevel());
     }
 
     @Override
@@ -113,18 +113,18 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         RenderSystem.popMatrix();
     }
 
-    protected void renderTransfer(MatrixStack matrixStack, IFluxDevice fluxConnector, int color, int x, int y) {
+    protected void renderTransfer(MatrixStack matrixStack, IFluxDevice flux, int color, int x, int y) {
         RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
         screenUtils.resetGuiColouring();
-        font.drawString(matrixStack, FluxUtils.getTransferInfo(fluxConnector.getDeviceType(), EnergyType.FE, fluxConnector.getTransferChange()), x, y, color);
+        font.drawString(matrixStack, FluxUtils.getTransferInfo(flux, EnergyType.FE), x, y, color);
 
-        font.drawString(matrixStack, (fluxConnector.getDeviceType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
-                ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferBuffer(), NumberFormatType.COMMAS,
+        font.drawString(matrixStack, (flux.getDeviceType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
+                ": " + TextFormatting.BLUE + FluxUtils.format(flux.getTransferBuffer(), NumberFormatType.COMMAS,
                 EnergyType.FE, false), x, y + 10, 0xffffff);
 
-        screenUtils.renderItemStack(fluxConnector.getDisplayStack(), x - 20, y + 1);
+        screenUtils.renderItemStack(flux.getDisplayStack(), x - 20, y + 1);
 
         RenderSystem.popMatrix();
     }
@@ -138,7 +138,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
             if (flux.isForcedLoading()) {
                 list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
-            list.add(FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getTransferChange()));
+            list.add(FluxUtils.getTransferInfo(flux, EnergyType.FE));
         } else {
             list.add(TextFormatting.RED + FluxTranslate.CHUNK_UNLOADED.t());
         }
@@ -150,7 +150,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
                     FluxUtils.format(flux.getTransferBuffer(), NumberFormatType.COMMAS, EnergyType.FE, false));
         }
 
-        list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getRawLimit()));
+        list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() :
+                FluxUtils.format(flux.getRawLimit(), NumberFormatType.COMMAS, EnergyType.FE, false)));
         list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getRawPriority()));
         list.add(TextFormatting.ITALIC + FluxUtils.getDisplayString(flux.getGlobalPos()));
         return list;

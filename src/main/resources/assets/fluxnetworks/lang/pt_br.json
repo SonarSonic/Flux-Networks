@@ -76,7 +76,6 @@
 	"info.fluxnetworks.feedback.hascontroller": "A rede já possui um controlador",
 	"info.fluxnetworks.feedback.invaliduser": "Usuário inválido selecionado",
 	"info.fluxnetworks.feedback.illegalpassword": "Formato de senha errado, tem de ser um dígito ou letra",
-	"info.fluxnetworks.feedback.hasloader": "Esse chunk já possui um Carregador de Chunk",
 	"info.fluxnetworks.feedback.bannedloading": "Carregamento de Chunks foi banido desse servidor",
 
 	"info.fluxnetworks.gui.sortby": "Ordenar por",
@@ -113,10 +112,10 @@
 
 	"info.fluxnetworks.slot.main": "Inventário Principal (Desabilitado)",
 	"info.fluxnetworks.slot.hotbar": "Espaços da Hotbar",
-	"info.fluxnetworks.slot.righthand": "Mão Direita",
-	"info.fluxnetworks.slot.lefthand": "Mão Esquerda",
+	"info.fluxnetworks.slot.mainhand": "Main Hand",
+	"info.fluxnetworks.slot.offhand": "Off Hand",
 	"info.fluxnetworks.slot.armor": "Espaços de Armadura",
-	"info.fluxnetworks.slot.baubles": "Espaços de Anéis",
+	"info.fluxnetworks.slot.curios": "Curios Slots",
 
 	"info.fluxnetworks.stat.plug": "Plugues",
 	"info.fluxnetworks.stat.point": "Pontos",

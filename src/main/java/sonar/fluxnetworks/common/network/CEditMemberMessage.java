@@ -10,6 +10,7 @@ import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
@@ -40,7 +41,7 @@ public class CEditMemberMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = NetworkHandler.getPlayer(context);
+        PlayerEntity player = FluxUtils.getPlayer(context);
         if (player == null)
             return;
 
@@ -62,7 +63,8 @@ public class CEditMemberMessage implements IMessage {
         if (type == FluxConstants.TYPE_NEW_MEMBER) {
             PlayerEntity target = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(playerChanged);
             if (target != null) {
-                network.getAllMembers().add(NetworkMember.create(target, AccessLevel.USER));
+                NetworkMember m = NetworkMember.create(target, AccessLevel.USER);
+                network.getMembersMap().put(m.getPlayerUUID(), m);
                 NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS), context);
                 NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_MEMBERS), context);
             } else {
@@ -81,7 +83,7 @@ public class CEditMemberMessage implements IMessage {
                 } else if (type == FluxConstants.TYPE_SET_USER) {
                     p.setAccessLevel(AccessLevel.USER);
                 } else if (type == FluxConstants.TYPE_CANCEL_MEMBERSHIP) {
-                    network.getAllMembers().remove(p);
+                    network.getMembersMap().remove(playerChanged);
                 } else if (type == FluxConstants.TYPE_TRANSFER_OWNERSHIP) {
                     if (!network.getPlayerAccess(player).canDelete()) {
                         NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.NO_OWNER), context);
@@ -89,7 +91,7 @@ public class CEditMemberMessage implements IMessage {
                     }
                                 /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
                                         .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
-                    network.getAllMembers().removeIf(f -> f.getPlayerAccess().canDelete());
+                    network.getAllMembers().removeIf(f -> f.getAccessLevel().canDelete());
                     network.setOwnerUUID(playerChanged);
                     p.setAccessLevel(AccessLevel.OWNER);
                 }
@@ -100,8 +102,9 @@ public class CEditMemberMessage implements IMessage {
                 if (target != null) {
                                 /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
                                         .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
-                    network.getAllMembers().removeIf(f -> f.getPlayerAccess().canDelete());
-                    network.getAllMembers().add(NetworkMember.create(target, AccessLevel.OWNER));
+                    network.getAllMembers().removeIf(f -> f.getAccessLevel().canDelete());
+                    NetworkMember m = NetworkMember.create(target, AccessLevel.OWNER);
+                    network.getMembersMap().put(m.getPlayerUUID(), m);
                     network.setOwnerUUID(playerChanged);
                     NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS), context);
                     NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_MEMBERS), context);

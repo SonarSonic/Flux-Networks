@@ -15,6 +15,9 @@ public class ForgeEnergyHandler implements ITileEnergyHandler, IItemEnergyHandle
 
     public static final ForgeEnergyHandler INSTANCE = new ForgeEnergyHandler();
 
+    private ForgeEnergyHandler() {
+    }
+
     @Override
     public boolean hasCapability(@Nonnull TileEntity tile, @Nonnull Direction side) {
         return !tile.isRemoved() && tile.getCapability(CapabilityEnergy.ENERGY, side).isPresent();

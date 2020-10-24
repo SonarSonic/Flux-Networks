@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 public class StyleUtils {
 
     @Nonnull
-    public static ITextComponent getErrorStyle(@Nonnull FluxTranslate key) {
+    public static ITextComponent error(@Nonnull FluxTranslate key) {
         return key.getTextComponent().mergeStyle(TextFormatting.BOLD, TextFormatting.DARK_RED);
     }
 }

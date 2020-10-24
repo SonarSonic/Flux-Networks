@@ -76,7 +76,6 @@
 	"info.fluxnetworks.feedback.hascontroller": "В сети уже есть контроллер",
 	"info.fluxnetworks.feedback.invaliduser": "Выбран неверный пользователь",
 	"info.fluxnetworks.feedback.illegalpassword": "Неверный формат пароля, должен быть цифрой или буквой",
-	"info.fluxnetworks.feedback.hasloader": "Этот чанк уже имеет загрузчик чанка",
 	"info.fluxnetworks.feedback.bannedloading": "Загрузка чанка была заблокирована с сервера",
 
 	"info.fluxnetworks.gui.sortby": "Сортировать по",
@@ -113,10 +112,10 @@
 
 	"info.fluxnetworks.slot.main": "Основной инвентарь (отключено)",
 	"info.fluxnetworks.slot.hotbar": "Слоты горячей панели",
-	"info.fluxnetworks.slot.righthand": "Правая рука",
-	"info.fluxnetworks.slot.lefthand": "Левая рука",
+	"info.fluxnetworks.slot.mainhand": "Main Hand",
+	"info.fluxnetworks.slot.offhand": "Off Hand",
 	"info.fluxnetworks.slot.armor": "Слоты брони",
-	"info.fluxnetworks.slot.baubles": "Слоты Baubles",
+	"info.fluxnetworks.slot.curios": "Curios Slots",
 
 	"info.fluxnetworks.stat.plug": "Разъёмы",
 	"info.fluxnetworks.stat.point": "Точки",

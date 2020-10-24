@@ -15,15 +15,14 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -33,7 +32,6 @@ import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
-import sonar.fluxnetworks.common.network.SFeedbackMessage;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
@@ -54,7 +52,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     //TODO keep empty when created and client can use translated name as default, waiting for new UI framework
     private String customName;
-    private UUID playerUUID = FluxConstants.DEFAULT_UUID;
+    private UUID playerUUID = Util.DUMMY_UUID;
 
     private int networkID;
 
@@ -240,8 +238,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         if (type <= FluxConstants.TYPE_TILE_DROP) {
             networkID = tag.getInt(FluxConstants.NETWORK_ID);
             customName = tag.getString(FluxConstants.CUSTOM_NAME);
-            priority = tag.getInt(FluxConstants.PRIORITY);
-            limit = tag.getLong(FluxConstants.LIMIT);
+            setPriority(tag.getInt(FluxConstants.PRIORITY));
+            setTransferLimit(tag.getLong(FluxConstants.LIMIT));
             surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
             disableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
         }
@@ -336,7 +334,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         }
     }
 
-    public void readPacket(PacketBuffer buffer, NetworkEvent.Context context, byte id) {
+    public void readPacket(PacketBuffer buffer, byte id) {
         getTransferHandler().readPacket(buffer, id);
         switch (id) {
             case FluxConstants.C2S_CUSTOM_NAME:
@@ -367,7 +365,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                     setForcedLoading(FluxChunkManager.isChunkLoader(this));
                 } else {
                     setForcedLoading(false);
-                    NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.BANNED_LOADING), context);
                 }
                 break;
             case FluxConstants.S2C_GUI_SYNC:

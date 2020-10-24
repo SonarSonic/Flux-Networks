@@ -10,7 +10,7 @@ import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
-import sonar.fluxnetworks.client.gui.GuiFluxConnectorHome;
+import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
 import sonar.fluxnetworks.client.gui.tab.*;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
@@ -77,7 +77,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
         switch (tab) {
             case TAB_HOME:
                 if (connector instanceof TileFluxDevice) {
-                    Minecraft.getInstance().displayGuiScreen(new GuiFluxConnectorHome(player, (TileFluxDevice) connector));
+                    Minecraft.getInstance().displayGuiScreen(new GuiFluxDeviceHome(player, (TileFluxDevice) connector));
                 } else if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxAdminHome(player, connector));
                 } else if (connector instanceof ItemFluxConfigurator.ContainerProvider) {

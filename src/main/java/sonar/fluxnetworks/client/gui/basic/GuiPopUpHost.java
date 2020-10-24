@@ -270,6 +270,7 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector<?>> {
 
     }
 
+    @Override
     protected final void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         renderBackground(matrixStack);
         drawFluxDefaultBackground(matrixStack);

@@ -8,6 +8,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -30,7 +31,7 @@ public class SSuperAdminMessage implements IMessage {
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
         FluxClientCache.superAdmin = buffer.readBoolean();
-        PlayerEntity player = NetworkHandler.getPlayer(context);
+        PlayerEntity player = FluxUtils.getPlayer(context);
         if (player != null) {
             Screen gui = Minecraft.getInstance().currentScreen;
             if (gui instanceof GuiFluxCore) {

@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.api.network;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.GlobalPos;
@@ -40,6 +41,10 @@ public interface IFluxNetwork {
 
     void setNetworkColor(int color);
 
+    int getWirelessMode();
+
+    void setWirelessMode(int wireless);
+
     UUID getOwnerUUID();
 
     void setOwnerUUID(UUID uuid);
@@ -48,7 +53,19 @@ public interface IFluxNetwork {
 
     NetworkStatistics getStatistics();
 
+    /**
+     * Returns a collection object that contains all network members
+     *
+     * @return all members
+     */
     Collection<NetworkMember> getAllMembers();
+
+    /**
+     * Returns the original object of current network members
+     *
+     * @return members
+     */
+    Object2ObjectMap<UUID, NetworkMember> getMembersMap();
 
     Optional<NetworkMember> getMemberByUUID(UUID playerUUID);
 
@@ -79,7 +96,7 @@ public interface IFluxNetwork {
 
     }
 
-    default void onDeleted() {
+    default void onDelete() {
 
     }
 

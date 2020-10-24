@@ -54,8 +54,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                                 new StringTextComponent(TextFormatting.AQUA + flux.getNetwork().getNetworkName())
                                 : new StringTextComponent(TextFormatting.AQUA + FluxTranslate.ERROR_NO_SELECTED.t())));
 
-                        iProbeInfo.text(new StringTextComponent(
-                                FluxUtils.getTransferInfo(flux.getDeviceType(), EnergyType.FE, flux.getTransferChange())));
+                        iProbeInfo.text(new StringTextComponent(FluxUtils.getTransferInfo(flux, EnergyType.FE)));
 
                         if (playerEntity.isSneaking()) {
                             if (flux.getDeviceType().isStorage()) {
@@ -92,7 +91,8 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                             );
                         } else {
                             iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
-                                    .appendString(": " + TextFormatting.GREEN + flux.getRawLimit())
+                                    .appendString(": " + TextFormatting.GREEN + FluxUtils.format(
+                                            flux.getRawLimit(), NumberFormatType.COMMAS, EnergyType.FE, false))
                             );
                         }
 

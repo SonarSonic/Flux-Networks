@@ -92,10 +92,10 @@ public enum FluxTranslate {
 
     INVENTORY(true, "slot.main"),
     HOT_BAR(true, "slot.hotbar"),
-    RIGHT_HAND(true, "slot.righthand"),
-    LEFT_HAND(true, "slot.lefthand"),
+    MAIN_HAND(true, "slot.mainhand"),
+    OFF_HAND(true, "slot.offhand"),
     ARMOR(true, "slot.armor"),
-    BAUBLES(true, "slot.baubles"),
+    CURIOS(true, "slot.curios"),
 
     PLUGS(true, "stat.plug"),
     POINTS(true, "stat.point"),
@@ -117,7 +117,6 @@ public enum FluxTranslate {
 
     INVALID_USER(true, "feedback.invaliduser"),
     ILLEGAL_PASSWORD(true, "feedback.illegalpassword"),
-    HAS_LOADER(true, "feedback.hasloader"),
     BANNED_LOADING(true, "feedback.bannedloading"),
 
     OWNER(true, "access.owner"),

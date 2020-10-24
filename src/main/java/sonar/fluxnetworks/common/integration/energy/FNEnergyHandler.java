@@ -15,6 +15,9 @@ public class FNEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
 
     public static final FNEnergyHandler INSTANCE = new FNEnergyHandler();
 
+    private FNEnergyHandler() {
+    }
+
     @Override
     public boolean hasCapability(@Nonnull TileEntity tile, @Nonnull Direction side) {
         return !tile.isRemoved() && tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side).isPresent();

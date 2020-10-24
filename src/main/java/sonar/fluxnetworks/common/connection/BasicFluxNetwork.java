@@ -47,9 +47,11 @@ public class BasicFluxNetwork implements IFluxNetwork {
     private int networkColor;
     private UUID ownerUUID;
 
+    private int wirelessMode;
+
     protected final NetworkSecurity security = new NetworkSecurity();
     protected final NetworkStatistics statistics = new NetworkStatistics(this);
-    protected final Object2ObjectMap<UUID, NetworkMember> allMembers = new Object2ObjectOpenHashMap<>();
+    protected final Object2ObjectMap<UUID, NetworkMember> members = new Object2ObjectOpenHashMap<>();
     // On server: TileFluxDevice (loaded) and PhantomFluxDevice (unloaded)
     // On client: PhantomFluxDevice
     protected final Object2ObjectMap<GlobalPos, IFluxDevice> allConnections = new Object2ObjectOpenHashMap<>();
@@ -63,6 +65,14 @@ public class BasicFluxNetwork implements IFluxNetwork {
         networkName = name;
         networkColor = color;
         ownerUUID = owner;
+    }
+
+    protected BasicFluxNetwork(int id, String name, int color, @Nonnull PlayerEntity creator) {
+        networkID = id;
+        networkName = name;
+        networkColor = color;
+        ownerUUID = PlayerEntity.getUUID(creator.getGameProfile());
+        members.put(ownerUUID, NetworkMember.create(creator, AccessLevel.OWNER));
     }
 
     @Override
@@ -91,6 +101,16 @@ public class BasicFluxNetwork implements IFluxNetwork {
     }
 
     @Override
+    public int getWirelessMode() {
+        return wirelessMode;
+    }
+
+    @Override
+    public void setWirelessMode(int wireless) {
+        wirelessMode = wireless;
+    }
+
+    @Override
     public UUID getOwnerUUID() {
         return ownerUUID;
     }
@@ -112,7 +132,12 @@ public class BasicFluxNetwork implements IFluxNetwork {
 
     @Override
     public Collection<NetworkMember> getAllMembers() {
-        return allMembers.values();
+        return members.values();
+    }
+
+    @Override
+    public Object2ObjectMap<UUID, NetworkMember> getMembersMap() {
+        return members;
     }
 
     @Override
@@ -140,7 +165,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
 
     @Override
     public Optional<NetworkMember> getMemberByUUID(UUID playerUUID) {
-        return Optional.ofNullable(allMembers.get(playerUUID));
+        return Optional.ofNullable(members.get(playerUUID));
     }
 
     @Override
@@ -185,11 +210,11 @@ public class BasicFluxNetwork implements IFluxNetwork {
             nbt.putString(NETWORK_NAME, networkName);
             nbt.putInt(NETWORK_COLOR, networkColor);
             nbt.putUniqueId(OWNER_UUID, ownerUUID);
+            nbt.putInt("wirelessMode", wirelessMode);
             security.writeNBT(nbt, type == FluxConstants.TYPE_SAVE_ALL);
-            //nbt.putInt(FluxNetworkData.SECURITY_TYPE, securityType.ordinal());
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
-            Collection<NetworkMember> members = allMembers.values();
+            Collection<NetworkMember> members = this.members.values();
             if (!members.isEmpty()) {
                 ListNBT list = new ListNBT();
                 for (NetworkMember m : members) {
@@ -215,7 +240,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
             }
         }
         if (type == FluxConstants.TYPE_NET_MEMBERS) {
-            Collection<NetworkMember> members = allMembers.values();
+            Collection<NetworkMember> members = this.members.values();
             ListNBT list = new ListNBT();
             for (NetworkMember m : members) {
                 CompoundNBT t1 = new CompoundNBT();
@@ -291,6 +316,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
             networkName = nbt.getString(NETWORK_NAME);
             networkColor = nbt.getInt(NETWORK_COLOR);
             ownerUUID = nbt.getUniqueId(OWNER_UUID);
+            wirelessMode = nbt.getInt("wirelessMode");
             security.readNBT(nbt);
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
@@ -298,7 +324,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
-                allMembers.put(m.getPlayerUUID(), m);
+                members.put(m.getPlayerUUID(), m);
             }
             list = nbt.getList(CONNECTIONS, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
@@ -309,12 +335,12 @@ public class BasicFluxNetwork implements IFluxNetwork {
             }
         }
         if (type == FluxConstants.TYPE_NET_MEMBERS) {
-            allMembers.clear();
+            members.clear();
             ListNBT list = nbt.getList(PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundNBT c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
-                allMembers.put(m.getPlayerUUID(), m);
+                members.put(m.getPlayerUUID(), m);
             }
         }
         if (type == FluxConstants.TYPE_NET_CONNECTIONS) {

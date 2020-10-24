@@ -16,8 +16,8 @@
 
 	"tooltip.fluxnetworks.flux_dust": "Obtained by compressing Redstone with Bedrock and Obsidian",
 	"tooltip.fluxnetworks.flux_controller": "Enables Wireless Charging on your Flux Network",
-	"tooltip.fluxnetworks.flux_plug": "Extracts energy from adjacent tiles. Adding energy to your Flux Network",
-	"tooltip.fluxnetworks.flux_point": "Inserts energy into adjacent tiles. Removing energy from your Flux Network",
+	"tooltip.fluxnetworks.flux_plug": "Receives energy from adjacent blocks passively. Adding energy to your Flux Network",
+	"tooltip.fluxnetworks.flux_point": "Provides energy to adjacent blocks actively. Removing energy from your Flux Network",
 	"tooltip.fluxnetworks.flux_storage": "Stores energy for your Flux Network.",
 
 	"info.fluxnetworks.tab.home": "Home",
@@ -75,8 +75,7 @@
 	"info.fluxnetworks.feedback.nospace": "You can't create more networks",
 	"info.fluxnetworks.feedback.hascontroller": "The network already has a Flux Controller",
 	"info.fluxnetworks.feedback.invaliduser": "Invalid user selected",
-	"info.fluxnetworks.feedback.illegalpassword": "Wrong password format, must be digit or letter",
-	"info.fluxnetworks.feedback.hasloader": "This chunk already has a chunk loader",
+	"info.fluxnetworks.feedback.illegalpassword": "Wrong password format, must be digit, letter or common symbols",
 	"info.fluxnetworks.feedback.bannedloading": "Chunk loading is banned on this server",
 
 	"info.fluxnetworks.gui.sortby": "Sort by",
@@ -94,9 +93,9 @@
 	"info.fluxnetworks.gui.setuser": "Set to User",
 	"info.fluxnetworks.gui.setadmin": "Set to Admin",
 	"info.fluxnetworks.gui.playername": "Username",
-	"info.fluxnetworks.gui.playeraccess": "Access",
+	"info.fluxnetworks.gui.playeraccess": "Access Level",
 	"info.fluxnetworks.gui.cancelmembership": "Cancel Membership",
-	"info.fluxnetworks.gui.you": "You",
+	"info.fluxnetworks.gui.you": "Yourself",
 
 	"info.fluxnetworks.gui.sort.smart": "Smart",
 	"info.fluxnetworks.gui.sort.id": "ID",
@@ -113,10 +112,10 @@
 
 	"info.fluxnetworks.slot.main": "Main Inventory (Disabled)",
 	"info.fluxnetworks.slot.hotbar": "Hotbar Slots",
-	"info.fluxnetworks.slot.righthand": "Right Hand",
-	"info.fluxnetworks.slot.lefthand": "Left Hand",
+	"info.fluxnetworks.slot.mainhand": "Main Hand",
+	"info.fluxnetworks.slot.offhand": "Off Hand",
 	"info.fluxnetworks.slot.armor": "Armor Slots",
-	"info.fluxnetworks.slot.baubles": "Baubles Slots",
+	"info.fluxnetworks.slot.curios": "Curios Slots",
 
 	"info.fluxnetworks.stat.plug": "Plugs",
 	"info.fluxnetworks.stat.point": "Points",

@@ -76,7 +76,6 @@
     "info.fluxnetworks.feedback.hascontroller": "Dieses Netzwerk hat bereits einen Controller",
     "info.fluxnetworks.feedback.invaliduser": "Ungültigen Benutzer ausgewählt",
     "info.fluxnetworks.feedback.illegalpassword": "Falsches Passwort Format. Benutze nur Buchstaben und Zahlen",
-    "info.fluxnetworks.feedback.hasloader": "Dieser Chunk hat bereits einen Chunkloader",
     "info.fluxnetworks.feedback.bannedloading": "Chunk laden wurde vom Server verweigert",
 
     "info.fluxnetworks.gui.sortby": "Sortiere nach",
@@ -113,10 +112,10 @@
 
     "info.fluxnetworks.slot.main": "Hauptinventar (Deaktiviert)",
     "info.fluxnetworks.slot.hotbar": "Schnellauswahlslots",
-    "info.fluxnetworks.slot.righthand": "Haupthand",
-    "info.fluxnetworks.slot.lefthand": "Offhand",
+    "info.fluxnetworks.slot.mainhand": "Main Hand",
+    "info.fluxnetworks.slot.offhand": "Off Hand",
     "info.fluxnetworks.slot.armor": "Rüstungsslots",
-    "info.fluxnetworks.slot.baubles": "Baublesslots",
+    "info.fluxnetworks.slot.curios": "Curios Slots",
 
     "info.fluxnetworks.stat.plug": "Stecker",
     "info.fluxnetworks.stat.point": "Zugangspunkte",

@@ -79,6 +79,7 @@ public enum NetworkHandler {
         INSTANCE.registerMessage(CSuperAdminMessage.class, CSuperAdminMessage::new);
         INSTANCE.registerMessage(CEditMemberMessage.class, CEditMemberMessage::new);
         INSTANCE.registerMessage(CEditNetworkMessage.class, CEditNetworkMessage::new);
+        INSTANCE.registerMessage(CEditWirelessMessage.class, CEditWirelessMessage::new);
         INSTANCE.registerMessage(SLavaParticleMessage.class, SLavaParticleMessage::new);
         INSTANCE.registerMessage(CNetworkUpdateMessage.class, CNetworkUpdateMessage::new);
         INSTANCE.registerMessage(SNetworkUpdateMessage.class, SNetworkUpdateMessage::new);
@@ -180,21 +181,6 @@ public enum NetworkHandler {
         message.handle(ctx.get());
         ctx.get().setPacketHandled(true);
     }*/
-
-    /**
-     * Get player on current side depending on given network context for bi-directional message
-     *
-     * @param context network context
-     * @return player entity
-     */
-    @Nullable
-    public static PlayerEntity getPlayer(@Nonnull NetworkEvent.Context context) {
-        if (context.getDirection().getOriginationSide().isClient()) {
-            return context.getSender();
-        } else {
-            return Minecraft.getInstance().player;
-        }
-    }
 
     private <MSG extends IMessage> PacketBuffer toBuffer(MSG message) {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());

@@ -38,7 +38,7 @@ public class CCreateNetworkMessage implements IMessage {
 
     @Override
     public final void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = NetworkHandler.getPlayer(context);
+        PlayerEntity player = FluxUtils.getPlayer(context);
         if (player == null) {
             return;
         }

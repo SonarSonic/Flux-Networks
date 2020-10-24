@@ -4,7 +4,7 @@ import sonar.fluxnetworks.api.device.IFluxPoint;
 
 public abstract class BasicPointHandler<T extends IFluxPoint> extends BasicTransferHandler<T> {
 
-    private long allRequest;
+    private long demand;
 
     public BasicPointHandler(T device) {
         super(device);
@@ -13,23 +13,25 @@ public abstract class BasicPointHandler<T extends IFluxPoint> extends BasicTrans
     @Override
     public void onCycleStart() {
         super.onCycleStart();
-        allRequest = sendToConsumers(getRemoveLimit(), true);
+        demand = sendToConsumers(device.getLogicLimit(), true);
     }
 
     @Override
     public void onCycleEnd() {
-        super.onCycleEnd();
-        buffer += change = -sendToConsumers(buffer, false);
+        buffer += change = -sendToConsumers(Math.min(buffer, device.getLogicLimit()), false);
+    }
+
+    @Override
+    public void addToBuffer(long energy) {
+        if (energy <= 0) {
+            return;
+        }
+        buffer += energy;
     }
 
     @Override
     public long getRequest() {
-        return allRequest - addedToBuffer;
-    }
-
-    @Override
-    public long getAddLimit() {
-        return Math.min(allRequest, device.getLogicLimit());
+        return Math.max(demand - buffer, 0);
     }
 
     protected abstract long sendToConsumers(long energy, boolean simulate);

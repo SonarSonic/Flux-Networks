@@ -53,6 +53,9 @@ public class EnergyUtils {
     public static void reloadBlacklist() {
         BLOCK_BLACKLIST.clear();
         for (String str : FluxConfig.blockBlacklistStrings) {
+            if (str.isEmpty()) {
+                continue;
+            }
             if (!str.contains(":")) {
                 FluxNetworks.LOGGER.warn("BLACKLIST ERROR: " + str + " has incorrect formatting");
                 continue;
@@ -64,6 +67,9 @@ public class EnergyUtils {
         }
         ITEM_BLACKLIST.clear();
         for (String str : FluxConfig.itemBlackListStrings) {
+            if (str.isEmpty()) {
+                continue;
+            }
             if (!str.contains(":")) {
                 FluxNetworks.LOGGER.warn("BLACKLIST ERROR: " + str + " has incorrect formatting");
                 continue;

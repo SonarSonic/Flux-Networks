@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.misc;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -14,6 +15,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.NetworkEvent;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -46,10 +49,12 @@ public class FluxUtils {
     }
 
     @Nonnull
-    public static String getTransferInfo(@Nonnull FluxDeviceType type, EnergyType energyType, long change) {
+    public static String getTransferInfo(@Nonnull IFluxDevice flux, EnergyType energyType) {
+        FluxDeviceType type = flux.getDeviceType();
+        long change = flux.getTransferChange();
         if (type.isPlug()) {
             if (change == 0) {
-                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" +
                         FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
@@ -57,7 +62,7 @@ public class FluxUtils {
         }
         if (type.isPoint() || type.isController()) {
             if (change == 0) {
-                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED +
                         FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
@@ -65,7 +70,7 @@ public class FluxUtils {
         }
         if (type.isStorage()) {
             if (change == 0) {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else if (change > 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" +
                         FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
@@ -238,7 +243,7 @@ public class FluxUtils {
                 for (int i = 1; i < exp; i++) {
                     base *= 1000;
                 }
-                return String.format("%.1f%s", in / (double) base, pre) + suffix;
+                return String.format("%.1f%c", (double) in / base, pre) + suffix;
             }
             case COMMAS:
                 return NumberFormat.getInstance().format(in) + suffix;
@@ -284,6 +289,21 @@ public class FluxUtils {
             return lazyOptional.orElseThrow(IllegalStateException::new);
         }
         return null;
+    }
+
+    /**
+     * Get player on current side depending on given network context for bi-directional message
+     *
+     * @param context network context
+     * @return player entity
+     */
+    @Nullable
+    public static PlayerEntity getPlayer(@Nonnull NetworkEvent.Context context) {
+        if (context.getDirection().getOriginationSide().isClient()) {
+            return context.getSender();
+        } else {
+            return Minecraft.getInstance().player;
+        }
     }
 
     /*public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {

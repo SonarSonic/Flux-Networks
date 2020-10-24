@@ -65,7 +65,6 @@ public class GuiTabSettings extends GuiTabEditAbstract {
 
             //TODO only players that have permission can receive password from server
             //passwordField.setText(network.getNetworkPassword());
-            passwordField.setVisible(network.getSecurity().isEncrypted());
 
             buttons.add(apply = new NormalButton(FluxTranslate.APPLY.t(), 112, 140, 36, 12, 3).setUnclickable());
             buttons.add(delete = new NormalButton(FluxTranslate.DELETE.t(), 30, 140, 36, 12, 4).setUnclickable());
@@ -92,9 +91,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
             addButton(redirectButton);
         }
-
     }
-
 
     @Override
     public void onEditSettingsChanged() {

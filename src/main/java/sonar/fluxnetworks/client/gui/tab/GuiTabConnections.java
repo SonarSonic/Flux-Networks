@@ -29,6 +29,7 @@ import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
@@ -151,7 +152,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         if (element.isChunkLoaded()) {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 2, fontColor);
             RenderSystem.scaled(0.625, 0.625, 0.625);
-            font.drawString(matrixStack, FluxUtils.getTransferInfo(element.getDeviceType(), EnergyType.FE, element.getTransferChange()), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
+            font.drawString(matrixStack, FluxUtils.getTransferInfo(element, EnergyType.FE), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
             RenderSystem.scaled(1.6, 1.6, 1.6);
         } else {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 5, 0x808080);
@@ -204,7 +205,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         }
         if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
             closePopUp();
-            elements.removeAll(batchConnections);
+            //elements.removeAll(batchConnections);
             batchConnections.clear();
             clear.clickable = false;
             edit.clickable = false;
@@ -213,7 +214,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             if (connector instanceof IFluxDevice) {
                 GlobalPos g = ((IFluxDevice) connector).getGlobalPos();
                 if (elements.stream().noneMatch(f -> f.getGlobalPos().equals(g))) {
-                    Minecraft.getInstance().currentScreen = new GuiTabSelection(player, connector);
+                    Minecraft.getInstance().displayGuiScreen(new GuiTabSelection(player, connector));
                 }
             }
             page = Math.min(page, pages);
@@ -232,11 +233,12 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(IFluxDevice::isChunkLoaded).reversed().
-                thenComparing(f -> f.getDeviceType().isStorage()).
-                thenComparing(f -> f.getDeviceType().isPlug()).
-                thenComparing(f -> f.getDeviceType().isPoint()).
-                thenComparing(p -> -p.getRawPriority()));
+        Comparator<IFluxDevice> comparator = Comparator.comparing((Function<IFluxDevice, Boolean>) f -> !f.isChunkLoaded())
+                .thenComparing(f -> f.getDeviceType().isStorage())
+                .thenComparing(f -> f.getDeviceType().isPlug())
+                .thenComparing(f -> f.getDeviceType().isPoint())
+                .thenComparingInt(p -> -p.getRawPriority());
+        elements.sort(comparator);
         refreshCurrentPageInternal();
     }
 }

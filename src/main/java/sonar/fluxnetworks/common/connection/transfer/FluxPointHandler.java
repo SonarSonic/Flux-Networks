@@ -26,31 +26,20 @@ public class FluxPointHandler extends BasicPointHandler<TileFluxPoint> {
     }
 
     @Override
-    public void onCycleEnd() {
-        super.onCycleEnd();
-        for (ConnectionTransfer transfer : transfers.values()) {
-            if (transfer != null) {
-                transfer.onCycleEnd();
-            }
-        }
-    }
-
-    @Override
     public long sendToConsumers(long energy, boolean simulate) {
         if (!device.isActive()) {
             return 0;
         }
-        long remove = 0;
+        long leftover = energy;
         for (ConnectionTransfer transfer : transfers.values()) {
             if (transfer != null) {
-                long toTransfer = energy - remove;
-                remove += transfer.sendToTile(toTransfer, simulate);
+                leftover -= transfer.sendToTile(leftover, simulate);
+                if (leftover <= 0) {
+                    return energy;
+                }
             }
         }
-        if (!simulate) {
-            removedFromBuffer += remove;
-        }
-        return remove;
+        return energy - leftover;
     }
 
     @Override

@@ -30,8 +30,8 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
 
     public static final FluxColorHandler INSTANCE = new FluxColorHandler();
 
-    public static final int DEFAULT_COLOR = EnumNetworkColor.BLUE.getRGB();
-    public static final int NO_NETWORK_COLOR = FluxConstants.INVALID_NETWORK_COLOR;
+    private static final int DEFAULT_COLOR = EnumNetworkColor.BLUE.getRGB();
+    private static final int NO_NETWORK_COLOR = FluxConstants.INVALID_NETWORK_COLOR;
 
     /*private final Int2IntMap colorMap = new Int2IntArrayMap();
 

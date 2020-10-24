@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class NBTWipeRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<NBTWipeRecipe> {
 
-    public static NBTWipeRecipeSerializer INSTANCE = new NBTWipeRecipeSerializer();
+    public static final NBTWipeRecipeSerializer INSTANCE = new NBTWipeRecipeSerializer();
 
     @Nonnull
     @Override

@@ -11,7 +11,6 @@ public enum FeedbackInfo {
     HAS_CONTROLLER(FluxTranslate.HAS_CONTROLLER),
     INVALID_USER(FluxTranslate.INVALID_USER),
     ILLEGAL_PASSWORD(FluxTranslate.ILLEGAL_PASSWORD),
-    HAS_LOADER(FluxTranslate.HAS_LOADER),
     BANNED_LOADING(FluxTranslate.BANNED_LOADING),
     PASSWORD_REQUIRE(null),
     SUCCESS(null),
