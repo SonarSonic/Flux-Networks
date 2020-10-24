@@ -14,6 +14,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
         super(fluxStorage);
     }
 
+    private long added;
     private long removed;
 
     @Override
@@ -28,6 +29,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
         }
         buffer += energy;
         change += energy;
+        added += energy;
         device.markServerEnergyChanged();
     }
 
@@ -46,7 +48,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
 
     @Override
     public long getRequest() {
-        return MathHelper.clamp(device.getMaxTransferLimit() - buffer, 0, device.getLogicLimit());
+        return MathHelper.clamp(device.getMaxTransferLimit() - buffer, 0, device.getLogicLimit() - added);
     }
 
     @Override

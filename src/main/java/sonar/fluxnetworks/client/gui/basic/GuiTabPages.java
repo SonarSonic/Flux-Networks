@@ -2,11 +2,13 @@ package sonar.fluxnetworks.client.gui.basic;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.button.PageLabelButton;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -39,13 +41,17 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
             i++;
         }
         i = 0;
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef(0, 0, 400);
         for (T s : current) {
             int y = (gridStartY + gridHeight * i);
             if (mouseX >= gridStartX + guiLeft && mouseY >= y + guiTop && mouseX < (gridStartX + elementWidth) + guiLeft && mouseY < y + elementHeight + guiTop) {
                 renderElementTooltip(matrixStack, s, mouseX - guiLeft, mouseY - guiTop);
+                break;
             }
             i++;
         }
+        RenderSystem.popMatrix();
         /*if(pages > 1) {
             drawCenteredString(fontRenderer, page + " / " + pages, 89, 156, 0xffffff);
         }*/
@@ -56,6 +62,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         super.drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
     }
 
+    @Nullable
     public T getHoveredElement(int mouseX, int mouseY) {
         if (current.isEmpty())
             return null;
@@ -178,7 +185,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         ID(FluxTranslate.SORTING_ID),
         NAME(FluxTranslate.SORTING_NAME);
 
-        private FluxTranslate name;
+        private final FluxTranslate name;
 
         SortType(FluxTranslate name) {
             this.name = name;
@@ -187,7 +194,5 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         public String getTranslatedName() {
             return name.t();
         }
-
     }
-
 }

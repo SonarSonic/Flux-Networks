@@ -3,6 +3,7 @@ package sonar.fluxnetworks.common.connection;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.nbt.CompoundNBT;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.device.IFluxPoint;
 import sonar.fluxnetworks.api.device.IFluxStorage;
@@ -90,9 +91,9 @@ public class NetworkStatistics {
     private void weakerTick() {
         totalBuffer = 0;
         totalEnergy = 0;
-        List<IFluxPlug> plugs = network.getConnections(FluxLogicType.PLUG);
-        plugs.forEach(p -> {
-            if (p.getDeviceType().isPlug()) {
+        List<IFluxDevice> devices = network.getConnections(FluxLogicType.ANY);
+        devices.forEach(p -> {
+            if (!p.getDeviceType().isStorage()) {
                 totalBuffer += p.getTransferBuffer();
             }
         });
@@ -100,7 +101,7 @@ public class NetworkStatistics {
         storages.forEach(p -> totalEnergy += p.getTransferBuffer());
         fluxControllerCount = network.getConnections(FluxLogicType.CONTROLLER).size();
         fluxStorageCount = storages.size();
-        fluxPlugCount = plugs.size() - fluxStorageCount;
+        fluxPlugCount = network.getConnections(FluxLogicType.PLUG).size() - fluxStorageCount;
         fluxPointCount = network.getConnections(FluxLogicType.POINT).size() - fluxStorageCount - fluxControllerCount;
         energyInput = energyInput4 / 4;
         energyOutput = energyOutput4 / 4;
