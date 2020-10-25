@@ -11,7 +11,7 @@
       "item": "fluxnetworks:flux_core"
     },
     "b": {
-      "item": "minecraft:redstone_block"
+      "tag": "forge:storage_blocks/redstone"
     }
   },
   "result": {
