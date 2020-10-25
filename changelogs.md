@@ -1,4 +1,4 @@
-### Changelog 1.16.3-6.0.2.3 (2020-10-25)
+### Changelog 1.16.3-6.0.0.3 (2020-10-25)
 * Fix some packets without security check
 * Fix chunk loading system
 * Fix blacklist system
