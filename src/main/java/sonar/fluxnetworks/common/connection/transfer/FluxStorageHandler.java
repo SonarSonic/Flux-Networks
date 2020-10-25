@@ -18,7 +18,13 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
     private long removed;
 
     @Override
+    public void onCycleStart() {
+        change = 0;
+    }
+
+    @Override
     public void onCycleEnd() {
+        added = 0;
         removed = 0;
     }
 

@@ -21,11 +21,6 @@ public enum FluxConfigurationType {
         this.key = key;
     }
 
-    @Deprecated
-    public String getNBTKey() {
-        return key;
-    }
-
     public void copy(CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
         switch (this) {
             case NETWORK:

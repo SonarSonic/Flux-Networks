@@ -25,11 +25,6 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
     }
 
     @Override
-    public void onCycleStart() {
-        change = 0;
-    }
-
-    @Override
     public void addToBuffer(long energy) {
         throw new UnsupportedOperationException();
     }

@@ -43,8 +43,7 @@
     "info.fluxnetworks.denied.occupy": "Zugang verweigert: Wird gerade von einem anderen Spieler verwendet",
     "info.fluxnetworks.denied.removal": "Entfernen verweigert: Keine Berechtigung",
 
-    "info.fluxnetworks.click": "Klick",
-    "info.fluxnetworks.above": "Oben",
+    "info.fluxnetworks.clickabove": "Click %s Above",
 
     "info.fluxnetworks.error.noselected": "Kein netzwerk ausgewählt",
     "info.fluxnetworks.error.nonetwork": "Kein Netzwerk verfügbar",
@@ -82,7 +81,7 @@
     "info.fluxnetworks.gui.selected": "Ausgewählt",
     "info.fluxnetworks.gui.singleedit": "Einzelbearbeitungsmodus",
     "info.fluxnetworks.gui.batchedit": "Stapelbearbeitungsmodus",
-    "info.fluxnetworks.gui.editing": "Bearbeiten",
+    "info.fluxnetworks.gui.editingconnections": "Editing %d Connections",
     "info.fluxnetworks.gui.connections": "Verbindungen",
     "info.fluxnetworks.gui.customcolor": "Eigene Farbe",
     "info.fluxnetworks.gui.connectingto": "Verbinde zu",

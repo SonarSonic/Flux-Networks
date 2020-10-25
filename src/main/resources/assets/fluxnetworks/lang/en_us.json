@@ -34,7 +34,7 @@
 
 	"info.fluxnetworks.network.name": "Name",
 	"info.fluxnetworks.network.fullname": "Network Name",
-	"info.fluxnetworks.network.security": "Security Setting",
+	"info.fluxnetworks.network.security": "Security",
 	"info.fluxnetworks.network.password": "Password",
 	"info.fluxnetworks.network.energy": "Energy Type",
 	"info.fluxnetworks.network.color": "Color",
@@ -43,8 +43,7 @@
 	"info.fluxnetworks.denied.occupy": "Access denied: Another player is using",
 	"info.fluxnetworks.denied.removal": "Removal denied: No permission",
 
-	"info.fluxnetworks.click": "Click",
-	"info.fluxnetworks.above": "Above",
+	"info.fluxnetworks.clickabove": "Click %s Above",
 
 	"info.fluxnetworks.error.noselected": "No network selected",
 	"info.fluxnetworks.error.nonetwork": "No network available",
@@ -82,7 +81,7 @@
 	"info.fluxnetworks.gui.selected": "Selected",
 	"info.fluxnetworks.gui.singleedit": "Single Editing Mode",
 	"info.fluxnetworks.gui.batchedit": "Batch Editing Mode",
-	"info.fluxnetworks.gui.editing": "Editing",
+	"info.fluxnetworks.gui.editingconnections": "Editing %d Connections",
 	"info.fluxnetworks.gui.connections": "Connections",
 	"info.fluxnetworks.gui.customcolor": "Custom Color",
 	"info.fluxnetworks.gui.connectingto": "Connecting to",

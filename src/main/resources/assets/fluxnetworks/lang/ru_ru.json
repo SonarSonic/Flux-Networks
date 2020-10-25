@@ -43,8 +43,7 @@
 	"info.fluxnetworks.denied.occupy": "Доступ запрещен: Другой игрок использует",
 	"info.fluxnetworks.denied.removal": "В удалениии отказано: Нет разрешения",
 
-	"info.fluxnetworks.click": "Нажмите",
-	"info.fluxnetworks.above": "Выше",
+	"info.fluxnetworks.clickabove": "Click %s Above",
 
 	"info.fluxnetworks.error.noselected": "Сеть не выбрана",
 	"info.fluxnetworks.error.nonetwork": "Сеть недоступна",
@@ -82,7 +81,7 @@
 	"info.fluxnetworks.gui.selected": "Выбрано",
 	"info.fluxnetworks.gui.singleedit": "Одиночный режим редактирования",
 	"info.fluxnetworks.gui.batchedit": "Пакетный режим редактирования",
-	"info.fluxnetworks.gui.editing": "Редактирование",
+	"info.fluxnetworks.gui.editingconnections": "Editing %d Connections",
 	"info.fluxnetworks.gui.connections": "Соединения",
 	"info.fluxnetworks.gui.customcolor": "Пользовательский цвет",
 	"info.fluxnetworks.gui.connectingto": "Подсоединенный к",

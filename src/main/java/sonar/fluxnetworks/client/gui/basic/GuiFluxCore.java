@@ -108,7 +108,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         RenderSystem.pushMatrix();
         drawCenteredString(matrixStack, font, error, xSize / 2, 16, 0x808080);
         RenderSystem.scaled(0.625, 0.625, 0.625);
-        drawCenteredString(matrixStack, font, FluxTranslate.CLICK.t() + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE.t(), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
+        drawCenteredString(matrixStack, font, FluxTranslate.CLICK_ABOVE.format(TextFormatting.AQUA + " " + prompt + " " + TextFormatting.RESET), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
         RenderSystem.scaled(1.6, 1.6, 1.6);
         RenderSystem.popMatrix();
     }

@@ -54,7 +54,7 @@ public class ItemFluxConfigurator extends Item {
         if (tile instanceof TileFluxDevice) {
             TileFluxDevice flux = (TileFluxDevice) tile;
             if (!flux.canPlayerAccess(context.getPlayer())) {
-                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_DENIED_KEY), true);
+                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_DENIED), true);
                 return ActionResultType.FAIL;
             }
             ItemStack stack = player.getHeldItem(context.getHand());
@@ -97,7 +97,7 @@ public class ItemFluxConfigurator extends Item {
         CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
             tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE +
-                    FluxClientCache.getDisplayName(tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()))));
+                    FluxClientCache.getDisplayName(tag.getInt(FluxConstants.NETWORK_ID))));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
@@ -105,12 +105,12 @@ public class ItemFluxConfigurator extends Item {
     public static class ContainerProvider implements INamedContainerProvider, INetworkConnector {
 
         public final ItemStack stack;
-        private final int networkID;
+        public int networkID;
 
         public ContainerProvider(@Nonnull ItemStack stack) {
             this.stack = stack;
             CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
-            networkID = tag != null ? tag.getInt(FluxConfigurationType.NETWORK.getNBTKey()) : -1;
+            networkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
         }
 
         @Override

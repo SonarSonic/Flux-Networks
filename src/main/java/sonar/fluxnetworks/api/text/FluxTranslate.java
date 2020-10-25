@@ -5,6 +5,7 @@ import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
 
@@ -31,8 +32,7 @@ public enum FluxTranslate {
     NETWORK_ENERGY(true, "network.energy"),
     NETWORK_COLOR(true, "network.color"),
 
-    CLICK(true, "click"),
-    ABOVE(true, "above"),
+    CLICK_ABOVE(true, "clickabove"),
 
     ERROR_NO_SELECTED(true, "error.noselected"),
     ERROR_NO_NETWORK(true, "error.nonetwork"),
@@ -62,7 +62,7 @@ public enum FluxTranslate {
     SELECTED(true, "gui.selected"),
     SINGLE_EDIT(true, "gui.singleedit"),
     BATCH_EDIT(true, "gui.batchedit"),
-    EDITING(true, "gui.editing"),
+    EDITING_CONNECTIONS(true, "gui.editingconnections"),
     CONNECTIONS(true, "gui.connections"),
     CUSTOM_COLOR(true, "gui.customcolor"),
     CONNECTING_TO(true, "gui.connectingto"),
@@ -103,11 +103,11 @@ public enum FluxTranslate {
     STORAGES(true, "stat.storage"),
 
 
-    ACCESS_DENIED_KEY(true, "denied.access"),
-    ACCESS_OCCUPY_KEY(true, "denied.occupy"),
-    REMOVAL_DENIED_KEY(true, "denied.removal"),
-    SA_ON_KEY(true, "superadmin.on"),
-    SA_OFF_KEY(true, "superadmin.off"),
+    ACCESS_DENIED(true, "denied.access"),
+    ACCESS_OCCUPY(true, "denied.occupy"),
+    REMOVAL_DENIED(true, "denied.removal"),
+    SA_ON(true, "superadmin.on"),
+    SA_OFF(true, "superadmin.off"),
 
     REJECT(true, "feedback.reject"),
     NO_OWNER(true, "feedback.noowner"),
@@ -135,7 +135,7 @@ public enum FluxTranslate {
     String key;
 
     FluxTranslate(boolean prefix, String key) {
-        this.key = prefix ? "info.fluxnetworks." + key : key;
+        this.key = prefix ? "info." + FluxNetworks.MODID + "." + key : key;
     }
 
     @Nonnull

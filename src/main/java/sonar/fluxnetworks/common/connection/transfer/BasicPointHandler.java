@@ -12,7 +12,6 @@ public abstract class BasicPointHandler<T extends IFluxPoint> extends BasicTrans
 
     @Override
     public void onCycleStart() {
-        super.onCycleStart();
         demand = sendToConsumers(device.getLogicLimit(), true);
     }
 

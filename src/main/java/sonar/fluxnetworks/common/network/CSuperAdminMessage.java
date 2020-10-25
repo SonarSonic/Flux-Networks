@@ -33,9 +33,9 @@ public class CSuperAdminMessage implements IMessage {
         if (superAdmin != null && (superAdmin.hasPermission() || SuperAdmin.canActivateSuperAdmin(player))) {
             superAdmin.changePermission();
             if (superAdmin.hasPermission()) {
-                player.sendStatusMessage(FluxTranslate.SA_ON_KEY.getTextComponent(), true);
+                player.sendStatusMessage(FluxTranslate.SA_ON.getTextComponent(), true);
             } else {
-                player.sendStatusMessage(FluxTranslate.SA_OFF_KEY.getTextComponent(), true);
+                player.sendStatusMessage(FluxTranslate.SA_OFF.getTextComponent(), true);
             }
             NetworkHandler.INSTANCE.reply(new SSuperAdminMessage(superAdmin.hasPermission()), context);
         }

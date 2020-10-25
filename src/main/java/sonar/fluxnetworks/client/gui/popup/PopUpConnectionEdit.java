@@ -15,9 +15,9 @@ import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SimpleToggleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabConnections;
-import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CEditConnectionsMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,7 +134,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
             drawCenteredString(matrixStack, font, FluxUtils.getDisplayString(host.singleConnection.getGlobalPos()), 88, 122, 0xffffff);
         } else {
             drawCenteredString(matrixStack, font, FluxTranslate.BATCH_EDIT.t(), 88, 14, 0xffffff);
-            drawCenteredString(matrixStack, font, FluxTranslate.EDITING.t() + " " + host.batchConnections.size() + " " + FluxTranslate.CONNECTIONS.t(), 88, 122, 0xffffff);
+            drawCenteredString(matrixStack, font, FluxTranslate.EDITING_CONNECTIONS.format(host.batchConnections.size()), 88, 122, 0xffffff);
         }
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getNetworkColor());
@@ -179,6 +179,9 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
                             }
                         } else {
                             list = Lists.newArrayList(host.singleConnection.getGlobalPos());
+                            flags |= FluxConstants.FLAG_EDIT_NAME | FluxConstants.FLAG_EDIT_PRIORITY
+                                    | FluxConstants.FLAG_EDIT_LIMIT | FluxConstants.FLAG_EDIT_SURGE_MODE
+                                    | FluxConstants.FLAG_EDIT_DISABLE_LIMIT | FluxConstants.FLAG_EDIT_CHUNK_LOADING;
                         }
                         //CompoundNBT tag = FluxUtils.getBatchEditingTag(fluxName, priority, limit, surgeMode, disableLimit, chunkLoading);
                         NetworkHandler.INSTANCE.sendToServer(new CEditConnectionsMessage(host.network.getNetworkID(), list, flags,
