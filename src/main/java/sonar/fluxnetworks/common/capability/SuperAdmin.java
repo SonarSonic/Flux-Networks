@@ -13,7 +13,6 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxCapabilities;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
-import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -63,11 +62,8 @@ public class SuperAdmin implements ISuperAdmin {
     }
 
     public static boolean isPlayerSuperAdmin(@Nonnull PlayerEntity player) {
-        if (!player.world.isRemote) {
-            ISuperAdmin instance = FluxUtils.getCap(player, FluxCapabilities.SUPER_ADMIN);
-            return instance != null && instance.hasPermission();
-        }
-        return FluxClientCache.superAdmin;
+        ISuperAdmin instance = FluxUtils.getCap(player, FluxCapabilities.SUPER_ADMIN);
+        return instance != null && instance.hasPermission();
     }
 
     private static class SuperAdminStorage implements Capability.IStorage<ISuperAdmin> {
