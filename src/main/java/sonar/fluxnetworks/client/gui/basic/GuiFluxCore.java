@@ -108,7 +108,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         RenderSystem.pushMatrix();
         drawCenteredString(matrixStack, font, error, xSize / 2, 16, 0x808080);
         RenderSystem.scaled(0.625, 0.625, 0.625);
-        drawCenteredString(matrixStack, font, FluxTranslate.CLICK_ABOVE.format(TextFormatting.AQUA + " " + prompt + " " + TextFormatting.RESET), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
+        drawCenteredString(matrixStack, font, FluxTranslate.CLICK_ABOVE.format(TextFormatting.AQUA + prompt + TextFormatting.RESET), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
         RenderSystem.scaled(1.6, 1.6, 1.6);
         RenderSystem.popMatrix();
     }
@@ -163,9 +163,9 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     public void setConnectedNetwork(int networkID, String password) {
         if (connector instanceof TileFluxDevice) {
             NetworkHandler.INSTANCE.sendToServer(new CSelectNetworkMessage(((TileFluxDevice) connector).getPos(), networkID, password));
-        } else if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
+        } else if (connector instanceof ItemAdminConfigurator.NetworkConnector) {
             FluxClientCache.adminViewingNetwork = FluxClientCache.getNetwork(networkID);
-        } else if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
+        } else if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
             NetworkHandler.INSTANCE.sendToServer(new CConfiguratorConnectMessage(networkID, password));
         }
     }

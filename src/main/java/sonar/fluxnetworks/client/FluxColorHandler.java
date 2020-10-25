@@ -161,7 +161,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             Screen screen = Minecraft.getInstance().currentScreen;
             if (screen instanceof GuiFluxCore) {
                 GuiFluxCore gui = (GuiFluxCore) screen;
-                if (gui.connector instanceof ItemFluxConfigurator.ContainerProvider) {
+                if (gui.connector instanceof ItemFluxConfigurator.NetworkConnector) {
                     return gui.network.getNetworkColor();
                 }
             }

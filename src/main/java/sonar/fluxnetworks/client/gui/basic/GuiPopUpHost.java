@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.text.StringTextComponent;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.popup.PopUpCore;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
@@ -18,7 +19,7 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector<?>> {
     public PlayerEntity player;
 
     public GuiPopUpHost(PlayerEntity player, INetworkConnector connector) {
-        super(new ContainerConnector<>(0, player.inventory, connector), player.inventory, ((INamedContainerProvider) connector).getDisplayName());
+        super(new ContainerConnector<>(0, player.inventory, connector), player.inventory, StringTextComponent.EMPTY);
         this.player = player;
         this.connector = connector;
     }

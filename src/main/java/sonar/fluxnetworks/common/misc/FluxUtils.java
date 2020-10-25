@@ -29,9 +29,12 @@ import java.util.Objects;
 
 public class FluxUtils {
 
+    private FluxUtils() {
+    }
+
     @Nonnull
-    public static <E extends Enum<?>> E incrementEnum(@Nonnull E v, @Nonnull E[] values) {
-        int next = v.ordinal() + 1;
+    public static <E extends Enum<?>> E incrementEnum(@Nonnull E val, @Nonnull E[] values) {
+        int next = val.ordinal() + 1;
         if (next < values.length) {
             return values[next];
         } else {
@@ -302,7 +305,7 @@ public class FluxUtils {
         if (context.getDirection().getOriginationSide().isClient()) {
             return context.getSender();
         } else {
-            return Minecraft.getInstance().player;
+            return Inner.getPlayer();
         }
     }
 
@@ -331,4 +334,15 @@ public class FluxUtils {
         tag.putBoolean("chunkLoad", f != null && f.toggled);
         return tag;
     }*/
+
+    private static class Inner {
+
+        private Inner() {
+        }
+
+        @Nullable
+        private static PlayerEntity getPlayer() {
+            return Minecraft.getInstance().player;
+        }
+    }
 }

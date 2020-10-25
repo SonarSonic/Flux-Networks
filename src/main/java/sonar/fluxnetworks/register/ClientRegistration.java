@@ -68,10 +68,10 @@ public class ClientRegistration {
             if (connector instanceof TileFluxDevice) {
                 return new GuiFluxDeviceHome(inventory.player, (TileFluxDevice) connector);
             }
-            if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
-                return new GuiFluxConfiguratorHome(inventory.player, (ItemFluxConfigurator.ContainerProvider) connector);
+            if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
+                return new GuiFluxConfiguratorHome(inventory.player, (ItemFluxConfigurator.NetworkConnector) connector);
             }
-            if (connector instanceof ItemAdminConfigurator.ContainerProvider) {
+            if (connector instanceof ItemAdminConfigurator.NetworkConnector) {
                 return new GuiFluxAdminHome(inventory.player, connector);
             }
             return null;

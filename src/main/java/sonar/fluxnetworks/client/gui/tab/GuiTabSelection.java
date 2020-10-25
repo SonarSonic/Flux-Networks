@@ -52,7 +52,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             font.drawString(matrixStack, amount, 158 - font.getStringWidth(amount), 10, 0xffffff);
             font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
             if (!hasActivePopup()) {
-                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 88, 150, 0xffffff);
+                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 150, 0xffffff);
             }
         }
     }
@@ -145,8 +145,8 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         }
         if (selectedNetwork != null && FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
             closePopUp();
-            if (connector instanceof ItemFluxConfigurator.ContainerProvider) {
-                ItemFluxConfigurator.ContainerProvider networkConnector = (ItemFluxConfigurator.ContainerProvider) connector;
+            if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
+                ItemFluxConfigurator.NetworkConnector networkConnector = (ItemFluxConfigurator.NetworkConnector) connector;
                 networkConnector.networkID = selectedNetwork.getNetworkID();
 
                 this.network = selectedNetwork;

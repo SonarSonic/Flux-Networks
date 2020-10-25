@@ -51,7 +51,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
 
         screenUtils.renderNetwork(matrixStack, nameField.getText(), colorBtn.color, 20, 129);
-        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 88, 150, 0xffffff);
+        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 150, 0xffffff);
     }
 
     @Override

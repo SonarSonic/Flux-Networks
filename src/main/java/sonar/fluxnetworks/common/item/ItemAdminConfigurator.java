@@ -11,6 +11,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -38,18 +39,12 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
         if (!world.isRemote) {
             NetworkHooks.openGui((ServerPlayerEntity) player,
-                    new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
+                    new ContainerProvider(), buf -> buf.writeBoolean(false));
         }
         return ActionResult.resultSuccess(player.getHeldItem(hand));
     }
 
-    public static class ContainerProvider implements INamedContainerProvider, INetworkConnector {
-
-        public ItemStack stack;
-
-        public ContainerProvider(ItemStack stack) {
-            this.stack = stack;
-        }
+    public static class NetworkConnector implements INetworkConnector {
 
         @Override
         public int getNetworkID() {
@@ -70,17 +65,20 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
         public void onContainerClosed(PlayerEntity player) {
 
         }
+    }
+
+    public static class ContainerProvider implements INamedContainerProvider {
 
         @Nonnull
         @Override
         public ITextComponent getDisplayName() {
-            return stack.getDisplayName();
+            return StringTextComponent.EMPTY;
         }
 
         @Nullable
         @Override
         public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-            return new ContainerConnector<>(windowID, playerInventory, this);
+            return new ContainerConnector<>(windowID, playerInventory, null);
         }
     }
 }

@@ -77,7 +77,7 @@ public class ItemFluxConfigurator extends Item {
             return ActionResultType.SUCCESS;
         }
         NetworkHooks.openGui((ServerPlayerEntity) player,
-                new ContainerProvider(player.getHeldItem(context.getHand())), buf -> buf.writeBoolean(false));
+                new ContainerProvider(), buf -> buf.writeBoolean(false));
         return ActionResultType.SUCCESS;
     }
 
@@ -86,7 +86,7 @@ public class ItemFluxConfigurator extends Item {
     public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
         if (!world.isRemote) {
             NetworkHooks.openGui((ServerPlayerEntity) player,
-                    new ContainerProvider(player.getHeldItem(hand)), buf -> buf.writeBoolean(false));
+                    new ContainerProvider(), buf -> buf.writeBoolean(false));
         }
         return ActionResult.resultSuccess(player.getHeldItem(hand));
     }
@@ -102,12 +102,12 @@ public class ItemFluxConfigurator extends Item {
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
-    public static class ContainerProvider implements INamedContainerProvider, INetworkConnector {
+    public static class NetworkConnector implements INetworkConnector {
 
         public final ItemStack stack;
         public int networkID;
 
-        public ContainerProvider(@Nonnull ItemStack stack) {
+        public NetworkConnector(@Nonnull ItemStack stack) {
             this.stack = stack;
             CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
             networkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
@@ -125,22 +125,27 @@ public class ItemFluxConfigurator extends Item {
 
         @Override
         public void onContainerOpened(PlayerEntity player) {
+
         }
 
         @Override
         public void onContainerClosed(PlayerEntity player) {
+
         }
+    }
+
+    public static class ContainerProvider implements INamedContainerProvider {
 
         @Nonnull
         @Override
         public ITextComponent getDisplayName() {
-            return stack.getDisplayName();
+            return StringTextComponent.EMPTY;
         }
 
         @Nullable
         @Override
         public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-            return new ContainerConnector<>(windowID, playerInventory, this);
+            return new ContainerConnector<>(windowID, playerInventory, null);
         }
     }
 }

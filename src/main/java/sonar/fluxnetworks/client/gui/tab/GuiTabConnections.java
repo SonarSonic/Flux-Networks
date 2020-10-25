@@ -114,7 +114,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             }
             super.drawForegroundLayer(matrixStack, mouseX, mouseY);
             if (!hasActivePopup())
-                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getInfo(), 88, 165, 0xffffff);
+                drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 165, 0xffffff);
         } else {
             super.drawForegroundLayer(matrixStack, mouseX, mouseY);
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());

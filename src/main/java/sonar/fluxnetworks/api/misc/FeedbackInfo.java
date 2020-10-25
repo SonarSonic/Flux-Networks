@@ -2,6 +2,9 @@ package sonar.fluxnetworks.api.misc;
 
 import sonar.fluxnetworks.api.text.FluxTranslate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public enum FeedbackInfo {
     NONE(null),
     REJECT(FluxTranslate.REJECT),
@@ -16,18 +19,19 @@ public enum FeedbackInfo {
     SUCCESS(null),
     SUCCESS_2(null); // Sometimes we need another success to compare to the first one
 
+    @Nullable
     private final FluxTranslate localization;
 
-    FeedbackInfo(FluxTranslate localization) {
+    FeedbackInfo(@Nullable FluxTranslate localization) {
         this.localization = localization;
     }
 
-    public boolean hasFeedback() {
+    public boolean isValid() {
         return this != NONE;
     }
 
-    public String getInfo() {
-        return localization == null ? "": localization.t();
+    @Nonnull
+    public String getText() {
+        return localization == null ? "" : localization.t();
     }
-
 }
