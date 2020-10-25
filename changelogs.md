@@ -1,9 +1,10 @@
-#### Changelog 6.0.0.1
+### Changelog 1.16.3-6.0.0.1 (2020-10-25)
 
 * Fix some packets without security check
 * Fix chunk loading system
 * Fix blacklist system
 * Fix many other bugs
+* Add support for Curios API
 * Enhance flux storage capacity limit to Long.MAX_VALUE
 * Optimize data synchronization and client cache
 * Optimize network transfer
