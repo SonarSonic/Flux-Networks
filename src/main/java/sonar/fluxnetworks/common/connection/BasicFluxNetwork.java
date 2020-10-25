@@ -25,12 +25,12 @@ import java.util.*;
  */
 public class BasicFluxNetwork implements IFluxNetwork {
 
-    private static final String NETWORK_ID = "networkID";
     private static final String NETWORK_NAME = "networkName";
     private static final String NETWORK_COLOR = "networkColor";
     private static final String OWNER_UUID = "ownerUUID";
     private static final String PLAYER_LIST = "playerList";
     private static final String CONNECTIONS = "connections";
+    private static final String WIRELESS_MODE = "wirelessMode";
 
     //public ICustomValue<Integer> network_id = new CustomValue<>();
     //public ICustomValue<String> network_name = new CustomValue<>();
@@ -206,11 +206,11 @@ public class BasicFluxNetwork implements IFluxNetwork {
     @Override
     public void writeCustomNBT(CompoundNBT nbt, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
-            nbt.putInt(NETWORK_ID, networkID);
+            nbt.putInt(FluxConstants.NETWORK_ID, networkID);
             nbt.putString(NETWORK_NAME, networkName);
             nbt.putInt(NETWORK_COLOR, networkColor);
             nbt.putUniqueId(OWNER_UUID, ownerUUID);
-            nbt.putInt("wirelessMode", wirelessMode);
+            nbt.putInt(WIRELESS_MODE, wirelessMode);
             security.writeNBT(nbt, type == FluxConstants.TYPE_SAVE_ALL);
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
@@ -312,11 +312,11 @@ public class BasicFluxNetwork implements IFluxNetwork {
     @Override
     public void readCustomNBT(CompoundNBT nbt, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
-            networkID = nbt.getInt(NETWORK_ID);
+            networkID = nbt.getInt(FluxConstants.NETWORK_ID);
             networkName = nbt.getString(NETWORK_NAME);
             networkColor = nbt.getInt(NETWORK_COLOR);
             ownerUUID = nbt.getUniqueId(OWNER_UUID);
-            wirelessMode = nbt.getInt("wirelessMode");
+            wirelessMode = nbt.getInt(WIRELESS_MODE);
             security.readNBT(nbt);
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {

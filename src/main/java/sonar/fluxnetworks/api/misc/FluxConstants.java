@@ -60,22 +60,22 @@ public class FluxConstants {
     public static final String FLUX_COLOR = "FluxColor";
 
     // NBT key
-    public static final String NETWORK_ID = "11";
-    public static final String CUSTOM_NAME = "12";
-    public static final String PRIORITY = "13";
-    public static final String LIMIT = "14";
-    public static final String SURGE_MODE = "15";
-    public static final String DISABLE_LIMIT = "16";
-    public static final String PLAYER_UUID = "17";
+    public static final String NETWORK_ID = "networkID";
+    public static final String CUSTOM_NAME = "customName";
+    public static final String PRIORITY = "priority";
+    public static final String LIMIT = "limit";
+    public static final String SURGE_MODE = "surgeMode";
+    public static final String DISABLE_LIMIT = "disableLimit";
+    public static final String PLAYER_UUID = "playerUUID";
 
-    public static final String CLIENT_COLOR = "21";
-    public static final String FLAGS = "22";
+    public static final String CLIENT_COLOR = "clientColor";
+    public static final String FLAGS = "flags";
 
-    public static final String DEVICE_TYPE = "31";
-    public static final String FORCED_LOADING = "32";
-    public static final String CHUNK_LOADED = "33";
+    public static final String DEVICE_TYPE = "deviceType";
+    public static final String FORCED_LOADING = "forcedLoading";
+    public static final String CHUNK_LOADED = "chunkLoaded";
 
-    public static final String BUFFER = "71";
-    public static final String ENERGY = "72"; // equals to buffer, but with different display text
-    public static final String CHANGE = "75";
+    public static final String BUFFER = "buffer";
+    public static final String ENERGY = "energy"; // equals to buffer, but with different display text
+    public static final String CHANGE = "change";
 }

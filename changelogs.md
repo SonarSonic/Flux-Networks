@@ -6,8 +6,7 @@
 * Fix many other bugs
 * Enhance flux storage capacity limit to Long.MAX_VALUE
 * Optimize data synchronization and client cache
-* Reduce RAM consumption and redundant values
-* Optimize network transfer to the most
+* Optimize network transfer
 * More code standardizing and optimization
 
 #### Changelog 5.0.3
