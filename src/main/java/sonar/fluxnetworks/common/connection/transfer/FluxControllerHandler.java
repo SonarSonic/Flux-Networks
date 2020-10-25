@@ -22,11 +22,27 @@ import java.util.function.Supplier;
 
 public class FluxControllerHandler extends BasicPointHandler<TileFluxController> {
 
+    private static final Predicate<ItemStack> NOT_EMPTY = s -> !s.isEmpty();
+
     private final Map<ServerPlayerEntity, List<WirelessHandler>> players = new HashMap<>();
     private int timer;
 
     public FluxControllerHandler(TileFluxController fluxController) {
         super(fluxController);
+    }
+
+    @Override
+    public void onCycleStart() {
+        if (!device.isActive() || !ChargingType.ENABLE_WIRELESS.isActivated(device.getNetwork())) {
+            demand = 0;
+            players.clear();
+            return;
+        }
+        if (timer == 0) updatePlayers();
+        if ((timer & 0x3) == 2) {
+            // keep demand
+            demand = chargeAllItems(device.getLogicLimit(), true);
+        }
     }
 
     @Override
@@ -37,19 +53,13 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
 
     @Override
     public long sendToConsumers(long energy, boolean simulate) {
-        if (!device.isActive()) {
-            return 0;
-        }
-        if ((timer & 0x3) > 0) { //TODO THIS CAUSES FLICKERING INTO GUI, WE COULD SMOOTH THIS OUT (on client side)
-            return 0;
-        }
-        if (!ChargingType.ENABLE_WIRELESS.isActivated(device.getNetwork())) {
-            players.clear();
-            return 0;
-        }
-        if (simulate && timer == 0) {
-            updatePlayers();
-        }
+        if (!device.isActive()) return 0;
+        if ((timer & 0x3) > 0) return 0;
+        if (!ChargingType.ENABLE_WIRELESS.isActivated(device.getNetwork())) return 0;
+        return chargeAllItems(energy, simulate);
+    }
+
+    private long chargeAllItems(long energy, boolean simulate) {
         long leftover = energy;
         for (Map.Entry<ServerPlayerEntity, List<WirelessHandler>> player : players.entrySet()) {
             // dead, or quit game
@@ -144,8 +154,6 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
         }
     }
 
-    private static final Predicate<ItemStack> NOT_EMPTY = s -> !s.isEmpty();
-
     private static class WirelessHandler {
 
         private final Supplier<Iterator<ItemStack>> supplier;
@@ -156,7 +164,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
             this.validator = validator;
         }
 
-        public long chargeItems(long leftover, boolean simulate) {
+        private long chargeItems(long leftover, boolean simulate) {
             for (Iterator<ItemStack> it = supplier.get(); it.hasNext(); ) {
                 ItemStack stack = it.next();
                 IItemEnergyHandler handler;

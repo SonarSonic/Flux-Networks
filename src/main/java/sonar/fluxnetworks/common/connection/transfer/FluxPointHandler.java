@@ -17,12 +17,12 @@ public class FluxPointHandler extends BasicPointHandler<TileFluxPoint> {
 
     @Override
     public void onCycleStart() {
-        super.onCycleStart();
         for (ConnectionTransfer transfer : transfers.values()) {
             if (transfer != null) {
                 transfer.onCycleStart();
             }
         }
+        demand = sendToConsumers(device.getLogicLimit(), true);
     }
 
     @Override

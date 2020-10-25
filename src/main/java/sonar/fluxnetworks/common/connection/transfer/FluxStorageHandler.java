@@ -19,11 +19,12 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
 
     @Override
     public void onCycleStart() {
-        change = 0;
+
     }
 
     @Override
     public void onCycleEnd() {
+        change = added - removed;
         added = 0;
         removed = 0;
     }
@@ -34,7 +35,6 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
             return;
         }
         buffer += energy;
-        change += energy;
         added += energy;
         device.markServerEnergyChanged();
     }
@@ -46,7 +46,6 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
             return 0;
         }
         buffer -= a;
-        change -= a;
         removed += a;
         device.markServerEnergyChanged();
         return a;

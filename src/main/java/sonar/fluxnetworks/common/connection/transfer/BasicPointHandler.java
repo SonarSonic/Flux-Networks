@@ -4,15 +4,10 @@ import sonar.fluxnetworks.api.device.IFluxPoint;
 
 public abstract class BasicPointHandler<T extends IFluxPoint> extends BasicTransferHandler<T> {
 
-    private long demand;
+    protected long demand;
 
     public BasicPointHandler(T device) {
         super(device);
-    }
-
-    @Override
-    public void onCycleStart() {
-        demand = sendToConsumers(device.getLogicLimit(), true);
     }
 
     @Override

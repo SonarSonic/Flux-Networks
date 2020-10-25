@@ -16,7 +16,7 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
 
     private final Map<Direction, ConnectionTransfer> transfers = new EnumMap<>(Direction.class);
 
-    private long added;
+    private long received;
     private long removed;
 
     public FluxPlugHandler(TileFluxPlug fluxPlug) {
@@ -34,8 +34,8 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
 
     @Override
     public void onCycleEnd() {
-        change = added;
-        added = 0;
+        change = received;
+        received = 0;
         removed = 0;
     }
 
@@ -67,7 +67,7 @@ public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
             }
             if (!simulate) {
                 buffer += a;
-                added += a; // external additions happen outside the transfer cycle.
+                received += a; // external additions happen outside the transfer cycle.
                 transfer.onEnergyReceived(a);
             }
             return a;
