@@ -2,7 +2,6 @@ package sonar.fluxnetworks.common.connection.transfer;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.MathHelper;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
@@ -53,7 +52,7 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
 
     @Override
     public long getRequest() {
-        return MathHelper.clamp(device.getMaxTransferLimit() - buffer, 0, device.getLogicLimit() - added);
+        return Math.max(0, Math.min(device.getMaxTransferLimit() - buffer, device.getLogicLimit() - added));
     }
 
     @Override

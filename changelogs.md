@@ -1,3 +1,8 @@
+### Changelog 1.16.3-6.0.1.4 (2020-10-26)
+* Improve controller transfer logic
+* Fix crash caused by bad API implementations of other mods
+* Fix client only method crash
+
 ### Changelog 1.16.3-6.0.0.3 (2020-10-25)
 * Fix some packets without security check
 * Fix chunk loading system

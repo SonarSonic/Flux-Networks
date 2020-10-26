@@ -4,7 +4,6 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.api.network.ITransferHandler;
 
 /**
  * Uses forge's own energy wrapper and also IFNEnergyStorage
@@ -23,9 +22,8 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public long receiveEnergyL(long maxReceive, boolean simulate) {
-        ITransferHandler handler = device.getTransferHandler();
-        if (device.isActive()) {
-            return handler.receiveFromSupplier(maxReceive, side, simulate);
+        if (device.getDeviceType().isPlug() && device.isActive()) {
+            return device.getTransferHandler().receiveFromSupplier(maxReceive, side, simulate);
         }
         return 0;
     }
@@ -59,9 +57,9 @@ public class DefaultEnergyWrapper implements IEnergyStorage, IFNEnergyStorage {
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        ITransferHandler handler = device.getTransferHandler();
-        if (device.isActive()) {
-            return (int) handler.receiveFromSupplier(maxReceive, side, simulate);
+        // so other mods didn't check if this canReceive() at all
+        if (device.getDeviceType().isPlug() && device.isActive()) {
+            return (int) device.getTransferHandler().receiveFromSupplier(maxReceive, side, simulate);
         }
         return 0;
     }
