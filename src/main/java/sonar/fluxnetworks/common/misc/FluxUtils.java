@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.misc;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
@@ -15,7 +14,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
@@ -157,14 +155,14 @@ public class FluxUtils {
     }
 
     public static void writeGlobalPos(@Nonnull PacketBuffer buffer, @Nonnull GlobalPos pos) {
-        buffer.writeString(pos.getDimension().getLocation().toString(), 0x100);
+        buffer.writeResourceLocation(pos.getDimension().getLocation());
         buffer.writeBlockPos(pos.getPos());
     }
 
     @Nonnull
     public static GlobalPos readGlobalPos(@Nonnull PacketBuffer buffer) {
         RegistryKey<World> dim = RegistryKey.getOrCreateKey(Registry.WORLD_KEY,
-                new ResourceLocation(buffer.readString(0x100)));
+                buffer.readResourceLocation());
         return GlobalPos.getPosition(dim, buffer.readBlockPos());
     }
 
@@ -214,13 +212,13 @@ public class FluxUtils {
         }
     }*/
 
-    public static int getIntFromColor(int red, int green, int blue) {
+    /*public static int getIntFromColor(int red, int green, int blue) {
         red = red << 16 & 0x00FF0000;
         green = green << 8 & 0x0000FF00;
         blue = blue & 0x000000FF;
 
         return 0xFF000000 | red | green | blue;
-    }
+    }*/
 
     public static int getBrighterColor(int color, float factor) {
         int red = (color >> 16) & 0xff;
@@ -260,9 +258,9 @@ public class FluxUtils {
         return format(energy == EnergyType.EU ? in >> 2 : in, style, " " + (usage ? energy.getUsageSuffix() : energy.getStorageSuffix()));
     }
 
-    public static boolean checkPassword(@Nonnull String str) {
+    public static boolean isLegalPassword(@Nonnull String str) {
         for (int i = 0; i < str.length(); i++) {
-            int codePoint;
+            /*int codePoint;
             char c1 = str.charAt(i);
             if (Character.isHighSurrogate(c1) && i + 1 < str.length()) {
                 char c2 = str.charAt(i + 1);
@@ -276,6 +274,9 @@ public class FluxUtils {
                 codePoint = c1;
             }
             if (codePoint < 0x21 || codePoint >= 0x7f)
+                return false;*/
+            char c = str.charAt(i);
+            if (c < 0x21 || c >= 0x7f)
                 return false;
         }
         return true;
@@ -288,25 +289,9 @@ public class FluxUtils {
 
     @Nullable
     public static <T> T getCap(@Nonnull LazyOptional<T> lazyOptional) {
-        if (lazyOptional.isPresent()) {
+        if (lazyOptional.isPresent())
             return lazyOptional.orElseThrow(IllegalStateException::new);
-        }
         return null;
-    }
-
-    /**
-     * Get player on current side depending on given network context for bi-directional message
-     *
-     * @param context network context
-     * @return player entity
-     */
-    @Nullable
-    public static PlayerEntity getPlayer(@Nonnull NetworkEvent.Context context) {
-        if (context.getDirection().getOriginationSide().isClient()) {
-            return context.getSender();
-        } else {
-            return Inner.getPlayer();
-        }
     }
 
     /*public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {
@@ -334,15 +319,4 @@ public class FluxUtils {
         tag.putBoolean("chunkLoad", f != null && f.toggled);
         return tag;
     }*/
-
-    private static class Inner {
-
-        private Inner() {
-        }
-
-        @Nullable
-        private static PlayerEntity getPlayer() {
-            return Minecraft.getInstance().player;
-        }
-    }
 }

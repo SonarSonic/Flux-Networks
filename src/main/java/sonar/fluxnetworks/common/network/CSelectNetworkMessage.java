@@ -10,7 +10,6 @@ import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.SecurityType;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -40,7 +39,7 @@ public class CSelectNetworkMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = FluxUtils.getPlayer(context);
+        PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null)
             return;
 

@@ -38,7 +38,7 @@ public class CCreateNetworkMessage implements IMessage {
 
     @Override
     public final void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = FluxUtils.getPlayer(context);
+        PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
             return;
         }
@@ -46,7 +46,7 @@ public class CCreateNetworkMessage implements IMessage {
         color = buffer.readInt();
         security = SecurityType.values()[buffer.readVarInt()];
         password = buffer.readString(256);
-        if (FluxUtils.checkPassword(password)) {
+        if (FluxUtils.isLegalPassword(password)) {
             handle(buffer, context, player);
         } else {
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.ILLEGAL_PASSWORD), context);

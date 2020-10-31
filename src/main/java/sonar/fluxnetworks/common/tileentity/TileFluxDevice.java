@@ -44,10 +44,11 @@ import java.util.UUID;
 public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, ITickableTileEntity,
         INamedContainerProvider, IBigPower {
 
-    private static final int FLAG_LOAD = 1 << 6;
-    private static final int FLAG_SETTING_CHANGED = 1 << 7;
-    private static final int FLAG_FORCED_LOADING = 1 << 8;
+    private static final int FLAG_LOAD = 1 << 6; // server
+    private static final int FLAG_SETTING_CHANGED = 1 << 7; // server
+    private static final int FLAG_FORCED_LOADING = 1 << 8; // client and server
 
+    // server, players who are accessing this tile with container
     public final Set<PlayerEntity> playerUsing = new ObjectArraySet<>();
 
     //TODO keep empty when created and client can use translated name as default, waiting for new UI framework
@@ -56,16 +57,20 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     private int networkID;
 
-    // 0xRRGGBB, this value only available on client for rendering, updated from server
+    // 0xRRGGBB, this value only available on client for rendering, updated from server data
+    // this color is brighter than network color
     public int clientColor = FluxConstants.INVALID_NETWORK_COLOR;
 
     protected int priority;
     protected boolean surgeMode;
-    private long limit;
+    private long limit; // transfer limit
     private boolean disableLimit;
 
+    // bit 0~5 side connected, server
     protected int flags;
 
+    // cached value, pos may changed so still needs to test
+    @Nullable
     private GlobalPos globalPos;
 
     private IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
@@ -108,7 +113,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     protected void sTick() {
         if (!playerUsing.isEmpty()) {
             NetworkHandler.INSTANCE.sendToPlayers(new FluxTileMessage(this, FluxConstants.S2C_GUI_SYNC), playerUsing);
-            flags &= ~FLAG_SETTING_CHANGED;
         }
         if ((flags & FLAG_LOAD) == 0) {
             if (networkID > 0) {
@@ -179,7 +183,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Override
     public final void handleUpdateTag(BlockState state, @Nonnull CompoundNBT tag) {
         // Client side, read NBT when updating chunk data
-        clientColor = tag.getInt(FluxConstants.CLIENT_COLOR);
+        clientColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.2f);
         read(state, tag);
     }
 
@@ -247,12 +251,12 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             playerUUID = tag.getUniqueId(FluxConstants.PLAYER_UUID);
         }
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
-            clientColor = tag.getInt(FluxConstants.CLIENT_COLOR);
+            clientColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.2f);
             flags = tag.getInt(FluxConstants.FLAGS);
         }
         if (type == FluxConstants.TYPE_TILE_DROP) {
             if (world.isRemote) {
-                clientColor = FluxClientCache.getNetwork(networkID).getNetworkColor();
+                clientColor = FluxUtils.getBrighterColor(FluxClientCache.getNetwork(networkID).getNetworkColor(), 1.2f);
             }
         }
         getTransferHandler().readCustomNBT(tag, type);
@@ -323,13 +327,15 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 buffer.writeBoolean(isForcedLoading());
                 break;
             case FluxConstants.S2C_GUI_SYNC:
-                buffer.writeBoolean((flags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED);
-                if ((flags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
+                boolean s = (flags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED;
+                buffer.writeBoolean(s);
+                if (s) {
                     buffer.writeString(customName, 256);
                     buffer.writeInt(priority);
                     buffer.writeLong(limit);
                     buffer.writeByte(flags >> 6);
                 }
+                flags &= ~FLAG_SETTING_CHANGED;
                 break;
         }
     }
@@ -376,7 +382,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
                 }
                 break;
         }
-        if (id > 0) { // C2S
+        // C2S
+        if (id > 0) {
             flags |= FLAG_SETTING_CHANGED;
         }
     }

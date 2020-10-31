@@ -6,7 +6,6 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
@@ -29,7 +28,7 @@ public class CDeleteNetworkMessage implements IMessage {
 
     @Override
     public final void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = FluxUtils.getPlayer(context);
+        PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
             return;
         }

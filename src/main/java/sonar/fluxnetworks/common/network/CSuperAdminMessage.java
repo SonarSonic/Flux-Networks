@@ -25,7 +25,7 @@ public class CSuperAdminMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = FluxUtils.getPlayer(context);
+        PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
             return;
         }

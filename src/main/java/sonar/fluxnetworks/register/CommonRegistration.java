@@ -172,15 +172,11 @@ public class CommonRegistration {
             } else {
                 ItemStack stack = inventory.player.getHeldItemMainhand();
                 // build a bridge to connect to a flux network
-                if (stack.getItem() instanceof ItemAdminConfigurator) {
-                    return new ContainerConnector<>(windowId, inventory, new ItemAdminConfigurator.NetworkConnector());
-                }
                 if (stack.getItem() instanceof ItemFluxConfigurator) {
                     return new ContainerConnector<>(windowId, inventory, new ItemFluxConfigurator.NetworkConnector(stack));
                 }
             }
-            // return null, because players have broken some rules, and there's no gui will be opened, and the server container will be closed as well
-            return null;
+            return new ContainerConnector<>(windowId, inventory, new ItemAdminConfigurator.NetworkConnector());
         }).setRegistryName("connector"));
 
         FluxNetworks.LOGGER.info("Finished Registering Containers");

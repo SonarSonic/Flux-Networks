@@ -16,8 +16,8 @@
 
 	"tooltip.fluxnetworks.flux_dust": "通过基岩与黑曜石压缩红石获得",
 	"tooltip.fluxnetworks.flux_controller": "给你的网络带来无线充电功能",
-	"tooltip.fluxnetworks.flux_plug": "用于向能量网络增加能量(被动接收相邻方块的能量)",
-	"tooltip.fluxnetworks.flux_point": "用于从能量网络移除能量(主动为相邻方块供给能量)",
+	"tooltip.fluxnetworks.flux_plug": "被动接收相邻方块的能量,向能量网络增加能量",
+	"tooltip.fluxnetworks.flux_point": "主动为相邻方块供给能量,从能量网络移除能量",
 	"tooltip.fluxnetworks.flux_storage": "为你的能量网络存储能量",
 
 	"info.fluxnetworks.tab.home": "主页",

@@ -20,9 +20,8 @@ import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.mui.MUIIntegration;
 import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
-import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
@@ -58,12 +57,8 @@ public class ClientRegistration {
     }
 
     @Nonnull
-    @SuppressWarnings("ConstantConditions")
     private static ScreenManager.IScreenFactory<ContainerConnector<?>, GuiTabCore> getScreenFactory() {
         return (container, inventory, windowID) -> {
-            if (container == null) {
-                return null;
-            }
             INetworkConnector connector = container.connector;
             if (connector instanceof TileFluxDevice) {
                 return new GuiFluxDeviceHome(inventory.player, (TileFluxDevice) connector);
@@ -71,10 +66,7 @@ public class ClientRegistration {
             if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
                 return new GuiFluxConfiguratorHome(inventory.player, (ItemFluxConfigurator.NetworkConnector) connector);
             }
-            if (connector instanceof ItemAdminConfigurator.NetworkConnector) {
-                return new GuiFluxAdminHome(inventory.player, connector);
-            }
-            return null;
+            return new GuiFluxAdminHome(inventory.player, connector);
         };
     }
 

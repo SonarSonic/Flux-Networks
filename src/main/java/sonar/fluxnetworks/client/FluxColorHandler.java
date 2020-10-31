@@ -16,7 +16,6 @@ import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -29,9 +28,6 @@ import javax.annotation.Nullable;
 public class FluxColorHandler implements IBlockColor, IItemColor {
 
     public static final FluxColorHandler INSTANCE = new FluxColorHandler();
-
-    private static final int DEFAULT_COLOR = EnumNetworkColor.BLUE.getRGB();
-    private static final int NO_NETWORK_COLOR = FluxConstants.INVALID_NETWORK_COLOR;
 
     /*private final Int2IntMap colorMap = new Int2IntArrayMap();
 
@@ -125,9 +121,9 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
                 if (t.getNetworkID() == -1) {
                     return NO_NETWORK_COLOR;
                 }*/
-                return FluxUtils.getBrighterColor(((TileFluxDevice) tile).clientColor, 1.2f);
+                return ((TileFluxDevice) tile).clientColor;
             }
-            return DEFAULT_COLOR;
+            return EnumNetworkColor.BLUE.getRGB();
         }
         return ~0;
     }
@@ -151,7 +147,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             if (tag != null) {
                 return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
-            return NO_NETWORK_COLOR;
+            return FluxConstants.INVALID_NETWORK_COLOR;
         }
         return ~0;
     }
@@ -169,7 +165,7 @@ public class FluxColorHandler implements IBlockColor, IItemColor {
             if (tag != null) {
                 return FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
-            return NO_NETWORK_COLOR;
+            return FluxConstants.INVALID_NETWORK_COLOR;
         }
         return ~0;
     }

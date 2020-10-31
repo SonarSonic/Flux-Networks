@@ -9,7 +9,6 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -40,7 +39,7 @@ public class FluxTileMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = FluxUtils.getPlayer(context);
+        PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null) {
             if (context.getDirection().getOriginationSide().isServer()) {
                 buffer.release();

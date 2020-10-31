@@ -10,7 +10,6 @@ import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
@@ -41,7 +40,7 @@ public class CEditMemberMessage implements IMessage {
 
     @Override
     public void handle(@Nonnull PacketBuffer buffer, @Nonnull NetworkEvent.Context context) {
-        PlayerEntity player = FluxUtils.getPlayer(context);
+        PlayerEntity player = NetworkHandler.getPlayer(context);
         if (player == null)
             return;
 

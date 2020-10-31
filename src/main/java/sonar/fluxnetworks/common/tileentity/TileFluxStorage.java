@@ -19,10 +19,10 @@ import javax.annotation.Nonnull;
 
 public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage {
 
-    public static final int PRI_DIFF = 1000000;
-    public static final int PRI_UPPER = -10000;
+    public static final int PRI_DIFF = 1000000; // to get lower priority across the network
+    public static final int PRI_UPPER = -10000; // the priority limit
 
-    private static final int FLAG_ENERGY_CHANGED = 1 << 9;
+    private static final int FLAG_ENERGY_CHANGED = 1 << 9; // server
 
     private final FluxStorageHandler handler = new FluxStorageHandler(this);
 

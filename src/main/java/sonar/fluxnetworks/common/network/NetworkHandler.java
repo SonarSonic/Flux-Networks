@@ -96,6 +96,21 @@ public enum NetworkHandler {
     }
 
     /**
+     * Get player on current side depending on given network context for bi-directional message
+     *
+     * @param context network context
+     * @return player entity
+     */
+    @Nullable
+    public static PlayerEntity getPlayer(@Nonnull NetworkEvent.Context context) {
+        if (context.getDirection().getOriginationSide().isClient()) {
+            return context.getSender();
+        } else {
+            return Helper.getPlayer();
+        }
+    }
+
+    /**
      * Get the protocol version of this channel on current side
      *
      * @return the protocol
@@ -347,5 +362,17 @@ public enum NetworkHandler {
         final IPacket<?> packet = toS2CPacket(message);
         ((ServerWorld) chunk.getWorld()).getChunkProvider().chunkManager.getTrackingPlayers(
                 chunk.getPos(), false).forEach(player -> player.connection.sendPacket(packet));
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private static class Helper {
+
+        private Helper() {
+        }
+
+        @Nullable
+        private static PlayerEntity getPlayer() {
+            return Minecraft.getInstance().player;
+        }
     }
 }
