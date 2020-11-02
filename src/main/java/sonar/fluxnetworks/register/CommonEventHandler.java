@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.register;
 
-import com.google.common.collect.Lists;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -39,6 +38,7 @@ import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber
@@ -94,7 +94,7 @@ public class CommonEventHandler {
             if (entities.isEmpty()) {
                 return;
             }
-            final List<ItemEntity> validEntities = Lists.newArrayList();
+            final List<ItemEntity> validEntities = new ArrayList<>();
             int count = 0;
             for (ItemEntity entity : entities) {
                 if (entity.getItem().getItem() == Items.REDSTONE) {
@@ -113,7 +113,9 @@ public class CommonEventHandler {
                 ItemStack stack = new ItemStack(RegistryItems.FLUX_DUST, count);
                 validEntities.forEach(Entity::remove);
                 world.removeBlock(pos, false);
-                world.addEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack));
+                ItemEntity entity = new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack);
+                entity.setNoPickupDelay();
+                world.addEntity(entity);
                 if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 4)) {
                     world.setBlockState(pos.down(), Blocks.COBBLESTONE.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_DRAGON_FIREBALL_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);

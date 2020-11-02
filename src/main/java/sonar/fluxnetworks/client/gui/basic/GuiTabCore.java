@@ -78,7 +78,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
             case TAB_HOME:
                 if (connector instanceof TileFluxDevice) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxDeviceHome(player, (TileFluxDevice) connector));
-                } else if (connector instanceof ItemAdminConfigurator.NetworkConnector) {
+                } else if (connector instanceof ItemAdminConfigurator.AdminNetworkConnector) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxAdminHome(player, connector));
                 } else if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxConfiguratorHome(player, (ItemFluxConfigurator.NetworkConnector) connector));
@@ -87,7 +87,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 }
                 break;
             case TAB_SELECTION:
-                if (connector instanceof ItemAdminConfigurator.NetworkConnector && FluxClientCache.detailedNetworkView) {
+                if (connector instanceof ItemAdminConfigurator.AdminNetworkConnector && FluxClientCache.detailedNetworkView) {
                     Minecraft.getInstance().displayGuiScreen(new GuiTabDetailedSelection(player, connector));
                     break;
                 }

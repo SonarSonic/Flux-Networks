@@ -44,7 +44,7 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
         return ActionResult.resultSuccess(player.getHeldItem(hand));
     }
 
-    public static class NetworkConnector implements INetworkConnector {
+    public static class AdminNetworkConnector implements INetworkConnector {
 
         @Override
         public int getNetworkID() {
@@ -67,7 +67,7 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
         }
     }
 
-    public static class ContainerProvider implements INamedContainerProvider {
+    private static class ContainerProvider implements INamedContainerProvider {
 
         @Nonnull
         @Override

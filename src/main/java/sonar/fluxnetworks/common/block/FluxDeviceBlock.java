@@ -89,11 +89,10 @@ public abstract class FluxDeviceBlock extends Block {
     public boolean removedByPlayer(BlockState state, @Nonnull World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         if (!world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileFluxDevice)
-                if (!((TileFluxDevice) tile).canPlayerAccess(player)) {
-                    player.sendStatusMessage(StyleUtils.error(FluxTranslate.REMOVAL_DENIED), true);
-                    return false;
-                }
+            if (tile instanceof TileFluxDevice && !((TileFluxDevice) tile).canPlayerAccess(player)) {
+                player.sendStatusMessage(StyleUtils.error(FluxTranslate.REMOVAL_DENIED), true);
+                return false;
+            }
         }
         onBlockHarvested(world, pos, state, player);
         return world.setBlockState(pos, fluid.getBlockState(), world.isRemote ?

@@ -176,7 +176,7 @@ public class CommonRegistration {
                     return new ContainerConnector<>(windowId, inventory, new ItemFluxConfigurator.NetworkConnector(stack));
                 }
             }
-            return new ContainerConnector<>(windowId, inventory, new ItemAdminConfigurator.NetworkConnector());
+            return new ContainerConnector<>(windowId, inventory, new ItemAdminConfigurator.AdminNetworkConnector());
         }).setRegistryName("connector"));
 
         FluxNetworks.LOGGER.info("Finished Registering Containers");

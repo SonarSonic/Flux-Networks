@@ -5,7 +5,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.common.registry.RegistryItems;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +31,10 @@ public class ContainerConnector<T extends INetworkConnector> extends Container {
     public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
         if (connector instanceof IFluxDevice) {
             return ((IFluxDevice) connector).getFluxWorld() == playerIn.getEntityWorld();
+        } else if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
+            return playerIn.getHeldItemMainhand().getItem() == RegistryItems.FLUX_CONFIGURATOR;
+        } else if (connector instanceof ItemAdminConfigurator.AdminNetworkConnector) {
+            return playerIn.getHeldItemMainhand().getItem() == RegistryItems.ADMIN_CONFIGURATOR;
         }
         return true;
     }

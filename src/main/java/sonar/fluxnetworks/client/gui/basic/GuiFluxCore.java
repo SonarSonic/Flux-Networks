@@ -18,7 +18,6 @@ import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.misc.NumberFormatType;
 import sonar.fluxnetworks.common.network.CConfiguratorConnectMessage;
 import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
@@ -121,8 +120,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         font.drawString(matrixStack, FluxUtils.getTransferInfo(flux, EnergyType.FE), x, y, color);
 
         font.drawString(matrixStack, (flux.getDeviceType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
-                ": " + TextFormatting.BLUE + FluxUtils.format(flux.getTransferBuffer(), NumberFormatType.COMMAS,
-                EnergyType.FE, false), x, y + 10, 0xffffff);
+                ": " + TextFormatting.BLUE + EnergyType.storage(flux.getTransferBuffer()), x, y + 10, 0xffffff);
 
         screenUtils.renderItemStack(flux.getDisplayStack(), x - 20, y + 1);
 
@@ -144,14 +142,14 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         }
         if (flux.getDeviceType().isStorage()) {
             list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE +
-                    FluxUtils.format(flux.getTransferBuffer(), NumberFormatType.COMMAS, EnergyType.FE, false));
+                    EnergyType.storage(flux.getTransferBuffer()));
         } else {
             list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE +
-                    FluxUtils.format(flux.getTransferBuffer(), NumberFormatType.COMMAS, EnergyType.FE, false));
+                    EnergyType.storage(flux.getTransferBuffer()));
         }
 
         list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() :
-                FluxUtils.format(flux.getRawLimit(), NumberFormatType.COMMAS, EnergyType.FE, false)));
+                EnergyType.storage(flux.getRawLimit())));
         list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getRawPriority()));
         list.add(TextFormatting.ITALIC + FluxUtils.getDisplayString(flux.getGlobalPos()));
         return list;
@@ -163,7 +161,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     public void setConnectedNetwork(int networkID, String password) {
         if (connector instanceof TileFluxDevice) {
             NetworkHandler.INSTANCE.sendToServer(new CSelectNetworkMessage(((TileFluxDevice) connector).getPos(), networkID, password));
-        } else if (connector instanceof ItemAdminConfigurator.NetworkConnector) {
+        } else if (connector instanceof ItemAdminConfigurator.AdminNetworkConnector) {
             FluxClientCache.adminViewingNetwork = FluxClientCache.getNetwork(networkID);
         } else if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
             NetworkHandler.INSTANCE.sendToServer(new CConfiguratorConnectMessage(networkID, password));

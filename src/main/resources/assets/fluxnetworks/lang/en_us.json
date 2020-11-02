@@ -16,9 +16,10 @@
 
 	"tooltip.fluxnetworks.flux_dust": "Obtained by compressing Redstone with Bedrock and Obsidian",
 	"tooltip.fluxnetworks.flux_controller": "Enables Wireless Charging on your Flux Network",
-	"tooltip.fluxnetworks.flux_plug": "Receives energy from adjacent blocks passively. Adding energy to your Flux Network",
-	"tooltip.fluxnetworks.flux_point": "Provides energy to adjacent blocks actively. Removing energy from your Flux Network",
-	"tooltip.fluxnetworks.flux_storage": "Stores energy for your Flux Network.",
+	"tooltip.fluxnetworks.flux_plug": "Receives energy from adjacent blocks passively, adding energy to your Flux Network",
+	"tooltip.fluxnetworks.flux_point": "Provides energy to adjacent blocks actively, removing energy from your Flux Network",
+	"tooltip.fluxnetworks.flux_storage": "Stores energy for your Flux Network",
+	"tooltip.fluxnetworks.flux_storage_2": "Energy Capacity: %s",
 
 	"info.fluxnetworks.tab.home": "Home",
 	"info.fluxnetworks.tab.selection": "Network Selection",
@@ -95,6 +96,7 @@
 	"info.fluxnetworks.gui.playeraccess": "Access Level",
 	"info.fluxnetworks.gui.cancelmembership": "Cancel Membership",
 	"info.fluxnetworks.gui.you": "Yourself",
+	"info.fluxnetworks.gui.detailedview": "Detailed Network View",
 
 	"info.fluxnetworks.gui.sort.smart": "Smart",
 	"info.fluxnetworks.gui.sort.id": "ID",

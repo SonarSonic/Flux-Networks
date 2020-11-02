@@ -4,13 +4,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IBlockReader;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
@@ -27,9 +24,10 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
     @Override
     public void addInformation(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
         tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP.getTextComponent());
+        tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP_2.getTextComponent(EnergyType.storage(getEnergyCapacity())));
     }
 
-    public abstract long getMaxStorage();
+    public abstract long getEnergyCapacity();
 
     public static class Basic extends FluxStorageBlock {
 
@@ -38,7 +36,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         }
 
         @Override
-        public long getMaxStorage() {
+        public long getEnergyCapacity() {
             return FluxConfig.basicCapacity;
         }
 
@@ -56,7 +54,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         }
 
         @Override
-        public long getMaxStorage() {
+        public long getEnergyCapacity() {
             return FluxConfig.herculeanCapacity;
         }
 
@@ -74,7 +72,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         }
 
         @Override
-        public long getMaxStorage() {
+        public long getEnergyCapacity() {
             return FluxConfig.gargantuanCapacity;
         }
 

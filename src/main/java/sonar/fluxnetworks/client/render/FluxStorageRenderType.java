@@ -15,6 +15,7 @@ public class FluxStorageRenderType extends RenderType {
     private static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
 
     private static final RenderType INSTANCE;
+    private static final RenderType DIFFUSE;
 
     static {
         RenderType.State state = RenderType.State.getBuilder()
@@ -22,8 +23,22 @@ public class FluxStorageRenderType extends RenderType {
                 .shadeModel(SHADE_ENABLED)
                 .alpha(DEFAULT_ALPHA)
                 .transparency(TRANSLUCENT_TRANSPARENCY)
+                .lightmap(LIGHTMAP_ENABLED)
+                .overlay(OVERLAY_ENABLED)
                 .build(true);
-        INSTANCE = makeType("glow_type", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, true, state);
+        INSTANCE = makeType(FluxNetworks.MODID + ":storage_energy", DefaultVertexFormats.ENTITY, GL11.GL_QUADS,
+                256, true, true, state);
+        state = RenderType.State.getBuilder()
+                .texture(new RenderState.TextureState(ENERGY_TEXTURE, false, false))
+                .shadeModel(SHADE_ENABLED)
+                .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
+                .alpha(DEFAULT_ALPHA)
+                .transparency(TRANSLUCENT_TRANSPARENCY)
+                .lightmap(LIGHTMAP_ENABLED)
+                .overlay(OVERLAY_ENABLED)
+                .build(true);
+        DIFFUSE = makeType(FluxNetworks.MODID + ":storage_energy_diffuse", DefaultVertexFormats.ENTITY, GL11.GL_QUADS,
+                256, true, true, state);
     }
 
     private FluxStorageRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
@@ -31,7 +46,12 @@ public class FluxStorageRenderType extends RenderType {
     }
 
     @Nonnull
-    public static RenderType getGlowType() {
+    public static RenderType getType() {
         return INSTANCE;
+    }
+
+    @Nonnull
+    public static RenderType getDiffuse(boolean diffuse) {
+        return diffuse ? DIFFUSE : INSTANCE;
     }
 }

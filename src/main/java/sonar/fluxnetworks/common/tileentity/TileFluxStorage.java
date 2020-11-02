@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
 
 public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage {
 
-    public static final int PRI_DIFF = 1000000; // to get lower priority across the network
-    public static final int PRI_UPPER = -10000; // the priority limit
+    public static final int PRI_DIFF = 1000000; // to get the lowest priority across the network
+    public static final int PRI_UPPER = -10000; // the priority upper limit for storages
 
     private static final int FLAG_ENERGY_CHANGED = 1 << 9; // server
 
@@ -134,9 +134,11 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         CompoundNBT subTag = stack.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
         //noinspection ConstantConditions
         if (world.isRemote)
-            subTag.putInt(FluxConstants.CLIENT_COLOR, clientColor);
-        else
+            stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, true);
+        else {
+            stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, false);
             subTag.putInt(FluxConstants.CLIENT_COLOR, getNetwork().getNetworkColor());
+        }
         subTag.putLong(FluxConstants.ENERGY, getTransferBuffer());
         return stack;
     }

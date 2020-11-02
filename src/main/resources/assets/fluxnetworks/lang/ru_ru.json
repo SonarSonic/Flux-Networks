@@ -19,6 +19,7 @@
 	"tooltip.fluxnetworks.flux_plug": "Извлекает энергию из соседних тайлов. Добавление энергии в вашу флаксовую сеть",
 	"tooltip.fluxnetworks.flux_point": "Передаёт энергию в соседние тайлы. Удаление энергии из вашей флаксовой сети",
 	"tooltip.fluxnetworks.flux_storage": "Хранит энергию для вашей флаксовой сети",
+	"tooltip.fluxnetworks.flux_storage_2": "Energy Capacity: %s",
 
 	"info.fluxnetworks.tab.home": "Дом",
 	"info.fluxnetworks.tab.selection": "Выбор сети",
@@ -95,6 +96,7 @@
 	"info.fluxnetworks.gui.playeraccess": "Доступ",
 	"info.fluxnetworks.gui.cancelmembership": "Отменить членство",
 	"info.fluxnetworks.gui.you": "Вы",
+	"info.fluxnetworks.gui.detailedview": "Detailed Network View",
 
 	"info.fluxnetworks.gui.sort.smart": "Умному",
 	"info.fluxnetworks.gui.sort.id": "ID",

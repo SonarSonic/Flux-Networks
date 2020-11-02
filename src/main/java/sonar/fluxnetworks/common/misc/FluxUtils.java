@@ -3,7 +3,6 @@ package sonar.fluxnetworks.common.misc;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
@@ -18,12 +17,11 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.text.NumberFormat;
 import java.util.Collection;
-import java.util.Objects;
 
 public class FluxUtils {
 
@@ -35,17 +33,15 @@ public class FluxUtils {
         int next = val.ordinal() + 1;
         if (next < values.length) {
             return values[next];
-        } else {
-            return values[0];
         }
+        return values[0];
     }
 
     @Nullable
     public static Direction getBlockDirection(BlockPos pos, BlockPos other) {
-        for (Direction face : Direction.values()) {
+        for (Direction face : Direction.values())
             if (pos.offset(face).equals(other))
                 return face;
-        }
         return null;
     }
 
@@ -57,27 +53,23 @@ public class FluxUtils {
             if (change == 0) {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" +
-                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
+                return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + EnergyType.usage(change);
             }
         }
         if (type.isPoint() || type.isController()) {
             if (change == 0) {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED +
-                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
+                return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.RED + EnergyType.usage(change);
             }
         }
         if (type.isStorage()) {
             if (change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else if (change > 0) {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" +
-                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GREEN + "+" + EnergyType.usage(change);
             } else {
-                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED +
-                        FluxUtils.format(change, NumberFormatType.COMMAS, energyType, true);
+                return FluxTranslate.CHANGE.t() + ": " + TextFormatting.RED + EnergyType.usage(change);
             }
         }
         return "";
@@ -135,8 +127,8 @@ public class FluxUtils {
     }*/
 
     @Nonnull
-    public static GlobalPos getGlobalPos(@Nonnull TileEntity tileEntity) {
-        return GlobalPos.getPosition(Objects.requireNonNull(tileEntity.getWorld()).getDimensionKey(), tileEntity.getPos());
+    public static GlobalPos getGlobalPos(@Nonnull TileFluxDevice tile) {
+        return GlobalPos.getPosition(tile.getFluxWorld().getDimensionKey(), tile.getPos());
     }
 
     public static void writeGlobalPos(@Nonnull CompoundNBT nbt, @Nonnull GlobalPos pos) {
@@ -230,33 +222,28 @@ public class FluxUtils {
         return red << 16 | green << 8 | blue;
     }
 
-    public static String format(long in, @Nonnull NumberFormatType style, String suffix) {
-        switch (style) {
-            case FULL:
-                return in + suffix;
-            case COMPACT: {
-                if (in < 1000) {
-                    return in + suffix;
-                }
-                int exp = (int) (Math.log10(in) / 3);
-                char pre = "kMGTPE".charAt(exp - 1);
-                long base = 1000;
-                for (int i = 1; i < exp; i++) {
-                    base *= 1000;
-                }
-                return String.format("%.1f%c", (double) in / base, pre) + suffix;
-            }
-            case COMMAS:
-                return NumberFormat.getInstance().format(in) + suffix;
-            case NONE:
-                return suffix;
+    /**
+     * Compact format (like 3.5M)
+     *
+     * @param in value in
+     * @return compact string
+     */
+    public static String compact(long in) {
+        if (in < 1000) {
+            return Long.toString(in);
         }
-        return Long.toString(in);
+        int exp = (int) (Math.log10(in) / 3);
+        char pre = "kMGTPE".charAt(exp - 1);
+        double scale = 0.001;
+        for (int i = 1; i < exp; i++) {
+            scale *= 0.001;
+        }
+        return String.format("%.1f%c", in * scale, pre);
     }
 
-    public static String format(long in, NumberFormatType style, EnergyType energy, boolean usage) {
-        return format(energy == EnergyType.EU ? in >> 2 : in, style, " " + (usage ? energy.getUsageSuffix() : energy.getStorageSuffix()));
-    }
+    /*public static String format(long in, NumberFormatType style, EnergyType energy, boolean usage) {
+        return compact(energy == EnergyType.EU ? in >> 2 : in, style, " " + (usage ? energy.getUsageSuffix() : energy.getStorageSuffix()));
+    }*/
 
     public static boolean isLegalPassword(@Nonnull String str) {
         for (int i = 0; i < str.length(); i++) {

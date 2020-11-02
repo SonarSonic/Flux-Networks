@@ -134,7 +134,7 @@ public class ItemFluxConfigurator extends Item {
         }
     }
 
-    public static class ContainerProvider implements INamedContainerProvider {
+    private static class ContainerProvider implements INamedContainerProvider {
 
         @Nonnull
         @Override

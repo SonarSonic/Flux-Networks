@@ -14,8 +14,7 @@ import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.misc.NumberFormatType;
+import sonar.fluxnetworks.common.block.FluxStorageBlock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,8 +47,7 @@ public class ItemFluxDevice extends BlockItem {
 
             if (tag.contains(FluxConstants.LIMIT))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " +
-                        TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.LIMIT),
-                        NumberFormatType.COMMAS, EnergyType.FE, false)));
+                        TextFormatting.RESET + EnergyType.storage(tag.getLong(FluxConstants.LIMIT))));
 
             if (tag.contains(FluxConstants.PRIORITY))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.PRIORITY.t() + ": " +
@@ -57,12 +55,17 @@ public class ItemFluxDevice extends BlockItem {
 
             if (tag.contains(FluxConstants.BUFFER))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.t() + ": " +
-                        TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.BUFFER),
-                        NumberFormatType.COMMAS, EnergyType.FE, false)));
-            else if (tag.contains(FluxConstants.ENERGY))
+                        TextFormatting.RESET + EnergyType.storage(tag.getLong(FluxConstants.BUFFER))));
+            else if (tag.contains(FluxConstants.ENERGY)) {
+                long energy = tag.getLong(FluxConstants.ENERGY);
+                double percentage = 0;
+                Block block = getBlock();
+                if (block instanceof FluxStorageBlock) {
+                    percentage = Math.min((double) energy / ((FluxStorageBlock) block).getEnergyCapacity(), 1.0);
+                }
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " +
-                        TextFormatting.RESET + FluxUtils.format(tag.getLong(FluxConstants.ENERGY),
-                        NumberFormatType.COMMAS, EnergyType.FE, false)));
+                        TextFormatting.RESET + EnergyType.storage(energy) + String.format(" (%.1f%%)", percentage * 100)));
+            }
 
         } else {
             super.addInformation(stack, worldIn, tooltip, flagIn);

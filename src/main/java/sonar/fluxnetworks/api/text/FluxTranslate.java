@@ -15,6 +15,7 @@ public enum FluxTranslate {
     FLUX_PLUG_TOOLTIP(false, "tooltip.fluxnetworks.flux_plug"),
     FLUX_POINT_TOOLTIP(false, "tooltip.fluxnetworks.flux_point"),
     FLUX_STORAGE_TOOLTIP(false, "tooltip.fluxnetworks.flux_storage"),
+    FLUX_STORAGE_TOOLTIP_2(false, "tooltip.fluxnetworks.flux_storage_2"),
 
     TAB_HOME(true, "tab.home"),
     TAB_SELECTION(true, "tab.selection"),
@@ -76,6 +77,7 @@ public enum FluxTranslate {
     ACCESS(true, "gui.playeraccess"),
     CANCEL_MEMBERSHIP(true, "gui.cancelmembership"),
     YOU(true, "gui.you"),
+    DETAILED_VIEW(true, "gui.detailedview"),
 
     SORTING_SMART(true, "gui.sort.smart"),
     SORTING_ID(true, "gui.sort.id"),
@@ -152,6 +154,11 @@ public enum FluxTranslate {
     @Nonnull
     public TranslationTextComponent getTextComponent() {
         return new TranslationTextComponent(key);
+    }
+
+    @Nonnull
+    public TranslationTextComponent getTextComponent(Object... args) {
+        return new TranslationTextComponent(key, args);
     }
 
     @Nonnull

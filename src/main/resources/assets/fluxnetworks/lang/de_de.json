@@ -19,6 +19,7 @@
     "tooltip.fluxnetworks.flux_plug": "Um Energie in das Flux Netzwerk zu leiten",
     "tooltip.fluxnetworks.flux_point": "Um Energie aus dem Flux Netzwerk zu leiten",
     "tooltip.fluxnetworks.flux_storage": "Speichert Energie im Flux Netzwerk",
+    "tooltip.fluxnetworks.flux_storage_2": "Energy Capacity: %s",
 
     "info.fluxnetworks.tab.home": "Home",
     "info.fluxnetworks.tab.selection": "Netzwerkauswahl",
@@ -95,6 +96,7 @@
     "info.fluxnetworks.gui.playeraccess": "Zugang",
     "info.fluxnetworks.gui.cancelmembership": "Mitglied blocken",
     "info.fluxnetworks.gui.you": "Du",
+    "info.fluxnetworks.gui.detailedview": "Detailed Network View",
 
     "info.fluxnetworks.gui.sort.smart": "Smart",
     "info.fluxnetworks.gui.sort.id": "ID",

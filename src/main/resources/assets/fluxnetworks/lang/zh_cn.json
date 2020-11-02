@@ -19,6 +19,7 @@
 	"tooltip.fluxnetworks.flux_plug": "被动接收相邻方块的能量,向能量网络增加能量",
 	"tooltip.fluxnetworks.flux_point": "主动为相邻方块供给能量,从能量网络移除能量",
 	"tooltip.fluxnetworks.flux_storage": "为你的能量网络存储能量",
+	"tooltip.fluxnetworks.flux_storage_2": "能量容量: %s",
 
 	"info.fluxnetworks.tab.home": "主页",
 	"info.fluxnetworks.tab.selection": "网络选择",
@@ -95,6 +96,7 @@
 	"info.fluxnetworks.gui.playeraccess": "访问等级",
 	"info.fluxnetworks.gui.cancelmembership": "撤销成员权限",
 	"info.fluxnetworks.gui.you": "你自己",
+	"info.fluxnetworks.gui.detailedview": "详细网络视图",
 
 	"info.fluxnetworks.gui.sort.smart": "智能",
 	"info.fluxnetworks.gui.sort.id": "ID",

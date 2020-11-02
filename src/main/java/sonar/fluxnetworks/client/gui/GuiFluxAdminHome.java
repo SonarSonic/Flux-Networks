@@ -7,6 +7,7 @@ import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
@@ -39,7 +40,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 89, 150, 0xffffff);
 
         font.drawString(matrixStack, AccessLevel.SUPER_ADMIN.getName(), 20, 30, network.getNetworkColor());
-        font.drawString(matrixStack, "Detailed Network View", 20, 42, network.getNetworkColor());
+        font.drawString(matrixStack, FluxTranslate.DETAILED_VIEW.t(), 20, 42, network.getNetworkColor());
     }
 
     @Override

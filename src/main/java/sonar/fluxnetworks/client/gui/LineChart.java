@@ -9,7 +9,6 @@ import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.misc.NumberFormatType;
 
 import java.util.List;
 
@@ -93,7 +92,7 @@ public class LineChart {
         mc.fontRenderer.drawString(matrixStack, displayUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY), (float) ((y - 2) * 1.6), 0xffffff);
         mc.fontRenderer.drawString(matrixStack, displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)), (float) ((y + height + 1.5) * 1.6), 0xffffff);
         for (int i = 0; i < data.size(); i++) {
-            String d = FluxUtils.format(data.getLong(i), NumberFormatType.COMPACT, "");
+            String d = FluxUtils.compact(data.getLong(i));
             mc.fontRenderer.drawString(matrixStack, d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 1.0f, (float) ((currentHeight.getDouble(i) - 7) * 1.6), 0xffffff);
             String c = String.valueOf((5 - i) * 5);
             mc.fontRenderer.drawString(matrixStack, c, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(c) / 2F), (float) ((y + height + 2) * 1.6), 0xffffff);
@@ -141,7 +140,7 @@ public class LineChart {
         }
         if (maxValue == 0) {
             maxUnitY = 1;
-            displayUnitY = FluxUtils.format(maxUnitY, NumberFormatType.COMPACT, "");
+            displayUnitY = FluxUtils.compact(maxUnitY);
             return;
         }
         int measureLevel = (int) Math.log10(maxValue); // 0 = 10, 3 = 10000
@@ -160,7 +159,7 @@ public class LineChart {
                 maxUnitY = ((maxValue / p) + 1) * p;
                 break;
         }
-        displayUnitY = FluxUtils.format(maxUnitY, NumberFormatType.COMPACT, "");
+        displayUnitY = FluxUtils.compact(maxUnitY);
     }
 
     private void calculateTargetHeight(List<Long> data) {

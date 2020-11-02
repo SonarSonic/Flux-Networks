@@ -19,6 +19,7 @@
 	"tooltip.fluxnetworks.flux_plug": "Extrai energia de blocos adjacentes, adicionando energia para sua Rede de Flux",
 	"tooltip.fluxnetworks.flux_point": "Insere energia em blocos adjacentes, removendo energia de sua Rede de Flux",
 	"tooltip.fluxnetworks.flux_storage": "Guarda energia para sua Rede de Flux.",
+	"tooltip.fluxnetworks.flux_storage_2": "Energy Capacity: %s",
 
 	"info.fluxnetworks.tab.home": "Início",
 	"info.fluxnetworks.tab.selection": "Seleção de Rede",
@@ -95,6 +96,7 @@
 	"info.fluxnetworks.gui.playeraccess": "Acesso",
 	"info.fluxnetworks.gui.cancelmembership": "Cancelar Filiação",
 	"info.fluxnetworks.gui.you": "Você",
+	"info.fluxnetworks.gui.detailedview": "Detailed Network View",
 
 	"info.fluxnetworks.gui.sort.smart": "Smart",
 	"info.fluxnetworks.gui.sort.id": "ID",

@@ -3,20 +3,18 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.LineChart;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
-import sonar.fluxnetworks.common.misc.NumberFormatType;
-import sonar.fluxnetworks.common.network.NetworkHandler;
-import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
-import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 
 public class GuiTabStatistics extends GuiTabCore {
 
@@ -50,16 +48,16 @@ public class GuiTabStatistics extends GuiTabCore {
             font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.CONTROLLERS.t() + TextFormatting.GRAY + ": " +
                     TextFormatting.RESET + stats.fluxControllerCount, 82, 36, color);
             font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.INPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.energyInput, NumberFormatType.COMPACT, EnergyType.FE, true), 12, 48, color);
+                    EnergyType.usageCompact(stats.energyInput), 12, 48, color);
             font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.OUTPUT.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.energyOutput, NumberFormatType.COMPACT, EnergyType.FE, true), 12, 60, color);
+                    EnergyType.usageCompact(stats.energyOutput), 12, 60, color);
             font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.BUFFER.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.totalBuffer, NumberFormatType.COMPACT, EnergyType.FE, false), 12, 72, color);
+                    EnergyType.storageCompact(stats.totalBuffer), 12, 72, color);
             font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.ENERGY.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
-                    FluxUtils.format(stats.totalEnergy, NumberFormatType.COMPACT, EnergyType.FE, false), 12, 84, color);
+                    EnergyType.storageCompact(stats.totalEnergy), 12, 84, color);
 
             GlStateManager.scaled(0.75, 0.75, 0.75);
-            drawCenteredString(matrixStack, font, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.averageTickMicro + " \u00B5s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
+            drawCenteredString(matrixStack, font, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.averageTickMicro + " \u00b5s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
             GlStateManager.scaled(1 / 0.75, 1 / 0.75, 1 / 0.75);
 
         } else {
