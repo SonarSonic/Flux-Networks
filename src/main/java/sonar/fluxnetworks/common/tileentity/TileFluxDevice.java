@@ -617,6 +617,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Nullable
     public final Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity entity) {
-        return new ContainerConnector<>(windowID, playerInventory, this);
+        return new ContainerConnector(windowID, playerInventory, this);
     }
 }

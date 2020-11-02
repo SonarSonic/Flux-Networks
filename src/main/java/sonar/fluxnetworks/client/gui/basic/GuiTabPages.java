@@ -4,10 +4,11 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.button.PageLabelButton;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -24,8 +25,8 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
 
     public int page = 1, currentPages = 1, pages = 1, gridPerPage = 1, gridStartX = 0, gridStartY = 0, gridHeight = 0, elementHeight = 0, elementWidth = 0;
 
-    public GuiTabPages(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabPages(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
     }
 
     @Override

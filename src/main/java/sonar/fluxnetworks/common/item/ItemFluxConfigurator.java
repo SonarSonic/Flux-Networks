@@ -97,7 +97,7 @@ public class ItemFluxConfigurator extends Item {
         CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
             tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE +
-                    FluxClientCache.getDisplayName(tag.getInt(FluxConstants.NETWORK_ID))));
+                    FluxClientCache.getDisplayName(tag)));
         }
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
@@ -107,10 +107,12 @@ public class ItemFluxConfigurator extends Item {
         public final ItemStack stack;
         public int networkID;
 
-        public NetworkConnector(@Nonnull ItemStack stack) {
+        public NetworkConnector(ItemStack stack) {
             this.stack = stack;
-            CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
-            networkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
+            if (stack != null) {
+                CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
+                networkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
+            }
         }
 
         @Override
@@ -136,6 +138,8 @@ public class ItemFluxConfigurator extends Item {
 
     private static class ContainerProvider implements INamedContainerProvider {
 
+        private static final NetworkConnector SERVER_INSTANCE = new NetworkConnector(null);
+
         @Nonnull
         @Override
         public ITextComponent getDisplayName() {
@@ -145,7 +149,7 @@ public class ItemFluxConfigurator extends Item {
         @Nullable
         @Override
         public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-            return new ContainerConnector<>(windowID, playerInventory, null);
+            return new ContainerConnector(windowID, playerInventory, SERVER_INSTANCE);
         }
     }
 }

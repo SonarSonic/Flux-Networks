@@ -4,7 +4,7 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 
 import javax.annotation.Nonnull;
 
-public enum EnumNavigationTabs {
+public enum EnumNavigationTab {
     TAB_HOME(FluxTranslate.TAB_HOME),
     TAB_SELECTION(FluxTranslate.TAB_SELECTION),
     TAB_WIRELESS(FluxTranslate.TAB_WIRELESS),
@@ -17,7 +17,7 @@ public enum EnumNavigationTabs {
     private final FluxTranslate tabName;
     private final int id;
 
-    EnumNavigationTabs(FluxTranslate tabName) {
+    EnumNavigationTab(FluxTranslate tabName) {
         this.tabName = tabName;
         id = ordinal() + 1;
     }

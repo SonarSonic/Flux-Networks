@@ -3,7 +3,6 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 
 import javax.annotation.Nonnull;
 

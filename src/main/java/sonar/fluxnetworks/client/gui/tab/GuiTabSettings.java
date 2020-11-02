@@ -4,11 +4,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
@@ -16,9 +15,12 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.network.CDeleteNetworkMessage;
 import sonar.fluxnetworks.common.network.CEditNetworkMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
+
+import javax.annotation.Nonnull;
 
 public class GuiTabSettings extends GuiTabEditAbstract {
 
@@ -27,22 +29,22 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     public NormalButton apply, delete;
     public int deleteCount;
 
-    public GuiTabSettings(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabSettings(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
         if (networkValid) {
             securityType = network.getSecurity().getType();
             energyType = EnergyType.FE;
         }
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_SETTING;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_SETTING;
     }
 
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        if (getNavigationTab() == EnumNavigationTabs.TAB_CREATE || networkValid) {
+        if (getNavigationTab() == EnumNavigationTab.TAB_CREATE || networkValid) {
             if (mouseX > 30 + guiLeft && mouseX < 66 + guiLeft && mouseY > 140 + guiTop && mouseY < 152 + guiTop) {
                 if (delete.clickable) {
                     drawCenteredString(matrixStack, font, TextFormatting.BOLD + FluxTranslate.DELETE_NETWORK.t(), 48, 128, 0xff0000);
@@ -88,7 +90,8 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 this.colorBtn.selected = true;
             }
         } else {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
+                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
             addButton(redirectButton);
         }
     }
@@ -136,7 +139,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     public void tick() {
         super.tick();
         if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
-            switchTab(EnumNavigationTabs.TAB_HOME, player, connector);
+            switchTab(EnumNavigationTab.TAB_HOME);
             FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
         if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS_2) {

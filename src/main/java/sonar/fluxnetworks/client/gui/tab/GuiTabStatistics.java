@@ -4,17 +4,19 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.LineChart;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
+
+import javax.annotation.Nonnull;
 
 public class GuiTabStatistics extends GuiTabCore {
 
@@ -24,12 +26,12 @@ public class GuiTabStatistics extends GuiTabCore {
     private LineChart chart;
     private int timer = 0;
 
-    public GuiTabStatistics(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabStatistics(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_STATISTICS;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_STATISTICS;
     }
 
     @Override
@@ -62,7 +64,8 @@ public class GuiTabStatistics extends GuiTabCore {
 
         } else {
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
+                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
             addButton(redirectButton);
         }
     }
@@ -71,15 +74,14 @@ public class GuiTabStatistics extends GuiTabCore {
     protected void drawBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
         if (networkValid && chart != null) {
-            chart.drawChart(minecraft, matrixStack);
-            chart.updateHeight(partialTicks);
+            chart.drawChart(minecraft, matrixStack, partialTicks);
         }
     }
 
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTabs.TAB_STATISTICS, navigationTabs);
+        configureNavigationButtons(EnumNavigationTab.TAB_STATISTICS, navigationTabs);
 
         if (networkValid) {
             chart = new LineChart(width / 2 - 48, height / 2 + 20, 50, 6, "s", EnergyType.FE.getStorageSuffix());

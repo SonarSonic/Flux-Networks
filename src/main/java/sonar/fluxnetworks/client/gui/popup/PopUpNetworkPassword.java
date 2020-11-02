@@ -10,6 +10,8 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabSelection;
 
+import javax.annotation.Nonnull;
+
 public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
 
     public FluxTextWidget password;
@@ -17,7 +19,6 @@ public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
     public PopUpNetworkPassword(GuiTabSelection host, PlayerEntity player, INetworkConnector connector) {
         super(host, player, connector);
     }
-
 
     @Override
     public void init() {
@@ -34,7 +35,7 @@ public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         if (host.selectedNetwork != null) {
             drawCenteredString(matrixStack, font, FluxTranslate.CONNECTING_TO.t() + " " + host.selectedNetwork.getNetworkName(), 88, 50, 0xffffff);

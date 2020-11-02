@@ -3,7 +3,7 @@ package sonar.fluxnetworks.client.gui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
@@ -12,10 +12,13 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+
+import javax.annotation.Nonnull;
 
 /**
  * The home page.
@@ -30,23 +33,24 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     private final TileFluxDevice tileEntity;
     private int timer;
 
-    public GuiFluxDeviceHome(PlayerEntity player, TileFluxDevice tileEntity) {
-        super(player, tileEntity);
-        this.tileEntity = tileEntity;
+    public GuiFluxDeviceHome(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
+        this.tileEntity = (TileFluxDevice) container.connector;
     }
 
     @Override
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_HOME;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_HOME;
     }
 
 
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTabs.TAB_HOME, navigationTabs);
+        configureNavigationButtons(EnumNavigationTab.TAB_HOME, navigationTabs);
 
-        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12,
+                EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
         addButton(redirectButton);
 
         int color = network.getNetworkColor() | 0xff000000;

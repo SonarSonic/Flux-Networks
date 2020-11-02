@@ -8,8 +8,12 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -21,21 +25,21 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class LineChart {
 
-    public int x, y;
-    public int height;
+    private final int x, y;
+    private final int height;
 
-    public int linePoints;
+    private final int linePoints;
 
-    public String displayUnitX;
-    public String displayUnitY;
+    private final String displayUnitX;
+    private String displayUnitY;
 
-    public long maxUnitY;
-    public String suffixUnitY;
+    private long maxUnitY;
+    private final String suffixUnitY;
 
-    public LongList data = new LongArrayList();
+    private LongList data = new LongArrayList();
 
-    public DoubleList currentHeight;
-    public DoubleList targetHeight;
+    private final DoubleList currentHeight;
+    private final DoubleList targetHeight;
 
     public LineChart(int x, int y, int height, int linePoints, String displayUnitX, String suffixUnitY) {
         this.x = x;
@@ -55,53 +59,62 @@ public class LineChart {
         }
     }
 
-    public void drawChart(Minecraft mc, MatrixStack matrixStack) {
-        RenderSystem.pushLightingAttributes();
+    public void drawChart(Minecraft mc, MatrixStack matrixStack, float partialTicks) {
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.disableTexture();
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder builder = tessellator.getBuffer();
+
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glBegin(GL_LINE_STRIP);
-        for (int i = 0; i < currentHeight.size(); i++) {
-            glVertex3d(x + 20 * i, currentHeight.get(i), 1);
-        }
-        glEnd();
 
-        RenderSystem.blendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, 1, 0);
+        builder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        for (int i = 0; i < currentHeight.size(); i++) {
+            builder.pos(x + 20 * i, currentHeight.getDouble(i), 1).color(255, 255, 255, 255).endVertex();
+        }
+        tessellator.draw();
+
+        glDisable(GL_LINE_SMOOTH);
 
         glEnable(GL_POINT_SMOOTH);
         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
         glPointSize(8.0f);
-        glBegin(GL_POINTS);
+
+        builder.begin(GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
         for (int i = 0; i < currentHeight.size(); i++) {
-            glVertex3d(x + 20 * i, currentHeight.get(i), 1);
+            builder.pos(x + 20 * i, currentHeight.getDouble(i), 1).color(255, 255, 255, 255).endVertex();
         }
-        glEnd();
+        tessellator.draw();
+
         glDisable(GL_POINT_SMOOTH);
-        glDisable(GL_BLEND);
+        glPointSize(1.0f);
 
         Screen.fill(matrixStack, x - 16, y + height, x + 116, y + height + 1, 0xffffffff);
         Screen.fill(matrixStack, x - 14, y - 6, x - 13, y + height + 3, 0xffffffff);
 
-        RenderSystem.scaled(0.625f, 0.625f, 0.625f);
-        mc.fontRenderer.drawString(matrixStack, suffixUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY), (float) ((y - 7.5) * 1.6), 0xffffff);
-        mc.fontRenderer.drawString(matrixStack, displayUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY), (float) ((y - 2) * 1.6), 0xffffff);
-        mc.fontRenderer.drawString(matrixStack, displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)), (float) ((y + height + 1.5) * 1.6), 0xffffff);
+        matrixStack.push();
+        matrixStack.scale(0.625f, 0.625f, 1);
+        mc.fontRenderer.drawString(matrixStack, suffixUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY),
+                (float) ((y - 7.5) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, displayUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY),
+                (float) ((y - 2) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)),
+                (float) ((y + height + 1.5) * 1.6), 0xffffff);
         for (int i = 0; i < data.size(); i++) {
             String d = FluxUtils.compact(data.getLong(i));
-            mc.fontRenderer.drawString(matrixStack, d, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(d) / 2F) + 1.0f, (float) ((currentHeight.getDouble(i) - 7) * 1.6), 0xffffff);
+            mc.fontRenderer.drawString(matrixStack, d, ((x + 20 * i) * 1.6f) - (mc.fontRenderer.getStringWidth(d) * 0.5f),
+                    (float) ((currentHeight.getDouble(i) - 7) * 1.6), 0xffffff);
             String c = String.valueOf((5 - i) * 5);
-            mc.fontRenderer.drawString(matrixStack, c, ((x + 20 * i) * 1.6F) - (mc.fontRenderer.getStringWidth(c) / 2F), (float) ((y + height + 2) * 1.6), 0xffffff);
+            mc.fontRenderer.drawString(matrixStack, c, ((x + 20 * i) * 1.6f) - (mc.fontRenderer.getStringWidth(c) * 0.5f),
+                    (float) ((y + height + 2) * 1.6), 0xffffff);
         }
-        RenderSystem.scaled(1.6f, 1.6f, 1.6f);
+        matrixStack.pop();
 
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
-        RenderSystem.popAttributes();
+
+        updateHeight(partialTicks);
     }
 
     public void updateData(LongList newData) {
@@ -110,59 +123,59 @@ public class LineChart {
         calculateTargetHeight(newData);
     }
 
-    public void updateHeight(float partialTick) {
-        if (currentHeight.size() == 0) {
+    private void updateHeight(float partialTick) {
+        if (currentHeight.isEmpty()) {
             return;
         }
         for (int i = 0; i < currentHeight.size(); i++) {
-            double a = targetHeight.getDouble(i) - currentHeight.getDouble(i);
-            if (a == 0) {
+            double diff = targetHeight.getDouble(i) - currentHeight.getDouble(i);
+            if (diff == 0) {
                 continue;
             }
-            double c;
+            double r;
             double p = partialTick / 16;
-            if (Math.abs(a) <= p) {
-                c = targetHeight.getDouble(i);
+            if (Math.abs(diff) <= p) {
+                r = targetHeight.getDouble(i);
             } else {
-                if (a > 0)
-                    c = currentHeight.getDouble(i) + Math.max(Math.min(a, a / 4 * partialTick), p);
+                if (diff > 0)
+                    r = currentHeight.getDouble(i) + Math.max(Math.min(diff, diff / 4 * partialTick), p);
                 else
-                    c = currentHeight.getDouble(i) + Math.min(Math.max(a, a / 4 * partialTick), -p);
+                    r = currentHeight.getDouble(i) + Math.min(Math.max(diff, diff / 4 * partialTick), -p);
             }
-            currentHeight.set(i, c);
+            currentHeight.set(i, r);
         }
     }
 
-    private void calculateUnitY(List<Long> data) {
+    private void calculateUnitY(@Nonnull List<Long> data) {
         long maxValue = 0;
         for (long v : data) {
             maxValue = Math.max(maxValue, v);
         }
-        if (maxValue == 0) {
+        if (maxValue <= 0) {
+            displayUnitY = "1";
             maxUnitY = 1;
-            displayUnitY = FluxUtils.compact(maxUnitY);
             return;
         }
-        int measureLevel = (int) Math.log10(maxValue); // 0 = 10, 3 = 10000
-        switch (measureLevel) {
-            case 0:
-                maxUnitY = maxValue + 1;
-                break;
-            case 1:
-                maxUnitY = ((maxValue / 5) + 1) * 5;
-                break;
-            case 2:
-                maxUnitY = ((maxValue / 50) + 1) * 50;
-                break;
-            default:
-                int p = (int) Math.pow(10, measureLevel - 1);
-                maxUnitY = ((maxValue / p) + 1) * p;
-                break;
+        long maxUnitY;
+        int exp = (int) Math.log10(maxValue); // 0 = 10, 3 = 10000
+        if (exp <= 0) {
+            maxUnitY = maxValue + 1;
+        } else if (exp <= 1) {
+            maxUnitY = ((maxValue / 5) + 1) * 5;
+        } else if (exp <= 2) {
+            maxUnitY = ((maxValue / 50) + 1) * 50;
+        } else {
+            int unit = 10;
+            for (int i = 1; i < exp; i++) {
+                unit *= 10;
+            }
+            maxUnitY = ((maxValue / unit) + 1) * unit;
         }
         displayUnitY = FluxUtils.compact(maxUnitY);
+        this.maxUnitY = maxUnitY;
     }
 
-    private void calculateTargetHeight(List<Long> data) {
+    private void calculateTargetHeight(@Nonnull List<Long> data) {
         if (data.size() != linePoints) {
             return;
         }

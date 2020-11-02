@@ -43,7 +43,7 @@ public class ItemFluxDevice extends BlockItem {
         if (tag != null) {
             if (tag.contains(FluxConstants.NETWORK_ID))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " +
-                        TextFormatting.RESET + FluxClientCache.getDisplayName(tag.getInt(FluxConstants.NETWORK_ID))));
+                        TextFormatting.RESET + FluxClientCache.getDisplayName(tag)));
 
             if (tag.contains(FluxConstants.LIMIT))
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " +
@@ -58,11 +58,12 @@ public class ItemFluxDevice extends BlockItem {
                         TextFormatting.RESET + EnergyType.storage(tag.getLong(FluxConstants.BUFFER))));
             else if (tag.contains(FluxConstants.ENERGY)) {
                 long energy = tag.getLong(FluxConstants.ENERGY);
-                double percentage = 0;
                 Block block = getBlock();
-                if (block instanceof FluxStorageBlock) {
+                double percentage;
+                if (block instanceof FluxStorageBlock)
                     percentage = Math.min((double) energy / ((FluxStorageBlock) block).getEnergyCapacity(), 1.0);
-                }
+                else
+                    percentage = 0;
                 tooltip.add(new StringTextComponent(TextFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " +
                         TextFormatting.RESET + EnergyType.storage(energy) + String.format(" (%.1f%%)", percentage * 100)));
             }

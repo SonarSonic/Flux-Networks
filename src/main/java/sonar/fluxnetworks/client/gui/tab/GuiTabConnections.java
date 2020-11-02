@@ -3,29 +3,30 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopUpConnectionEdit;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CConnectionUpdateMessage;
 import sonar.fluxnetworks.common.network.CEditConnectionsMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -45,8 +46,8 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     private int timer = 3;
 
-    public GuiTabConnections(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabConnections(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
         gridStartX = 15;
         gridStartY = 22;
         gridHeight = 19;
@@ -56,19 +57,20 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_CONNECTIONS));
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_CONNECTION;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_CONNECTION;
     }
 
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTabs.TAB_CONNECTION, navigationTabs);
+        configureNavigationButtons(EnumNavigationTab.TAB_CONNECTION, navigationTabs);
         editButtons.clear();
         buttonLists.add(editButtons);
 
         if (!networkValid) {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
+                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
             addButton(redirectButton);
         } else {
             clear = new BatchEditButton(118, 8, 0, FluxTranslate.BATCH_CLEAR_BUTTON.t()).setUnclickable();
@@ -124,7 +126,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     @Override
     public void renderElement(MatrixStack matrixStack, IFluxDevice element, int x, int y) {
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
-        minecraft.getTextureManager().bindTexture(screenUtils.GUI_BAR);
+        minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
         int fontColor = 0xffffff;
         int color = element.getDeviceType().color;
 
@@ -214,7 +216,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             if (connector instanceof IFluxDevice) {
                 GlobalPos g = ((IFluxDevice) connector).getGlobalPos();
                 if (elements.stream().noneMatch(f -> f.getGlobalPos().equals(g))) {
-                    Minecraft.getInstance().displayGuiScreen(new GuiTabSelection(player, connector));
+                    switchTab(EnumNavigationTab.TAB_SELECTION);
                 }
             }
             page = Math.min(page, pages);

@@ -3,32 +3,34 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.network.CCreateNetworkMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
+
+import javax.annotation.Nonnull;
 
 public class GuiTabCreate extends GuiTabEditAbstract {
 
     public NormalButton apply, create;
 
-    public GuiTabCreate(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabCreate(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
         securityType = SecurityType.ENCRYPTED;
         energyType = EnergyType.FE;
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_CREATE;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_CREATE;
     }
 
     @Override
@@ -78,7 +80,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     public void tick() {
         super.tick();
         if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
-            switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector);
+            switchTab(EnumNavigationTab.TAB_SELECTION);
             FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
     }

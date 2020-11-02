@@ -4,9 +4,8 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.EnergyType;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -16,8 +15,10 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopUpCore;
 import sonar.fluxnetworks.client.gui.popup.PopUpCustomColour;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -35,8 +36,8 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     public FluxTextWidget nameField;
     public FluxTextWidget passwordField;
 
-    public GuiTabEditAbstract(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabEditAbstract(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
     }
 
     public abstract void onEditSettingsChanged();
@@ -48,7 +49,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         buttonLists.add(colorButtons);
         configureNavigationButtons(getNavigationTab(), navigationTabs);
 
-        if (networkValid || getNavigationTab() == EnumNavigationTabs.TAB_CREATE) {
+        if (networkValid || getNavigationTab() == EnumNavigationTab.TAB_CREATE) {
             int l = font.getStringWidth(FluxTranslate.NETWORK_NAME.t());
             nameField = FluxTextWidget.create("", font, guiLeft + 20 + l, guiTop + 28, 140 - l, 12);
             nameField.setMaxStringLength(24);
@@ -64,7 +65,8 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             addButton(nameField);
             addButton(passwordField);
         } else if (!networkValid) {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
+                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
             addButton(redirectButton);
         }
     }
@@ -73,7 +75,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        if (getNavigationTab() == EnumNavigationTabs.TAB_CREATE || networkValid) {
+        if (getNavigationTab() == EnumNavigationTab.TAB_CREATE || networkValid) {
 
             drawCenteredString(matrixStack, font, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
             font.drawString(matrixStack, FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);

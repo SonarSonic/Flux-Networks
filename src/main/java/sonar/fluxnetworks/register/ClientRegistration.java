@@ -57,16 +57,16 @@ public class ClientRegistration {
     }
 
     @Nonnull
-    private static ScreenManager.IScreenFactory<ContainerConnector<?>, GuiTabCore> getScreenFactory() {
+    private static ScreenManager.IScreenFactory<ContainerConnector, GuiTabCore> getScreenFactory() {
         return (container, inventory, windowID) -> {
             INetworkConnector connector = container.connector;
             if (connector instanceof TileFluxDevice) {
-                return new GuiFluxDeviceHome(inventory.player, (TileFluxDevice) connector);
+                return new GuiFluxDeviceHome(container, inventory.player);
             }
             if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
-                return new GuiFluxConfiguratorHome(inventory.player, (ItemFluxConfigurator.NetworkConnector) connector);
+                return new GuiFluxConfiguratorHome(container, inventory.player);
             }
-            return new GuiFluxAdminHome(inventory.player, connector);
+            return new GuiFluxAdminHome(container, inventory.player);
         };
     }
 

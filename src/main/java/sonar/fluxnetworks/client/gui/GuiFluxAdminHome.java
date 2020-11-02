@@ -3,20 +3,22 @@ package sonar.fluxnetworks.client.gui;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.CSuperAdminMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
+
+import javax.annotation.Nonnull;
 
 public class GuiFluxAdminHome extends GuiTabCore {
 
@@ -25,12 +27,12 @@ public class GuiFluxAdminHome extends GuiTabCore {
     private int timer;
     public SlidedSwitchButton detailedNetworkView, superAdmin;
 
-    public GuiFluxAdminHome(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiFluxAdminHome(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_HOME;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_HOME;
     }
 
     @Override
@@ -46,9 +48,10 @@ public class GuiFluxAdminHome extends GuiTabCore {
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTabs.TAB_HOME, navigationTabs);
+        configureNavigationButtons(EnumNavigationTab.TAB_HOME, navigationTabs);
 
-        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12,
+                EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
         addButton(redirectButton);
 
         superAdmin = new SlidedSwitchButton(140, 30, 0, guiLeft, guiTop, FluxClientCache.superAdmin);

@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.ITextComponent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.popup.PopUpCore;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
@@ -39,6 +39,7 @@ public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
         });
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         InputMappings.Input mouseKey = InputMappings.getInputByCode(keyCode, scanCode);
@@ -47,20 +48,20 @@ public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
                 this.setListener(null);
                 return true;
             }
-            if (this.minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
-                return false; //allows the typing of "E"
+            if (minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
+                return false; // allows the typing of "E"
             }
-        } else if (keyCode == 256 || this.minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
+        } else if (keyCode == 256 || minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
             if (this instanceof PopUpCore) {
                 ((PopUpCore<?>) this).host.closePopUp();
                 return true;
             }
             if (this instanceof GuiTabCore) {
                 GuiTabCore core = (GuiTabCore) this;
-                if (core.getNavigationTab() == EnumNavigationTabs.TAB_HOME) {
-                    minecraft.player.closeScreen();
+                if (core.getNavigationTab() == EnumNavigationTab.TAB_HOME) {
+                    closeScreen();
                 } else {
-                    GuiTabCore.switchTab(EnumNavigationTabs.TAB_HOME, core.player, core.connector);
+                    core.switchTab(EnumNavigationTab.TAB_HOME);
                     if (FluxConfig.enableButtonSound) {
                         minecraft.getSoundHandler().play(SimpleSound.master(RegistrySounds.BUTTON_CLICK, 1.0F));
                     }

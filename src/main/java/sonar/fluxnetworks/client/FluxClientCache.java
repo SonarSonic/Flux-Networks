@@ -72,8 +72,8 @@ public class FluxClientCache {
         return NETWORKS.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
-    public static String getDisplayName(int networkID) {
-        IFluxNetwork network = getNetwork(networkID);
+    public static String getDisplayName(@Nonnull CompoundNBT subTag) {
+        IFluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
         if (network.isValid()) {
             return network.getNetworkName();
         }

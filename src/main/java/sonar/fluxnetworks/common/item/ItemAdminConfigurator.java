@@ -78,7 +78,7 @@ public class ItemAdminConfigurator extends ItemFluxConfigurator {
         @Nullable
         @Override
         public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-            return new ContainerConnector<>(windowID, playerInventory, null);
+            return new ContainerConnector(windowID, playerInventory, null);
         }
     }
 }

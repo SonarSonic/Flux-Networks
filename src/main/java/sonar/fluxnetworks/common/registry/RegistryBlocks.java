@@ -23,7 +23,7 @@ public class RegistryBlocks {
 
 
     @ObjectHolder("connector")
-    public static ContainerType<ContainerConnector<?>> CONTAINER_CONNECTOR;
+    public static ContainerType<ContainerConnector> CONTAINER_CONNECTOR;
 
     @ObjectHolder("flux_plug")
     public static FluxPlugBlock FLUX_PLUG;

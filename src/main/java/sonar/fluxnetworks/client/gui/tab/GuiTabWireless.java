@@ -3,10 +3,9 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.ChargingType;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -15,9 +14,11 @@ import sonar.fluxnetworks.client.gui.button.InventoryButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.network.CEditWirelessMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,12 +31,12 @@ public class GuiTabWireless extends GuiTabCore {
 
     public int settings;
 
-    public GuiTabWireless(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabWireless(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_WIRELESS;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_WIRELESS;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class GuiTabWireless extends GuiTabCore {
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTabs.TAB_WIRELESS, navigationTabs);
+        configureNavigationButtons(EnumNavigationTab.TAB_WIRELESS, navigationTabs);
         inventoryButtonList.clear();
         buttonLists.add(inventoryButtonList);
         if (networkValid) {
@@ -72,7 +73,8 @@ public class GuiTabWireless extends GuiTabCore {
             apply = new NormalButton(FluxTranslate.APPLY.t(), 73, 130, 32, 12, 0).setUnclickable();
             buttons.add(apply);
         } else {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
+                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
             addButton(redirectButton);
         }
     }

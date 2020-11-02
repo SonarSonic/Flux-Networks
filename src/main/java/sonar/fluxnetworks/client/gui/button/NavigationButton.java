@@ -5,16 +5,16 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
 public class NavigationButton extends GuiButtonCore {
 
-    public EnumNavigationTabs tab;
+    public EnumNavigationTab tab;
     public boolean isCurrentTab = false;
 
-    public NavigationButton(int x, int y, EnumNavigationTabs tab) {
+    public NavigationButton(int x, int y, EnumNavigationTab tab) {
         super(x, y, 16, 16, 0);
         this.tab = tab;
     }

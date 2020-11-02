@@ -24,7 +24,7 @@ public enum FluxConfigurationType {
     public void copy(CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
         switch (this) {
             case NETWORK:
-                //TODO currently we don't allow to connect to the invalid network, this may produce SYNC bugs
+                //TODO currently we don't allow to connect to the invalid network, this may produce SYNC bugs, IFluxDevice#onDisconnect() etc
                 if (tile.getNetwork().isValid()) {
                     nbt.putInt(key, tile.getNetwork().getNetworkID());
                 }

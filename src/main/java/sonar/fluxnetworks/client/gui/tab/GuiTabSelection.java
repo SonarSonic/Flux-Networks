@@ -5,10 +5,9 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
@@ -16,8 +15,10 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopUpNetworkPassword;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 
 public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
@@ -28,8 +29,8 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
     protected int timer2;
 
-    public GuiTabSelection(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabSelection(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
         gridStartX = 15;
         gridStartY = 22;
         gridHeight = 13;
@@ -38,8 +39,8 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         elementWidth = 146;
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_SELECTION;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_SELECTION;
     }
 
     @Override
@@ -68,9 +69,10 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTabs.TAB_SELECTION, navigationTabs);
+        configureNavigationButtons(EnumNavigationTab.TAB_SELECTION, navigationTabs);
         if (FluxClientCache.getAllNetworks().isEmpty()) {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_CREATE.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_CREATE, player, connector));
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
+                    EnumNavigationTab.TAB_CREATE.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_CREATE));
             addButton(redirectButton);
         }
         refreshPages(FluxClientCache.getAllNetworks());

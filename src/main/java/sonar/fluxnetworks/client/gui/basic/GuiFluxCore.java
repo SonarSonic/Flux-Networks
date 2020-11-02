@@ -10,19 +10,20 @@ import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CConfiguratorConnectMessage;
 import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class GuiFluxCore extends GuiPopUpHost {
@@ -36,8 +37,8 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected boolean networkValid;
     private int timer1;
 
-    public GuiFluxCore(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiFluxCore(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
         this.network = FluxClientCache.getNetwork(connector.getNetworkID());
         this.networkValid = network.isValid();
         network.getMemberByUUID(PlayerEntity.getUUID(player.getGameProfile())).ifPresent(m -> accessLevel = m.getAccessLevel());

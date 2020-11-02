@@ -5,7 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.text.StringTextComponent;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.FluxClientCache;
@@ -15,10 +15,11 @@ import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerConnector<?>> {
+public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerConnector> {
 
     protected List<NormalButton> popButtons = Lists.newArrayList();
     protected List<SlidedSwitchButton> popSwitches = new ArrayList<>();
@@ -28,7 +29,7 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCon
     public INetworkConnector connector;
 
     public PopUpCore(T host, PlayerEntity player, INetworkConnector connector) {
-        super(host.getContainer(), player.inventory, ((INamedContainerProvider) connector).getDisplayName());
+        super(host.getContainer(), player.inventory, StringTextComponent.EMPTY);
         this.host = host;
         this.player = player;
         this.connector = connector;
@@ -55,12 +56,12 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCon
         return host.getGuiColouring();
     }
 
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         popButtons.forEach(b -> b.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop));
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    public void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         drawFluxDefaultBackground(matrixStack);
         fillGradient(matrixStack, -guiLeft, -guiTop, this.width, this.height, 0x20000000, 0x20000000);
 
@@ -69,7 +70,7 @@ public class PopUpCore<T extends GuiPopUpHost> extends GuiFocusable<ContainerCon
             button.updateButton(partialTicks, mouseX, mouseY);
         }
         for (Widget widget : buttons) {
-            widget.render(matrixStack, mouseX, mouseY, 1);
+            widget.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }
 }

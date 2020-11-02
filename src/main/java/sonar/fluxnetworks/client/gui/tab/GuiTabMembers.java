@@ -6,10 +6,9 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
@@ -17,10 +16,12 @@ import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopUpUserEdit;
+import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -34,8 +35,8 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     private int timer;
 
-    public GuiTabMembers(PlayerEntity player, INetworkConnector connector) {
-        super(player, connector);
+    public GuiTabMembers(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+        super(container, player);
         gridStartX = 15;
         gridStartY = 22;
         gridHeight = 13;
@@ -45,8 +46,8 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_MEMBERS));
     }
 
-    public EnumNavigationTabs getNavigationTab() {
-        return EnumNavigationTabs.TAB_MEMBER;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_MEMBER;
     }
 
     @Override
@@ -75,9 +76,10 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }*/
 
         super.init();
-        configureNavigationButtons(EnumNavigationTabs.TAB_MEMBER, navigationTabs);
+        configureNavigationButtons(EnumNavigationTab.TAB_MEMBER, navigationTabs);
         if (!networkValid) {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20, EnumNavigationTabs.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTabs.TAB_SELECTION, player, connector));
+            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
+                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
             addButton(redirectButton);
         }
         refreshPages(Lists.newArrayList(network.getAllMembers()));

@@ -19,6 +19,7 @@ import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CEditConnectionsMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -120,7 +121,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         for (SlidedSwitchButton button : popSwitches) {
             button.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop);

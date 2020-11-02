@@ -26,7 +26,6 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.FNEnergyStorage;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.render.FluxStorageItemRenderer;
 import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
@@ -46,10 +45,7 @@ import sonar.fluxnetworks.common.recipe.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
-import sonar.fluxnetworks.common.tileentity.TileFluxController;
-import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
-import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
-import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
+import sonar.fluxnetworks.common.tileentity.*;
 
 import javax.annotation.Nonnull;
 
@@ -166,17 +162,17 @@ public class CommonRegistration {
             if (packet.readBoolean()) {
                 BlockPos pos = packet.readBlockPos();
                 TileEntity tile = inventory.player.getEntityWorld().getTileEntity(pos);
-                if (tile instanceof INetworkConnector) {
-                    return new ContainerConnector<>(windowId, inventory, (INetworkConnector) tile);
+                if (tile instanceof TileFluxDevice) {
+                    return new ContainerConnector(windowId, inventory, (TileFluxDevice) tile);
                 }
             } else {
                 ItemStack stack = inventory.player.getHeldItemMainhand();
                 // build a bridge to connect to a flux network
-                if (stack.getItem() instanceof ItemFluxConfigurator) {
-                    return new ContainerConnector<>(windowId, inventory, new ItemFluxConfigurator.NetworkConnector(stack));
+                if (stack.getItem() == RegistryItems.FLUX_CONFIGURATOR) {
+                    return new ContainerConnector(windowId, inventory, new ItemFluxConfigurator.NetworkConnector(stack));
                 }
             }
-            return new ContainerConnector<>(windowId, inventory, new ItemAdminConfigurator.AdminNetworkConnector());
+            return new ContainerConnector(windowId, inventory, new ItemAdminConfigurator.AdminNetworkConnector());
         }).setRegistryName("connector"));
 
         FluxNetworks.LOGGER.info("Finished Registering Containers");
