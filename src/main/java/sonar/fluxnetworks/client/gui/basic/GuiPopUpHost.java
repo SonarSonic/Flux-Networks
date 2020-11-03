@@ -225,7 +225,7 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
         //super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         drawForegroundLayer(matrixStack, mouseX, mouseY);
 
-        float partialTicks = Minecraft.getInstance().getRenderPartialTicks();
+        float partialTicks = Minecraft.getInstance().getTickLength();
 
         if (currentPopUp != null) {
             RenderSystem.disableDepthTest();
