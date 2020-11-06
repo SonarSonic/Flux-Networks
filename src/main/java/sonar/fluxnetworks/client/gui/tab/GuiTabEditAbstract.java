@@ -14,7 +14,7 @@ import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopUpCore;
-import sonar.fluxnetworks.client.gui.popup.PopUpCustomColour;
+import sonar.fluxnetworks.client.gui.popup.PopUpCustomColor;
 import sonar.fluxnetworks.common.misc.ContainerConnector;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
@@ -77,7 +77,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         if (getNavigationTab() == EnumNavigationTab.TAB_CREATE || networkValid) {
 
-            drawCenteredString(matrixStack, font, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
+            drawCenterText(matrixStack, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
             font.drawString(matrixStack, FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
             font.drawString(matrixStack, FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
             if (securityType == SecurityType.ENCRYPTED)
@@ -117,15 +117,15 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             colorBtn.selected = true;
             onEditSettingsChanged();
             if (mouseButton == 1) {
-                openPopUp(new PopUpCustomColour(this, colorBtn.color, player, connector));
+                openPopUp(new PopUpCustomColor(this, colorBtn.color, player, connector));
             }
         }
     }
 
     public void onPopUpClose(PopUpCore<?> popUp) {
         super.onPopUpClose(popUp);
-        if (popUp instanceof PopUpCustomColour) {
-            this.colorBtn.color = ((PopUpCustomColour) popUp).currentColour;
+        if (popUp instanceof PopUpCustomColor) {
+            this.colorBtn.color = ((PopUpCustomColor) popUp).currentColour;
         }
     }
 }

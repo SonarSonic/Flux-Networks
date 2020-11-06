@@ -47,12 +47,12 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (getNavigationTab() == EnumNavigationTab.TAB_CREATE || networkValid) {
             if (mouseX > 30 + guiLeft && mouseX < 66 + guiLeft && mouseY > 140 + guiTop && mouseY < 152 + guiTop) {
                 if (delete.clickable) {
-                    drawCenteredString(matrixStack, font, TextFormatting.BOLD + FluxTranslate.DELETE_NETWORK.t(), 48, 128, 0xff0000);
+                    drawCenterText(matrixStack, TextFormatting.BOLD + FluxTranslate.DELETE_NETWORK.t(), 48, 128, 0xff0000);
                 } else {
-                    drawCenteredString(matrixStack, font, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
+                    drawCenterText(matrixStack, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
                 }
             }
-            drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 156, 0xffffff);
+            drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 156, 0xffffff);
         } else {
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }

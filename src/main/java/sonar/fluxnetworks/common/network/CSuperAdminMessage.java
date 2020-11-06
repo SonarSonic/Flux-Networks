@@ -29,7 +29,7 @@ public class CSuperAdminMessage implements IMessage {
         if (player == null) {
             return;
         }
-        ISuperAdmin superAdmin = FluxUtils.getCap(player, FluxCapabilities.SUPER_ADMIN);
+        ISuperAdmin superAdmin = FluxUtils.get(player.getCapability(FluxCapabilities.SUPER_ADMIN));
         if (superAdmin != null && (superAdmin.hasPermission() || SuperAdmin.canActivateSuperAdmin(player))) {
             superAdmin.changePermission();
             if (superAdmin.hasPermission()) {

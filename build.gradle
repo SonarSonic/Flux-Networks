@@ -43,18 +43,11 @@ sourceSets {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200916-1.16.2'
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    mappings channel: 'snapshot', version: '20201028-1.16.3'
 
     runs {
         client {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
 
             mods {
                 fluxnetworks {
@@ -65,12 +58,6 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
 
             mods {
                 fluxnetworks {
@@ -123,7 +110,7 @@ repositories {
     maven {
         // JEI, Mekanism
         name 'ModMaven'
-        url 'https://modmaven.k-4u.nl'
+        url 'https://modmaven.dev/'
     }
     maven {
         // location of a maven that hosts all files on CurseForge
@@ -143,11 +130,11 @@ dependencies {
 
     compile fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
 
-    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-1.16.3:${jei_version}:api")
+    //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    //runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 }
 
 jar {

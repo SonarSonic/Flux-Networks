@@ -10,7 +10,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
-import sonar.fluxnetworks.api.network.ChargingType;
+import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.common.integration.CuriosIntegration;
 import sonar.fluxnetworks.common.misc.EnergyUtils;
@@ -33,7 +33,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
 
     @Override
     public void onCycleStart() {
-        if (!device.isActive() || !ChargingType.ENABLE_WIRELESS.isActivated(device.getNetwork())) {
+        if (!device.isActive() || !WirelessType.ENABLE_WIRELESS.isActivated(device.getNetwork())) {
             demand = 0;
             players.clear();
             return;
@@ -55,7 +55,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     public long sendToConsumers(long energy, boolean simulate) {
         if (!device.isActive()) return 0;
         if ((timer & 0x3) > 0) return 0;
-        if (!ChargingType.ENABLE_WIRELESS.isActivated(device.getNetwork())) return 0;
+        if (!WirelessType.ENABLE_WIRELESS.isActivated(device.getNetwork())) return 0;
         return chargeAllItems(energy, simulate);
     }
 
@@ -85,9 +85,9 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
             if (player == null) {
                 continue;
             }
-            PlayerInventory inv = player.inventory;
+            final PlayerInventory inv = player.inventory;
             List<WirelessHandler> handlers = new ArrayList<>();
-            if (ChargingType.MAIN_HAND.isActivated(wireless)) {
+            if (WirelessType.MAIN_HAND.isActivated(wireless)) {
                 handlers.add(new WirelessHandler(() -> new Iterator<ItemStack>() {
                     private byte count;
 
@@ -103,21 +103,21 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
                     }
                 }, NOT_EMPTY));
             }
-            if (ChargingType.OFF_HAND.isActivated(wireless)) {
+            if (WirelessType.OFF_HAND.isActivated(wireless)) {
                 handlers.add(new WirelessHandler(inv.offHandInventory::iterator, NOT_EMPTY));
             }
-            if (ChargingType.HOT_BAR.isActivated(wireless)) {
+            if (WirelessType.HOT_BAR.isActivated(wireless)) {
                 handlers.add(new WirelessHandler(() -> inv.mainInventory.subList(0, 9).iterator(),
                         stack -> {
                             ItemStack heldItem = inv.getCurrentItem();
                             return !stack.isEmpty() && (heldItem.isEmpty() || heldItem != stack);
                         }));
             }
-            if (ChargingType.ARMOR.isActivated(wireless)) {
+            if (WirelessType.ARMOR.isActivated(wireless)) {
                 handlers.add(new WirelessHandler(inv.armorInventory::iterator, NOT_EMPTY));
             }
-            if (ChargingType.CURIOS.isActivated(wireless) && FluxNetworks.curiosLoaded) {
-                LazyOptional<IItemHandlerModifiable> curios = CuriosIntegration.getEquippedCurios(player);
+            if (WirelessType.CURIOS.isActivated(wireless) && FluxNetworks.curiosLoaded) {
+                final LazyOptional<IItemHandlerModifiable> curios = CuriosIntegration.getEquippedCurios(player);
                 handlers.add(new WirelessHandler(() -> {
                     if (curios.isPresent()) {
                         return new Iterator<ItemStack>() {

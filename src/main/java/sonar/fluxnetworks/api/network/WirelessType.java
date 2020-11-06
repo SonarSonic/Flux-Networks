@@ -4,7 +4,7 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 
 import javax.annotation.Nonnull;
 
-public enum ChargingType {
+public enum WirelessType {
     ENABLE_WIRELESS(FluxTranslate.ENABLE_WIRELESS),
     MAIN_HAND(FluxTranslate.MAIN_HAND),
     OFF_HAND(FluxTranslate.OFF_HAND),
@@ -15,7 +15,7 @@ public enum ChargingType {
 
     private final FluxTranslate typeName;
 
-    ChargingType(FluxTranslate typeName) {
+    WirelessType(FluxTranslate typeName) {
         this.typeName = typeName;
     }
 

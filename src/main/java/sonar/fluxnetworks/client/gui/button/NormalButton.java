@@ -9,13 +9,14 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
  */
 public class NormalButton extends GuiButtonCore {
 
-    public int color = 0xffffffff;
+    private int color = 0xffffffff;
 
     public NormalButton(String text, int x, int y, int width, int height, int id) {
         super(x, y, width, height, id);
         this.text = text;
     }
 
+    @Override
     public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
         boolean hovered = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
         int color;
@@ -37,7 +38,7 @@ public class NormalButton extends GuiButtonCore {
         drawRect(x - 1, y, x, y + height, color);
         drawRect(x + width, y, x + width + 1, y + height, color);
 
-        drawCenteredString(matrixStack, mc.fontRenderer, text, x + width / 2, y + height / 2 - 4, color);
+        mc.fontRenderer.drawString(matrixStack, text, x + (width - mc.fontRenderer.getStringWidth(text)) / 2f, y + height / 2f - 4, color);
     }
 
     public NormalButton setUnclickable() {

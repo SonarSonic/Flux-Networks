@@ -14,6 +14,8 @@ import java.util.List;
 
 public class NetworkStatistics {
 
+    public static final int CHANGE_COUNT = 6;
+
     private final IFluxNetwork network;
 
     private int timer;
@@ -26,7 +28,7 @@ public class NetworkStatistics {
     public long energyInput;
     public long energyOutput;
 
-    public LongList energyChange = new LongArrayList(6);
+    public final LongList energyChange = new LongArrayList(CHANGE_COUNT);
 
     public long totalBuffer;
     public long totalEnergy;
@@ -35,20 +37,18 @@ public class NetworkStatistics {
     private long energyInput4;
     private long energyOutput4;
 
-    public long averageTickMicro;
-    private long runningTotalMicro;
+    public int averageTickMicro;
+    private long runningTotalNano;
 
-    private long networkNanoTime;
+    private long startNanoTime;
 
     public NetworkStatistics(IFluxNetwork network) {
         this.network = network;
-        for (int i = 0; i < 6; i++) {
-            energyChange.add(0L);
-        }
+        energyChange.size(CHANGE_COUNT);
     }
 
     public void startProfiling() {
-        networkNanoTime = System.nanoTime();
+        startNanoTime = System.nanoTime();
     }
 
     public void stopProfiling() {
@@ -61,10 +61,9 @@ public class NetworkStatistics {
         if (timer % 20 == 0) {
             weakerTick();
         }
-        runningTotalMicro += (System.nanoTime() - networkNanoTime) / 1000;
+        runningTotalNano += System.nanoTime() - startNanoTime;
 
-        timer++;
-        timer %= 100;
+        timer = ++timer % 100;
     }
 
     /**
@@ -109,22 +108,19 @@ public class NetworkStatistics {
         energyOutput4 = 0;
         energyChange5 += Math.max(energyInput, energyOutput);
 
-        averageTickMicro = runningTotalMicro / 20;
-        runningTotalMicro = 0;
+        averageTickMicro = (int) Math.min(runningTotalNano / 20000, Integer.MAX_VALUE);
+        runningTotalNano = 0;
     }
 
     /**
      * Called every 100 ticks
      */
     private void weakestTick() {
-        long change = energyChange5 / 5;
-        energyChange5 = 0;
-        for (int i = 0; i < energyChange.size(); i++) {
-            if (i > 0) {
-                energyChange.set(i - 1, energyChange.getLong(i));
-            }
+        for (int i = 1; i < CHANGE_COUNT; i++) {
+            energyChange.set(i - 1, energyChange.getLong(i));
         }
-        energyChange.set(5, change);
+        energyChange.set(CHANGE_COUNT - 1, energyChange5 / 5);
+        energyChange5 = 0;
     }
 
     public int getConnectionCount() {
@@ -140,10 +136,8 @@ public class NetworkStatistics {
         tag.putLong("6", energyOutput);
         tag.putLong("7", totalBuffer);
         tag.putLong("8", totalEnergy);
-        tag.putLong("9", averageTickMicro);
-        for (int i = 0; i < 6; i++) {
-            tag.putLong("a" + i, energyChange.getLong(i));
-        }
+        tag.putInt("9", averageTickMicro);
+        tag.putLongArray("a", energyChange);
     }
 
     public void readNBT(CompoundNBT tag) {
@@ -155,9 +149,10 @@ public class NetworkStatistics {
         energyOutput = tag.getLong("6");
         totalBuffer = tag.getLong("7");
         totalEnergy = tag.getLong("8");
-        averageTickMicro = tag.getLong("9");
-        for (int i = 0; i < 6; i++) {
-            energyChange.set(i, tag.getLong("a" + i));
+        averageTickMicro = tag.getInt("9");
+        long[] a = tag.getLongArray("a");
+        for (int i = 0; i < a.length; i++) {
+            energyChange.set(i, a[i]);
         }
     }
 }

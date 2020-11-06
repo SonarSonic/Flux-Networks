@@ -58,9 +58,11 @@ public class GuiTabStatistics extends GuiTabCore {
             font.drawString(matrixStack, TextFormatting.GRAY + FluxTranslate.ENERGY.t() + TextFormatting.GRAY + ": " + TextFormatting.RESET +
                     EnergyType.storageCompact(stats.totalEnergy), 12, 84, color);
 
-            GlStateManager.scaled(0.75, 0.75, 0.75);
-            drawCenteredString(matrixStack, font, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.averageTickMicro + " \u00b5s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
-            GlStateManager.scaled(1 / 0.75, 1 / 0.75, 1 / 0.75);
+            matrixStack.push();
+            matrixStack.scale(0.75f, 0.75f, 1);
+            drawCenterText(matrixStack, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.averageTickMicro + " \u00b5s/t",
+                    ((xSize / 2f) * (1 / 0.75f)), ((ySize - 2f) * (1 / 0.75f)), color);
+            matrixStack.pop();
 
         } else {
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
@@ -84,7 +86,7 @@ public class GuiTabStatistics extends GuiTabCore {
         configureNavigationButtons(EnumNavigationTab.TAB_STATISTICS, navigationTabs);
 
         if (networkValid) {
-            chart = new LineChart(width / 2 - 48, height / 2 + 20, 50, 6, "s", EnergyType.FE.getStorageSuffix());
+            chart = new LineChart(width / 2 - 48, height / 2 + 20, 50, NetworkStatistics.CHANGE_COUNT, "s", EnergyType.FE.getStorageSuffix());
             chart.updateData(stats.energyChange);
         }
     }

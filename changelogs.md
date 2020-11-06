@@ -1,3 +1,13 @@
+### Changelog 1.16.4-6.1.0.5 (2020-11-06)
+* Update to 1.16.4 (1.16.3 works as well)
+* Add energy capacity tooltip for storages
+* Improve text display
+* Optimize GUI code
+* Fix possible crash
+* Fix diffuse lighting in GUI
+* Fix flux storage rendering
+* Fix network buffer limiter
+
 ### Changelog 1.16.3-6.0.1.4 (2020-10-26)
 * Improve controller transfer logic
 * Fix crash caused by bad API implementations of other mods

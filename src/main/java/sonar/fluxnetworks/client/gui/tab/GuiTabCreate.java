@@ -36,7 +36,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     public void init() {
         super.init();
-        nameField.setText(minecraft.player.getDisplayName().getString() + "'s Network");
+        nameField.setText(player.getDisplayName().getString() + "'s Network");
         int i = 0;
         for (EnumNetworkColor color : EnumNetworkColor.values()) {
             colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 96 + (i >= 7 ? 1 : 0) * 16, color.getRGB()));
@@ -53,7 +53,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
 
         screenUtils.renderNetwork(matrixStack, nameField.getText(), colorBtn.color, 20, 129);
-        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 150, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 150, 0xffffff);
     }
 
     @Override

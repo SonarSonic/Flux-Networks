@@ -107,7 +107,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     @Override
     public void init() {
         super.init();
-        labelButton = new PageLabelButton(14, 157, page, pages, network.getNetworkColor(), guiLeft, guiTop);
+        labelButton = new PageLabelButton(14, 157, page, pages, network.getNetworkColor());
     }
 
     @Override

@@ -62,7 +62,7 @@ public class SuperAdmin implements ISuperAdmin {
     }
 
     public static boolean isPlayerSuperAdmin(@Nonnull PlayerEntity player) {
-        ISuperAdmin instance = FluxUtils.getCap(player, FluxCapabilities.SUPER_ADMIN);
+        ISuperAdmin instance = FluxUtils.get(player.getCapability(FluxCapabilities.SUPER_ADMIN));
         return instance != null && instance.hasPermission();
     }
 

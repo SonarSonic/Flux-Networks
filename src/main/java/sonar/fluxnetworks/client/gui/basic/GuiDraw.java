@@ -9,6 +9,8 @@ import net.minecraft.util.text.ITextComponent;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 
+import javax.annotation.Nonnull;
+
 ////ONLY RENDER METHODS & TEXTURES \\\\
 public abstract class GuiDraw<T extends Container> extends ContainerScreen<T> {
 
@@ -35,5 +37,9 @@ public abstract class GuiDraw<T extends Container> extends ContainerScreen<T> {
         blit(matrixStack, width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
         RenderSystem.disableBlend();
         RenderSystem.disableAlphaTest();
+    }
+
+    protected final void drawCenterText(@Nonnull MatrixStack matrixStack, String text, float x, float y, int color) {
+        font.drawString(matrixStack, text, x - font.getStringWidth(text) / 2f, y, color);
     }
 }

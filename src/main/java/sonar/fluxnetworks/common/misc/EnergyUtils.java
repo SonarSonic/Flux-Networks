@@ -110,6 +110,9 @@ public class EnergyUtils {
         if (stack == null) {
             return null;
         }
+        if (stack.isEmpty()) {
+            return null;
+        }
         if (ITEM_BLACKLIST.contains(stack.getItem())) {
             return null;
         }

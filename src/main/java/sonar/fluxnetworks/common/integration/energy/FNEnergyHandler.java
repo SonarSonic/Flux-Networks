@@ -26,7 +26,7 @@ public class FNEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
     @Override
     public boolean canAddEnergy(@Nonnull TileEntity tile, @Nonnull Direction side) {
         if (!tile.isRemoved()) {
-            IFNEnergyStorage storage = FluxUtils.getCap(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
+            IFNEnergyStorage storage = FluxUtils.get(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
             if (storage != null) {
                 return storage.canReceiveL();
             }
@@ -37,7 +37,7 @@ public class FNEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
     @Override
     public boolean canRemoveEnergy(@Nonnull TileEntity tile, @Nonnull Direction side) {
         if (!tile.isRemoved()) {
-            IFNEnergyStorage storage = FluxUtils.getCap(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
+            IFNEnergyStorage storage = FluxUtils.get(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
             if (storage != null) {
                 return storage.canExtractL();
             }
@@ -47,13 +47,13 @@ public class FNEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
 
     @Override
     public long addEnergy(long amount, @Nonnull TileEntity tile, @Nonnull Direction side, boolean simulate) {
-        IFNEnergyStorage storage = FluxUtils.getCap(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
+        IFNEnergyStorage storage = FluxUtils.get(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
         return storage == null ? 0 : storage.receiveEnergyL(amount, simulate);
     }
 
     @Override
     public long removeEnergy(long amount, @Nonnull TileEntity tile, @Nonnull Direction side) {
-        IFNEnergyStorage storage = FluxUtils.getCap(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
+        IFNEnergyStorage storage = FluxUtils.get(tile.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
         return storage == null ? 0 : storage.extractEnergyL(amount, false);
     }
 
@@ -64,25 +64,25 @@ public class FNEnergyHandler implements ITileEnergyHandler, IItemEnergyHandler {
 
     @Override
     public boolean canAddEnergy(@Nonnull ItemStack stack) {
-        IFNEnergyStorage storage = FluxUtils.getCap(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
+        IFNEnergyStorage storage = FluxUtils.get(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
         return storage != null && storage.canReceiveL();
     }
 
     @Override
     public boolean canRemoveEnergy(@Nonnull ItemStack stack) {
-        IFNEnergyStorage storage = FluxUtils.getCap(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
+        IFNEnergyStorage storage = FluxUtils.get(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
         return storage != null && storage.canExtractL();
     }
 
     @Override
     public long addEnergy(long amount, @Nonnull ItemStack stack, boolean simulate) {
-        IFNEnergyStorage storage = FluxUtils.getCap(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
+        IFNEnergyStorage storage = FluxUtils.get(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
         return storage == null ? 0 : storage.receiveEnergyL(amount, simulate);
     }
 
     @Override
     public long removeEnergy(long amount, @Nonnull ItemStack stack) {
-        IFNEnergyStorage storage = FluxUtils.getCap(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
+        IFNEnergyStorage storage = FluxUtils.get(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
         return storage == null ? 0 : storage.extractEnergyL(amount, false);
     }
 }

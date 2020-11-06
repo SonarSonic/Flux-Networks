@@ -105,29 +105,25 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     }
 
     protected void renderNavigationPrompt(MatrixStack matrixStack, String error, String prompt) {
-        RenderSystem.pushMatrix();
-        drawCenteredString(matrixStack, font, error, xSize / 2, 16, 0x808080);
-        RenderSystem.scaled(0.625, 0.625, 0.625);
-        drawCenteredString(matrixStack, font, FluxTranslate.CLICK_ABOVE.format(TextFormatting.AQUA + prompt + TextFormatting.RESET), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
-        RenderSystem.scaled(1.6, 1.6, 1.6);
-        RenderSystem.popMatrix();
+        drawCenterText(matrixStack, error, xSize / 2f, 16, 0xff808080);
+        matrixStack.push();
+        matrixStack.scale(0.625f, 0.625f, 1);
+        drawCenterText(matrixStack, FluxTranslate.CLICK_ABOVE.format(TextFormatting.AQUA + prompt + TextFormatting.RESET),
+                xSize / 2f * 1.6f, 26 * 1.6f, 0x808080);
+        matrixStack.pop();
     }
 
-    protected void renderTransfer(MatrixStack matrixStack, IFluxDevice flux, int color, int x, int y) {
-        RenderSystem.pushMatrix();
+    protected void renderTransfer(MatrixStack matrixStack, IFluxDevice flux) {
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
         screenUtils.resetGuiColouring();
-        font.drawString(matrixStack, FluxUtils.getTransferInfo(flux, EnergyType.FE), x, y, color);
+        font.drawString(matrixStack, FluxUtils.getTransferInfo(flux, EnergyType.FE), 30, 90, 0xffffff);
 
         font.drawString(matrixStack, (flux.getDeviceType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
-                ": " + TextFormatting.BLUE + EnergyType.storage(flux.getTransferBuffer()), x, y + 10, 0xffffff);
+                ": " + TextFormatting.BLUE + EnergyType.storage(flux.getTransferBuffer()), 30, 90 + 10, 0xffffff);
 
-        screenUtils.renderItemStack(flux.getDisplayStack(), x - 20, y + 1);
-
-        RenderSystem.popMatrix();
+        screenUtils.renderItemStack(flux.getDisplayStack(), 30 - 20, 90 + 1);
     }
-
 
     protected List<String> getFluxInfo(IFluxDevice flux) {
         List<String> list = Lists.newArrayList();

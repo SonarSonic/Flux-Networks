@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.client.gui.popup;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.misc.FluxConstants;
@@ -11,8 +10,8 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
-import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.network.CEditMemberMessage;
+import sonar.fluxnetworks.common.network.NetworkHandler;
 
 import javax.annotation.Nonnull;
 
@@ -80,14 +79,15 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
     public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         //screenUtils.drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 162, 0xffffff);
-        drawCenteredString(matrixStack, font, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
-        drawCenteredString(matrixStack, font, host.selectedPlayer.getAccessLevel().getName(), 88, 48, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 162, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
+        drawCenterText(matrixStack, host.selectedPlayer.getAccessLevel().getName(), 88, 48, 0xffffff);
         String text = host.selectedPlayer.getPlayerUUID().toString();
-        GlStateManager.scaled(0.625, 0.625, 0.625);
-        drawCenteredString(matrixStack, font, "UUID: " + text.substring(0, 16), (int) (88 * 1.6), (int) (60 * 1.6), 0xffffff);
-        drawCenteredString(matrixStack, font, text.substring(16), (int) (88 * 1.6), (int) (66 * 1.6), 0xffffff);
-        GlStateManager.scaled(1.6, 1.6, 1.6);
+        matrixStack.push();
+        matrixStack.scale(0.625f, 0.625f, 1);
+        drawCenterText(matrixStack, "UUID: " + text.substring(0, 16), 88 * 1.6f, 60 * 1.6f, 0xffffff);
+        drawCenterText(matrixStack, text.substring(16), 88 * 1.6f, 66 * 1.6f, 0xffffff);
+        matrixStack.pop();
     }
 
     @Override

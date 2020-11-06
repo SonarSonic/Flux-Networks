@@ -10,14 +10,11 @@ public class PageLabelButton extends GuiButtonCore {
 
     public int page, pages, color;
     public double currentLeft, singleWidth;
-    private int guiLeft, guiTop;
     public int hoveredPage, showTick;
 
-    public PageLabelButton(int x, int y, int page, int pages, int color, int guiLeft, int guiTop) {
+    public PageLabelButton(int x, int y, int page, int pages, int color) {
         super(x, y, 148, 4, 0);
         this.color = color;
-        this.guiLeft = guiLeft;
-        this.guiTop = guiTop;
         refreshPages(page, pages);
     }
 

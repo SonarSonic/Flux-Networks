@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.misc;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
@@ -11,7 +10,6 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.EnergyType;
@@ -24,6 +22,9 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class FluxUtils {
+
+    private static final double[] COMPACT_SCALE = new double[]{0.001D, 0.000_001D, 0.000_000_001D, 0.000_000_000_001D,
+            0.000_000_000_000_001D, 0.000_000_000_000_000_001D};
 
     private FluxUtils() {
     }
@@ -232,13 +233,18 @@ public class FluxUtils {
         if (in < 1000) {
             return Long.toString(in);
         }
-        int exp = (int) (Math.log10(in) / 3);
-        char pre = "kMGTPE".charAt(exp - 1);
-        double scale = 0.001;
-        for (int i = 1; i < exp; i++) {
-            scale *= 0.001;
+        int level = (int) (Math.log10(in) / 3) - 1;
+        char pre = "kMGTPE".charAt(level);
+        return String.format("%.1f%c", in * COMPACT_SCALE[level], pre);
+    }
+
+    public static String compact(long in, String suffix) {
+        if (in < 1000) {
+            return Long.toString(in);
         }
-        return String.format("%.1f%c", in * scale, pre);
+        int level = (int) (Math.log10(in) / 3) - 1;
+        char pre = "kMGTPE".charAt(level);
+        return String.format("%.1f %c%s", in * COMPACT_SCALE[level], pre, suffix);
     }
 
     /*public static String format(long in, NumberFormatType style, EnergyType energy, boolean usage) {
@@ -269,13 +275,13 @@ public class FluxUtils {
         return true;
     }
 
-    @Nullable
+    /*@Nullable
     public static <T> T getCap(@Nonnull PlayerEntity player, Capability<T> capability) {
-        return getCap(player.getCapability(capability));
-    }
+        return cap(player.getCapability(capability));
+    }*/
 
     @Nullable
-    public static <T> T getCap(@Nonnull LazyOptional<T> lazyOptional) {
+    public static <T> T get(@Nonnull LazyOptional<T> lazyOptional) {
         if (lazyOptional.isPresent())
             return lazyOptional.orElseThrow(IllegalStateException::new);
         return null;

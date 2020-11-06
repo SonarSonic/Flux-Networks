@@ -10,6 +10,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.CCustomPayloadPacket;
+import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -19,19 +21,20 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkInstance;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.apache.commons.lang3.tuple.Pair;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.IMessage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * This class copied from Modern UI
@@ -55,7 +58,9 @@ public enum NetworkHandler {
 
     NetworkHandler(@Nonnull String modid, @Nonnull String name) {
         // get protocol first
-        protocol = ModList.get().getModFileById(modid).getMods().get(0).getVersion().getQualifier();
+        protocol = UUID.nameUUIDFromBytes(ModList.get().getModFileById(modid).getMods().stream()
+                .map(iModInfo -> iModInfo.getVersion().getQualifier())
+                .collect(Collectors.joining(",")).getBytes(StandardCharsets.UTF_8)).toString();
         NetworkRegistry.ChannelBuilder builder = NetworkRegistry.ChannelBuilder
                 .named(new ResourceLocation(modid, name))
                 .networkProtocolVersion(this::getProtocolVersion)
@@ -136,7 +141,7 @@ public enum NetworkHandler {
      * @return {@code true} to accept the protocol, {@code false} otherwise
      */
     public boolean verifyClientProtocol(@Nonnull String clientProtocol) {
-        return clientProtocol.equals(protocol) || clientProtocol.equals(NetworkRegistry.ACCEPTVANILLA);
+        return clientProtocol.equals(protocol);
     }
 
     /**
@@ -197,7 +202,8 @@ public enum NetworkHandler {
         ctx.get().setPacketHandled(true);
     }*/
 
-    private <MSG extends IMessage> PacketBuffer toBuffer(MSG message) {
+    @Nonnull
+    private <MSG extends IMessage> PacketBuffer toBuffer(@Nonnull MSG message) {
         final PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         Class<? extends IMessage> clazz = message.getClass();
         byte index = types.getByte(clazz);
@@ -207,18 +213,6 @@ public enum NetworkHandler {
         buffer.writeByte(index);
         message.encode(buffer);
         return buffer;
-    }
-
-    private <MSG extends IMessage> Pair<PacketBuffer, Integer> toBufferPair(MSG message) {
-        return Pair.of(toBuffer(message), Integer.MIN_VALUE); // no login index
-    }
-
-    private <MSG extends IMessage> IPacket<?> toC2SPacket(MSG message) {
-        return NetworkDirection.PLAY_TO_SERVER.buildPacket(toBufferPair(message), network.getChannelName()).getThis();
-    }
-
-    private <MSG extends IMessage> IPacket<?> toS2CPacket(MSG message) {
-        return NetworkDirection.PLAY_TO_CLIENT.buildPacket(toBufferPair(message), network.getChannelName()).getThis();
     }
 
     /**
@@ -242,8 +236,13 @@ public enum NetworkHandler {
     public <MSG extends IMessage> void sendToServer(MSG message) {
         ClientPlayNetHandler connection = Minecraft.getInstance().getConnection();
         if (connection != null) {
-            connection.getNetworkManager().sendPacket(toC2SPacket(message));
+            connection.sendPacket(new CCustomPayloadPacket(network.getChannelName(), toBuffer(message)));
         }
+    }
+
+    @Nonnull
+    private <MSG extends IMessage> IPacket<?> toS2CPacket(MSG message) {
+        return new SCustomPayloadPlayPacket(network.getChannelName(), toBuffer(message));
     }
 
     /**

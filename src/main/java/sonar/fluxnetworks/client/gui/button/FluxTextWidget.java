@@ -6,6 +6,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.text.StringTextComponent;
 
+import javax.annotation.Nonnull;
+
 public class FluxTextWidget extends TextFieldWidget {
 
     private String origin;
@@ -54,7 +56,7 @@ public class FluxTextWidget extends TextFieldWidget {
     }
 
     @Override
-    public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderButton(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.setEnableBackgroundDrawing(true);
         if (this.getVisible()) {
             fill(matrixStack, this.x - textWidth - 1, this.y - 1, this.x + this.width + 1, this.y, outlineColor);

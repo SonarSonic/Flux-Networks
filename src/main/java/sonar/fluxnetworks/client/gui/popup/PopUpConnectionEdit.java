@@ -66,13 +66,13 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
             limit.setText(String.valueOf(0));
             addButton(limit);
 
-            editName = new SimpleToggleButton(10, 33, guiLeft, guiTop, 0);
-            editPriority = new SimpleToggleButton(10, 50, guiLeft, guiTop, 1);
-            editLimit = new SimpleToggleButton(10, 67, guiLeft, guiTop, 2);
+            editName = new SimpleToggleButton(10, 33, 0);
+            editPriority = new SimpleToggleButton(10, 50, 1);
+            editLimit = new SimpleToggleButton(10, 67, 2);
 
-            editSurgeMode = new SimpleToggleButton(10, 82, guiLeft, guiTop, 3);
-            editDisableLimit = new SimpleToggleButton(10, 94, guiLeft, guiTop, 4);
-            editChunkLoading = new SimpleToggleButton(10, 106, guiLeft, guiTop, 5);
+            editSurgeMode = new SimpleToggleButton(10, 82, 3);
+            editDisableLimit = new SimpleToggleButton(10, 94, 4);
+            editChunkLoading = new SimpleToggleButton(10, 106, 5);
 
             toggleButtons.add(editName);
             toggleButtons.add(editPriority);
@@ -131,18 +131,18 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         }
 
         if (!batchMode) {
-            drawCenteredString(matrixStack, font, FluxTranslate.SINGLE_EDIT.t(), 88, 14, 0xffffff);
-            drawCenteredString(matrixStack, font, FluxUtils.getDisplayString(host.singleConnection.getGlobalPos()), 88, 122, 0xffffff);
+            drawCenterText(matrixStack, FluxTranslate.SINGLE_EDIT.t(), 88, 14, 0xffffff);
+            drawCenterText(matrixStack, FluxUtils.getDisplayString(host.singleConnection.getGlobalPos()), 88, 122, 0xffffff);
         } else {
-            drawCenteredString(matrixStack, font, FluxTranslate.BATCH_EDIT.t(), 88, 14, 0xffffff);
-            drawCenteredString(matrixStack, font, FluxTranslate.EDITING_CONNECTIONS.format(host.batchConnections.size()), 88, 122, 0xffffff);
+            drawCenterText(matrixStack, FluxTranslate.BATCH_EDIT.t(), 88, 14, 0xffffff);
+            drawCenterText(matrixStack, FluxTranslate.EDITING_CONNECTIONS.format(host.batchConnections.size()), 88, 122, 0xffffff);
         }
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 82, host.network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 94, host.network.getNetworkColor());
         if (batchMode || !host.singleConnection.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getNetworkColor());
         }
-        drawCenteredString(matrixStack, font, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 155, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 155, 0xffffff);
     }
 
     @Override

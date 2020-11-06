@@ -10,13 +10,13 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 
 import javax.annotation.Nonnull;
 
-public class PopUpCustomColour extends PopUpCore<GuiFluxCore> {
+public class PopUpCustomColor extends PopUpCore<GuiFluxCore> {
 
     public FluxTextWidget customColor;
     public NormalButton colorApply;
     public int currentColour;
 
-    public PopUpCustomColour(GuiFluxCore host, int currentColour, PlayerEntity player, INetworkConnector connector) {
+    public PopUpCustomColor(GuiFluxCore host, int currentColour, PlayerEntity player, INetworkConnector connector) {
         super(host, player, connector);
         this.currentColour = currentColour;
     }
@@ -41,7 +41,7 @@ public class PopUpCustomColour extends PopUpCore<GuiFluxCore> {
     public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         //screenUtils.drawRectWithBackground(30, 44, 60, 118, 0xccffffff, 0x80000000);
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        drawCenteredString(matrixStack, font, FluxTranslate.CUSTOM_COLOR.t(), 88, 48, 0xffffff);
+        drawCenterText(matrixStack, FluxTranslate.CUSTOM_COLOR.t(), 88, 48, 0xffffff);
     }
 
     @Override

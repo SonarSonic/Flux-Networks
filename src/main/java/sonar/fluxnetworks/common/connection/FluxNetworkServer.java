@@ -123,10 +123,9 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         List<IFluxDevice> devices = getConnections(FluxLogicType.ANY);
         for (IFluxDevice f : devices) {
             f.getTransferHandler().onCycleStart();
-            bufferLimiter += f.getTransferHandler().getRequest();
         }
 
-        if (bufferLimiter > 0 && !sortedPoints.isEmpty() && !sortedPlugs.isEmpty()) {
+        if (!sortedPoints.isEmpty() && !sortedPlugs.isEmpty()) {
             plugTransferIterator.reset(sortedPlugs);
             pointTransferIterator.reset(sortedPoints);
             CYCLE:
@@ -153,6 +152,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         }
         for (IFluxDevice f : devices) {
             f.getTransferHandler().onCycleEnd();
+            bufferLimiter += f.getTransferHandler().getRequest();
         }
 
         statistics.stopProfiling();

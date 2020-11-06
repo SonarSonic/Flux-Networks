@@ -59,7 +59,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     // 0xRRGGBB, this value only available on client for rendering, updated from server data
     // this color is brighter than network color
-    public int clientColor = FluxConstants.INVALID_NETWORK_COLOR;
+    public int brColor = FluxConstants.INVALID_NETWORK_COLOR;
 
     protected int priority;
     protected boolean surgeMode;
@@ -183,7 +183,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Override
     public final void handleUpdateTag(BlockState state, @Nonnull CompoundNBT tag) {
         // Client side, read NBT when updating chunk data
-        clientColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.2f);
+        brColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.2f);
         read(state, tag);
     }
 
@@ -251,12 +251,12 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             playerUUID = tag.getUniqueId(FluxConstants.PLAYER_UUID);
         }
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
-            clientColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.2f);
+            brColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.2f);
             flags = tag.getInt(FluxConstants.FLAGS);
         }
         if (type == FluxConstants.TYPE_TILE_DROP) {
             if (world.isRemote) {
-                clientColor = FluxUtils.getBrighterColor(FluxClientCache.getNetwork(networkID).getNetworkColor(), 1.2f);
+                brColor = FluxUtils.getBrighterColor(FluxClientCache.getNetwork(networkID).getNetworkColor(), 1.2f);
             }
         }
         getTransferHandler().readCustomNBT(tag, type);

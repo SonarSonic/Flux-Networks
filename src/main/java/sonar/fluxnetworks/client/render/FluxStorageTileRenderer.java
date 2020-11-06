@@ -33,7 +33,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
     @Override
     public void render(@Nonnull TileFluxStorage tile, float partialTicks, @Nonnull MatrixStack matrixStackIn,
                        @Nonnull IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        int color = tile.clientColor;
+        int color = tile.brColor;
         float r = ScreenUtils.getRed(color);
         float g = ScreenUtils.getGreen(color);
         float b = ScreenUtils.getBlue(color);
@@ -60,8 +60,7 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
 
     private static void renderSide(@Nonnull MatrixStack matrix, @Nonnull IVertexBuilder builder, @Nonnull Direction dir,
                            float x, float y, float z, float width, float height,
-                           float r, float g, float b, int overlay, float fillPercentage) {
-        float minU = 0, minV = 0, maxU = 1, maxV = 1 * fillPercentage;
+                           float r, float g, float b, int overlay, float maxV) {
         matrix.push();
         matrix.translate(0.5, 0.5, 0.5);
         matrix.rotate(dir.getRotation());
@@ -70,13 +69,13 @@ public class FluxStorageTileRenderer extends TileEntityRenderer<TileFluxStorage>
         Matrix4f matrix4f = matrix.getLast().getMatrix();
         Matrix3f normal = matrix.getLast().getNormal();
         builder.pos(matrix4f, x, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
-                .tex(minU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
+                .tex(0, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
         builder.pos(matrix4f, x + width, y + height, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
-                .tex(maxU, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
+                .tex(1, maxV).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
         builder.pos(matrix4f, x + width, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
-                .tex(maxU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
+                .tex(1, 0).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
         builder.pos(matrix4f, x, y, z).color(r, g, b, FluxStorageTileRenderer.ALPHA)
-                .tex(minU, minV).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
+                .tex(0, 0).overlay(overlay).lightmap(FluxStorageTileRenderer.FULL_LIGHT).normal(normal, 0, 0, 0).endVertex();
         matrix.pop();
     }
 }

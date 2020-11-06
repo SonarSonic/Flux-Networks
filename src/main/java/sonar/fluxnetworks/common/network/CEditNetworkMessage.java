@@ -9,6 +9,7 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.SecurityType;
+import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
@@ -53,7 +54,9 @@ public class CEditNetworkMessage extends CCreateNetworkMessage {
                     }
                 }); // update color data
             }
-            network.getSecurity().set(security, password);
+            if (FluxUtils.isLegalPassword(password)) {
+                network.getSecurity().set(security, password);
+            }
             NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_BASIC), context);
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS_2), context);
         } else {

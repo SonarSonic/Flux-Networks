@@ -38,7 +38,7 @@ public enum EnergyType {
 
     @Nonnull
     public static String usageCompact(long in) {
-        return FluxUtils.compact(in) + " " + FE.usage;
+        return FluxUtils.compact(in, FE.usage);
     }
 
     @Nonnull
@@ -48,6 +48,6 @@ public enum EnergyType {
 
     @Nonnull
     public static String storageCompact(long in) {
-        return FluxUtils.compact(in) + " " + FE.storage;
+        return FluxUtils.compact(in, FE.storage);
     }
 }
