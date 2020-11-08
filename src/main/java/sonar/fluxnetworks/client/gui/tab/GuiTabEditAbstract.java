@@ -5,7 +5,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -13,9 +12,9 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popup.PopUpCore;
-import sonar.fluxnetworks.client.gui.popup.PopUpCustomColor;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.client.gui.popup.PopupCore;
+import sonar.fluxnetworks.client.gui.popup.PopupCustomColor;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -31,12 +30,11 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     protected List<ColorButton> colorButtons = Lists.newArrayList();
 
     protected SecurityType securityType;
-    public EnergyType energyType;
     public ColorButton colorBtn;
     public FluxTextWidget nameField;
     public FluxTextWidget passwordField;
 
-    public GuiTabEditAbstract(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabEditAbstract(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 
@@ -57,7 +55,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
 
             l = font.getStringWidth(FluxTranslate.NETWORK_PASSWORD.t());
-            passwordField = FluxTextWidget.create("", font, guiLeft + 20 + l, guiTop + 62, 140 - l, 12).setTextInvisible();
+            passwordField = FluxTextWidget.create("", font, guiLeft + 20 + l, guiTop + 63, 140 - l, 12).setTextInvisible();
             passwordField.setMaxStringLength(16);
             passwordField.setResponder(string -> onEditSettingsChanged());
             passwordField.setVisible(securityType == SecurityType.ENCRYPTED);
@@ -71,7 +69,6 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         }
     }
 
-
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
@@ -81,9 +78,9 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             font.drawString(matrixStack, FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
             font.drawString(matrixStack, FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
             if (securityType == SecurityType.ENCRYPTED)
-                font.drawString(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 64, 0x606060);
-            font.drawString(matrixStack, FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
-            font.drawString(matrixStack, FluxTranslate.NETWORK_COLOR.t() + ":", 14, 97, 0x606060);
+                font.drawString(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 65, 0x606060);
+            //font.drawString(matrixStack, FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
+            font.drawString(matrixStack, FluxTranslate.NETWORK_COLOR.t() + ":", 14, 92, 0x606060);
         }
     }
 
@@ -99,11 +96,11 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
                 onEditSettingsChanged();
                 return true;
             }
-            if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() + 88) {
+            /*if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() + 88) {
                 energyType = FluxUtils.incrementEnum(energyType, EnergyType.values());
                 onEditSettingsChanged();
                 return true;
-            }
+            }*/
         }
         return false;
     }
@@ -117,15 +114,15 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             colorBtn.selected = true;
             onEditSettingsChanged();
             if (mouseButton == 1) {
-                openPopUp(new PopUpCustomColor(this, colorBtn.color, player, connector));
+                openPopUp(new PopupCustomColor(this, player, colorBtn.color));
             }
         }
     }
 
-    public void onPopUpClose(PopUpCore<?> popUp) {
+    public void onPopUpClose(PopupCore<?> popUp) {
         super.onPopUpClose(popUp);
-        if (popUp instanceof PopUpCustomColor) {
-            this.colorBtn.color = ((PopUpCustomColor) popUp).currentColour;
+        if (popUp instanceof PopupCustomColor) {
+            this.colorBtn.color = ((PopupCustomColor) popUp).currentColor;
         }
     }
 }

@@ -2,8 +2,8 @@ package sonar.fluxnetworks.client.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
-import it.unimi.dsi.fastutil.doubles.DoubleList;
+import it.unimi.dsi.fastutil.floats.FloatArrayList;
+import it.unimi.dsi.fastutil.floats.FloatList;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.client.Minecraft;
@@ -38,8 +38,8 @@ public class LineChart {
 
     private LongList data = new LongArrayList();
 
-    private final DoubleList currentHeight;
-    private final DoubleList targetHeight;
+    private final FloatList currentHeight;
+    private final FloatList targetHeight;
 
     public LineChart(int x, int y, int height, int linePoints, String displayUnitX, String suffixUnitY) {
         this.x = x;
@@ -49,11 +49,11 @@ public class LineChart {
         this.displayUnitX = displayUnitX;
         this.suffixUnitY = suffixUnitY;
 
-        this.currentHeight = new DoubleArrayList(linePoints);
+        this.currentHeight = new FloatArrayList(linePoints);
         for (int i = 0; i < linePoints; i++) {
             currentHeight.add(y + height);
         }
-        this.targetHeight = new DoubleArrayList(linePoints);
+        this.targetHeight = new FloatArrayList(linePoints);
         for (int i = 0; i < linePoints; i++) {
             targetHeight.add(y + height);
         }
@@ -72,7 +72,7 @@ public class LineChart {
 
         builder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         for (int i = 0; i < currentHeight.size(); i++) {
-            builder.pos(x + 20 * i, currentHeight.getDouble(i), 1).color(255, 255, 255, 255).endVertex();
+            builder.pos(x + 20 * i, currentHeight.getFloat(i), 0).color(255, 255, 255, 255).endVertex();
         }
         tessellator.draw();
 
@@ -80,35 +80,35 @@ public class LineChart {
 
         glEnable(GL_POINT_SMOOTH);
         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-        glPointSize(8.0f);
+        glPointSize(6.0f);
 
         builder.begin(GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
         for (int i = 0; i < currentHeight.size(); i++) {
-            builder.pos(x + 20 * i, currentHeight.getDouble(i), 1).color(255, 255, 255, 255).endVertex();
+            builder.pos(x + 20 * i, currentHeight.getFloat(i), 0).color(255, 255, 255, 255).endVertex();
         }
         tessellator.draw();
 
         glDisable(GL_POINT_SMOOTH);
         glPointSize(1.0f);
 
-        Screen.fill(matrixStack, x - 16, y + height, x + 116, y + height + 1, 0xffffffff);
-        Screen.fill(matrixStack, x - 14, y - 6, x - 13, y + height + 3, 0xffffffff);
+        Screen.fill(matrixStack, x - 16, y + height, x + 116, y + height + 1, 0xcfffffff);
+        Screen.fill(matrixStack, x - 14, y - 6, x - 13, y + height + 3, 0xcfffffff);
 
         matrixStack.push();
         matrixStack.scale(0.625f, 0.625f, 1);
-        mc.fontRenderer.drawString(matrixStack, suffixUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(suffixUnitY),
-                (float) ((y - 7.5) * 1.6), 0xffffff);
-        mc.fontRenderer.drawString(matrixStack, displayUnitY, (float) ((x - 15) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitY),
-                (float) ((y - 2) * 1.6), 0xffffff);
-        mc.fontRenderer.drawString(matrixStack, displayUnitX, (float) (((x + 118) * 1.6) - mc.fontRenderer.getStringWidth(displayUnitX)),
-                (float) ((y + height + 1.5) * 1.6), 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, suffixUnitY, (x - 15) * 1.6f - mc.fontRenderer.getStringWidth(suffixUnitY),
+                (y - 7.5f) * 1.6f, 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, displayUnitY, (x - 15) * 1.6f - mc.fontRenderer.getStringWidth(displayUnitY),
+                (y - 2) * 1.6f, 0xffffff);
+        mc.fontRenderer.drawString(matrixStack, displayUnitX, ((x + 118) * 1.6f - mc.fontRenderer.getStringWidth(displayUnitX)),
+                (y + height + 1.5f) * 1.6f, 0xffffff);
         for (int i = 0; i < data.size(); i++) {
             String d = FluxUtils.compact(data.getLong(i));
             mc.fontRenderer.drawString(matrixStack, d, ((x + 20 * i) * 1.6f) - (mc.fontRenderer.getStringWidth(d) * 0.5f),
-                    (float) ((currentHeight.getDouble(i) - 7) * 1.6), 0xffffff);
+                    (currentHeight.getFloat(i) - 7) * 1.6f, 0xffffff);
             String c = String.valueOf((5 - i) * 5);
             mc.fontRenderer.drawString(matrixStack, c, ((x + 20 * i) * 1.6f) - (mc.fontRenderer.getStringWidth(c) * 0.5f),
-                    (float) ((y + height + 2) * 1.6), 0xffffff);
+                    (y + height + 2) * 1.6f, 0xffffff);
         }
         matrixStack.pop();
 
@@ -128,19 +128,19 @@ public class LineChart {
             return;
         }
         for (int i = 0; i < currentHeight.size(); i++) {
-            double diff = targetHeight.getDouble(i) - currentHeight.getDouble(i);
+            float diff = targetHeight.getFloat(i) - currentHeight.getFloat(i);
             if (diff == 0) {
                 continue;
             }
-            double r;
-            double p = partialTick / 16;
+            float r;
+            float p = partialTick / 16;
             if (Math.abs(diff) <= p) {
-                r = targetHeight.getDouble(i);
+                r = targetHeight.getFloat(i);
             } else {
                 if (diff > 0)
-                    r = currentHeight.getDouble(i) + Math.max(Math.min(diff, diff / 4 * partialTick), p);
+                    r = currentHeight.getFloat(i) + Math.max(Math.min(diff, diff / 4 * partialTick), p);
                 else
-                    r = currentHeight.getDouble(i) + Math.min(Math.max(diff, diff / 4 * partialTick), -p);
+                    r = currentHeight.getFloat(i) + Math.min(Math.max(diff, diff / 4 * partialTick), -p);
             }
             currentHeight.set(i, r);
         }
@@ -181,7 +181,7 @@ public class LineChart {
         }
         int i = 0;
         for (Long value : data) {
-            targetHeight.set(i, y + height * (1 - ((double) value / maxUnitY)));
+            targetHeight.set(i, (float) (y + height * (1 - ((double) value / maxUnitY))));
             i++;
         }
     }

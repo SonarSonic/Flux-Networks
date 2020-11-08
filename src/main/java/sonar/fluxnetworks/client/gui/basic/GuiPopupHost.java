@@ -5,26 +5,19 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.StringTextComponent;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.client.gui.popup.PopUpCore;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.client.gui.popup.PopupCore;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
+public abstract class GuiPopupHost extends GuiFocusable<FluxMenu> {
 
-    public final INetworkConnector connector;
-    public final PlayerEntity player; // client player
-
-    public GuiPopUpHost(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
-        super(container, player.inventory, StringTextComponent.EMPTY);
-        this.connector = container.connector;
-        this.player = player;
+    public GuiPopupHost(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+        super(container, player);
     }
 
-    public PopUpCore<? extends GuiPopUpHost> currentPopUp;
+    public PopupCore<? extends GuiPopupHost> currentPopUp;
 
     public final boolean hasActivePopup() {
         return currentPopUp != null;
@@ -32,7 +25,7 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
 
     //// OPEN POP UP \\\\
 
-    public final void openPopUp(PopUpCore<? extends GuiPopUpHost> popUp) {
+    public final void openPopUp(PopupCore<? extends GuiPopupHost> popUp) {
         if (popUp == null) {
             return;
         }
@@ -45,7 +38,7 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
         onPopUpOpen(popUp);
     }
 
-    public void onPopUpOpen(PopUpCore<?> popUp) {
+    public void onPopUpOpen(PopupCore<?> popUp) {
 
     }
 
@@ -60,7 +53,7 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
     }
 
     // USED FOR OBTAINING INFO FROM POP UPS
-    public void onPopUpClose(PopUpCore<?> popUp) {
+    public void onPopUpClose(PopupCore<?> popUp) {
 
     }
 
@@ -195,25 +188,6 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
         }
     }
 
-    /// RENDER METHODS \\\\\
-
-
-    @Override
-    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        if (currentPopUp != null) {
-            currentPopUp.render(matrixStack, mouseX, mouseY, partialTicks);
-        }
-    }
-
-    /*@Override
-    public void renderHoveredToolTip(int mouseX, int mouseY) {
-        if(currentPopUp == null){
-            super.renderHoveredToolTip(mouseX, mouseY);
-        }
-
-    }*/
-
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
     }
 
@@ -222,7 +196,6 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
 
     @Override
     protected final void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
-        //super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
         drawForegroundLayer(matrixStack, mouseX, mouseY);
 
         float partialTicks = Minecraft.getInstance().getTickLength();
@@ -230,20 +203,18 @@ public abstract class GuiPopUpHost extends GuiFocusable<ContainerConnector> {
         if (currentPopUp != null) {
             RenderSystem.disableDepthTest();
             RenderSystem.pushMatrix();
-            RenderSystem.translated(-guiLeft, -guiTop, 0);
+            RenderSystem.translatef(-guiLeft, -guiTop, 400);
             currentPopUp.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-            RenderSystem.popMatrix();
-
+            RenderSystem.translatef(guiLeft, guiTop, 100);
             currentPopUp.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
+            RenderSystem.popMatrix();
             RenderSystem.enableDepthTest();
         }
-
     }
 
     @Override
     protected final void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         renderBackground(matrixStack);
-        drawFluxDefaultBackground(matrixStack);
         drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
     }
 }

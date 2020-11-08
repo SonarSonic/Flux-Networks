@@ -25,10 +25,9 @@ public class FluxClientCache {
     public static boolean superAdmin = false;
     public static boolean detailedNetworkView = false;
 
-    public static IFluxNetwork adminViewingNetwork = FluxNetworkInvalid.INSTANCE;
+    public static int adminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
 
     private static FeedbackInfo feedback = FeedbackInfo.NONE; // Text message.
-    private static FeedbackInfo feedbackAction = FeedbackInfo.NONE; // Special operation.
 
     private static int feedbackTimer = 0;
 
@@ -80,25 +79,20 @@ public class FluxClientCache {
         return "NONE";
     }
 
-    public static FeedbackInfo getFeedback(boolean action) {
-        return action ? feedbackAction : feedback;
+    public static FeedbackInfo getFeedbackText() {
+        return feedback;
     }
 
-    public static void setFeedback(FeedbackInfo info, boolean action) {
-        if (action) {
-            feedbackAction = info;
-        } else {
-            feedback = info;
-        }
+    public static void setFeedback(FeedbackInfo info) {
+        feedback = info;
         feedbackTimer = 0;
     }
 
     public static void tick() {
-        if (feedback.isValid()) {
-            feedbackTimer++;
-            if (feedbackTimer >= 60) {
+        if (feedback != FeedbackInfo.NONE) {
+            if (++feedbackTimer >= 60) {
+                feedback = FeedbackInfo.NONE;
                 feedbackTimer = 0;
-                setFeedback(FeedbackInfo.NONE, false);
             }
         }
     }

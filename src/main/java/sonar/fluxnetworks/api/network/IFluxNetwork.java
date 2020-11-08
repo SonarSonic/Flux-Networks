@@ -26,7 +26,7 @@ public interface IFluxNetwork {
      * Returns the network name
      *
      * @return the name of this network
-     * @see sonar.fluxnetworks.client.FluxClientCache#getDisplayName(int)
+     * @see sonar.fluxnetworks.client.FluxClientCache#getDisplayName(CompoundNBT)
      */
     String getNetworkName();
 

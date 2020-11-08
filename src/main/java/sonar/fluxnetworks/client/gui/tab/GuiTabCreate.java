@@ -5,7 +5,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
-import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -13,7 +12,7 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CCreateNetworkMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 
@@ -23,10 +22,9 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
     public NormalButton apply, create;
 
-    public GuiTabCreate(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabCreate(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         securityType = SecurityType.ENCRYPTED;
-        energyType = EnergyType.FE;
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -39,7 +37,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         nameField.setText(player.getDisplayName().getString() + "'s Network");
         int i = 0;
         for (EnumNetworkColor color : EnumNetworkColor.values()) {
-            colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 96 + (i >= 7 ? 1 : 0) * 16, color.getRGB()));
+            colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 91 + (i >= 7 ? 1 : 0) * 16, color.getRGB()));
             i++;
         }
         colorBtn = colorButtons.get(0);
@@ -53,7 +51,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
 
         screenUtils.renderNetwork(matrixStack, nameField.getText(), colorBtn.color, 20, 129);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 150, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 150, 0xffffff);
     }
 
     @Override
@@ -77,11 +75,10 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
+    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+        super.onOperationalFeedback(info);
+        if (info == FeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTab.TAB_SELECTION);
-            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
     }
 }

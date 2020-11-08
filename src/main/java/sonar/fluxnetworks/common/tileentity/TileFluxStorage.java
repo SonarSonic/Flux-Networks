@@ -91,7 +91,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             //noinspection ConstantConditions
             if ((world.getWorldInfo().getGameTime() & 0x3) == 0) {
                 // update model data to players who can see it
-                NetworkHandler.INSTANCE.sendToChunkTracking(new FluxTileMessage(
+                NetworkHandler.INSTANCE.sendToTrackingChunk(new FluxTileMessage(
                         this, FluxConstants.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
                 flags &= ~FLAG_ENERGY_CHANGED;
             }
@@ -137,7 +137,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, true);
         else {
             stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, false);
-            subTag.putInt(FluxConstants.CLIENT_COLOR, getNetwork().getNetworkColor());
+            subTag.putInt(FluxConstants.CLIENT_COLOR, network.getNetworkColor());
         }
         subTag.putLong(FluxConstants.ENERGY, getTransferBuffer());
         return stack;

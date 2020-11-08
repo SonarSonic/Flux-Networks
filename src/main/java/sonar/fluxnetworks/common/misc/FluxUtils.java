@@ -9,7 +9,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.EnergyType;
@@ -154,9 +153,8 @@ public class FluxUtils {
 
     @Nonnull
     public static GlobalPos readGlobalPos(@Nonnull PacketBuffer buffer) {
-        RegistryKey<World> dim = RegistryKey.getOrCreateKey(Registry.WORLD_KEY,
-                buffer.readResourceLocation());
-        return GlobalPos.getPosition(dim, buffer.readBlockPos());
+        return GlobalPos.getPosition(RegistryKey.getOrCreateKey(Registry.WORLD_KEY,
+                buffer.readResourceLocation()), buffer.readBlockPos());
     }
 
     @Nonnull
@@ -240,7 +238,7 @@ public class FluxUtils {
 
     public static String compact(long in, String suffix) {
         if (in < 1000) {
-            return Long.toString(in);
+            return in + " " + suffix;
         }
         int level = (int) (Math.log10(in) / 3) - 1;
         char pre = "kMGTPE".charAt(level);

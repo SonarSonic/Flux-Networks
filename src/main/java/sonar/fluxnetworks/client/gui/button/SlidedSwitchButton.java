@@ -15,16 +15,17 @@ public class SlidedSwitchButton extends GuiButtonCore {
     // switch on/off
     public boolean toggled = false;
 
-    // control movement
-    protected float center;
+    // control offset
+    private float offset;
 
-    private int guiLeft, guiTop;
+    private final int guiLeft;
+    private final int guiTop;
 
-    public SlidedSwitchButton(int x, int y, int id, int guiLeft, int guiTop, boolean defaultControl) {
+    public SlidedSwitchButton(int x, int y, int id, int guiLeft, int guiTop, boolean toggled) {
         super(x, y, 16, 8, id);
-        if (defaultControl) {
-            toggled = true;
-            center = 8;
+        if (toggled) {
+            this.toggled = true;
+            offset = 8;
         }
         this.guiLeft = guiLeft;
         this.guiTop = guiTop;
@@ -32,7 +33,6 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
     @Override
     public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
-        GlStateManager.pushMatrix();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableBlend();
 
@@ -46,15 +46,13 @@ public class SlidedSwitchButton extends GuiButtonCore {
 
         // Green background
         //drawTexturedModalRect(x, y, 32, 32, center * 2, 8);
-        drawTexturedRectangular(x, y, 32, 32, center * 2, 8);
+        drawTexturedRectangular(x, y, 32, 32, offset * 2, 8);
 
         // Circular
-        accurateBlit(x + center, y, 16 * s, 40, 8, 8);
+        accurateBlit(x + offset, y, 16 * s, 40, 8, 8);
 
         // Button Bar
         blit(matrixStack, x, y, 16 * s, 32, 16, 8);
-
-        GlStateManager.popMatrix();
     }
 
     private int getState(Minecraft mc, int mouseX, int mouseY) {
@@ -65,20 +63,19 @@ public class SlidedSwitchButton extends GuiButtonCore {
         toggled = !toggled;
     }
 
-
     public void updateButton(float partialTicks, int mouseX, int mouseY) {
-        float par = partialTicks * 4;
+        float par = partialTicks * 3;
         if (toggled) {
-            if (center <= 8 - par) {
-                center += par;
+            if (offset <= 8 - par) {
+                offset += par;
             } else {
-                center = 8;
+                offset = 8;
             }
         } else {
-            if (center >= par) {
-                center -= par;
+            if (offset >= par) {
+                offset -= par;
             } else {
-                center = 0;
+                offset = 0;
             }
         }
     }

@@ -5,7 +5,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
@@ -15,13 +14,13 @@ import sonar.fluxnetworks.common.network.NetworkHandler;
 
 import javax.annotation.Nonnull;
 
-public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
+public class PopupMemberEdit extends PopupCore<GuiTabMembers> {
 
     public NormalButton transferOwnership;
     public int transferOwnershipCount;
 
-    public PopUpUserEdit(GuiTabMembers host, PlayerEntity player, INetworkConnector connector) {
-        super(host, player, connector);
+    public PopupMemberEdit(GuiTabMembers host, PlayerEntity player) {
+        super(host, player);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class PopUpUserEdit extends PopUpCore<GuiTabMembers> {
     public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         //screenUtils.drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 162, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 162, 0xffffff);
         drawCenterText(matrixStack, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
         drawCenterText(matrixStack, host.selectedPlayer.getAccessLevel().getName(), 88, 48, 0xffffff);
         String text = host.selectedPlayer.getPlayerUUID().toString();

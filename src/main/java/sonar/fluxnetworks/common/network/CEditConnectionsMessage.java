@@ -105,7 +105,7 @@ public class CEditConnectionsMessage implements IMessage {
         if ((flags & FluxConstants.FLAG_EDIT_DISCONNECT) != 0) {
             toEdit.forEach(d -> {
                 d.getNetwork().enqueueConnectionRemoval(d, false);
-                d.onDisconnect();
+                d.onDisconnected();
             });
             NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_CONNECTIONS), context);
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS_2), context);

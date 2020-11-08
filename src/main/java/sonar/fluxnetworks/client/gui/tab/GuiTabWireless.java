@@ -14,7 +14,7 @@ import sonar.fluxnetworks.client.gui.button.InventoryButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CEditWirelessMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 
@@ -31,7 +31,7 @@ public class GuiTabWireless extends GuiTabCore {
 
     public int settings;
 
-    public GuiTabWireless(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabWireless(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 
@@ -46,7 +46,7 @@ public class GuiTabWireless extends GuiTabCore {
             int color = network.getNetworkColor();
             drawCenterText(matrixStack, FluxTranslate.TAB_WIRELESS.t(), 88, 12, 0xb4b4b4);
             font.drawString(matrixStack, FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, color);
-            drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 146, 0xffffff);
+            drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 146, 0xffffff);
         } else {
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -105,11 +105,10 @@ public class GuiTabWireless extends GuiTabCore {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (apply != null && FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
+    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+        super.onOperationalFeedback(info);
+        if (apply != null && info == FeedbackInfo.SUCCESS) {
             apply.clickable = false;
-            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
     }
 }

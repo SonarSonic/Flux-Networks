@@ -3,22 +3,21 @@ package sonar.fluxnetworks.client.gui.popup;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 
 import javax.annotation.Nonnull;
 
-public class PopUpCustomColor extends PopUpCore<GuiFluxCore> {
+public class PopupCustomColor extends PopupCore<GuiFluxCore> {
 
     public FluxTextWidget customColor;
     public NormalButton colorApply;
-    public int currentColour;
+    public int currentColor;
 
-    public PopUpCustomColor(GuiFluxCore host, int currentColour, PlayerEntity player, INetworkConnector connector) {
-        super(host, player, connector);
-        this.currentColour = currentColour;
+    public PopupCustomColor(GuiFluxCore host, PlayerEntity player, int currentColor) {
+        super(host, player);
+        this.currentColor = currentColor;
     }
 
     @Override
@@ -31,7 +30,7 @@ public class PopUpCustomColor extends PopUpCore<GuiFluxCore> {
 
         customColor = FluxTextWidget.create("0x", font, guiLeft + 57, guiTop + 64, 64, 12).setHexOnly();
         customColor.setMaxStringLength(6);
-        customColor.setText(Integer.toHexString(currentColour));
+        customColor.setText(Integer.toHexString(currentColor));
         customColor.setResponder(string -> colorApply.clickable = string.length() == 6);
         addButton(customColor);
     }
@@ -55,7 +54,7 @@ public class PopUpCustomColor extends PopUpCore<GuiFluxCore> {
                         return true;
                     }
                     if(button.id == 12) {
-                        currentColour = customColor.getIntegerFromHex();
+                        currentColor = customColor.getIntegerFromHex();
                         host.closePopUp();
                         return true;
                     }

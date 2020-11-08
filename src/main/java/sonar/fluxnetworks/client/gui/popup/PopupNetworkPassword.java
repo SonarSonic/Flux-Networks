@@ -3,7 +3,6 @@ package sonar.fluxnetworks.client.gui.popup;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
@@ -12,12 +11,12 @@ import sonar.fluxnetworks.client.gui.tab.GuiTabSelection;
 
 import javax.annotation.Nonnull;
 
-public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
+public class PopupNetworkPassword extends PopupCore<GuiTabSelection> {
 
     public FluxTextWidget password;
 
-    public PopUpNetworkPassword(GuiTabSelection host, PlayerEntity player, INetworkConnector connector) {
-        super(host, player, connector);
+    public PopupNetworkPassword(GuiTabSelection host, PlayerEntity player) {
+        super(host, player);
     }
 
     @Override
@@ -42,9 +41,8 @@ public class PopUpNetworkPassword extends PopUpCore<GuiTabSelection> {
         }
         drawCenterText(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
 
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 110, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 110, 0xffffff);
     }
-
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {

@@ -12,11 +12,12 @@ import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CConfiguratorConnectMessage;
 import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
@@ -26,27 +27,27 @@ import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class GuiFluxCore extends GuiPopUpHost {
+public abstract class GuiFluxCore extends GuiPopupHost {
 
     public List<List<? extends GuiButtonCore>> buttonLists = Lists.newArrayList();
     protected List<NormalButton> buttons = Lists.newArrayList();
     protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
+    public final PlayerEntity player; // client player
     public IFluxNetwork network;
     public AccessLevel accessLevel = AccessLevel.BLOCKED;
     protected boolean networkValid;
-    private int timer1;
 
-    public GuiFluxCore(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiFluxCore(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
-        this.network = FluxClientCache.getNetwork(connector.getNetworkID());
+        this.player = player;
+        this.network = FluxClientCache.getNetwork(container.bridge.getNetworkID());
         this.networkValid = network.isValid();
-        network.getMemberByUUID(PlayerEntity.getUUID(player.getGameProfile())).ifPresent(m -> accessLevel = m.getAccessLevel());
-    }
-
-    @Override
-    public int getGuiColouring() {
-        return network.getNetworkColor();
+        if (FluxClientCache.superAdmin) {
+            accessLevel = AccessLevel.SUPER_ADMIN;
+        } else {
+            network.getMemberByUUID(PlayerEntity.getUUID(player.getGameProfile())).ifPresent(m -> accessLevel = m.getAccessLevel());
+        }
     }
 
     @Override
@@ -67,6 +68,13 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
 
     protected void drawBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         super.drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+        RenderSystem.enableBlend();
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+        minecraft.getTextureManager().bindTexture(ScreenUtils.BACKGROUND);
+        blit(matrixStack, width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
+        screenUtils.setGuiColoring(network.getNetworkColor());
+        minecraft.getTextureManager().bindTexture(ScreenUtils.FRAME);
+        blit(matrixStack, width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
         buttonLists.forEach(list -> list.forEach(b -> b.updateButton(partialTicks, mouseX, mouseY)));
     }
 
@@ -89,19 +97,14 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     @Override
     public void tick() {
         super.tick();
-        if (timer1 == 0) {
-            this.network = FluxClientCache.getNetwork(connector.getNetworkID());
-            this.networkValid = network.isValid();
-        }
-        timer1++;
-        timer1 %= 20;
+        network = FluxClientCache.getNetwork(container.bridge.getNetworkID());
+        networkValid = network.isValid();
     }
 
     @Override
     public void onClose() {
         super.onClose();
-        FluxClientCache.setFeedback(FeedbackInfo.NONE, false);
-        FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
+        FluxClientCache.setFeedback(FeedbackInfo.NONE);
     }
 
     protected void renderNavigationPrompt(MatrixStack matrixStack, String error, String prompt) {
@@ -152,16 +155,17 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         return list;
     }
 
-    public void onSuperAdminChanged() {
+    public void setConnectedNetwork(int networkID, String password) {
+        if (container.bridge instanceof TileFluxDevice) {
+            NetworkHandler.INSTANCE.sendToServer(new CSelectNetworkMessage(((TileFluxDevice) container.bridge).getPos(), networkID, password));
+        } else if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
+            NetworkHandler.INSTANCE.sendToServer(new CConfiguratorConnectMessage(networkID, password));
+        } else if (container.bridge instanceof ItemAdminConfigurator.MenuBridge) {
+            FluxClientCache.adminViewingNetwork = networkID;
+        }
     }
 
-    public void setConnectedNetwork(int networkID, String password) {
-        if (connector instanceof TileFluxDevice) {
-            NetworkHandler.INSTANCE.sendToServer(new CSelectNetworkMessage(((TileFluxDevice) connector).getPos(), networkID, password));
-        } else if (connector instanceof ItemAdminConfigurator.AdminNetworkConnector) {
-            FluxClientCache.adminViewingNetwork = FluxClientCache.getNetwork(networkID);
-        } else if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
-            NetworkHandler.INSTANCE.sendToServer(new CConfiguratorConnectMessage(networkID, password));
-        }
+    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+
     }
 }

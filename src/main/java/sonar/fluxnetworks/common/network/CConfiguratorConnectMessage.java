@@ -9,7 +9,7 @@ import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
 import javax.annotation.Nonnull;
@@ -45,7 +45,7 @@ public class CConfiguratorConnectMessage implements IMessage {
             if (CSelectNetworkMessage.checkAccess(buffer, context, player, network))
                 return;
             ItemStack stack = player.getHeldItemMainhand();
-            if (stack.getItem() instanceof ItemFluxConfigurator) {
+            if (stack.getItem() == RegistryItems.FLUX_CONFIGURATOR) {
                 CompoundNBT configs = stack.getOrCreateChildTag(FluxConstants.TAG_FLUX_CONFIG);
                 configs.putInt(FluxConstants.NETWORK_ID, networkID);
             }

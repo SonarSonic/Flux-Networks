@@ -6,7 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.button.PageLabelButton;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
 
     public int page = 1, currentPages = 1, pages = 1, gridPerPage = 1, gridStartX = 0, gridStartY = 0, gridHeight = 0, elementHeight = 0, elementWidth = 0;
 
-    public GuiTabPages(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabPages(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 

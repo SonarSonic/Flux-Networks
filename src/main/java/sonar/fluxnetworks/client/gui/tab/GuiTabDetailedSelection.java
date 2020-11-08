@@ -8,7 +8,7 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 
@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 
 public class GuiTabDetailedSelection extends GuiTabSelection {
 
-    public GuiTabDetailedSelection(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabDetailedSelection(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         gridStartX = 15;
         gridStartY = 22;
@@ -39,7 +39,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
 
-        boolean selected = connector.getNetworkID() == element.getNetworkID();
+        boolean selected = container.bridge.getNetworkID() == element.getNetworkID();
         boolean isEncrypted = element.getSecurity().isEncrypted();
 
         if (isEncrypted) {

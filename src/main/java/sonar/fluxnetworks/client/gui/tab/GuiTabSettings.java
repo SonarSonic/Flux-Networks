@@ -6,7 +6,6 @@ import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
-import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -15,7 +14,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CDeleteNetworkMessage;
 import sonar.fluxnetworks.common.network.CEditNetworkMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
@@ -29,11 +28,10 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     public NormalButton apply, delete;
     public int deleteCount;
 
-    public GuiTabSettings(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabSettings(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         if (networkValid) {
             securityType = network.getSecurity().getType();
-            energyType = EnergyType.FE;
         }
     }
 
@@ -44,7 +42,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        if (getNavigationTab() == EnumNavigationTab.TAB_CREATE || networkValid) {
+        if (networkValid) {
             if (mouseX > 30 + guiLeft && mouseX < 66 + guiLeft && mouseY > 140 + guiTop && mouseY < 152 + guiTop) {
                 if (delete.clickable) {
                     drawCenterText(matrixStack, TextFormatting.BOLD + FluxTranslate.DELETE_NETWORK.t(), 48, 128, 0xff0000);
@@ -52,7 +50,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                     drawCenterText(matrixStack, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
                 }
             }
-            drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 156, 0xffffff);
+            drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 156, 0xffffff);
         } else {
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }
@@ -61,12 +59,8 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void init() {
         super.init();
-
         if (networkValid) {
             nameField.setText(network.getNetworkName());
-
-            //TODO only players that have permission can receive password from server
-            //passwordField.setText(network.getNetworkPassword());
 
             buttons.add(apply = new NormalButton(FluxTranslate.APPLY.t(), 112, 140, 36, 12, 3).setUnclickable());
             buttons.add(delete = new NormalButton(FluxTranslate.DELETE.t(), 30, 140, 36, 12, 4).setUnclickable());
@@ -74,7 +68,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
             int i = 0;
             boolean colorSet = false;
             for (EnumNetworkColor color : EnumNetworkColor.values()) {
-                ColorButton b = new ColorButton(48 + ((i >= 7 ? i - 7 : i) * 16), 96 + ((i >= 7 ? 1 : 0) * 16), color.getRGB());
+                ColorButton b = new ColorButton(48 + ((i >= 7 ? i - 7 : i) * 16), 91 + ((i >= 7 ? 1 : 0) * 16), color.getRGB());
                 colorButtons.add(b);
                 if (!colorSet && color.getRGB() == network.getNetworkColor()) {
                     this.colorBtn = b;
@@ -84,7 +78,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 i++;
             }
             if (!colorSet) {
-                ColorButton c = new ColorButton(32, 112, network.getNetworkColor());
+                ColorButton c = new ColorButton(32, 107, network.getNetworkColor());
                 colorButtons.add(c);
                 this.colorBtn = c;
                 this.colorBtn.selected = true;
@@ -113,7 +107,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                             nameField.getText(), colorBtn.color, securityType, passwordField.getText()));
                     break;
                 case 4:
-                    NetworkHandler.INSTANCE.sendToServer(new CDeleteNetworkMessage(connector.getNetworkID()));
+                    NetworkHandler.INSTANCE.sendToServer(new CDeleteNetworkMessage(network.getNetworkID()));
                     break;
             }
         }
@@ -136,15 +130,12 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
+    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+        super.onOperationalFeedback(info);
+        if (info == FeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTab.TAB_HOME);
-            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
-        }
-        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
+        } else if (info == FeedbackInfo.SUCCESS_2) {
             apply.clickable = false;
-            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
     }
 }

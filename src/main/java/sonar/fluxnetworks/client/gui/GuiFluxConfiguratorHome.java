@@ -17,7 +17,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CConfiguratorSettingMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
@@ -47,9 +47,9 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
 
     private int timer;
 
-    public GuiFluxConfiguratorHome(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiFluxConfiguratorHome(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
-        this.stack = ((ItemFluxConfigurator.NetworkConnector) Objects.requireNonNull(container.connector)).stack;
+        this.stack = ((ItemFluxConfigurator.MenuBridge) Objects.requireNonNull(container.bridge)).stack;
         updateSettingsFromTag();
     }
 
@@ -61,7 +61,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 89, 150, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 89, 150, 0xffffff);
 
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 90, network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 102, network.getNetworkColor());

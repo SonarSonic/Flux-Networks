@@ -7,7 +7,7 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.IMenuBridge;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 
 import javax.annotation.Nonnull;
@@ -16,7 +16,9 @@ import java.util.UUID;
 /**
  * Defines a device that can be connected to a flux network
  */
-public interface IFluxDevice extends INetworkConnector {
+public interface IFluxDevice extends IMenuBridge {
+
+    IFluxNetwork getNetwork();
 
     void writeCustomNBT(CompoundNBT tag, int type);
 
@@ -62,13 +64,13 @@ public interface IFluxDevice extends INetworkConnector {
      *
      * @param network the network invoked this method
      */
-    void onConnect(IFluxNetwork network);
+    void onConnected(IFluxNetwork network);
 
     /**
      * This method invoked by FluxNetworkServer.
      * To disconnect from current network, call getNetwork().enqueueConnectionRemoval()
      */
-    void onDisconnect();
+    void onDisconnected();
 
     @Nonnull
     ITransferHandler getTransferHandler();

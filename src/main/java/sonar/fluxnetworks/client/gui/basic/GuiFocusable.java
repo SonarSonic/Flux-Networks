@@ -3,15 +3,16 @@ package sonar.fluxnetworks.client.gui.basic;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
-import sonar.fluxnetworks.client.gui.popup.PopUpCore;
+import sonar.fluxnetworks.client.gui.popup.PopupCore;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -19,8 +20,8 @@ import javax.annotation.Nullable;
  */
 public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
 
-    public GuiFocusable(T container, PlayerInventory inventory, ITextComponent name) {
-        super(container, inventory, name);
+    public GuiFocusable(T container, @Nonnull PlayerEntity player) {
+        super(container, player.inventory, StringTextComponent.EMPTY);
     }
 
     /**
@@ -52,8 +53,8 @@ public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
                 return false; // allows the typing of "E"
             }
         } else if (keyCode == 256 || minecraft.gameSettings.keyBindInventory.isActiveAndMatches(mouseKey)) {
-            if (this instanceof PopUpCore) {
-                ((PopUpCore<?>) this).host.closePopUp();
+            if (this instanceof PopupCore) {
+                ((PopupCore<?>) this).host.closePopUp();
                 return true;
             }
             if (this instanceof GuiTabCore) {

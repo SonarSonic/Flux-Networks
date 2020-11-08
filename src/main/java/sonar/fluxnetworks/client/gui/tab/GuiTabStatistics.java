@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
@@ -12,7 +11,7 @@ import sonar.fluxnetworks.client.gui.LineChart;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 
@@ -26,7 +25,7 @@ public class GuiTabStatistics extends GuiTabCore {
     private LineChart chart;
     private int timer = 0;
 
-    public GuiTabStatistics(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabStatistics(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 

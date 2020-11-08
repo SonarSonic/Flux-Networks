@@ -11,12 +11,11 @@ import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popup.PopUpUserEdit;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.client.gui.popup.PopupMemberEdit;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
@@ -35,7 +34,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
     private int timer;
 
-    public GuiTabMembers(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabMembers(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         gridStartX = 15;
         gridStartY = 22;
@@ -94,7 +93,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }*/
         if (mouseButton == 0) {
             selectedPlayer = element;
-            openPopUp(new PopUpUserEdit(this, player, connector));
+            openPopUp(new PopupMemberEdit(this, player));
         }
     }
 
@@ -155,6 +154,23 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
+    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+        super.onOperationalFeedback(info);
+        if (info == FeedbackInfo.SUCCESS) {
+            if (hasActivePopup()) {
+                // re-open
+                Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
+                if (n.isPresent()) {
+                    selectedPlayer = n.get();
+                    openPopUp(new PopupMemberEdit(this, player));
+                } else {
+                    closePopUp();
+                }
+            }
+        }
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (timer == 0) {
@@ -162,20 +178,6 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }
         if (timer == 4 || timer == 14) {
             refreshPages(Lists.newArrayList(network.getAllMembers()));
-        }
-        if (timer % 2 == 0) {
-            if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
-                if (hasActivePopup()) {
-                    Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
-                    if (n.isPresent()) {
-                        selectedPlayer = n.get();
-                        openPopUp(new PopUpUserEdit(this, player, connector));
-                    } else {
-                        closePopUp();
-                    }
-                }
-                FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
-            }
         }
         timer++;
         timer %= 40;

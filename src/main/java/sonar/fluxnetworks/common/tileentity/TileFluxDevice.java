@@ -16,19 +16,21 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Util;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.FluxTileMessage;
 import sonar.fluxnetworks.common.network.NetworkHandler;
@@ -73,7 +75,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Nullable
     private GlobalPos globalPos;
 
-    private IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
+    protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
     public TileFluxDevice(TileEntityType<? extends TileFluxDevice> tileEntityTypeIn, String customName, long limit) {
         super(tileEntityTypeIn);
@@ -130,14 +132,14 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }
 
     @Override
-    public void onConnect(@Nonnull IFluxNetwork network) {
+    public void onConnected(@Nonnull IFluxNetwork network) {
         this.network = network;
         this.networkID = network.getNetworkID();
         sendFullUpdatePacket();
     }
 
     @Override
-    public void onDisconnect() {
+    public void onDisconnected() {
         if (network.isValid()) {
             network = FluxNetworkInvalid.INSTANCE;
             networkID = network.getNetworkID();
@@ -204,7 +206,20 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Override
     public final void read(@Nonnull BlockState state, @Nonnull CompoundNBT compound) {
         super.read(state, compound);
+        FluxNetworks.LOGGER.debug("Read from disk: {}", this);
         readCustomNBT(compound, FluxConstants.TYPE_SAVE_ALL);
+    }
+
+    @Override
+    public void setPos(BlockPos posIn) {
+        super.setPos(posIn);
+        FluxNetworks.LOGGER.debug("Set pos: {}", this);
+    }
+
+    @Override
+    public void setWorldAndPos(World world, BlockPos pos) {
+        super.setWorldAndPos(world, pos);
+        FluxNetworks.LOGGER.debug("Set WP: {}", this);
     }
 
     @Override
@@ -412,7 +427,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }
 
     @Override
-    public void onContainerOpened(PlayerEntity player) {
+    public void onMenuOpened(PlayerEntity player) {
         if (!world.isRemote) {
             playerUsing.add(player);
             sendFullUpdatePacket();
@@ -420,7 +435,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
+    public void onMenuClosed(PlayerEntity player) {
         if (!world.isRemote) {
             playerUsing.remove(player);
         }
@@ -617,6 +632,6 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
 
     @Nullable
     public final Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity entity) {
-        return new ContainerConnector(windowID, playerInventory, this);
+        return new FluxMenu(windowID, playerInventory, this);
     }
 }

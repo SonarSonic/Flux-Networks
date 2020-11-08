@@ -38,7 +38,7 @@ import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.item.ItemFluxDust;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.recipe.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipe.NBTWipeRecipeSerializer;
@@ -67,16 +67,16 @@ public class CommonRegistration {
         // capabilities
         SuperAdmin.register();
         FNEnergyStorage.register();
-
-        FluxNetworks.LOGGER.info("Finished Common Setup");
     }
 
     @SubscribeEvent
     public static void enqueueIMC(InterModEnqueueEvent event) {
-        if (ModList.get().isLoaded("carryon"))
+        if (ModList.get().isLoaded("carryon")) {
             InterModComms.sendTo("carryon", "blacklistBlock", () -> FluxNetworks.MODID + ":*");
-        if (ModList.get().isLoaded("theoneprobe"))
+        }
+        if (ModList.get().isLoaded("theoneprobe")) {
             InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration::new);
+        }
     }
 
     @SubscribeEvent
@@ -96,8 +96,6 @@ public class CommonRegistration {
         registry.register(new FluxStorageBlock.Basic(deviceProps).setRegistryName("basic_flux_storage"));
         registry.register(new FluxStorageBlock.Herculean(deviceProps).setRegistryName("herculean_flux_storage"));
         registry.register(new FluxStorageBlock.Gargantuan(deviceProps).setRegistryName("gargantuan_flux_storage"));
-
-        FluxNetworks.LOGGER.info("Finished Registering Blocks");
     }
 
     @SubscribeEvent
@@ -122,8 +120,6 @@ public class CommonRegistration {
         registry.register(new Item(props).setRegistryName("flux_core"));
         registry.register(new ItemFluxConfigurator(props).setRegistryName("flux_configurator"));
         registry.register(new ItemAdminConfigurator(props).setRegistryName("admin_configurator"));
-
-        FluxNetworks.LOGGER.info("Finished Registering Items");
     }
 
     /*@SubscribeEvent
@@ -147,8 +143,6 @@ public class CommonRegistration {
                 setRegistryName("herculean_flux_storage"));
         registry.register(TileEntityType.Builder.create(TileFluxStorage.Gargantuan::new, RegistryBlocks.GARGANTUAN_FLUX_STORAGE).build(null)
                 .setRegistryName("gargantuan_flux_storage"));
-
-        FluxNetworks.LOGGER.info("Finished Registering Tile Entities");
     }
 
     /**
@@ -157,29 +151,26 @@ public class CommonRegistration {
      */
     @SubscribeEvent
     public static void onContainerRegistry(@Nonnull RegistryEvent.Register<ContainerType<?>> event) {
-        event.getRegistry().register(IForgeContainerType.create((windowId, inventory, packet) -> {
+        event.getRegistry().register(IForgeContainerType.create((windowId, inventory, buffer) -> {
             // check if it's tile entity
-            if (packet.readBoolean()) {
-                BlockPos pos = packet.readBlockPos();
+            if (buffer.readBoolean()) {
+                BlockPos pos = buffer.readBlockPos();
                 TileEntity tile = inventory.player.getEntityWorld().getTileEntity(pos);
                 if (tile instanceof TileFluxDevice) {
-                    return new ContainerConnector(windowId, inventory, (TileFluxDevice) tile);
+                    return new FluxMenu(windowId, inventory, (TileFluxDevice) tile);
                 }
             } else {
                 ItemStack stack = inventory.player.getHeldItemMainhand();
-                // build a bridge to connect to a flux network
                 if (stack.getItem() == RegistryItems.FLUX_CONFIGURATOR) {
-                    return new ContainerConnector(windowId, inventory, new ItemFluxConfigurator.NetworkConnector(stack));
+                    return new FluxMenu(windowId, inventory, new ItemFluxConfigurator.MenuBridge(stack));
                 }
             }
-            return new ContainerConnector(windowId, inventory, new ItemAdminConfigurator.AdminNetworkConnector());
-        }).setRegistryName("connector"));
-
-        FluxNetworks.LOGGER.info("Finished Registering Containers");
+            return new FluxMenu(windowId, inventory, new ItemAdminConfigurator.MenuBridge());
+        }).setRegistryName("flux_menu"));
     }
 
     @SubscribeEvent
-    public static void registerRecipes(@Nonnull RegistryEvent.Register<IRecipeSerializer<?>> event) {
+    public static void registerRecipeSerializers(@Nonnull RegistryEvent.Register<IRecipeSerializer<?>> event) {
         event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "flux_storage_recipe"));
         event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "nbt_wipe_recipe"));
     }

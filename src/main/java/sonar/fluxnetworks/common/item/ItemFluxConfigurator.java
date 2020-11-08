@@ -21,12 +21,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.IMenuBridge;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.text.StyleUtils;
 import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -102,17 +101,19 @@ public class ItemFluxConfigurator extends Item {
         super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
-    public static class NetworkConnector implements INetworkConnector {
+    public static class MenuBridge implements IMenuBridge {
 
         public final ItemStack stack;
         public int networkID;
 
-        public NetworkConnector(ItemStack stack) {
+        MenuBridge() {
+            stack = null;
+        }
+
+        public MenuBridge(@Nonnull ItemStack stack) {
             this.stack = stack;
-            if (stack != null) {
-                CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
-                networkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
-            }
+            CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
+            networkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
         }
 
         @Override
@@ -121,24 +122,17 @@ public class ItemFluxConfigurator extends Item {
         }
 
         @Override
-        public IFluxNetwork getNetwork() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void onContainerOpened(PlayerEntity player) {
+        public void onMenuOpened(PlayerEntity player) {
 
         }
 
         @Override
-        public void onContainerClosed(PlayerEntity player) {
+        public void onMenuClosed(PlayerEntity player) {
 
         }
     }
 
     private static class ContainerProvider implements INamedContainerProvider {
-
-        private static final NetworkConnector SERVER_INSTANCE = new NetworkConnector(null);
 
         @Nonnull
         @Override
@@ -149,7 +143,7 @@ public class ItemFluxConfigurator extends Item {
         @Nullable
         @Override
         public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-            return new ContainerConnector(windowID, playerInventory, SERVER_INSTANCE);
+            return new FluxMenu(windowID, playerInventory, new MenuBridge());
         }
     }
 }

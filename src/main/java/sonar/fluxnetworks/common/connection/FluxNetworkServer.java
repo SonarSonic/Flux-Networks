@@ -79,7 +79,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
             }
             if (b) {
                 //MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(device, this));
-                device.onConnect(this);
+                device.onConnected(this);
                 sortConnections = true;
             }
         }
@@ -190,7 +190,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     @Override
     public void onDelete() {
-        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::onDisconnect);
+        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::onDisconnected);
         connections.clear();
         toAdd.clear();
         toRemove.clear();

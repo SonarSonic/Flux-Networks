@@ -39,7 +39,6 @@ public class SGuiPermissionMessage implements IMessage {
         if (gui instanceof GuiFluxCore) {
             GuiFluxCore guiFluxCore = (GuiFluxCore) gui;
             guiFluxCore.accessLevel = access;
-            guiFluxCore.onSuperAdminChanged();
         }
         buffer.release();
     }

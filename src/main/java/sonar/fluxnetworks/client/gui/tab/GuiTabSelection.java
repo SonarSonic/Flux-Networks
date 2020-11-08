@@ -13,9 +13,9 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popup.PopUpNetworkPassword;
+import sonar.fluxnetworks.client.gui.popup.PopupNetworkPassword;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -29,7 +29,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
 
     protected int timer2;
 
-    public GuiTabSelection(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabSelection(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         gridStartX = 15;
         gridStartY = 22;
@@ -53,7 +53,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             font.drawString(matrixStack, amount, 158 - font.getStringWidth(amount), 10, 0xffffff);
             font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
             if (!hasActivePopup()) {
-                drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 150, 0xffffff);
+                drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 150, 0xffffff);
             }
         }
     }
@@ -92,7 +92,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
 
-        boolean selected = connector.getNetworkID() == element.getNetworkID();
+        boolean selected = container.bridge.getNetworkID() == element.getNetworkID();
         boolean isEncrypted = element.getSecurity().isEncrypted();
 
         if (isEncrypted) {
@@ -140,24 +140,25 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     }
 
     @Override
+    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+        super.onOperationalFeedback(info);
+        if (info == FeedbackInfo.PASSWORD_REQUIRE) {
+            openPopUp(new PopupNetworkPassword(this, player));
+        } else if (selectedNetwork != null && info == FeedbackInfo.SUCCESS) {
+            closePopUp();
+            if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
+                ((ItemFluxConfigurator.MenuBridge) container.bridge).networkID = selectedNetwork.getNetworkID();
+                network = selectedNetwork;
+                networkValid = selectedNetwork.isValid();
+            }
+        }
+    }
+
+    @Override
     public void tick() {
         super.tick();
         if (timer2 == 9) {
             refreshPages(FluxClientCache.getAllNetworks());
-        }
-        if (selectedNetwork != null && FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
-            closePopUp();
-            if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
-                ItemFluxConfigurator.NetworkConnector networkConnector = (ItemFluxConfigurator.NetworkConnector) connector;
-                networkConnector.networkID = selectedNetwork.getNetworkID();
-
-                this.network = selectedNetwork;
-                this.networkValid = selectedNetwork.isValid();
-            }
-        }
-        if (FluxClientCache.getFeedback(true) == FeedbackInfo.PASSWORD_REQUIRE) {
-            openPopUp(new PopUpNetworkPassword(this, player, connector));
-            FluxClientCache.setFeedback(FeedbackInfo.NONE, true);
         }
         timer2++;
         timer2 %= 10;

@@ -12,7 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
 import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
 import sonar.fluxnetworks.common.network.CSuperAdminMessage;
@@ -27,7 +27,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
     private int timer;
     public SlidedSwitchButton detailedNetworkView, superAdmin;
 
-    public GuiFluxAdminHome(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiFluxAdminHome(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 
@@ -39,7 +39,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 89, 150, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 89, 150, 0xffffff);
 
         font.drawString(matrixStack, AccessLevel.SUPER_ADMIN.getName(), 20, 30, network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DETAILED_VIEW.t(), 20, 42, network.getNetworkColor());
@@ -61,12 +61,6 @@ public class GuiFluxAdminHome extends GuiTabCore {
         switches.add(detailedNetworkView);
     }
 
-
-    public void onSuperAdminChanged() {
-        super.onSuperAdminChanged();
-        superAdmin.toggled = FluxClientCache.superAdmin;
-    }
-
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == 0 && button instanceof SlidedSwitchButton) {
@@ -81,7 +75,6 @@ public class GuiFluxAdminHome extends GuiTabCore {
                     break;
             }
         }
-
     }
 
     @Override

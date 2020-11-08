@@ -9,7 +9,7 @@ import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
@@ -22,8 +22,8 @@ public class RegistryBlocks {
     public static Block FLUX_BLOCK;
 
 
-    @ObjectHolder("connector")
-    public static ContainerType<ContainerConnector> CONTAINER_CONNECTOR;
+    @ObjectHolder("flux_menu")
+    public static ContainerType<FluxMenu> FLUX_MENU;
 
     @ObjectHolder("flux_plug")
     public static FluxPlugBlock FLUX_PLUG;

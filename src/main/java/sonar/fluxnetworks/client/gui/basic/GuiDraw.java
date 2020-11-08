@@ -14,29 +14,10 @@ import javax.annotation.Nonnull;
 ////ONLY RENDER METHODS & TEXTURES \\\\
 public abstract class GuiDraw<T extends Container> extends ContainerScreen<T> {
 
-    public ScreenUtils screenUtils = ScreenUtils.INSTANCE;
+    public final ScreenUtils screenUtils = ScreenUtils.INSTANCE;
 
     public GuiDraw(T container, PlayerInventory inventory, ITextComponent name) {
         super(container, inventory, name);
-    }
-
-    public int getGuiColouring(){
-        return FluxConstants.INVALID_NETWORK_COLOR;
-    }
-
-    protected final void drawFluxDefaultBackground(MatrixStack matrixStack) {
-        RenderSystem.enableAlphaTest();
-        RenderSystem.enableBlend();
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-        minecraft.getTextureManager().bindTexture(ScreenUtils.BACKGROUND);
-        blit(matrixStack, width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
-
-        screenUtils.setGuiColouring(getGuiColouring());
-        minecraft.getTextureManager().bindTexture(ScreenUtils.FRAME);
-        blit(matrixStack, width / 2 - 128, height / 2 - 128, 0, 0, 256, 256);
-        RenderSystem.disableBlend();
-        RenderSystem.disableAlphaTest();
     }
 
     protected final void drawCenterText(@Nonnull MatrixStack matrixStack, String text, float x, float y, int color) {

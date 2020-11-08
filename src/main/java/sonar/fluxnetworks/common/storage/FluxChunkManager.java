@@ -37,23 +37,22 @@ public class FluxChunkManager {
         }
         RegistryKey<World> dim = world.getDimensionKey();
         LongSet tickets = FluxNetworkData.getTickets(dim);
-        if (tickets.isEmpty()) {
-            return;
-        }
         /*List<ChunkPos> chunks = tickets.stream().map(l -> new ChunkPos(BlockPos.fromLong(l)))
                 .distinct().collect(Collectors.toList());
         chunks.forEach(pos -> registerTicket(world, pos));*/
-        ServerChunkProvider chunkProvider = world.getChunkProvider();
-        LongIterator iterator = tickets.iterator();
-        while (iterator.hasNext()) {
-            BlockPos blockPos = BlockPos.fromLong(iterator.nextLong());
-            TileEntity tile = world.getTileEntity(blockPos); // loads the chunk
-            if (tile instanceof TileFluxDevice) {
-                ChunkPos chunkPos = new ChunkPos(blockPos);
-                chunkProvider.registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, (TileFluxDevice) tile);
-            } else {
-                // remove invalid tickets
-                iterator.remove();
+        if (!tickets.isEmpty()) {
+            ServerChunkProvider chunkProvider = world.getChunkProvider();
+            LongIterator iterator = tickets.iterator();
+            while (iterator.hasNext()) {
+                BlockPos blockPos = BlockPos.fromLong(iterator.nextLong());
+                TileEntity tile = world.getTileEntity(blockPos); // loads the chunk
+                if (tile instanceof TileFluxDevice) {
+                    ChunkPos chunkPos = new ChunkPos(blockPos);
+                    chunkProvider.registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, (TileFluxDevice) tile);
+                } else {
+                    // remove invalid tickets
+                    iterator.remove();
+                }
             }
         }
         FluxNetworks.LOGGER.info("Chunks Loaded in {}, Tickets Count: {}",

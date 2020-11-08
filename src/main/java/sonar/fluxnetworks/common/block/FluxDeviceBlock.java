@@ -19,7 +19,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.api.text.StyleUtils;
-import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -42,7 +42,7 @@ public abstract class FluxDeviceBlock extends Block {
             return ActionResultType.SUCCESS;
         }
 
-        if (player.getHeldItem(hand).getItem() instanceof ItemFluxConfigurator) {
+        if (player.getHeldItem(hand).getItem() == RegistryItems.FLUX_CONFIGURATOR) {
             return ActionResultType.FAIL;
         }
 

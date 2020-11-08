@@ -48,7 +48,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-
+            property 'forge.logging.console.level', 'debug'
             mods {
                 fluxnetworks {
                     source sourceSets.main
@@ -58,7 +58,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-
+            property 'forge.logging.console.level', 'debug'
             mods {
                 fluxnetworks {
                     source sourceSets.main

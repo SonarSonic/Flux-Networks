@@ -26,10 +26,6 @@ public enum FeedbackInfo {
         this.localization = localization;
     }
 
-    public boolean isValid() {
-        return this != NONE;
-    }
-
     @Nonnull
     public String getText() {
         return localization == null ? "" : localization.t();

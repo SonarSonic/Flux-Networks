@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.IMenuBridge;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;
@@ -21,7 +21,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.mui.MUIIntegration;
 import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
@@ -48,22 +48,20 @@ public class ClientRegistration {
         if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {
             MUIIntegration.init();
         } else {
-            ScreenManager.registerFactory(RegistryBlocks.CONTAINER_CONNECTOR, getScreenFactory());
+            ScreenManager.registerFactory(RegistryBlocks.FLUX_MENU, getScreenFactory());
         }
 
         //RenderingRegistry.registerEntityRenderingHandler(RegistryItems.FIRE_ITEM_ENTITY, manager -> new ItemRenderer(manager, Minecraft.getInstance().getItemRenderer()));
-
-        FluxNetworks.LOGGER.info("Finished Client Setup Event");
     }
 
     @Nonnull
-    private static ScreenManager.IScreenFactory<ContainerConnector, GuiTabCore> getScreenFactory() {
+    private static ScreenManager.IScreenFactory<FluxMenu, GuiTabCore> getScreenFactory() {
         return (container, inventory, windowID) -> {
-            INetworkConnector connector = container.connector;
+            IMenuBridge connector = container.bridge;
             if (connector instanceof TileFluxDevice) {
                 return new GuiFluxDeviceHome(container, inventory.player);
             }
-            if (connector instanceof ItemFluxConfigurator.NetworkConnector) {
+            if (connector instanceof ItemFluxConfigurator.MenuBridge) {
                 return new GuiFluxConfiguratorHome(container, inventory.player);
             }
             return new GuiFluxAdminHome(container, inventory.player);

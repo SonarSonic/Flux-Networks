@@ -10,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ScreenUtils extends AbstractGui {
@@ -50,8 +52,12 @@ public class ScreenUtils extends AbstractGui {
         return (float) (colour & 255) / 255.0F;
     }
 
-    public void setGuiColouring(int colour) {
+    public void setGuiColoring(int colour) {
         RenderSystem.color3f(getRed(colour), getGreen(colour), getBlue(colour));
+    }
+
+    public void setGuiColoring(int colour, float alpha) {
+        RenderSystem.color4f(getRed(colour), getGreen(colour), getBlue(colour), alpha);
     }
 
     public void resetGuiColouring() {
@@ -59,9 +65,7 @@ public class ScreenUtils extends AbstractGui {
     }
 
     public void renderNetwork(MatrixStack matrixStack, String name, int color, int x, int y) {
-        RenderSystem.pushMatrix();
         RenderSystem.enableBlend();
-        RenderSystem.enableAlphaTest();
 
         float f = (float) (color >> 16 & 255) / 255.0F;
         float f1 = (float) (color >> 8 & 255) / 255.0F;
@@ -71,28 +75,15 @@ public class ScreenUtils extends AbstractGui {
         Minecraft.getInstance().getTextureManager().bindTexture(GUI_BAR);
         blit(matrixStack, x, y, 0, 0, 135, 12, 256, 256);
         Minecraft.getInstance().fontRenderer.drawString(matrixStack, name, x + 4, y + 2, 0xffffff);
-
-        RenderSystem.popMatrix();
     }
 
-    public void renderItemStack(ItemStack stack, int x, int y) {
-        renderItemStack(stack, x, y, "");
-    }
-
-    public void renderItemStack(ItemStack stack, int x, int y, String text) {
+    public void renderItemStack(@Nonnull ItemStack stack, int x, int y) {
         RenderSystem.enableBlend();
-        RenderSystem.enableAlphaTest();
-        RenderSystem.translatef(0.0F, 0.0F, 32.0F);
         this.setBlitOffset(200);
         this.itemRenderer.zLevel = 200.0F;
-        net.minecraft.client.gui.FontRenderer font = stack.getItem().getFontRenderer(stack);
-        if (font == null) font = this.font;
         this.itemRenderer.renderItemAndEffectIntoGUI(stack, x, y);
-        this.itemRenderer.renderItemOverlayIntoGUI(font, stack, x, y, text);
         this.setBlitOffset(0);
         this.itemRenderer.zLevel = 0.0F;
-        RenderSystem.disableAlphaTest();
-        RenderSystem.disableBlend();
     }
 
     /*public void drawColorRect(int x, int y, int height, int width, int color) {

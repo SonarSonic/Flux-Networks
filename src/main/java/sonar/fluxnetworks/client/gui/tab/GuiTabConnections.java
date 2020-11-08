@@ -18,8 +18,8 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.BatchEditButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popup.PopUpConnectionEdit;
-import sonar.fluxnetworks.common.misc.ContainerConnector;
+import sonar.fluxnetworks.client.gui.popup.PopupConnectionEdit;
+import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
 import sonar.fluxnetworks.common.network.CConnectionUpdateMessage;
 import sonar.fluxnetworks.common.network.CEditConnectionsMessage;
@@ -46,7 +46,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     private int timer = 3;
 
-    public GuiTabConnections(@Nonnull ContainerConnector container, @Nonnull PlayerEntity player) {
+    public GuiTabConnections(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         gridStartX = 15;
         gridStartY = 22;
@@ -87,7 +87,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     protected void onElementClicked(IFluxDevice element, int mouseButton) {
         if (mouseButton == 0 && batchConnections.size() == 0 && element.isChunkLoaded()) {
             singleConnection = element;
-            openPopUp(new PopUpConnectionEdit(this, false, player, connector));
+            openPopUp(new PopupConnectionEdit(this, player, false));
         }
         if (mouseButton == 1 || (mouseButton == 0 && batchConnections.size() > 0)) {
             if (batchConnections.contains(element)) {
@@ -116,7 +116,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             }
             super.drawForegroundLayer(matrixStack, mouseX, mouseY);
             if (!hasActivePopup())
-                drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 165, 0xffffff);
+                drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 165, 0xffffff);
         } else {
             super.drawForegroundLayer(matrixStack, mouseX, mouseY);
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
@@ -124,7 +124,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     }
 
     @Override
-    public void renderElement(MatrixStack matrixStack, IFluxDevice element, int x, int y) {
+    public void renderElement(MatrixStack matrixStack, @Nonnull IFluxDevice element, int x, int y) {
         RenderSystem.color3f(1.0f, 1.0f, 1.0f);
         minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
         int fontColor = 0xffffff;
@@ -154,14 +154,12 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         if (element.isChunkLoaded()) {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 2, fontColor);
             RenderSystem.scaled(0.625, 0.625, 0.625);
-            font.drawString(matrixStack, FluxUtils.getTransferInfo(element, EnergyType.FE), (int) ((x + 21) * 1.6), (int) ((y + 11) * 1.6), fontColor);
+            font.drawString(matrixStack, FluxUtils.getTransferInfo(element, EnergyType.FE), (x + 21) * 1.6f, (y + 11) * 1.6f, fontColor);
             RenderSystem.scaled(1.6, 1.6, 1.6);
         } else {
             font.drawString(matrixStack, element.getCustomName(), x + 21, y + 5, 0x808080);
         }
-        if (currentPopUp == null) { //TODO MINOR - TEMP FIX ! - DEPTH PROBLEM WITH POPUPS DUE TO THE ITEMRENDERER OFFSET I THINK - lets disable when there is no pop up for now.
-            screenUtils.renderItemStack(element.getDisplayStack(), x + 2, y + 1);
-        }
+        screenUtils.renderItemStack(element.getDisplayStack(), x + 2, y + 1);
     }
 
     @Override
@@ -183,7 +181,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
                     disconnect.clickable = false;
                     break;
                 case 1:
-                    openPopUp(new PopUpConnectionEdit(this, true, player, connector));
+                    openPopUp(new PopupConnectionEdit(this, player, true));
                     break;
                 case 2:
                     List<GlobalPos> list = batchConnections.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList());
@@ -195,17 +193,16 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS) {
+    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+        super.onOperationalFeedback(info);
+        if (info == FeedbackInfo.SUCCESS) {
             closePopUp();
             batchConnections.clear();
             clear.clickable = false;
             edit.clickable = false;
             disconnect.clickable = false;
             refreshPages(Lists.newArrayList(network.getAllConnections()));
-        }
-        if (FluxClientCache.getFeedback(true) == FeedbackInfo.SUCCESS_2) {
+        } else if (info == FeedbackInfo.SUCCESS_2) {
             closePopUp();
             //elements.removeAll(batchConnections);
             batchConnections.clear();
@@ -213,14 +210,19 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             edit.clickable = false;
             disconnect.clickable = false;
             refreshPages(Lists.newArrayList(network.getAllConnections()));
-            if (connector instanceof IFluxDevice) {
-                GlobalPos g = ((IFluxDevice) connector).getGlobalPos();
+            if (container.bridge instanceof IFluxDevice) {
+                GlobalPos g = ((IFluxDevice) container.bridge).getGlobalPos();
                 if (elements.stream().noneMatch(f -> f.getGlobalPos().equals(g))) {
                     switchTab(EnumNavigationTab.TAB_SELECTION);
                 }
             }
             page = Math.min(page, pages);
         }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
         if (!networkValid)
             return;
         if (timer == 4 || timer == 14) {

@@ -75,6 +75,7 @@ public enum NetworkHandler {
         }
         network.addListener(this::onS2CMessageReceived);
         network.addListener(this::onC2SMessageReceived);
+        network.addListener(this::changeReg);
     }
 
     public static void registerMessages() {
@@ -179,6 +180,10 @@ public enum NetworkHandler {
         handleMessage(event.getPayload(), event.getSource());
     }
 
+    private void changeReg(NetworkEvent.ChannelRegistrationChangeEvent event) {
+        FluxNetworks.LOGGER.debug(event.getRegistrationChangeType());
+    }
+
     private void handleMessage(PacketBuffer buffer, Supplier<NetworkEvent.Context> ctx) {
         byte index = buffer.readByte();
         Supplier<? extends IMessage> factory = indices.get(index);
@@ -241,42 +246,30 @@ public enum NetworkHandler {
     }
 
     @Nonnull
-    private <MSG extends IMessage> IPacket<?> toS2CPacket(MSG message) {
+    private <MSG extends IMessage> IPacket<?> getS2CPacket(MSG message) {
         return new SCustomPayloadPlayPacket(network.getChannelName(), toBuffer(message));
     }
 
     /**
-     * A helper version of {@link #sendToPlayer(IMessage, ServerPlayerEntity)}
-     * to cast player entity to server player entity
+     * Send a message to a player
      *
      * @param message message to send
      * @param player  player entity on server
      * @param <MSG>   message type
      */
-    public <MSG extends IMessage> void sendToPlayer(MSG message, PlayerEntity player) {
-        sendToPlayer(message, (ServerPlayerEntity) player);
+    public <MSG extends IMessage> void sendToPlayer(MSG message, @Nonnull PlayerEntity player) {
+        ((ServerPlayerEntity) player).connection.sendPacket(getS2CPacket(message));
     }
 
     /**
-     * Send a message to a client player, call this on server side
-     *
-     * @param message  message to send
-     * @param playerMP player entity on server
-     * @param <MSG>    message type
-     */
-    public <MSG extends IMessage> void sendToPlayer(MSG message, @Nonnull ServerPlayerEntity playerMP) {
-        playerMP.connection.sendPacket(toS2CPacket(message));
-    }
-
-    /**
-     * Send a message to all given players, call this on server side
+     * Send a message to all specific players
      *
      * @param message message to send
      * @param players players on server
      * @param <MSG>   message type
      */
     public <MSG extends IMessage> void sendToPlayers(MSG message, @Nonnull Iterable<? extends PlayerEntity> players) {
-        final IPacket<?> packet = toS2CPacket(message);
+        final IPacket<?> packet = getS2CPacket(message);
         for (PlayerEntity player : players) {
             ((ServerPlayerEntity) player).connection.sendPacket(packet);
         }
@@ -289,7 +282,7 @@ public enum NetworkHandler {
      * @param <MSG>   message type
      */
     public <MSG extends IMessage> void sendToAll(MSG message) {
-        ServerLifecycleHooks.getCurrentServer().getPlayerList().sendPacketToAllPlayers(toS2CPacket(message));
+        ServerLifecycleHooks.getCurrentServer().getPlayerList().sendPacketToAllPlayers(getS2CPacket(message));
     }
 
     /**
@@ -300,7 +293,7 @@ public enum NetworkHandler {
      * @param <MSG>     message type
      */
     public <MSG extends IMessage> void sendToDimension(MSG message, @Nonnull RegistryKey<World> dimension) {
-        ServerLifecycleHooks.getCurrentServer().getPlayerList().func_232642_a_(toS2CPacket(message), dimension);
+        ServerLifecycleHooks.getCurrentServer().getPlayerList().func_232642_a_(getS2CPacket(message), dimension);
     }
 
     /**
@@ -315,11 +308,11 @@ public enum NetworkHandler {
      * @param dimension dimension that players in
      * @param <MSG>     message type
      */
-    public <MSG extends IMessage> void sendToRadius(MSG message, @Nullable ServerPlayerEntity excluded,
-                                                    double x, double y, double z, double radius,
-                                                    @Nonnull RegistryKey<World> dimension) {
+    public <MSG extends IMessage> void sendToAllNear(MSG message, @Nullable ServerPlayerEntity excluded,
+                                                     double x, double y, double z, double radius,
+                                                     @Nonnull RegistryKey<World> dimension) {
         ServerLifecycleHooks.getCurrentServer().getPlayerList().sendToAllNearExcept(
-                excluded, x, y, z, radius, dimension, toS2CPacket(message));
+                excluded, x, y, z, radius, dimension, getS2CPacket(message));
     }
 
     /**
@@ -331,9 +324,9 @@ public enum NetworkHandler {
      * @param entity  entity is tracking
      * @param <MSG>   message type
      */
-    public <MSG extends IMessage> void sendToEntityTracking(MSG message, @Nonnull Entity entity) {
+    public <MSG extends IMessage> void sendToTrackingEntity(MSG message, @Nonnull Entity entity) {
         ((ServerWorld) entity.getEntityWorld()).getChunkProvider().sendToAllTracking(
-                entity, toS2CPacket(message));
+                entity, getS2CPacket(message));
     }
 
     /**
@@ -347,7 +340,7 @@ public enum NetworkHandler {
      */
     public <MSG extends IMessage> void sendToTrackingAndSelf(MSG message, @Nonnull Entity entity) {
         ((ServerWorld) entity.getEntityWorld()).getChunkProvider().sendToTrackingAndSelf(
-                entity, toS2CPacket(message));
+                entity, getS2CPacket(message));
     }
 
     /**
@@ -357,8 +350,8 @@ public enum NetworkHandler {
      * @param chunk   chunk that players in
      * @param <MSG>   message type
      */
-    public <MSG extends IMessage> void sendToChunkTracking(MSG message, @Nonnull Chunk chunk) {
-        final IPacket<?> packet = toS2CPacket(message);
+    public <MSG extends IMessage> void sendToTrackingChunk(MSG message, @Nonnull Chunk chunk) {
+        final IPacket<?> packet = getS2CPacket(message);
         ((ServerWorld) chunk.getWorld()).getChunkProvider().chunkManager.getTrackingPlayers(
                 chunk.getPos(), false).forEach(player -> player.connection.sendPacket(packet));
     }

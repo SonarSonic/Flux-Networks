@@ -31,7 +31,7 @@ public class InventoryButton extends GuiButtonCore {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         int color = host.network.getNetworkColor();
-        ScreenUtils.INSTANCE.setGuiColouring(color);
+        ScreenUtils.INSTANCE.setGuiColoring(color);
         boolean hover = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
 
         mc.getTextureManager().bindTexture(ScreenUtils.INVENTORY);

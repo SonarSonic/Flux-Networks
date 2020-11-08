@@ -138,12 +138,12 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void onContainerOpened(PlayerEntity player) {
+    public void onMenuOpened(PlayerEntity player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity player) {
+    public void onMenuClosed(PlayerEntity player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
@@ -178,12 +178,12 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void onConnect(IFluxNetwork network) {
+    public void onConnected(IFluxNetwork network) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
-    public void onDisconnect() {
+    public void onDisconnected() {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 

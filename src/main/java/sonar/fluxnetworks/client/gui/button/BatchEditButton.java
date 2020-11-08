@@ -3,9 +3,9 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import net.minecraft.client.Minecraft;
 
 public class BatchEditButton extends GuiButtonCore {
 
@@ -19,7 +19,7 @@ public class BatchEditButton extends GuiButtonCore {
         GlStateManager.pushMatrix();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableBlend();
-        if(clickable) {
+        if (clickable) {
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0f);
         } else {
             RenderSystem.color4f(0.5F, 0.5F, 0.5F, 1.0f);
@@ -30,7 +30,7 @@ public class BatchEditButton extends GuiButtonCore {
         mc.getTextureManager().bindTexture(ScreenUtils.BUTTONS);
         blit(matrixStack, x, y, 16 * id, 48 + (b ? 16 : 0), 12, 12);
 
-        if(clickable && b) {
+        if (clickable && b) {
             mc.fontRenderer.drawString(matrixStack, text, x - mc.fontRenderer.getStringWidth(text) / 2f + 6, y - 9, 0xFFFFFF);
         }
 

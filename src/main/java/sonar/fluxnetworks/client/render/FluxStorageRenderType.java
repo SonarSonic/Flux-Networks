@@ -10,6 +10,9 @@ import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Render energy
+ */
 public class FluxStorageRenderType extends RenderType {
 
     private static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
@@ -21,13 +24,14 @@ public class FluxStorageRenderType extends RenderType {
         RenderType.State state = RenderType.State.getBuilder()
                 .texture(new RenderState.TextureState(ENERGY_TEXTURE, false, false))
                 .shadeModel(SHADE_ENABLED)
+                .diffuseLighting(DIFFUSE_LIGHTING_DISABLED)
                 .alpha(DEFAULT_ALPHA)
                 .transparency(TRANSLUCENT_TRANSPARENCY)
                 .lightmap(LIGHTMAP_ENABLED)
                 .overlay(OVERLAY_ENABLED)
-                .build(true);
-        INSTANCE = makeType(FluxNetworks.MODID + ":storage_energy", DefaultVertexFormats.ENTITY, GL11.GL_QUADS,
-                256, true, true, state);
+                .build(false);
+        INSTANCE = makeType(FluxNetworks.MODID + ":storage_energy", DefaultVertexFormats.ENTITY,
+                GL11.GL_QUADS, 256, state);
         state = RenderType.State.getBuilder()
                 .texture(new RenderState.TextureState(ENERGY_TEXTURE, false, false))
                 .shadeModel(SHADE_ENABLED)
@@ -36,12 +40,13 @@ public class FluxStorageRenderType extends RenderType {
                 .transparency(TRANSLUCENT_TRANSPARENCY)
                 .lightmap(LIGHTMAP_ENABLED)
                 .overlay(OVERLAY_ENABLED)
-                .build(true);
-        DIFFUSE = makeType(FluxNetworks.MODID + ":storage_energy_diffuse", DefaultVertexFormats.ENTITY, GL11.GL_QUADS,
-                256, true, true, state);
+                .build(false);
+        DIFFUSE = makeType(FluxNetworks.MODID + ":storage_energy_diffuse", DefaultVertexFormats.ENTITY,
+                GL11.GL_QUADS, 256, state);
     }
 
-    private FluxStorageRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
+    private FluxStorageRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn,
+                                  boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
         super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
     }
 

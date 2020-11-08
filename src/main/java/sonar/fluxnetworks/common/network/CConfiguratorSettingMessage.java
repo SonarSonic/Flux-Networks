@@ -8,7 +8,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.misc.IMessage;
-import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.registry.RegistryItems;
 
 import javax.annotation.Nonnull;
 
@@ -40,7 +40,7 @@ public class CConfiguratorSettingMessage implements IMessage {
         String customName = buffer.readString(256);
         CompoundNBT tag = buffer.readCompoundTag();
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.getItem() instanceof ItemFluxConfigurator) {
+        if (stack.getItem() == RegistryItems.FLUX_CONFIGURATOR) {
             if (tag != null && !tag.isEmpty()) {
                 stack.setTagInfo(FluxConstants.TAG_FLUX_CONFIG, tag);
             }

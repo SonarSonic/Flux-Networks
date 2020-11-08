@@ -39,20 +39,21 @@ import java.util.List;
 
 public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxRecipeType> {
 
-    public static final ResourceLocation CATEGORY_UUID = new ResourceLocation(FluxNetworks.MODID, "creatingflux");
+    public static final ResourceLocation CATEGORY_UUID = new ResourceLocation(FluxNetworks.MODID, "creating_flux");
 
     public static final ResourceLocation TEXTURES = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_creating_flux_recipe.png");
 
-    public IGuiHelper guiHelper;
-    public IDrawable  background;
-    public ITickTimer timer;
+    private final IDrawable background;
+    private final IDrawable icon;
+    private final ITickTimer timer;
 
-    public CreatingFluxRecipeCategory(IGuiHelper guiHelper) {
-        this.guiHelper = guiHelper;
+    public CreatingFluxRecipeCategory(@Nonnull IGuiHelper guiHelper) {
         this.background = guiHelper.createDrawable(TEXTURES, 0, -20, 128, 80);
+        this.icon = guiHelper.createDrawableIngredient(new ItemStack(RegistryItems.FLUX_DUST));
         this.timer = guiHelper.createTickTimer(60, 320, false);
     }
 
+    @Nonnull
     public static List<CreatingFluxRecipeType> getRecipes() {
         List<CreatingFluxRecipeType> recipes = new ArrayList<>();
         recipes.add(new CreatingFluxRecipeType(Blocks.BEDROCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX_DUST)));
@@ -60,6 +61,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
         return recipes;
     }
 
+    @Nonnull
     public static List<ItemStack> getCatalysts() {
         return Lists.newArrayList(new ItemStack(RegistryItems.FLUX_DUST));
     }
@@ -88,19 +90,20 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
         return background;
     }
 
+    @Nonnull
     @Override
     public IDrawable getIcon() {
-        return null;
+        return icon;
     }
 
     @Override
-    public void setIngredients(CreatingFluxRecipeType recipe, IIngredients iIngredients) {
+    public void setIngredients(@Nonnull CreatingFluxRecipeType recipe, @Nonnull IIngredients iIngredients) {
         iIngredients.setInput(VanillaTypes.ITEM, recipe.getInput());
         iIngredients.setOutput(VanillaTypes.ITEM, recipe.getOutput());
     }
 
     @Override
-    public void setRecipe(IRecipeLayout iRecipeLayout, @Nonnull CreatingFluxRecipeType recipe, IIngredients iIngredients) {
+    public void setRecipe(@Nonnull IRecipeLayout iRecipeLayout, @Nonnull CreatingFluxRecipeType recipe, @Nonnull IIngredients iIngredients) {
         IGuiItemStackGroup guiItemStacks = iRecipeLayout.getItemStacks();
 
         guiItemStacks.init(0, false, 8, 24);
@@ -124,7 +127,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
     }
 
     @Override
-    public void draw(CreatingFluxRecipeType recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
+    public void draw(@Nonnull CreatingFluxRecipeType recipe, @Nonnull MatrixStack matrixStack, double mouseX, double mouseY) {
         IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
@@ -160,7 +163,6 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
 
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
         String help = FluxTranslate.JEI_LEFT_CLICK.format(recipe.getCrusher().getBlock().getTranslatedName().getString());
-        fontRenderer.drawString(matrixStack, help, (float) (64 - fontRenderer.getStringWidth(help) / 2), 68, 4210752);
-
+        fontRenderer.drawString(matrixStack, help, 64 - fontRenderer.getStringWidth(help) / 2f, 68, 0xff404040);
     }
 }

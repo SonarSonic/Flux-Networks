@@ -7,7 +7,6 @@ import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
+public class PopupConnectionEdit extends PopupCore<GuiTabConnections> {
 
     public NormalButton apply;
     public FluxTextWidget fluxName, priority, limit;
@@ -35,8 +34,8 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
 
     private final List<SimpleToggleButton> toggleButtons = new ArrayList<>();
 
-    public PopUpConnectionEdit(GuiTabConnections host, boolean batchMode, PlayerEntity player, INetworkConnector connector) {
-        super(host, player, connector);
+    public PopupConnectionEdit(GuiTabConnections host, PlayerEntity player, boolean batchMode) {
+        super(host, player);
         this.batchMode = batchMode;
     }
 
@@ -142,7 +141,7 @@ public class PopUpConnectionEdit extends PopUpCore<GuiTabConnections> {
         if (batchMode || !host.singleConnection.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getNetworkColor());
         }
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedback(false).getText(), 88, 155, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 155, 0xffffff);
     }
 
     @Override

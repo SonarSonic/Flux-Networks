@@ -1,9 +1,8 @@
 package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.text.StringTextComponent;
 
 import javax.annotation.Nonnull;
@@ -22,7 +21,6 @@ public class FluxTextWidget extends TextFieldWidget {
     private boolean allowNegatives = false;
 
     private int outlineColor = 0xffb4b4b4;
-    private static final int boxColor = 0x20000000;
 
     public FluxTextWidget(String text, FontRenderer fontRenderer, int x, int y, int par5Width, int par6Height, int width) {
         super(fontRenderer, x + width, y, par5Width - width, par6Height, new StringTextComponent(""));
@@ -36,15 +34,15 @@ public class FluxTextWidget extends TextFieldWidget {
     }
 
     public int getIntegerFromText(boolean allowNegatives) {
-        if(getText().isEmpty() || getText().equals("-")){
+        if (getText().isEmpty() || getText().equals("-")) {
             return 0;
         }
         int parseInt = Integer.parseInt(getText());
-        return allowNegatives ?  parseInt : Math.max(parseInt, 0);
+        return allowNegatives ? parseInt : Math.max(parseInt, 0);
     }
 
     public long getLongFromText(boolean allowNegatives) {
-        if(getText().isEmpty() || getText().equals("-")){
+        if (getText().isEmpty() || getText().equals("-")) {
             return 0;
         }
         long parseLong = Long.parseLong(getText());
@@ -57,20 +55,18 @@ public class FluxTextWidget extends TextFieldWidget {
 
     @Override
     public void renderButton(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.setEnableBackgroundDrawing(true);
         if (this.getVisible()) {
             fill(matrixStack, this.x - textWidth - 1, this.y - 1, this.x + this.width + 1, this.y, outlineColor);
             fill(matrixStack, this.x - textWidth - 1, this.y + this.height, this.x + this.width + 1, this.y + this.height + 1, outlineColor);
             fill(matrixStack, this.x - textWidth - 1, this.y, this.x - textWidth, this.y + this.height, outlineColor);
             fill(matrixStack, this.x + width, this.y, this.x + this.width + 1, this.y + this.height, outlineColor);
-            fill(matrixStack, this.x - textWidth, this.y, this.x + this.width, this.y + this.height, boxColor);
+            fill(matrixStack, this.x - textWidth, this.y, this.x + this.width, this.y + this.height, 0x20000000);
         }
-        this.setEnableBackgroundDrawing(false);
         x += 4;
         y += (this.height - 8) / 2;
 
+        setEnableBackgroundDrawing(false);
         super.renderButton(matrixStack, mouseX, mouseY, partialTicks);
-
 
         font.drawString(matrixStack, extraText, x - textWidth, y, outlineColor);
         x -= 4;
@@ -78,13 +74,13 @@ public class FluxTextWidget extends TextFieldWidget {
     }
 
     @Override
-    public void writeText(String textToWrite) {
-        if(digitsOnly) {
-            for(int i = 0; i < textToWrite.length(); i++) {
+    public void writeText(@Nonnull String textToWrite) {
+        if (digitsOnly) {
+            for (int i = 0; i < textToWrite.length(); i++) {
                 char c = textToWrite.charAt(i);
-                if(!Character.isDigit(c)) {
-                    if(getText().isEmpty()) {
-                        if(c != '-') {
+                if (!Character.isDigit(c)) {
+                    if (getText().isEmpty()) {
+                        if (c != '-') {
                             return;
                         }
                     } else {
@@ -93,10 +89,10 @@ public class FluxTextWidget extends TextFieldWidget {
                 }
             }
         }
-        if(hexOnly) {
-            for(int i = 0; i < textToWrite.length(); i++) {
+        if (hexOnly) {
+            for (int i = 0; i < textToWrite.length(); i++) {
                 char c = textToWrite.charAt(i);
-                if(c == '-') {
+                if (c == '-') {
                     return;
                 }
             }
@@ -113,12 +109,11 @@ public class FluxTextWidget extends TextFieldWidget {
     }
 
 
-
     @Override
     public void setFocused2(boolean isFocusedIn) {
         super.setFocused2(isFocusedIn);
-        if(digitsOnly) {
-            if(isFocusedIn) {
+        if (digitsOnly) {
+            if (isFocusedIn) {
                 origin = getText();
             } else {
                 try {
@@ -131,12 +126,12 @@ public class FluxTextWidget extends TextFieldWidget {
         }
     }
 
-    public long getValidLong(){
+    public long getValidLong() {
         return Math.min(getLongFromText(allowNegatives), maxValue);
     }
 
-    public int getValidInt(){
-        return (int)Math.min(getValidLong(), Integer.MAX_VALUE);
+    public int getValidInt() {
+        return (int) Math.min(getValidLong(), Integer.MAX_VALUE);
     }
 
     public FluxTextWidget setOutlineColor(int color) {
@@ -163,12 +158,12 @@ public class FluxTextWidget extends TextFieldWidget {
         return this;
     }
 
-    public FluxTextWidget setAllowNegatives(boolean allowNegatives){
+    public FluxTextWidget setAllowNegatives(boolean allowNegatives) {
         this.allowNegatives = allowNegatives;
         return this;
     }
 
-    public FluxTextWidget setMaxValue(long max){
+    public FluxTextWidget setMaxValue(long max) {
         this.maxValue = max;
         return this;
     }
