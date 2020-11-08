@@ -35,7 +35,7 @@ public class InventoryButton extends GuiButtonCore {
         boolean hover = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
 
         mc.getTextureManager().bindTexture(ScreenUtils.INVENTORY);
-        ScreenUtils.INSTANCE.blit(matrixStack, x, y, texX, texY + height * (type.isActivated(host.settings) ? 1 : 0), width, height);
+        ScreenUtils.INSTANCE.blit(matrixStack, x, y, texX, texY + height * (type.isActivated(host.wirelessMode) ? 1 : 0), width, height);
 
         if (hover) {
             mc.fontRenderer.drawString(matrixStack, text, x + (width - mc.fontRenderer.getStringWidth(text)) / 2f + 1, y - 9, 0xFFFFFF);

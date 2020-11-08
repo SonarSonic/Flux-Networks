@@ -1,3 +1,8 @@
+### Changelog 1.16.4-6.1.1.6 (2020-11-08)
+(Install Modern UI to get better font looking)
+* Fix various GUI bugs
+* Optimize GUI code
+
 ### Changelog 1.16.4-6.1.0.5 (2020-11-06)
 * Update to 1.16.4 (1.16.3 works as well)
 * Add energy capacity tooltip for storages

@@ -29,7 +29,7 @@ public class GuiTabWireless extends GuiTabCore {
     public List<InventoryButton> inventoryButtonList = new ArrayList<>();
     public NormalButton apply;
 
-    public int settings;
+    public int wirelessMode;
 
     public GuiTabWireless(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
@@ -60,9 +60,9 @@ public class GuiTabWireless extends GuiTabCore {
         buttonLists.add(inventoryButtonList);
         if (networkValid) {
 
-            settings = network.getWirelessMode();
+            wirelessMode = network.getWirelessMode();
 
-            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, WirelessType.ENABLE_WIRELESS.isActivated(settings)));
+            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, WirelessType.ENABLE_WIRELESS.isActivated(wirelessMode)));
             inventoryButtonList.add(new InventoryButton(WirelessType.ARMOR, this, 24, 32, 0, 80, 52, 16));
             inventoryButtonList.add(new InventoryButton(WirelessType.CURIOS, this, 100, 32, 0, 80, 52, 16));
             inventoryButtonList.add(new InventoryButton(WirelessType.INVENTORY, this, 32, 56, 0, 0, 112, 40));
@@ -89,7 +89,7 @@ public class GuiTabWireless extends GuiTabCore {
             switchSetting(((InventoryButton) button).type);
         }
         if (button instanceof NormalButton && button.id == 0) {
-            NetworkHandler.INSTANCE.sendToServer(new CEditWirelessMessage(network.getNetworkID(), settings));
+            NetworkHandler.INSTANCE.sendToServer(new CEditWirelessMessage(network.getNetworkID(), wirelessMode));
         }
         if (button instanceof SlidedSwitchButton) {
             ((SlidedSwitchButton) button).switchButton();
@@ -100,8 +100,10 @@ public class GuiTabWireless extends GuiTabCore {
     }
 
     public void switchSetting(WirelessType type) {
-        settings ^= 1 << type.ordinal();
-        apply.clickable = true;
+        if (type != WirelessType.INVENTORY) {
+            wirelessMode ^= 1 << type.ordinal();
+            apply.clickable = true;
+        }
     }
 
     @Override
