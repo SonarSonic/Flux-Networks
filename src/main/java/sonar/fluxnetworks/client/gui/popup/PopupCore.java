@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.client.gui.popup;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -19,7 +18,7 @@ import java.util.List;
 
 public abstract class PopupCore<T extends GuiFluxCore> extends GuiFocusable<FluxMenu> {
 
-    protected List<NormalButton> popButtons = Lists.newArrayList();
+    protected List<NormalButton> popButtons = new ArrayList<>();
     protected List<SlidedSwitchButton> popSwitches = new ArrayList<>();
 
     public final T host;
@@ -48,13 +47,18 @@ public abstract class PopupCore<T extends GuiFluxCore> extends GuiFocusable<Flux
         popSwitches.clear();
     }
 
+    @Override
+    public final void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        throw new UnsupportedOperationException();
+    }
+
     public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         popButtons.forEach(b -> b.drawButton(minecraft, matrixStack, mouseX, mouseY, guiLeft, guiTop));
     }
 
     @Override
-    public void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        alpha = Math.min(1.0f, alpha + partialTicks * 0.25f);
+    public void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float deltaTicks, int mouseX, int mouseY) {
+        alpha = Math.min(1.0f, alpha + deltaTicks * 0.25f);
         RenderSystem.enableBlend();
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, alpha);
         minecraft.getTextureManager().bindTexture(ScreenUtils.BACKGROUND);
@@ -67,10 +71,10 @@ public abstract class PopupCore<T extends GuiFluxCore> extends GuiFocusable<Flux
 
         //screenUtils.drawRectWithBackground(guiLeft + 8, guiTop + 13, 150, 160, 0xccffffff, 0xb0000000);
         for (SlidedSwitchButton button : popSwitches) {
-            button.updateButton(partialTicks, mouseX, mouseY);
+            button.updateButton(deltaTicks, mouseX, mouseY);
         }
         for (Widget widget : buttons) {
-            widget.render(matrixStack, mouseX, mouseY, partialTicks);
+            widget.render(matrixStack, mouseX, mouseY, deltaTicks);
         }
     }
 }

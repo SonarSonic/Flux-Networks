@@ -75,7 +75,6 @@ public enum NetworkHandler {
         }
         network.addListener(this::onS2CMessageReceived);
         network.addListener(this::onC2SMessageReceived);
-        network.addListener(this::changeReg);
     }
 
     public static void registerMessages() {
@@ -178,10 +177,6 @@ public enum NetworkHandler {
     private void onC2SMessageReceived(NetworkEvent.ClientCustomPayloadEvent event) {
         // received on main thread of effective side
         handleMessage(event.getPayload(), event.getSource());
-    }
-
-    private void changeReg(NetworkEvent.ChannelRegistrationChangeEvent event) {
-        FluxNetworks.LOGGER.debug(event.getRegistrationChangeType());
     }
 
     private void handleMessage(PacketBuffer buffer, Supplier<NetworkEvent.Context> ctx) {

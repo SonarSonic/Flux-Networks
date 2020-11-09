@@ -9,12 +9,12 @@
 	"block.fluxnetworks.herculean_flux_storage": "大型能量存储器",
 	"block.fluxnetworks.gargantuan_flux_storage": "超大型能量存储器",
 
-	"item.fluxnetworks.flux_dust": "能量尘",
+	"item.fluxnetworks.flux_dust": "通量粉尘",
 	"item.fluxnetworks.flux_core": "能量核心",
 	"item.fluxnetworks.flux_configurator": "能量网络配置器",
 	"item.fluxnetworks.admin_configurator": "管理员网络配置器",
 
-	"tooltip.fluxnetworks.flux_dust": "通过基岩与黑曜石压缩红石获得",
+	"tooltip.fluxnetworks.flux_dust": "通过基岩与黑曜石压缩红石粉获得",
 	"tooltip.fluxnetworks.flux_controller": "给你的网络带来无线充电功能",
 	"tooltip.fluxnetworks.flux_plug": "被动接收相邻方块的能量,向能量网络增加能量",
 	"tooltip.fluxnetworks.flux_point": "主动为相邻方块供给能量,从能量网络移除能量",

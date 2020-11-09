@@ -79,8 +79,9 @@ public class FluxClientCache {
         return "NONE";
     }
 
-    public static FeedbackInfo getFeedbackText() {
-        return feedback;
+    @Nonnull
+    public static String getFeedbackText() {
+        return feedback.getText();
     }
 
     public static void setFeedback(FeedbackInfo info) {

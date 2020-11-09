@@ -141,7 +141,7 @@ public class PopupConnectionEdit extends PopupCore<GuiTabConnections> {
         if (batchMode || !host.singleConnection.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getNetworkColor());
         }
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 155, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 155, 0xffffff);
     }
 
     @Override

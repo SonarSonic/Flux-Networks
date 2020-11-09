@@ -39,7 +39,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 89, 150, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 89, 150, 0xffffff);
 
         font.drawString(matrixStack, AccessLevel.SUPER_ADMIN.getName(), 20, 30, network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DETAILED_VIEW.t(), 20, 42, network.getNetworkColor());

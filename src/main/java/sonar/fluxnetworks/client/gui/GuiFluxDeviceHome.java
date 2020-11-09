@@ -98,7 +98,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
         renderTransfer(matrixStack, tileEntity);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 89, 150, 0xffffff);
+        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 89, 150, 0xffffff);
 
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 120, network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getNetworkColor());

@@ -23,7 +23,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxLogicType;
@@ -206,20 +205,23 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Override
     public final void read(@Nonnull BlockState state, @Nonnull CompoundNBT compound) {
         super.read(state, compound);
-        FluxNetworks.LOGGER.debug("Read from disk: {}", this);
         readCustomNBT(compound, FluxConstants.TYPE_SAVE_ALL);
     }
 
     @Override
-    public void setPos(BlockPos posIn) {
+    public void setPos(@Nonnull BlockPos posIn) {
         super.setPos(posIn);
-        FluxNetworks.LOGGER.debug("Set pos: {}", this);
+        if (globalPos != null) {
+            globalPos = FluxUtils.getGlobalPos(this);
+        }
     }
 
     @Override
-    public void setWorldAndPos(World world, BlockPos pos) {
+    public void setWorldAndPos(@Nonnull World world, @Nonnull BlockPos pos) {
         super.setWorldAndPos(world, pos);
-        FluxNetworks.LOGGER.debug("Set WP: {}", this);
+        if (globalPos != null) {
+            globalPos = FluxUtils.getGlobalPos(this);
+        }
     }
 
     @Override
@@ -242,7 +244,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             tag.putInt(FluxConstants.FLAGS, flags);
         }
         if (type == FluxConstants.TYPE_CONNECTION_UPDATE) {
-            FluxUtils.writeGlobalPos(tag, globalPos);
+            FluxUtils.writeGlobalPos(tag, getGlobalPos());
             tag.putByte(FluxConstants.DEVICE_TYPE, (byte) getDeviceType().ordinal());
             tag.putUniqueId(FluxConstants.PLAYER_UUID, playerUUID);
             tag.putBoolean(FluxConstants.FORCED_LOADING, isForcedLoading());
@@ -631,7 +633,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }
 
     @Nullable
-    public final Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity entity) {
-        return new FluxMenu(windowID, playerInventory, this);
+    public final Container createMenu(int windowID, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity player) {
+        return new FluxMenu(windowID, inventory, this);
     }
 }

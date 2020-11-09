@@ -53,7 +53,7 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
             font.drawString(matrixStack, amount, 158 - font.getStringWidth(amount), 10, 0xffffff);
             font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
             if (!hasActivePopup()) {
-                drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText().getText(), 88, 150, 0xffffff);
+                drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 150, 0xffffff);
             }
         }
     }

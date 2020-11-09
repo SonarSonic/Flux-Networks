@@ -9,12 +9,12 @@
 	"block.fluxnetworks.herculean_flux_storage": "Herculean Flux Storage",
 	"block.fluxnetworks.gargantuan_flux_storage": "Gargantuan Flux Storage",
 
-	"item.fluxnetworks.flux_dust": "Flux",
+	"item.fluxnetworks.flux_dust": "Flux Dust",
 	"item.fluxnetworks.flux_core": "Flux Core",
 	"item.fluxnetworks.flux_configurator": "Flux Configurator",
 	"item.fluxnetworks.admin_configurator": "Admin Configurator",
 
-	"tooltip.fluxnetworks.flux_dust": "Obtained by compressing Redstone with Bedrock and Obsidian",
+	"tooltip.fluxnetworks.flux_dust": "Obtained by compressing Redstone Dust with Bedrock and Obsidian",
 	"tooltip.fluxnetworks.flux_controller": "Enables Wireless Charging on your Flux Network",
 	"tooltip.fluxnetworks.flux_plug": "Receives energy from adjacent blocks passively, adding energy to your Flux Network",
 	"tooltip.fluxnetworks.flux_point": "Provides energy to adjacent blocks actively, removing energy from your Flux Network",

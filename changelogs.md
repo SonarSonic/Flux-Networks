@@ -1,5 +1,9 @@
-### Changelog 1.16.4-6.1.1.6 (2020-11-08)
+### Changelog 1.16.4-6.1.2.7 (2020-11-09)
 (Install Modern UI to get better font looking)
+
+* Update localization
+
+### Changelog 1.16.4-6.1.1.6 (2020-11-08)
 * Fix various GUI bugs
 * Optimize GUI code
 
