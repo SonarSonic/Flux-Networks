@@ -2,6 +2,7 @@ package sonar.fluxnetworks.common.storage;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -16,6 +17,7 @@ import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
+import java.util.Set;
 
 public class FluxChunkManager {
 
@@ -40,24 +42,28 @@ public class FluxChunkManager {
         /*List<ChunkPos> chunks = tickets.stream().map(l -> new ChunkPos(BlockPos.fromLong(l)))
                 .distinct().collect(Collectors.toList());
         chunks.forEach(pos -> registerTicket(world, pos));*/
+        Set<ChunkPos> chunkPosSet = new ObjectArraySet<>();
         if (!tickets.isEmpty()) {
             ServerChunkProvider chunkProvider = world.getChunkProvider();
             LongIterator iterator = tickets.iterator();
             while (iterator.hasNext()) {
                 BlockPos blockPos = BlockPos.fromLong(iterator.nextLong());
-                TileEntity tile = world.getTileEntity(blockPos); // loads the chunk
+                TileEntity tile = world.getTileEntity(blockPos); // also loads the chunk
                 if (tile instanceof TileFluxDevice) {
+                    TileFluxDevice flux = (TileFluxDevice) tile;
                     ChunkPos chunkPos = new ChunkPos(blockPos);
-                    chunkProvider.registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, (TileFluxDevice) tile);
-                    ((TileFluxDevice) tile).setForcedLoading(true);
+                    chunkPosSet.add(chunkPos);
+                    chunkProvider.registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, flux);
+                    flux.setForcedLoading(true);
+                    flux.sendFullUpdatePacket();
                 } else {
                     // remove invalid tickets
                     iterator.remove();
                 }
             }
         }
-        FluxNetworks.LOGGER.info("Chunks Loaded in {}, Tickets Count: {}",
-                dim.getLocation(), tickets.size());
+        FluxNetworks.LOGGER.info("Loading {} chunks in {} by {} flux devices",
+                chunkPosSet.size(), dim.getLocation(), tickets.size());
     }
 
     public static void tickWorld(@Nonnull ServerWorld world) {
@@ -75,10 +81,10 @@ public class FluxChunkManager {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunk(blockPos); // loads the chunk
             world.getChunkProvider().registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Added Chunk Loader in {}, Chunk: {} at {}",
+            FluxNetworks.LOGGER.debug("Adding chunk loader in {}, chunk: {} at {}",
                     dim.getLocation(), chunkPos, blockPos);
         } else {
-            FluxNetworks.LOGGER.warn("There's already a Chunk Loader added in {} at {}", dim.getLocation(), blockPos);
+            FluxNetworks.LOGGER.warn("There's already a chunk loader added in {} at {}", dim.getLocation(), blockPos);
         }
     }
 
@@ -89,10 +95,10 @@ public class FluxChunkManager {
         if (FluxNetworkData.getTickets(dim).remove(blockPos.toLong())) {
             ChunkPos chunkPos = new ChunkPos(blockPos);
             world.getChunkProvider().releaseTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, tile);
-            FluxNetworks.LOGGER.debug("Removed Chunk Loader in {}, Chunk: {} at {}",
+            FluxNetworks.LOGGER.debug("Removing chunk loader in {}, chunk: {} at {}",
                     dim.getLocation(), chunkPos, blockPos);
         } else {
-            FluxNetworks.LOGGER.warn("There's no such a Chunk Loader to remove in {} at {}", dim.getLocation(), blockPos);
+            FluxNetworks.LOGGER.warn("There's no such a chunk loader to remove in {} at {}", dim.getLocation(), blockPos);
         }
     }
 

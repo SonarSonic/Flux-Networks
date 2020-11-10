@@ -147,12 +147,12 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     }
 
     @Override
-    public int getNetworkID() {
+    public final int getNetworkID() {
         return networkID;
     }
 
     @Override
-    public IFluxNetwork getNetwork() {
+    public final IFluxNetwork getNetwork() {
         return network;
     }
 
@@ -169,23 +169,22 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     public final void onDataPacket(NetworkManager net, @Nonnull SUpdateTileEntityPacket pkt) {
         // Client side, read block update data
         readCustomNBT(pkt.getNbtCompound(), FluxConstants.TYPE_TILE_UPDATE);
-        world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), -1);
     }
 
     @Nonnull
     @Override
     public final CompoundNBT getUpdateTag() {
         // Server side, write NBT when updating chunk data
-        CompoundNBT tag = new CompoundNBT();
-        tag.putInt(FluxConstants.CLIENT_COLOR, network.getNetworkColor());
-        return write(tag);
+        CompoundNBT tag = super.write(new CompoundNBT());
+        writeCustomNBT(tag, FluxConstants.TYPE_TILE_UPDATE);
+        return tag;
     }
 
     @Override
     public final void handleUpdateTag(BlockState state, @Nonnull CompoundNBT tag) {
         // Client side, read NBT when updating chunk data
-        brColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.2f);
-        read(state, tag);
+        super.read(state, tag);
+        readCustomNBT(tag, FluxConstants.TYPE_TILE_UPDATE);
     }
 
     @Nonnull
