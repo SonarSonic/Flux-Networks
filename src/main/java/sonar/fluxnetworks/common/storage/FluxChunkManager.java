@@ -49,6 +49,7 @@ public class FluxChunkManager {
                 if (tile instanceof TileFluxDevice) {
                     ChunkPos chunkPos = new ChunkPos(blockPos);
                     chunkProvider.registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, (TileFluxDevice) tile);
+                    ((TileFluxDevice) tile).setForcedLoading(true);
                 } else {
                     // remove invalid tickets
                     iterator.remove();

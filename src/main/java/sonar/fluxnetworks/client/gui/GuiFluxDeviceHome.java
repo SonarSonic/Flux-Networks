@@ -137,10 +137,8 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         if (timer == 0) {
             NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_BASIC));
         }
-        if (timer % 4 == 0) {
-            if (chunkLoading != null) {
-                chunkLoading.toggled = tileEntity.isForcedLoading();
-            }
+        if (chunkLoading != null) {
+            chunkLoading.toggled = tileEntity.isForcedLoading();
         }
         timer++;
         timer %= 100;

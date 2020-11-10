@@ -1,6 +1,9 @@
-### Changelog 1.16.4-6.1.2.7 (2020-11-10)
+### Changelog 1.16.4-6.1.3.8 (2020-11-10)
 (Install Modern UI for better font looking)
   
+* Fix chunk loading flag not updated when re-entering world
+
+### Changelog 1.16.4-6.1.2.7 (2020-11-10)
 * Update localization
 * Improve GUI
 * Remove debug logs
