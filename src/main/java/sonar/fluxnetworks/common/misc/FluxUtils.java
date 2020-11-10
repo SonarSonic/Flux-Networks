@@ -158,9 +158,14 @@ public class FluxUtils {
     }
 
     @Nonnull
-    public static String getDisplayString(@Nonnull GlobalPos pos) {
+    public static String getDisplayPos(@Nonnull GlobalPos pos) {
         BlockPos p = pos.getPos();
-        return "X: " + p.getX() + " Y: " + p.getY() + " Z: " + p.getZ() + " (" + pos.getDimension().getLocation() + ")";
+        return "X: " + p.getX() + " Y: " + p.getY() + " Z: " + p.getZ();
+    }
+
+    @Nonnull
+    public static String getDisplayDim(@Nonnull GlobalPos pos) {
+        return pos.getDimension().getLocation().toString();
     }
 
     public static <T> boolean addWithCheck(@Nonnull Collection<T> list, @Nullable T toAdd) {

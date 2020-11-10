@@ -44,23 +44,26 @@ public class PopupConnectionEdit extends PopupCore<GuiTabConnections> {
         super.init();
         toggleButtons.clear();
 
-        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 40, 140, 36, 12, 11));
-        apply = new NormalButton(FluxTranslate.APPLY.t(), 100, 140, 36, 12, 12).setUnclickable();
+        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 40, 146, 36, 12, 11));
+        apply = new NormalButton(FluxTranslate.APPLY.t(), 100, 146, 36, 12, 12).setUnclickable();
         popButtons.add(apply);
 
         int color = host.network.getNetworkColor() | 0xff000000;
         if (batchMode) {
-            fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 20, guiTop + 30, 136, 12).setOutlineColor(color);
+            fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 20, guiTop + 30, 136, 12)
+                    .setOutlineColor(color);
             fluxName.setMaxStringLength(24);
             addButton(fluxName);
 
 
-            priority = FluxTextWidget.create(FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 20, guiTop + 47, 136, 12).setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
+            priority = FluxTextWidget.create(FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 20, guiTop + 47, 136, 12)
+                    .setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
             priority.setMaxStringLength(5);
             priority.setText(String.valueOf(0));
             addButton(priority);
 
-            limit = FluxTextWidget.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", font, guiLeft + 20, guiTop + 64, 136, 12).setOutlineColor(color).setDigitsOnly().setMaxValue(Long.MAX_VALUE);
+            limit = FluxTextWidget.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", font, guiLeft + 20, guiTop + 64, 136, 12)
+                    .setOutlineColor(color).setDigitsOnly().setMaxValue(Long.MAX_VALUE);
             limit.setMaxStringLength(9);
             limit.setText(String.valueOf(0));
             addButton(limit);
@@ -88,19 +91,22 @@ public class PopupConnectionEdit extends PopupCore<GuiTabConnections> {
             popSwitches.add(disableLimit);
             popSwitches.add(chunkLoading);
         } else {
-            fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 18, guiTop + 30, 140, 12).setOutlineColor(color);
+            fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 18, guiTop + 30, 140, 12)
+                    .setOutlineColor(color);
             fluxName.setMaxStringLength(24);
             fluxName.setText(host.singleConnection.getCustomName());
             fluxName.setResponder(string -> apply.clickable = true);
             addButton(fluxName);
 
-            priority = FluxTextWidget.create(FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 18, guiTop + 47, 140, 12).setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
+            priority = FluxTextWidget.create(FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 18, guiTop + 47, 140, 12)
+                    .setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
             priority.setMaxStringLength(5);
             priority.setText(String.valueOf(host.singleConnection.getRawPriority()));
             priority.setResponder(string -> apply.clickable = true);
             addButton(priority);
 
-            limit = FluxTextWidget.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", font, guiLeft + 18, guiTop + 64, 140, 12).setOutlineColor(color).setDigitsOnly().setMaxValue(Long.MAX_VALUE);
+            limit = FluxTextWidget.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", font, guiLeft + 18, guiTop + 64, 140, 12)
+                    .setOutlineColor(color).setDigitsOnly().setMaxValue(Long.MAX_VALUE);
             limit.setMaxStringLength(9);
             limit.setText(String.valueOf(host.singleConnection.getRawLimit()));
             limit.setResponder(string -> apply.clickable = true);
@@ -131,7 +137,8 @@ public class PopupConnectionEdit extends PopupCore<GuiTabConnections> {
 
         if (!batchMode) {
             drawCenterText(matrixStack, FluxTranslate.SINGLE_EDIT.t(), 88, 14, 0xffffff);
-            drawCenterText(matrixStack, FluxUtils.getDisplayString(host.singleConnection.getGlobalPos()), 88, 122, 0xffffff);
+            drawCenterText(matrixStack, FluxUtils.getDisplayPos(host.singleConnection.getGlobalPos()), 88, 121, 0xffffff);
+            drawCenterText(matrixStack, FluxUtils.getDisplayDim(host.singleConnection.getGlobalPos()), 88, 130, 0xffffff);
         } else {
             drawCenterText(matrixStack, FluxTranslate.BATCH_EDIT.t(), 88, 14, 0xffffff);
             drawCenterText(matrixStack, FluxTranslate.EDITING_CONNECTIONS.format(host.batchConnections.size()), 88, 122, 0xffffff);

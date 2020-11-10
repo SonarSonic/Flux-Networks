@@ -22,10 +22,10 @@ public class FluxTextWidget extends TextFieldWidget {
 
     private int outlineColor = 0xffb4b4b4;
 
-    public FluxTextWidget(String text, FontRenderer fontRenderer, int x, int y, int par5Width, int par6Height, int width) {
-        super(fontRenderer, x + width, y, par5Width - width, par6Height, new StringTextComponent(""));
+    public FluxTextWidget(String text, FontRenderer fontRenderer, int x, int y, int totalWidth, int height, int headerWidth) {
+        super(fontRenderer, x + headerWidth, y, totalWidth - headerWidth, height, StringTextComponent.EMPTY);
         this.extraText = text;
-        this.textWidth = width;
+        this.textWidth = headerWidth;
         this.font = fontRenderer;
     }
 
