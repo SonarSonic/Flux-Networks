@@ -69,6 +69,7 @@ public class LineChart {
 
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glLineWidth((float) mc.getMainWindow().getGuiScaleFactor());
 
         builder.begin(GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         for (int i = 0; i < currentHeight.size(); i++) {
@@ -77,10 +78,11 @@ public class LineChart {
         tessellator.draw();
 
         glDisable(GL_LINE_SMOOTH);
+        glLineWidth(1.0f);
 
         glEnable(GL_POINT_SMOOTH);
         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-        glPointSize(6.0f);
+        glPointSize((float) (4.0f * mc.getMainWindow().getGuiScaleFactor()));
 
         builder.begin(GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
         for (int i = 0; i < currentHeight.size(); i++) {
