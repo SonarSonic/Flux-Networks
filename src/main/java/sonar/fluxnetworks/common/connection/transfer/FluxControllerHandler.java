@@ -41,7 +41,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     public void onCycleStart() {
         if (!device.isActive() || !WirelessType.ENABLE_WIRELESS.isActivated(device.getNetwork())) {
             demand = 0;
-            players.clear();
+            clearPlayers();
             return;
         }
         if (timer == 0) updatePlayers();
@@ -65,10 +65,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     @Override
     public void invalid() {
         super.invalid();
-        for (ServerPlayerEntity toRemove : players.keySet()) {
-            CHARGING_PLAYERS.remove(toRemove);
-        }
-        players.clear();
+        clearPlayers();
     }
 
     @Override
@@ -96,11 +93,17 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
         return energy - leftover;
     }
 
-    private void updatePlayers() {
-        for (ServerPlayerEntity toRemove : players.keySet()) {
-            CHARGING_PLAYERS.remove(toRemove);
+    private void clearPlayers() {
+        if (!players.isEmpty()) {
+            for (ServerPlayerEntity toRemove : players.keySet()) {
+                CHARGING_PLAYERS.remove(toRemove);
+            }
+            players.clear();
         }
-        players.clear();
+    }
+
+    private void updatePlayers() {
+        clearPlayers();
         PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
         int wireless = device.getNetwork().getWirelessMode();
         for (NetworkMember p : device.getNetwork().getAllMembers()) {
