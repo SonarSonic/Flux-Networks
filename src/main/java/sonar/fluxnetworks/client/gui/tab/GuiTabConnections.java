@@ -204,18 +204,19 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             refreshPages(Lists.newArrayList(network.getAllConnections()));
         } else if (info == FeedbackInfo.SUCCESS_2) {
             closePopUp();
-            //elements.removeAll(batchConnections);
+            if (container.bridge instanceof IFluxDevice) {
+                final GlobalPos p = ((IFluxDevice) container.bridge).getGlobalPos();
+                if (batchConnections.stream().anyMatch(f -> f.getGlobalPos().equals(p))) {
+                    switchTab(EnumNavigationTab.TAB_SELECTION);
+                    return;
+                }
+            }
+            elements.removeAll(batchConnections);
             batchConnections.clear();
             clear.clickable = false;
             edit.clickable = false;
             disconnect.clickable = false;
             refreshPages(Lists.newArrayList(network.getAllConnections()));
-            if (container.bridge instanceof IFluxDevice) {
-                GlobalPos g = ((IFluxDevice) container.bridge).getGlobalPos();
-                if (elements.stream().noneMatch(f -> f.getGlobalPos().equals(g))) {
-                    switchTab(EnumNavigationTab.TAB_SELECTION);
-                }
-            }
             page = Math.min(page, pages);
         }
     }

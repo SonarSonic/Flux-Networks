@@ -151,7 +151,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Override
     public void disconnect() {
         if (network.isValid()) {
-            network.enqueueConnectionAddition(this);
+            network.enqueueConnectionRemoval(this, false);
             network = FluxNetworkInvalid.INSTANCE;
             networkID = network.getNetworkID();
             getTransferHandler().invalid();
