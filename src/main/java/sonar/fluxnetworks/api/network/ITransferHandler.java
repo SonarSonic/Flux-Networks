@@ -43,5 +43,5 @@ public interface ITransferHandler {
 
     void updateTransfers(@Nonnull Direction... faces);
 
-    void onDisconnect();
+    void invalid();
 }

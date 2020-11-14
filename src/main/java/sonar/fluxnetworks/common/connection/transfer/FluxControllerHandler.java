@@ -63,8 +63,8 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     }
 
     @Override
-    public void onDisconnect() {
-        super.onDisconnect();
+    public void invalid() {
+        super.invalid();
         for (ServerPlayerEntity toRemove : players.keySet()) {
             CHARGING_PLAYERS.remove(toRemove);
         }

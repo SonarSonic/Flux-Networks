@@ -102,7 +102,7 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
     }
 
     @Override
-    public void onDisconnect() {
+    public void invalid() {
         change = 0;
     }
 }
