@@ -29,7 +29,8 @@ public class FluxMenu extends Container {
     @Override
     public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
         if (bridge instanceof IFluxDevice) {
-            return ((IFluxDevice) bridge).getFluxWorld() == playerIn.getEntityWorld();
+            IFluxDevice flux = ((IFluxDevice) bridge);
+            return flux.isChunkLoaded() && flux.getFluxWorld() == playerIn.getEntityWorld();
         } else if (bridge instanceof ItemFluxConfigurator.MenuBridge) {
             return playerIn.getHeldItemMainhand().getItem() == RegistryItems.FLUX_CONFIGURATOR;
         }
