@@ -180,6 +180,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     public final void onDataPacket(NetworkManager net, @Nonnull SUpdateTileEntityPacket pkt) {
         // Client side, read block update data
         readCustomNBT(pkt.getNbtCompound(), FluxConstants.TYPE_TILE_UPDATE);
+        // update chunk render whether state changed or not
+        world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), -1);
     }
 
     @Nonnull
