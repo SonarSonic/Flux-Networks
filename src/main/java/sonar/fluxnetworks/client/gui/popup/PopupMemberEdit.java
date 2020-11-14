@@ -78,7 +78,7 @@ public class PopupMemberEdit extends PopupCore<GuiTabMembers> {
     public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         //screenUtils.drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
         super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 162, 0xffffff);
+        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 162, FluxClientCache.getFeedbackColor());
         drawCenterText(matrixStack, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
         drawCenterText(matrixStack, host.selectedPlayer.getAccessLevel().getName(), 88, 48, 0xffffff);
         String text = host.selectedPlayer.getPlayerUUID().toString();

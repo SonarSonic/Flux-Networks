@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.text.FluxTranslate;
@@ -148,7 +147,7 @@ public class PopupConnectionEdit extends PopupCore<GuiTabConnections> {
         if (batchMode || !host.singleConnection.getDeviceType().isStorage()) {
             font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 106, host.network.getNetworkColor());
         }
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 155, 0xffffff);
+        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 155, FluxClientCache.getFeedbackColor());
     }
 
     @Override

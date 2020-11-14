@@ -73,14 +73,8 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     private void handleConnectionQueue() {
         IFluxDevice device;
         while ((device = toAdd.poll()) != null) {
-            boolean b = false;
             for (FluxLogicType type : FluxLogicType.getValidTypes(device)) {
-                b |= FluxUtils.addWithCheck(getConnections(type), device);
-            }
-            if (b) {
-                //MinecraftForge.EVENT_BUS.post(new FluxConnectionEvent.Connected(device, this));
-                device.onConnected(this);
-                sortConnections = true;
+                sortConnections |= FluxUtils.addWithCheck(getConnections(type), device);
             }
         }
         while ((device = toRemove.poll()) != null) {
@@ -190,7 +184,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     @Override
     public void onDelete() {
-        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::onDisconnected);
+        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::disconnect);
         connections.clear();
         toAdd.clear();
         toRemove.clear();
@@ -206,7 +200,6 @@ public class FluxNetworkServer extends BasicFluxNetwork {
         if (getConnections(FluxLogicType.ANY).contains(device)) {
             return;
         }
-        device.getNetwork().enqueueConnectionRemoval(device, false);
         if (!toAdd.contains(device)) {
             toAdd.offer(device);
             toRemove.remove(device);

@@ -92,14 +92,17 @@ public interface IFluxNetwork {
 
     }*/
 
-    default void onEndServerTick() {
+    void onEndServerTick();
 
-    }
+    void onDelete();
 
-    default void onDelete() {
-
-    }
-
+    /**
+     * Helper method to get player's access level for this network including super admin.
+     * Notice this method is server only.
+     *
+     * @param player the server player
+     * @return access level
+     */
     @Nonnull
     AccessLevel getPlayerAccess(PlayerEntity player);
 

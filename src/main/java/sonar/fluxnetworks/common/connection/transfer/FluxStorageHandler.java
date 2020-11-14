@@ -2,6 +2,7 @@ package sonar.fluxnetworks.common.connection.transfer;
 
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Direction;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
 
@@ -91,5 +92,10 @@ public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
         } else {
             super.readPacket(buffer, id);
         }
+    }
+
+    @Override
+    public void updateTransfers(@Nonnull Direction... faces) {
+
     }
 }

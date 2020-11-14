@@ -151,16 +151,26 @@ public class BasicFluxNetwork implements IFluxNetwork {
         return Optional.ofNullable(allConnections.get(pos));
     }
 
+    @Override
+    public void onEndServerTick() {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void onDelete() {
+
+    }
+
     @Nonnull
     @Override
     public AccessLevel getPlayerAccess(PlayerEntity player) {
-        return AccessLevel.BLOCKED;
+        throw new IllegalStateException();
     }
 
     @Nonnull
     @Override
     public <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
-        return new ArrayList<>();
+        throw new IllegalStateException();
     }
 
     @Override
@@ -170,22 +180,22 @@ public class BasicFluxNetwork implements IFluxNetwork {
 
     @Override
     public long getBufferLimiter() {
-        return 0;
+        throw new IllegalStateException();
     }
 
     @Override
     public void markSortConnections() {
-
+        throw new IllegalStateException();
     }
 
     @Override
     public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
-        device.getNetwork().enqueueConnectionRemoval(device, false);
+        throw new IllegalStateException();
     }
 
     @Override
     public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
-
+        throw new IllegalStateException();
     }
 
     /*@Override

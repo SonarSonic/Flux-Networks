@@ -2,7 +2,6 @@ package sonar.fluxnetworks.client.gui.popup;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
@@ -41,7 +40,7 @@ public class PopupNetworkPassword extends PopupCore<GuiTabSelection> {
         }
         drawCenterText(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
 
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 110, 0xffffff);
+        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 110, FluxClientCache.getFeedbackColor());
     }
 
     @Override

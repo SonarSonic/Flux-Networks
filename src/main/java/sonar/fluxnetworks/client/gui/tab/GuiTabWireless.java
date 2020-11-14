@@ -2,7 +2,6 @@ package sonar.fluxnetworks.client.gui.tab;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.WirelessType;
@@ -46,7 +45,7 @@ public class GuiTabWireless extends GuiTabCore {
             int color = network.getNetworkColor();
             drawCenterText(matrixStack, FluxTranslate.TAB_WIRELESS.t(), 88, 12, 0xb4b4b4);
             font.drawString(matrixStack, FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, color);
-            drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 146, 0xffffff);
+            drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 146, FluxClientCache.getFeedbackColor());
         } else {
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }

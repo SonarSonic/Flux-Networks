@@ -70,10 +70,14 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     // bit 0~5 side connected, server
     protected int flags;
 
-    // cached value, pos may changed so still needs to test
+    /**
+     * lazy loading because {@link #setWorldAndPos(World, BlockPos)} first called,
+     * and then {@link #read(BlockState, CompoundNBT)} being called also changes pos
+     */
     @Nullable
     private GlobalPos globalPos;
 
+    @Nonnull
     protected IFluxNetwork network = FluxNetworkInvalid.INSTANCE;
 
     public TileFluxDevice(TileEntityType<? extends TileFluxDevice> tileEntityTypeIn, String customName, long limit) {
@@ -116,32 +120,38 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             NetworkHandler.INSTANCE.sendToPlayers(new FluxTileMessage(this, FluxConstants.S2C_GUI_SYNC), playerUsing);
         }
         if ((flags & FLAG_LOAD) == 0) {
-            if (networkID > 0) {
-                IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
-                if (network.isValid() && !(getDeviceType().isController() &&
-                        !network.getConnections(FluxLogicType.CONTROLLER).isEmpty())) {
-                    network.enqueueConnectionAddition(this);
-                } else {
-                    networkID = FluxConstants.INVALID_NETWORK_ID;
-                }
-            }
+            connect(FluxNetworkData.getNetwork(networkID));
             updateTransfers(Direction.values());
             flags |= FLAG_LOAD;
         }
     }
 
     @Override
-    public void onConnected(@Nonnull IFluxNetwork network) {
-        this.network = network;
+    public void connect(@Nonnull IFluxNetwork network) {
+        if (this.network == network) {
+            return;
+        }
+        this.network.enqueueConnectionRemoval(this, false);
+        if (network.isValid()) {
+            if (getDeviceType().isController() && !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
+                return;
+            }
+            network.enqueueConnectionAddition(this);
+            this.network = network;
+        } else {
+            this.network = FluxNetworkInvalid.INSTANCE;
+        }
         this.networkID = network.getNetworkID();
         sendFullUpdatePacket();
     }
 
     @Override
-    public void onDisconnected() {
+    public void disconnect() {
         if (network.isValid()) {
+            network.enqueueConnectionAddition(this);
             network = FluxNetworkInvalid.INSTANCE;
             networkID = network.getNetworkID();
+            getTransferHandler().onDisconnect();
             sendFullUpdatePacket();
         }
     }
@@ -151,6 +161,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         return networkID;
     }
 
+    @Nonnull
     @Override
     public final IFluxNetwork getNetwork() {
         return network;

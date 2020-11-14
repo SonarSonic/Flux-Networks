@@ -2,7 +2,6 @@ package sonar.fluxnetworks.client.gui.tab;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
@@ -51,7 +50,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
 
         screenUtils.renderNetwork(matrixStack, nameField.getText(), colorBtn.color, 20, 129);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 150, 0xffffff);
+        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 150, FluxClientCache.getFeedbackColor());
     }
 
     @Override

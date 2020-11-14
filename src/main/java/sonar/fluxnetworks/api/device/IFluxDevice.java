@@ -18,6 +18,7 @@ import java.util.UUID;
  */
 public interface IFluxDevice extends IMenuBridge {
 
+    @Nonnull
     IFluxNetwork getNetwork();
 
     void writeCustomNBT(CompoundNBT tag, int type);
@@ -59,18 +60,16 @@ public interface IFluxDevice extends IMenuBridge {
     void setForcedLoading(boolean forcedLoading);
 
     /**
-     * This method invoked by FluxNetworkServer.
-     * To connect to a network, call {@link IFluxNetwork#enqueueConnectionAddition(IFluxDevice)}
+     * Connect this device to a network
      *
-     * @param network the network invoked this method
+     * @param network the network to connect
      */
-    void onConnected(IFluxNetwork network);
+    void connect(IFluxNetwork network);
 
     /**
-     * This method invoked by FluxNetworkServer.
-     * To disconnect from current network, call getNetwork().enqueueConnectionRemoval()
+     * Disconnect this device from current network
      */
-    void onDisconnected();
+    void disconnect();
 
     @Nonnull
     ITransferHandler getTransferHandler();

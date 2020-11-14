@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FluxConstants;
@@ -61,7 +60,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
         super.drawForegroundLayer(matrixStack, mouseX, mouseY);
         screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 89, 150, 0xffffff);
+        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 89, 150, FluxClientCache.getFeedbackColor());
 
         font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 90, network.getNetworkColor());
         font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 102, network.getNetworkColor());

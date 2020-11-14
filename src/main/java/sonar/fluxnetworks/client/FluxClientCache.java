@@ -84,16 +84,19 @@ public class FluxClientCache {
         return feedback.getText();
     }
 
+    public static int getFeedbackColor() {
+        return 16733525 | (int) (Math.min(feedbackTimer, 16) * Math.min(61 - feedbackTimer, 5) * 3.1875f) << 24;
+    }
+
     public static void setFeedback(FeedbackInfo info) {
         feedback = info;
-        feedbackTimer = 0;
+        feedbackTimer = 60;
     }
 
     public static void tick() {
         if (feedback != FeedbackInfo.NONE) {
-            if (++feedbackTimer >= 60) {
+            if (--feedbackTimer <= 0) {
                 feedback = FeedbackInfo.NONE;
-                feedbackTimer = 0;
             }
         }
     }

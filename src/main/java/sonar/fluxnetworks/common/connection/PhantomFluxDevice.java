@@ -132,6 +132,7 @@ public class PhantomFluxDevice implements IFluxDevice {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
+    @Nonnull
     @Override
     public IFluxNetwork getNetwork() {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
@@ -178,12 +179,12 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void onConnected(IFluxNetwork network) {
+    public void connect(IFluxNetwork network) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
-    public void onDisconnected() {
+    public void disconnect() {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 

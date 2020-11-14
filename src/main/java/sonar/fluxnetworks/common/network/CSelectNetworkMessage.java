@@ -62,7 +62,7 @@ public class CSelectNetworkMessage implements IMessage {
             if (checkAccess(buffer, context, player, network))
                 return;
             flux.setConnectionOwner(PlayerEntity.getUUID(player.getGameProfile()));
-            network.enqueueConnectionAddition(flux);
+            flux.connect(network);
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS), context);
         }
     }

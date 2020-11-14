@@ -100,4 +100,9 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
             this.buffer = buffer.readLong();
         }
     }
+
+    @Override
+    public void onDisconnect() {
+        change = 0;
+    }
 }

@@ -2,6 +2,8 @@
 (Install Modern UI for better font looking)
   
 * Fix GUI not closed when block removed
+* Fix possible strong reference bug
+* Make devices able to disconnect in any case
 
 ### Changelog 1.16.4-6.1.3.8 (2020-11-10)
 * Fix chunk loading flag not updated when re-entering world

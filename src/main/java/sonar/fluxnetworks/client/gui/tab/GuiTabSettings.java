@@ -50,7 +50,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                     drawCenterText(matrixStack, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
                 }
             }
-            drawCenterText(matrixStack, TextFormatting.RED + FluxClientCache.getFeedbackText(), 88, 156, 0xffffff);
+            drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 156, FluxClientCache.getFeedbackColor());
         } else {
             renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
         }

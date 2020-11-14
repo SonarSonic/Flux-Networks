@@ -1,30 +1,36 @@
 package sonar.fluxnetworks.common.connection.transfer;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.IItemEnergyHandler;
-import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.common.integration.CuriosIntegration;
 import sonar.fluxnetworks.common.misc.EnergyUtils;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class FluxControllerHandler extends BasicPointHandler<TileFluxController> {
 
+    // a set of players that have at least one network for wireless charging
+    private static final Set<ServerPlayerEntity> CHARGING_PLAYERS = new ObjectOpenHashSet<>();
+
     private static final Predicate<ItemStack> NOT_EMPTY = s -> !s.isEmpty();
 
-    private final Map<ServerPlayerEntity, List<WirelessHandler>> players = new HashMap<>();
+    private final Map<ServerPlayerEntity, Iterable<WirelessHandler>> players = new HashMap<>();
     private int timer;
 
     public FluxControllerHandler(TileFluxController fluxController) {
@@ -52,6 +58,20 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     }
 
     @Override
+    public void updateTransfers(@Nonnull Direction... faces) {
+
+    }
+
+    @Override
+    public void onDisconnect() {
+        super.onDisconnect();
+        for (ServerPlayerEntity toRemove : players.keySet()) {
+            CHARGING_PLAYERS.remove(toRemove);
+        }
+        players.clear();
+    }
+
+    @Override
     public long sendToConsumers(long energy, boolean simulate) {
         if (!device.isActive()) return 0;
         if ((timer & 0x3) > 0) return 0;
@@ -61,7 +81,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
 
     private long chargeAllItems(long energy, boolean simulate) {
         long leftover = energy;
-        for (Map.Entry<ServerPlayerEntity, List<WirelessHandler>> player : players.entrySet()) {
+        for (Map.Entry<ServerPlayerEntity, Iterable<WirelessHandler>> player : players.entrySet()) {
             // dead, or quit game
             if (!player.getKey().isAlive()) {
                 continue;
@@ -77,12 +97,15 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     }
 
     private void updatePlayers() {
+        for (ServerPlayerEntity toRemove : players.keySet()) {
+            CHARGING_PLAYERS.remove(toRemove);
+        }
         players.clear();
         PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
         int wireless = device.getNetwork().getWirelessMode();
         for (NetworkMember p : device.getNetwork().getAllMembers()) {
             ServerPlayerEntity player = playerList.getPlayerByUUID(p.getPlayerUUID());
-            if (player == null) {
+            if (player == null || CHARGING_PLAYERS.contains(player)) {
                 continue;
             }
             final PlayerInventory inv = player.inventory;
@@ -119,6 +142,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
             if (WirelessType.CURIOS.isActivated(wireless) && FluxNetworks.curiosLoaded) {
                 final LazyOptional<IItemHandlerModifiable> curios = CuriosIntegration.getEquippedCurios(player);
                 handlers.add(new WirelessHandler(() -> {
+                    // the lazy optional is not cached by Curios
                     if (curios.isPresent()) {
                         return new Iterator<ItemStack>() {
                             private final IItemHandler handler = curios.orElseThrow(IllegalStateException::new);
@@ -137,20 +161,11 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
                             }
                         };
                     }
-                    return new Iterator<ItemStack>() {
-                        @Override
-                        public boolean hasNext() {
-                            return false;
-                        }
-
-                        @Override
-                        public ItemStack next() {
-                            return null;
-                        }
-                    };
+                    return null;
                 }, NOT_EMPTY));
             }
             players.put(player, handlers);
+            CHARGING_PLAYERS.add(player);
         }
     }
 
@@ -165,7 +180,7 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
         }
 
         private long chargeItems(long leftover, boolean simulate) {
-            for (Iterator<ItemStack> it = supplier.get(); it.hasNext(); ) {
+            for (Iterator<ItemStack> it = supplier.get(); it != null && it.hasNext(); ) {
                 ItemStack stack = it.next();
                 IItemEnergyHandler handler;
                 if (!validator.test(stack) || (handler = EnergyUtils.getEnergyHandler(stack)) == null) {

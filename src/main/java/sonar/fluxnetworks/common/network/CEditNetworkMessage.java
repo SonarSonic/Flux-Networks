@@ -56,6 +56,8 @@ public class CEditNetworkMessage extends CCreateNetworkMessage {
             }
             if (FluxUtils.isLegalPassword(password)) {
                 network.getSecurity().set(security, password);
+            } else {
+                NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.ILLEGAL_PASSWORD), context);
             }
             NetworkHandler.INSTANCE.reply(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_BASIC), context);
             NetworkHandler.INSTANCE.reply(new SFeedbackMessage(FeedbackInfo.SUCCESS_2), context);

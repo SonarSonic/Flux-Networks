@@ -41,7 +41,7 @@ public interface ITransferHandler {
 
     void readPacket(PacketBuffer buffer, byte id);
 
-    default void updateTransfers(@Nonnull Direction... faces) {
+    void updateTransfers(@Nonnull Direction... faces);
 
-    }
+    void onDisconnect();
 }
