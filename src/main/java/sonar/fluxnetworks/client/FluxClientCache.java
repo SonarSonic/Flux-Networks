@@ -90,7 +90,11 @@ public class FluxClientCache {
 
     public static void setFeedback(FeedbackInfo info) {
         feedback = info;
-        feedbackTimer = 60;
+        if (feedbackTimer > 0) {
+            feedbackTimer = 58;
+        } else {
+            feedbackTimer = 60;
+        }
     }
 
     public static void tick() {

@@ -1,6 +1,9 @@
 ### Changelog 1.16.4-6.1.4.9 (2020-11-14)
 (Install Modern UI for better font looking)
   
+* Add feedback text animation
+* Move super admin text from action bar into GUI
+* Disable players to be charged by multiple networks
 * Fix GUI not closed when block removed
 * Fix possible strong reference bug
 * Make devices able to disconnect in any case
