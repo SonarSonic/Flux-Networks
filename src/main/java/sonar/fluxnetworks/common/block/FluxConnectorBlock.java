@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
@@ -41,7 +42,10 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock {
         // block changed
         TileFluxDevice tile = (TileFluxDevice) worldIn.getTileEntity(pos);
         if (tile != null && !tile.getFluxWorld().isRemote) {
-            tile.updateTransfers(FluxUtils.getBlockDirection(pos, fromPos));
+            Direction dir = FluxUtils.getBlockDirection(pos, fromPos);
+            if (dir != null) {
+                tile.updateTransfers(dir);
+            }
         }
     }
 
@@ -51,7 +55,10 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock {
         // tile changed, not always being called, because some mods do not call related methods
         TileFluxDevice tile = (TileFluxDevice) world.getTileEntity(pos);
         if (tile != null && !tile.getFluxWorld().isRemote) {
-            tile.updateTransfers(FluxUtils.getBlockDirection(pos, neighbor));
+            Direction dir = FluxUtils.getBlockDirection(pos, neighbor);
+            if (dir != null) {
+                tile.updateTransfers(dir);
+            }
         }
     }
 

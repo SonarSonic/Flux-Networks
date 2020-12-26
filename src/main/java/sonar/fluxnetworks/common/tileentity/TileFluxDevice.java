@@ -94,7 +94,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             if (isForcedLoading()) {
                 FluxChunkManager.removeChunkLoader(this);
             }
-            getTransferHandler().invalid();
+            getTransferHandler().reset();
             flags &= ~FLAG_LOAD;
         }
     }
@@ -104,7 +104,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         super.onChunkUnloaded();
         if (!world.isRemote && (flags & FLAG_LOAD) == FLAG_LOAD) {
             network.enqueueConnectionRemoval(this, true);
-            getTransferHandler().invalid();
+            getTransferHandler().reset();
             flags &= ~FLAG_LOAD;
         }
     }
@@ -144,7 +144,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             this.network = FluxNetworkInvalid.INSTANCE;
         }
         this.networkID = network.getNetworkID();
-        getTransferHandler().invalid();
+        getTransferHandler().reset();
         sendFullUpdatePacket();
     }
 
@@ -154,7 +154,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
             network.enqueueConnectionRemoval(this, false);
             network = FluxNetworkInvalid.INSTANCE;
             networkID = network.getNetworkID();
-            getTransferHandler().invalid();
+            getTransferHandler().reset();
             sendFullUpdatePacket();
         }
     }
@@ -439,7 +439,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
         playerUUID = uuid;
     }
 
-    public void updateTransfers(Direction... dirs) {
+    public void updateTransfers(@Nonnull Direction... dirs) {
         getTransferHandler().updateTransfers(dirs);
     }
 

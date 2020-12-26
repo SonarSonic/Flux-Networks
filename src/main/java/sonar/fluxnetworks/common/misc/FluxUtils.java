@@ -39,6 +39,8 @@ public class FluxUtils {
 
     @Nullable
     public static Direction getBlockDirection(BlockPos pos, BlockPos other) {
+        if (pos == other)
+            return null;
         for (Direction face : Direction.values())
             if (pos.offset(face).equals(other))
                 return face;

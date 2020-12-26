@@ -102,7 +102,7 @@ public abstract class BasicTransferHandler<T extends IFluxDevice> implements ITr
     }
 
     @Override
-    public void invalid() {
+    public void reset() {
         change = 0;
     }
 }

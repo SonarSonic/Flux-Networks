@@ -9,6 +9,8 @@ import sonar.fluxnetworks.common.block.FluxConnectorBlock;
 import sonar.fluxnetworks.common.misc.EnergyUtils;
 import sonar.fluxnetworks.common.tileentity.energy.TileDefaultEnergy;
 
+import javax.annotation.Nonnull;
+
 public abstract class TileFluxConnector extends TileDefaultEnergy {
 
     public TileFluxConnector(TileEntityType<? extends TileFluxConnector> tileEntityTypeIn, String customName, long limit) {
@@ -16,7 +18,7 @@ public abstract class TileFluxConnector extends TileDefaultEnergy {
     }
 
     @Override
-    public void updateTransfers(Direction... dirs) {
+    public void updateTransfers(@Nonnull Direction... dirs) {
         super.updateTransfers(dirs);
         boolean sendUpdate = false;
         for (Direction facing : dirs) {

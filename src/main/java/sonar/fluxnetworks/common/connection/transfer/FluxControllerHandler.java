@@ -63,8 +63,8 @@ public class FluxControllerHandler extends BasicPointHandler<TileFluxController>
     }
 
     @Override
-    public void invalid() {
-        super.invalid();
+    public void reset() {
+        super.reset();
         clearPlayers();
     }
 
