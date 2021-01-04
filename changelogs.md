@@ -1,6 +1,10 @@
-### Changelog 1.16.4-6.1.5.10 (2020-11-14)
+### Changelog 1.16.4-6.1.6.11 (2021-01-04)
 (Install Modern UI for better font looking)
   
+* Fix server config not synced to client
+* Fix possible crash with some blocks
+
+### Changelog 1.16.4-6.1.5.10 (2020-11-14)
 * Add feedback text animation
 * Move super admin text from action bar into GUI
 * Disable players to be charged by multiple networks
