@@ -1,44 +1,135 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url = "https://files.minecraftforge.net/maven" }
+        mavenCentral()
+        maven {
+            name "forge"
+            url "https://files.minecraftforge.net/maven"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
-version = "${minecraft_version}-4.0.15-32"
-group = "fluxnetworks"
-archivesBaseName = "fluxnetworks"
+version = "${minecraft_version}-${mod_version}"
+group = 'sonar.fluxnetworks'
+archivesBaseName = 'FluxNetworks'
 
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+sourceSets {
+    api {
+        java {
+            srcDir 'src/api/java'
+        }
+    }
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            include '**/**'
+            exclude '**/*.psd'
+        }
+        compileClasspath += sourceSets.api.output
+        runtimeClasspath += sourceSets.api.output
+    }
 }
 
 minecraft {
-    version = "1.12.2-14.23.5.2838"
-    runDir = "run"
-    mappings = "stable_39"
+    mappings channel: 'stable', version: '39-1.12'
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        server {
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+        }
+    }
+}
+
+repositories {
+    maven {
+        // location of the maven that hosts JEI files
+        name 'Progwml6 maven'
+        url 'https://dvs1.progwml6.com/files/maven/'
+    }
+    maven {
+        // The One Probe
+        name 'tterrag maven'
+        url 'https://maven.tterrag.com/'
+    }
+    maven {
+        // Open Computers
+        url "http://maven.cil.li/"
+    }
+    maven {
+        // location of a maven that hosts all files on CurseForge
+        name 'CurseMaven'
+        url 'https://www.cursemaven.com/'
+    }
 }
 
 dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+    compileOnly fg.deobf("mezz.jei:jei_${minecraft_version}:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei_${minecraft_version}:${jei_version}")
+
+    compile fg.deobf("mcjty.theoneprobe:TheOneProbe-1.12:${top_version}")
+
+    compileOnly fg.deobf("li.cil.oc:OpenComputers:MC${minecraft_version}-1.7.5.213:api")
+
+    compile fg.deobf("curse.maven:baubles-227083:2518667")
+    compileOnly fg.deobf("curse.maven:gregtechce-293327:3167654")
+    compileOnly fg.deobf("curse.maven:industrial-craft-242638:2746894")
+    compileOnly fg.deobf("curse.maven:mekanism-268560:2835176")
+    compileOnly fg.deobf("curse.maven:redstone-flux-270789:2920436")
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property "version", mod_version
+    inputs.property "mcversion", minecraft_version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': mod_version, 'mcversion': minecraft_version
     }
 
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "Flux-Networks",
+                "Specification-Vendor"    : "SonarSonic",
+                "Specification-Version"   : "1",
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "SonarSonic",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
     }
 }
 

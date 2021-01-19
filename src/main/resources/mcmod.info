@@ -5,10 +5,9 @@
   "description": "Wireless Energy Networks.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "https://www.curseforge.com/minecraft/mc-mods/flux-networks",
   "updateUrl": "",
-  "authorList": ["BloCamLimb"],
-  "credits": "Original by Ollie Lansdell, Refactored by BloCamLimb",
+  "authorList": ["Sonar Sonic","BloCamLimb"],
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
