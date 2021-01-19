@@ -1,6 +1,7 @@
-### Changelog 1.16.4-6.1.6.11 (2021-01-04)
+### Changelog 1.16.5-6.1.6.11 (2021-01-19)
 (Install Modern UI for better font looking)
   
+* Make flux plugs and points waterlogged
 * Fix server config not synced to client
 * Fix possible crash with some blocks
 
