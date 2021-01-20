@@ -37,6 +37,7 @@ sourceSets {
         }
         compileClasspath += sourceSets.api.output
         runtimeClasspath += sourceSets.api.output
+        output.resourcesDir = java.outputDir
     }
 }
 
@@ -91,7 +92,6 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     compileOnly fg.deobf("mezz.jei:jei_${minecraft_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei_${minecraft_version}:${jei_version}")
 
     compile fg.deobf("mcjty.theoneprobe:TheOneProbe-1.12:${top_version}")
 
@@ -132,9 +132,3 @@ jar {
         ])
     }
 }
-
-/*sourceSets {
-    main {
-        output.resourcesDir = java.outputDir
-    }
-}*/

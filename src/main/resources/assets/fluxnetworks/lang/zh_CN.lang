@@ -8,7 +8,7 @@ tile.fluxnetworks.fluxstorage.name=基础能量存储器
 tile.fluxnetworks.herculeanfluxstorage.name=大型能量存储器
 tile.fluxnetworks.gargantuanfluxstorage.name=超大型能量存储器
 
-item.fluxnetworks.flux.name=能量尘
+item.fluxnetworks.flux.name=通量粉尘
 item.fluxnetworks.fluxcore.name=能量核心
 item.fluxnetworks.fluxconfigurator.name=能量网络配置器
 item.fluxnetworks.adminconfigurator.name=管理员网络配置器
@@ -42,8 +42,7 @@ info.fluxnetworks.denied.access=拒绝访问: 无权限
 info.fluxnetworks.denied.occupy=拒绝访问: 另一名玩家正在使用
 info.fluxnetworks.denied.removal=拒绝移除: 无权限
 
-info.fluxnetworks.click=点击上方的
-info.fluxnetworks.above=
+info.fluxnetworks.clickabove=点击上方的%s
 
 info.fluxnetworks.error.noselected=尚未选择网络
 info.fluxnetworks.error.nonetwork=暂无可用网络
@@ -96,14 +95,14 @@ info.fluxnetworks.gui.setadmin=设为管理员
 info.fluxnetworks.gui.playername=玩家名字
 info.fluxnetworks.gui.playeraccess=访问权限
 info.fluxnetworks.gui.cancelmembership=撤销成员权限
-info.fluxnetworks.gui.you=你
+info.fluxnetworks.gui.you=你自己
 
 info.fluxnetworks.gui.sort.smart=智能
 info.fluxnetworks.gui.sort.id=ID
 info.fluxnetworks.gui.sort.name=名称
 
-info.fluxnetworks.button.batchclear=清空所选项
-info.fluxnetworks.button.batchedit=编辑所选项
+info.fluxnetworks.button.batchclear=清空所选
+info.fluxnetworks.button.batchedit=编辑所选
 info.fluxnetworks.button.batchdisconnect=断开连接
 info.fluxnetworks.button.apply=应用
 info.fluxnetworks.button.cancel=取消
@@ -113,10 +112,10 @@ info.fluxnetworks.button.delete=删除
 
 info.fluxnetworks.slot.main=主物品栏(已禁用)
 info.fluxnetworks.slot.hotbar=快捷栏
-info.fluxnetworks.slot.righthand=右手
-info.fluxnetworks.slot.lefthand=左手
-info.fluxnetworks.slot.armor=护甲栏
-info.fluxnetworks.slot.baubles=饰品栏
+info.fluxnetworks.slot.righthand=主手
+info.fluxnetworks.slot.lefthand=副手
+info.fluxnetworks.slot.armor=盔甲槽
+info.fluxnetworks.slot.baubles=饰品槽
 
 info.fluxnetworks.stat.plug=接入点
 info.fluxnetworks.stat.point=接出点
@@ -131,3 +130,6 @@ info.fluxnetworks.access.admin=管理员
 info.fluxnetworks.access.user=用户
 info.fluxnetworks.access.blocked=陌生人
 info.fluxnetworks.access.superadmin=超级管理员
+
+info.fluxnetworks.jei.creatingfluxrecipe=某科学的通量创造
+info.fluxnetworks.jei.leftclickhelp=左键敲击%s

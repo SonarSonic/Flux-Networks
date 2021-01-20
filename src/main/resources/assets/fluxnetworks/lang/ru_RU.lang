@@ -42,8 +42,7 @@ info.fluxnetworks.denied.access=Доступ запрещен: Нет разре
 info.fluxnetworks.denied.occupy=Доступ запрещен: Другой игрок использует
 info.fluxnetworks.denied.removal=В удалениии отказано: Нет разрешения
 
-info.fluxnetworks.click=Нажмите
-info.fluxnetworks.above=Выше
+info.fluxnetworks.clickabove=Нажмите %s Выше
 
 info.fluxnetworks.error.noselected=Сеть не выбрана
 info.fluxnetworks.error.nonetwork=Сеть недоступна
@@ -131,3 +130,6 @@ info.fluxnetworks.access.admin=Администратор
 info.fluxnetworks.access.user=Пользователь
 info.fluxnetworks.access.blocked=Заблокирован
 info.fluxnetworks.access.superadmin=Супер администратор
+
+info.fluxnetworks.jei.creatingfluxrecipe=Creating Flux
+info.fluxnetworks.jei.leftclickhelp=Left click the %s

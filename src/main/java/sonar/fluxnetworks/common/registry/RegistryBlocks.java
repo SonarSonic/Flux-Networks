@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.registry;
 
-import fluxnetworks.common.block.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import sonar.fluxnetworks.common.block.*;

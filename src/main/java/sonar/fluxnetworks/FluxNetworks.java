@@ -7,12 +7,12 @@ import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = FluxNetworks.MODID, name = FluxNetworks.NAME, version = FluxNetworks.VERSION, dependencies = "required-after:forge@[14.23.4.2814,)", acceptedMinecraftVersions = "[1.12.2]", guiFactory = "sonar.fluxnetworks.common.core.ConfigGuiFactory")
+@Mod(modid = FluxNetworks.MODID, name = FluxNetworks.NAME, version = FluxNetworks.VERSION, dependencies = "required-after:forge@[14.23.4.2854,)", acceptedMinecraftVersions = "[1.12.2]", guiFactory = "sonar.fluxnetworks.common.core.ConfigGuiFactory")
 public class FluxNetworks {
 
     public static final String MODID = "fluxnetworks";
     public static final String NAME = "Flux Networks";
-    public static final String VERSION = "4.0.14";
+    public static final String VERSION = "4.1.0";
 
     @Mod.Instance(MODID)
     public static FluxNetworks instance;

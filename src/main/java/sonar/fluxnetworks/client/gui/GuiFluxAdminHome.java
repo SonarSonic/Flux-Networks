@@ -1,19 +1,18 @@
 package sonar.fluxnetworks.client.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.network.EnumAccessType;
 import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.NetworkSettings;
+import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.handler.PacketHandler;
-import fluxnetworks.common.network.*;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.common.network.PacketActivateSuperAdmin;
 import sonar.fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import sonar.fluxnetworks.common.network.PacketPermissionRequest;

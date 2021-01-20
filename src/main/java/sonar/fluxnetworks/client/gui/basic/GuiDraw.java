@@ -1,15 +1,14 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.translate.FluxTranslate;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.FluxNetworks;
 
 import java.awt.*;
 import java.util.List;
@@ -23,7 +22,7 @@ public abstract class GuiDraw extends GuiContainer implements ITextBoxButton {
     public static final ResourceLocation FRAME = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_default_frame.png");
     public static final ResourceLocation GUI_BAR = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_bar.png");
     public static final ResourceLocation INVENTORY = new ResourceLocation(FluxNetworks.MODID, "textures/gui/inventory_configuration.png");
-    public static final ResourceLocation BUTTONS = new ResourceLocation(FluxNetworks.MODID , "textures/gui/gui_button.png");
+    public static final ResourceLocation BUTTONS = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_button.png");
 
     public GuiDraw(Container inventorySlotsIn) {
         super(inventorySlotsIn);
@@ -34,9 +33,9 @@ public abstract class GuiDraw extends GuiContainer implements ITextBoxButton {
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
 
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
         GlStateManager.color(f, f1, f2);
 
         mc.getTextureManager().bindTexture(GUI_BAR);
@@ -50,7 +49,7 @@ public abstract class GuiDraw extends GuiContainer implements ITextBoxButton {
         GlStateManager.pushMatrix();
         drawCenteredString(fontRenderer, error, xSize / 2, 16, 0x808080);
         GlStateManager.scale(0.625, 0.625, 0.625);
-        drawCenteredString(fontRenderer, FluxTranslate.CLICK.t() + TextFormatting.AQUA + ' ' + prompt + ' ' + TextFormatting.RESET + FluxTranslate.ABOVE.t(), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
+        drawCenteredString(fontRenderer, I18n.format("info.fluxnetworks.clickabove", TextFormatting.AQUA + prompt + TextFormatting.RESET), (int) (xSize / 2 * 1.6), (int) (26 * 1.6), 0x808080);
         GlStateManager.scale(1.6, 1.6, 1.6);
         GlStateManager.popMatrix();
     }
@@ -95,7 +94,7 @@ public abstract class GuiDraw extends GuiContainer implements ITextBoxButton {
         strings.forEach(a -> maxLength.set(Math.max(fontRenderer.getStringWidth(a), maxLength.get())));
         drawRectWithBackground(x, y, strings.size() * 9 + 3, maxLength.get() + 4, 0x80ffffff, 0xc0000000);
         int i = 0;
-        for(String s : strings) {
+        for (String s : strings) {
             fontRenderer.drawString(s, x + 2, y + 2 + 9 * i, 0xffffff);
             i++;
         }

@@ -33,9 +33,6 @@ public class FluxTranslate implements ITranslationProvider {
     public static final Translation NETWORK_ENERGY = i("network.energy");
     public static final Translation NETWORK_COLOR = i("network.color");
 
-    public static final Translation CLICK = i("click");
-    public static final Translation ABOVE = i("above");
-
     public static final Translation ERROR_NO_SELECTED = i("error.noselected");
     public static final Translation ERROR_NO_NETWORK = i("error.nonetwork");
 

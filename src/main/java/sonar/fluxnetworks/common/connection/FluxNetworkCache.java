@@ -1,15 +1,14 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.FluxConfig;
-import fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.utils.Coord4D;
+import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.common.data.FluxNetworkData;
 
 import java.util.*;
 import java.util.stream.Collectors;

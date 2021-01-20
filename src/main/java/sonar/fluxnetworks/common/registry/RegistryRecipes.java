@@ -1,8 +1,5 @@
 package sonar.fluxnetworks.common.registry;
 
-import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
@@ -13,6 +10,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.minecraftforge.registries.IForgeRegistry;
+import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.data.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 
@@ -81,15 +81,15 @@ public class RegistryRecipes {
             for (int i = 0; i < crafting.getSizeInventory(); i++) {
                 ItemStack stack = crafting.getStackInSlot(i);
                 NBTTagCompound subTag = stack.getSubCompound(FluxUtils.FLUX_DATA);
-                if(subTag != null) {
-                    if(!firstFound) {
+                if (subTag != null) {
+                    if (!firstFound) {
                         networkID = subTag.getInteger(FluxNetworkData.NETWORK_ID);
                         firstFound = true;
                     }
                     energyTotal += subTag.getInteger("energy");
                 }
             }
-            if(firstFound) {
+            if (firstFound) {
                 ItemStack stack = output.copy();
                 NBTTagCompound subTag = stack.getOrCreateSubCompound(FluxUtils.FLUX_DATA);
                 subTag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
@@ -97,25 +97,6 @@ public class RegistryRecipes {
                 return stack;
             }
             return super.getCraftingResult(crafting);
-        }
-    }
-
-    public static class FluxRecipe {
-
-        public final ItemStack input;
-        public final ItemStack output;
-
-        public FluxRecipe(ItemStack input, ItemStack output) {
-            this.input = input;
-            this.output = output;
-        }
-
-        public ItemStack getInput() {
-            return input;
-        }
-
-        public ItemStack getOutput() {
-            return output;
         }
     }
 }

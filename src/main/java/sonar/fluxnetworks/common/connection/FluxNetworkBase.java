@@ -1,16 +1,17 @@
 package sonar.fluxnetworks.common.connection;
 
-import fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.common.core.CustomValue;
-import sonar.fluxnetworks.api.utils.ICustomValue;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
 import net.minecraft.nbt.NBTTagCompound;
 import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.utils.ICustomValue;
+import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.common.core.CustomValue;
+import sonar.fluxnetworks.common.data.FluxNetworkData;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class FluxNetworkBase implements IFluxNetwork {
 

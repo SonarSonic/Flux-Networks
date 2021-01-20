@@ -42,8 +42,7 @@ info.fluxnetworks.denied.access=Acesso negado: Sem permissão
 info.fluxnetworks.denied.occupy=Acesso negado: Outro jogador já está usando
 info.fluxnetworks.denied.removal=Remoção negada: Sem permissão
 
-info.fluxnetworks.click=Clique
-info.fluxnetworks.above=Acima
+info.fluxnetworks.clickabove=Clique %s Acima
 
 info.fluxnetworks.error.noselected=Nenhuma rede selecionada
 info.fluxnetworks.error.nonetwork=Nenhuma rede disponível

@@ -1,19 +1,6 @@
 package sonar.fluxnetworks.common.data;
 
 import com.google.common.collect.Lists;
-import sonar.fluxnetworks.FluxNetworks;
-import fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.utils.Capabilities;
-import sonar.fluxnetworks.api.utils.EnergyType;
-import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import fluxnetworks.common.connection.*;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.connection.FluxLiteConnector;
-import sonar.fluxnetworks.common.connection.FluxNetworkBase;
-import sonar.fluxnetworks.common.connection.FluxNetworkCache;
-import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.PacketNetworkUpdate;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,12 +13,26 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.io.FileUtils;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
+import sonar.fluxnetworks.api.utils.Capabilities;
+import sonar.fluxnetworks.api.utils.EnergyType;
+import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.common.connection.FluxLiteConnector;
+import sonar.fluxnetworks.common.connection.FluxNetworkBase;
+import sonar.fluxnetworks.common.connection.FluxNetworkCache;
+import sonar.fluxnetworks.common.connection.FluxNetworkServer;
+import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.network.PacketNetworkUpdate;
 
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Save network data to local. Only on server side

@@ -1,17 +1,16 @@
 package sonar.fluxnetworks.common.connection;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.MinecraftForge;
 import sonar.fluxnetworks.FluxConfig;
-import fluxnetworks.api.network.*;
 import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.api.utils.Capabilities;
-import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
-import sonar.fluxnetworks.common.event.FluxConnectionEvent;
+import sonar.fluxnetworks.api.utils.Capabilities;
+import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.common.core.FluxUtils;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.MinecraftForge;
+import sonar.fluxnetworks.common.event.FluxConnectionEvent;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;

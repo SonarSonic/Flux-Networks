@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.api.network;
 
 import com.google.common.collect.Lists;
-import fluxnetworks.api.tiles.*;
 import sonar.fluxnetworks.api.tiles.*;
 
 import java.util.ArrayList;

@@ -1,7 +1,5 @@
 package sonar.fluxnetworks.common.handler;
 
-import sonar.fluxnetworks.FluxNetworks;
-import fluxnetworks.common.network.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -9,6 +7,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.network.*;
 
 public class PacketHandler {
