@@ -1,43 +1,26 @@
 package sonar.fluxnetworks.common.tileentity;
 
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.ConnectionType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxController;
-import sonar.fluxnetworks.api.tiles.IFluxEnergy;
-import sonar.fluxnetworks.common.connection.transfer.ControllerTransfer;
-import sonar.fluxnetworks.common.connection.handler.SingleTransferHandler;
+import sonar.fluxnetworks.common.connection.transfer.FluxControllerHandler;
 
-public class TileFluxController extends TileFluxCore implements IFluxController, IFluxEnergy {
+public class TileFluxController extends TileFluxCore implements IFluxController {
 
-    public final SingleTransferHandler handler = new SingleTransferHandler(this, new ControllerTransfer(this));
+    private final FluxControllerHandler handler = new FluxControllerHandler(this);
 
     public TileFluxController() {
         customName = "Flux Controller";
     }
 
     @Override
-    public EnumConnectionType getConnectionType() {
-        return EnumConnectionType.CONTROLLER;
+    public ConnectionType getConnectionType() {
+        return ConnectionType.CONTROLLER;
     }
 
     @Override
     public ITransferHandler getTransferHandler() {
         return handler;
-    }
-
-    @Override
-    public long addEnergy(long amount, boolean simulate) {
-        return 0;
-    }
-
-    @Override
-    public long removeEnergy(long amount, boolean simulate) {
-        return 0;
-    }
-
-    @Override
-    public long getEnergy() {
-        return 0;
     }
 
     @Override

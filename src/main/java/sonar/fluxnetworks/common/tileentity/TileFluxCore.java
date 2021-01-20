@@ -24,7 +24,6 @@ import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.utils.NBTType;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.connection.FluxTransferHandler;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 import sonar.fluxnetworks.common.core.FluxUtils;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
@@ -55,7 +54,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     public boolean disableLimit = false;
 
     public boolean connected = false;
-    public byte[] connections = new byte[]{0,0,0,0,0,0};
+    public byte[] connections = new byte[]{0, 0, 0, 0, 0, 0};
 
     public boolean chunkLoading = false;
 
@@ -66,11 +65,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public void invalidate() {
         super.invalidate();
-        if(!world.isRemote && load) {
+        if (!world.isRemote && load) {
             FluxUtils.removeConnection(this, false);
-            if(chunkLoading) {
+            if (chunkLoading) {
                 FluxChunkManager.releaseChunk(world, new ChunkPos(pos));
             }
+            getTransferHandler().reset();
             load = false;
         }
     }
@@ -78,20 +78,21 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     @Override
     public void onChunkUnload() {
         super.onChunkUnload();
-        if(!world.isRemote && load) {
+        if (!world.isRemote && load) {
             FluxUtils.removeConnection(this, true);
+            getTransferHandler().reset();
             load = false;
         }
     }
 
     @Override
     public void update() {
-        if(!world.isRemote) {
-            if(playerUsing.size() > 0) {
+        if (!world.isRemote) {
+            if (playerUsing.size() > 0) {
                 sendPackets();
             }
-            if(!load) {
-                if(!FluxUtils.addConnection(this)) {
+            if (!load) {
+                if (!FluxUtils.addConnection(this)) {
                     networkID = -1;
                     connected = false;
                     color = 0xb2b2b2;
@@ -109,16 +110,18 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
         this.networkID = network.getNetworkID();
         this.color = network.getSetting(NetworkSettings.NETWORK_COLOR);
         connected = true;
+        getTransferHandler().reset();
         sendPackets();
     }
 
     @Override
     public void disconnect(IFluxNetwork network) {
-        if(network.getNetworkID() == getNetworkID()) {
+        if (network.getNetworkID() == getNetworkID()) {
             this.network = FluxNetworkInvalid.instance;
             this.networkID = -1;
             this.color = 0xb2b2b2;
             connected = false;
+            getTransferHandler().reset();
             sendPackets();
         }
     }
@@ -174,7 +177,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     public NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type) {
-        if(type == NBTType.ALL_SAVE || type == NBTType.TILE_UPDATE) {
+        if (type == NBTType.ALL_SAVE || type == NBTType.TILE_UPDATE) {
             tag.setInteger("0", priority);
             tag.setLong("1", limit);
             tag.setBoolean("2", disableLimit);
@@ -185,17 +188,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             tag.setInteger("7", color);
             tag.setBoolean("8", connected);
             tag.setInteger("9", folderID);
-            for(int i = 0; i < connections.length; i++) {
+            for (int i = 0; i < connections.length; i++) {
                 tag.setByte('c' + String.valueOf(i), connections[i]);
             }
-            tag.setLong("buf", ((FluxTransferHandler) getTransferHandler()).buffer);
             tag.setBoolean("l", chunkLoading);
         }
-        if(type == NBTType.TILE_UPDATE) {
-            getTransferHandler().writeNetworkedNBT(tag);
-        }
-        if(type == NBTType.TILE_DROP) {
-            tag.setLong("buffer", ((FluxTransferHandler) getTransferHandler()).buffer);
+        if (type == NBTType.TILE_DROP) {
             tag.setInteger(ItemFluxConnector.PRIORITY, priority);
             tag.setLong(ItemFluxConnector.LIMIT, limit);
             tag.setBoolean(ItemFluxConnector.DISABLE_LIMIT, disableLimit);
@@ -204,12 +202,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             tag.setString(ItemFluxConnector.CUSTOM_NAME, customName);
             tag.setInteger(NetworkFolder.FOLDER_ID, folderID);
         }
-
+        getTransferHandler().writeCustomNBT(tag, type);
         return tag;
     }
 
     public void readCustomNBT(NBTTagCompound tag, NBTType type) {
-        if(type == NBTType.ALL_SAVE || type == NBTType.TILE_UPDATE) {
+        if (type == NBTType.ALL_SAVE || type == NBTType.TILE_UPDATE) {
             priority = tag.getInteger("0");
             limit = tag.getLong("1");
             disableLimit = tag.getBoolean("2");
@@ -220,18 +218,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             color = tag.getInteger("7");
             connected = tag.getBoolean("8");
             folderID = tag.getInteger("9");
-            for(int i = 0; i < connections.length; i++) {
+            for (int i = 0; i < connections.length; i++) {
                 connections[i] = tag.getByte('c' + String.valueOf(i));
             }
-            ((FluxTransferHandler) getTransferHandler()).buffer = tag.getLong("buf");
             chunkLoading = tag.getBoolean("l");
         }
-        if(type == NBTType.TILE_UPDATE) {
-            getTransferHandler().readNetworkedNBT(tag);
-        }
-        if(type == NBTType.TILE_DROP) {
-            long k;
-            ((FluxTransferHandler) getTransferHandler()).buffer = (k = tag.getLong("buffer")) > 0 ? k : ((FluxTransferHandler) getTransferHandler()).buffer;
+        if (type == NBTType.TILE_DROP) {
             priority = tag.getInteger(ItemFluxConnector.PRIORITY);
             long l;
             limit = (l = tag.getLong(ItemFluxConnector.LIMIT)) > 0 ? l : limit;
@@ -243,11 +235,12 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
             customName = (name = tag.getString(ItemFluxConnector.CUSTOM_NAME)).isEmpty() ? customName : name;
             folderID = tag.getInteger(NetworkFolder.FOLDER_ID);
         }
+        getTransferHandler().readCustomNBT(tag, type);
     }
 
     public boolean canAccess(EntityPlayer player) {
-        if(!network.isInvalid()) {
-            if(EntityPlayer.getUUID(player.getGameProfile()).equals(playerUUID)) {
+        if (!network.isInvalid()) {
+            if (EntityPlayer.getUUID(player.getGameProfile()).equals(playerUUID)) {
                 return true;
             }
             return network.getMemberPermission(player).canAccess();
@@ -328,7 +321,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     @Override
-    public World getDimension() {
+    public final World getFluxWorld() {
         return world;
     }
 
@@ -342,21 +335,38 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     @Override
-    public int getPriority() {
+    public int getLogicPriority() {
         return surgeMode ? Integer.MAX_VALUE : priority;
     }
 
+    @Override
     public void open(EntityPlayer player) {
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             playerUsing.add(player);
             sendPackets();
         }
     }
 
+    @Override
     public void close(EntityPlayer player) {
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             playerUsing.remove(player);
         }
+    }
+
+    @Override
+    public long getMaxTransferLimit() {
+        return Long.MAX_VALUE;
+    }
+
+    @Override
+    public final long getTransferBuffer() {
+        return getTransferHandler().getBuffer();
+    }
+
+    @Override
+    public final long getTransferChange() {
+        return getTransferHandler().getChange();
     }
 
     @Override
@@ -380,17 +390,17 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
     }
 
     @Override
-    public long getCurrentLimit() {
+    public final long getLogicLimit() {
         return disableLimit ? Long.MAX_VALUE : limit;
     }
 
     @Override
-    public int getActualPriority() {
+    public final int getRawPriority() {
         return priority;
     }
 
     @Override
-    public long getActualLimit() {
+    public final long getRawLimit() {
         return limit;
     }
 
@@ -403,7 +413,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
 
     @Override
     public Coord4D getCoords() {
-        if(coord4D == null)
+        if (coord4D == null)
             coord4D = new Coord4D(this);
         return coord4D;
     }
@@ -433,7 +443,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                 map.put("ownerUUID", network.getSetting(NetworkSettings.NETWORK_OWNER).toString());
                 map.put("securityType", network.getSetting(NetworkSettings.NETWORK_SECURITY).name().toLowerCase());
                 map.put("energyType", network.getSetting(NetworkSettings.NETWORK_ENERGY).getStorageSuffix());
-                map.put("averageTick", network.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro);
+                map.put("averageTick", network.getSetting(NetworkSettings.NETWORK_STATISTICS).averageTickMicro);
                 return new Object[]{map};
             }
             case "getCountInfo": {
@@ -461,7 +471,7 @@ public abstract class TileFluxCore extends TileEntity implements IFluxConnector,
                 map.put("transferLimit", limit);
                 map.put("surgeMode", surgeMode);
                 map.put("unlimited", disableLimit);
-                map.put("buffer", getTransferHandler().getEnergyStored());
+                map.put("buffer", getTransferHandler().getBuffer());
                 return new Object[]{map};
             }
         }

@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.ConnectionType;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.ITransferHandler;
@@ -18,7 +18,7 @@ public class FluxLiteConnector implements IFluxConnector {
     public int networkID;
     public int priority;
     public UUID playerUUID;
-    public EnumConnectionType connectionType;
+    public ConnectionType connectionType;
     public long limit;
     public Coord4D coord4D;
     public int folderID;
@@ -33,10 +33,10 @@ public class FluxLiteConnector implements IFluxConnector {
 
     public FluxLiteConnector(IFluxConnector tile) {
         this.networkID = tile.getNetworkID();
-        this.priority = tile.getActualPriority();
+        this.priority = tile.getRawPriority();
         this.playerUUID = tile.getConnectionOwner();
         this.connectionType = tile.getConnectionType();
-        this.limit = tile.getActualLimit();
+        this.limit = tile.getRawLimit();
         this.coord4D = tile.getCoords();
         this.folderID = tile.getFolderID();
         this.customName = tile.getCustomName();
@@ -57,15 +57,15 @@ public class FluxLiteConnector implements IFluxConnector {
         tile.getCoords().write(tag);
         tag.setInteger("type", tile.getConnectionType().ordinal());
         tag.setInteger("n_id", tile.getNetworkID());
-        tag.setInteger("priority", tile.getActualPriority());
+        tag.setInteger("priority", tile.getRawPriority());
         tag.setInteger("folder_id", tile.getFolderID());
-        tag.setLong("limit", tile.getActualLimit());
+        tag.setLong("limit", tile.getRawLimit());
         tag.setString("name", tile.getCustomName());
         tag.setBoolean("dLimit", tile.getDisableLimit());
         tag.setBoolean("surge", tile.getSurgeMode());
         tag.setBoolean("isChunkLoaded", tile.isChunkLoaded());
-        tag.setLong("buffer", tile.getBuffer());
-        tag.setLong("change", tile.getChange());
+        tag.setLong("buffer", tile.getTransferBuffer());
+        tag.setLong("change", tile.getTransferChange());
         tag.setBoolean("forcedChunk", tile.isForcedLoading());
         tile.getDisplayStack().writeToNBT(tag);
         return tag;
@@ -93,7 +93,7 @@ public class FluxLiteConnector implements IFluxConnector {
     @Override
     public void readCustomNBT(NBTTagCompound tag, NBTType type) {
         coord4D = new Coord4D(tag);
-        connectionType = EnumConnectionType.values()[tag.getInteger("type")];
+        connectionType = ConnectionType.values()[tag.getInteger("type")];
         networkID = tag.getInteger("n_id");
         priority = tag.getInteger("priority");
         folderID = tag.getInteger("folder_id");
@@ -114,12 +114,12 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
-    public int getPriority() {
+    public int getLogicPriority() {
         return priority;
     }
 
     @Override
-    public int getActualPriority() {
+    public int getRawPriority() {
         return priority;
     }
 
@@ -140,7 +140,7 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
-    public EnumConnectionType getConnectionType() {
+    public ConnectionType getConnectionType() {
         return connectionType;
     }
 
@@ -171,18 +171,23 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
-    public World getDimension() {
+    public World getFluxWorld() {
         return null;
     }
 
     @Override
-    public long getCurrentLimit() {
+    public long getLogicLimit() {
         return limit;
     }
 
     @Override
-    public long getActualLimit() {
+    public long getRawLimit() {
         return limit;
+    }
+
+    @Override
+    public long getMaxTransferLimit() {
+        return 0;
     }
 
     @Override
@@ -221,12 +226,12 @@ public class FluxLiteConnector implements IFluxConnector {
     }
 
     @Override
-    public long getBuffer() {
+    public long getTransferBuffer() {
         return buffer;
     }
 
     @Override
-    public long getChange() {
+    public long getTransferChange() {
         return change;
     }
 

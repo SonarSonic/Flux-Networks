@@ -2,34 +2,38 @@ package sonar.fluxnetworks.common.connection;
 
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 
+import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 
-public class TransferIterator<T extends IFluxConnector> {
+public class TransferIterator<T extends IFluxConnector> implements Iterator<T> {
+
+    private final boolean isPoint;
 
     private Iterator<PriorityGroup<T>> groupIterator;
     private PriorityGroup<T> currentGroup;
-
     private Iterator<T> fluxIterator;
     private T currentFlux;
 
-    private boolean isPoint;
-    public boolean finish = false;
+    private boolean finish;
 
-    public void reset(List<PriorityGroup<T>> list, boolean isPoint) {
+    public TransferIterator(boolean isPoint) {
+        this.isPoint = isPoint;
+    }
+
+    public void reset(@Nonnull List<PriorityGroup<T>> list) {
         groupIterator = list.iterator();
         currentGroup = null;
         fluxIterator = null;
         currentFlux = null;
-        this.isPoint = isPoint;
         finish = false;
         incrementGroup();
     }
 
-    public boolean incrementGroup() {
-        if(groupIterator.hasNext()) {
+    private boolean incrementGroup() {
+        if (groupIterator.hasNext()) {
             currentGroup = groupIterator.next();
-            fluxIterator = currentGroup.connectors.iterator();
+            fluxIterator = currentGroup.getConnectors().iterator();
             return incrementFlux();
         }
         finish = true;
@@ -37,32 +41,34 @@ public class TransferIterator<T extends IFluxConnector> {
     }
 
     public boolean incrementFlux() {
-        if(fluxIterator.hasNext()) {
+        if (fluxIterator.hasNext()) {
             currentFlux = fluxIterator.next();
             return needTransfer() || incrementFlux();
         }
         return incrementGroup();
     }
 
-    public boolean needTransfer() {
-        if(!currentFlux.isActive()) {
+    private boolean needTransfer() {
+        if (!currentFlux.isActive()) {
             return false;
         }
-        if(isPoint) {
+        if (isPoint) {
             return currentFlux.getTransferHandler().getRequest() > 0;
         } else {
             return currentFlux.getTransferHandler().getBuffer() > 0;
         }
     }
 
-    public T getCurrentFlux() {
-        return currentFlux;
-    }
-
+    @Override
     public boolean hasNext() {
-        if(finish) {
+        if (finish) {
             return false;
         }
         return needTransfer() || incrementFlux();
+    }
+
+    @Override
+    public T next() {
+        return currentFlux;
     }
 }

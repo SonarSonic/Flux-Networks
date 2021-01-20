@@ -4,11 +4,11 @@ import com.google.common.collect.Lists;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.ConnectionType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.button.TextboxButton;
@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -40,7 +39,7 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
     protected List<SlidedSwitchButton> switches = Lists.newArrayList();
 
     public IFluxNetwork network;
-    public EnumAccessType accessPermission = EnumAccessType.NONE;
+    public AccessLevel accessPermission = AccessLevel.NONE;
     protected boolean networkValid;
     private int timer1;
 
@@ -137,9 +136,9 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
         GlStateManager.enableAlpha();
         GlStateManager.color(1.0f, 1.0f, 1.0f);
 
-        fontRenderer.drawString(FluxUtils.getTransferInfo(fluxConnector.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), fluxConnector.getTransferHandler().getChange()), x, y, color);
+        fontRenderer.drawString(FluxUtils.getTransferInfo(fluxConnector.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), fluxConnector.getTransferChange()), x, y, color);
         fontRenderer.drawString((fluxConnector.getConnectionType().isStorage() ? FluxTranslate.ENERGY.t() : FluxTranslate.BUFFER.t()) +
-                ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferHandler().getEnergyStored(), FluxUtils.TypeNumberFormat.COMMAS,
+                ": " + TextFormatting.BLUE + FluxUtils.format(fluxConnector.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMMAS,
                 network.getSetting(NetworkSettings.NETWORK_ENERGY), false), x, y + 10, 0xffffff);
 
         renderItemStack(fluxConnector.getDisplayStack(), x - 20, y + 1);
@@ -156,25 +155,25 @@ public abstract class GuiFluxCore extends GuiPopUpHost {
             if(flux.isForcedLoading()) {
                 list.add(TextFormatting.AQUA + FluxTranslate.FORCED_LOADING.t());
             }
-            list.add(FluxUtils.getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getChange()));
-            if(flux.getConnectionType() == EnumConnectionType.STORAGE) {
-                list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+            list.add(FluxUtils.getTransferInfo(flux.getConnectionType(), network.getSetting(NetworkSettings.NETWORK_ENERGY), flux.getTransferChange()));
+            if(flux.getConnectionType() == ConnectionType.STORAGE) {
+                list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
             } else {
-                list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
             }
         } else {
             list.add(TextFormatting.RED + FluxTranslate.CHUNK_UNLOADED.t());
             if(tag != null) {
                 if (tag.hasKey("energy")) {
-                    list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getInteger("energy")) + "RF");
+                    list.add(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getLong("energy")) + "RF");
                 } else {
                     list.add(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.BLUE + NumberFormat.getInstance().format(tag.getLong("buffer")) + "RF");
                 }
             }
         }
 
-        list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getCurrentLimit()));
-        list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getPriority()));
+        list.add(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getLogicLimit()));
+        list.add(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getLogicPriority()));
         list.add(TextFormatting.ITALIC + flux.getCoords().getStringInfo());
         return list;
     }

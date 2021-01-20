@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.tiles;
 
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.ConnectionType;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
@@ -15,33 +15,35 @@ import net.minecraft.world.World;
 import java.util.UUID;
 
 /**
- * extended by IFluxPoint and IFluxPlug
+ * Extended by IFluxPoint and IFluxPlug
  */
-
-///TODO remove common references
 public interface IFluxConnector extends INetworkConnector {
 
     NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type);
 
     void readCustomNBT(NBTTagCompound tag, NBTType type);
 
-    int getPriority();
+    int getLogicPriority();
 
-    int getActualPriority(); // ignore surge
+    int getRawPriority(); // ignore surge
 
     UUID getConnectionOwner();
 
-    EnumConnectionType getConnectionType();
+    ConnectionType getConnectionType();
 
     boolean canAccess(EntityPlayer player);
 
-    long getCurrentLimit();
+    long getLogicLimit();
 
-    long getActualLimit(); // ignore disable limit
+    long getRawLimit(); // ignore disable limit
 
-    default long getMaxTransferLimit() {
-        return Long.MAX_VALUE;
-    }
+    /**
+     * If this device is storage, this method returns the max energy storage of it,
+     * or Long.MAX_VALUE otherwise
+     *
+     * @return max transfer limit
+     */
+    long getMaxTransferLimit();
 
     boolean isActive();
 
@@ -55,7 +57,7 @@ public interface IFluxConnector extends INetworkConnector {
 
     ITransferHandler getTransferHandler();
 
-    World getDimension();
+    World getFluxWorld();
 
     Coord4D getCoords();
 
@@ -67,13 +69,15 @@ public interface IFluxConnector extends INetworkConnector {
 
     boolean getSurgeMode();
 
-    default long getBuffer() {
-        return getTransferHandler().getEnergyStored();
-    }
+    /**
+     * Transfer handler is unavailable on client, this method is mainly used for gui display on client
+     * If this device is storage, this method returns the energy stored of it
+     *
+     * @return internal buffer or energy stored
+     */
+    long getTransferBuffer();
 
-    default long getChange() {
-        return getTransferHandler().getChange();
-    }
+    long getTransferChange();
 
     default void setChunkLoaded(boolean chunkLoaded) {}
 

@@ -7,13 +7,13 @@ import javax.annotation.Nonnull;
 
 public interface ITileEnergyHandler {
 
-    boolean canRenderConnection(@Nonnull TileEntity tile, EnumFacing side);
+    boolean hasCapability(@Nonnull TileEntity tile, EnumFacing side);
 
-    boolean canAddEnergy(TileEntity tile, EnumFacing side);
+    boolean canAddEnergy(@Nonnull TileEntity tile, EnumFacing side);
 
-    boolean canRemoveEnergy(TileEntity tile, EnumFacing side);
+    boolean canRemoveEnergy(@Nonnull TileEntity tile, EnumFacing side);
 
-    long addEnergy(long amount, TileEntity tile, EnumFacing side, boolean simulate);
+    long addEnergy(long amount, @Nonnull TileEntity tile, EnumFacing side, boolean simulate);
 
-    long removeEnergy(long amount, TileEntity tile, EnumFacing side);
+    long removeEnergy(long amount, @Nonnull TileEntity tile, EnumFacing side);
 }

@@ -1,95 +1,54 @@
 package sonar.fluxnetworks.common.connection.transfer;
 
-import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
-import sonar.fluxnetworks.api.network.IFluxTransfer;
-import sonar.fluxnetworks.api.network.ISidedTransfer;
-import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.common.core.FluxUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 
-public class ConnectionTransfer implements IFluxTransfer, ISidedTransfer {
+import javax.annotation.Nonnull;
 
-    public final ITransferHandler transferHandler;
-    public final ITileEnergyHandler energyHandler;
-    public final TileEntity tile;
-    public final EnumFacing side;
-    public final ItemStack displayStack;
+public class ConnectionTransfer {
 
-    public long added;
-    public long removed;
+    private final ITileEnergyHandler energyHandler;
+    private final TileEntity tile;
+    private final EnumFacing side;
+    private final ItemStack displayStack;
 
-    public ConnectionTransfer(ITransferHandler transferHandler, ITileEnergyHandler energyHandler, TileEntity tile, EnumFacing side) {
-        this.transferHandler = transferHandler;
+    public long outbound;
+    public long inbound;
+
+    public ConnectionTransfer(ITileEnergyHandler energyHandler, @Nonnull TileEntity tile, @Nonnull EnumFacing dir) {
         this.energyHandler = energyHandler;
         this.tile = tile;
-        this.side = side;
-        this.displayStack = FluxUtils.getBlockItem(tile.getWorld(), tile.getPos());
+        this.side = dir.getOpposite(); // the tile is on our north side, we charge it from its south side
+        this.displayStack = new ItemStack(tile.getBlockType());
     }
 
-    /**
-     * Flux Plug
-     * @param amount
-     * @return
-     */
-    @Override
-    public long addToNetwork(long amount, boolean simulate) {
-        return 0;
-    }
-
-    /**
-     * Flux point
-     * @param amount
-     * @param simulate
-     * @return
-     */
-    @Override
-    public long removeFromNetwork(long amount, boolean simulate) {
-        EnumFacing dir = side.getOpposite();
-        if(energyHandler.canAddEnergy(tile, dir)) {
-            long added = energyHandler.addEnergy(amount, tile, dir, simulate);
-            if(!simulate) {
-                removedFromNetwork(added);
+    public long sendToTile(long amount, boolean simulate) {
+        if (energyHandler.canAddEnergy(tile, side)) {
+            long added = energyHandler.addEnergy(amount, tile, side, simulate);
+            if (!simulate) {
+                inbound += added;
             }
             return added;
         }
         return 0;
     }
 
-    @Override
-    public void addedToNetwork(long amount) {
-        added += amount;
+    public void onEnergyReceived(long amount) {
+        outbound += amount;
     }
 
-    @Override
-    public void removedFromNetwork(long amount) {
-        removed += amount;
+    public void onCycleStart() {
+        outbound = 0;
+        inbound = 0;
     }
 
-    @Override
-    public void onServerStartTick() {
-        added = 0;
-        removed = 0;
-    }
-
-    @Override
     public TileEntity getTile() {
         return tile;
     }
 
-    @Override
-    public EnumFacing getSide() {
-        return side;
-    }
-
-    @Override
     public ItemStack getDisplayStack() {
         return displayStack;
-    }
-
-    @Override
-    public boolean isInvalid() {
-        return tile.isInvalid();
     }
 }

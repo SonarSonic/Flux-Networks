@@ -13,7 +13,7 @@ public class NetworkMember{
 
     private UUID playerUUID;
     private String cachedName;
-    private EnumAccessType accessPermission;
+    private AccessLevel accessPermission;
 
     NetworkMember() {}
 
@@ -21,7 +21,7 @@ public class NetworkMember{
         readNetworkNBT(nbt);
     }
 
-    public static NetworkMember createNetworkMember(EntityPlayer player, EnumAccessType permissionLevel) {
+    public static NetworkMember createNetworkMember(EntityPlayer player, AccessLevel permissionLevel) {
         NetworkMember t = new NetworkMember();
         GameProfile profile = player.getGameProfile();
 
@@ -50,7 +50,7 @@ public class NetworkMember{
             t.playerUUID = EntityPlayer.getOfflineUUID(username);
         }
         t.cachedName = username;
-        t.accessPermission = EnumAccessType.USER;
+        t.accessPermission = AccessLevel.USER;
         return t;
     }
 
@@ -58,7 +58,7 @@ public class NetworkMember{
         return cachedName;
     }
 
-    public EnumAccessType getAccessPermission() {
+    public AccessLevel getAccessPermission() {
         return accessPermission;
     }
 
@@ -66,14 +66,14 @@ public class NetworkMember{
         return playerUUID;
     }
 
-    public void setAccessPermission(EnumAccessType accessPermission) {
+    public void setAccessPermission(AccessLevel accessPermission) {
         this.accessPermission = accessPermission;
     }
 
     public void readNetworkNBT(NBTTagCompound nbt) {
         playerUUID = nbt.getUniqueId("playerUUID");
         cachedName = nbt.getString("cachedName");
-        accessPermission = EnumAccessType.values()[nbt.getByte("playerAccess")];
+        accessPermission = AccessLevel.values()[nbt.getByte("playerAccess")];
     }
 
     public NBTTagCompound writeNetworkNBT(NBTTagCompound nbt) {

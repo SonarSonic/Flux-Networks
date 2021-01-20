@@ -1,10 +1,10 @@
 package sonar.fluxnetworks;
 
-import sonar.fluxnetworks.common.handler.ItemEnergyHandler;
-import sonar.fluxnetworks.common.handler.TileEntityHandler;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import sonar.fluxnetworks.common.handler.ItemEnergyHandler;
+import sonar.fluxnetworks.common.handler.TileEntityHandler;
 
 import java.io.File;
 
@@ -35,13 +35,13 @@ public class FluxConfig {
 
     public static void verifyAndReadBlacklist() {
         TileEntityHandler.blockBlacklist.clear();
-        for(String str : blockBlacklistStrings) {
-            if(!str.contains(":")) {
+        for (String str : blockBlacklistStrings) {
+            if (!str.contains(":")) {
                 FluxNetworks.logger.error("BLACKLIST ERROR: " + str + " has incorrect formatting, please use 'modid:name@meta'");
             }
             String root = str;
             int meta = -1;
-            if(str.contains("@")) {
+            if (str.contains("@")) {
                 String[] split = str.split("@");
                 root = split[0];
                 try {
@@ -55,13 +55,13 @@ public class FluxConfig {
             }
         }
         ItemEnergyHandler.itemBlackList.clear();
-        for(String str : itemBlackListStrings) {
-            if(!str.contains(":")) {
+        for (String str : itemBlackListStrings) {
+            if (!str.contains(":")) {
                 FluxNetworks.logger.error("BLACKLIST ERROR: " + str + " has incorrect formatting, please use 'modid:name@meta'");
             }
             String root = str;
             int meta = -1;
-            if(str.contains("@")) {
+            if (str.contains("@")) {
                 String[] split = str.split("@");
                 root = split[0];
                 try {
@@ -77,7 +77,7 @@ public class FluxConfig {
     }
 
     public static void generateFluxChunkConfig() {
-        if(!ForgeChunkManager.getConfig().hasCategory(FluxNetworks.MODID)) {
+        if (!ForgeChunkManager.getConfig().hasCategory(FluxNetworks.MODID)) {
             ForgeChunkManager.getConfig().get(FluxNetworks.MODID, "maximumChunksPerTicket", 1000000).setMinValue(0);
             ForgeChunkManager.getConfig().get(FluxNetworks.MODID, "maximumTicketCount", 1000000).setMinValue(0);
             ForgeChunkManager.getConfig().save();
@@ -111,7 +111,7 @@ public class FluxConfig {
         itemBlackListStrings = getBlackList("Item Transfer Blacklist", BLACKLIST, new String[]{}, "a blacklist for items which the Flux Controller shouldn't transfer to, use format 'modid:name@meta'");
     }
 
-    public static String[] getBlackList(String name, String category, String[] defaultValue, String comment){
+    public static String[] getBlackList(String name, String category, String[] defaultValue, String comment) {
         Property prop = config.get(category, name, defaultValue);
         prop.setLanguageKey(name);
         prop.setValidValues(null);

@@ -1,10 +1,11 @@
-package sonar.fluxnetworks.api.gui;
+package sonar.fluxnetworks.api.network;
 
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.translate.Translation;
 
-public enum EnumChargingTypes {
+import javax.annotation.Nonnull;
 
+public enum WirelessType {
     ENABLE_WIRELESS(FluxTranslate.ENABLE_WIRELESS),
     RIGHT_HAND(FluxTranslate.RIGHT_HAND),
     LEFT_HAND(FluxTranslate.LEFT_HAND),
@@ -13,21 +14,21 @@ public enum EnumChargingTypes {
     BAUBLES(FluxTranslate.BAUBLES),
     INVENTORY(FluxTranslate.INVENTORY);
 
-    Translation typeName;
+    private final Translation typeName;
 
-    EnumChargingTypes(Translation typeName){
+    WirelessType(Translation typeName){
         this.typeName = typeName;
     }
 
     public boolean isActivated(int setting){
-        if(this == INVENTORY){
+        if (this == INVENTORY) {
             return false;
         }
-        if(this == ENABLE_WIRELESS){
-             return (setting & 1) == 1;
-        }
-
         return (setting >> ordinal() & 1) == 1;
+    }
+
+    public boolean isActivated(@Nonnull IFluxNetwork network) {
+        return isActivated(network.getSetting(NetworkSettings.NETWORK_WIRELESS));
     }
 
     public String getTranslatedName(){

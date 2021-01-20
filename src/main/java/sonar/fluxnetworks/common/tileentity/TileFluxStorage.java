@@ -1,74 +1,75 @@
 package sonar.fluxnetworks.common.tileentity;
 
-import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
-import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.api.tiles.IFluxEnergy;
-import sonar.fluxnetworks.api.tiles.IFluxStorage;
-import sonar.fluxnetworks.common.data.FluxNetworkData;
-import sonar.fluxnetworks.common.connection.handler.SingleTransferHandler;
-import sonar.fluxnetworks.common.connection.transfer.StorageTransfer;
-import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import li.cil.oc.api.machine.Arguments;
 import mcjty.lib.api.power.IBigPower;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Optional;
+import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.network.ConnectionType;
+import sonar.fluxnetworks.api.network.ITransferHandler;
+import sonar.fluxnetworks.api.tiles.IFluxStorage;
+import sonar.fluxnetworks.common.connection.transfer.FluxStorageHandler;
+import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.data.FluxNetworkData;
+import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Optional.Interface(iface = "mcjty.lib.api.power.IBigPower", modid = "theoneprobe")
-public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFluxEnergy, IBigPower {
+public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IBigPower {
 
-    public final SingleTransferHandler handler = new SingleTransferHandler(this, new StorageTransfer(this));
+    private final FluxStorageHandler handler = new FluxStorageHandler(this);
 
-    public static final int C = 1000000;
-    public static final int D = -10000;
-
-    public int energyStored;
-    public int maxEnergyStorage;
+    public static final int PRI_DIFF = 1000000; // to get the lowest priority across the network
+    public static final int PRI_UPPER = -10000; // the priority upper limit for storages
 
     private boolean needSyncEnergy = false;
 
-    public ItemStack stack = ItemStack.EMPTY;
+    private final ItemStack stack;
 
     public TileFluxStorage() {
-        this(FluxConfig.basicCapacity);
+        this(new ItemStack(RegistryBlocks.FLUX_STORAGE_1));
         customName = "Basic Storage";
         limit = FluxConfig.basicTransfer;
-        stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_1);
     }
 
-    private TileFluxStorage(int maxEnergyStorage) {
-        this.maxEnergyStorage = maxEnergyStorage;
+    private TileFluxStorage(ItemStack stack) {
+        this.stack = stack;
     }
 
     public static class Herculean extends TileFluxStorage {
 
         public Herculean() {
-            super(FluxConfig.herculeanCapacity);
+            super(new ItemStack(RegistryBlocks.FLUX_STORAGE_2));
             customName = "Herculean Storage";
             limit = FluxConfig.herculeanTransfer;
-            stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_2);
+        }
+
+        @Override
+        public long getMaxTransferLimit() {
+            return FluxConfig.herculeanCapacity;
         }
     }
 
     public static class Gargantuan extends TileFluxStorage {
 
         public Gargantuan() {
-            super(FluxConfig.gargantuanCapacity);
+            super(new ItemStack(RegistryBlocks.FLUX_STORAGE_3));
             customName = "Gargantuan Storage";
             limit = FluxConfig.gargantuanTransfer;
-            stack = new ItemStack(RegistryBlocks.FLUX_STORAGE_3);
+        }
+
+        @Override
+        public long getMaxTransferLimit() {
+            return FluxConfig.gargantuanCapacity;
         }
     }
 
     @Override
-    public EnumConnectionType getConnectionType() {
-        return EnumConnectionType.STORAGE;
+    public ConnectionType getConnectionType() {
+        return ConnectionType.STORAGE;
     }
 
     @Override
@@ -77,32 +78,15 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     }
 
     @Override
-    public NBTTagCompound writeCustomNBT(NBTTagCompound tag, NBTType type) {
-        super.writeCustomNBT(tag, type);
-        tag.setInteger("energy", energyStored);
-        return tag;
-    }
-
-    public long addEnergy(long amount, boolean simulate) {
-        long energyReceived = Math.min(maxEnergyStorage - energyStored, amount);
-        if (!simulate) {
-            energyStored += energyReceived;
-            needSyncEnergy = true;
+    public void update() {
+        super.update();
+        if (!world.isRemote) {
+            sendPacketIfNeeded();
         }
-        return energyReceived;
-    }
-
-    public long removeEnergy(long amount, boolean simulate) {
-        long energyExtracted = Math.min(energyStored, amount);
-        if (!simulate) {
-            energyStored -= energyExtracted;
-            needSyncEnergy = true;
-        }
-        return energyExtracted;
     }
 
     /** on server side **/
-    public void sendPacketIfNeeded() {
+    private void sendPacketIfNeeded() {
         if (needSyncEnergy) {
             if ((world.getWorldTime() & 3) == 0) {
                 sendPackets();
@@ -111,37 +95,25 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
         }
     }
 
-    @Override
-    public long getEnergy() {
-        return energyStored;
+    public void markServerEnergyChanged() {
+        needSyncEnergy = true;
     }
 
     @Override
-    public long getCurrentLimit() {
-        return disableLimit ? maxEnergyStorage : Math.min(limit, maxEnergyStorage);
-    }
-
-    @Override
-    public int getPriority() {
-        return surgeMode ? D : Math.min(priority - C, D);
+    public int getLogicPriority() {
+        return surgeMode ? PRI_UPPER : Math.min(priority - PRI_DIFF, PRI_UPPER);
     }
 
     @Override
     public long getMaxTransferLimit() {
-        return maxEnergyStorage;
-    }
-
-    @Override
-    public void readCustomNBT(NBTTagCompound tag, NBTType type) {
-        super.readCustomNBT(tag, type);
-        energyStored = tag.getInteger("energy");
+        return FluxConfig.basicCapacity;
     }
 
     public ItemStack writeStorageToDisplayStack(ItemStack stack) {
         NBTTagCompound tag = new NBTTagCompound();
 
         NBTTagCompound subTag = new NBTTagCompound();
-        subTag.setInteger("energy", energyStored);
+        subTag.setLong("energy", getTransferBuffer());
         subTag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
 
         tag.setTag(FluxUtils.FLUX_DATA, subTag);
@@ -159,13 +131,13 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
     @Override
     @Optional.Method(modid = "theoneprobe")
     public long getStoredPower(){
-        return this.energyStored;
+        return getTransferBuffer();
     }
 
     @Override
     @Optional.Method(modid = "theoneprobe")
     public long getCapacity(){
-        return this.maxEnergyStorage;
+        return getMaxTransferLimit();
     }
 
     @Override
@@ -182,8 +154,8 @@ public class TileFluxStorage extends TileFluxCore implements IFluxStorage, IFlux
             map.put("transferLimit", limit);
             map.put("surgeMode", surgeMode);
             map.put("unlimited", disableLimit);
-            map.put("energyStored", getTransferHandler().getEnergyStored());
-            map.put("maxStorage", maxEnergyStorage);
+            map.put("energyStored", getTransferBuffer());
+            map.put("maxStorage", getMaxTransferLimit());
             return new Object[]{map};
         }
         return super.invokeMethods(method, arguments);

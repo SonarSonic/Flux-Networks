@@ -2,7 +2,7 @@ package sonar.fluxnetworks.client.gui.popups;
 
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
@@ -31,15 +31,15 @@ public class GuiPopUserEdit extends GuiPopCore<GuiTabMembers> {
         popButtons.clear();
         boolean editPermission = host.accessPermission.canEdit();
         boolean ownerPermission = host.accessPermission.canDelete();
-        if(host.selectedPlayer.getAccessPermission() != EnumAccessType.OWNER && editPermission) {
+        if(host.selectedPlayer.getAccessPermission() != AccessLevel.OWNER && editPermission) {
             String text;
             int length;
             int i = 0;
-            if (host.selectedPlayer.getAccessPermission() == EnumAccessType.NONE || host.selectedPlayer.getAccessPermission() == EnumAccessType.SUPER_ADMIN) {
+            if (host.selectedPlayer.getAccessPermission() == AccessLevel.NONE || host.selectedPlayer.getAccessPermission() == AccessLevel.SUPER_ADMIN) {
                 text = FluxTranslate.SET_USER.t();
                 length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                 popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 0));
-                if(host.selectedPlayer.getAccessPermission() == EnumAccessType.SUPER_ADMIN && ownerPermission) {
+                if(host.selectedPlayer.getAccessPermission() == AccessLevel.SUPER_ADMIN && ownerPermission) {
                     text = FluxTranslate.TRANSFER_OWNERSHIP.t();
                     length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                     transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
@@ -47,11 +47,11 @@ public class GuiPopUserEdit extends GuiPopCore<GuiTabMembers> {
                 }
             } else {
                 if(ownerPermission) {
-                    if (host.selectedPlayer.getAccessPermission() == EnumAccessType.USER) {
+                    if (host.selectedPlayer.getAccessPermission() == AccessLevel.USER) {
                         text = FluxTranslate.SET_ADMIN.t();
                         length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 1));
-                    } else if(host.selectedPlayer.getAccessPermission() == EnumAccessType.ADMIN) {
+                    } else if(host.selectedPlayer.getAccessPermission() == AccessLevel.ADMIN) {
                         text = FluxTranslate.SET_USER.t();
                         length = Math.max(64, fontRenderer.getStringWidth(text) + 4);
                         popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12, 2));

@@ -73,8 +73,8 @@ public class GuiPopConnectionEdit extends GuiPopCore<GuiTabConnections> {
 
         if(!batchMode) {
             fluxName.setText(host.singleConnection.getCustomName());
-            priority.setText(String.valueOf(host.singleConnection.getPriority()));
-            limit.setText(String.valueOf(host.singleConnection.getCurrentLimit()));
+            priority.setText(String.valueOf(host.singleConnection.getLogicPriority()));
+            limit.setText(String.valueOf(host.singleConnection.getLogicLimit()));
 
             surge = new SlidedSwitchButton(140, 82, 1, guiLeft, guiTop, host.singleConnection.getSurgeMode());
             unlimited = new SlidedSwitchButton(140, 94, 2, guiLeft, guiTop, host.singleConnection.getDisableLimit());

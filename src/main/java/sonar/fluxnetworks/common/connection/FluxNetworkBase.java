@@ -18,7 +18,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     public ICustomValue<Integer> network_id = new CustomValue<>();
     public ICustomValue<String> network_name = new CustomValue<>();
     public ICustomValue<UUID> network_owner = new CustomValue<>();
-    public ICustomValue<EnumSecurityType> network_security = new CustomValue<>();
+    public ICustomValue<SecurityType> network_security = new CustomValue<>();
     public ICustomValue<String> network_password = new CustomValue<>();
     public ICustomValue<Integer> network_color = new CustomValue<>();
     public ICustomValue<EnergyType> network_energy = new CustomValue<>();
@@ -30,7 +30,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
 
     public FluxNetworkBase() {}
 
-    public FluxNetworkBase(int id, String name, EnumSecurityType security, int color, UUID owner, EnergyType energy, String password) {
+    public FluxNetworkBase(int id, String name, SecurityType security, int color, UUID owner, EnergyType energy, String password) {
         network_id.setValue(id);
         network_name.setValue(name);
         network_security.setValue(security);
@@ -56,7 +56,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
             network_id.setValue(nbt.getInteger(FluxNetworkData.NETWORK_ID));
             network_name.setValue(nbt.getString(FluxNetworkData.NETWORK_NAME));
             network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
-            network_security.setValue(EnumSecurityType.values()[nbt.getInteger(FluxNetworkData.SECURITY_TYPE)]);
+            network_security.setValue(SecurityType.values()[nbt.getInteger(FluxNetworkData.SECURITY_TYPE)]);
             network_password.setValue(nbt.getString(FluxNetworkData.NETWORK_PASSWORD));
             network_color.setValue(nbt.getInteger(FluxNetworkData.NETWORK_COLOR));
             network_energy.setValue(EnergyType.values()[nbt.getInteger(FluxNetworkData.ENERGY_TYPE)]);
@@ -81,7 +81,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
     }
 
     @Override
-    public NBTTagCompound writeNetworkNBT(NBTTagCompound nbt, NBTType type) {
+    public void writeNetworkNBT(NBTTagCompound nbt, NBTType type) {
         if(type == NBTType.NETWORK_GENERAL || type == NBTType.ALL_SAVE) {
             nbt.setInteger(FluxNetworkData.NETWORK_ID, network_id.getValue());
             nbt.setString(FluxNetworkData.NETWORK_NAME, network_name.getValue());
@@ -105,7 +105,7 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
         if(type == NBTType.NETWORK_CONNECTIONS) {
             all_connectors.getValue().removeIf(IFluxConnector::isChunkLoaded);
             @SuppressWarnings("unchecked")
-            List<IFluxConnector> connectors = getConnections(FluxCacheTypes.flux);
+            List<IFluxConnector> connectors = getConnections(FluxLogicType.ANY);
             connectors.forEach(f -> all_connectors.getValue().add(new FluxLiteConnector(f)));
             FluxNetworkData.writeAllConnections(this, nbt);
         }
@@ -116,7 +116,6 @@ public abstract class FluxNetworkBase implements IFluxNetwork {
             nbt.setBoolean("clear", true); // Nothing
         }
 
-        return nbt;
     }
 
 }

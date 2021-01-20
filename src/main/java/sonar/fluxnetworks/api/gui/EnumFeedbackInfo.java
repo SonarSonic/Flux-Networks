@@ -19,7 +19,7 @@ public enum EnumFeedbackInfo {
     SUCCESS(FluxTranslate.EMPTY),
     SUCCESS_2(FluxTranslate.EMPTY); // Sometimes we need another success to compare to the first one
 
-    private Translation localization;
+    private final Translation localization;
 
     EnumFeedbackInfo(Translation localization) {
         this.localization = localization;

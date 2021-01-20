@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.network;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.utils.Coord4D;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.core.FluxUtils;
@@ -48,7 +48,7 @@ public class PacketBatchEditing implements IMessageHandler<PacketBatchEditing.Ba
                     boolean unlimited = message.tag.getBoolean(ItemFluxConnector.DISABLE_LIMIT);
                     boolean load = message.tag.getBoolean("chunkLoad");
                     //noinspection unchecked
-                    List<TileFluxCore> onlineConnectors = network.getConnections(FluxCacheTypes.flux);
+                    List<TileFluxCore> onlineConnectors = network.getConnections(FluxLogicType.ANY);
                     AtomicBoolean reject = new AtomicBoolean(false);
                     PacketHandler.handlePacket(() -> {
                         message.coord4DS.forEach(c -> onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst().ifPresent(f -> {

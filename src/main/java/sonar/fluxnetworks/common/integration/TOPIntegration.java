@@ -45,24 +45,24 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     IFluxConnector flux = (IFluxConnector) tile;
                     if(FluxConfig.enableOneProbeBasicInfo) {
                         iProbeInfo.text(TextFormatting.AQUA + (flux.getNetwork().isInvalid() ? FluxTranslate.ERROR_NO_SELECTED.t() : flux.getNetwork().getNetworkName()));
-                        iProbeInfo.text(FluxUtils.getTransferInfo(flux.getConnectionType(), EnergyType.RF, flux.getChange()));
+                        iProbeInfo.text(FluxUtils.getTransferInfo(flux.getConnectionType(), EnergyType.RF, flux.getTransferChange()));
                         if(entityPlayer.isSneaking()) {
                             if (flux.getConnectionType().isStorage()) {
-                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
                             } else {
-                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getBuffer()) + "RF");
+                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.GREEN + NumberFormat.getInstance().format(flux.getTransferBuffer()) + "RF");
                             }
                         } else {
                             if (flux.getConnectionType().isStorage()) {
-                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.GREEN + FluxUtils.format(flux.getBuffer(), FluxUtils.TypeNumberFormat.COMPACT, "RF"));
+                                iProbeInfo.text(FluxTranslate.ENERGY_STORED.t() + ": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMPACT, "RF"));
                             } else {
-                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.GREEN + FluxUtils.format(flux.getBuffer(), FluxUtils.TypeNumberFormat.COMPACT, "RF"));
+                                iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.t() + ": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(), FluxUtils.TypeNumberFormat.COMPACT, "RF"));
                             }
                         }
                     }
                     if(FluxConfig.enableOneProbeAdvancedInfo && (!FluxConfig.enableOneProbeSneaking || entityPlayer.isSneaking())) {
-                        iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getActualLimit()));
-                        iProbeInfo.text(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getActualPriority()));
+                        iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.t() + ": " + TextFormatting.GREEN + (flux.getDisableLimit() ? FluxTranslate.UNLIMITED.t() : flux.getRawLimit()));
+                        iProbeInfo.text(FluxTranslate.PRIORITY.t() + ": " + TextFormatting.GREEN + (flux.getSurgeMode() ? FluxTranslate.SURGE.t() : flux.getRawPriority()));
                         if (flux.isForcedLoading()) {
                             iProbeInfo.text(TextFormatting.GOLD + FluxTranslate.FORCED_LOADING.t());
                         }

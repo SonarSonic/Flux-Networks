@@ -1,20 +1,22 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
+import net.minecraft.nbt.NBTTagCompound;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.api.tiles.IFluxPlug;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
 import sonar.fluxnetworks.api.tiles.IFluxStorage;
-import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
-import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
-import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NetworkStatistics {
 
-    public final IFluxNetwork network;
+    public static final int CHANGE_COUNT = 6;
+
+    private final IFluxNetwork network;
 
     private int timer;
 
@@ -25,7 +27,8 @@ public class NetworkStatistics {
 
     public long energyInput;
     public long energyOutput;
-    public List<Long> energyChange = new ArrayList<>();
+
+    public final LongList energyChange = new LongArrayList(CHANGE_COUNT);
 
     public long totalBuffer;
     public long totalEnergy;
@@ -34,73 +37,49 @@ public class NetworkStatistics {
     private long energyInput4;
     private long energyOutput4;
 
-    public long average_tick_micro = 0;
+    public int averageTickMicro;
+    private long runningTotalNano;
 
-    public long running_total_micro = 0;
-    public long running_total_count = 0;
-
-    public long network_nano_time;
-    public long network_tick;
+    private long startNanoTime;
 
     public NetworkStatistics(IFluxNetwork network) {
         this.network = network;
-        for (int i = 0; i < 6; i++) {
-            energyChange.add(0L);
-        }
+        energyChange.size(CHANGE_COUNT);
     }
 
-    public void startProfiling(){
-        network_nano_time = System.nanoTime();
+    public void startProfiling() {
+        startNanoTime = System.nanoTime();
     }
 
-    public void stopProfiling(){
-        network_tick += (System.nanoTime()-network_nano_time)/1000;
-    }
-
-    public void onStartServerTick() {
-        network_tick = 0;
-    }
-
-    public void onEndServerTick() {
-        if(timer == 0) {
+    public void stopProfiling() {
+        if (timer == 0) {
             weakestTick();
         }
-        if(timer % 5 == 0) {
+        if (timer % 5 == 0) {
             weakTick();
         }
-        if(timer % 20 == 0) {
+        if (timer % 20 == 0) {
             weakerTick();
         }
+        runningTotalNano += System.nanoTime() - startNanoTime;
 
-        running_total_micro+=network_tick;
-        running_total_count ++;
-
-        if(running_total_count >= 20) {
-            average_tick_micro = running_total_micro / running_total_count;
-
-            running_total_micro = 0;
-            running_total_count = 0;
-        }
-
-        timer++;
-        timer %= 100;
+        timer = ++timer % 100;
     }
 
     /**
      * Called every 5 ticks
      */
-    @SuppressWarnings("unchecked")
     private void weakTick() {
-        List<IFluxPlug> plugs = network.getConnections(FluxCacheTypes.plug);
+        List<IFluxPlug> plugs = network.getConnections(FluxLogicType.PLUG);
         plugs.forEach(p -> {
-            if(!(p instanceof TileFluxStorage)) {
-                energyInput4 += p.getTransferHandler().getChange();
+            if (!p.getConnectionType().isStorage()) {
+                energyInput4 += p.getTransferChange();
             }
         });
-        List<IFluxPoint> points = network.getConnections(FluxCacheTypes.point);
+        List<IFluxPoint> points = network.getConnections(FluxLogicType.POINT);
         points.forEach(p -> {
-            if(!(p instanceof TileFluxStorage)) {
-                energyOutput4 -= p.getTransferHandler().getChange();
+            if (!p.getConnectionType().isStorage()) {
+                energyOutput4 -= p.getTransferChange();
             }
         });
     }
@@ -108,49 +87,47 @@ public class NetworkStatistics {
     /**
      * Called every 20 ticks
      */
-    @SuppressWarnings("unchecked")
     private void weakerTick() {
         totalBuffer = 0;
         totalEnergy = 0;
-        List<IFluxPlug> plugs = network.getConnections(FluxCacheTypes.plug);
-        plugs.forEach(p -> {
-            if(p instanceof TileFluxPlug) {
-                totalBuffer += p.getTransferHandler().getBuffer();
+        List<IFluxConnector> devices = network.getConnections(FluxLogicType.ANY);
+        devices.forEach(p -> {
+            if (!p.getConnectionType().isStorage()) {
+                totalBuffer += p.getTransferBuffer();
             }
         });
-        List<IFluxStorage> storages = network.getConnections(FluxCacheTypes.storage);
-        storages.forEach(p -> totalEnergy += p.getTransferHandler().getEnergyStored());
-        fluxControllerCount = network.getConnections(FluxCacheTypes.controller).size();
+        List<IFluxStorage> storages = network.getConnections(FluxLogicType.STORAGE);
+        storages.forEach(p -> totalEnergy += p.getTransferBuffer());
+        fluxControllerCount = network.getConnections(FluxLogicType.CONTROLLER).size();
         fluxStorageCount = storages.size();
-        fluxPlugCount = plugs.size() - fluxStorageCount;
-        fluxPointCount = network.getConnections(FluxCacheTypes.point).size() - fluxStorageCount - fluxControllerCount;
+        fluxPlugCount = network.getConnections(FluxLogicType.PLUG).size() - fluxStorageCount;
+        fluxPointCount = network.getConnections(FluxLogicType.POINT).size() - fluxStorageCount - fluxControllerCount;
         energyInput = energyInput4 / 4;
         energyOutput = energyOutput4 / 4;
         energyInput4 = 0;
         energyOutput4 = 0;
         energyChange5 += Math.max(energyInput, energyOutput);
 
+        averageTickMicro = (int) Math.min(runningTotalNano / 20000, Integer.MAX_VALUE);
+        runningTotalNano = 0;
     }
 
     /**
      * Called every 100 ticks
      */
     private void weakestTick() {
-        long change = energyChange5 / 5;
-        energyChange5 = 0;
-        for (int i = 0; i < energyChange.size(); i++) {
-            if(i > 0) {
-                energyChange.set(i - 1, energyChange.get(i));
-            }
+        for (int i = 1; i < CHANGE_COUNT; i++) {
+            energyChange.set(i - 1, energyChange.getLong(i));
         }
-        energyChange.set(5, change);
+        energyChange.set(CHANGE_COUNT - 1, energyChange5 / 5);
+        energyChange5 = 0;
     }
 
-    public int getConnectionCount(){
+    public int getConnectionCount() {
         return this.fluxPlugCount + this.fluxPointCount + this.fluxStorageCount + this.fluxControllerCount;
     }
 
-    public NBTTagCompound writeNBT(NBTTagCompound tag) {
+    public void writeNBT(NBTTagCompound tag) {
         tag.setInteger("i1", fluxPlugCount);
         tag.setInteger("i2", fluxPointCount);
         tag.setInteger("i3", fluxControllerCount);
@@ -159,12 +136,11 @@ public class NetworkStatistics {
         tag.setLong("l2", energyOutput);
         tag.setLong("l3", totalBuffer);
         tag.setLong("l4", totalEnergy);
-        tag.setLong("l5", average_tick_micro);
+        tag.setInteger("9", averageTickMicro);
 
         for (int i = 0; i < energyChange.size(); i++) {
             tag.setLong("a" + i, energyChange.get(i));
         }
-        return tag;
     }
 
     public void readNBT(NBTTagCompound tag) {
@@ -176,7 +152,7 @@ public class NetworkStatistics {
         energyOutput = tag.getLong("l2");
         totalBuffer = tag.getLong("l3");
         totalEnergy = tag.getLong("l4");
-        average_tick_micro = tag.getLong("l5");
+        averageTickMicro = tag.getInteger("9");
         for (int i = 0; i < 6; i++) {
             energyChange.set(i, tag.getLong("a" + i));
         }

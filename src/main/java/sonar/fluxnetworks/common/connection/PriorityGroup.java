@@ -8,12 +8,13 @@ import java.util.Optional;
 
 /**
  * A single group that points or plugs with same priority
+ *
  * @param <T> Flux Point or Plug
  */
 public class PriorityGroup<T extends IFluxConnector> {
 
-    public final int priority;
-    public final List<T> connectors;
+    private final int priority;
+    private final List<T> connectors;
 
     public PriorityGroup(int priority) {
         this.priority = priority;
@@ -30,7 +31,7 @@ public class PriorityGroup<T extends IFluxConnector> {
 
     public static <T extends IFluxConnector> PriorityGroup<T> getOrCreateGroup(int priority, List<PriorityGroup<T>> groups) {
         Optional<PriorityGroup<T>> group = groups.stream().filter(g -> g.priority == priority).findFirst();
-        if(!group.isPresent()){
+        if (!group.isPresent()) {
             PriorityGroup<T> newGroup = new PriorityGroup<>(priority);
             groups.add(newGroup);
             return newGroup;

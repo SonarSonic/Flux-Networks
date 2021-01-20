@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
-import sonar.fluxnetworks.api.gui.EnumChargingTypes;
+import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiDraw;
 import sonar.fluxnetworks.client.gui.tab.GuiTabWireless;
@@ -10,11 +10,11 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class InventoryButton extends GuiButtonCore {
 
-    public EnumChargingTypes chargeType;
+    public WirelessType chargeType;
     private int texX, texY;
     public GuiTabWireless host;
 
-    public InventoryButton(EnumChargingTypes chargeType, GuiTabWireless host, int x, int y, int texX, int texY, int width, int height) {
+    public InventoryButton(WirelessType chargeType, GuiTabWireless host, int x, int y, int texX, int texY, int width, int height) {
         super(x, y, width, height, chargeType.ordinal());
         this.chargeType = chargeType;
         this.texX = texX;

@@ -2,32 +2,42 @@ package sonar.fluxnetworks.api.network;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import sonar.fluxnetworks.api.utils.NBTType;
 
-import java.util.List;
+import javax.annotation.Nonnull;
 
 public interface ITransferHandler {
 
-    void onLastEndTick();
+    void onCycleStart();
+
+    void onCycleEnd();
 
     long getBuffer();
 
     long getRequest();
 
-    default long getEnergyStored() {
-        return getBuffer();
-    }
-
+    /**
+     * Get the energy change produced by externals in last tick.
+     * For instance, a Plug may receive energy, but not transmit them across the network,
+     * so energy change is the amount it received rather than zero, they just went to the buffer.
+     * If a Point is requesting 1EU but we can only provide 3FE, the 3FE will go to the
+     * Point buffer, and the energy change of the Point is zero rather than 3.
+     *
+     * @return energy change
+     */
     long getChange();
 
-    void updateTransfers(EnumFacing...faces);
+    void addToBuffer(long amount);
 
-    List<IFluxTransfer> getTransfers();
+    long removeFromBuffer(long amount);
 
-    long addToNetwork(long maxAmount);
+    long receiveFromSupplier(long amount, @Nonnull EnumFacing side, boolean simulate);
 
-    long removeFromNetwork(long maxAmount, boolean simulate);
+    void writeCustomNBT(NBTTagCompound tag, NBTType type);
 
-    NBTTagCompound writeNetworkedNBT(NBTTagCompound tag);
+    void readCustomNBT(NBTTagCompound tag, NBTType type);
 
-    void readNetworkedNBT(NBTTagCompound tag);
+    void updateTransfers(EnumFacing... faces);
+
+    void reset();
 }

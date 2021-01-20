@@ -98,7 +98,7 @@ dependencies {
     compileOnly fg.deobf("li.cil.oc:OpenComputers:MC${minecraft_version}-1.7.5.213:api")
 
     compile fg.deobf("curse.maven:baubles-227083:2518667")
-    compileOnly fg.deobf("curse.maven:gregtechce-293327:3167654")
+    compileOnly fg.deobf("curse.maven:gregtechce-293327:3167656")
     compileOnly fg.deobf("curse.maven:industrial-craft-242638:2746894")
     compileOnly fg.deobf("curse.maven:mekanism-268560:2835176")
     compileOnly fg.deobf("curse.maven:redstone-flux-270789:2920436")

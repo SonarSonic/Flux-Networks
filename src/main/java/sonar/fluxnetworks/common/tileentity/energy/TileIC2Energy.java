@@ -66,19 +66,22 @@ public abstract class TileIC2Energy extends TileRedstoneFlux implements IEnergyS
     @Override
     @Optional.Method(modid = "ic2")
     public boolean acceptsEnergyFrom(IEnergyEmitter emitter, EnumFacing side) {
-        return getConnectionType().canAddEnergy();
+        return getConnectionType().isPlug();
     }
 
     @Override
     @Optional.Method(modid = "ic2")
     public double injectEnergy(EnumFacing directionFrom, double amount, double voltage) {
-        return amount - addPhantomEnergyToNetwork(directionFrom.getOpposite(), (long) amount * 4, false) / 4D;
+        if (getConnectionType().isPlug()) {
+            return amount - getTransferHandler().receiveFromSupplier((long) amount * 4, directionFrom.getOpposite(), false) / 4D;
+        }
+        return 0;
     }
 
     @Override
     @Optional.Method(modid = "ic2")
     public boolean emitsEnergyTo(IEnergyAcceptor receiver, EnumFacing side) {
-        return getConnectionType().canRemoveEnergy();
+        return getConnectionType().isPoint();
     }
 
     @Override
@@ -89,7 +92,8 @@ public abstract class TileIC2Energy extends TileRedstoneFlux implements IEnergyS
 
     @Override
     @Optional.Method(modid = "ic2")
-    public void drawEnergy(double amount) { }
+    public void drawEnergy(double amount) {
+    }
 
     @Override
     @Optional.Method(modid = "ic2")

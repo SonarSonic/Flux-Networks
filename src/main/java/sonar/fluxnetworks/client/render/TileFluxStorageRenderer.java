@@ -14,11 +14,11 @@ public class TileFluxStorageRenderer extends TileEntitySpecialRenderer<TileFluxS
     @Override
     public void render(TileFluxStorage te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         enableBlend();
-        render(te.energyStored, te.maxEnergyStorage, te.color | 0xff000000, x, y, z);
+        render(te.getTransferBuffer(), te.getMaxTransferLimit(), te.color | 0xff000000, x, y, z);
         disableBlend();
     }
 
-    public static void render(int stored, int capacity, int colour, double x, double y, double z) {
+    public static void render(long stored, long capacity, int colour, double x, double y, double z) {
         if (stored == 0 || capacity == 0) {
             return;
         }

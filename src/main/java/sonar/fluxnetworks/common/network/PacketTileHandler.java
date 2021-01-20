@@ -2,7 +2,7 @@ package sonar.fluxnetworks.common.network;
 
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumFeedbackInfo;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import sonar.fluxnetworks.common.data.FluxChunkManager;
@@ -31,7 +31,7 @@ public class PacketTileHandler {
         }
         IFluxNetwork network = FluxNetworkCache.instance.getNetwork(id);
         if(!network.isInvalid()) {
-            if(tile.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
+            if(tile.getConnectionType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0) {
                 return new PacketFeedback.FeedbackMessage(EnumFeedbackInfo.HAS_CONTROLLER);
             }
             if(!network.getMemberPermission(player).canAccess()) {

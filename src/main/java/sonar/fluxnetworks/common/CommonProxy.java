@@ -199,14 +199,14 @@ public class CommonProxy {
 
     @SubscribeEvent
     public void onFluxConnected(FluxConnectionEvent.Connected event) {
-        if(!event.flux.getDimension().isRemote) {
+        if(!event.flux.getFluxWorld().isRemote) {
             event.flux.connect(event.network);
         }
     }
 
     @SubscribeEvent
     public void onFluxDisconnect(FluxConnectionEvent.Disconnected event) {
-        if(!event.flux.getDimension().isRemote) {
+        if(!event.flux.getFluxWorld().isRemote) {
             event.flux.disconnect(event.network);
         }
     }

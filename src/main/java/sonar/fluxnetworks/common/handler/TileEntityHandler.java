@@ -3,10 +3,10 @@ package sonar.fluxnetworks.common.handler;
 import com.google.common.collect.Lists;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.common.handler.energy.ForgeEnergyHandler;
-import sonar.fluxnetworks.common.handler.energy.GTEnergyHandler;
-import sonar.fluxnetworks.common.handler.energy.IC2EnergyHandler;
-import sonar.fluxnetworks.common.handler.energy.RedstoneFluxHandler;
+import sonar.fluxnetworks.common.integration.energy.ForgeEnergyHandler;
+import sonar.fluxnetworks.common.integration.energy.GTEnergyHandler;
+import sonar.fluxnetworks.common.integration.energy.IC2EnergyHandler;
+import sonar.fluxnetworks.common.integration.energy.RedstoneFluxHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
@@ -74,7 +74,7 @@ public class TileEntityHandler {
                 return null;
         }
         for(ITileEnergyHandler handler : tileEnergyHandlers) {
-            if(handler.canRenderConnection(tile, side)) {
+            if(handler.hasCapability(tile, side)) {
                 return handler;
             }
         }
@@ -97,7 +97,7 @@ public class TileEntityHandler {
         }
         ITileEnergyHandler handler = null;
         for(ITileEnergyHandler handler1 : tileEnergyHandlers) {
-            if(handler1.canRenderConnection(tile, side)) {
+            if(handler1.hasCapability(tile, side)) {
                 handler = handler1;
             }
         }

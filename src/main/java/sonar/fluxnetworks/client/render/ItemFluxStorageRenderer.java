@@ -30,7 +30,7 @@ public class ItemFluxStorageRenderer extends TileEntityItemStackRenderer {
         NBTTagCompound tag = stack.getSubCompound(FluxUtils.FLUX_DATA);
         if(tag != null) {
             int colour = FluxColorHandler.getOrRequestNetworkColor(tag.getInteger(FluxNetworkData.NETWORK_ID));
-            TileFluxStorageRenderer.render(tag.getInteger("energy"), block.getMaxStorage(), colour, 0.0D, 0.0D, 0.0D);
+            TileFluxStorageRenderer.render(tag.getLong("energy"), block.getMaxStorage(), colour, 0.0D, 0.0D, 0.0D);
         }
     }
 }

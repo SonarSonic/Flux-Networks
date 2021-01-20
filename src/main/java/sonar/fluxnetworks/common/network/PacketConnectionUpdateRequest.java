@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.common.network;
 
 import sonar.fluxnetworks.api.utils.Coord4D;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.common.connection.FluxLiteConnector;
@@ -26,7 +26,7 @@ public class PacketConnectionUpdateRequest implements IMessageHandler<PacketConn
         if(!network.isInvalid()) {
             List<NBTTagCompound> tags = new ArrayList<>();
             //noinspection unchecked
-            List<IFluxConnector> onlineConnectors = network.getConnections(FluxCacheTypes.flux);
+            List<IFluxConnector> onlineConnectors = network.getConnections(FluxLogicType.ANY);
             message.coords.forEach(c ->
                     onlineConnectors.stream().filter(f -> f.getCoords().equals(c)).findFirst()
                             .ifPresent(f -> tags.add(FluxLiteConnector.writeCustomNBT(f, new NBTTagCompound()))));

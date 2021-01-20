@@ -1,17 +1,29 @@
 package sonar.fluxnetworks.common.tileentity;
 
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.ConnectionType;
+import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.api.tiles.IFluxPoint;
+import sonar.fluxnetworks.common.connection.transfer.FluxPointHandler;
+
+import javax.annotation.Nonnull;
 
 public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
+
+    private final FluxPointHandler handler = new FluxPointHandler(this);
 
     public TileFluxPoint() {
         customName = "Flux Point";
     }
 
     @Override
-    public EnumConnectionType getConnectionType() {
-        return EnumConnectionType.POINT;
+    public ConnectionType getConnectionType() {
+        return ConnectionType.POINT;
+    }
+
+    @Nonnull
+    @Override
+    public ITransferHandler getTransferHandler() {
+        return handler;
     }
 
     @Override

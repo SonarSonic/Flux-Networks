@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.network;
 
-import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkCache;
 import io.netty.buffer.ByteBuf;
@@ -19,7 +19,7 @@ public class PacketPermissionRequest implements IMessageHandler<PacketPermission
     public IMessage onMessage(PermissionRequestMessage message, MessageContext ctx) {
         IFluxNetwork network = FluxNetworkCache.instance.getNetwork(message.networkID);
         EntityPlayer player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().getPlayerByUUID(message.uuid);
-        return new PacketGUIPermission.GUIPermissionMessage((network.isInvalid() || player == null) ? EnumAccessType.NONE : network.getMemberPermission(player));
+        return new PacketGUIPermission.GUIPermissionMessage((network.isInvalid() || player == null) ? AccessLevel.NONE : network.getMemberPermission(player));
     }
 
     public static class PermissionRequestMessage implements IMessage {

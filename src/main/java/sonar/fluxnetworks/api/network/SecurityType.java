@@ -3,13 +3,13 @@ package sonar.fluxnetworks.api.network;
 import sonar.fluxnetworks.api.translate.FluxTranslate;
 import sonar.fluxnetworks.api.translate.Translation;
 
-public enum EnumSecurityType {
+public enum SecurityType {
     PUBLIC(FluxTranslate.PUBLIC),
     ENCRYPTED(FluxTranslate.ENCRYPTED);
 
     private Translation localization;
 
-    EnumSecurityType(Translation localization) {
+    SecurityType(Translation localization) {
         this.localization = localization;
     }
 

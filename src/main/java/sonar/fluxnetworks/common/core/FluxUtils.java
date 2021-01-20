@@ -1,10 +1,10 @@
 package sonar.fluxnetworks.common.core;
 
 import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.network.EnumConnectionType;
+import sonar.fluxnetworks.api.network.ConnectionType;
 import sonar.fluxnetworks.api.utils.EnergyType;
 import sonar.fluxnetworks.api.utils.FluxConfigurationType;
-import sonar.fluxnetworks.api.network.FluxCacheTypes;
+import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
@@ -56,8 +56,8 @@ public class FluxUtils {
         return null;
     }
 
-    public static String getTransferInfo(EnumConnectionType type, EnergyType energyType, long change) {
-        if(type.canAddEnergy()) {
+    public static String getTransferInfo(ConnectionType type, EnergyType energyType, long change) {
+        if(type.isPlug()) {
             String b = FluxUtils.format(change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if(change == 0) {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GOLD + b;
@@ -65,7 +65,7 @@ public class FluxUtils {
                 return FluxTranslate.INPUT.t() + ": " + TextFormatting.GREEN + "+" + b;
             }
         }
-        if(type.canRemoveEnergy() || type.isController()) {
+        if(type.isPoint() || type.isController()) {
             String b = FluxUtils.format(-change, FluxUtils.TypeNumberFormat.COMMAS, energyType, true);
             if(change == 0) {
                 return FluxTranslate.OUTPUT.t() + ": " + TextFormatting.GOLD + b;
@@ -74,7 +74,7 @@ public class FluxUtils {
             }
         }
         // Storage are inverted
-        if(type == EnumConnectionType.STORAGE) {
+        if(type == ConnectionType.STORAGE) {
             if(change == 0) {
                 return FluxTranslate.CHANGE.t() + ": " + TextFormatting.GOLD + change + energyType.getUsageSuffix();
             } else if(change > 0) {
@@ -155,7 +155,7 @@ public class FluxUtils {
         if(fluxConnector.getNetworkID() != -1) {
             IFluxNetwork network = FluxNetworkCache.instance.getNetwork(fluxConnector.getNetworkID());
             if(!network.isInvalid()) {
-                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxCacheTypes.controller).size() > 0) {
+                if(fluxConnector.getConnectionType().isController() && network.getConnections(FluxLogicType.CONTROLLER).size() > 0) {
                     return false;
                 }
                 network.queueConnectionAddition(fluxConnector);

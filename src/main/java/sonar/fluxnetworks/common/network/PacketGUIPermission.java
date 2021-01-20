@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.network;
 
-import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.handler.PacketHandler;
 import io.netty.buffer.ByteBuf;
@@ -29,18 +29,18 @@ public class PacketGUIPermission implements IMessageHandler<PacketGUIPermission.
 
     public static class GUIPermissionMessage implements IMessage {
 
-        public EnumAccessType accessPermission;
+        public AccessLevel accessPermission;
 
         public GUIPermissionMessage() {
         }
 
-        public GUIPermissionMessage(EnumAccessType permission) {
+        public GUIPermissionMessage(AccessLevel permission) {
             this.accessPermission = permission;
         }
 
         @Override
         public void fromBytes(ByteBuf buf) {
-            accessPermission = EnumAccessType.values()[buf.readInt()];
+            accessPermission = AccessLevel.values()[buf.readInt()];
         }
 
         @Override

@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.network.EnumAccessType;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.INetworkConnector;
 import sonar.fluxnetworks.api.network.NetworkSettings;
 import sonar.fluxnetworks.api.utils.NBTType;
@@ -36,7 +36,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         renderNetwork(network.getSetting(NetworkSettings.NETWORK_NAME), network.getSetting(NetworkSettings.NETWORK_COLOR), 20, 8);
         drawCenteredString(fontRenderer, TextFormatting.RED + FluxNetworks.proxy.getFeedback(false).getInfo(), 89, 150, 0xffffff);
 
-        fontRenderer.drawString(EnumAccessType.SUPER_ADMIN.getName(), 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
+        fontRenderer.drawString(AccessLevel.SUPER_ADMIN.getName(), 20, 30, network.getSetting(NetworkSettings.NETWORK_COLOR));
         fontRenderer.drawString("Detailed Network View", 20, 42, network.getSetting(NetworkSettings.NETWORK_COLOR));
     }
 

@@ -1,22 +1,22 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.client.gui.LineChart;
-import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.common.connection.NetworkStatistics;
-import sonar.fluxnetworks.common.core.FluxUtils;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.PacketNetworkUpdateRequest;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
+import sonar.fluxnetworks.api.gui.EnumNavigationTabs;
+import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.NetworkSettings;
+import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.client.gui.LineChart;
+import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.common.connection.NetworkStatistics;
+import sonar.fluxnetworks.common.core.FluxUtils;
+import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.network.PacketNetworkUpdateRequest;
+import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
 public class GuiTabStatistics extends GuiTabCore {
 
@@ -75,7 +75,7 @@ public class GuiTabStatistics extends GuiTabCore {
                     FluxUtils.format(stats.totalEnergy, FluxUtils.TypeNumberFormat.COMPACT, network.getSetting(NetworkSettings.NETWORK_ENERGY), false), 12, 84, color);
 
             GlStateManager.scale(0.75, 0.75, 0.75);
-            drawCenteredString(fontRenderer, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.average_tick_micro + " " + "\u00B5" + "s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
+            drawCenteredString(fontRenderer, FluxTranslate.AVERAGE_TICK.t() + ": " + stats.averageTickMicro + " \u00b5s/t", (int) ((xSize / 2) * (1 / 0.75)), (int) ((ySize - 2) * (1 / 0.75)), color);
             GlStateManager.scale(1 / 0.75, 1 / 0.75, 1 / 0.75);
 
         } else {

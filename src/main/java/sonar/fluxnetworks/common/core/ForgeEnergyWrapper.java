@@ -1,23 +1,26 @@
 package sonar.fluxnetworks.common.core;
 
-import sonar.fluxnetworks.api.tiles.IFluxPhantomEnergy;
-import sonar.fluxnetworks.api.tiles.IFluxPoint;
+import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.IEnergyStorage;
 
 public class ForgeEnergyWrapper implements IEnergyStorage {
 
-    public IFluxPhantomEnergy tileEntity;
-    public EnumFacing side;
+    private final IFluxConnector tile;
+    private final EnumFacing side;
 
-    public ForgeEnergyWrapper(IFluxPhantomEnergy tileEntity, EnumFacing side) {
-        this.tileEntity = tileEntity;
+    public ForgeEnergyWrapper(IFluxConnector tile, EnumFacing side) {
+        this.tile = tile;
         this.side = side;
     }
 
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        return (int) tileEntity.addPhantomEnergyToNetwork(side, maxReceive, simulate);
+        // so other mods didn't check if this canReceive() at all
+        if (tile.getConnectionType().isPlug() && tile.isActive()) {
+            return (int) tile.getTransferHandler().receiveFromSupplier(maxReceive, side, simulate);
+        }
+        return 0;
     }
 
     @Override
@@ -27,21 +30,21 @@ public class ForgeEnergyWrapper implements IEnergyStorage {
 
     @Override
     public int getEnergyStored() {
-        return tileEntity instanceof IFluxPoint ? Integer.MAX_VALUE : 0;
+        return (int) Math.min(tile.getTransferBuffer(), Integer.MAX_VALUE);
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return Integer.MAX_VALUE;
+        return (int) Math.min(tile.getMaxTransferLimit(), Integer.MAX_VALUE);
     }
 
     @Override
     public boolean canExtract() {
-        return tileEntity.getConnectionType().canRemoveEnergy();
+        return false;
     }
 
     @Override
     public boolean canReceive() {
-        return tileEntity.getConnectionType().canAddEnergy();
+        return tile.getConnectionType().isPlug();
     }
 }

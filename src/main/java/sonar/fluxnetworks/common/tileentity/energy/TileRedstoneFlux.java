@@ -34,8 +34,8 @@ public abstract class TileRedstoneFlux extends TileForgeEnergy implements IEnerg
     @Override
     @Optional.Method(modid = "redstoneflux")
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        if(getConnectionType().canAddEnergy()) {
-            return (int) addPhantomEnergyToNetwork(from, maxReceive, simulate);
+        if (getConnectionType().isPlug()) {
+            return (int) getTransferHandler().receiveFromSupplier(maxReceive, from, simulate);
         }
         return 0;
     }

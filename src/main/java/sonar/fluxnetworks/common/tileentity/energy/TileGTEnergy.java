@@ -1,41 +1,31 @@
 package sonar.fluxnetworks.common.tileentity.energy;
 
-import sonar.fluxnetworks.common.core.GTEnergyWrapper;
 import gregtech.api.capability.GregtechCapabilities;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.Optional;
+import sonar.fluxnetworks.common.core.GTEnergyWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class TileGTEnergy extends TileIC2Energy {
 
-    public Map<EnumFacing, GTEnergyWrapper> GTWrappers = new HashMap<>();
-    {
-        GTWrappers.put(null, new GTEnergyWrapper(this, null));
-        for(EnumFacing face : EnumFacing.VALUES){
-            GTWrappers.put(face, new GTEnergyWrapper(this, face));
-        }
-    }
-
-    public GTEnergyWrapper getGTEnergyWrapper(EnumFacing facing) {
-        return GTWrappers.get(facing);
-    }
+    private final GTEnergyWrapper mGTEnergyWrapper = new GTEnergyWrapper(this);
 
     @Override
     @Optional.Method(modid = "gregtech")
-    public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER || super.hasCapability(capability, facing);
     }
 
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     @Optional.Method(modid = "gregtech")
-    public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
-        if(capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
-            return (T) getGTEnergyWrapper(facing);
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (facing != null && capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
+            return (T) mGTEnergyWrapper;
         return super.getCapability(capability, facing);
     }
 }

@@ -86,14 +86,14 @@ public class RegistryRecipes {
                         networkID = subTag.getInteger(FluxNetworkData.NETWORK_ID);
                         firstFound = true;
                     }
-                    energyTotal += subTag.getInteger("energy");
+                    energyTotal += subTag.getLong("energy");
                 }
             }
             if (firstFound) {
                 ItemStack stack = output.copy();
                 NBTTagCompound subTag = stack.getOrCreateSubCompound(FluxUtils.FLUX_DATA);
                 subTag.setInteger(FluxNetworkData.NETWORK_ID, networkID);
-                subTag.setInteger("energy", energyTotal);
+                subTag.setLong("energy", energyTotal);
                 return stack;
             }
             return super.getCraftingResult(crafting);

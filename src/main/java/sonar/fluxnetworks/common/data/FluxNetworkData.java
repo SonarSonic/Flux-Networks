@@ -210,9 +210,9 @@ public class FluxNetworkData extends WorldSavedData {
         nbt.setTag(PLAYER_LIST, list);
     }
 
-    private static EnumAccessType getPermission(EntityPlayer player) {
+    private static AccessLevel getPermission(EntityPlayer player) {
         ISuperAdmin superAdmin = player.getCapability(Capabilities.SUPER_ADMIN, null);
-        return (superAdmin != null && superAdmin.getPermission()) ? EnumAccessType.SUPER_ADMIN : EnumAccessType.NONE;
+        return (superAdmin != null && superAdmin.getPermission()) ? AccessLevel.SUPER_ADMIN : AccessLevel.NONE;
     }
 
     public static void readConnections(IFluxNetwork network, @Nonnull NBTTagCompound nbt) {
@@ -299,7 +299,7 @@ public class FluxNetworkData extends WorldSavedData {
         network.network_color.setValue(color.getInteger("red") << 16 | color.getInteger("green") << 8 | color.getInteger("blue"));
         network.network_owner.setValue(nbt.getUniqueId(FluxNetworkData.OWNER_UUID));
         int c = nbt.getInteger(FluxNetworkData.OLD_NETWORK_ACCESS);
-        network.network_security.setValue(c > 0 ? EnumSecurityType.ENCRYPTED : EnumSecurityType.PUBLIC);
+        network.network_security.setValue(c > 0 ? SecurityType.ENCRYPTED : SecurityType.PUBLIC);
         network.network_password.setValue(String.valueOf((int) (Math.random() * 1000000)));
         network.network_energy.setValue(EnergyType.RF);
         FluxNetworkData.readPlayers(network, nbt);

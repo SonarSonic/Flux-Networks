@@ -1,23 +1,26 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import sonar.fluxnetworks.api.translate.FluxTranslate;
-import sonar.fluxnetworks.api.network.INetworkConnector;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.client.gui.basic.GuiDraw;
-import sonar.fluxnetworks.api.network.NetworkSettings;
-import sonar.fluxnetworks.api.utils.NBTType;
-import sonar.fluxnetworks.common.handler.PacketHandler;
-import sonar.fluxnetworks.common.network.PacketNetworkUpdateRequest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.INetworkConnector;
+import sonar.fluxnetworks.api.network.NetworkSettings;
+import sonar.fluxnetworks.api.translate.FluxTranslate;
+import sonar.fluxnetworks.api.utils.NBTType;
+import sonar.fluxnetworks.client.gui.basic.GuiDraw;
+import sonar.fluxnetworks.common.handler.PacketHandler;
+import sonar.fluxnetworks.common.network.PacketNetworkUpdateRequest;
 
 public class GuiTabDetailedSelection extends GuiTabSelection {
 
     public GuiTabDetailedSelection(EntityPlayer player, INetworkConnector connector) {
         super(player, connector);
-        gridStartX = 15; gridStartY = 22;
-        gridHeight = 19; gridPerPage = 7;
-        elementHeight = 18; elementWidth = 146;
+        gridStartX = 15;
+        gridStartY = 22;
+        gridHeight = 19;
+        gridPerPage = 7;
+        elementHeight = 18;
+        elementWidth = 146;
     }
 
 
@@ -31,15 +34,15 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
         int color = element.getSetting(NetworkSettings.NETWORK_COLOR);
 
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
+        float f = (float) (color >> 16 & 255) / 255.0F;
+        float f1 = (float) (color >> 8 & 255) / 255.0F;
+        float f2 = (float) (color & 255) / 255.0F;
 
         boolean selected = connector.getNetworkID() == element.getNetworkID();
         boolean isEncrypted = element.getSetting(NetworkSettings.NETWORK_SECURITY).isEncrypted();
 
-        if(isEncrypted) {
-            if(selected) {
+        if (isEncrypted) {
+            if (selected) {
                 drawTexturedModalRect(x + 131, y, 159, 16, 16, elementHeight);
             } else {
                 drawTexturedModalRect(x + 131, y, 175, 16, 16, elementHeight);
@@ -48,7 +51,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
         String text = element.getSetting(NetworkSettings.NETWORK_NAME);
 
-        if(selected) {
+        if (selected) {
             GlStateManager.color(f, f1, f2);
             drawTexturedModalRect(x, y, 0, 32, elementWidth, elementHeight);
             mc.fontRenderer.drawString(text, x + 4, y + 2, 0xffffff);
@@ -59,7 +62,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         }
 
         GlStateManager.scale(0.625, 0.625, 0.625);
-        fontRenderer.drawString(FluxTranslate.CONNECTIONS.t() +": " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).getConnectionCount() + "  Avg: " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).average_tick_micro + " " + "\u03BC" + "s/t  ", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
+        fontRenderer.drawString(FluxTranslate.CONNECTIONS.t() + ": " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).getConnectionCount() + "  Avg: " + element.getSetting(NetworkSettings.NETWORK_STATISTICS).averageTickMicro + " \u00b5s/t", (int) ((x + 4) * 1.6), (int) ((y + 11) * 1.6), selected ? 0xffffff : 0x404040);
         GlStateManager.scale(1.6, 1.6, 1.6);
 
         GlStateManager.popMatrix();
