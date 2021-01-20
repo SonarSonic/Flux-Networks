@@ -1,4 +1,4 @@
-### Changelog 1.16.5-6.1.6.11 (2021-01-19)
+### Changelog 1.16.5-6.1.6.11 (2021-01-20)
 (Install Modern UI for better font looking)
   
 * Make flux plugs and points waterlogged
@@ -57,13 +57,6 @@
 * Bug Fixed: Client flux networks cache won't be cleared when logging out a server
 * Added: Lava particles when creating flux and there's a chance to turn obsidian into cobblestone
 
-#### Changelog 4.0.15 (1.12.2)
-
-* Bug Fixed: Storage render glitch after reducing the capacity
-* Added: New tooltips for flux connectors
-* Added: Brazilian Portuguese pt_BR.lang (Focamacho)
-* Updated: zh_CN.lang, ru_RU.lang (Smollet777)
-
 #### Changelog 5.0.1
 
 * Improvement: Clicking on "Please select a network" will take you to the Network Selection tab
@@ -90,6 +83,25 @@
 PORTED TO 1.15.2
 
 ------
+
+#### Changelog 4.1.0.33 (2021-01-20)
+
+* Backport the new energy transfer system from 1.16.5 to 1.12.2: 
+  including two-way buffering, enhancing GTEU transfer, it now can transfer
+  almost infinite vols and amps as long as you can supply enough energy,
+  but no more than the max voltage or amperage of machines can accept
+* Improvement: JEI animated recipe view and works with resource packs
+* Improvement: Flux Storage rendering will now have better performance
+* Improvement: More understandable tooltips for plugs and points
+* Balancing: Disable players to be charged by multiple networks
+* Minor: Cleanup code, update Forge to 2854, update to ForgeGradle 3
+
+#### Changelog 4.0.15 (1.12.2)
+
+* Bug Fixed: Storage render glitch after reducing the capacity
+* Added: New tooltips for flux connectors
+* Added: Brazilian Portuguese pt_BR.lang (Focamacho)
+* Updated: zh_CN.lang, ru_RU.lang (Smollet777)
 
 #### Changelog 4.0.14
 
