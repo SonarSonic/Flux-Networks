@@ -19,7 +19,7 @@ public class GTEnergyWrapper implements IEnergyContainer {
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long vol, long amp) {
-        if (tile.getConnectionType().isPlug() && tile.isActive()) {
+        if (side != null && tile.getConnectionType().isPlug() && tile.isActive()) {
             long actualAmp = tile.getTransferHandler().receiveFromSupplier(vol * amp << 2, side, true) / vol >> 2;
             tile.getTransferHandler().receiveFromSupplier(vol * actualAmp << 2, side, false);
             return actualAmp;

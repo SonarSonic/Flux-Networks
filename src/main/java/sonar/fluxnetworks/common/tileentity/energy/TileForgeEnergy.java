@@ -13,7 +13,8 @@ import java.util.Map;
 
 public abstract class TileForgeEnergy extends TileFluxCore {
 
-    public Map<EnumFacing, ForgeEnergyWrapper> wrappers = new EnumMap<>(EnumFacing.class);
+    private final ForgeEnergyWrapper readerWrapper = new ForgeEnergyWrapper(this, null);
+    private final Map<EnumFacing, ForgeEnergyWrapper> wrappers = new EnumMap<>(EnumFacing.class);
 
     {
         for (EnumFacing face : EnumFacing.VALUES) {
@@ -21,7 +22,7 @@ public abstract class TileForgeEnergy extends TileFluxCore {
         }
     }
 
-    public ForgeEnergyWrapper getEnergyWrapper(EnumFacing facing) {
+    private ForgeEnergyWrapper getTransferWrapper(EnumFacing facing) {
         return wrappers.get(facing);
     }
 
@@ -34,8 +35,11 @@ public abstract class TileForgeEnergy extends TileFluxCore {
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (facing != null && capability == CapabilityEnergy.ENERGY)
-            return (T) getEnergyWrapper(facing);
+        if (capability == CapabilityEnergy.ENERGY)
+            if (facing != null)
+                return (T) getTransferWrapper(facing);
+            else
+                return (T) readerWrapper; // to get the stored energy
         return super.getCapability(capability, facing);
     }
 }

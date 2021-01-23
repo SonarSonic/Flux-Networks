@@ -24,7 +24,7 @@ public abstract class TileGTEnergy extends TileIC2Energy {
     @Override
     @Optional.Method(modid = "gregtech")
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (facing != null && capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
+        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return (T) mGTEnergyWrapper;
         return super.getCapability(capability, facing);
     }

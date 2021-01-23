@@ -4,12 +4,14 @@ import sonar.fluxnetworks.api.tiles.IFluxConnector;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.energy.IEnergyStorage;
 
+import javax.annotation.Nullable;
+
 public class ForgeEnergyWrapper implements IEnergyStorage {
 
     private final IFluxConnector tile;
-    private final EnumFacing side;
+    private final @Nullable EnumFacing side;
 
-    public ForgeEnergyWrapper(IFluxConnector tile, EnumFacing side) {
+    public ForgeEnergyWrapper(IFluxConnector tile, @Nullable EnumFacing side) {
         this.tile = tile;
         this.side = side;
     }
@@ -17,7 +19,7 @@ public class ForgeEnergyWrapper implements IEnergyStorage {
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         // so other mods didn't check if this canReceive() at all
-        if (tile.getConnectionType().isPlug() && tile.isActive()) {
+        if (side != null && tile.getConnectionType().isPlug() && tile.isActive()) {
             return (int) tile.getTransferHandler().receiveFromSupplier(maxReceive, side, simulate);
         }
         return 0;
