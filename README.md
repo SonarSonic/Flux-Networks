@@ -1,4 +1,7 @@
 # Flux Networks
+[![Curseforge Name](http://cf.way2muchnoise.eu/full_248020_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/flux-networks)
+[![Curseforge For](http://cf.way2muchnoise.eu/versions/For%20MC_248020_all.svg)](https://www.curseforge.com/minecraft/mc-mods/flux-networks)
+
 ### Homepage [CurseForge](https://www.curseforge.com/minecraft/mc-mods/flux-networks)
 For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug]
 ## License
