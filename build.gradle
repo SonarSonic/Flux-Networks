@@ -49,6 +49,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 fluxnetworks {
                     source sourceSets.main
@@ -113,6 +115,11 @@ repositories {
         url 'https://modmaven.dev/'
     }
     maven {
+        // Modern UI
+        name 'IzzelAliz Maven'
+        url 'https://maven.izzel.io/releases'
+    }
+    maven {
         // location of a maven that hosts all files on CurseForge
         name 'CurseMaven'
         url 'https://www.cursemaven.com/'
@@ -135,6 +142,9 @@ dependencies {
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
     //runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    compile fg.deobf("icyllis.modernui:ModernUI-Forge:${modernui_version}")
+    compile fg.deobf("icyllis.modernui:ModernUI-Forge:${modernui_version}@pom")
 }
 
 jar {

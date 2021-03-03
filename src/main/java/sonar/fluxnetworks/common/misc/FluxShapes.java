@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.misc;
 
-import com.sun.javafx.geom.Vec3d;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -41,10 +40,6 @@ public class FluxShapes {
     );
 
     public static final double PIXEL = 0.0625;
-
-    public static Vec3d getVec3DFromPixels(double x, double y, double z) {
-        return new Vec3d(x * PIXEL, y * PIXEL, z * PIXEL);
-    }
 
     public static AxisAlignedBB getBBFromPixels(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
         return new AxisAlignedBB(minX * PIXEL, minY * PIXEL, minZ * PIXEL, maxX * PIXEL, maxY * PIXEL, maxZ * PIXEL);
