@@ -61,11 +61,11 @@ public interface IFluxNetwork {
     Collection<NetworkMember> getAllMembers();
 
     /**
-     * Returns the original object of current network members
+     * Returns the raw map of current network members
      *
      * @return members
      */
-    Object2ObjectMap<UUID, NetworkMember> getMembersMap();
+    Object2ObjectMap<UUID, NetworkMember> getRawMemberMap();
 
     Optional<NetworkMember> getMemberByUUID(UUID playerUUID);
 

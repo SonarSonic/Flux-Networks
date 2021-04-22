@@ -12,9 +12,7 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
-import sonar.fluxnetworks.common.network.FluxTileMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -58,7 +56,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         fluxName.setText(tileEntity.getCustomName());
         fluxName.setResponder(string -> {
             tileEntity.setCustomName(fluxName.getText());
-            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_CUSTOM_NAME));
+            C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_CUSTOM_NAME);
         });
         addButton(fluxName);
 
@@ -67,7 +65,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         priority.setText(String.valueOf(tileEntity.getRawPriority()));
         priority.setResponder(string -> {
             tileEntity.setPriority(priority.getValidInt());
-            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_PRIORITY));
+            C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_PRIORITY);
         });
         addButton(priority);
 
@@ -76,7 +74,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         limit.setText(String.valueOf(tileEntity.getRawLimit()));
         limit.setResponder(string -> {
             tileEntity.setTransferLimit(limit.getValidLong());
-            NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_LIMIT));
+            C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_LIMIT);
         });
         addButton(limit);
 
@@ -115,16 +113,16 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                 case 1:
                     switchButton.switchButton();
                     tileEntity.setSurgeMode(switchButton.toggled);
-                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_SURGE_MODE));
+                    C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_SURGE_MODE);
                     break;
                 case 2:
                     switchButton.switchButton();
                     tileEntity.setDisableLimit(switchButton.toggled);
-                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_DISABLE_LIMIT));
+                    C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_DISABLE_LIMIT);
                     break;
                 case 3:
                     tileEntity.setForcedLoading(!switchButton.toggled); // delayed updating value
-                    NetworkHandler.INSTANCE.sendToServer(new FluxTileMessage(tileEntity, FluxConstants.C2S_CHUNK_LOADING));
+                    C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_CHUNK_LOADING);
                     break;
             }
         }
@@ -134,7 +132,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_BASIC));
+            C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC);
         }
         if (chunkLoading != null) {
             chunkLoading.toggled = tileEntity.isForcedLoading();

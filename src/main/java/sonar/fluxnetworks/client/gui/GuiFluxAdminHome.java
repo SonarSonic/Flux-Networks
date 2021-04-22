@@ -12,10 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
-import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
-import sonar.fluxnetworks.common.network.CSuperAdminMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 
@@ -67,7 +64,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
             switchButton.switchButton();
             switch (switchButton.id) {
                 case 0:
-                    NetworkHandler.INSTANCE.sendToServer(new CSuperAdminMessage());
+                    C2SNetMsg.requestSuperAdmin();
                     break;
                 case 1:
                     FluxClientCache.detailedNetworkView = switchButton.toggled;
@@ -80,8 +77,8 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_BASIC));
-            NetworkHandler.INSTANCE.sendToServer(new CGuiPermissionMessage(network.getNetworkID()));
+            C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC);
+            C2SNetMsg.requestAccessUpdate(network.getNetworkID());
         }
         timer++;
         timer %= 100;

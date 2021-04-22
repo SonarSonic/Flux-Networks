@@ -28,6 +28,11 @@ public enum FeedbackInfo {
         this.localization = localization;
     }
 
+    // a non-text feedback that wants to do some actions in GUI
+    public boolean action() {
+        return localization == null;
+    }
+
     @Nonnull
     public String getText() {
         return localization == null ? "" : localization.t();

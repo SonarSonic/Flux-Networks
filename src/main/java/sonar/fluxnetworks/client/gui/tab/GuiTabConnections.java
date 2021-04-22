@@ -21,10 +21,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopupConnectionEdit;
 import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.CConnectionUpdateMessage;
-import sonar.fluxnetworks.common.network.CEditConnectionsMessage;
-import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -54,7 +51,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         gridPerPage = 7;
         elementHeight = 18;
         elementWidth = 146;
-        NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_CONNECTIONS));
+        C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_CONNECTIONS);
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -185,16 +182,15 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
                     break;
                 case 2:
                     List<GlobalPos> list = batchConnections.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList());
-                    NetworkHandler.INSTANCE.sendToServer(new CEditConnectionsMessage(network.getNetworkID(), list,
-                            FluxConstants.FLAG_EDIT_DISCONNECT));
+                    C2SNetMsg.disconnect(network.getNetworkID(), list);
                     break;
             }
         }
     }
 
     @Override
-    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
-        super.onOperationalFeedback(info);
+    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
+        super.onFeedbackAction(info);
         if (info == FeedbackInfo.SUCCESS) {
             closePopUp();
             batchConnections.clear();
@@ -230,7 +226,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             refreshPages(Lists.newArrayList(network.getAllConnections()));
         }
         if (timer % 5 == 0) {
-            NetworkHandler.INSTANCE.sendToServer(new CConnectionUpdateMessage(network.getNetworkID(), current.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList())));
+            C2SNetMsg.requestConnectionUpdate(network.getNetworkID(), current.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList()));
         }
         timer++;
         timer %= 20;

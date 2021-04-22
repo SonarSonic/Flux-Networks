@@ -9,8 +9,7 @@ import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
-import sonar.fluxnetworks.common.network.CEditMemberMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 
@@ -94,7 +93,7 @@ public class PopupMemberEdit extends PopupCore<GuiTabMembers> {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         for (NormalButton button : popButtons) {
             if (button.clickable && button.isMouseHovered(minecraft, (int) mouseX - guiLeft, (int) mouseY - guiTop)) {
-                NetworkHandler.INSTANCE.sendToServer(new CEditMemberMessage(host.network.getNetworkID(), host.selectedPlayer.getPlayerUUID(), button.id));
+                C2SNetMsg.editMember(host.network.getNetworkID(), host.selectedPlayer.getPlayerUUID(), button.id);
                 return true;
             }
         }

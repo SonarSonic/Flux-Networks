@@ -140,8 +140,8 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     }
 
     @Override
-    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
-        super.onOperationalFeedback(info);
+    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
+        super.onFeedbackAction(info);
         if (info == FeedbackInfo.PASSWORD_REQUIRE) {
             openPopUp(new PopupNetworkPassword(this, player));
         } else if (selectedNetwork != null && info == FeedbackInfo.SUCCESS) {

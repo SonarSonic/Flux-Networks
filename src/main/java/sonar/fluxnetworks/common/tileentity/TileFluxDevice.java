@@ -31,8 +31,7 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.FluxTileMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.S2CNetMsg;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
@@ -119,7 +118,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     // server tick
     protected void sTick() {
         if (!playerUsing.isEmpty()) {
-            NetworkHandler.INSTANCE.sendToPlayers(new FluxTileMessage(this, FluxConstants.S2C_GUI_SYNC), playerUsing);
+            S2CNetMsg.tileEntity(this, FluxConstants.S2C_GUI_SYNC).sendToPlayers(playerUsing);
         }
         if ((flags & FLAG_LOAD) == 0) {
             connect(FluxNetworkData.getNetwork(networkID));

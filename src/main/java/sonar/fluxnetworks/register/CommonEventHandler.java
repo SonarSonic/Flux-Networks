@@ -28,10 +28,7 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.capability.SuperAdminProvider;
-import sonar.fluxnetworks.common.network.NetworkHandler;
-import sonar.fluxnetworks.common.network.SLavaParticleMessage;
-import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
-import sonar.fluxnetworks.common.network.SSuperAdminMessage;
+import sonar.fluxnetworks.common.network.S2CNetMsg;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
@@ -123,7 +120,7 @@ public class CommonEventHandler {
                     world.setBlockState(pos.down(), Blocks.OBSIDIAN.getDefaultState());
                     world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 1.0f, 1.0f);
                 }
-                NetworkHandler.INSTANCE.sendToTrackingEntity(new SLavaParticleMessage(pos, max), event.getPlayer());
+                S2CNetMsg.lavaEffect(pos, max).sendToTrackingEntity(event.getPlayer());
             } else {
                 for (int i = 0; i < max; i++) {
                     // speed won't work with lava particle, because its constructor doesn't use these params
@@ -156,10 +153,10 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
-        NetworkHandler.INSTANCE.sendToPlayer(new SNetworkUpdateMessage(FluxNetworkData.getAllNetworks(),
-                FluxConstants.TYPE_NET_BASIC), event.getPlayer());
-        NetworkHandler.INSTANCE.sendToPlayer(new SSuperAdminMessage(SuperAdmin.isPlayerSuperAdmin(event.getPlayer())),
-                event.getPlayer());
+        S2CNetMsg.updateNetwork(FluxNetworkData.getAllNetworks(), FluxConstants.TYPE_NET_BASIC)
+                .sendToPlayer(event.getPlayer());
+        S2CNetMsg.updateSuperAdmin(SuperAdmin.isPlayerSuperAdmin(event.getPlayer()))
+                .sendToPlayer(event.getPlayer());
     }
 
     @SubscribeEvent

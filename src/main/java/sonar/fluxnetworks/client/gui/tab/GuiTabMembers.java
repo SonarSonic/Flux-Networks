@@ -16,9 +16,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopupMemberEdit;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.CGuiPermissionMessage;
-import sonar.fluxnetworks.common.network.CNetworkUpdateMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         gridPerPage = 10;
         elementHeight = 12;
         elementWidth = 146;
-        NetworkHandler.INSTANCE.sendToServer(new CNetworkUpdateMessage(network.getNetworkID(), FluxConstants.TYPE_NET_MEMBERS));
+        C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_MEMBERS);
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -154,8 +152,8 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
-        super.onOperationalFeedback(info);
+    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
+        super.onFeedbackAction(info);
         if (info == FeedbackInfo.SUCCESS) {
             if (hasActivePopup()) {
                 // re-open
@@ -174,7 +172,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            NetworkHandler.INSTANCE.sendToServer(new CGuiPermissionMessage(network.getNetworkID()));
+            C2SNetMsg.requestAccessUpdate(network.getNetworkID());
         }
         if (timer == 4 || timer == 14) {
             refreshPages(Lists.newArrayList(network.getAllMembers()));

@@ -19,9 +19,7 @@ import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.CConfiguratorConnectMessage;
-import sonar.fluxnetworks.common.network.CSelectNetworkMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -104,7 +102,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     @Override
     public void onClose() {
         super.onClose();
-        FluxClientCache.setFeedback(FeedbackInfo.NONE);
+        FluxClientCache.setFeedbackText(FeedbackInfo.NONE);
     }
 
     protected void renderNavigationPrompt(MatrixStack matrixStack, String error, String prompt) {
@@ -158,15 +156,15 @@ public abstract class GuiFluxCore extends GuiPopupHost {
 
     public void setConnectedNetwork(int networkID, String password) {
         if (container.bridge instanceof TileFluxDevice) {
-            NetworkHandler.INSTANCE.sendToServer(new CSelectNetworkMessage(((TileFluxDevice) container.bridge).getPos(), networkID, password));
+            C2SNetMsg.setNetwork(((TileFluxDevice) container.bridge).getPos(), networkID, password);
         } else if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
-            NetworkHandler.INSTANCE.sendToServer(new CConfiguratorConnectMessage(networkID, password));
+            C2SNetMsg.configuratorNet(networkID, password);
         } else if (container.bridge instanceof ItemAdminConfigurator.MenuBridge) {
             FluxClientCache.adminViewingNetwork = networkID;
         }
     }
 
-    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
+    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
 
     }
 }

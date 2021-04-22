@@ -62,7 +62,7 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        NetworkHandler.registerMessages();
+        NetworkHandler.initialize();
 
         // capabilities
         SuperAdmin.register();

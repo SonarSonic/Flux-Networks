@@ -15,9 +15,7 @@ import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.CDeleteNetworkMessage;
-import sonar.fluxnetworks.common.network.CEditNetworkMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 
@@ -103,11 +101,11 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (networkValid && button instanceof NormalButton) {
             switch (button.id) {
                 case 3:
-                    NetworkHandler.INSTANCE.sendToServer(new CEditNetworkMessage(network.getNetworkID(),
-                            nameField.getText(), colorBtn.color, securityType, passwordField.getText()));
+                    C2SNetMsg.editNetwork(network.getNetworkID(),
+                            nameField.getText(), colorBtn.color, securityType, passwordField.getText());
                     break;
                 case 4:
-                    NetworkHandler.INSTANCE.sendToServer(new CDeleteNetworkMessage(network.getNetworkID()));
+                    C2SNetMsg.deleteNetwork(network.getNetworkID());
                     break;
             }
         }
@@ -130,8 +128,8 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     }
 
     @Override
-    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
-        super.onOperationalFeedback(info);
+    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
+        super.onFeedbackAction(info);
         if (info == FeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTab.TAB_HOME);
         } else if (info == FeedbackInfo.SUCCESS_2) {

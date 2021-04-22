@@ -88,7 +88,7 @@ public class FluxClientCache {
         return 16733525 | (int) (Math.min(feedbackTimer, 16) * Math.min(61 - feedbackTimer, 5) * 3.1875f) << 24;
     }
 
-    public static void setFeedback(FeedbackInfo info) {
+    public static void setFeedbackText(FeedbackInfo info) {
         feedback = info;
         if (feedbackTimer > 0) {
             feedbackTimer = 58;

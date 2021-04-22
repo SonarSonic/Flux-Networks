@@ -19,11 +19,11 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.*;
+import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.api.network.SecurityType;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.network.NetworkHandler;
-import sonar.fluxnetworks.common.network.SNetworkUpdateMessage;
+import sonar.fluxnetworks.common.network.S2CNetMsg;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -130,14 +130,14 @@ public class FluxNetworkData extends WorldSavedData {
         if (networks.put(network.getNetworkID(), network) != null) {
             FluxNetworks.LOGGER.warn("Network IDs are not unique when creating network");
         }
-        NetworkHandler.INSTANCE.sendToAll(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_BASIC));
+        S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_BASIC).sendToAll();
         return network;
     }
 
     public void deleteNetwork(@Nonnull IFluxNetwork network) {
         network.onDelete();
         networks.remove(network.getNetworkID());
-        NetworkHandler.INSTANCE.sendToAll(new SNetworkUpdateMessage(network, FluxConstants.TYPE_NET_DELETE));
+        S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_DELETE).sendToAll();
     }
 
     @Override

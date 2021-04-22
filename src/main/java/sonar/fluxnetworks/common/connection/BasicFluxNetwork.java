@@ -136,7 +136,7 @@ public class BasicFluxNetwork implements IFluxNetwork {
     }
 
     @Override
-    public Object2ObjectMap<UUID, NetworkMember> getMembersMap() {
+    public Object2ObjectMap<UUID, NetworkMember> getRawMemberMap() {
         return members;
     }
 

@@ -11,8 +11,7 @@ import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.api.network.ITransferHandler;
 import sonar.fluxnetworks.common.connection.transfer.FluxStorageHandler;
 import sonar.fluxnetworks.common.misc.FluxGuiStack;
-import sonar.fluxnetworks.common.network.FluxTileMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.S2CNetMsg;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 
 import javax.annotation.Nonnull;
@@ -91,8 +90,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             //noinspection ConstantConditions
             if ((world.getWorldInfo().getGameTime() & 0x3) == 0) {
                 // update model data to players who can see it
-                NetworkHandler.INSTANCE.sendToTrackingChunk(new FluxTileMessage(
-                        this, FluxConstants.S2C_STORAGE_ENERGY), world.getChunkAt(pos));
+                S2CNetMsg.tileEntity(this, FluxConstants.S2C_STORAGE_ENERGY)
+                        .sendToTrackingChunk(world.getChunkAt(pos));
                 flags &= ~FLAG_ENERGY_CHANGED;
             }
         }

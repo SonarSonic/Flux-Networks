@@ -12,8 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.CCreateNetworkMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 
@@ -59,8 +58,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         if (button instanceof NormalButton) {
             if (mouseButton == 0 && button.id == 3) {
                 //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK, GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
-                NetworkHandler.INSTANCE.sendToServer(new CCreateNetworkMessage(
-                        nameField.getText(), colorBtn.color, securityType, passwordField.getText()));
+                C2SNetMsg.createNetwork(nameField.getText(), colorBtn.color, securityType, passwordField.getText());
             }
         }
     }
@@ -74,8 +72,8 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     }
 
     @Override
-    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
-        super.onOperationalFeedback(info);
+    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
+        super.onFeedbackAction(info);
         if (info == FeedbackInfo.SUCCESS) {
             switchTab(EnumNavigationTab.TAB_SELECTION);
         }

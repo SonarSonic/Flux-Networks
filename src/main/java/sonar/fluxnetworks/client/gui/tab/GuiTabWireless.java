@@ -14,8 +14,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.CEditWirelessMessage;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -88,7 +87,7 @@ public class GuiTabWireless extends GuiTabCore {
             switchSetting(((InventoryButton) button).type);
         }
         if (button instanceof NormalButton && button.id == 0) {
-            NetworkHandler.INSTANCE.sendToServer(new CEditWirelessMessage(network.getNetworkID(), wirelessMode));
+            C2SNetMsg.editWireless(network.getNetworkID(), wirelessMode);
         }
         if (button instanceof SlidedSwitchButton) {
             ((SlidedSwitchButton) button).switchButton();
@@ -106,8 +105,8 @@ public class GuiTabWireless extends GuiTabCore {
     }
 
     @Override
-    public void onOperationalFeedback(@Nonnull FeedbackInfo info) {
-        super.onOperationalFeedback(info);
+    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
+        super.onFeedbackAction(info);
         if (apply != null && info == FeedbackInfo.SUCCESS) {
             apply.clickable = false;
         }
