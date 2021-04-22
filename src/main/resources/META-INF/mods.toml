@@ -5,7 +5,7 @@ license="MIT"
 
 [[mods]]
     modId="fluxnetworks"
-    version="${file.jarVersion}"
+    version="${version}"
     displayName="Flux Networks"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/flux-networks"
     authors="Sonar Sonic, BloCamLimb"

@@ -15,7 +15,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${minecraft_version}-${mod_version}"
+version = "1.16.5-${mod_version}"
 group = 'sonar.fluxnetworks'
 archivesBaseName = 'FluxNetworks'
 
@@ -147,6 +147,19 @@ dependencies {
     compile fg.deobf("icyllis.modernui:ModernUI-Forge:${modernui_version}@pom")
 }
 
+processResources {
+    inputs.property 'version', mod_version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+        expand 'version': mod_version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/mods.toml'
+    }
+}
+
 jar {
     manifest {
         attributes([
@@ -155,7 +168,7 @@ jar {
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "SonarSonic",
+                "Implementation-Vendor"   : "SonarSonic, BloCamLimb",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
