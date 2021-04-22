@@ -1,6 +1,10 @@
-### Changelog 1.16.5-6.1.6.11 (2021-01-20)
+### Changelog 1.16.5-6.1.7.12 (2021-04-22)
 (Install Modern UI for better font looking)
   
+* Fix network packet security leaks
+* Fix super admin can't transfer ownership to self
+
+### Changelog 1.16.5-6.1.6.11 (2021-01-20)
 * Make flux plugs and points waterlogged
 * Fix server config not synced to client
 * Fix possible crash with some blocks
