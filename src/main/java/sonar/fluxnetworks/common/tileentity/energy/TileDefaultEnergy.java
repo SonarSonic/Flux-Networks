@@ -22,12 +22,20 @@ public abstract class TileDefaultEnergy extends TileFluxDevice {
         super(tileEntityTypeIn, customName, limit);
     }
 
+    @Override
+    protected void invalidateCaps() {
+        super.invalidateCaps();
+        wrappers.values().forEach(LazyOptional::invalidate);
+        wrappers.clear();
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (side != null) {
+        if (side != null && !removed) {
             if (cap == CapabilityEnergy.ENERGY || cap == FluxCapabilities.FN_ENERGY_STORAGE) {
                 return wrappers.computeIfAbsent(side, s -> {
+                    // the only instance
                     final DefaultEnergyWrapper wrapper = new DefaultEnergyWrapper(this, s);
                     return LazyOptional.of(() -> wrapper);
                 }).cast();

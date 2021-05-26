@@ -285,11 +285,10 @@ public class FluxUtils {
         return cap(player.getCapability(capability));
     }*/
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     public static <T> T get(@Nonnull LazyOptional<T> lazyOptional) {
-        if (lazyOptional.isPresent())
-            return lazyOptional.orElseThrow(IllegalStateException::new);
-        return null;
+        return lazyOptional.orElse(null);
     }
 
     /*public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {
