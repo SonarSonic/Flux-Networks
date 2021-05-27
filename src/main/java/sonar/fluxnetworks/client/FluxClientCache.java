@@ -20,7 +20,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FluxClientCache {
 
-    private static final Int2ObjectMap<IFluxNetwork> NETWORKS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<IFluxNetwork> networks = new Int2ObjectOpenHashMap<>();
 
     public static boolean superAdmin = false;
     public static boolean detailedNetworkView = false;
@@ -32,23 +32,26 @@ public class FluxClientCache {
     private static int feedbackTimer = 0;
 
     public static void release() {
-        NETWORKS.clear();
+        networks.clear();
+        networks.trim();
+        adminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
+        feedback = FeedbackInfo.NONE;
     }
 
     public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundNBT> serverSideNetworks, int type) {
         for (Int2ObjectMap.Entry<CompoundNBT> entry : serverSideNetworks.int2ObjectEntrySet()) {
             int id = entry.getIntKey();
             CompoundNBT nbt = entry.getValue();
-            IFluxNetwork network = NETWORKS.get(id);
+            IFluxNetwork network = networks.get(id);
             if (type == FluxConstants.TYPE_NET_DELETE) {
                 if (network != null) {
-                    NETWORKS.remove(id);
+                    networks.remove(id);
                 }
             } else {
                 if (network == null) {
                     network = new BasicFluxNetwork();
                     network.readCustomNBT(nbt, type);
-                    NETWORKS.put(id, network);
+                    networks.put(id, network);
                 } else {
                     network.readCustomNBT(nbt, type);
                 }
@@ -57,7 +60,7 @@ public class FluxClientCache {
     }
 
     public static void updateConnections(int networkID, List<CompoundNBT> tags) {
-        IFluxNetwork network = NETWORKS.get(networkID);
+        IFluxNetwork network = networks.get(networkID);
         if (network != null) {
             for (CompoundNBT tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
@@ -68,7 +71,7 @@ public class FluxClientCache {
 
     @Nonnull
     public static IFluxNetwork getNetwork(int id) {
-        return NETWORKS.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
+        return networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     public static String getDisplayName(@Nonnull CompoundNBT subTag) {
@@ -107,6 +110,6 @@ public class FluxClientCache {
 
     @Nonnull
     public static List<IFluxNetwork> getAllNetworks() {
-        return new ArrayList<>(NETWORKS.values());
+        return new ArrayList<>(networks.values());
     }
 }
