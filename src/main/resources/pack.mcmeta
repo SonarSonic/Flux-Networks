@@ -1,6 +1,6 @@
 {
-    "pack": {
-        "description": "Flux Networks Resources",
-        "pack_format": 6
-    }
+  "pack": {
+    "description": "Flux Networks",
+    "pack_format": 7
+  }
 }

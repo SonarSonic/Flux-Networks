@@ -7,42 +7,21 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "1.16.5-${mod_version}"
+version = "${minecraft_version}-${mod_version}"
 group = 'sonar.fluxnetworks'
 archivesBaseName = 'FluxNetworks'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
-
-sourceSets {
-    api {
-        java {
-            srcDir 'src/api/java'
-        }
-    }
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-        resources {
-            include '**/**'
-            exclude '**/*.psd'
-            srcDirs += 'src/generated'
-            exclude '.cache'
-        }
-        compileClasspath += sourceSets.api.output
-        runtimeClasspath += sourceSets.api.output
-    }
-}
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
-    mappings channel: 'snapshot', version: '20201028-1.16.3'
+    mappings channel: 'official', version: '1.17.1'
 
     runs {
         client {
@@ -60,6 +39,8 @@ minecraft {
         server {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 fluxnetworks {
                     source sourceSets.main
@@ -69,15 +50,9 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'fluxnetworks', '--all', '--output', file('src/generated/')
-
+            args '--mod', 'fluxnetworks', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
                 fluxnetworks {
                     source sourceSets.main
@@ -87,14 +62,42 @@ minecraft {
     }
 }
 
-repositories {
-    maven {
-        // location of latest mappings from the latest contents of the spreadsheet
-        name 'Gigaherz'
-        url 'https://www.dogforce-games.com/maven/'
+configurations {
+    library
+    implementation.extendsFrom library
+}
+
+sourceSets {
+    api {
+        java {
+            srcDir 'src/api/java'
+        }
     }
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            include '**/**'
+            exclude '**/*.psd'
+            srcDirs += 'src/generated/resources'
+            exclude '.cache'
+        }
+        compileClasspath += sourceSets.api.output
+        runtimeClasspath += sourceSets.api.output
+    }
+}
+
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+
+repositories {
+    mavenLocal()
     maven {
-        // location of the maven that hosts JEI files
+        // JEI
         name 'Progwml6 maven'
         url 'https://dvs1.progwml6.com/files/maven/'
     }
@@ -116,46 +119,40 @@ repositories {
     maven {
         // Modern UI
         name 'IzzelAliz Maven'
-        url 'https://maven.izzel.io/releases'
+        url 'https://maven.izzel.io/releases/'
     }
     maven {
-        // location of a maven that hosts all files on CurseForge
         name 'CurseMaven'
         url 'https://www.cursemaven.com/'
+        content {
+            includeGroup "curse.maven"
+        }
     }
-    /*flatDir {
-        dirs 'libs'
-    }*/
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    /*compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")*/
 
-    compile fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
+    implementation fg.deobf("curse.maven:the-one-probe-245211:3430022")
 
-    compileOnly fg.deobf("mezz.jei:jei-1.16.3:${jei_version}:api")
-    //runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
-    //runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}")
 
-    compile fg.deobf("icyllis.modernui:ModernUI-Forge:${modernui_version}")
-    compile fg.deobf("icyllis.modernui:ModernUI-Forge:${modernui_version}@pom")
+    library "icyllis.modernui:ModernUI-Core:${modernui_version}"
+    implementation fg.deobf("icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_version}")
 }
 
 processResources {
     inputs.property 'version', mod_version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
+    filesMatching("META-INF/mods.toml") {
         expand 'version': mod_version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
     }
 }
 
@@ -166,7 +163,7 @@ jar {
                 "Specification-Vendor"    : "SonarSonic",
                 "Specification-Version"   : "1",
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
+                "Implementation-Version"  : project.version,
                 "Implementation-Vendor"   : "SonarSonic, BloCamLimb",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])

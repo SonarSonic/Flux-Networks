@@ -6,10 +6,10 @@
 For any suggestions or bugs, open a new issue labelled with [Suggestion] or [Bug]
 ## License
 * Flux Networks
-  - Copyright (C) 2017-2020 SonarSonic, BloCamLimb et al.
+  - Copyright (C) 2017-2021 SonarSonic, BloCamLimb et al.
   - [![License](https://img.shields.io/badge/License-MIT-red.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 * GUI Designs and GUI Resources
-  -  Copyright (C) 2019-2020 BloCamLimb. All rights reserved.
+  -  Copyright (C) 2019-2021 BloCamLimb. All rights reserved.
   - [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-yellow.svg?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 ### Wiki
 [GitHub Wiki](https://github.com/SonarSonic/Flux-Networks/wiki)
