@@ -1,19 +1,32 @@
 package sonar.fluxnetworks.api.network;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.GlobalPos;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 
-import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public interface IFluxNetwork {
+
+    /**
+     * Define logical types of network transfer handlers.
+     */
+    int
+            ANY = 0,
+            PLUG = 1,
+            POINT = 2,
+            STORAGE = 3,
+            CONTROLLER = 4;
 
     /**
      * Returns the network ID
@@ -22,11 +35,13 @@ public interface IFluxNetwork {
      */
     int getNetworkID();
 
+    UUID getOwnerUUID();
+
     /**
-     * Returns the network name
+     * Returns the network name. For an invalid network this is empty,
+     * and client should display an alternative text instead.
      *
      * @return the name of this network
-     * @see sonar.fluxnetworks.client.FluxClientCache#getDisplayName(CompoundNBT)
      */
     String getNetworkName();
 
@@ -41,14 +56,6 @@ public interface IFluxNetwork {
 
     void setNetworkColor(int color);
 
-    int getWirelessMode();
-
-    void setWirelessMode(int wireless);
-
-    UUID getOwnerUUID();
-
-    void setOwnerUUID(UUID uuid);
-
     NetworkSecurity getSecurity();
 
     NetworkStatistics getStatistics();
@@ -60,21 +67,13 @@ public interface IFluxNetwork {
      */
     Collection<NetworkMember> getAllMembers();
 
-    /**
-     * Returns the raw map of current network members
-     *
-     * @return members
-     */
-    Object2ObjectMap<UUID, NetworkMember> getRawMemberMap();
-
-    Optional<NetworkMember> getMemberByUUID(UUID playerUUID);
+    Optional<NetworkMember> getMemberByUUID(UUID uuid);
 
     /**
-     * Get all connections including loaded tile entities (TileFluxDevice) and unloaded (SimpleFluxDevice)
-     * On client, all are SimpleFluxDevice
+     * Get all connections including loaded entities and unloaded devices.
      *
      * @return the list of all connections
-     * @see #getConnections(FluxLogicType)
+     * @see #getLogicalEntities(int)
      */
     Collection<IFluxDevice> getAllConnections();
 
@@ -97,14 +96,14 @@ public interface IFluxNetwork {
     void onDelete();
 
     /**
-     * Helper method to get player's access level for this network including super admin.
-     * Notice this method is server only.
+     * Helper method to get player's access level for this network including super admin,
+     * even if the player in not a member in the network.
+     * Note this method is server only.
      *
      * @param player the server player
      * @return access level
      */
-    @Nonnull
-    AccessLevel getPlayerAccess(PlayerEntity player);
+    AccessLevel getPlayerAccess(Player player);
 
     /*@Deprecated
     default void addNewMember(String name) {
@@ -117,27 +116,22 @@ public interface IFluxNetwork {
     }*/
 
     /**
-     * Get all loaded connections with given logic type,
-     * this method should be only invoked on server side
+     * Get all network device entities with given logical type,
+     * this method should be only invoked on the server side.
      *
-     * @param type logic type
-     * @param <T>  device type
-     * @return the list of connections
+     * @param logic the logical type
+     * @return a list of devices
      */
-    @Nonnull
-    <T extends IFluxDevice> List<T> getConnections(FluxLogicType type);
+    List<FluxDeviceEntity> getLogicalEntities(int logic);
 
     /* Server only */
     long getBufferLimiter();
 
     /* Server only */
-    void markSortConnections();
+    boolean enqueueConnectionAddition(FluxDeviceEntity device);
 
     /* Server only */
-    void enqueueConnectionAddition(@Nonnull IFluxDevice device);
-
-    /* Server only */
-    void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload);
+    void enqueueConnectionRemoval(FluxDeviceEntity device, boolean chunkUnload);
 
     /**
      * Returns whether this network is a valid network.
@@ -147,7 +141,7 @@ public interface IFluxNetwork {
      */
     boolean isValid();
 
-    void writeCustomNBT(CompoundNBT nbt, int type);
+    void writeCustomTag(CompoundTag tag, int type);
 
-    void readCustomNBT(CompoundNBT nbt, int type);
+    void readCustomTag(CompoundTag tag, int type);
 }

@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 @Deprecated
 public class TilePacket extends AbstractPacket {
@@ -46,8 +46,8 @@ public class TilePacket extends AbstractPacket {
                 world = server.getWorld(DimensionType.getById(coord4D.getDimension()));
             }*/
             TileEntity tile = world.getTileEntity(coord4D.getPos());
-            if (tile instanceof TileFluxDevice) {
-                TileFluxDevice flux = (TileFluxDevice) tile;
+            if (tile instanceof FluxDeviceEntity) {
+                FluxDeviceEntity flux = (FluxDeviceEntity) tile;
                 return type.handler.handlePacket(flux, player, tag);
             }
         }

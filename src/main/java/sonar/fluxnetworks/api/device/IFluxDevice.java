@@ -1,47 +1,49 @@
 package sonar.fluxnetworks.api.device;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.world.World;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.IMenuBridge;
-import sonar.fluxnetworks.api.network.ITransferHandler;
+import sonar.fluxnetworks.api.network.IFluxBridge;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * Defines a device that can be connected to a flux network
+ * Defines a device that can be connected to a flux network.
+ * The implementation may not be a network entity.
  */
-public interface IFluxDevice extends IMenuBridge {
+public interface IFluxDevice extends IFluxBridge {
 
+    /**
+     * A constant value identifying the type of this device.
+     *
+     * @return the device type
+     */
     @Nonnull
-    IFluxNetwork getNetwork();
-
-    void writeCustomNBT(CompoundNBT tag, int type);
-
-    void readCustomNBT(CompoundNBT tag, int type);
-
-    UUID getConnectionOwner();
-
     FluxDeviceType getDeviceType();
 
-    boolean canPlayerAccess(PlayerEntity player);
+    @Nonnull
+    UUID getOwnerUUID();
 
-    int getLogicPriority(); // consider surge, for transfer on server
+    void writeCustomTag(@Nonnull CompoundTag tag, int type);
+
+    void readCustomTag(@Nonnull CompoundTag tag, int type);
+
+    //boolean canPlayerAccess(Player player);
+
+    //int getLogicPriority(); // consider surge, for transfer on server
 
     int getRawPriority(); // ignore surge, for numeric display on client
 
-    void setPriority(int priority);
+    //void setPriority(int priority);
 
-    long getLogicLimit(); // consider disable limit
+    //long getLogicLimit(); // consider disable limit
 
     long getRawLimit(); // ignore disable limit
 
-    void setTransferLimit(long limit);
+    //void setTransferLimit(long limit);
 
     /**
      * If this device is storage, this method returns the max energy storage of it,
@@ -51,36 +53,12 @@ public interface IFluxDevice extends IMenuBridge {
      */
     long getMaxTransferLimit();
 
-    boolean isActive();
+    //boolean isActive();
 
     boolean isChunkLoaded();
 
-    boolean isForcedLoading();
-
-    void setForcedLoading(boolean forcedLoading);
-
-    /**
-     * Connect this device to a network
-     *
-     * @param network the network to connect
-     */
-    void connect(IFluxNetwork network);
-
-    /**
-     * Disconnect this device from current network
-     */
-    void disconnect();
-
     @Nonnull
-    ITransferHandler getTransferHandler();
-
-    @Nonnull
-    World getFluxWorld();
-
-    /*@Deprecated
-    default Coord4D getCoords() {
-        throw new IllegalStateException();
-    }*/
+    Level getFluxWorld();
 
     @Nonnull
     GlobalPos getGlobalPos();
@@ -89,15 +67,17 @@ public interface IFluxDevice extends IMenuBridge {
 
     String getCustomName();
 
-    void setCustomName(String customName);
+    //void setCustomName(String customName);
 
     boolean getDisableLimit();
 
-    void setDisableLimit(boolean disableLimit);
+    //void setDisableLimit(boolean disableLimit);
 
     boolean getSurgeMode();
 
-    void setSurgeMode(boolean surgeMode);
+    boolean isForcedLoading();
+
+    //void setSurgeMode(boolean surgeMode);
 
     /**
      * Transfer handler is unavailable on client, this method is mainly used for gui display on client

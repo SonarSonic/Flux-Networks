@@ -1,48 +1,53 @@
 package sonar.fluxnetworks.client.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.renderer.Atlases;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
+public class FluxStorageItemRenderer extends BlockEntityWithoutLevelRenderer {
+
+    public FluxStorageItemRenderer() {
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+    }
 
     @Override
-    public void func_239207_a_(@Nonnull ItemStack stack, @Nonnull ItemCameraTransforms.TransformType transformType, @Nonnull MatrixStack matrix, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
+    public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType,
+                             @Nonnull PoseStack ps, @Nonnull MultiBufferSource source, int combinedLight,
+                             int combinedOverlay) {
         int color; // 0xRRGGBB
         long energy;
         boolean syncedOnly = false;
-        CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
+        CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
         if (tag != null) {
             if (tag.getBoolean(FluxConstants.FLUX_COLOR)) {
                 // GUI display
-                Screen screen = Minecraft.getInstance().currentScreen;
-                if (screen instanceof GuiFluxCore) {
+                Screen screen = Minecraft.getInstance().screen;
+                /*if (screen instanceof GuiFluxCore) {
                     GuiFluxCore gui = (GuiFluxCore) screen;
                     color = gui.network.getNetworkColor();
-                } else {
-                    color = FluxConstants.INVALID_NETWORK_COLOR;
-                }
+                } else {*/
+                color = FluxConstants.INVALID_NETWORK_COLOR;
+                //}
             } else if (tag.contains(FluxConstants.CLIENT_COLOR)) {
                 // TheOneProbe
                 color = tag.getInt(FluxConstants.CLIENT_COLOR);
@@ -57,17 +62,17 @@ public class FluxStorageItemRenderer extends ItemStackTileEntityRenderer {
             energy = 0;
         }
 
-        FluxStorageBlock block = (FluxStorageBlock) Block.getBlockFromItem(stack.getItem());
-        BlockState renderState = block.getDefaultState();
+        FluxStorageBlock block = (FluxStorageBlock) Block.byItem(stack.getItem());
+        BlockState renderState = block.defaultBlockState();
 
-        BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
-        IBakedModel ibakedmodel = dispatcher.getModelForState(renderState);
+        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
+        BakedModel model = dispatcher.getBlockModel(renderState);
 
         float r = ScreenUtils.getRed(color), g = ScreenUtils.getGreen(color), b = ScreenUtils.getBlue(color);
-        dispatcher.getBlockModelRenderer()
-                .renderModel(matrix.getLast(), buffer.getBuffer(Atlases.getCutoutBlockType()),
-                        renderState, ibakedmodel, r, g, b, light, overlay, EmptyModelData.INSTANCE);
-        FluxStorageTileRenderer.render(matrix, buffer.getBuffer(FluxStorageRenderType.getDiffuse(syncedOnly)),
-                r, g, b, overlay, energy, block.getEnergyCapacity());
+        dispatcher.getModelRenderer()
+                .renderModel(ps.last(), source.getBuffer(Sheets.cutoutBlockSheet()),
+                        renderState, model, r, g, b, combinedLight, combinedOverlay, EmptyModelData.INSTANCE);
+        FluxStorageTileRenderer.render(ps, source.getBuffer(FluxStorageRenderType.getDiffuse(syncedOnly)),
+                r, g, b, combinedOverlay, energy, block.getEnergyCapacity());
     }
 }

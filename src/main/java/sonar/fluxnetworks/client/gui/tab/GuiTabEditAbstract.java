@@ -5,8 +5,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.network.SecurityType;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
@@ -14,8 +14,8 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopupCore;
 import sonar.fluxnetworks.client.gui.popup.PopupCustomColor;
-import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -29,12 +29,12 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
     protected List<ColorButton> colorButtons = Lists.newArrayList();
 
-    protected SecurityType securityType;
+    protected SecurityLevel mSecurityLevel;
     public ColorButton colorBtn;
     public FluxTextWidget nameField;
     public FluxTextWidget passwordField;
 
-    public GuiTabEditAbstract(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiTabEditAbstract(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 
@@ -58,7 +58,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             passwordField = FluxTextWidget.create("", font, guiLeft + 20 + l, guiTop + 63, 140 - l, 12).setTextInvisible();
             passwordField.setMaxStringLength(16);
             passwordField.setResponder(string -> onEditSettingsChanged());
-            passwordField.setVisible(securityType == SecurityType.ENCRYPTED);
+            passwordField.setVisible(mSecurityLevel == SecurityLevel.ENCRYPTED);
 
             addButton(nameField);
             addButton(passwordField);
@@ -76,8 +76,8 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
 
             drawCenterText(matrixStack, getNavigationTab().getTranslatedName(), 88, 10, 0xb4b4b4);
             font.drawString(matrixStack, FluxTranslate.NETWORK_NAME.t() + ":", 14, 30, 0x606060);
-            font.drawString(matrixStack, FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + securityType.getName(), 14, 50, 0x606060);
-            if (securityType == SecurityType.ENCRYPTED)
+            font.drawString(matrixStack, FluxTranslate.NETWORK_SECURITY.t() + ": " + TextFormatting.AQUA + mSecurityLevel.getName(), 14, 50, 0x606060);
+            if (mSecurityLevel == SecurityLevel.ENCRYPTED)
                 font.drawString(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ": ", 14, 65, 0x606060);
             //font.drawString(matrixStack, FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType.getName(), 14, 78, 0x606060);
             font.drawString(matrixStack, FluxTranslate.NETWORK_COLOR.t() + ":", 14, 92, 0x606060);
@@ -90,9 +90,9 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         ////TODO MINOR replace with "text buttons
         if (mouseButton == 0) {
             if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 48 && mouseY < getGuiTop() + 60) {
-                securityType = FluxUtils.incrementEnum(securityType, SecurityType.values());
+                mSecurityLevel = FluxUtils.incrementEnum(mSecurityLevel, SecurityLevel.values());
                 passwordField.setText("");
-                passwordField.setVisible(securityType == SecurityType.ENCRYPTED);
+                passwordField.setVisible(mSecurityLevel == SecurityLevel.ENCRYPTED);
                 onEditSettingsChanged();
                 return true;
             }

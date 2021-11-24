@@ -1,15 +1,8 @@
 package sonar.fluxnetworks.api.energy;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.LongNBT;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.misc.FluxCapabilities;
-
-import javax.annotation.Nonnull;
 
 /**
  * Functions the same as {@link EnergyStorage}  but allows Long.MAX_VALUE, also uses Forge's own capability.
@@ -43,7 +36,7 @@ public class FNEnergyStorage implements IFNEnergyStorage, IEnergyStorage {
 
     @Override
     public long receiveEnergyL(long maxReceive, boolean simulate) {
-        if (!canReceiveL()) {
+        if (!this.canReceive()) {
             return 0;
         }
 
@@ -56,7 +49,7 @@ public class FNEnergyStorage implements IFNEnergyStorage, IEnergyStorage {
 
     @Override
     public long extractEnergyL(long maxExtract, boolean simulate) {
-        if (!canExtractL()) {
+        if (!this.canExtract()) {
             return 0;
         }
 
@@ -78,12 +71,12 @@ public class FNEnergyStorage implements IFNEnergyStorage, IEnergyStorage {
     }
 
     @Override
-    public boolean canExtractL() {
+    public boolean canExtract() {
         return this.maxExtract > 0;
     }
 
     @Override
-    public boolean canReceiveL() {
+    public boolean canReceive() {
         return this.maxReceive > 0;
     }
 
@@ -108,34 +101,5 @@ public class FNEnergyStorage implements IFNEnergyStorage, IEnergyStorage {
     @Override
     public int getMaxEnergyStored() {
         return (int) Math.min(getMaxEnergyStoredL(), Integer.MAX_VALUE);
-    }
-
-    @Override
-    public boolean canExtract() {
-        return canExtractL();
-    }
-
-    @Override
-    public boolean canReceive() {
-        return canReceiveL();
-    }
-
-    public static void register() {
-        CapabilityManager.INSTANCE.register(IFNEnergyStorage.class, new CapStorage(), () -> new FNEnergyStorage(10000));
-    }
-
-    private static class CapStorage implements Capability.IStorage<IFNEnergyStorage> {
-
-        @Override
-        public INBT writeNBT(Capability<IFNEnergyStorage> capability, @Nonnull IFNEnergyStorage instance, Direction side) {
-            return LongNBT.valueOf(instance.getEnergyStoredL());
-        }
-
-        @Override
-        public void readNBT(Capability<IFNEnergyStorage> capability, IFNEnergyStorage instance, Direction side, INBT nbt) {
-            if (!(instance instanceof FNEnergyStorage))
-                throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
-            ((FNEnergyStorage) instance).energy = ((LongNBT) nbt).getLong();
-        }
     }
 }

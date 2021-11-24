@@ -12,6 +12,7 @@ import net.minecraft.nbt.LongNBT;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
@@ -20,7 +21,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.SecurityType;
+import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.connection.FluxNetworkServer;
 import sonar.fluxnetworks.common.network.S2CNetMsg;
@@ -36,7 +37,7 @@ import java.util.UUID;
  * Manage all flux network server and save network data to local.
  * Only on logic server side
  */
-public class FluxNetworkData extends WorldSavedData {
+public class FluxNetworkData extends SavedData {
 
     private static final String NETWORK_DATA = FluxNetworks.MODID + "data";
 
@@ -112,7 +113,7 @@ public class FluxNetworkData extends WorldSavedData {
 
     @Nullable
     public IFluxNetwork createNetwork(@Nonnull PlayerEntity creator, String name, int color,
-                                      SecurityType securityType, String password) {
+                                      SecurityLevel securityLevel, String password) {
         final boolean limitReached;
         if (FluxConfig.maximumPerPlayer == -1) {
             limitReached = false;
@@ -125,7 +126,7 @@ public class FluxNetworkData extends WorldSavedData {
             return null;
         }
         FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, color, creator);
-        network.getSecurity().set(securityType, password);
+        network.getSecurity().set(securityLevel, password);
 
         if (networks.put(network.getNetworkID(), network) != null) {
             FluxNetworks.LOGGER.warn("Network IDs are not unique when creating network");
@@ -182,7 +183,7 @@ public class FluxNetworkData extends WorldSavedData {
         ListNBT list = new ListNBT();
         for (IFluxNetwork network : networks.values()) {
             CompoundNBT tag = new CompoundNBT();
-            network.writeCustomNBT(tag, FluxConstants.TYPE_SAVE_ALL);
+            network.writeCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
             list.add(tag);
         }
         compound.put(NETWORKS, list);

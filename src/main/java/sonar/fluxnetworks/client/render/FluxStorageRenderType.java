@@ -1,11 +1,8 @@
 package sonar.fluxnetworks.client.render;
 
-import net.minecraft.client.renderer.RenderState;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.resources.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
@@ -15,24 +12,26 @@ import javax.annotation.Nonnull;
  */
 public class FluxStorageRenderType extends RenderType {
 
-    private static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
+    private static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model" +
+            "/flux_storage_energy.png");
 
     private static final RenderType INSTANCE;
     private static final RenderType DIFFUSE;
 
     static {
-        RenderType.State state = RenderType.State.getBuilder()
-                .texture(new RenderState.TextureState(ENERGY_TEXTURE, false, false))
-                .shadeModel(SHADE_ENABLED)
+        /*CompositeState state = CompositeState.builder()
+                .setTextureState(new TextureStateShard(ENERGY_TEXTURE, false, false))
+                .setSha(SHADE_ENABLED)
                 .diffuseLighting(DIFFUSE_LIGHTING_DISABLED)
                 .alpha(DEFAULT_ALPHA)
                 .transparency(TRANSLUCENT_TRANSPARENCY)
                 .lightmap(LIGHTMAP_ENABLED)
                 .overlay(OVERLAY_ENABLED)
                 .build(false);
-        INSTANCE = makeType(FluxNetworks.MODID + ":storage_energy", DefaultVertexFormats.ENTITY,
-                GL11.GL_QUADS, 256, state);
-        state = RenderType.State.getBuilder()
+        INSTANCE = create(FluxNetworks.MODID + ":storage_energy", DefaultVertexFormat.NEW_ENTITY,
+                VertexFormat.Mode.QUADS, 256, state);*/
+        INSTANCE = entityTranslucent(ENERGY_TEXTURE);
+        /*state = RenderType.State.getBuilder()
                 .texture(new RenderState.TextureState(ENERGY_TEXTURE, false, false))
                 .shadeModel(SHADE_ENABLED)
                 .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
@@ -41,12 +40,14 @@ public class FluxStorageRenderType extends RenderType {
                 .lightmap(LIGHTMAP_ENABLED)
                 .overlay(OVERLAY_ENABLED)
                 .build(false);
-        DIFFUSE = makeType(FluxNetworks.MODID + ":storage_energy_diffuse", DefaultVertexFormats.ENTITY,
-                GL11.GL_QUADS, 256, state);
+        DIFFUSE = makeType(FluxNetworks.MODID + ":storage_energy_diffuse", DefaultVertexFormat.NEW_ENTITY,
+                GL11.GL_QUADS, 256, state);*/
+        DIFFUSE = INSTANCE;
     }
 
-    private FluxStorageRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn,
-                                  boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
+    private FluxStorageRenderType(String nameIn, VertexFormat formatIn, VertexFormat.Mode drawModeIn, int bufferSizeIn,
+                                  boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn,
+                                  Runnable clearTaskIn) {
         super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
     }
 

@@ -1,49 +1,43 @@
 package sonar.fluxnetworks.common.connection.transfer;
 
-import net.minecraft.util.Direction;
-import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
+public class FluxPointHandler extends FluxConnectorHandler {
 
-import javax.annotation.Nonnull;
-import java.util.EnumMap;
-import java.util.Map;
+    private long mDesired;
 
-public class FluxPointHandler extends BasicPointHandler<TileFluxPoint> {
-
-    private final Map<Direction, ConnectionTransfer> transfers = new EnumMap<>(Direction.class);
-
-    public FluxPointHandler(TileFluxPoint fluxPoint) {
-        super(fluxPoint);
+    public FluxPointHandler() {
     }
 
     @Override
     public void onCycleStart() {
-        for (ConnectionTransfer transfer : transfers.values()) {
-            if (transfer != null) {
-                transfer.onCycleStart();
-            }
-        }
-        demand = sendToConsumers(device.getLogicLimit(), true);
+        super.onCycleStart();
+        mDesired = send(getLimit(), true);
     }
 
     @Override
-    public long sendToConsumers(long energy, boolean simulate) {
-        if (!device.isActive()) {
-            return 0;
-        }
+    public void onCycleEnd() {
+        mBuffer += mChange = -send(Math.min(mBuffer, getLimit()), false);
+    }
+
+    @Override
+    public void insert(long energy) {
+        mBuffer += energy;
+    }
+
+    @Override
+    public long getRequest() {
+        return Math.max(mDesired - mBuffer, 0);
+    }
+
+    private long send(long energy, boolean simulate) {
         long leftover = energy;
-        for (ConnectionTransfer transfer : transfers.values()) {
+        for (SideTransfer transfer : mTransfers) {
             if (transfer != null) {
-                leftover -= transfer.sendToTile(leftover, simulate);
+                leftover -= transfer.send(leftover, simulate);
                 if (leftover <= 0) {
                     return energy;
                 }
             }
         }
         return energy - leftover;
-    }
-
-    @Override
-    public void updateTransfers(@Nonnull Direction... faces) {
-        FluxPlugHandler.updateSidedTransfers(device.getFluxWorld(), device.getPos(), transfers, faces);
     }
 }

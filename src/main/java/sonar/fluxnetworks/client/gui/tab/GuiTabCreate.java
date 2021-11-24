@@ -5,13 +5,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.network.SecurityType;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
@@ -20,9 +20,9 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
     public NormalButton apply, create;
 
-    public GuiTabCreate(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiTabCreate(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
-        securityType = SecurityType.ENCRYPTED;
+        mSecurityLevel = SecurityLevel.ENCRYPTED;
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -58,7 +58,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         if (button instanceof NormalButton) {
             if (mouseButton == 0 && button.id == 3) {
                 //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK, GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
-                C2SNetMsg.createNetwork(nameField.getText(), colorBtn.color, securityType, passwordField.getText());
+                C2SNetMsg.createNetwork(nameField.getText(), colorBtn.color, mSecurityLevel, passwordField.getText());
             }
         }
     }
@@ -66,7 +66,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     public void onEditSettingsChanged() {
         if (create != null) {
-            create.clickable = (securityType != SecurityType.ENCRYPTED
+            create.clickable = (mSecurityLevel != SecurityLevel.ENCRYPTED
                     || passwordField.getText().length() != 0) && nameField.getText().length() != 0;
         }
     }

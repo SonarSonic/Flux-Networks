@@ -1,40 +1,12 @@
 package sonar.fluxnetworks.common.network;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.SecurityType;
-import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
-import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
-import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 @OnlyIn(Dist.CLIENT)
 public final class C2SNetMsg {
 
-    private static final NetworkHandler sNetwork = NetworkHandler.sInstance;
+    /*private static final NetworkHandler sNetwork = NetworkHandler.sInstance;
 
     // indices are defined in S2CNetMsg
     static final Functor[] sFunctors = new Functor[]{
@@ -54,7 +26,7 @@ public final class C2SNetMsg {
     }
 
     // request to change flux tile entity settings
-    public static void tileEntity(@Nonnull TileFluxDevice tile, byte type) {
+    public static void tileEntity(@Nonnull FluxDeviceEntity tile, byte type) {
         PacketBuffer buf = sNetwork.targetAt(0);
         buf.writeBlockPos(tile.getPos());
         buf.writeByte(type);
@@ -78,7 +50,7 @@ public final class C2SNetMsg {
     }
 
     // edit network settings
-    public static void editNetwork(int networkID, String name, int color, @Nonnull SecurityType security,
+    public static void editNetwork(int networkID, String name, int color, @Nonnull SecurityLevel security,
                                    String password) {
         PacketBuffer buf = sNetwork.targetAt(3);
         buf.writeVarInt(networkID);
@@ -125,7 +97,7 @@ public final class C2SNetMsg {
     }
 
     // create a flux network
-    public static void createNetwork(String name, int color, @Nonnull SecurityType security, String password) {
+    public static void createNetwork(String name, int color, @Nonnull SecurityLevel security, String password) {
         PacketBuffer buf = sNetwork.targetAt(7);
         buf.writeString(name, 256);
         buf.writeInt(color);
@@ -157,7 +129,8 @@ public final class C2SNetMsg {
         sNetwork.sendToServer(buf);
     }
 
-    public static void editConnections(int networkID, @Nonnull List<GlobalPos> list, int flags, String name, int priority,
+    public static void editConnections(int networkID, @Nonnull List<GlobalPos> list, int flags, String name, int
+    priority,
                                        long limit, boolean surgeMode, boolean disableLimit, boolean chunkLoading) {
         PacketBuffer buf = sNetwork.targetAt(10);
         buf.writeVarInt(networkID);
@@ -211,8 +184,8 @@ public final class C2SNetMsg {
 
     private static void tileEntity(@Nonnull PacketBuffer buf, @Nonnull ClientPlayerEntity player) {
         final TileEntity tile = player.world.getTileEntity(buf.readBlockPos());
-        if (tile instanceof TileFluxDevice) {
-            ((TileFluxDevice) tile).readPacket(buf, buf.readByte());
+        if (tile instanceof FluxDeviceEntity) {
+            ((FluxDeviceEntity) tile).readPacket(buf, buf.readByte());
         }
     }
 
@@ -277,5 +250,5 @@ public final class C2SNetMsg {
             tags.add(buf.readCompoundTag());
         }
         FluxClientCache.updateConnections(networkID, tags);
-    }
+    }*/
 }

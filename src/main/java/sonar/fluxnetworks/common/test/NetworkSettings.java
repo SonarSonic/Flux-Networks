@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import sonar.fluxnetworks.common.connection.BasicFluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetworkModel;
 
 @Deprecated
 public class NetworkSettings<T> {
@@ -23,11 +23,11 @@ public class NetworkSettings<T> {
         this.value = value;
     }
 
-    public ICustomValue<T> getValue(BasicFluxNetwork network) {
+    public ICustomValue<T> getValue(FluxNetworkModel network) {
         return value.getValue(network);
     }
 
     private interface ISettingGetter<T> {
-        ICustomValue<T> getValue(BasicFluxNetwork network);
+        ICustomValue<T> getValue(FluxNetworkModel network);
     }
 }

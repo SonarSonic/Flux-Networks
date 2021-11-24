@@ -1,22 +1,29 @@
 package sonar.fluxnetworks.common.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.IBlockReader;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.common.misc.FluxShapes;
-import sonar.fluxnetworks.common.tileentity.TileFluxController;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import sonar.fluxnetworks.api.FluxTranslate;
+import sonar.fluxnetworks.common.util.FluxShapes;
+import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.common.blockentity.FluxControllerEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class FluxControllerBlock extends FluxDeviceBlock {
 
     public FluxControllerBlock(Properties props) {
@@ -25,18 +32,30 @@ public class FluxControllerBlock extends FluxDeviceBlock {
 
     @Nonnull
     @Override
-    public VoxelShape getShape(@Nonnull BlockState state, @Nonnull IBlockReader reader, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return FluxShapes.FLUX_CONTROLLER_VOXEL;
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable IBlockReader worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
+                                TooltipFlag flag) {
+        super.appendHoverText(stack, level, tooltip, flag);
         tooltip.add(FluxTranslate.FLUX_CONTROLLER_TOOLTIP.getTextComponent());
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new TileFluxController();
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new FluxControllerEntity(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
+                                                                  BlockEntityType<T> type) {
+        if (type == RegistryBlocks.FLUX_CONTROLLER_TILE) {
+            return FluxDeviceEntity.getTicker(level);
+        }
+        return null;
     }
 }

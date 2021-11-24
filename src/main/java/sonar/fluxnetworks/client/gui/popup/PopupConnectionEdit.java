@@ -6,14 +6,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.GlobalPos;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SimpleToggleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabConnections;
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;

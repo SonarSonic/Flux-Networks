@@ -1,19 +1,19 @@
 package sonar.fluxnetworks.common.registry;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.common.item.FluxDeviceItem;
+import sonar.fluxnetworks.common.item.FluxDustItem;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.item.ItemFluxDevice;
-import sonar.fluxnetworks.common.item.ItemFluxDust;
 
 @SuppressWarnings("unused")
 @ObjectHolder(FluxNetworks.MODID)
 public class RegistryItems {
 
     @ObjectHolder("flux_dust")
-    public static ItemFluxDust FLUX_DUST;
+    public static FluxDustItem FLUX_DUST;
 
     @ObjectHolder("flux_core")
     public static Item FLUX_CORE;
@@ -28,11 +28,11 @@ public class RegistryItems {
     //public static EntityType<FireItemEntity> FIRE_ITEM_ENTITY;
 
     @ObjectHolder("basic_flux_storage")
-    public static ItemFluxDevice BASIC_FLUX_STORAGE;
+    public static FluxDeviceItem BASIC_FLUX_STORAGE;
 
     @ObjectHolder("herculean_flux_storage")
-    public static ItemFluxDevice HERCULEAN_FLUX_STORAGE;
+    public static FluxDeviceItem HERCULEAN_FLUX_STORAGE;
 
     @ObjectHolder("gargantuan_flux_storage")
-    public static ItemFluxDevice GARGANTUAN_FLUX_STORAGE;
+    public static FluxDeviceItem GARGANTUAN_FLUX_STORAGE;
 }

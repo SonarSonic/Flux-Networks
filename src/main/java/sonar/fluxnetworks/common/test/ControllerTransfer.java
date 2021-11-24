@@ -3,18 +3,18 @@ package sonar.fluxnetworks.common.test;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import sonar.fluxnetworks.common.tileentity.TileFluxController;
+import sonar.fluxnetworks.common.blockentity.FluxControllerEntity;
 
 import java.util.*;
 
 @Deprecated
 public class ControllerTransfer implements IFluxTransfer {
 
-    public final TileFluxController tile;
+    public final FluxControllerEntity tile;
     private final List<ServerPlayerEntity> players = new ArrayList<>();
     private int timer;
 
-    public ControllerTransfer(TileFluxController tile) {
+    public ControllerTransfer(FluxControllerEntity tile) {
         this.tile = tile;
     }
 

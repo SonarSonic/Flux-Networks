@@ -2,16 +2,16 @@ package sonar.fluxnetworks.client;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.GlobalPos;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.BasicFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.connection.FluxNetworkModel;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -38,10 +38,10 @@ public class FluxClientCache {
         feedback = FeedbackInfo.NONE;
     }
 
-    public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundNBT> serverSideNetworks, int type) {
-        for (Int2ObjectMap.Entry<CompoundNBT> entry : serverSideNetworks.int2ObjectEntrySet()) {
+    public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundTag> serverSideNetworks, int type) {
+        for (Int2ObjectMap.Entry<CompoundTag> entry : serverSideNetworks.int2ObjectEntrySet()) {
             int id = entry.getIntKey();
-            CompoundNBT nbt = entry.getValue();
+            CompoundTag nbt = entry.getValue();
             IFluxNetwork network = networks.get(id);
             if (type == FluxConstants.TYPE_NET_DELETE) {
                 if (network != null) {
@@ -49,22 +49,23 @@ public class FluxClientCache {
                 }
             } else {
                 if (network == null) {
-                    network = new BasicFluxNetwork();
-                    network.readCustomNBT(nbt, type);
+                    network = new FluxNetworkModel();
+                    network.readCustomTag(nbt, type);
                     networks.put(id, network);
                 } else {
-                    network.readCustomNBT(nbt, type);
+                    network.readCustomTag(nbt, type);
                 }
             }
         }
     }
 
-    public static void updateConnections(int networkID, List<CompoundNBT> tags) {
+    public static void updateConnections(int networkID, List<CompoundTag> tags) {
         IFluxNetwork network = networks.get(networkID);
         if (network != null) {
-            for (CompoundNBT tag : tags) {
+            for (CompoundTag tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
-                network.getConnectionByPos(globalPos).ifPresent(c -> c.readCustomNBT(tag, FluxConstants.TYPE_CONNECTION_UPDATE));
+                network.getConnectionByPos(globalPos).ifPresent(c -> c.readCustomTag(tag,
+                        FluxConstants.TYPE_CONNECTION_UPDATE));
             }
         }
     }
@@ -74,7 +75,7 @@ public class FluxClientCache {
         return networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
-    public static String getDisplayName(@Nonnull CompoundNBT subTag) {
+    public static String getDisplayName(@Nonnull CompoundTag subTag) {
         IFluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
         if (network.isValid()) {
             return network.getNetworkName();

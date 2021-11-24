@@ -1,9 +1,7 @@
 package sonar.fluxnetworks.api.misc;
 
-import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import net.minecraft.nbt.CompoundTag;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 
@@ -20,7 +18,7 @@ public enum FluxConfigurationType {
         this.key = key;
     }
 
-    public void copy(CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
+    public void copy(CompoundTag nbt, @Nonnull FluxDeviceEntity tile) {
         switch (this) {
             case NETWORK:
                 nbt.putInt(key, tile.getNetwork().getNetworkID());
@@ -40,11 +38,12 @@ public enum FluxConfigurationType {
         }
     }
 
-    public void paste(@Nonnull CompoundNBT nbt, @Nonnull TileFluxDevice tile) {
+    public void paste(@Nonnull CompoundTag nbt, @Nonnull FluxDeviceEntity tile) {
         if (!nbt.contains(key)) {
             return;
         }
-        switch (this) {
+        //FIXME
+        /*switch (this) {
             case NETWORK:
                 IFluxNetwork network = FluxNetworkData.getNetwork(nbt.getInt(key));
                 tile.connect(network);
@@ -61,7 +60,7 @@ public enum FluxConfigurationType {
             case TRANSFER_SETTING:
                 tile.setDisableLimit(nbt.getBoolean(key));
                 break;
-        }
+        }*/
     }
 
     //// NETWORK \\\\

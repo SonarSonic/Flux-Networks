@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.gui;
 
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 
 import javax.annotation.Nonnull;
 

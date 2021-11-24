@@ -1,25 +1,36 @@
 package sonar.fluxnetworks.api.network;
 
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import sonar.fluxnetworks.api.FluxTranslate;
 
 import javax.annotation.Nonnull;
 
 public enum AccessLevel {
-    OWNER(FluxTranslate.OWNER, 0xffaa00, TextFormatting.GOLD),
-    ADMIN(FluxTranslate.ADMIN, 0x66cc00, TextFormatting.GREEN),
-    USER(FluxTranslate.USER, 0x6699ff, TextFormatting.BLUE),
-    BLOCKED(FluxTranslate.BLOCKED, 0xa9a9a9, TextFormatting.GRAY),
-    SUPER_ADMIN(FluxTranslate.SUPER_ADMIN, 0x4b0082, TextFormatting.DARK_PURPLE);
+    OWNER(FluxTranslate.OWNER, 0xffaa00, ChatFormatting.GOLD),
+    ADMIN(FluxTranslate.ADMIN, 0x66cc00, ChatFormatting.GREEN),
+    USER(FluxTranslate.USER, 0x6699ff, ChatFormatting.BLUE),
+    BLOCKED(FluxTranslate.BLOCKED, 0xa9a9a9, ChatFormatting.GRAY),
+    SUPER_ADMIN(FluxTranslate.SUPER_ADMIN, 0x4b0082, ChatFormatting.DARK_PURPLE);
+
+    private static final AccessLevel[] VALUES = values();
 
     private final FluxTranslate localization;
     private final int color;
-    private final TextFormatting formatting;
+    private final ChatFormatting formatting;
 
-    AccessLevel(FluxTranslate localization, int color, TextFormatting formatting) {
+    AccessLevel(FluxTranslate localization, int color, ChatFormatting formatting) {
         this.localization = localization;
         this.color = color;
         this.formatting = formatting;
+    }
+
+    @Nonnull
+    public static AccessLevel fromId(byte id) {
+        return VALUES[id];
+    }
+
+    public byte getId() {
+        return (byte) ordinal();
     }
 
     @Nonnull

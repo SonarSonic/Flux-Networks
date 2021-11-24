@@ -6,14 +6,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.client.gui.popup.PopupCore;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class GuiPopupHost extends GuiFocusable<FluxMenu> {
+public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
-    public GuiPopupHost(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiPopupHost(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 

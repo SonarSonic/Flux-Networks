@@ -7,14 +7,14 @@ import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.network.SecurityType;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
@@ -26,10 +26,10 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     public NormalButton apply, delete;
     public int deleteCount;
 
-    public GuiTabSettings(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiTabSettings(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         if (networkValid) {
-            securityType = network.getSecurity().getType();
+            mSecurityLevel = network.getSecurity().getLevel();
         }
     }
 
@@ -91,7 +91,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void onEditSettingsChanged() {
         if (networkValid && apply != null) {
-            apply.clickable = ((securityType != SecurityType.ENCRYPTED || passwordField.getText().length() != 0) && nameField.getText().length() != 0);
+            apply.clickable = ((mSecurityLevel != SecurityLevel.ENCRYPTED || passwordField.getText().length() != 0) && nameField.getText().length() != 0);
         }
     }
 
@@ -102,7 +102,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
             switch (button.id) {
                 case 3:
                     C2SNetMsg.editNetwork(network.getNetworkID(),
-                            nameField.getText(), colorBtn.color, securityType, passwordField.getText());
+                            nameField.getText(), colorBtn.color, mSecurityLevel, passwordField.getText());
                     break;
                 case 4:
                     C2SNetMsg.deleteNetwork(network.getNetworkID());

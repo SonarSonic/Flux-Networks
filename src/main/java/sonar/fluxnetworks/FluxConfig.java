@@ -5,10 +5,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import sonar.fluxnetworks.common.misc.EnergyUtils;
+import sonar.fluxnetworks.common.util.EnergyUtils;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -54,8 +56,8 @@ public class FluxConfig {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(FluxConfig::reload);
     }
 
-    static void reload(@Nonnull ModConfig.ModConfigEvent event) {
-        final ForgeConfigSpec spec = event.getConfig().getSpec();
+    static void reload(@Nonnull ModConfigEvent event) {
+        final IConfigSpec<?> spec = event.getConfig().getSpec();
         if (spec == CLIENT_SPEC) {
             CLIENT_CONFIG.load();
             FluxNetworks.LOGGER.info("CLIENT CONFIG LOADED");

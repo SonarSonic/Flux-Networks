@@ -1,34 +1,24 @@
 package sonar.fluxnetworks.common.item;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.IMenuBridge;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.text.StyleUtils;
 import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
@@ -39,69 +29,58 @@ public class ItemFluxConfigurator extends Item {
         super(props);
     }
 
-    @Nonnull
     @Override
-    public ActionResultType onItemUse(@Nonnull ItemUseContext context) {
-        if (context.getWorld().isRemote) {
-            return ActionResultType.SUCCESS;
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        if (context.getLevel().isClientSide) {
+            return InteractionResult.SUCCESS;
         }
-        PlayerEntity player = context.getPlayer();
+        Player player = context.getPlayer();
         if (player == null) {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
-        TileEntity tile = context.getWorld().getTileEntity(context.getPos());
-        if (tile instanceof TileFluxDevice) {
-            TileFluxDevice flux = (TileFluxDevice) tile;
-            if (!flux.canPlayerAccess(context.getPlayer())) {
-                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_DENIED), true);
-                return ActionResultType.FAIL;
+        if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof FluxDeviceEntity device) {
+            if (!device.canPlayerAccess(context.getPlayer())) {
+                player.displayClientMessage(FluxTranslate.error(FluxTranslate.ACCESS_DENIED), true);
+                return InteractionResult.FAIL;
             }
-            ItemStack stack = player.getHeldItem(context.getHand());
-            if (player.isSneaking()) {
-                CompoundNBT configs = new CompoundNBT();
+            if (player.isShiftKeyDown()) {
+                CompoundTag configs = new CompoundTag();
                 for (FluxConfigurationType type : FluxConfigurationType.values()) {
-                    type.copy(configs, flux);
+                    type.copy(configs, device);
                 }
-                stack.setTagInfo(FluxConstants.TAG_FLUX_CONFIG, configs);
-                player.sendMessage(new StringTextComponent("Copied Configuration"), UUID.randomUUID());
+                stack.addTagElement(FluxConstants.TAG_FLUX_CONFIG, configs);
+                player.sendMessage(new TextComponent("Copied Configuration"), UUID.randomUUID());
             } else {
-                CompoundNBT configs = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
+                CompoundTag configs = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
                 if (configs != null) {
                     for (FluxConfigurationType type : FluxConfigurationType.values()) {
-                        type.paste(configs, flux);
+                        type.paste(configs, device);
                     }
-                    player.sendMessage(new StringTextComponent("Pasted Configuration"), UUID.randomUUID());
+                    player.sendMessage(new TextComponent("Pasted Configuration"), UUID.randomUUID());
                 }
             }
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        NetworkHooks.openGui((ServerPlayerEntity) player,
-                new ContainerProvider(), buf -> buf.writeBoolean(false));
-        return ActionResultType.SUCCESS;
-    }
-
-    @Nonnull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
-        if (!world.isRemote) {
-            NetworkHooks.openGui((ServerPlayerEntity) player,
-                    new ContainerProvider(), buf -> buf.writeBoolean(false));
-        }
-        return ActionResult.resultSuccess(player.getHeldItem(hand));
+        /*NetworkHooks.openGui((ServerPlayerEntity) player,
+                new ContainerProvider(), buf -> buf.writeBoolean(false));*/
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip,
-                               @Nonnull ITooltipFlag flagIn) {
-        CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
+    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+        return super.use(pLevel, pPlayer, pUsedHand);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
-            tooltip.add(new StringTextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + TextFormatting.WHITE +
+            tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + ChatFormatting.WHITE +
                     FluxClientCache.getDisplayName(tag)));
         }
-        super.addInformation(stack, worldIn, tooltip, flagIn);
     }
 
-    public static class MenuBridge implements IMenuBridge {
+    /*public static class MenuBridge implements IFluxBridge {
 
         public final ItemStack stack;
         public int networkID;
@@ -122,12 +101,12 @@ public class ItemFluxConfigurator extends Item {
         }
 
         @Override
-        public void onMenuOpened(PlayerEntity player) {
+        public void onPlayerOpen(PlayerEntity player) {
 
         }
 
         @Override
-        public void onMenuClosed(PlayerEntity player) {
+        public void onPlayerClose(PlayerEntity player) {
 
         }
     }
@@ -142,8 +121,9 @@ public class ItemFluxConfigurator extends Item {
 
         @Nullable
         @Override
-        public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-            return new FluxMenu(windowID, playerInventory, new MenuBridge());
+        public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory,
+                                    @Nonnull PlayerEntity player) {
+            return new FluxContainerMenu(windowID, playerInventory, new MenuBridge());
         }
-    }
+    }*/
 }

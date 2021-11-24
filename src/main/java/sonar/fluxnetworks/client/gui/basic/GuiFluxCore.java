@@ -10,17 +10,17 @@ import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
+import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -36,7 +36,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     public AccessLevel accessLevel = AccessLevel.BLOCKED;
     protected boolean networkValid;
 
-    public GuiFluxCore(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiFluxCore(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         this.player = player;
         this.network = FluxClientCache.getNetwork(container.bridge.getNetworkID());
@@ -155,8 +155,8 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     }
 
     public void setConnectedNetwork(int networkID, String password) {
-        if (container.bridge instanceof TileFluxDevice) {
-            C2SNetMsg.setNetwork(((TileFluxDevice) container.bridge).getPos(), networkID, password);
+        if (container.bridge instanceof FluxDeviceEntity) {
+            C2SNetMsg.setNetwork(((FluxDeviceEntity) container.bridge).getPos(), networkID, password);
         } else if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
             C2SNetMsg.configuratorNet(networkID, password);
         } else if (container.bridge instanceof ItemAdminConfigurator.MenuBridge) {

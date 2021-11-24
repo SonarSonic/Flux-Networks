@@ -2,7 +2,7 @@ package sonar.fluxnetworks.common.test;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 @Deprecated
 public enum TilePacketEnum {
@@ -16,6 +16,6 @@ public enum TilePacketEnum {
     }
 
     public interface IPacketTileHandler {
-        Object handlePacket(TileFluxDevice tile, PlayerEntity player, CompoundNBT nbtTag);
+        Object handlePacket(FluxDeviceEntity tile, PlayerEntity player, CompoundNBT nbtTag);
     }
 }

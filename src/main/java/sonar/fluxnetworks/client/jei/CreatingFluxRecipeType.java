@@ -1,22 +1,12 @@
 package sonar.fluxnetworks.client.jei;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 
-public class CreatingFluxRecipeType {
-
-    public final Block base;
-    public final Block crusher;
-
-    public final ItemStack input;
-    public final ItemStack output;
-
-    public CreatingFluxRecipeType(Block base, Block crusher, ItemStack input, ItemStack output) {
-        this.base = base;
-        this.crusher = crusher;
-        this.input = input;
-        this.output = output;
-    }
+public record CreatingFluxRecipeType(Block base,
+                                     Block crusher,
+                                     ItemStack input,
+                                     ItemStack output) {
 
     public Block getBase() {
         return base;

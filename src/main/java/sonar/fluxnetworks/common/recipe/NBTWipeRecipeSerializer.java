@@ -1,42 +1,49 @@
 package sonar.fluxnetworks.common.recipe;
 
 import com.google.gson.JsonObject;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
+import javax.annotation.Nullable;
 
-public class NBTWipeRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<NBTWipeRecipe> {
+public class NBTWipeRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<NBTWipeRecipe> {
 
     public static final NBTWipeRecipeSerializer INSTANCE = new NBTWipeRecipeSerializer();
 
+    private NBTWipeRecipeSerializer() {
+    }
+
     @Nonnull
     @Override
-    public NBTWipeRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        return new NBTWipeRecipe(IRecipeSerializer.CRAFTING_SHAPELESS.read(recipeId, json));
+    public NBTWipeRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
+        return new NBTWipeRecipe(RecipeSerializer.SHAPELESS_RECIPE.fromJson(recipeId, json));
     }
 
+    @Nullable
     @Override
-    public NBTWipeRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull PacketBuffer buffer) {
+    public NBTWipeRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         try {
-            return new NBTWipeRecipe(Objects.requireNonNull(IRecipeSerializer.CRAFTING_SHAPELESS.read(recipeId, buffer)));
+            ShapelessRecipe recipe = RecipeSerializer.SHAPELESS_RECIPE.fromNetwork(recipeId, buffer);
+            if (recipe != null) {
+                return new NBTWipeRecipe(recipe);
+            }
         } catch (Exception e) {
             FluxNetworks.LOGGER.error("Error reading NBT Wipe Recipe from Packet", e);
-            throw e;
         }
+        return null;
     }
 
     @Override
-    public void write(@Nonnull PacketBuffer buffer, @Nonnull NBTWipeRecipe recipe) {
+    public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull NBTWipeRecipe recipe) {
         try {
-            IRecipeSerializer.CRAFTING_SHAPELESS.write(buffer, recipe);
-        } catch(Exception e){
+            RecipeSerializer.SHAPELESS_RECIPE.toNetwork(buffer, recipe);
+        } catch (Exception e) {
             FluxNetworks.LOGGER.error("Error writing NBT Wipe Recipe to packet.", e);
-            throw e;
         }
     }
 }

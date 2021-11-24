@@ -10,13 +10,13 @@ import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PopupCore<T extends GuiFluxCore> extends GuiFocusable<FluxMenu> {
+public abstract class PopupCore<T extends GuiFluxCore> extends GuiFocusable<FluxContainerMenu> {
 
     protected List<NormalButton> popButtons = new ArrayList<>();
     protected List<SlidedSwitchButton> popSwitches = new ArrayList<>();

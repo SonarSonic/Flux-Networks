@@ -1,46 +1,54 @@
 package sonar.fluxnetworks.common.connection;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.device.IFluxPlug;
-import sonar.fluxnetworks.api.device.IFluxPoint;
+import sonar.fluxnetworks.api.device.*;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.FluxLogicType;
 import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
- * This class handles a single flux Network on logic server.
+ * This class handles a single flux Network on logical server side.
  */
-public class FluxNetworkServer extends BasicFluxNetwork {
+public class FluxNetworkServer extends FluxNetworkModel {
 
-    private final Map<FluxLogicType, List<? extends IFluxDevice>> connections = new EnumMap<>(FluxLogicType.class);
+    private static final Comparator<FluxDeviceEntity> DESCENDING_ORDER =
+            (a, b) -> Integer.compare(b.getTransferHandler().getPriority(), a.getTransferHandler().getPriority());
 
-    private final Queue<IFluxDevice> toAdd = new LinkedList<>();
-    private final Queue<IFluxDevice> toRemove = new LinkedList<>();
+    private static final Consumer<FluxDeviceEntity> DISCONNECT = d -> d.connect(FluxNetworkInvalid.INSTANCE);
 
-    private boolean sortConnections = true;
+    private static final Class<?>[] LOGICAL_TYPES =
+            {IFluxDevice.class, IFluxPlug.class, IFluxPoint.class, IFluxStorage.class, IFluxController.class};
 
-    // storage can work as both plug and point logically
-    private final List<PriorityGroup<IFluxPlug>> sortedPlugs = new ArrayList<>();
-    private final List<PriorityGroup<IFluxPoint>> sortedPoints = new ArrayList<>();
+    private final List<List<FluxDeviceEntity>> mDevices = new ArrayList<>(LOGICAL_TYPES.length);
 
-    private final TransferIterator<IFluxPlug> plugTransferIterator = new TransferIterator<>(false);
-    private final TransferIterator<IFluxPoint> pointTransferIterator = new TransferIterator<>(true);
+    private final Queue<FluxDeviceEntity> mToAdd = new LinkedList<>();
+    private final Queue<FluxDeviceEntity> mToRemove = new LinkedList<>();
 
-    private long bufferLimiter = 0;
+    private boolean mSortConnections = true;
 
-    public FluxNetworkServer() {
+    private final TransferIterator mPlugTransferIterator = new TransferIterator(false);
+    private final TransferIterator mPointTransferIterator = new TransferIterator(true);
 
+    private long mBufferLimiter = 0;
+
+    {
+        for (int i = 0; i < LOGICAL_TYPES.length; i++) {
+            mDevices.add(new ArrayList<>());
+        }
     }
 
-    public FluxNetworkServer(int id, String name, int color, PlayerEntity creator) {
-        super(id, name, color, creator);
+    public FluxNetworkServer() {
+    }
+
+    public FluxNetworkServer(int id, @Nonnull String name, int color, @Nonnull Player owner) {
+        super(id, name, color, owner);
     }
 
     /*public void addConnections() {
@@ -71,100 +79,91 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     }*/
 
     private void handleConnectionQueue() {
-        IFluxDevice device;
-        while ((device = toAdd.poll()) != null) {
-            for (FluxLogicType type : FluxLogicType.getValidTypes(device)) {
-                sortConnections |= FluxUtils.addWithCheck(getConnections(type), device);
+        FluxDeviceEntity device;
+        while ((device = mToAdd.poll()) != null) {
+            for (int i = 0; i < LOGICAL_TYPES.length; i++) {
+                if (LOGICAL_TYPES[i].isInstance(device)) {
+                    mSortConnections |= FluxUtils.addWithCheck(getLogicalEntities(i), device);
+                }
             }
         }
-        while ((device = toRemove.poll()) != null) {
-            for (FluxLogicType type : FluxLogicType.getValidTypes(device)) {
-                sortConnections |= getConnections(type).remove(device);
+        while ((device = mToRemove.poll()) != null) {
+            for (int i = 0; i < LOGICAL_TYPES.length; i++) {
+                if (LOGICAL_TYPES[i].isInstance(device)) {
+                    mSortConnections |= getLogicalEntities(i).remove(device);
+                }
             }
         }
-        if (sortConnections) {
-            sortConnections();
-            sortConnections = false;
+        if (mSortConnections) {
+            getLogicalEntities(PLUG).sort(DESCENDING_ORDER);
+            getLogicalEntities(POINT).sort(DESCENDING_ORDER);
+            mSortConnections = false;
         }
-    }
-
-    private void sortConnections() {
-        sortedPlugs.clear();
-        sortedPoints.clear();
-        List<IFluxPlug> plugs = getConnections(FluxLogicType.PLUG);
-        List<IFluxPoint> points = getConnections(FluxLogicType.POINT);
-        plugs.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPlugs).getDevices().add(p));
-        points.forEach(p -> PriorityGroup.getOrCreateGroup(p.getLogicPriority(), sortedPoints).getDevices().add(p));
-        sortedPlugs.sort(PriorityGroup.DESCENDING_ORDER);
-        sortedPoints.sort(PriorityGroup.DESCENDING_ORDER);
     }
 
     @Nonnull
     @Override
-    @SuppressWarnings("unchecked")
-    public <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
-        return (List<T>) connections.computeIfAbsent(type, m -> new ArrayList<>());
+    public List<FluxDeviceEntity> getLogicalEntities(int logic) {
+        return mDevices.get(logic);
     }
 
     @Override
     public void onEndServerTick() {
-        statistics.startProfiling();
+        mStatistics.startProfiling();
 
         handleConnectionQueue();
 
-        bufferLimiter = 0;
+        mBufferLimiter = 0;
 
-        List<IFluxDevice> devices = getConnections(FluxLogicType.ANY);
-        for (IFluxDevice f : devices) {
+        List<FluxDeviceEntity> devices = getLogicalEntities(ANY);
+        for (var f : devices) {
             f.getTransferHandler().onCycleStart();
         }
 
-        if (!sortedPoints.isEmpty() && !sortedPlugs.isEmpty()) {
-            plugTransferIterator.reset(sortedPlugs);
-            pointTransferIterator.reset(sortedPoints);
+        List<FluxDeviceEntity> plugs = getLogicalEntities(PLUG);
+        List<FluxDeviceEntity> points = getLogicalEntities(POINT);
+        if (!points.isEmpty() && !plugs.isEmpty()) {
+            mPlugTransferIterator.reset(plugs);
+            mPointTransferIterator.reset(points);
             CYCLE:
-            while (pointTransferIterator.hasNext()) {
-                while (plugTransferIterator.hasNext()) {
-                    IFluxPlug plug = plugTransferIterator.next();
-                    IFluxPoint point = pointTransferIterator.next();
+            while (mPointTransferIterator.hasNext()) {
+                while (mPlugTransferIterator.hasNext()) {
+                    FluxDeviceEntity plug = mPlugTransferIterator.next();
+                    FluxDeviceEntity point = mPointTransferIterator.next();
                     if (plug.getDeviceType() == point.getDeviceType()) {
                         break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                     }
                     // we don't need to simulate this action
-                    long operate = plug.getTransferHandler().removeFromBuffer(point.getTransferHandler().getRequest());
-                    if (operate > 0) {
-                        point.getTransferHandler().addToBuffer(operate);
+                    long op = plug.getTransferHandler().extract(point.getTransferHandler().getRequest());
+                    if (op > 0) {
+                        point.getTransferHandler().insert(op);
                         continue CYCLE;
                     } else {
                         // although the plug still need transfer (buffer > 0)
                         // but it reached max transfer limit, so we use next plug
-                        plugTransferIterator.incrementFlux();
+                        mPlugTransferIterator.increment();
                     }
                 }
                 break; // all plugs have been used
             }
         }
-        for (IFluxDevice f : devices) {
+
+        for (var f : devices) {
             f.getTransferHandler().onCycleEnd();
-            bufferLimiter += f.getTransferHandler().getRequest();
+            mBufferLimiter += f.getTransferHandler().getRequest();
         }
 
-        statistics.stopProfiling();
+        mStatistics.stopProfiling();
     }
 
     @Override
     public long getBufferLimiter() {
-        return bufferLimiter;
-    }
-
-    @Override
-    public void markSortConnections() {
-        sortConnections = true;
+        return mBufferLimiter;
     }
 
     @Nonnull
     @Override
-    public AccessLevel getPlayerAccess(PlayerEntity player) {
+    public AccessLevel getPlayerAccess(@Nonnull Player player) {
         if (FluxConfig.enableSuperAdmin) {
             if (SuperAdmin.isPlayerSuperAdmin(player)) {
                 return AccessLevel.SUPER_ADMIN;
@@ -174,60 +173,55 @@ public class FluxNetworkServer extends BasicFluxNetwork {
                 .stream().collect(Collectors.toMap(NetworkMember::getPlayerUUID, NetworkMember::getAccessPermission))
                 .getOrDefault(PlayerEntity.getUUID(player.getGameProfile()),
                         network_security.getValue().isEncrypted() ? EnumAccessType.NONE : EnumAccessType.USER);*/
-        UUID uuid = PlayerEntity.getUUID(player.getGameProfile());
-        Optional<NetworkMember> member = getMemberByUUID(uuid);
+        Optional<NetworkMember> member = getMemberByUUID(player.getUUID());
         if (member.isPresent()) {
             return member.get().getAccessLevel();
         }
-        return security.isEncrypted() ? AccessLevel.BLOCKED : AccessLevel.USER;
+        return mSecurity.isEncrypted() ? AccessLevel.BLOCKED : AccessLevel.USER;
     }
 
     @Override
     public void onDelete() {
-        getConnections(FluxLogicType.ANY).forEach(IFluxDevice::disconnect);
-        connections.clear();
-        toAdd.clear();
-        toRemove.clear();
-        sortedPlugs.clear();
-        sortedPoints.clear();
+        super.onDelete();
+        getLogicalEntities(ANY).forEach(DISCONNECT);
+        mDevices.clear();
+        mToAdd.clear();
+        mToRemove.clear();
     }
 
     @Override
-    public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
-        if (device instanceof PhantomFluxDevice) {
-            throw new IllegalStateException();
+    public boolean enqueueConnectionAddition(@Nonnull FluxDeviceEntity device) {
+        if (device.getDeviceType().isController() && getLogicalEntities(CONTROLLER).size() > 0) {
+            return false;
         }
-        if (getConnections(FluxLogicType.ANY).contains(device)) {
-            return;
+        if (!mToAdd.contains(device) && !getLogicalEntities(ANY).contains(device)) {
+            mToAdd.offer(device);
+            mToRemove.remove(device);
+            mConnections.put(device.getGlobalPos(), device);
+            return true;
         }
-        if (!toAdd.contains(device)) {
-            toAdd.offer(device);
-            toRemove.remove(device);
-            allConnections.put(device.getGlobalPos(), device);
-        }
+        return false;
     }
 
     @Override
-    public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
-        if (device instanceof PhantomFluxDevice) {
-            throw new IllegalArgumentException();
-        }
-        if (getConnections(FluxLogicType.ANY).contains(device) && !toRemove.contains(device)) {
-            toRemove.offer(device);
-            toAdd.remove(device);
+    public void enqueueConnectionRemoval(@Nonnull FluxDeviceEntity device, boolean chunkUnload) {
+        if (!mToRemove.contains(device) && getLogicalEntities(ANY).contains(device)) {
+            mToRemove.offer(device);
+            mToAdd.remove(device);
             if (chunkUnload) {
                 // create a fake device on server side, representing it has ever connected to
                 // this network but currently unloaded
-                allConnections.put(device.getGlobalPos(), new PhantomFluxDevice(device));
+                mConnections.put(device.getGlobalPos(), PhantomFluxDevice.unload(device));
             } else {
                 // remove the tile entity
-                allConnections.remove(device.getGlobalPos());
+                mConnections.remove(device.getGlobalPos());
             }
         }
     }
 
     /*private void addToLite(IFluxDevice flux) {
-        Optional<IFluxDevice> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords())).findFirst();
+        Optional<IFluxDevice> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords
+        ())).findFirst();
         if (c.isPresent()) {
             changeChunkLoaded(flux, true);
         } else {
@@ -241,7 +235,8 @@ public class FluxNetworkServer extends BasicFluxNetwork {
     }
 
     private void changeChunkLoaded(IFluxDevice flux, boolean chunkLoaded) {
-        Optional<IFluxDevice> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords())).findFirst();
+        Optional<IFluxDevice> c = all_connectors.getValue().stream().filter(f -> f.getCoords().equals(flux.getCoords
+        ())).findFirst();
         c.ifPresent(fluxConnector -> fluxConnector.setChunkLoaded(chunkLoaded));
     }
 
@@ -255,6 +250,7 @@ public class FluxNetworkServer extends BasicFluxNetwork {
 
     @Override
     public void removeMember(UUID uuid) {
-        network_players.getValue().removeIf(p -> p.getPlayerUUID().equals(uuid) && !p.getAccessPermission().canDelete());
+        network_players.getValue().removeIf(p -> p.getPlayerUUID().equals(uuid) && !p.getAccessPermission().canDelete
+        ());
     }*/
 }

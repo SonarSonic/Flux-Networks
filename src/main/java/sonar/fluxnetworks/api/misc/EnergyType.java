@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.misc;
 
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.text.NumberFormat;

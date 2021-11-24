@@ -1,11 +1,13 @@
 package sonar.fluxnetworks.common.loot;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.LootTableProvider;
-import net.minecraft.loot.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.ValidationContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
@@ -23,10 +25,8 @@ public class FluxLootTableProvider extends LootTableProvider {
 
     @Nonnull
     @Override
-    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> getTables() {
-        return ImmutableList.of(
-                Pair.of(FluxBlockLootTables::new, LootParameterSets.BLOCK)
-        );
+    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
+        return List.of(Pair.of(FluxBlockLoot::new, LootContextParamSets.BLOCK));
     }
 
     @Nonnull
@@ -36,7 +36,8 @@ public class FluxLootTableProvider extends LootTableProvider {
     }
 
     @Override
-    protected void validate(@Nonnull Map<ResourceLocation, LootTable> map, @Nonnull ValidationTracker validationtracker) {
-        // DO NOTHING
+    protected void validate(@Nonnull Map<ResourceLocation, LootTable> map,
+                            @Nonnull ValidationContext validationContext) {
+        // NO-OP
     }
 }

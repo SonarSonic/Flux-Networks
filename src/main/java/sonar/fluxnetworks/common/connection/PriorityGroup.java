@@ -1,7 +1,5 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.device.IFluxDevice;
-
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,31 +10,36 @@ import java.util.Optional;
  * A single group that logic points, plugs with same priority
  *
  * @param <T> Logic Flux Point or Plug
+ * @deprecated inefficient
  */
-public class PriorityGroup<T extends IFluxDevice> {
+@Deprecated
+public class PriorityGroup<T extends TransferHandler> {
 
-    public static final Comparator<PriorityGroup<?>> DESCENDING_ORDER = Comparator.comparingInt(p -> -p.getPriority());
+    public static final Comparator<PriorityGroup<?>> DESCENDING_ORDER =
+            (a, b) -> Integer.compare(b.mPriority, a.mPriority);
 
-    private final int priority;
+    private final int mPriority;
 
-    private final List<T> devices = new ArrayList<>();
+    private final List<T> mItems = new ArrayList<>();
 
     private PriorityGroup(int priority) {
-        this.priority = priority;
+        mPriority = priority;
     }
 
     public int getPriority() {
-        return priority;
-    }
-
-    public List<T> getDevices() {
-        return devices;
+        return mPriority;
     }
 
     @Nonnull
-    public static <T extends IFluxDevice> PriorityGroup<T> getOrCreateGroup(int priority, @Nonnull List<PriorityGroup<T>> groups) {
-        Optional<PriorityGroup<T>> group = groups.stream().filter(g -> g.priority == priority).findFirst();
-        if (!group.isPresent()) {
+    public List<T> getItems() {
+        return mItems;
+    }
+
+    @Nonnull
+    public static <T extends TransferHandler> PriorityGroup<T> getOrCreateGroup(int priority,
+                                                                                @Nonnull List<PriorityGroup<T>> groups) {
+        Optional<PriorityGroup<T>> group = groups.stream().filter(g -> g.mPriority == priority).findFirst();
+        if (group.isEmpty()) {
             PriorityGroup<T> newGroup = new PriorityGroup<>(priority);
             groups.add(newGroup);
             return newGroup;

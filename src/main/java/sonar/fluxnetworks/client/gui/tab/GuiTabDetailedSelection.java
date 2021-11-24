@@ -6,16 +6,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 
 public class GuiTabDetailedSelection extends GuiTabSelection {
 
-    public GuiTabDetailedSelection(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiTabDetailedSelection(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         gridStartX = 15;
         gridStartY = 22;

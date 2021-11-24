@@ -5,12 +5,17 @@ buildscript {
             name "forge"
             url "https://maven.minecraftforge.net/"
         }
+        maven {
+            url = 'https://maven.parchmentmc.org/'
+        }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+', changing: true
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
@@ -21,7 +26,7 @@ archivesBaseName = 'FluxNetworks'
 java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
-    mappings channel: 'official', version: '1.17.1'
+    mappings channel: 'parchment', version: '2021.10.31-1.17.1'
 
     runs {
         client {

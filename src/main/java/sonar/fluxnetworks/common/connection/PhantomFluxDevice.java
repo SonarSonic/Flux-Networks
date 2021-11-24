@@ -1,44 +1,41 @@
 package sonar.fluxnetworks.common.connection;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.world.World;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.api.network.ITransferHandler;
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * A POJO class holds values updated from server for GUI display (via Network Connections tab,
- * because these devices may not exist on client world so there's no TileFluxDevice instance on client,
- * they just are loaded on server world for other players), or records unloaded flux devices on server.
+ * This class represents a non-entity flux device (e.g. Network Connections tab)
+ * These devices may not exist on client world, so there's no entity instance on the client.
+ * They just are loaded on the server world, or used to record unloaded flux devices on server.
  * Logical operations are not allowed here.
  *
- * @see sonar.fluxnetworks.common.tileentity.TileFluxDevice
+ * @see FluxDeviceEntity
  */
 public class PhantomFluxDevice implements IFluxDevice {
 
-    private int networkID;
-    private String customName;
-    private int priority;
-    private long limit;
-    private UUID playerUUID;
-    private FluxDeviceType deviceType;
-    private GlobalPos globalPos;
-    private boolean surgeMode;
-    private boolean disableLimit;
-    private boolean chunkLoaded;
-    private boolean forcedLoading;
-    private long buffer;
-    private long change;
-    private ItemStack stack;
+    private int mNetworkID;
+    private String mCustomName;
+    private int mPriority;
+    private long mLimit;
+    private UUID mPlayerUUID;
+    private FluxDeviceType mDeviceType;
+    private GlobalPos mGlobalPos;
+    private boolean mChunkLoaded;
+    private boolean mForcedLoading;
+    private long mBuffer;
+    private long mChange;
+    private ItemStack mDisplayStack;
 
     public PhantomFluxDevice() {
     }
@@ -48,171 +45,128 @@ public class PhantomFluxDevice implements IFluxDevice {
      *
      * @param device loaded device
      */
-    public PhantomFluxDevice(@Nonnull IFluxDevice device) {
-        if (device instanceof PhantomFluxDevice || device.getFluxWorld().isRemote) {
-            throw new IllegalArgumentException();
-        }
-        this.networkID = device.getNetworkID();
-        this.customName = device.getCustomName();
-        this.priority = device.getRawPriority();
-        this.limit = device.getRawLimit();
-        this.playerUUID = device.getConnectionOwner();
-        this.deviceType = device.getDeviceType();
-        this.globalPos = device.getGlobalPos();
-        this.surgeMode = device.getSurgeMode();
-        this.disableLimit = device.getDisableLimit();
-        this.buffer = device.getTransferBuffer();
-        this.stack = device.getDisplayStack();
+    @Nonnull
+    public static PhantomFluxDevice unload(@Nonnull FluxDeviceEntity device) {
+        PhantomFluxDevice t = new PhantomFluxDevice();
+        t.mNetworkID = device.getNetworkID();
+        t.mCustomName = device.getCustomName();
+        t.mPriority = device.getSurgeMode() ? Integer.MAX_VALUE : device.getRawPriority();
+        t.mLimit = device.getDisableLimit() ? -1 : device.getRawLimit();
+        t.mPlayerUUID = device.getOwnerUUID();
+        t.mDeviceType = device.getDeviceType();
+        t.mGlobalPos = device.getGlobalPos();
+        t.mBuffer = device.getTransferBuffer();
+        t.mDisplayStack = device.getDisplayStack();
+        return t;
     }
 
-    // client update only
-    public PhantomFluxDevice(@Nonnull GlobalPos globalPos, CompoundNBT tag) {
-        this.globalPos = globalPos;
-        readCustomNBT(tag, FluxConstants.TYPE_CONNECTION_UPDATE);
+    @Nonnull
+    public static PhantomFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
+        PhantomFluxDevice t = new PhantomFluxDevice();
+        t.mGlobalPos = pos;
+        t.readCustomTag(tag, FluxConstants.TYPE_CONNECTION_UPDATE);
+        return t;
+    }
+
+    @Nonnull
+    public static PhantomFluxDevice load(@Nonnull CompoundTag tag) {
+        PhantomFluxDevice t = new PhantomFluxDevice();
+        t.readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
+        return t;
     }
 
     @Override
-    public void writeCustomNBT(CompoundNBT tag, int type) {
+    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
-            FluxUtils.writeGlobalPos(tag, globalPos);
-            tag.putByte(FluxConstants.DEVICE_TYPE, (byte) deviceType.ordinal());
-            tag.putInt(FluxConstants.NETWORK_ID, networkID);
-            tag.putString(FluxConstants.CUSTOM_NAME, customName);
-            tag.putInt(FluxConstants.PRIORITY, priority);
-            tag.putLong(FluxConstants.LIMIT, limit);
-            tag.putBoolean(FluxConstants.SURGE_MODE, surgeMode);
-            tag.putBoolean(FluxConstants.DISABLE_LIMIT, disableLimit);
-            tag.putUniqueId(FluxConstants.PLAYER_UUID, playerUUID);
-            tag.putLong(FluxConstants.BUFFER, buffer);
-            stack.write(tag);
+            FluxUtils.writeGlobalPos(tag, mGlobalPos);
+            tag.putByte(FluxConstants.DEVICE_TYPE, (byte) mDeviceType.ordinal());
+            tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
+            tag.putString(FluxConstants.CUSTOM_NAME, mCustomName);
+            tag.putInt(FluxConstants.PRIORITY, mPriority);
+            tag.putLong(FluxConstants.LIMIT, mLimit);
+            /*tag.putBoolean(FluxConstants.SURGE_MODE, surgeMode);
+            tag.putBoolean(FluxConstants.DISABLE_LIMIT, disableLimit);*/
+            tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+            tag.putLong(FluxConstants.BUFFER, mBuffer);
+            mDisplayStack.save(tag);
         }
     }
 
     @Override
-    public void readCustomNBT(CompoundNBT tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_SAVE_ALL) {
-            globalPos = FluxUtils.readGlobalPos(tag);
+            mGlobalPos = FluxUtils.readGlobalPos(tag);
         }
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
-            deviceType = FluxDeviceType.values()[tag.getByte(FluxConstants.DEVICE_TYPE)];
-            networkID = tag.getInt(FluxConstants.NETWORK_ID);
-            customName = tag.getString(FluxConstants.CUSTOM_NAME);
-            priority = tag.getInt(FluxConstants.PRIORITY);
-            limit = tag.getLong(FluxConstants.LIMIT);
-            surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
-            disableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
-            playerUUID = tag.getUniqueId(FluxConstants.PLAYER_UUID);
-            buffer = tag.getLong(FluxConstants.BUFFER);
-            stack = ItemStack.read(tag);
+            mDeviceType = FluxDeviceType.values()[tag.getByte(FluxConstants.DEVICE_TYPE)];
+            mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
+            mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
+            mPriority = tag.getInt(FluxConstants.PRIORITY);
+            mLimit = tag.getLong(FluxConstants.LIMIT);
+            /*surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
+            disableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);*/
+            mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
+            mBuffer = tag.getLong(FluxConstants.BUFFER);
+            mDisplayStack = ItemStack.of(tag);
         }
         if (type == FluxConstants.TYPE_CONNECTION_UPDATE) {
-            forcedLoading = tag.getBoolean(FluxConstants.FORCED_LOADING);
-            chunkLoaded = tag.getBoolean(FluxConstants.CHUNK_LOADED);
-            change = tag.getLong(FluxConstants.CHANGE);
+            mForcedLoading = tag.getBoolean(FluxConstants.FORCED_LOADING);
+            mChunkLoaded = tag.getBoolean(FluxConstants.CHUNK_LOADED);
+            mChange = tag.getLong(FluxConstants.CHANGE);
         }
     }
 
     @Override
     public int getNetworkID() {
-        return networkID;
-    }
-
-    @Override
-    public int getLogicPriority() {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+        return mNetworkID;
     }
 
     @Override
     public int getRawPriority() {
-        return priority;
+        return mPriority;
     }
 
     @Override
-    public void setPriority(int priority) {
+    public void onPlayerOpen(@Nonnull Player player) {
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+    }
+
+    @Override
+    public void onPlayerClose(@Nonnull Player player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Nonnull
     @Override
-    public IFluxNetwork getNetwork() {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+    public UUID getOwnerUUID() {
+        return mPlayerUUID;
     }
 
-    @Override
-    public void onMenuOpened(PlayerEntity player) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
-    @Override
-    public void onMenuClosed(PlayerEntity player) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
-    @Override
-    public UUID getConnectionOwner() {
-        return playerUUID;
-    }
-
+    @Nonnull
     @Override
     public FluxDeviceType getDeviceType() {
-        return deviceType;
-    }
-
-    @Override
-    public boolean canPlayerAccess(PlayerEntity player) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+        return mDeviceType;
     }
 
     @Override
     public boolean isChunkLoaded() {
-        return chunkLoaded;
+        return mChunkLoaded;
     }
 
     @Override
     public boolean isForcedLoading() {
-        return forcedLoading;
-    }
-
-    @Override
-    public void setForcedLoading(boolean forcedLoading) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
-    @Override
-    public void connect(IFluxNetwork network) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
-    @Override
-    public void disconnect() {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+        return mForcedLoading;
     }
 
     @Nonnull
     @Override
-    public ITransferHandler getTransferHandler() {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
-    @Nonnull
-    @Override
-    public World getFluxWorld() {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
-    @Override
-    public long getLogicLimit() {
+    public Level getFluxWorld() {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
     public long getRawLimit() {
-        return limit;
-    }
-
-    @Override
-    public void setTransferLimit(long limit) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+        return mLimit;
     }
 
     @Override
@@ -220,60 +174,40 @@ public class PhantomFluxDevice implements IFluxDevice {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
-    @Override
-    public boolean isActive() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public GlobalPos getGlobalPos() {
-        return globalPos;
+        return mGlobalPos;
     }
 
     @Override
     public String getCustomName() {
-        return customName;
-    }
-
-    @Override
-    public void setCustomName(String customName) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+        return mCustomName;
     }
 
     @Override
     public boolean getDisableLimit() {
-        return disableLimit;
-    }
-
-    @Override
-    public void setDisableLimit(boolean disableLimit) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+        return mLimit == -1;
     }
 
     @Override
     public boolean getSurgeMode() {
-        return surgeMode;
-    }
-
-    @Override
-    public void setSurgeMode(boolean surgeMode) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+        return mPriority == Integer.MAX_VALUE;
     }
 
     @Nonnull
     @Override
     public ItemStack getDisplayStack() {
-        return stack;
+        return mDisplayStack;
     }
 
     @Override
     public long getTransferBuffer() {
-        return buffer;
+        return mBuffer;
     }
 
     @Override
     public long getTransferChange() {
-        return change;
+        return mChange;
     }
 }

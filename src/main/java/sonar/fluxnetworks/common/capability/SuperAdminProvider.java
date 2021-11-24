@@ -1,12 +1,13 @@
 package sonar.fluxnetworks.common.capability;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.api.misc.FluxCapabilities;
+import sonar.fluxnetworks.api.network.ISuperAdmin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,7 +15,7 @@ import javax.annotation.Nullable;
 /**
  * A class holding the super admin instance of each player
  */
-public class SuperAdminProvider implements ICapabilitySerializable<INBT> {
+public class SuperAdminProvider implements ICapabilitySerializable<Tag> {
 
     @Nonnull
     private final ISuperAdmin instance;
@@ -38,12 +39,12 @@ public class SuperAdminProvider implements ICapabilitySerializable<INBT> {
     }
 
     @Override
-    public INBT serializeNBT() {
-        return FluxCapabilities.SUPER_ADMIN.writeNBT(instance, null);
+    public Tag serializeNBT() {
+        return instance.writeNBT();
     }
 
     @Override
-    public void deserializeNBT(INBT nbt) {
-        FluxCapabilities.SUPER_ADMIN.readNBT(instance, null, nbt);
+    public void deserializeNBT(Tag nbt) {
+        instance.readNBT((ByteTag) nbt);
     }
 }

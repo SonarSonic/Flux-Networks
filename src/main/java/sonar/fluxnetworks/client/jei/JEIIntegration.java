@@ -5,7 +5,7 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 
@@ -30,7 +30,8 @@ public class JEIIntegration implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         if (FluxConfig.enableFluxRecipe) {
-            CreatingFluxRecipeCategory.getCatalysts().forEach(c -> registration.addRecipeCatalyst(c, CreatingFluxRecipeCategory.CATEGORY_UUID));
+            CreatingFluxRecipeCategory.getCatalysts().forEach(c -> registration.addRecipeCatalyst(c,
+                    CreatingFluxRecipeCategory.CATEGORY_UUID));
         }
     }
 

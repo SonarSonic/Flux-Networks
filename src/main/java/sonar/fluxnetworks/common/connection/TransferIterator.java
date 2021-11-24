@@ -1,74 +1,61 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 
-public class TransferIterator<T extends IFluxDevice> implements Iterator<T> {
+public class TransferIterator implements Iterator<FluxDeviceEntity> {
 
-    private final boolean isPoint;
+    private final boolean mPoint;
 
-    private Iterator<PriorityGroup<T>> groupIterator;
-    private PriorityGroup<T> currentGroup;
-    private Iterator<T> fluxIterator;
-    private T currentFlux;
+    private Iterator<FluxDeviceEntity> mIterator;
+    private FluxDeviceEntity mNext;
 
-    private boolean finish;
-
-    public TransferIterator(boolean isPoint) {
-        this.isPoint = isPoint;
+    public TransferIterator(boolean point) {
+        mPoint = point;
     }
 
-    public void reset(@Nonnull List<PriorityGroup<T>> list) {
-        groupIterator = list.iterator();
-        currentGroup = null;
-        fluxIterator = null;
-        currentFlux = null;
-        finish = false;
-        incrementGroup();
-    }
-
-    private boolean incrementGroup() {
-        if (groupIterator.hasNext()) {
-            currentGroup = groupIterator.next();
-            fluxIterator = currentGroup.getDevices().iterator();
-            return incrementFlux();
+    public void reset(@Nonnull List<FluxDeviceEntity> list) {
+        mIterator = list.listIterator();
+        if (mIterator.hasNext()) {
+            mNext = mIterator.next();
+        } else {
+            mNext = null;
         }
-        finish = true;
+    }
+
+    public boolean increment() {
+        if (mIterator.hasNext()) {
+            mNext = mIterator.next();
+            return needTransfer() || increment();
+        }
+        mNext = null;
         return false;
     }
 
-    public boolean incrementFlux() {
-        if (fluxIterator.hasNext()) {
-            currentFlux = fluxIterator.next();
-            return needTransfer() || incrementFlux();
-        }
-        return incrementGroup();
-    }
-
     private boolean needTransfer() {
-        if (!currentFlux.isActive()) {
+        /*if (!mNext.isActive()) {
             return false;
-        }
-        if (isPoint) {
-            return currentFlux.getTransferHandler().getRequest() > 0;
+        }*/
+        if (mPoint) {
+            return mNext.getTransferHandler().getRequest() > 0;
         } else {
-            return currentFlux.getTransferHandler().getBuffer() > 0;
+            return mNext.getTransferHandler().getBuffer() > 0;
         }
     }
 
     @Override
     public boolean hasNext() {
-        if (finish) {
+        if (mNext == null) {
             return false;
         }
-        return needTransfer() || incrementFlux();
+        return needTransfer() || increment();
     }
 
     @Override
-    public T next() {
-        return currentFlux;
+    public FluxDeviceEntity next() {
+        return mNext;
     }
 }

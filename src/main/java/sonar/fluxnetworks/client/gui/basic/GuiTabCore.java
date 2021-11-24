@@ -14,9 +14,9 @@ import sonar.fluxnetworks.client.gui.button.NavigationButton;
 import sonar.fluxnetworks.client.gui.tab.*;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.registry.RegistrySounds;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -29,7 +29,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
     protected List<NavigationButton> navigationButtons = Lists.newArrayList();
     public EnumNavigationTab[] navigationTabs;
 
-    public GuiTabCore(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiTabCore(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
         setDefaultTabs();
     }
@@ -78,7 +78,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
     protected final void switchTab(@Nonnull EnumNavigationTab tab) {
         switch (tab) {
             case TAB_HOME:
-                if (container.bridge instanceof TileFluxDevice) {
+                if (container.bridge instanceof FluxDeviceEntity) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxDeviceHome(container, player));
                 } else if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
                     Minecraft.getInstance().displayGuiScreen(new GuiFluxConfiguratorHome(container, player));

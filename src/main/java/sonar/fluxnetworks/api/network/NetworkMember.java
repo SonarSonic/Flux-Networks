@@ -1,33 +1,34 @@
 package sonar.fluxnetworks.api.network;
 
-import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class NetworkMember {
 
-    private UUID playerUUID;
-    private String cachedName;
-    private AccessLevel accessLevel;
+    private UUID mPlayerUUID;
+    private String mCachedName;
+    private AccessLevel mAccessLevel;
+    private int mWirelessMode;
 
     private NetworkMember() {
     }
 
-    public NetworkMember(CompoundNBT nbt) {
-        readNBT(nbt);
+    public NetworkMember(@Nonnull CompoundTag tag) {
+        readNBT(tag);
     }
 
-    public static NetworkMember create(PlayerEntity player, AccessLevel accessLevel) {
+    @Nonnull
+    public static NetworkMember create(@Nonnull Player player, @Nonnull AccessLevel level) {
         NetworkMember t = new NetworkMember();
-        GameProfile profile = player.getGameProfile();
-
-        t.playerUUID = PlayerEntity.getUUID(profile);
-        t.cachedName = profile.getName();
-        t.accessLevel = accessLevel;
-
+        t.mPlayerUUID = player.getUUID();
+        t.mCachedName = player.getGameProfile().getName();
+        if (t.mCachedName == null) {
+            t.mCachedName = "Anonymous";
+        }
+        t.mAccessLevel = level;
         return t;
     }
 
@@ -53,31 +54,41 @@ public class NetworkMember {
         return t;
     }*/
 
+    public UUID getPlayerUUID() {
+        return mPlayerUUID;
+    }
+
     public String getCachedName() {
-        return cachedName;
+        return mCachedName;
     }
 
     public AccessLevel getAccessLevel() {
-        return accessLevel;
+        return mAccessLevel;
     }
 
-    public UUID getPlayerUUID() {
-        return playerUUID;
+    public void setAccessLevel(@Nonnull AccessLevel accessLevel) {
+        mAccessLevel = accessLevel;
     }
 
-    public void setAccessLevel(AccessLevel accessLevel) {
-        this.accessLevel = accessLevel;
+    public int getWirelessMode() {
+        return mWirelessMode;
     }
 
-    public void readNBT(@Nonnull CompoundNBT nbt) {
-        playerUUID = nbt.getUniqueId("playerUUID");
-        cachedName = nbt.getString("cachedName");
-        accessLevel = AccessLevel.values()[nbt.getByte("accessLevel")];
+    public void setWirelessMode(int wirelessMode) {
+        mWirelessMode = wirelessMode;
     }
 
-    public void writeNBT(@Nonnull CompoundNBT nbt) {
-        nbt.putUniqueId("playerUUID", playerUUID);
-        nbt.putString("cachedName", cachedName);
-        nbt.putByte("accessLevel", (byte) accessLevel.ordinal());
+    public void readNBT(@Nonnull CompoundTag tag) {
+        mPlayerUUID = tag.getUUID("playerUUID");
+        mCachedName = tag.getString("cachedName");
+        mAccessLevel = AccessLevel.fromId(tag.getByte("accessLevel"));
+        mWirelessMode = tag.getInt("wirelessMode");
+    }
+
+    public void writeNBT(@Nonnull CompoundTag tag) {
+        tag.putUUID("playerUUID", mPlayerUUID);
+        tag.putString("cachedName", mCachedName);
+        tag.putByte("accessLevel", mAccessLevel.getId());
+        tag.putInt("wirelessMode", mWirelessMode);
     }
 }

@@ -1,22 +1,17 @@
 package sonar.fluxnetworks.common.capability;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.ByteNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.server.management.OpEntry;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.nbt.ByteTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.players.ServerOpListEntry;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxCapabilities;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
-import sonar.fluxnetworks.common.misc.FluxUtils;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class SuperAdmin implements ISuperAdmin {
 
@@ -35,50 +30,31 @@ public class SuperAdmin implements ISuperAdmin {
     }
 
     @Override
-    public ByteNBT writeNBT() {
-        return ByteNBT.valueOf(permission);
+    public ByteTag writeNBT() {
+        return ByteTag.valueOf(permission);
     }
 
     @Override
-    public void readNBT(@Nonnull ByteNBT nbt) {
-        permission = nbt.getByte();
-    }
-
-    public static void register() {
-        CapabilityManager.INSTANCE.register(ISuperAdmin.class, new SuperAdminStorage(), SuperAdmin::new);
+    public void readNBT(@Nonnull ByteTag nbt) {
+        permission = nbt.getAsByte();
     }
 
     //// UTIL METHODS \\\\
 
-    public static boolean canActivateSuperAdmin(PlayerEntity player) {
-        if (ServerLifecycleHooks.getCurrentServer().isSinglePlayer()) {
+    public static boolean canActivateSuperAdmin(Player player) {
+        if (ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
             return true;
         }
         if (FluxConfig.enableSuperAdmin) {
-            OpEntry opEntry = ServerLifecycleHooks.getCurrentServer().getPlayerList().getOppedPlayers().getEntry(player.getGameProfile());
-            return opEntry != null && opEntry.getPermissionLevel() >= FluxConfig.superAdminRequiredPermission;
+            ServerOpListEntry opEntry =
+                    ServerLifecycleHooks.getCurrentServer().getPlayerList().getOps().get(player.getGameProfile());
+            return opEntry != null && opEntry.getLevel() >= FluxConfig.superAdminRequiredPermission;
         }
         return false;
     }
 
-    public static boolean isPlayerSuperAdmin(@Nonnull PlayerEntity player) {
+    public static boolean isPlayerSuperAdmin(@Nonnull Player player) {
         ISuperAdmin instance = FluxUtils.get(player.getCapability(FluxCapabilities.SUPER_ADMIN));
         return instance != null && instance.hasPermission();
-    }
-
-    private static class SuperAdminStorage implements Capability.IStorage<ISuperAdmin> {
-
-        @Nullable
-        @Override
-        public INBT writeNBT(Capability<ISuperAdmin> capability, @Nonnull ISuperAdmin instance, Direction side) {
-            return instance.writeNBT();
-        }
-
-        @Override
-        public void readNBT(Capability<ISuperAdmin> capability, @Nonnull ISuperAdmin instance, Direction side, @Nonnull INBT nbt) {
-            if (nbt.getType() == ByteNBT.TYPE) {
-                instance.readNBT((ByteNBT) nbt);
-            }
-        }
     }
 }

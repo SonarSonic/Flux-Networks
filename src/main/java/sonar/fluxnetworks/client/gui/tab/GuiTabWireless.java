@@ -5,7 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.WirelessType;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
@@ -13,7 +13,7 @@ import sonar.fluxnetworks.client.gui.button.InventoryButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
@@ -29,7 +29,7 @@ public class GuiTabWireless extends GuiTabCore {
 
     public int wirelessMode;
 
-    public GuiTabWireless(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiTabWireless(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 

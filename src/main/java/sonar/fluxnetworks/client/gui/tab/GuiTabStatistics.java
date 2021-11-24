@@ -6,12 +6,12 @@ import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.LineChart;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
@@ -24,7 +24,7 @@ public class GuiTabStatistics extends GuiTabCore {
     private LineChart chart;
     private int timer = 0;
 
-    public GuiTabStatistics(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiTabStatistics(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 

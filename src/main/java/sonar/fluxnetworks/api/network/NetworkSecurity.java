@@ -1,57 +1,56 @@
 package sonar.fluxnetworks.api.network;
 
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nonnull;
 
 public class NetworkSecurity {
 
-    private SecurityType type = SecurityType.PUBLIC;
+    @Nonnull
+    private SecurityLevel mLevel = SecurityLevel.PUBLIC;
 
     @Nonnull
-    private String password = "";
+    private String mPassword = "";
 
     public NetworkSecurity() {
-
     }
 
-    public void set(SecurityType type, @Nonnull String password) {
-        this.type = type;
-        this.password = password;
+    public void set(@Nonnull SecurityLevel type, @Nonnull String password) {
+        mLevel = type;
+        mPassword = password;
     }
 
-    public SecurityType getType() {
-        return type;
+    @Nonnull
+    public SecurityLevel getLevel() {
+        return mLevel;
     }
 
-    public void setType(SecurityType type) {
-        this.type = type;
+    public void setLevel(@Nonnull SecurityLevel level) {
+        mLevel = level;
     }
 
     @Nonnull
     public String getPassword() {
-        return password;
+        return mPassword;
     }
 
     public void setPassword(@Nonnull String password) {
-        this.password = password;
+        mPassword = password;
     }
 
     public boolean isEncrypted() {
-        return type != SecurityType.PUBLIC;
+        return mLevel != SecurityLevel.PUBLIC;
     }
 
-    public void writeNBT(@Nonnull CompoundNBT nbt, boolean writePassword) {
-        CompoundNBT tag = new CompoundNBT();
-        tag.putByte("type", (byte) type.ordinal());
-        if (writePassword)
-            tag.putString("password", password);
-        nbt.put("security", tag);
+    public void writeNBT(@Nonnull CompoundTag tag, boolean writePassword) {
+        tag.putByte("level", mLevel.getId());
+        if (writePassword) {
+            tag.putString("password", mPassword);
+        }
     }
 
-    public void readNBT(@Nonnull CompoundNBT nbt) {
-        CompoundNBT tag = nbt.getCompound("security");
-        type = SecurityType.values()[tag.getByte("type")];
-        password = tag.getString("password");
+    public void readNBT(@Nonnull CompoundTag tag) {
+        mLevel = SecurityLevel.fromId(tag.getByte("level"));
+        mPassword = tag.getString("password");
     }
 }

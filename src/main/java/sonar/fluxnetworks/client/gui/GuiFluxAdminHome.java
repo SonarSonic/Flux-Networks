@@ -5,13 +5,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.misc.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;
@@ -23,7 +23,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
     private int timer;
     public SlidedSwitchButton detailedNetworkView, superAdmin;
 
-    public GuiFluxAdminHome(@Nonnull FluxMenu container, @Nonnull PlayerEntity player) {
+    public GuiFluxAdminHome(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
         super(container, player);
     }
 

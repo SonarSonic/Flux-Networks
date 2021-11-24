@@ -1,97 +1,50 @@
 package sonar.fluxnetworks.common.connection.transfer;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
-import sonar.fluxnetworks.common.misc.EnergyUtils;
-import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
+import net.minecraft.core.Direction;
 
 import javax.annotation.Nonnull;
-import java.util.EnumMap;
-import java.util.Map;
 
-public class FluxPlugHandler extends BasicTransferHandler<TileFluxPlug> {
+public class FluxPlugHandler extends FluxConnectorHandler {
 
-    private final Map<Direction, ConnectionTransfer> transfers = new EnumMap<>(Direction.class);
+    // external received energy happen outside the transfer cycle
+    private long mReceived;
 
-    private long received;
-    private long removed;
+    // internal removed energy happen inside the transfer cycle
+    private long mRemoved;
 
-    public FluxPlugHandler(TileFluxPlug fluxPlug) {
-        super(fluxPlug);
-    }
-
-    @Override
-    public void onCycleStart() {
-        for (ConnectionTransfer transfer : transfers.values()) {
-            if (transfer != null) {
-                transfer.onCycleStart();
-            }
-        }
+    public FluxPlugHandler() {
     }
 
     @Override
     public void onCycleEnd() {
-        change = received;
-        received = 0;
-        removed = 0;
+        mChange = mReceived;
+        mReceived = 0;
+        mRemoved = 0;
     }
 
     @Override
-    public long removeFromBuffer(long energy) {
-        long a = Math.min(Math.min(energy, buffer), device.getLogicLimit() - removed);
-        if (a <= 0) {
-            return 0;
-        }
-        buffer -= a;
-        removed += a;
-        return a;
+    public long extract(long energy) {
+        long op = Math.min(Math.min(energy, mBuffer), getLimit() - mRemoved);
+        assert op >= 0;
+        mBuffer -= op;
+        mRemoved += op;
+        return op;
     }
 
-    @Override
-    public long receiveFromSupplier(long amount, @Nonnull Direction side, boolean simulate) {
-        if (!device.getNetwork().isValid()) {
-            return 0;
-        }
-        ConnectionTransfer transfer = transfers.get(side);
+    public long receive(long maxReceive, @Nonnull Direction side, boolean simulate, long limiter) {
+        SideTransfer transfer = mTransfers[side.get3DDataValue()];
         if (transfer != null) {
-            long a = device.getNetwork().getBufferLimiter() - buffer;
-            if (a <= 0) {
-                return 0;
+            long op = Math.min(Math.min(getLimit(),
+                    limiter - mBuffer) - mBuffer, maxReceive);
+            if (op > 0) {
+                if (!simulate) {
+                    mBuffer += op;
+                    mReceived += op;
+                    transfer.receive(op);
+                }
+                return op;
             }
-            a = Math.min(amount, Math.min(a, device.getLogicLimit()) - buffer);
-            if (a <= 0) {
-                return 0;
-            }
-            if (!simulate) {
-                buffer += a;
-                received += a; // external additions happen outside the transfer cycle.
-                transfer.onEnergyReceived(a);
-            }
-            return a;
         }
         return 0;
-    }
-
-    @Override
-    public void updateTransfers(@Nonnull Direction... faces) {
-        updateSidedTransfers(device.getFluxWorld(), device.getPos(), transfers, faces);
-    }
-
-    static void updateSidedTransfers(World world, BlockPos pos, Map<Direction, ConnectionTransfer> transfers, @Nonnull Direction[] faces) {
-        for (Direction dir : faces) {
-            TileEntity tile = world.getTileEntity(pos.offset(dir));
-            ConnectionTransfer transfer = transfers.get(dir);
-            ITileEnergyHandler handler;
-            if (tile == null || (handler = EnergyUtils.getEnergyHandler(tile, dir.getOpposite())) == null) {
-                transfers.put(dir, null);
-            } else if (transfer == null || transfer.getTile() != tile) {
-                transfers.put(dir, new ConnectionTransfer(handler, tile, dir));
-            } else if (transfer.getTile().isRemoved()) {
-                transfers.put(dir, null);
-            }
-        }
     }
 }

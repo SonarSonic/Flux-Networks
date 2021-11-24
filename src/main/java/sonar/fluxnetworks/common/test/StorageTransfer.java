@@ -1,15 +1,15 @@
 package sonar.fluxnetworks.common.test;
 
-import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
+import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 @Deprecated
 public class StorageTransfer implements IFluxTransfer {
 
-    public final TileFluxStorage tile;
+    public final FluxStorageEntity tile;
 
-    public StorageTransfer(TileFluxStorage tile) {
+    public StorageTransfer(FluxStorageEntity tile) {
         this.tile = tile;
     }
 

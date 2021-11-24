@@ -1,42 +1,49 @@
 package sonar.fluxnetworks.common.recipe;
 
 import com.google.gson.JsonObject;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
+import javax.annotation.Nullable;
 
-public class FluxStorageRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<FluxStorageRecipe> {
+public class FluxStorageRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<FluxStorageRecipe> {
 
     public static final FluxStorageRecipeSerializer INSTANCE = new FluxStorageRecipeSerializer();
 
+    private FluxStorageRecipeSerializer() {
+    }
+
     @Nonnull
     @Override
-    public FluxStorageRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        return new FluxStorageRecipe(IRecipeSerializer.CRAFTING_SHAPED.read(recipeId, json));
+    public FluxStorageRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
+        return new FluxStorageRecipe(RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json));
     }
 
+    @Nullable
     @Override
-    public FluxStorageRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull PacketBuffer buffer) {
+    public FluxStorageRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
         try {
-            return new FluxStorageRecipe(Objects.requireNonNull(IRecipeSerializer.CRAFTING_SHAPED.read(recipeId, buffer)));
+            ShapedRecipe recipe = RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer);
+            if (recipe != null) {
+                return new FluxStorageRecipe(recipe);
+            }
         } catch (Exception e) {
             FluxNetworks.LOGGER.error("Error reading Flux Storage Recipe from Packet", e);
-            throw e;
         }
+        return null;
     }
 
     @Override
-    public void write(@Nonnull PacketBuffer buffer, @Nonnull FluxStorageRecipe recipe) {
+    public void toNetwork(@Nonnull FriendlyByteBuf buffer, @Nonnull FluxStorageRecipe recipe) {
         try {
-            IRecipeSerializer.CRAFTING_SHAPED.write(buffer, recipe);
+            RecipeSerializer.SHAPED_RECIPE.toNetwork(buffer, recipe);
         } catch (Exception e) {
             FluxNetworks.LOGGER.error("Error writing Flux Storage Recipe to packet.", e);
-            throw e;
         }
     }
 }

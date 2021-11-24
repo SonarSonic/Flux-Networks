@@ -1,101 +1,136 @@
 package sonar.fluxnetworks.common.connection.transfer;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.common.tileentity.TileFluxStorage;
+import sonar.fluxnetworks.common.connection.TransferHandler;
 
 import javax.annotation.Nonnull;
 
-public class FluxStorageHandler extends BasicTransferHandler<TileFluxStorage> {
+public abstract class FluxStorageHandler extends TransferHandler {
 
-    public FluxStorageHandler(TileFluxStorage fluxStorage) {
-        super(fluxStorage);
+    private long mAdded;
+    private long mRemoved;
+
+    protected FluxStorageHandler(long limit) {
+        super(limit);
     }
-
-    private long added;
-    private long removed;
 
     @Override
     public void onCycleStart() {
-
     }
 
     @Override
     public void onCycleEnd() {
-        change = added - removed;
-        added = 0;
-        removed = 0;
+        mChange = mAdded - mRemoved;
+        mAdded = 0;
+        mRemoved = 0;
     }
 
     @Override
-    public void addToBuffer(long energy) {
-        if (energy <= 0) {
-            return;
-        }
-        buffer += energy;
-        added += energy;
-        device.markServerEnergyChanged();
+    public void insert(long energy) {
+        mBuffer += energy;
+        mAdded += energy;
     }
 
     @Override
-    public long removeFromBuffer(long energy) {
-        long a = Math.min(Math.min(energy, buffer), device.getLogicLimit() - removed);
-        if (a <= 0) {
-            return 0;
-        }
-        buffer -= a;
-        removed += a;
-        device.markServerEnergyChanged();
-        return a;
+    public long extract(long energy) {
+        long op = Math.min(Math.min(energy, mBuffer), getLimit() - mRemoved);
+        assert op >= 0;
+        mBuffer -= op;
+        mRemoved += op;
+        return op;
     }
 
     @Override
     public long getRequest() {
-        return Math.max(0, Math.min(device.getMaxTransferLimit() - buffer, device.getLogicLimit() - added));
+        return Math.max(0, Math.min(getMaxEnergyStorage() - mBuffer, getLimit() - mAdded));
+    }
+
+    public abstract long getMaxEnergyStorage();
+
+    @Override
+    public int getPriority() {
+        return super.getPriority() - STORAGE_PRI_DECR;
     }
 
     @Override
-    public void writeCustomNBT(CompoundNBT tag, int type) {
+    public void setLimit(long limit) {
+        super.setLimit(Math.min(limit, getMaxEnergyStorage()));
+    }
+
+    @Override
+    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
-            super.writeCustomNBT(tag, type); // read by PhantomFluxDevice
+            super.writeCustomTag(tag, type); // read by PhantomFluxDevice
         }
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
-            tag.putLong(FluxConstants.ENERGY, buffer);
+            tag.putLong(FluxConstants.ENERGY, mBuffer);
         }
     }
 
     @Override
-    public void readCustomNBT(CompoundNBT tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
-            super.readCustomNBT(tag, type);
+            super.readCustomTag(tag, type);
         }
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
-            buffer = tag.getLong(FluxConstants.ENERGY);
+            mBuffer = tag.getLong(FluxConstants.ENERGY);
         }
     }
 
     @Override
-    public void writePacket(@Nonnull PacketBuffer buffer, byte id) {
+    public void writePacket(@Nonnull FriendlyByteBuf buffer, byte id) {
         if (id == FluxConstants.S2C_STORAGE_ENERGY) {
-            buffer.writeLong(this.buffer);
+            buffer.writeLong(this.mBuffer);
         } else {
             super.writePacket(buffer, id);
         }
     }
 
     @Override
-    public void readPacket(@Nonnull PacketBuffer buffer, byte id) {
+    public void readPacket(@Nonnull FriendlyByteBuf buffer, byte id) {
         if (id == FluxConstants.S2C_STORAGE_ENERGY) {
-            this.buffer = buffer.readLong();
+            this.mBuffer = buffer.readLong();
         } else {
             super.readPacket(buffer, id);
         }
     }
 
-    @Override
-    public void updateTransfers(@Nonnull Direction... faces) {
+    public static class Basic extends FluxStorageHandler {
 
+        public Basic() {
+            super(FluxConfig.basicTransfer);
+        }
+
+        @Override
+        public long getMaxEnergyStorage() {
+            return FluxConfig.basicCapacity;
+        }
+    }
+
+    public static class Herculean extends FluxStorageHandler {
+
+        public Herculean() {
+            super(FluxConfig.herculeanTransfer);
+        }
+
+        @Override
+        public long getMaxEnergyStorage() {
+            return FluxConfig.herculeanCapacity;
+        }
+    }
+
+    public static class Gargantuan extends FluxStorageHandler {
+
+        public Gargantuan() {
+            super(FluxConfig.gargantuanTransfer);
+        }
+
+        @Override
+        public long getMaxEnergyStorage() {
+            return FluxConfig.gargantuanCapacity;
+        }
     }
 }

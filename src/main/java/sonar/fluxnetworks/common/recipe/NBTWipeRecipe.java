@@ -1,15 +1,14 @@
 package sonar.fluxnetworks.common.recipe;
 
-import net.minecraft.block.Block;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapelessRecipe;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.block.Block;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 
@@ -20,50 +19,47 @@ import javax.annotation.Nonnull;
  */
 public class NBTWipeRecipe extends ShapelessRecipe {
 
-    public NBTWipeRecipe(ResourceLocation idIn, String groupIn, ItemStack recipeOutputIn, NonNullList<Ingredient> recipeItemsIn) {
+    public NBTWipeRecipe(ResourceLocation idIn, String groupIn, ItemStack recipeOutputIn,
+                         NonNullList<Ingredient> recipeItemsIn) {
         super(idIn, groupIn, recipeOutputIn, recipeItemsIn);
     }
 
     public NBTWipeRecipe(@Nonnull ShapelessRecipe recipe) {
-        super(recipe.getId(), recipe.getGroup(), recipe.getRecipeOutput(), recipe.getIngredients());
+        super(recipe.getId(), recipe.getGroup(), recipe.getResultItem(), recipe.getIngredients());
     }
 
     @Nonnull
     @Override
-    public ItemStack getCraftingResult(@Nonnull CraftingInventory inventory) {
+    public ItemStack assemble(@Nonnull CraftingContainer container) {
         ItemStack originalStack = null;
 
-        for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            ItemStack stack = container.getItem(i);
             if (!stack.isEmpty()) {
                 originalStack = stack;
                 break;
             }
         }
         if (originalStack != null) {
-            ItemStack output = getRecipeOutput().copy();
-            if (Block.getBlockFromItem(output.getItem()) instanceof FluxStorageBlock) {
-                CompoundNBT fluxData = originalStack.getChildTag(FluxConstants.TAG_FLUX_DATA);
+            ItemStack output = getResultItem().copy();
+            if (Block.byItem(output.getItem()) instanceof FluxStorageBlock) {
+                CompoundTag subTag = originalStack.getTagElement(FluxConstants.TAG_FLUX_DATA);
                 long energy = 0;
-                if (fluxData != null) {
-                    energy = fluxData.getLong(FluxConstants.ENERGY);
+                if (subTag != null) {
+                    energy = subTag.getLong(FluxConstants.ENERGY);
                 }
                 if (energy != 0) {
-                    CompoundNBT newTag = output.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
+                    CompoundTag newTag = output.getOrCreateTagElement(FluxConstants.TAG_FLUX_DATA);
                     newTag.putLong(FluxConstants.ENERGY, energy);
                 }
             }
             return output;
         }
-        return super.getCraftingResult(inventory);
-    }
-
-    public boolean matches(@Nonnull CraftingInventory inv, @Nonnull World worldIn) {
-        return super.matches(inv, worldIn);
+        return super.assemble(container);
     }
 
     @Nonnull
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return NBTWipeRecipeSerializer.INSTANCE;
     }
 }

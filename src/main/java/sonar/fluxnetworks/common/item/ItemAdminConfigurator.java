@@ -1,24 +1,6 @@
 package sonar.fluxnetworks.common.item;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkHooks;
-import sonar.fluxnetworks.api.network.IMenuBridge;
-import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.common.misc.FluxMenu;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import net.minecraft.world.item.Item;
 
 public class ItemAdminConfigurator extends Item {
 
@@ -26,9 +8,10 @@ public class ItemAdminConfigurator extends Item {
         super(props);
     }
 
-    @Nonnull
+    /*@Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand) {
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand
+     hand) {
         if (!world.isRemote) {
             NetworkHooks.openGui((ServerPlayerEntity) player,
                     new ContainerProvider(), buf -> buf.writeBoolean(false));
@@ -36,7 +19,7 @@ public class ItemAdminConfigurator extends Item {
         return ActionResult.resultSuccess(player.getHeldItem(hand));
     }
 
-    public static class MenuBridge implements IMenuBridge {
+    public static class MenuBridge implements IFluxBridge {
 
         @Override
         public int getNetworkID() {
@@ -44,12 +27,12 @@ public class ItemAdminConfigurator extends Item {
         }
 
         @Override
-        public void onMenuOpened(PlayerEntity player) {
+        public void onPlayerOpen(PlayerEntity player) {
 
         }
 
         @Override
-        public void onMenuClosed(PlayerEntity player) {
+        public void onPlayerClose(PlayerEntity player) {
 
         }
     }
@@ -64,8 +47,9 @@ public class ItemAdminConfigurator extends Item {
 
         @Nullable
         @Override
-        public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
-            return new FluxMenu(windowID, playerInventory, new MenuBridge());
+        public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity
+        player) {
+            return new FluxContainerMenu(windowID, playerInventory, new MenuBridge());
         }
-    }
+    }*/
 }

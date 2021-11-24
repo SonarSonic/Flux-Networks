@@ -1,7 +1,8 @@
 package sonar.fluxnetworks.client.jei;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Quaternion;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ITickTimer;
@@ -10,25 +11,23 @@ import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.text.FluxTranslate;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
 
@@ -41,7 +40,8 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
 
     public static final ResourceLocation CATEGORY_UUID = new ResourceLocation(FluxNetworks.MODID, "creating_flux");
 
-    public static final ResourceLocation TEXTURES = new ResourceLocation(FluxNetworks.MODID, "textures/gui/gui_creating_flux_recipe.png");
+    public static final ResourceLocation TEXTURES = new ResourceLocation(FluxNetworks.MODID, "textures/gui" +
+            "/gui_creating_flux_recipe.png");
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -56,8 +56,10 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
     @Nonnull
     public static List<CreatingFluxRecipeType> getRecipes() {
         List<CreatingFluxRecipeType> recipes = new ArrayList<>();
-        recipes.add(new CreatingFluxRecipeType(Blocks.BEDROCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX_DUST)));
-        recipes.add(new CreatingFluxRecipeType(RegistryBlocks.FLUX_BLOCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX_DUST)));
+        recipes.add(new CreatingFluxRecipeType(Blocks.BEDROCK, Blocks.OBSIDIAN, new ItemStack(Items.REDSTONE),
+                new ItemStack(RegistryItems.FLUX_DUST)));
+        recipes.add(new CreatingFluxRecipeType(RegistryBlocks.FLUX_BLOCK, Blocks.OBSIDIAN,
+                new ItemStack(Items.REDSTONE), new ItemStack(RegistryItems.FLUX_DUST)));
         return recipes;
     }
 
@@ -80,8 +82,8 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
 
     @Nonnull
     @Override
-    public String getTitle() {
-        return FluxTranslate.JEI_CREATING_FLUX.t();
+    public Component getTitle() {
+        return FluxTranslate.JEI_CREATING_FLUX.getTextComponent();
     }
 
     @Nonnull
@@ -103,7 +105,8 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
     }
 
     @Override
-    public void setRecipe(@Nonnull IRecipeLayout iRecipeLayout, @Nonnull CreatingFluxRecipeType recipe, @Nonnull IIngredients iIngredients) {
+    public void setRecipe(@Nonnull IRecipeLayout iRecipeLayout, @Nonnull CreatingFluxRecipeType recipe,
+                          @Nonnull IIngredients iIngredients) {
         IGuiItemStackGroup guiItemStacks = iRecipeLayout.getItemStacks();
 
         guiItemStacks.init(0, false, 8, 24);
@@ -115,54 +118,59 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
 
     @Nonnull
     @Override
-    public List<ITextComponent> getTooltipStrings(@Nonnull CreatingFluxRecipeType recipe, double mouseX, double mouseY) {
+    public List<Component> getTooltipStrings(@Nonnull CreatingFluxRecipeType recipe, double mouseX, double mouseY) {
         if (mouseX > 40 && mouseX < 80 && mouseY < 64) {
             return Lists.newArrayList(
-                    new StringTextComponent("Y+2 = ").append(recipe.getCrusher().getBlock().getTranslatedName()),
-                    new StringTextComponent("Y+1 = ").append(recipe.getInput().getDisplayName()),
-                    new StringTextComponent("Y+0 = ").append(recipe.getBase().getBlock().getTranslatedName())
+                    new TextComponent("Y+2 = ").append(recipe.getCrusher().getName()),
+                    new TextComponent("Y+1 = ").append(recipe.getInput().getDisplayName()),
+                    new TextComponent("Y+0 = ").append(recipe.getBase().getName())
             );
         }
         return Collections.emptyList();
     }
 
     @Override
-    public void draw(@Nonnull CreatingFluxRecipeType recipe, @Nonnull MatrixStack matrixStack, double mouseX, double mouseY) {
-        IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+    public void draw(@Nonnull CreatingFluxRecipeType recipe, @Nonnull PoseStack poseStack, double mouseX,
+                     double mouseY) {
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        BlockRendererDispatcher dispatcher = Minecraft.getInstance().getBlockRendererDispatcher();
+        BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 
         //// OBSIDIAN
-        matrixStack.push();
+        poseStack.pushPose();
         int value = timer.getValue();
         double offset = (value > 160 ? 160 - (value - 160) : value) / 10F;
-        matrixStack.translate(52, 10 + offset, 128);
-        matrixStack.scale(16, 16, 16);
-        matrixStack.rotate(new Quaternion(30, 45, 0, true));
-        dispatcher.renderBlock(recipe.getCrusher().getDefaultState(), matrixStack, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-        matrixStack.pop();
+        poseStack.translate(52, 10 + offset, 128);
+        poseStack.scale(16, 16, 16);
+        poseStack.mulPose(new Quaternion(30, 45, 0, true));
+        dispatcher.renderSingleBlock(recipe.getCrusher().defaultBlockState(), poseStack, bufferSource, 0xF000F0,
+                OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        poseStack.popPose();
 
         //// BEDROCK
-        matrixStack.push();
-        matrixStack.translate(52, 40, 128 + -32);
-        matrixStack.scale(16, 16, 16);
-        matrixStack.rotate(new Quaternion(30, 45, 0, true));
-        dispatcher.renderBlock(recipe.getBase().getDefaultState(), matrixStack, buffer, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
-        matrixStack.pop();
+        poseStack.pushPose();
+        poseStack.translate(52, 40, 128 + -32);
+        poseStack.scale(16, 16, 16);
+        poseStack.mulPose(new Quaternion(30, 45, 0, true));
+        dispatcher.renderSingleBlock(recipe.getBase().defaultBlockState(), poseStack, bufferSource, 0xF000F0,
+                OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+        poseStack.popPose();
 
         //// ITEM
-        matrixStack.push();
-        matrixStack.translate(63, 36, 128 + -16);
-        matrixStack.scale(16, -16, 16);
+        poseStack.pushPose();
+        poseStack.translate(63, 36, 128 + -16);
+        poseStack.scale(16, -16, 16);
         ItemStack toDisplay = value > 160 ? recipe.getOutput() : recipe.getInput();
-        matrixStack.rotate(new Quaternion(toDisplay.getItem() instanceof BlockItem ? 30 : 0, -90 + 180 * ((float) value / timer.getMaxValue()), 0, true));
-        itemRenderer.renderItem(toDisplay, ItemCameraTransforms.TransformType.FIXED, 0xF000F0, OverlayTexture.NO_OVERLAY, matrixStack, buffer);
-        matrixStack.pop();
+        poseStack.mulPose(new Quaternion(toDisplay.getItem() instanceof BlockItem ? 30 : 0,
+                -90 + 180 * ((float) value / timer.getMaxValue()), 0, true));
+        itemRenderer.renderStatic(toDisplay, ItemTransforms.TransformType.FIXED, 0xF000F0, OverlayTexture.NO_OVERLAY,
+                poseStack, bufferSource, 0);
+        poseStack.popPose();
 
-        buffer.finish();
+        bufferSource.endBatch();
 
-        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
-        String help = FluxTranslate.JEI_LEFT_CLICK.format(recipe.getCrusher().getBlock().getTranslatedName().getString());
-        fontRenderer.drawString(matrixStack, help, 64 - fontRenderer.getStringWidth(help) / 2f, 68, 0xff404040);
+        Font fontRenderer = Minecraft.getInstance().font;
+        String help = FluxTranslate.JEI_LEFT_CLICK.format(recipe.getCrusher().getName().getString());
+        fontRenderer.draw(poseStack, help, 64 - fontRenderer.width(help) / 2f, 68, 0xff404040);
     }
 }

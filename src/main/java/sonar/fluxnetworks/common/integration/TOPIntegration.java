@@ -1,21 +1,21 @@
 package sonar.fluxnetworks.common.integration;
 
 import mcjty.theoneprobe.api.*;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.misc.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -32,75 +32,75 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
     public static class FluxDeviceInfoProvider implements IProbeInfoProvider {
 
         @Override
-        public String getID() {
-            return FluxNetworks.MODID;
+        public ResourceLocation getID() {
+            return new ResourceLocation(FluxNetworks.MODID, "device_provider");
         }
 
         @Override
-        public void addProbeInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world,
-                                 BlockState blockState, IProbeHitData iProbeHitData) {
+        public void addProbeInfo(ProbeMode probeMode, IProbeInfo probeInfo, Player player, Level level,
+                                 BlockState blockState, IProbeHitData hitData) {
             if (!(FluxConfig.enableOneProbeBasicInfo || FluxConfig.enableOneProbeAdvancedInfo)) {
                 return;
             }
-            TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
-            if (tile instanceof TileFluxDevice) {
-                TileFluxDevice flux = (TileFluxDevice) tile;
+            if (level.getBlockEntity(hitData.getPos()) instanceof FluxDeviceEntity device) {
                 if (FluxConfig.enableOneProbeBasicInfo) {
-                    iProbeInfo.text((flux.getNetwork().isValid() ?
-                            new StringTextComponent(TextFormatting.AQUA + flux.getNetwork().getNetworkName())
-                            : new StringTextComponent(TextFormatting.AQUA + FluxTranslate.ERROR_NO_SELECTED.t())));
+                    probeInfo.text((device.getNetwork().isValid() ?
+                            new TextComponent(ChatFormatting.AQUA + device.getNetwork().getNetworkName())
+                            : new TextComponent(ChatFormatting.AQUA + FluxTranslate.ERROR_NO_SELECTED.t())));
 
-                    iProbeInfo.text(new StringTextComponent(FluxUtils.getTransferInfo(flux, EnergyType.FE)));
+                    probeInfo.text(new TextComponent(FluxUtils.getTransferInfo(device, EnergyType.FE)));
 
-                    if (playerEntity.isSneaking()) {
-                        if (flux.getDeviceType().isStorage()) {
-                            iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
-                                    .appendString(": " + TextFormatting.GREEN + EnergyType.storage(flux.getTransferBuffer()))
+                    if (player.isShiftKeyDown()) {
+                        if (device.getDeviceType().isStorage()) {
+                            probeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
+                                    .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
                             );
                         } else {
-                            iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
-                                    .appendString(": " + TextFormatting.GREEN + EnergyType.storage(flux.getTransferBuffer()))
+                            probeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
+                                    .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
                             );
                         }
                     }/* else {
                         if (flux.getDeviceType().isStorage()) {
                             iProbeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
-                                    .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
+                                    .appendString(": " + ChatFormatting.GREEN + FluxUtils.format(flux
+                                    .getTransferBuffer(),
                                             NumberFormatType.COMPACT, EnergyType.FE, false))
                             );
                         } else {
                             iProbeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
-                                    .appendString(": " + TextFormatting.GREEN + FluxUtils.format(flux.getTransferBuffer(),
+                                    .appendString(": " + ChatFormatting.GREEN + FluxUtils.format(flux
+                                    .getTransferBuffer(),
                                             NumberFormatType.COMPACT, EnergyType.FE, false))
                             );
                         }
                     }*/
                 }
                 if (FluxConfig.enableOneProbeAdvancedInfo &&
-                        (!FluxConfig.enableOneProbeSneaking || playerEntity.isSneaking())) {
+                        (!FluxConfig.enableOneProbeSneaking || player.isShiftKeyDown())) {
 
-                    if (flux.getDisableLimit()) {
-                        iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
-                                .appendString(": " + TextFormatting.GREEN + FluxTranslate.UNLIMITED)
+                    if (device.getDisableLimit()) {
+                        probeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
+                                .append(": " + ChatFormatting.GREEN + FluxTranslate.UNLIMITED)
                         );
                     } else {
-                        iProbeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
-                                .appendString(": " + TextFormatting.GREEN + EnergyType.storage(flux.getRawLimit()))
+                        probeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
+                                .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getRawLimit()))
                         );
                     }
 
-                    if (flux.getSurgeMode()) {
-                        iProbeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
-                                .appendString(": " + TextFormatting.GREEN + FluxTranslate.SURGE)
+                    if (device.getSurgeMode()) {
+                        probeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
+                                .append(": " + ChatFormatting.GREEN + FluxTranslate.SURGE)
                         );
                     } else {
-                        iProbeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
-                                .appendString(": " + TextFormatting.GREEN + flux.getRawPriority())
+                        probeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
+                                .append(": " + ChatFormatting.GREEN + device.getRawPriority())
                         );
                     }
 
-                    if (flux.isForcedLoading()) {
-                        iProbeInfo.text(new StringTextComponent(TextFormatting.GOLD + FluxTranslate.FORCED_LOADING.t()));
+                    if (device.isForcedLoading()) {
+                        probeInfo.text(new TextComponent(ChatFormatting.GOLD + FluxTranslate.FORCED_LOADING.t()));
                     }
                 }
             }
@@ -110,18 +110,17 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
     public static class FluxDeviceDisplayOverride implements IBlockDisplayOverride {
 
         @Override
-        public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, @Nonnull World world,
-                                            @Nonnull BlockState blockState, @Nonnull IProbeHitData iProbeHitData) {
-            TileEntity tile = world.getTileEntity(iProbeHitData.getPos());
-            if (tile instanceof TileFluxDevice) {
-                TileFluxDevice flux = (TileFluxDevice) tile;
-                ItemStack itemStack = flux.getDisplayStack();
-                CompoundNBT tag = itemStack.getOrCreateChildTag(FluxConstants.TAG_FLUX_DATA);
-                tag.putInt(FluxConstants.NETWORK_ID, flux.getNetworkID());
-                tag.putString(FluxConstants.CUSTOM_NAME, flux.getCustomName());
-                iProbeInfo.horizontal().item(itemStack)
+        public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo probeInfo, Player player,
+                                            @Nonnull Level level, BlockState blockState,
+                                            @Nonnull IProbeHitData hitData) {
+            if (level.getBlockEntity(hitData.getPos()) instanceof FluxDeviceEntity device) {
+                ItemStack itemStack = device.getDisplayStack();
+                CompoundTag tag = itemStack.getOrCreateTagElement(FluxConstants.TAG_FLUX_DATA);
+                tag.putInt(FluxConstants.NETWORK_ID, device.getNetworkID());
+                tag.putString(FluxConstants.CUSTOM_NAME, device.getCustomName());
+                probeInfo.horizontal().item(itemStack)
                         .vertical().itemLabel(itemStack)
-                        .text(new StringTextComponent(TextStyleClass.MODNAME + FluxNetworks.NAME));
+                        .text(new TextComponent(TextStyleClass.MODNAME + FluxNetworks.NAME));
                 return true;
             }
             return false;

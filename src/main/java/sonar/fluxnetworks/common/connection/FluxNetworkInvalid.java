@@ -1,40 +1,38 @@
 package sonar.fluxnetworks.common.connection;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Util;
-import sonar.fluxnetworks.api.device.IFluxDevice;
+import net.minecraft.Util;
+import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.FluxLogicType;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class FluxNetworkInvalid extends BasicFluxNetwork {
+public class FluxNetworkInvalid extends FluxNetworkModel {
 
     public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 
     private FluxNetworkInvalid() {
         super(FluxConstants.INVALID_NETWORK_ID, "Please select a network",
-                FluxConstants.INVALID_NETWORK_COLOR, Util.DUMMY_UUID);
+                FluxConstants.INVALID_NETWORK_COLOR, Util.NIL_UUID);
     }
 
     @Override
     public void onEndServerTick() {
-
     }
 
     @Nonnull
     @Override
-    public AccessLevel getPlayerAccess(PlayerEntity player) {
+    public AccessLevel getPlayerAccess(@Nonnull Player player) {
         return AccessLevel.BLOCKED;
     }
 
     @Nonnull
     @Override
-    public <T extends IFluxDevice> List<T> getConnections(FluxLogicType type) {
-        return new ArrayList<>();
+    public List<FluxDeviceEntity> getLogicalEntities(int logic) {
+        return Collections.emptyList();
     }
 
     @Override
@@ -43,18 +41,12 @@ public class FluxNetworkInvalid extends BasicFluxNetwork {
     }
 
     @Override
-    public void markSortConnections() {
-
+    public boolean enqueueConnectionAddition(@Nonnull FluxDeviceEntity device) {
+        return true;
     }
 
     @Override
-    public void enqueueConnectionAddition(@Nonnull IFluxDevice device) {
-
-    }
-
-    @Override
-    public void enqueueConnectionRemoval(@Nonnull IFluxDevice device, boolean chunkUnload) {
-
+    public void enqueueConnectionRemoval(@Nonnull FluxDeviceEntity device, boolean chunkUnload) {
     }
 
     @Override

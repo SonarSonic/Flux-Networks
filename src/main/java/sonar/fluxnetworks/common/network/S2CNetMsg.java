@@ -1,70 +1,44 @@
 package sonar.fluxnetworks.common.network;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.GlobalPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.misc.FluxCapabilities;
-import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.network.*;
-import sonar.fluxnetworks.common.capability.SuperAdmin;
-import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.registry.RegistryItems;
-import sonar.fluxnetworks.common.storage.FluxChunkManager;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
-
-import javax.annotation.Nonnull;
-import java.util.*;
-
 public final class S2CNetMsg {
 
-    private static final NetworkHandler sNetwork = NetworkHandler.sInstance;
+    //private static final NetworkHandler sNetwork = NetworkHandler.sInstance;
 
-    // indices are defined in C2SNetMsg
+    /*// indices are defined in C2SNetMsg
     static final S2CNetMsg.Functor[] sFunctors = new Functor[]{
-            S2CNetMsg::tileEntity, // 0
-            S2CNetMsg::responseSuperAdmin, // 1
-            S2CNetMsg::editMember, // 2
-            S2CNetMsg::editNetwork, // 3
-            S2CNetMsg::editWireless, // 4
-            S2CNetMsg::responseNetworkUpdate, // 5
-            S2CNetMsg::setNetwork, // 6
-            S2CNetMsg::createNetwork, // 7
-            S2CNetMsg::deleteNetwork, // 8
-            S2CNetMsg::responseAccessUpdate, // 9
-            S2CNetMsg::editConnections, // 10
-            S2CNetMsg::responseConnectionUpdate, // 11
-            S2CNetMsg::configuratorNet, // 12
-            S2CNetMsg::configuratorEdit}; // 13
+            (buf, player) -> tileEntity(buf, player), // 0
+            (buf, player) -> responseSuperAdmin(buf, player), // 1
+            (buf, sender) -> editMember(buf, sender), // 2
+            (buf, player) -> editNetwork(buf, player), // 3
+            (buf, player) -> editWireless(buf, player), // 4
+            (buf, player) -> responseNetworkUpdate(buf, player), // 5
+            (buf, player) -> setNetwork(buf, player), // 6
+            (buf, player) -> createNetwork(buf, player), // 7
+            (buf, player) -> deleteNetwork(buf, player), // 8
+            (buf, player) -> responseAccessUpdate(buf, player), // 9
+            (buf, player) -> editConnections(buf, player), // 10
+            (buf, player) -> responseConnectionUpdate(buf, player), // 11
+            (buf, player) -> configuratorNet(buf, player), // 12
+            (buf, player) -> configuratorEdit(buf, player)}; // 13
 
     @FunctionalInterface
     interface Functor {
 
         // handle C2S packets
-        void f(@Nonnull PacketBuffer payload, @Nonnull ServerPlayerEntity player);
+        void f(@Nonnull FriendlyByteBuf payload, @Nonnull ServerPlayer player);
     }
 
     @Nonnull
-    public static NetworkHandler.Broadcaster tileEntity(@Nonnull TileFluxDevice tile, byte type) {
-        PacketBuffer buf = sNetwork.targetAt(0);
+    public static NetworkHandler.Broadcaster tileEntity(@Nonnull FluxDeviceEntity tile, byte type) {
+        FriendlyByteBuf buf = sNetwork.targetAt(0);
         buf.writeBlockPos(tile.getPos());
         buf.writeByte(type);
         tile.writePacket(buf, type);
         return sNetwork.getBroadcaster(buf);
     }
 
-    private static void feedback(@Nonnull FeedbackInfo info, @Nonnull ServerPlayerEntity player) {
-        PacketBuffer buf = sNetwork.targetAt(1);
+    private static void feedback(@Nonnull FeedbackInfo info, @Nonnull ServerPlayer player) {
+        FriendlyByteBuf buf = sNetwork.targetAt(1);
         buf.writeVarInt(info.ordinal());
         sNetwork.getBroadcaster(buf).sendToPlayer(player);
     }
@@ -72,7 +46,7 @@ public final class S2CNetMsg {
     // update client super admin state
     @Nonnull
     public static NetworkHandler.Broadcaster updateSuperAdmin(boolean hasPermission) {
-        PacketBuffer buf = sNetwork.targetAt(2);
+        FriendlyByteBuf buf = sNetwork.targetAt(2);
         buf.writeBoolean(hasPermission);
         return sNetwork.getBroadcaster(buf);
     }
@@ -80,7 +54,7 @@ public final class S2CNetMsg {
     // generate lava particles
     @Nonnull
     public static NetworkHandler.Broadcaster lavaEffect(BlockPos pos, int count) {
-        PacketBuffer buf = sNetwork.targetAt(3);
+        FriendlyByteBuf buf = sNetwork.targetAt(3);
         buf.writeBlockPos(pos);
         buf.writeVarInt(count);
         return sNetwork.getBroadcaster(buf);
@@ -89,12 +63,12 @@ public final class S2CNetMsg {
     // update flux network data
     @Nonnull
     public static NetworkHandler.Broadcaster updateNetwork(@Nonnull IFluxNetwork net, int type) {
-        PacketBuffer buf = sNetwork.targetAt(4);
+        FriendlyByteBuf buf = sNetwork.targetAt(4);
         buf.writeVarInt(type);
         buf.writeVarInt(1); // size = 1
         buf.writeVarInt(net.getNetworkID());
         final CompoundNBT tag = new CompoundNBT();
-        net.writeCustomNBT(tag, type);
+        net.writeCustomTag(tag, type);
         buf.writeCompoundTag(tag);
         return sNetwork.getBroadcaster(buf);
     }
@@ -102,26 +76,26 @@ public final class S2CNetMsg {
     // update flux networks data
     @Nonnull
     public static NetworkHandler.Broadcaster updateNetwork(@Nonnull Collection<IFluxNetwork> networks, int type) {
-        PacketBuffer buf = sNetwork.targetAt(4);
+        FriendlyByteBuf buf = sNetwork.targetAt(4);
         buf.writeVarInt(type);
         buf.writeVarInt(networks.size());
         networks.forEach(net -> {
             buf.writeVarInt(net.getNetworkID());
             final CompoundNBT tag = new CompoundNBT();
-            net.writeCustomNBT(tag, type);
+            net.writeCustomTag(tag, type);
             buf.writeCompoundTag(tag);
         });
         return sNetwork.getBroadcaster(buf);
     }
 
-    private static void updateAccess(@Nonnull AccessLevel access, ServerPlayerEntity player) {
-        PacketBuffer buf = sNetwork.targetAt(5);
+    private static void updateAccess(@Nonnull AccessLevel access, ServerPlayer player) {
+        FriendlyByteBuf buf = sNetwork.targetAt(5);
         buf.writeVarInt(access.ordinal());
         sNetwork.getBroadcaster(buf).sendToPlayer(player);
     }
 
-    private static void updateConnection(int networkID, @Nonnull List<CompoundNBT> tags, ServerPlayerEntity player) {
-        PacketBuffer buf = sNetwork.targetAt(6);
+    private static void updateConnection(int networkID, @Nonnull List<CompoundNBT> tags, ServerPlayer player) {
+        FriendlyByteBuf buf = sNetwork.targetAt(6);
         buf.writeVarInt(networkID);
         buf.writeVarInt(tags.size());
         tags.forEach(buf::writeCompoundTag);
@@ -130,10 +104,10 @@ public final class S2CNetMsg {
 
     ///  HANDLING  \\\
 
-    private static void tileEntity(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void tileEntity(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         final TileEntity tile = player.world.getTileEntity(buf.readBlockPos());
-        if (tile instanceof TileFluxDevice) {
-            final TileFluxDevice flux = (TileFluxDevice) tile;
+        if (tile instanceof FluxDeviceEntity) {
+            final FluxDeviceEntity flux = (FluxDeviceEntity) tile;
             // security check
             if (!flux.canPlayerAccess(player)) {
                 return;
@@ -146,7 +120,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void responseSuperAdmin(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void responseSuperAdmin(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         ISuperAdmin sa = FluxUtils.get(player.getCapability(FluxCapabilities.SUPER_ADMIN));
         if (sa != null && (sa.hasPermission() || SuperAdmin.canActivateSuperAdmin(player))) {
             sa.changePermission();
@@ -159,7 +133,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void editMember(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity sender) {
+    private static void editMember(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer sender) {
         final IFluxNetwork network = FluxNetworkData.getNetwork(buf.readVarInt());
         if (!network.isValid()) {
             return;
@@ -214,8 +188,9 @@ public final class S2CNetMsg {
                     feedback(FeedbackInfo.NO_OWNER, sender);
                     return;
                 }
-                /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
-                    .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
+                *//*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
+                    .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s
+                    .setAccessPermission(AccessPermission.USER));*//*
                 network.getAllMembers().removeIf(f -> f.getAccessLevel().canDelete());
                 network.setOwnerUUID(targetUUID);
                 c.setAccessLevel(AccessLevel.OWNER);
@@ -234,8 +209,9 @@ public final class S2CNetMsg {
             PlayerEntity target = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayerByUUID(targetUUID);
             // is online
             if (target != null) {
-                /*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
-                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s.setAccessPermission(AccessPermission.USER));*/
+                *//*network.getSetting(NetworkSettings.NETWORK_PLAYERS).stream()
+                        .filter(f -> f.getAccessPermission().canDelete()).findFirst().ifPresent(s -> s
+                        .setAccessPermission(AccessPermission.USER));*//*
                 network.getAllMembers().removeIf(f -> f.getAccessLevel().canDelete());
                 NetworkMember m = NetworkMember.create(target, AccessLevel.OWNER);
                 network.getRawMemberMap().put(m.getPlayerUUID(), m);
@@ -250,14 +226,14 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void editNetwork(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void editNetwork(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         IFluxNetwork network = FluxNetworkData.getNetwork(buf.readVarInt());
         if (!network.isValid()) {
             return;
         }
         final String name = buf.readString(256);
         final int color = buf.readInt();
-        final SecurityType security = SecurityType.values()[buf.readVarInt()];
+        final SecurityLevel security = SecurityLevel.values()[buf.readVarInt()];
         final String password = buf.readString(256);
 
         if (network.getPlayerAccess(player).canEdit()) {
@@ -266,9 +242,9 @@ public final class S2CNetMsg {
             }
             if (network.getNetworkColor() != color) {
                 network.setNetworkColor(color);
-                network.getConnections(FluxLogicType.ANY).forEach(device -> {
-                    if (device instanceof TileFluxDevice) {
-                        ((TileFluxDevice) device).sendFullUpdatePacket();
+                network.getConnections(FluxLogicalType.ANY).forEach(device -> {
+                    if (device instanceof FluxDeviceEntity) {
+                        ((FluxDeviceEntity) device).sendBlockUpdate();
                     }
                 }); // update appearance
             }
@@ -284,7 +260,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void editWireless(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void editWireless(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         IFluxNetwork network = FluxNetworkData.getNetwork(buf.readVarInt());
         if (!network.isValid()) {
             return;
@@ -298,7 +274,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void responseNetworkUpdate(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void responseNetworkUpdate(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         final int type = buf.readVarInt();
         final int size = buf.readVarInt();
         List<IFluxNetwork> networks = new ArrayList<>();
@@ -313,12 +289,12 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void setNetwork(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void setNetwork(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         TileEntity tile = player.world.getTileEntity(buf.readBlockPos());
-        if (!(tile instanceof TileFluxDevice)) {
+        if (!(tile instanceof FluxDeviceEntity)) {
             return;
         }
-        TileFluxDevice flux = (TileFluxDevice) tile;
+        FluxDeviceEntity flux = (FluxDeviceEntity) tile;
         final int networkID = buf.readVarInt();
         if (flux.getNetworkID() == networkID) {
             return;
@@ -328,7 +304,7 @@ public final class S2CNetMsg {
 
         if (network.isValid() &&
                 flux.getDeviceType().isController() &&
-                !network.getConnections(FluxLogicType.CONTROLLER).isEmpty()) {
+                !network.getConnections(FluxLogicalType.CONTROLLER).isEmpty()) {
             feedback(FeedbackInfo.HAS_CONTROLLER, player);
         } else {
             if (network.isValid() && noAccess(buf.readString(256), player, network))
@@ -341,10 +317,10 @@ public final class S2CNetMsg {
         }
     }
 
-    private static boolean noAccess(String password, ServerPlayerEntity player, @Nonnull IFluxNetwork network) {
+    private static boolean noAccess(String password, ServerPlayer player, @Nonnull IFluxNetwork network) {
         // not a member
         if (!network.getPlayerAccess(player).canUse()) {
-            if (network.getSecurity().getType() == SecurityType.PRIVATE) {
+            if (network.getSecurity().getLevel() == SecurityLevel.PRIVATE) {
                 feedback(FeedbackInfo.REJECT, player);
                 return true;
             }
@@ -360,10 +336,10 @@ public final class S2CNetMsg {
         return false;
     }
 
-    private static void createNetwork(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void createNetwork(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         final String name = buf.readString(256);
         final int color = buf.readInt();
-        final SecurityType security = SecurityType.values()[buf.readVarInt()];
+        final SecurityLevel security = SecurityLevel.values()[buf.readVarInt()];
         final String password = buf.readString(256);
         if (FluxUtils.isLegalPassword(password)) {
             if (FluxNetworkData.get().createNetwork(player, name, color, security, password) != null) {
@@ -376,7 +352,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void deleteNetwork(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void deleteNetwork(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         IFluxNetwork network = FluxNetworkData.getNetwork(buf.readVarInt());
         if (network.isValid()) {
             if (network.getPlayerAccess(player).canDelete()) {
@@ -388,13 +364,13 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void responseAccessUpdate(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void responseAccessUpdate(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         IFluxNetwork network = FluxNetworkData.getNetwork(buf.readVarInt());
         AccessLevel access = network.getPlayerAccess(player);
         updateAccess(access, player);
     }
 
-    private static void editConnections(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void editConnections(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         final IFluxNetwork network = FluxNetworkData.getNetwork(buf.readVarInt());
         if (!network.isValid()) {
             return;
@@ -452,10 +428,10 @@ public final class S2CNetMsg {
             }
             boolean sendBannedLoading = false;
             for (IFluxDevice d : toEdit) {
-                if (!(d instanceof TileFluxDevice)) {
+                if (!(d instanceof FluxDeviceEntity)) {
                     continue;
                 }
-                TileFluxDevice t = (TileFluxDevice) d;
+                FluxDeviceEntity t = (FluxDeviceEntity) d;
                 if (editName) {
                     t.setCustomName(name);
                 }
@@ -484,7 +460,7 @@ public final class S2CNetMsg {
                         sendBannedLoading = true;
                     }
                 }
-                t.sendFullUpdatePacket();
+                t.sendBlockUpdate();
             }
             feedback(FeedbackInfo.SUCCESS, player);
             if (sendBannedLoading) {
@@ -493,7 +469,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void responseConnectionUpdate(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void responseConnectionUpdate(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         final int networkID = buf.readVarInt();
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (!network.isValid()) {
@@ -505,7 +481,7 @@ public final class S2CNetMsg {
             GlobalPos pos = FluxUtils.readGlobalPos(buf);
             network.getConnectionByPos(pos).ifPresent(c -> {
                 CompoundNBT tag = new CompoundNBT();
-                c.writeCustomNBT(tag, FluxConstants.TYPE_CONNECTION_UPDATE);
+                c.writeCustomTag(tag, FluxConstants.TYPE_CONNECTION_UPDATE);
                 tags.add(tag);
             });
         }
@@ -514,7 +490,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void configuratorNet(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void configuratorNet(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         int networkID = buf.readVarInt();
         IFluxNetwork network = FluxNetworkData.getNetwork(networkID);
         if (network.isValid()) {
@@ -529,7 +505,7 @@ public final class S2CNetMsg {
         }
     }
 
-    private static void configuratorEdit(@Nonnull PacketBuffer buf, @Nonnull ServerPlayerEntity player) {
+    private static void configuratorEdit(@Nonnull FriendlyByteBuf buf, @Nonnull ServerPlayer player) {
         String customName = buf.readString(256);
         CompoundNBT tag = buf.readCompoundTag();
         ItemStack stack = player.getHeldItemMainhand();
@@ -539,5 +515,5 @@ public final class S2CNetMsg {
             }
             stack.setDisplayName(new StringTextComponent(customName));
         }
-    }
+    }*/
 }

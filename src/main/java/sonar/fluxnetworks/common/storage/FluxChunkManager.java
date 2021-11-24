@@ -13,7 +13,7 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.server.TicketType;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class FluxChunkManager {
 
-    private static final TicketType<TileFluxDevice> FLUX_TICKET_TYPE
+    private static final TicketType<FluxDeviceEntity> FLUX_TICKET_TYPE
             = TicketType.create("fluxnetworks:chunk_loading", Comparator.comparing(TileEntity::getPos));
 
     // level = 33 - distance = 31, TileEntity, Entity's ticking and all game logic will run
@@ -49,13 +49,13 @@ public class FluxChunkManager {
             while (iterator.hasNext()) {
                 BlockPos blockPos = BlockPos.fromLong(iterator.nextLong());
                 TileEntity tile = world.getTileEntity(blockPos); // also loads the chunk
-                if (tile instanceof TileFluxDevice) {
-                    TileFluxDevice flux = (TileFluxDevice) tile;
+                if (tile instanceof FluxDeviceEntity) {
+                    FluxDeviceEntity flux = (FluxDeviceEntity) tile;
                     ChunkPos chunkPos = new ChunkPos(blockPos);
                     chunkPosSet.add(chunkPos);
                     chunkProvider.registerTicket(FLUX_TICKET_TYPE, chunkPos, LOAD_DISTANCE, flux);
                     flux.setForcedLoading(true);
-                    flux.sendFullUpdatePacket();
+                    flux.sendBlockUpdate();
                 } else {
                     // remove invalid tickets
                     iterator.remove();
@@ -73,7 +73,7 @@ public class FluxChunkManager {
         }
     }
 
-    public static void addChunkLoader(@Nonnull TileFluxDevice tile) {
+    public static void addChunkLoader(@Nonnull FluxDeviceEntity tile) {
         ServerWorld world = (ServerWorld) tile.getFluxWorld();
         RegistryKey<World> dim = world.getDimensionKey();
         BlockPos blockPos = tile.getPos();
@@ -88,7 +88,7 @@ public class FluxChunkManager {
         }
     }
 
-    public static void removeChunkLoader(@Nonnull TileFluxDevice tile) {
+    public static void removeChunkLoader(@Nonnull FluxDeviceEntity tile) {
         ServerWorld world = (ServerWorld) tile.getFluxWorld();
         RegistryKey<World> dim = world.getDimensionKey();
         BlockPos blockPos = tile.getPos();
@@ -102,7 +102,7 @@ public class FluxChunkManager {
         }
     }
 
-    public static boolean isChunkLoader(@Nonnull TileFluxDevice tile) {
+    public static boolean isChunkLoader(@Nonnull FluxDeviceEntity tile) {
         RegistryKey<World> dim = tile.getFluxWorld().getDimensionKey();
         BlockPos blockPos = tile.getPos();
         return FluxNetworkData.getTickets(dim).contains(blockPos.toLong());

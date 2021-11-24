@@ -1,34 +1,30 @@
 package sonar.fluxnetworks.common.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.api.text.FluxTranslate;
-import sonar.fluxnetworks.api.text.StyleUtils;
 import sonar.fluxnetworks.common.registry.RegistryItems;
-import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
+import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Defines the block base class for any flux device
+ * Defines the block base class for any flux device.
  */
-public abstract class FluxDeviceBlock extends Block {
+@ParametersAreNonnullByDefault
+public abstract class FluxDeviceBlock extends Block implements EntityBlock {
 
     public FluxDeviceBlock(Properties props) {
         super(props);
@@ -36,116 +32,56 @@ public abstract class FluxDeviceBlock extends Block {
 
     @Nonnull
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos,
-                                             @Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull BlockRayTraceResult result) {
-        if (worldIn.isRemote) {
-            return ActionResultType.SUCCESS;
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
+                                 BlockHitResult hit) {
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
         }
 
-        if (player.getHeldItem(hand).getItem() == RegistryItems.FLUX_CONFIGURATOR) {
-            return ActionResultType.FAIL;
+        if (player.getItemInHand(hand).is(RegistryItems.FLUX_CONFIGURATOR)) {
+            return InteractionResult.PASS;
         }
 
-        TileEntity tile = worldIn.getTileEntity(pos);
-
-        if (tile instanceof TileFluxDevice) {
-            TileFluxDevice flux = (TileFluxDevice) tile;
-            if (!flux.playerUsing.isEmpty()) {
-                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_OCCUPY), true);
-                return ActionResultType.SUCCESS;
-            } else if (flux.canPlayerAccess(player)) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, flux, buf -> {
-                    buf.writeBoolean(true);
-                    buf.writeBlockPos(pos);
-                });
-                return ActionResultType.SUCCESS;
-            } else {
-                player.sendStatusMessage(StyleUtils.error(FluxTranslate.ACCESS_DENIED), true);
-            }
+        if (level.getBlockEntity(pos) instanceof FluxDeviceEntity device) {
+            device.interact(player);
         }
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
+    /**
+     * Called by BlockItem after this block has been placed.
+     */
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable LivingEntity placer, @Nonnull ItemStack stack) {
-        TileEntity tile = worldIn.getTileEntity(pos);
-        if (tile instanceof TileFluxDevice) {
-            TileFluxDevice flux = (TileFluxDevice) tile;
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
+                            ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (level.getBlockEntity(pos) instanceof FluxDeviceEntity device) {
             if (stack.hasTag()) {
-                CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_DATA);
+                CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
                 if (tag != null) {
-                    // doing this client side to prevent network flickering when placing, we send a block update next tick anyway.
-                    flux.readCustomNBT(tag, FluxConstants.TYPE_TILE_DROP);
+                    // doing this client side to prevent network flickering when placing, we send a block update next
+                    // tick anyway.
+                    device.readCustomTag(tag, FluxConstants.TYPE_TILE_DROP);
                 }
             }
-            if (placer instanceof ServerPlayerEntity) {
-                flux.setConnectionOwner(PlayerEntity.getUUID(((PlayerEntity) placer).getGameProfile()));
+            if (placer instanceof Player) {
+                device.setConnectionOwner(placer.getUUID());
             }
         }
     }
 
-    @Override
-    public boolean removedByPlayer(BlockState state, @Nonnull World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
-        if (!world.isRemote) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile instanceof TileFluxDevice && !((TileFluxDevice) tile).canPlayerAccess(player)) {
+    //TODO use BlockEvent
+    /*@Override
+    public boolean removedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest,
+    FluidState fluid) {
+        if (!level.isClientSide) {
+            if (level.getBlockEntity(pos) instanceof FluxDeviceEntity  d && !d.canPlayerAccess(player)) {
                 player.sendStatusMessage(StyleUtils.error(FluxTranslate.REMOVAL_DENIED), true);
+                level.markAndNotifyBlock();
                 return false;
             }
         }
-        onBlockHarvested(world, pos, state, player);
-        return world.setBlockState(pos, fluid.getBlockState(), world.isRemote ?
-                Constants.BlockFlags.DEFAULT_AND_RERENDER : Constants.BlockFlags.DEFAULT);
-    }
-
-    /*@Override
-    public void harvestBlock(World worldIn, PlayerEntity player, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nullable TileEntity te, @Nonnull ItemStack heldStack) {
-        player.addStat(Stats.BLOCK_MINED.get(this));
-        player.addExhaustion(0.005F);
-        if (worldIn instanceof ServerWorld) {
-            TileEntity tile = worldIn.getTileEntity(pos);
-
-            if (tile instanceof TileFluxCore) {
-                TileFluxCore tileFluxCore = (TileFluxCore) tile;
-                //if(tileFluxCore.canAccess(player)) {
-                ItemStack stack = new ItemStack(this, 1);
-                writeDataToStack(stack, pos, worldIn);
-                spawnAsEntity(worldIn, pos, stack);
-
-                    *//*float motion = 0.7F;
-                    double motionX = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;
-                    double motionY = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;
-                    double motionZ = (world.rand.nextFloat() * motion) + (1.0F - motion) * 0.5D;
-
-                    ItemEntity entityItem = new ItemEntity(world, pos.getX() + motionX, pos.getY() + motionY, pos.getZ() + motionZ, stack);*//*
-
-                //world.removeBlock(pos, false);
-                //world.addEntity(entityItem);
-                //   return true;
-                //}else{
-                //    player.sendStatusMessage(StyleUtils.getErrorStyle(FluxTranslate.REMOVAL_DENIED_KEY), true);
-                //}
-            }
-        }
+        return super.removedByPlayer(state, level, pos, player, willHarvest, fluid);
     }*/
-
-    // see FluxBlockLootTables
-    /*public static void writeDataToStack(ItemStack stack, BlockPos pos, World world) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileFluxDevice) {
-            TileFluxDevice t = (TileFluxDevice) tile;
-            CompoundNBT tag = stack.getOrCreateChildTag(FluxUtils.FLUX_DATA);
-            t.writeCustomNBT(tag, NBTType.TILE_DROP);
-        }
-    }
-
-    public void readDataFromStack(ItemStack stack, BlockPos pos, @Nonnull World world) {
-
-    }*/
-
-    @Override
-    public final boolean hasTileEntity(BlockState state) {
-        return true;
-    }
 }
