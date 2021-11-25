@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.network.PacketBuffer;
+/*import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -35,14 +35,14 @@ public class NetworkColourRequestPacket extends AbstractPacket {
     @Override
     public Object handle(NetworkEvent.Context ctx) {
         Map<Integer, Tuple<Integer, String>> cache = new HashMap<>();
-        /*if (!requests.isEmpty()) {
+        *//*if (!requests.isEmpty()) {
             for (int id : requests) {
                 IFluxNetwork network = FluxNetworkData.getNetwork(id);
                 cache.put(id, new Tuple<>(network.getSetting(NetworkSettings.NETWORK_COLOR) | 0xff000000,
                         !network.isValid() ? "NONE" : network.getSetting(NetworkSettings.NETWORK_NAME)));
             }
             return new NetworkColourPacket(cache);
-        }*/
+        }*//*
         return null;
     }
-}
+}*/

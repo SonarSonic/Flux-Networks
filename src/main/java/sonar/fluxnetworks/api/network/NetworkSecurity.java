@@ -15,8 +15,8 @@ public class NetworkSecurity {
     public NetworkSecurity() {
     }
 
-    public void set(@Nonnull SecurityLevel type, @Nonnull String password) {
-        mLevel = type;
+    public void set(@Nonnull SecurityLevel level, @Nonnull String password) {
+        mLevel = level;
         mPassword = password;
     }
 

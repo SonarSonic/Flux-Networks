@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+/*import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
@@ -9,9 +9,9 @@ import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ScreenUtils extends AbstractGui {
@@ -40,24 +40,12 @@ public class ScreenUtils extends AbstractGui {
         font = minecraft.fontRenderer;
     }
 
-    public static float getRed(int colour) {
-        return (float) (colour >> 16 & 255) / 255.0F;
-    }
-
-    public static float getGreen(int colour) {
-        return (float) (colour >> 8 & 255) / 255.0F;
-    }
-
-    public static float getBlue(int colour) {
-        return (float) (colour & 255) / 255.0F;
-    }
-
     public void setGuiColoring(int colour) {
-        RenderSystem.color3f(getRed(colour), getGreen(colour), getBlue(colour));
+        RenderSystem.color3f(FluxUtils.getRed(colour), FluxUtils.getGreen(colour), FluxUtils.getBlue(colour));
     }
 
     public void setGuiColoring(int colour, float alpha) {
-        RenderSystem.color4f(getRed(colour), getGreen(colour), getBlue(colour), alpha);
+        RenderSystem.color4f(FluxUtils.getRed(colour), FluxUtils.getGreen(colour), FluxUtils.getBlue(colour), alpha);
     }
 
     public void resetGuiColouring() {
@@ -86,12 +74,12 @@ public class ScreenUtils extends AbstractGui {
         this.itemRenderer.zLevel = 0.0F;
     }
 
-    /*public void drawColorRect(int x, int y, int height, int width, int color) {
+    *//*public void drawColorRect(int x, int y, int height, int width, int color) {
         fill(x - 1, y - 1, x + width + 1, y, color);
         fill(x - 1, y + height, x + width + 1, y + height + 1, color);
         fill(x - 1, y, x, y + height, color);
         fill(x + width, y, x + width + 1, y + height, color);
-    }*/
+    }*//*
 
     public void drawRectWithBackground(MatrixStack matrixStack, int x, int y, int height, int width, int frameColor, int backColor) {
         fill(matrixStack, x - 1, y - 1, x + width + 1, y, frameColor);
@@ -112,10 +100,10 @@ public class ScreenUtils extends AbstractGui {
         }
     }
 
-    /*public void drawHoverTooltip(String text, int x, int y) {
+    *//*public void drawHoverTooltip(String text, int x, int y) {
         int maxLength = font.getStringWidth(text);
         fill(matrixStack, x, y, x + maxLength + 4, y + 12, 0x80000000);
         font.drawString(matrixStack, text, x + 2, y + 2, Color.GREEN.getRGB());
-    }*/
+    }*//*
 
-}
+}*/

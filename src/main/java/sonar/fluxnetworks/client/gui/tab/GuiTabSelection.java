@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+/*import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -122,8 +122,8 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
     public void renderElementTooltip(MatrixStack matrixStack, IFluxNetwork element, int mouseX, int mouseY) {
         if (hasActivePopup())
             return;
-        /*GlStateManager.pushMatrix();
-        GlStateManager.popMatrix();*/
+        *//*GlStateManager.pushMatrix();
+        GlStateManager.popMatrix();*//*
     }
 
     @Override
@@ -177,4 +177,4 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
                 break;
         }
     }
-}
+}*/

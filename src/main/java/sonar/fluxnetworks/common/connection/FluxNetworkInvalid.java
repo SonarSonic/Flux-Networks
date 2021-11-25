@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public class FluxNetworkInvalid extends FluxNetworkModel {
+public final class FluxNetworkInvalid extends FluxNetwork {
 
     public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 

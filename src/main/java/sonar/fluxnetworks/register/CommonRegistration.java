@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.register;
 
+import icyllis.modernui.forge.NetworkHandler;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
@@ -51,6 +52,8 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = FluxNetworks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CommonRegistration {
 
+    static NetworkHandler sNetwork;
+
     public static final CreativeModeTab CREATIVE_MODE_TAB = new CreativeModeTab(FluxNetworks.MODID) {
         @Nonnull
         @Override
@@ -61,7 +64,7 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        NetworkHandler.initialize();
+        sNetwork = new NetworkHandler(FluxNetworks.MODID, null, null, "701", false);
     }
 
     @SubscribeEvent

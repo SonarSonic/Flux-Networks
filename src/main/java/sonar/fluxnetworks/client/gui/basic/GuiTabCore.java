@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import com.google.common.collect.Lists;
+/*import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,9 +21,9 @@ import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-/**
+*//**
  * for guis which have navigation tabs along the top
- */
+ *//*
 public abstract class GuiTabCore extends GuiFluxCore {
 
     protected List<NavigationButton> navigationButtons = Lists.newArrayList();
@@ -115,4 +115,4 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 break;
         }
     }
-}
+}*/

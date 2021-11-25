@@ -1,15 +1,15 @@
 package sonar.fluxnetworks.client.gui.button;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+/*import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
-/**
+*//**
  * A sliding switch button
- */
+ *//*
 public class SlidedSwitchButton extends GuiButtonCore {
 
     // switch on/off
@@ -79,4 +79,4 @@ public class SlidedSwitchButton extends GuiButtonCore {
             }
         }
     }
-}
+}*/

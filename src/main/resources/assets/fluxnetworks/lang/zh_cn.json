@@ -1,17 +1,17 @@
 {
 	"itemGroup.fluxnetworks": "通量网络",
 
-	"block.fluxnetworks.flux_block": "能量块",
-	"block.fluxnetworks.flux_controller": "能量网络控制器",
-	"block.fluxnetworks.flux_point": "能量网络接出点",
-	"block.fluxnetworks.flux_plug": "能量网络接入点",
+	"block.fluxnetworks.flux_block": "通量块",
+	"block.fluxnetworks.flux_controller": "通量网络控制器",
+	"block.fluxnetworks.flux_point": "通量网络接入点",
+	"block.fluxnetworks.flux_plug": "通量网络输入点",
 	"block.fluxnetworks.basic_flux_storage": "基础能量存储器",
 	"block.fluxnetworks.herculean_flux_storage": "大型能量存储器",
 	"block.fluxnetworks.gargantuan_flux_storage": "超大型能量存储器",
 
 	"item.fluxnetworks.flux_dust": "通量粉尘",
-	"item.fluxnetworks.flux_core": "能量核心",
-	"item.fluxnetworks.flux_configurator": "能量网络配置器",
+	"item.fluxnetworks.flux_core": "通量核心",
+	"item.fluxnetworks.flux_configurator": "通量网络配置器",
 	"item.fluxnetworks.admin_configurator": "管理员网络配置器",
 
 	"tooltip.fluxnetworks.flux_dust": "通过基岩与黑曜石压缩红石粉获得",
@@ -46,15 +46,15 @@
 
 	"info.fluxnetworks.clickabove": "点击上方的%s",
 
-	"info.fluxnetworks.error.noselected": "尚未选择网络",
+	"info.fluxnetworks.error.noselected": "未选择网络",
 	"info.fluxnetworks.error.nonetwork": "暂无可用网络",
 
 	"info.fluxnetworks.flux.priority": "优先级",
-	"info.fluxnetworks.flux.surgemode": "涌流模式",
-	"info.fluxnetworks.flux.disablelimit": "不限速率",
+	"info.fluxnetworks.flux.surgemode": "电涌模式",
+	"info.fluxnetworks.flux.disablelimit": "解除压限",
 	"info.fluxnetworks.flux.chunkloading": "区块加载",
 	"info.fluxnetworks.flux.name": "名称",
-	"info.fluxnetworks.flux.transferlimit": "传输上限",
+	"info.fluxnetworks.flux.transferlimit": "传输极限",
 	"info.fluxnetworks.flux.wireless": "开启无线充能",
 	"info.fluxnetworks.flux.energy": "能量",
 	"info.fluxnetworks.flux.energystored": "能量存储",

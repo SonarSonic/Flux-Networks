@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.common.blockentity;
 
 import icyllis.modernui.forge.MuiForgeBridge;
-import mcjty.lib.api.power.IBigPower;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -24,9 +23,8 @@ import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
+import sonar.fluxnetworks.common.connection.FluxNetworkManager;
 import sonar.fluxnetworks.common.connection.TransferHandler;
-import sonar.fluxnetworks.common.storage.FluxChunkManager;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
 import sonar.fluxnetworks.common.util.FluxContainerMenu;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -37,7 +35,7 @@ import java.util.UUID;
 
 @SuppressWarnings("ConstantConditions")
 @ParametersAreNonnullByDefault
-public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevice, MenuConstructor, IBigPower {
+public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevice, MenuConstructor {
 
     private static final BlockEntityTicker<? extends FluxDeviceEntity> sTickerServer =
             (level, pos, state, entity) -> entity.onServerTick();
@@ -92,7 +90,7 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
         if (!level.isClientSide && (mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
             mNetwork.enqueueConnectionRemoval(this, false);
             if (isForcedLoading()) {
-                FluxChunkManager.removeChunkLoader(this);
+                //FluxChunkManager.removeChunkLoader(this);
             }
             getTransferHandler().clearLocalStates();
             mFlags &= ~FLAG_FIRST_LOADED;
@@ -122,7 +120,7 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
 
     // first load called from server tick
     protected void onFirstLoad() {
-        connect(FluxNetworkData.getNetwork(mNetworkID));
+        connect(FluxNetworkManager.getNetwork(mNetworkID));
     }
 
     /**
@@ -533,16 +531,6 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
     @Override
     public final boolean getSurgeMode() {
         return getTransferHandler().getSurgeMode();
-    }
-
-    @Override
-    public final long getStoredPower() {
-        return getTransferBuffer();
-    }
-
-    @Override
-    public final long getCapacity() {
-        return Math.max(getTransferBuffer(), getRawLimit());
     }
 
     /* TODO - FIX OPEN COMPUTERS INTEGRATION

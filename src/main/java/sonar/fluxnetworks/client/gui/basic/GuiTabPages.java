@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
+/*
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -12,9 +13,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+*/
 /**
  * for tabs which have multiple pages: e.g. Network Selection, Network Connections
- */
+ *//*
+
 public abstract class GuiTabPages<T> extends GuiTabCore {
 
     public List<T> elements = Lists.newArrayList();
@@ -53,9 +56,11 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
             i++;
         }
         RenderSystem.popMatrix();
-        /*if(pages > 1) {
+        */
+/*if(pages > 1) {
             drawCenteredString(fontRenderer, page + " / " + pages, 89, 156, 0xffffff);
-        }*/
+        }*//*
+
     }
 
     @Override
@@ -75,12 +80,14 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
                 }
             }
         }
-        /*int p = (mouseY - gridStartY) / gridHeight;
+        */
+/*int p = (mouseY - gridStartY) / gridHeight;
         if(mouseX >= gridStartX && mouseX < (gridStartX + elementWidth) && mouseY < (p * gridHeight + elementHeight)) {
             if(current.get(p) != null) {
                 return (T) current.get(p);
             }
-        }*/
+        }*//*
+
         return null;
     }
 
@@ -141,7 +148,8 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     }
 
     protected void refreshCurrentPage() {
-        /*if(elements.size() == 0)
+        */
+/*if(elements.size() == 0)
             return;
 
         current.clear();
@@ -159,7 +167,8 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         }
         for(int i = a; i < b; i++) {
             current.add(elements.get(i));
-        }*/
+        }*//*
+
         refreshCurrentPageInternal();
         labelButton.refreshPages(page, pages);
     }
@@ -197,3 +206,4 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         }
     }
 }
+*/

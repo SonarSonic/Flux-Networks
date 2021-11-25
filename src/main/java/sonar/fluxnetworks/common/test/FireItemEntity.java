@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.entity.EntityType;
+/*import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.world.World;
 
@@ -13,13 +13,13 @@ public class FireItemEntity extends ItemEntity {
         super(entityEntityType, world);
     }
 
-    /*public FireItemEntity(@Nonnull ItemEntity toConvert) {
+    *//*public FireItemEntity(@Nonnull ItemEntity toConvert) {
         this(RegistryItems.FIRE_ITEM_ENTITY, toConvert.getEntityWorld());
         setItem(toConvert.getItem());
         copyDataFromOld(toConvert);
-    }*/
+    }*//*
 
-    /*@Override
+    *//*@Override
     protected void dealFireDamage(int amount) {
         if (!changed) {
             ItemStack stack = getItem().copy();
@@ -30,5 +30,5 @@ public class FireItemEntity extends ItemEntity {
             setItem(newStack);
             changed = true;
         }
-    }*/
-}
+    }*//*
+}*/

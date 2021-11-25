@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.item.ItemStack;
+/*import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 @Deprecated
@@ -17,4 +17,4 @@ public interface IFluxTransfer {
     TileEntity getTile();
 
     ItemStack getDisplayStack();
-}
+}*/

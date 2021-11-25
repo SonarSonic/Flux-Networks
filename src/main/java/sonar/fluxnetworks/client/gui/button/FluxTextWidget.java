@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+/*import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.text.StringTextComponent;
@@ -145,13 +145,13 @@ public class FluxTextWidget extends TextFieldWidget {
     }
 
     //TODO
-    /*public static IReorderingProcessor getInvisibleText(String string, int cursorPos) {
+    *//*public static IReorderingProcessor getInvisibleText(String string, int cursorPos) {
         StringBuilder builder = new StringBuilder();
         for(int i = 0; i < string.length(); i++) {
             builder.append("*");
         }
         return IReorderingProcessor
-    }*/
+    }*//*
 
     public FluxTextWidget setDigitsOnly() {
         this.digitsOnly = true;
@@ -173,4 +173,4 @@ public class FluxTextWidget extends TextFieldWidget {
         return this;
     }
 
-}
+}*/

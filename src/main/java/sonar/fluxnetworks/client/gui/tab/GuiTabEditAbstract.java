@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import com.google.common.collect.Lists;
+/*import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
@@ -20,9 +20,9 @@ import sonar.fluxnetworks.common.util.FluxUtils;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-/**
+*//**
  * the base class for settings and creation guis
- */
+ *//*
 public abstract class GuiTabEditAbstract extends GuiTabCore {
 
     public InvisibleButton redirectButton;
@@ -96,11 +96,11 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
                 onEditSettingsChanged();
                 return true;
             }
-            /*if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() + 88) {
+            *//*if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() + 88) {
                 energyType = FluxUtils.incrementEnum(energyType, EnergyType.values());
                 onEditSettingsChanged();
                 return true;
-            }*/
+            }*//*
         }
         return false;
     }
@@ -125,4 +125,4 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             this.colorBtn.color = ((PopupCustomColor) popUp).currentColor;
         }
     }
-}
+}*/

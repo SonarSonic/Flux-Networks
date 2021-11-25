@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
+/*
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -43,3 +44,4 @@ public class InventoryButton extends GuiButtonCore {
         ScreenUtils.INSTANCE.resetGuiColouring();
     }
 }
+*/

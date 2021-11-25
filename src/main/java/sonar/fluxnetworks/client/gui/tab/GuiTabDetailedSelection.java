@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
+/*
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -75,3 +76,4 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         super.tick();
     }
 }
+*/

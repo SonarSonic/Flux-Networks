@@ -109,7 +109,7 @@ public class FluxPlugEntity extends FluxConnectorEntity implements IFluxPlug {
 
         @Override
         public int getMaxEnergyStored() {
-            return (int) Math.min(mHandler.getLimit(), Integer.MAX_VALUE);
+            return (int) Math.min(Math.max(mHandler.getBuffer(), mHandler.getLimit()), Integer.MAX_VALUE);
         }
 
         @Override

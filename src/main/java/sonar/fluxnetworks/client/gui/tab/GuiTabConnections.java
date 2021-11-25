@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import com.google.common.collect.Lists;
+/*import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -242,4 +242,4 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         elements.sort(comparator);
         refreshCurrentPageInternal();
     }
-}
+}*/

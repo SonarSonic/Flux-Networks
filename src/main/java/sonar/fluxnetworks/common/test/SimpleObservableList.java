@@ -27,7 +27,7 @@ public class SimpleObservableList<T> extends ArrayList<T> {
         watchers.remove(watcher);
     }
 
-    public void updateList(List<T> updatedList){
+    /*public void updateList(List<T> updatedList){
         List<T> newElements = Lists.newArrayList(updatedList);
         List<T> currentElements = Lists.newArrayList(this);
         currentElements.remove(newElements);
@@ -36,7 +36,7 @@ public class SimpleObservableList<T> extends ArrayList<T> {
         while(it.hasNext()){
 
         }
-    }
+    }*/
 
     @Override
     public boolean add(T t) {

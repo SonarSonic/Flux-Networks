@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import net.minecraft.client.audio.SimpleSound;
+/*import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,18 +15,18 @@ import sonar.fluxnetworks.common.registry.RegistrySounds;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
+*//**
  * fixes some of the vanilla FocusableGui implementation
- */
+ *//*
 public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
 
     public GuiFocusable(T container, @Nonnull PlayerEntity player) {
         super(container, player.inventory, StringTextComponent.EMPTY);
     }
 
-    /**
+    *//**
      * de-focus other text elements
-     */
+     *//*
     @Override
     public void setListener(@Nullable IGuiEventListener listener) {
         super.setListener(listener);
@@ -72,4 +72,4 @@ public abstract class GuiFocusable<T extends Container> extends GuiDraw<T> {
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
-}
+}*/

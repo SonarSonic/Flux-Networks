@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.network.PacketBuffer;
+/*import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
@@ -31,4 +31,4 @@ public abstract class AbstractPacket {
             PacketHandler.CHANNEL.reply(msg, ctx);
         }
     }
-}
+}*/

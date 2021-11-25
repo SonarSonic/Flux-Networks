@@ -304,6 +304,18 @@ public class FluxUtils {
         return lazyOptional.orElse(null);
     }
 
+    public static float getRed(int colour) {
+        return (float) (colour >> 16 & 255) / 255.0F;
+    }
+
+    public static float getGreen(int colour) {
+        return (float) (colour >> 8 & 255) / 255.0F;
+    }
+
+    public static float getBlue(int colour) {
+        return (float) (colour & 255) / 255.0F;
+    }
+
     /*public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {
         for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
             type.copy.copyFromTile(config, type.getNBTKey(), flux);

@@ -26,10 +26,6 @@ public enum WirelessType {
         return (setting >> ordinal() & 1) == 1;
     }
 
-    public boolean isActivated(@Nonnull IFluxNetwork network) {
-        return isActivated(network.getWirelessMode());
-    }
-
     @Nonnull
     public String getTranslatedName() {
         return typeName.t();

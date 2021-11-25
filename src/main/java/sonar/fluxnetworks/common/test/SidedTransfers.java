@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import com.google.common.collect.Lists;
+/*import com.google.common.collect.Lists;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 
@@ -30,7 +30,7 @@ public class SidedTransfers {
         return transfers.get(dir);
     }
 
-    /*public void updateTransfers(Direction... faces) {
+    *//*public void updateTransfers(Direction... faces) {
         for(Direction dir : faces) {
             TileEntity tile = host.getWorld().getTileEntity(host.getPos().offset(dir));
             IFluxTransfer transfer = transfers.get(dir);
@@ -44,5 +44,5 @@ public class SidedTransfers {
                 transfers.put(dir, null);
             }
         }
-    }*/
-}
+    }*//*
+}*/

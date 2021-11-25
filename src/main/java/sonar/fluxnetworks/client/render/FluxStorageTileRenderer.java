@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -34,9 +34,9 @@ public class FluxStorageTileRenderer implements BlockEntityRenderer<FluxStorageE
     public void render(@Nonnull FluxStorageEntity entity, float partialTick, @Nonnull PoseStack poseStack,
                        @Nonnull MultiBufferSource source, int packedLight, int packedOverlay) {
         int color = entity.mBlockTint;
-        float r = ScreenUtils.getRed(color);
-        float g = ScreenUtils.getGreen(color);
-        float b = ScreenUtils.getBlue(color);
+        float r = FluxUtils.getRed(color);
+        float g = FluxUtils.getGreen(color);
+        float b = FluxUtils.getBlue(color);
         render(poseStack, source.getBuffer(FluxStorageRenderType.getType()), r, g, b,
                 packedOverlay, entity.getTransferBuffer(), entity.getMaxTransferLimit());
     }

@@ -22,9 +22,9 @@ import java.util.*;
 
 /**
  * Defines the base class of a flux network.
- * Instances of this class are expected on the client side.
+ * Instances of this class directly are expected on the client side.
  */
-public class FluxNetworkModel implements IFluxNetwork {
+public class FluxNetwork implements IFluxNetwork {
 
     private static final String NETWORK_NAME = "networkName";
     private static final String NETWORK_COLOR = "networkColor";
@@ -55,17 +55,17 @@ public class FluxNetworkModel implements IFluxNetwork {
     // On client: PhantomFluxDevice
     protected final HashMap<GlobalPos, IFluxDevice> mConnections = new HashMap<>();
 
-    public FluxNetworkModel() {
+    public FluxNetwork() {
     }
 
-    FluxNetworkModel(int id, String name, int color, UUID owner) {
+    FluxNetwork(int id, String name, int color, UUID owner) {
         mNetworkID = id;
         mNetworkName = name;
         mNetworkColor = color;
         mOwnerUUID = owner;
     }
 
-    FluxNetworkModel(int id, String name, int color, @Nonnull Player owner) {
+    FluxNetwork(int id, String name, int color, @Nonnull Player owner) {
         mNetworkID = id;
         mNetworkName = name;
         mNetworkColor = color;

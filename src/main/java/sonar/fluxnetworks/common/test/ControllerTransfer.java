@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
+/*import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import sonar.fluxnetworks.common.blockentity.FluxControllerEntity;
@@ -20,29 +20,29 @@ public class ControllerTransfer implements IFluxTransfer {
 
     @Override
     public void onCycleStart() {
-        /*if (timer == 0) {
+        *//*if (timer == 0) {
             updatePlayers();
         }
-        timer = ++timer & 0x1f;*/
+        timer = ++timer & 0x1f;*//*
     }
 
     @Override
     public void onCycleEnd() {
     }
 
-    /*@Override
+    *//*@Override
     public long removeEnergy(long amount, boolean simulate) {
         return 0; // we don't extract energy from items
-    }*/
+    }*//*
 
     @Override
     public long sendToTile(long amount, boolean simulate) {
-        /*if ((timer & 3) > 0) {
+        *//*if ((timer & 3) > 0) {
             return 0;
         }
-        *//*if((tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS) & 1) == 0) {
+        *//**//*if((tile.getNetwork().getSetting(NetworkSettings.NETWORK_WIRELESS) & 1) == 0) {
             return 0;
-        }*//*
+        }*//**//*
         long received = 0;
         CYCLE:
         for (ServerPlayerEntity player : players) {
@@ -65,11 +65,11 @@ public class ControllerTransfer implements IFluxTransfer {
                 }
             }
         }
-        return received;*/
+        return received;*//*
         return 0;
     }
 
-    /*private void updatePlayers() {
+    *//*private void updatePlayers() {
         players.clear();
         PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
         for (NetworkMember p : tile.getNetwork().getMemberList()) {
@@ -78,12 +78,12 @@ public class ControllerTransfer implements IFluxTransfer {
                 players.add(player);
             }
         }
-    }*/
+    }*//*
 
-    /*@Override
+    *//*@Override
     public void onEnergyAdded(long amount) {
 
-    }*/
+    }*//*
 
     @Override
     public void onEnergyReceived(long amount) {
@@ -100,8 +100,8 @@ public class ControllerTransfer implements IFluxTransfer {
         return ItemStack.EMPTY;
     }
 
-    /*@Override
+    *//*@Override
     public boolean isInvalid() {
         return tile.isRemoved();
-    }*/
-}
+    }*//*
+}*/

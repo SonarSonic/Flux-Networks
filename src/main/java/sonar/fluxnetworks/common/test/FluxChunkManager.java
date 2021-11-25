@@ -1,5 +1,6 @@
-package sonar.fluxnetworks.common.storage;
+package sonar.fluxnetworks.common.test;
 
+/*
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
@@ -27,11 +28,13 @@ public class FluxChunkManager {
     // level = 33 - distance = 31, TileEntity, Entity's ticking and all game logic will run
     private static final int LOAD_DISTANCE = 2;
 
-    /*public static final Map<ResourceLocation, List<ChunkPos>> activeChunks = new HashMap<>();
+    */
+/*public static final Map<ResourceLocation, List<ChunkPos>> activeChunks = new HashMap<>();
 
     public static void clear() {
         activeChunks.clear();
-    }*/
+    }*//*
+
 
     public static void loadWorld(ServerWorld world) {
         if (!FluxConfig.enableChunkLoading) {
@@ -39,9 +42,11 @@ public class FluxChunkManager {
         }
         RegistryKey<World> dim = world.getDimensionKey();
         LongSet tickets = FluxNetworkData.getTickets(dim);
-        /*List<ChunkPos> chunks = tickets.stream().map(l -> new ChunkPos(BlockPos.fromLong(l)))
+        */
+/*List<ChunkPos> chunks = tickets.stream().map(l -> new ChunkPos(BlockPos.fromLong(l)))
                 .distinct().collect(Collectors.toList());
-        chunks.forEach(pos -> registerTicket(world, pos));*/
+        chunks.forEach(pos -> registerTicket(world, pos));*//*
+
         Set<ChunkPos> chunkPosSet = new ObjectArraySet<>();
         if (!tickets.isEmpty()) {
             ServerChunkProvider chunkProvider = world.getChunkProvider();
@@ -108,7 +113,8 @@ public class FluxChunkManager {
         return FluxNetworkData.getTickets(dim).contains(blockPos.toLong());
     }
 
-    /*private static void registerTicket(@Nonnull ServerWorld world, @Nonnull ChunkPos pos) {
+    */
+/*private static void registerTicket(@Nonnull ServerWorld world, @Nonnull ChunkPos pos) {
         world.getChunk(pos.x , pos.z); // loads the chunk
         ServerChunkProvider chunkProvider = world.getChunkProvider();
         chunkProvider.registerTicket(FLUX_TICKET_TYPE, pos, 2, pos);
@@ -117,5 +123,6 @@ public class FluxChunkManager {
     private static void releaseTicket(@Nonnull ServerWorld world, ChunkPos pos) {
         ServerChunkProvider chunkProvider = world.getChunkProvider();
         chunkProvider.releaseTicket(FLUX_TICKET_TYPE, pos, 2, pos);
-    }*/
-}
+    }*//*
+
+}*/

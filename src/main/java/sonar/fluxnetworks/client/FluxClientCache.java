@@ -9,8 +9,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.connection.FluxNetworkModel;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -49,7 +49,7 @@ public class FluxClientCache {
                 }
             } else {
                 if (network == null) {
-                    network = new FluxNetworkModel();
+                    network = new FluxNetwork();
                     network.readCustomTag(nbt, type);
                     networks.put(id, network);
                 } else {

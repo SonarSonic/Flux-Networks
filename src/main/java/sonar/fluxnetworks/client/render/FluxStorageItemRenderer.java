@@ -18,8 +18,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 
@@ -68,7 +68,7 @@ public class FluxStorageItemRenderer extends BlockEntityWithoutLevelRenderer {
         BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
         BakedModel model = dispatcher.getBlockModel(renderState);
 
-        float r = ScreenUtils.getRed(color), g = ScreenUtils.getGreen(color), b = ScreenUtils.getBlue(color);
+        float r = FluxUtils.getRed(color), g = FluxUtils.getGreen(color), b = FluxUtils.getBlue(color);
         dispatcher.getModelRenderer()
                 .renderModel(ps.last(), source.getBuffer(Sheets.cutoutBlockSheet()),
                         renderState, model, r, g, b, combinedLight, combinedOverlay, EmptyModelData.INSTANCE);

@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
+/*
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
@@ -10,9 +11,11 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import sonar.fluxnetworks.FluxNetworks;
 
+*/
 /**
  * @deprecated use {@link NetworkHandler} instead
- */
+ *//*
+
 @Deprecated
 public class PacketHandler {
 
@@ -55,3 +58,4 @@ public class PacketHandler {
     }
 
 }
+*/

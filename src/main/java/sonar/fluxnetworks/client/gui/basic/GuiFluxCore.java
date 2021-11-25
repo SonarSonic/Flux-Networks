@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import com.google.common.collect.Lists;
+/*import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
@@ -167,4 +167,4 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     public void onFeedbackAction(@Nonnull FeedbackInfo info) {
 
     }
-}
+}*/

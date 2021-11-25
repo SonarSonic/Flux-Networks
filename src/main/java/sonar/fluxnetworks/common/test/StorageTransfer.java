@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
+/*import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
@@ -26,13 +26,13 @@ public class StorageTransfer implements IFluxTransfer {
         return 0;
     }
 
-    /*@Override
+    *//*@Override
     public long removeEnergy(long amount, boolean simulate) {
         return tile.removeEnergy(amount, simulate);
     }
 
     @Override
-    public void onEnergyAdded(long amount) {}*/
+    public void onEnergyAdded(long amount) {}*//*
 
     @Override
     public void onEnergyReceived(long amount) {}
@@ -47,8 +47,8 @@ public class StorageTransfer implements IFluxTransfer {
         return ItemStack.EMPTY;
     }
 
-    /*@Override
+    *//*@Override
     public boolean isInvalid() {
         return tile.isRemoved();
-    }*/
-}
+    }*//*
+}*/

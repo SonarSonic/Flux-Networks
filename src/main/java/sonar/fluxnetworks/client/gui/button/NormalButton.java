@@ -1,12 +1,12 @@
 package sonar.fluxnetworks.client.gui.button;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+/*import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
-/**
+*//**
  * A clickable button
- */
+ *//*
 public class NormalButton extends GuiButtonCore {
 
     private int color = 0xffffffff;
@@ -50,4 +50,4 @@ public class NormalButton extends GuiButtonCore {
         color = c;
         return this;
     }
-}
+}*/

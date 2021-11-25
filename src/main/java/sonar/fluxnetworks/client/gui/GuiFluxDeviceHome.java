@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui;
 
+/*
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
@@ -17,9 +18,11 @@ import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 
+*/
 /**
  * The home page.
- */
+ *//*
+
 public class GuiFluxDeviceHome extends GuiTabCore {
 
     public InvisibleButton redirectButton;
@@ -141,3 +144,4 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         timer %= 100;
     }
 }
+*/

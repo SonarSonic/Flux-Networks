@@ -33,8 +33,11 @@ public class FluxDeviceItem extends BlockItem {
     @Override
     public Component getName(@Nonnull ItemStack stack) {
         CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
-        if (tag != null && tag.contains(FluxConstants.CUSTOM_NAME)) {
-            return new TextComponent(tag.getString(FluxConstants.CUSTOM_NAME));
+        if (tag != null) {
+            String value = tag.getString(FluxConstants.CUSTOM_NAME);
+            if (!value.isEmpty()) {
+                return new TextComponent(value);
+            }
         }
         return super.getName(stack);
     }

@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.entity.player.PlayerEntity;
+/*import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -41,10 +41,10 @@ public class TilePacket extends AbstractPacket {
         PlayerEntity player = PacketHandler.getPlayer(ctx);
         if (player != null) {
             World world = player.getEntityWorld();
-            /*if (world.getDimension().getType().getId() != coord4D.getDimension()) {
+            *//*if (world.getDimension().getType().getId() != coord4D.getDimension()) {
                 MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
                 world = server.getWorld(DimensionType.getById(coord4D.getDimension()));
-            }*/
+            }*//*
             TileEntity tile = world.getTileEntity(coord4D.getPos());
             if (tile instanceof FluxDeviceEntity) {
                 FluxDeviceEntity flux = (FluxDeviceEntity) tile;
@@ -53,4 +53,4 @@ public class TilePacket extends AbstractPacket {
         }
         return null;
     }
-}
+}*/

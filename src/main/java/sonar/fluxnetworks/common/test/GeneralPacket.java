@@ -1,11 +1,11 @@
 package sonar.fluxnetworks.common.test;
 
-import net.minecraft.entity.player.PlayerEntity;
+/*import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-/** Gui operation packets.*/
+*//** Gui operation packets.*//*
 @Deprecated
 public class GeneralPacket extends AbstractPacket {
 
@@ -35,4 +35,4 @@ public class GeneralPacket extends AbstractPacket {
         return handler.handler.handlePacket(player, nbtTag);
     }
 
-}
+}*/

@@ -25,14 +25,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.capability.SuperAdminProvider;
-import sonar.fluxnetworks.common.network.S2CNetMsg;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
 import sonar.fluxnetworks.common.registry.RegistryItems;
-import sonar.fluxnetworks.common.storage.FluxNetworkData;
+import sonar.fluxnetworks.common.connection.FluxNetworkManager;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -47,13 +45,13 @@ public class CommonEventHandler {
     public static void onServerStopped(FMLServerStoppedEvent event) {
         // mainly used to reload data while changing single-player saves, useless on dedicated server
         // because once server shut down, all memory deallocated
-        FluxNetworkData.release();
+        FluxNetworkManager.release();
     }
 
     @SubscribeEvent
     public static void onServerTick(@Nonnull TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            for (IFluxNetwork network : FluxNetworkData.getAllNetworks()) {
+            for (IFluxNetwork network : FluxNetworkManager.getAllNetworks()) {
                 network.onEndServerTick();
             }
         }

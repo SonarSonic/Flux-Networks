@@ -1,50 +1,40 @@
-package sonar.fluxnetworks.common.storage;
+package sonar.fluxnetworks.common.connection;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import it.unimi.dsi.fastutil.longs.LongSet;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.LongNBT;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.misc.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.SecurityLevel;
-import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.connection.FluxNetworkServer;
-import sonar.fluxnetworks.common.network.S2CNetMsg;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
- * Manage all flux network server and save network data to local.
- * Only on logic server side
+ * Manages all logical flux networks and save their data to the save.
+ * <p>
+ * Only on logical server side.
  */
-public class FluxNetworkData extends SavedData {
+@NotThreadSafe
+public final class FluxNetworkManager extends SavedData {
 
     private static final String NETWORK_DATA = FluxNetworks.MODID + "data";
 
-    private static FluxNetworkData data;
+    private static volatile FluxNetworkManager data;
 
     private static final String NETWORKS = "networks";
-    private static final String TICKETS = "tickets";
+    //private static final String TICKETS = "tickets";
     private static final String UNIQUE_ID = "uniqueID";
 
     /*public static String NETWORK_PASSWORD = "networkPassword";
@@ -60,28 +50,35 @@ public class FluxNetworkData extends SavedData {
     public static String OLD_NETWORK_COLOR = "colour";
     public static String OLD_NETWORK_ACCESS = "access";*/
 
-    private final Int2ObjectMap<IFluxNetwork> networks = new Int2ObjectOpenHashMap<>();
-    private final Map<ResourceLocation, LongSet> tickets = new HashMap<>();
+    private final Int2ObjectMap<IFluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
+    //private final Map<ResourceLocation, LongSet> tickets = new HashMap<>();
 
-    private int uniqueID = 1; // -1 for invalid, 0 for default return value
+    private int mUniqueID = 1; // -1 for invalid
 
-    public FluxNetworkData() {
-        super(NETWORK_DATA);
+    private FluxNetworkManager() {
     }
 
-    public static FluxNetworkData get() {
-        if (data == null) {
-            load();
+    private FluxNetworkManager(@Nonnull CompoundTag tag) {
+        read(tag);
+    }
+
+    @Nonnull
+    private static FluxNetworkManager get() {
+        if (data != null) {
+            return data;
+        }
+        synchronized (FluxNetworkManager.class) {
+            if (data == null) {
+                ServerLevel level = ServerLifecycleHooks.getCurrentServer().overworld();
+                data = level.getDataStorage()
+                        .computeIfAbsent(FluxNetworkManager::new, FluxNetworkManager::new, NETWORK_DATA);
+                FluxNetworks.LOGGER.info("FluxNetworkData has been successfully loaded");
+            }
         }
         return data;
     }
 
-    private static void load() {
-        ServerWorld saveWorld = ServerLifecycleHooks.getCurrentServer().func_241755_D_();
-        data = saveWorld.getSavedData().getOrCreate(FluxNetworkData::new, NETWORK_DATA);
-        FluxNetworks.LOGGER.info("FluxNetworkData has been successfully loaded");
-    }
-
+    // called when the server instance changed, e.g. switching single player worlds (saves)
     public static void release() {
         if (data != null) {
             data = null;
@@ -91,76 +88,80 @@ public class FluxNetworkData extends SavedData {
 
     @Nonnull
     public static IFluxNetwork getNetwork(int id) {
-        return get().networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
+        return get().mNetworks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     @Nonnull
     public static Collection<IFluxNetwork> getAllNetworks() {
-        return get().networks.values();
+        return get().mNetworks.values();
     }
 
-    /**
+    /*
      * Get a set of block pos with given dimension key, a pos represents a flux tile entity
      * that wants to load the chunk it's in
      *
      * @param dim dimension
      * @return all block pos that want to load chunks they are in
      */
-    @Nonnull
+    /*@Nonnull
     public static LongSet getTickets(@Nonnull RegistryKey<World> dim) {
         return get().tickets.computeIfAbsent(dim.getLocation(), d -> new LongOpenHashSet());
-    }
+    }*/
 
     @Nullable
-    public IFluxNetwork createNetwork(@Nonnull PlayerEntity creator, String name, int color,
-                                      SecurityLevel securityLevel, String password) {
+    public static IFluxNetwork createNetwork(@Nonnull Player creator, @Nonnull String name, int color,
+                                             @Nonnull SecurityLevel level, @Nonnull String password) {
+        final FluxNetworkManager t = get();
+
         final boolean limitReached;
         if (FluxConfig.maximumPerPlayer == -1) {
             limitReached = false;
         } else {
-            UUID uuid = PlayerEntity.getUUID(creator.getGameProfile());
-            long created = networks.values().stream().filter(n -> n.getOwnerUUID().equals(uuid)).count();
+            UUID uuid = creator.getUUID();
+            long created = t.mNetworks.values().stream().filter(n -> n.getOwnerUUID().equals(uuid)).count();
             limitReached = created >= FluxConfig.maximumPerPlayer;
         }
         if (limitReached) {
             return null;
         }
-        FluxNetworkServer network = new FluxNetworkServer(uniqueID++, name, color, creator);
-        network.getSecurity().set(securityLevel, password);
 
-        if (networks.put(network.getNetworkID(), network) != null) {
+        FluxNetworkServer network = new FluxNetworkServer(t.mUniqueID++, name, color, creator);
+        network.getSecurity().set(level, password);
+
+        if (t.mNetworks.put(network.getNetworkID(), network) != null) {
             FluxNetworks.LOGGER.warn("Network IDs are not unique when creating network");
         }
-        S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_BASIC).sendToAll();
+        //S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_BASIC).sendToAll();
         return network;
     }
 
-    public void deleteNetwork(@Nonnull IFluxNetwork network) {
-        network.onDelete();
-        networks.remove(network.getNetworkID());
-        S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_DELETE).sendToAll();
+    public static void deleteNetwork(@Nonnull IFluxNetwork network) {
+        if (get().mNetworks.remove(network.getNetworkID()) == network) {
+            network.onDelete();
+        }
+        //S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_DELETE).sendToAll();
     }
 
     @Override
     public boolean isDirty() {
+        // always dirty as a convenience
         return true;
     }
 
-    @Override
-    public void read(@Nonnull CompoundNBT nbt) {
-        uniqueID = nbt.getInt(UNIQUE_ID);
+    private void read(@Nonnull CompoundTag compound) {
+        mUniqueID = compound.getInt(UNIQUE_ID);
 
-        ListNBT list = nbt.getList(NETWORKS, Constants.NBT.TAG_COMPOUND);
+        ListTag list = compound.getList(NETWORKS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
-            CompoundNBT tag = list.getCompound(i);
+            CompoundTag tag = list.getCompound(i);
             FluxNetworkServer network = new FluxNetworkServer();
-            network.readCustomNBT(tag, FluxConstants.TYPE_SAVE_ALL);
-            if (networks.put(network.getNetworkID(), network) != null) {
+            network.readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
+            if (mNetworks.put(network.getNetworkID(), network) != null) {
                 FluxNetworks.LOGGER.warn("Network IDs are not unique when reading data");
             }
         }
 
-        CompoundNBT tag = nbt.getCompound(TICKETS);
+        /*CompoundNBT tag = nbt.getCompound(TICKETS);
         for (String key : tag.keySet()) {
             ListNBT l2 = tag.getList(key, Constants.NBT.TAG_LONG);
             LongSet set = tickets.computeIfAbsent(new ResourceLocation(key), d -> new LongOpenHashSet());
@@ -172,23 +173,23 @@ public class FluxNetworkData extends SavedData {
                 }
             }
         }
-        data = this;
+        data = this;*/
     }
 
     @Nonnull
     @Override
-    public CompoundNBT write(@Nonnull CompoundNBT compound) {
-        compound.putInt(UNIQUE_ID, uniqueID);
+    public CompoundTag save(@Nonnull CompoundTag compound) {
+        compound.putInt(UNIQUE_ID, mUniqueID);
 
-        ListNBT list = new ListNBT();
-        for (IFluxNetwork network : networks.values()) {
-            CompoundNBT tag = new CompoundNBT();
+        ListTag list = new ListTag();
+        for (IFluxNetwork network : mNetworks.values()) {
+            CompoundTag tag = new CompoundTag();
             network.writeCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
             list.add(tag);
         }
         compound.put(NETWORKS, list);
 
-        CompoundNBT tag = new CompoundNBT();
+        /*CompoundNBT tag = new CompoundNBT();
         for (Map.Entry<ResourceLocation, LongSet> entry : tickets.entrySet()) {
             LongSet set = entry.getValue();
             if (!set.isEmpty()) {
@@ -199,7 +200,7 @@ public class FluxNetworkData extends SavedData {
                 tag.put(entry.getKey().toString(), l2);
             }
         }
-        compound.put(TICKETS, tag);
+        compound.put(TICKETS, tag);*/
         return compound;
     }
 

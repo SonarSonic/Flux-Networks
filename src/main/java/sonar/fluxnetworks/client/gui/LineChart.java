@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui;
 
+/*
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.floats.FloatArrayList;
@@ -18,11 +19,13 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
+*/
 /**
  * Line chart that using OpenGL.
  *
  * @author BloCamLimb
- */
+ *//*
+
 public class LineChart {
 
     private final int x, y;
@@ -188,3 +191,4 @@ public class LineChart {
         }
     }
 }
+*/
