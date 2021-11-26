@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.api.device.IFluxController;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.common.connection.transfer.FluxControllerHandler;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.register.RegistryBlocks;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
 
 import javax.annotation.Nonnull;
@@ -16,7 +16,7 @@ public class FluxControllerEntity extends FluxDeviceEntity implements IFluxContr
     private final FluxControllerHandler mHandler = new FluxControllerHandler(this);
 
     public FluxControllerEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        super(RegistryBlocks.FLUX_CONTROLLER_TILE, pos, state);
+        super(RegistryBlocks.FLUX_CONTROLLER_ENTITY, pos, state);
     }
 
     @Nonnull

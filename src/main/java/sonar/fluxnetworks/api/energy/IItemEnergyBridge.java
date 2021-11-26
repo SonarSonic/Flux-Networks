@@ -14,5 +14,5 @@ public interface IItemEnergyBridge {
 
     long addEnergy(long amount, @Nonnull ItemStack stack, boolean simulate);
 
-    long removeEnergy(long amount, @Nonnull ItemStack stack);
+    long removeEnergy(long amount, @Nonnull ItemStack stack, boolean simulate);
 }

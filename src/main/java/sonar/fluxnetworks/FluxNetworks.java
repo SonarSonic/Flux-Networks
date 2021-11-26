@@ -10,17 +10,19 @@ public class FluxNetworks {
 
     public static final String MODID = "fluxnetworks";
     public static final String NAME = "Flux Networks";
-    public static final String NAME_COMPACT = "FluxNetworks";
+    public static final String NAME_CPT = "FluxNetworks";
 
-    public static final Logger LOGGER = LogManager.getLogger(NAME_COMPACT);
+    public static final Logger LOGGER = LogManager.getLogger(NAME_CPT);
 
-    public static boolean modernUILoaded;
-    public static boolean curiosLoaded;
+    private static boolean curiosLoaded;
 
     public FluxNetworks() {
-        modernUILoaded = ModList.get().isLoaded("modernui");
         curiosLoaded = ModList.get().isLoaded("curios");
 
         FluxConfig.init();
+    }
+
+    public static boolean isCuriosLoaded() {
+        return curiosLoaded;
     }
 }

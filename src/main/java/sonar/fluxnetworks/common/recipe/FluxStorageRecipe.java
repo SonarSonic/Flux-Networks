@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 
 import javax.annotation.Nonnull;
 

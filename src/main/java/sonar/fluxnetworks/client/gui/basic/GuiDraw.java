@@ -6,7 +6,7 @@ import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.ITextComponent;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 
 import javax.annotation.Nonnull;

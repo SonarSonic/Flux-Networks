@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.connection.transfer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.connection.TransferHandler;
 
 import javax.annotation.Nonnull;

@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundTag;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;

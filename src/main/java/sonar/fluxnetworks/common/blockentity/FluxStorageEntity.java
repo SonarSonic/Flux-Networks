@@ -6,10 +6,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.api.device.IFluxStorage;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.common.connection.transfer.FluxStorageHandler;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.register.RegistryBlocks;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
 
 import javax.annotation.Nonnull;
@@ -27,7 +27,7 @@ public abstract class FluxStorageEntity extends FluxDeviceEntity implements IFlu
     public static class Basic extends FluxStorageEntity {
 
         public Basic(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-            super(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, pos, state, new FluxStorageHandler.Basic());
+            super(RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY, pos, state, new FluxStorageHandler.Basic());
         }
 
         @Nonnull
@@ -40,7 +40,7 @@ public abstract class FluxStorageEntity extends FluxDeviceEntity implements IFlu
     public static class Herculean extends FluxStorageEntity {
 
         public Herculean(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, pos, state, new FluxStorageHandler.Herculean());
+            super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY, pos, state, new FluxStorageHandler.Herculean());
         }
 
         @Nonnull
@@ -53,7 +53,7 @@ public abstract class FluxStorageEntity extends FluxDeviceEntity implements IFlu
     public static class Gargantuan extends FluxStorageEntity {
 
         public Gargantuan(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, pos, state, new FluxStorageHandler.Gargantuan());
+            super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY, pos, state, new FluxStorageHandler.Gargantuan());
         }
 
         @Nonnull

@@ -15,7 +15,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 

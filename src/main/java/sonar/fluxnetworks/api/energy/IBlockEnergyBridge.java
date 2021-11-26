@@ -13,7 +13,7 @@ public interface IBlockEnergyBridge {
 
     boolean canRemoveEnergy(@Nonnull BlockEntity target, @Nonnull Direction side);
 
-    long addEnergy(long energy, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate);
+    long addEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate);
 
-    long removeEnergy(long energy, @Nonnull BlockEntity target, @Nonnull Direction side);
+    long removeEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate);
 }

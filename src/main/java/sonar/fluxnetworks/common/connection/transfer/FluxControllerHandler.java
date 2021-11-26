@@ -153,7 +153,7 @@ public class FluxControllerHandler extends TransferHandler {
             if (WirelessType.ARMOR.isActivated(wireless)) {
                 handlers.add(new WirelessHandler(inv.armor::iterator, NOT_EMPTY));
             }
-            if (WirelessType.CURIOS.isActivated(wireless) && FluxNetworks.curiosLoaded) {
+            if (WirelessType.CURIOS.isActivated(wireless) && FluxNetworks.isCuriosLoaded()) {
                 final LazyOptional<IItemHandlerModifiable> curios = CuriosIntegration.getEquippedCurios(player);
                 handlers.add(new WirelessHandler(() -> {
                     // the lazy optional is not cached by Curios

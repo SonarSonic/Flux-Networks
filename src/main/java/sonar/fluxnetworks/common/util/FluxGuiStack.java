@@ -2,8 +2,8 @@ package sonar.fluxnetworks.common.util;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import sonar.fluxnetworks.api.misc.FluxConstants;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.register.RegistryBlocks;
 
 public class FluxGuiStack {
 

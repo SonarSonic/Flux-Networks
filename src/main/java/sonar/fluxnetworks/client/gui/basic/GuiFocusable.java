@@ -10,7 +10,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.popup.PopupCore;
-import sonar.fluxnetworks.common.registry.RegistrySounds;
+import sonar.fluxnetworks.register.RegistrySounds;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

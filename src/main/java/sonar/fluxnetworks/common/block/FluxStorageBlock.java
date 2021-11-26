@@ -12,10 +12,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -59,7 +59,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Override
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
-            if (type == RegistryBlocks.BASIC_FLUX_STORAGE_TILE) {
+            if (type == RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY) {
                 return FluxDeviceEntity.getTicker(level);
             }
             return null;
@@ -87,7 +87,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Override
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
-            if (type == RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE) {
+            if (type == RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY) {
                 return FluxDeviceEntity.getTicker(level);
             }
             return null;
@@ -115,7 +115,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Override
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
-            if (type == RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE) {
+            if (type == RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY) {
                 return FluxDeviceEntity.getTicker(level);
             }
             return null;

@@ -10,11 +10,11 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.api.misc.FluxCapabilities;
+import sonar.fluxnetworks.api.FluxCapabilities;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 import sonar.fluxnetworks.common.connection.transfer.FluxPlugHandler;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +26,7 @@ public class FluxPlugEntity extends FluxConnectorEntity implements IFluxPlug {
     private final LazyOptional<?>[] mEnergyCaps = new LazyOptional[6];
 
     public FluxPlugEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
-        super(RegistryBlocks.FLUX_PLUG_TILE, pos, state);
+        super(RegistryBlocks.FLUX_PLUG_ENTITY, pos, state);
     }
 
     @Nonnull

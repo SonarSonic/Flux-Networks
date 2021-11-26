@@ -14,7 +14,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.common.util.FluxShapes;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
+import sonar.fluxnetworks.register.RegistryBlocks;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 import sonar.fluxnetworks.common.blockentity.FluxControllerEntity;
 
@@ -53,7 +53,7 @@ public class FluxControllerBlock extends FluxDeviceBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                   BlockEntityType<T> type) {
-        if (type == RegistryBlocks.FLUX_CONTROLLER_TILE) {
+        if (type == RegistryBlocks.FLUX_CONTROLLER_ENTITY) {
             return FluxDeviceEntity.getTicker(level);
         }
         return null;

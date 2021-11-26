@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.misc;
+package sonar.fluxnetworks.api;
 
 /**
  * Revision: 6.0.0

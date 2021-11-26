@@ -2,7 +2,7 @@ package sonar.fluxnetworks.api.energy;
 
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
-import sonar.fluxnetworks.api.misc.FluxCapabilities;
+import sonar.fluxnetworks.api.FluxCapabilities;
 
 /**
  * Functions the same as {@link EnergyStorage}  but allows Long.MAX_VALUE, also uses Forge's own capability.

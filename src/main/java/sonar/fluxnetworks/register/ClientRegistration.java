@@ -9,13 +9,9 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.FluxColorHandler;
-import sonar.fluxnetworks.client.mui.MUIIntegration;
-import sonar.fluxnetworks.client.render.FluxStorageTileRenderer;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.registry.RegistryItems;
+import sonar.fluxnetworks.client.render.FluxStorageEntityRenderer;
 
 import javax.annotation.Nonnull;
 
@@ -25,9 +21,9 @@ public class ClientRegistration {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
-        BlockEntityRenderers.register(RegistryBlocks.BASIC_FLUX_STORAGE_TILE, FluxStorageTileRenderer::new);
-        BlockEntityRenderers.register(RegistryBlocks.HERCULEAN_FLUX_STORAGE_TILE, FluxStorageTileRenderer::new);
-        BlockEntityRenderers.register(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_TILE, FluxStorageTileRenderer::new);
+        BlockEntityRenderers.register(RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY, FluxStorageEntityRenderer.PROVIDER);
+        BlockEntityRenderers.register(RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY, FluxStorageEntityRenderer.PROVIDER);
+        BlockEntityRenderers.register(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY, FluxStorageEntityRenderer.PROVIDER);
 
         ItemBlockRenderTypes.setRenderLayer(RegistryBlocks.FLUX_PLUG, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(RegistryBlocks.FLUX_POINT, RenderType.cutout());
@@ -35,10 +31,6 @@ public class ClientRegistration {
         ItemBlockRenderTypes.setRenderLayer(RegistryBlocks.BASIC_FLUX_STORAGE, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(RegistryBlocks.HERCULEAN_FLUX_STORAGE, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, RenderType.cutout());
-
-        if (FluxConfig.enableGuiDebug && FluxNetworks.modernUILoaded) {
-            MUIIntegration.init();
-        }
 
         //RenderingRegistry.registerEntityRenderingHandler(RegistryItems.FIRE_ITEM_ENTITY, manager -> new
         // ItemRenderer(manager, Minecraft.getInstance().getItemRenderer()));

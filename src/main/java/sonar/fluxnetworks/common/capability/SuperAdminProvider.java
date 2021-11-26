@@ -6,7 +6,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import sonar.fluxnetworks.api.misc.FluxCapabilities;
+import sonar.fluxnetworks.api.FluxCapabilities;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
 
 import javax.annotation.Nonnull;

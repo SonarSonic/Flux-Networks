@@ -2,7 +2,7 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.Util;
 import net.minecraft.world.entity.player.Player;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public final class FluxNetworkInvalid extends FluxNetwork {
+public final class FluxNetworkInvalid extends FluxNetworkBase {
 
     public static final FluxNetworkInvalid INSTANCE = new FluxNetworkInvalid();
 

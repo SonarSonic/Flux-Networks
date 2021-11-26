@@ -8,15 +8,14 @@ import sonar.fluxnetworks.FluxNetworks;
 import javax.annotation.Nonnull;
 
 /**
- * Render energy
+ * Render energy sides.
  */
 public class FluxStorageRenderType extends RenderType {
 
-    private static final ResourceLocation ENERGY_TEXTURE = new ResourceLocation(FluxNetworks.MODID, "textures/model" +
-            "/flux_storage_energy.png");
+    private static final ResourceLocation ENERGY_TEXTURE =
+            new ResourceLocation(FluxNetworks.MODID, "textures/model/flux_storage_energy.png");
 
     private static final RenderType INSTANCE;
-    private static final RenderType DIFFUSE;
 
     static {
         /*CompositeState state = CompositeState.builder()
@@ -30,7 +29,7 @@ public class FluxStorageRenderType extends RenderType {
                 .build(false);
         INSTANCE = create(FluxNetworks.MODID + ":storage_energy", DefaultVertexFormat.NEW_ENTITY,
                 VertexFormat.Mode.QUADS, 256, state);*/
-        INSTANCE = entityTranslucent(ENERGY_TEXTURE);
+        INSTANCE = entityTranslucentCull(ENERGY_TEXTURE);
         /*state = RenderType.State.getBuilder()
                 .texture(new RenderState.TextureState(ENERGY_TEXTURE, false, false))
                 .shadeModel(SHADE_ENABLED)
@@ -42,22 +41,16 @@ public class FluxStorageRenderType extends RenderType {
                 .build(false);
         DIFFUSE = makeType(FluxNetworks.MODID + ":storage_energy_diffuse", DefaultVertexFormat.NEW_ENTITY,
                 GL11.GL_QUADS, 256, state);*/
-        DIFFUSE = INSTANCE;
     }
 
-    private FluxStorageRenderType(String nameIn, VertexFormat formatIn, VertexFormat.Mode drawModeIn, int bufferSizeIn,
-                                  boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn,
-                                  Runnable clearTaskIn) {
-        super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
+    private FluxStorageRenderType(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize,
+                                  boolean affectsCrumbling, boolean sortOnUpload, Runnable setupState,
+                                  Runnable clearState) {
+        super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setupState, clearState);
     }
 
     @Nonnull
     public static RenderType getType() {
         return INSTANCE;
-    }
-
-    @Nonnull
-    public static RenderType getDiffuse(boolean diffuse) {
-        return diffuse ? DIFFUSE : INSTANCE;
     }
 }

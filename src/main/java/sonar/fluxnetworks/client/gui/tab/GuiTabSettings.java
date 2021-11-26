@@ -15,7 +15,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.util.FluxContainerMenu;
+import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
 import sonar.fluxnetworks.common.network.C2SNetMsg;
 
 import javax.annotation.Nonnull;

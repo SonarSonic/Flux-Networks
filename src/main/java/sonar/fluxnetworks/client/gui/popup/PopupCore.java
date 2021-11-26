@@ -10,7 +10,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.util.FluxContainerMenu;
+import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

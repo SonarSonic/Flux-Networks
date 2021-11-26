@@ -1,7 +1,9 @@
 package sonar.fluxnetworks.register;
 
 import icyllis.modernui.forge.NetworkHandler;
+import icyllis.modernui.mcgui.OpenMenuEvent;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
@@ -14,6 +16,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -30,21 +33,12 @@ import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.blockentity.FluxControllerEntity;
-import sonar.fluxnetworks.common.blockentity.FluxPlugEntity;
-import sonar.fluxnetworks.common.blockentity.FluxPointEntity;
-import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
+import sonar.fluxnetworks.common.blockentity.*;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
-import sonar.fluxnetworks.common.item.FluxDeviceItem;
-import sonar.fluxnetworks.common.item.FluxDustItem;
-import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
-import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
+import sonar.fluxnetworks.common.item.*;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
 import sonar.fluxnetworks.common.recipe.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipe.NBTWipeRecipeSerializer;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.registry.RegistryItems;
-import sonar.fluxnetworks.common.registry.RegistrySounds;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -118,11 +112,11 @@ public class CommonRegistration {
         registry.register(new FluxDeviceItem(RegistryBlocks.FLUX_CONTROLLER, props)
                 .setRegistryName("flux_controller"));
 
-        registry.register(new FluxDeviceItem(RegistryBlocks.BASIC_FLUX_STORAGE, props)
+        registry.register(new FluxStorageItem(RegistryBlocks.BASIC_FLUX_STORAGE, props)
                 .setRegistryName("basic_flux_storage"));
-        registry.register(new FluxDeviceItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE, props)
+        registry.register(new FluxStorageItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE, props)
                 .setRegistryName("herculean_flux_storage"));
-        registry.register(new FluxDeviceItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, props)
+        registry.register(new FluxStorageItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, props)
                 .setRegistryName("gargantuan_flux_storage"));
 
         registry.register(new FluxDustItem(props)
@@ -142,7 +136,7 @@ public class CommonRegistration {
     }*/
 
     @SubscribeEvent
-    public static void onTileEntityRegistry(@Nonnull RegistryEvent.Register<BlockEntityType<?>> event) {
+    public static void registerBlockEntities(@Nonnull RegistryEvent.Register<BlockEntityType<?>> event) {
         IForgeRegistry<BlockEntityType<?>> registry = event.getRegistry();
 
         registry.register(new BlockEntityType<>(FluxPlugEntity::new,
@@ -170,36 +164,22 @@ public class CommonRegistration {
      * Register the create container function that will be opened on client side from the packet that from the server
      */
     @SubscribeEvent
-    public static void onContainerRegistry(@Nonnull RegistryEvent.Register<MenuType<?>> event) {
-        /*event.getRegistry().register(IForgeContainerType.create((windowId, inventory, buffer) -> {
-            // check if it's tile entity
-            if (buffer.readBoolean()) {
-                BlockPos pos = buffer.readBlockPos();
-                TileEntity tile = inventory.player.getEntityWorld().getTileEntity(pos);
-                if (tile instanceof FluxDeviceEntity) {
-                    return new FluxContainerMenu(windowId, inventory, (FluxDeviceEntity) tile);
-                }
-            } else {
-                ItemStack stack = inventory.player.getHeldItemMainhand();
-                if (stack.getItem() == RegistryItems.FLUX_CONFIGURATOR) {
-                    return new FluxContainerMenu(windowId, inventory, new ItemFluxConfigurator.MenuBridge(stack));
-                }
-            }
-            return new FluxContainerMenu(windowId, inventory, new ItemAdminConfigurator.MenuBridge());
-        }).setRegistryName("flux_menu"));*/
+    public static void registerMenus(@Nonnull RegistryEvent.Register<MenuType<?>> event) {
+        event.getRegistry().register(IForgeContainerType.create(FluxContainerMenu::new).setRegistryName("flux_menu"));
     }
 
     @SubscribeEvent
-    public static void registerRecipeSerializers(@Nonnull RegistryEvent.Register<RecipeSerializer<?>> event) {
-        event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID,
-                "flux_storage_recipe"));
-        event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID,
-                "nbt_wipe_recipe"));
+    public static void registerRecipes(@Nonnull RegistryEvent.Register<RecipeSerializer<?>> event) {
+        event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE
+                .setRegistryName("flux_storage_recipe"));
+        event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE
+                .setRegistryName("nbt_wipe_recipe"));
     }
 
     @SubscribeEvent
     public static void registerSounds(@Nonnull RegistryEvent.Register<SoundEvent> event) {
-        RegistrySounds.registerSounds(event.getRegistry());
+        ResourceLocation soundID = new ResourceLocation(FluxNetworks.MODID, "button");
+        event.getRegistry().register(new SoundEvent(soundID).setRegistryName(soundID));
     }
 
     @SubscribeEvent
@@ -215,5 +195,10 @@ public class CommonRegistration {
             generator.addProvider(new FluxLootTableProvider(generator));
         }
         // language provider?
+    }
+
+    @SubscribeEvent
+    public static void openMenu(@Nonnull OpenMenuEvent event) {
+
     }
 }

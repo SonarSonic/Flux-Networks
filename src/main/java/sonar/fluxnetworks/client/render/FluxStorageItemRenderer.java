@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -32,11 +32,10 @@ public class FluxStorageItemRenderer extends BlockEntityWithoutLevelRenderer {
 
     @Override
     public void renderByItem(@Nonnull ItemStack stack, @Nonnull ItemTransforms.TransformType transformType,
-                             @Nonnull PoseStack ps, @Nonnull MultiBufferSource source, int combinedLight,
-                             int combinedOverlay) {
+                             @Nonnull PoseStack poseStack, @Nonnull MultiBufferSource bufferSource,
+                             int packedLight, int packedOverlay) {
         int color; // 0xRRGGBB
         long energy;
-        boolean syncedOnly = false;
         CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
         if (tag != null) {
             if (tag.getBoolean(FluxConstants.FLUX_COLOR)) {
@@ -51,7 +50,6 @@ public class FluxStorageItemRenderer extends BlockEntityWithoutLevelRenderer {
             } else if (tag.contains(FluxConstants.CLIENT_COLOR)) {
                 // TheOneProbe
                 color = tag.getInt(FluxConstants.CLIENT_COLOR);
-                syncedOnly = true;
             } else {
                 // ItemStack inventory
                 color = FluxClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
@@ -70,9 +68,9 @@ public class FluxStorageItemRenderer extends BlockEntityWithoutLevelRenderer {
 
         float r = FluxUtils.getRed(color), g = FluxUtils.getGreen(color), b = FluxUtils.getBlue(color);
         dispatcher.getModelRenderer()
-                .renderModel(ps.last(), source.getBuffer(Sheets.cutoutBlockSheet()),
-                        renderState, model, r, g, b, combinedLight, combinedOverlay, EmptyModelData.INSTANCE);
-        FluxStorageTileRenderer.render(ps, source.getBuffer(FluxStorageRenderType.getDiffuse(syncedOnly)),
-                r, g, b, combinedOverlay, energy, block.getEnergyCapacity());
+                .renderModel(poseStack.last(), bufferSource.getBuffer(Sheets.cutoutBlockSheet()),
+                        renderState, model, r, g, b, packedLight, packedOverlay, EmptyModelData.INSTANCE);
+        FluxStorageEntityRenderer.render(poseStack, bufferSource.getBuffer(FluxStorageRenderType.getType()),
+                color, packedOverlay, energy, block.getEnergyCapacity());
     }
 }

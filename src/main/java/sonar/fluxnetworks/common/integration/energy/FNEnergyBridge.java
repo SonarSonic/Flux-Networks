@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.api.energy.IItemEnergyBridge;
-import sonar.fluxnetworks.api.misc.FluxCapabilities;
+import sonar.fluxnetworks.api.FluxCapabilities;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -52,9 +52,9 @@ public class FNEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge {
     }
 
     @Override
-    public long removeEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side) {
+    public long removeEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
         IFNEnergyStorage storage = FluxUtils.get(target.getCapability(FluxCapabilities.FN_ENERGY_STORAGE, side));
-        return storage == null ? 0 : storage.extractEnergyL(amount, false);
+        return storage == null ? 0 : storage.extractEnergyL(amount, simulate);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class FNEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge {
     }
 
     @Override
-    public long removeEnergy(long amount, @Nonnull ItemStack stack) {
+    public long removeEnergy(long amount, @Nonnull ItemStack stack, boolean simulate) {
         IFNEnergyStorage storage = FluxUtils.get(stack.getCapability(FluxCapabilities.FN_ENERGY_STORAGE));
-        return storage == null ? 0 : storage.extractEnergyL(amount, false);
+        return storage == null ? 0 : storage.extractEnergyL(amount, simulate);
     }
 }

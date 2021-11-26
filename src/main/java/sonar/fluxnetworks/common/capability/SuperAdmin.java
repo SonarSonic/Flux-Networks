@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.misc.FluxCapabilities;
+import sonar.fluxnetworks.api.FluxCapabilities;
 import sonar.fluxnetworks.api.network.ISuperAdmin;
 import sonar.fluxnetworks.common.util.FluxUtils;
 

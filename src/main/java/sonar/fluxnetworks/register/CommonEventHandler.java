@@ -28,8 +28,6 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.common.capability.SuperAdmin;
 import sonar.fluxnetworks.common.capability.SuperAdminProvider;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.registry.RegistryItems;
 import sonar.fluxnetworks.common.connection.FluxNetworkManager;
 
 import javax.annotation.Nonnull;

@@ -13,6 +13,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -28,8 +29,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.common.registry.RegistryBlocks;
-import sonar.fluxnetworks.common.registry.RegistryItems;
+import sonar.fluxnetworks.register.RegistryBlocks;
+import sonar.fluxnetworks.register.RegistryItems;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -163,7 +164,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
         ItemStack toDisplay = value > 160 ? recipe.getOutput() : recipe.getInput();
         poseStack.mulPose(new Quaternion(toDisplay.getItem() instanceof BlockItem ? 30 : 0,
                 -90 + 180 * ((float) value / timer.getMaxValue()), 0, true));
-        itemRenderer.renderStatic(toDisplay, ItemTransforms.TransformType.FIXED, 0xF000F0, OverlayTexture.NO_OVERLAY,
+        itemRenderer.renderStatic(toDisplay, ItemTransforms.TransformType.FIXED, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
                 poseStack, bufferSource, 0);
         poseStack.popPose();
 

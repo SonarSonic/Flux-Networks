@@ -7,9 +7,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetworkBase;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -49,7 +49,7 @@ public class FluxClientCache {
                 }
             } else {
                 if (network == null) {
-                    network = new FluxNetwork();
+                    network = new FluxNetworkBase();
                     network.readCustomTag(nbt, type);
                     networks.put(id, network);
                 } else {

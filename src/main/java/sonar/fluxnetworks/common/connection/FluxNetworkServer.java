@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 /**
  * This class handles a single flux Network on logical server side.
  */
-public class FluxNetworkServer extends FluxNetwork {
+public class FluxNetworkServer extends FluxNetworkBase {
 
     private static final Comparator<FluxDeviceEntity> DESCENDING_ORDER =
             (a, b) -> Integer.compare(b.getTransferHandler().getPriority(), a.getTransferHandler().getPriority());

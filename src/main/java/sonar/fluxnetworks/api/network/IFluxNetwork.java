@@ -4,6 +4,7 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
@@ -31,7 +32,7 @@ public interface IFluxNetwork {
     /**
      * Returns the network ID
      *
-     * @return a positive integer or {@link sonar.fluxnetworks.api.misc.FluxConstants#INVALID_NETWORK_ID}
+     * @return a positive integer or {@link FluxConstants#INVALID_NETWORK_ID}
      */
     int getNetworkID();
 
@@ -137,7 +138,7 @@ public interface IFluxNetwork {
      * Returns whether this network is a valid network.
      *
      * @return {@code true} if it is valid, {@code false} otherwise
-     * @see sonar.fluxnetworks.api.misc.FluxConstants#INVALID_NETWORK_ID
+     * @see FluxConstants#INVALID_NETWORK_ID
      */
     boolean isValid();
 

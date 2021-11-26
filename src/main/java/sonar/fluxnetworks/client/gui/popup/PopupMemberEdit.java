@@ -3,7 +3,7 @@ package sonar.fluxnetworks.client.gui.popup;
 /*import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;

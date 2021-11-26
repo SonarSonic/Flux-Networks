@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.EnergyType;
+import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.api.network.FluxDeviceType;
 
 import javax.annotation.Nonnull;

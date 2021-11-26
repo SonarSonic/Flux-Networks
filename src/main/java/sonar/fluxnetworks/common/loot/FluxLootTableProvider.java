@@ -32,7 +32,7 @@ public class FluxLootTableProvider extends LootTableProvider {
     @Nonnull
     @Override
     public String getName() {
-        return super.getName() + ":" + FluxNetworks.NAME_COMPACT;
+        return super.getName() + ":" + FluxNetworks.NAME_CPT;
     }
 
     @Override

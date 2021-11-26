@@ -14,8 +14,8 @@ import sonar.fluxnetworks.client.gui.button.NavigationButton;
 import sonar.fluxnetworks.client.gui.tab.*;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.util.FluxContainerMenu;
-import sonar.fluxnetworks.common.registry.RegistrySounds;
+import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
+import sonar.fluxnetworks.register.RegistrySounds;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;

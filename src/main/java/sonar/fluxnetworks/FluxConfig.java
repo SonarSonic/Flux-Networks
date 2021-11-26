@@ -63,7 +63,6 @@ public class FluxConfig {
             FluxNetworks.LOGGER.info("CLIENT CONFIG LOADED");
         } else if (spec == COMMON_SPEC) {
             COMMON_CONFIG.load();
-            EnergyUtils.reloadBlacklist();
             FluxNetworks.LOGGER.info("COMMON CONFIG LOADED");
         } else if (spec == SERVER_SPEC) {
             SERVER_CONFIG.load();
@@ -71,17 +70,19 @@ public class FluxConfig {
         }
     }
 
-    public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
+    public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo,
+            enableOneProbeSneaking;
     public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
-    public static long defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer, gargantuanCapacity, gargantuanTransfer;
+    public static long defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer,
+            gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
-    public static List<String> blockBlacklistStrings, itemBlackListStrings;
     public static boolean enableGuiDebug;
 
     @OnlyIn(Dist.CLIENT)
     private static class Client {
 
-        private final ForgeConfigSpec.BooleanValue mEnableButtonSound, mEnableOneProbeBasicInfo, mEnableOneProbeAdvancedInfo,
+        private final ForgeConfigSpec.BooleanValue mEnableButtonSound, mEnableOneProbeBasicInfo,
+                mEnableOneProbeAdvancedInfo,
                 mEnableOneProbeSneaking;
         private final ForgeConfigSpec.BooleanValue mEnableGuiDebug;
 
@@ -142,11 +143,14 @@ public class FluxConfig {
                     .translation(FluxNetworks.MODID + ".config." + "maximumPerPlayer")
                     .defineInRange("maximumPerPlayer", 5, -1, Integer.MAX_VALUE);
             mEnableSuperAdmin = builder
-                    .comment("Allows someone to be a network super admin, otherwise, no one can access or dismantle your flux devices or delete your networks without permission")
+                    .comment("Allows someone to be a network super admin, otherwise, no one can access or dismantle " +
+                            "your flux devices or delete your networks without permission")
                     .translation(FluxNetworks.MODID + ".config." + "enableSuperAdmin")
                     .define("enableSuperAdmin", true);
             mSuperAdminRequiredPermission = builder
-                    .comment("See ops.json. If the player has permission level equal or greater to the value set here they will be able to Activate Super Admin. Setting this to 0 will allow anyone to active Super Admin.")
+                    .comment("See ops.json. If the player has permission level equal or greater to the value set here" +
+                            " they will be able to Activate Super Admin. Setting this to 0 will allow anyone to " +
+                            "active Super Admin.")
                     .translation(FluxNetworks.MODID + ".config." + "superAdminRequiredPermission")
                     .defineInRange("superAdminRequiredPermission", 1, 0, Integer.MAX_VALUE);
             builder.pop();
@@ -164,12 +168,14 @@ public class FluxConfig {
             builder.pop();
             builder.push("blacklist");
             mBlockBlacklistStrings = builder
-                    .comment("A blacklist for blocks which flux devices shouldn't connect to, use format 'modid:registry_name'")
+                    .comment("A blacklist for blocks which flux devices shouldn't connect to, use format " +
+                            "'modid:registry_name'")
                     .translation(FluxNetworks.MODID + ".config." + "blockBlacklistStrings")
                     .define("blockBlacklistStrings", Lists.newArrayList("actuallyadditions:block_phantom_energyface"));
 
             mItemBlackListStrings = builder
-                    .comment("A blacklist for items which wireless charging shouldn't charge to, use format 'modid:registry_name'")
+                    .comment("A blacklist for items which wireless charging shouldn't charge to, use format " +
+                            "'modid:registry_name'")
                     .translation(FluxNetworks.MODID + ".config." + "itemBlackListStrings")
                     .define("itemBlackListStrings", Lists.newArrayList(""));
             builder.pop();
@@ -183,8 +189,7 @@ public class FluxConfig {
             enableFluxRecipe = mEnableFluxRecipe.get();
             enableChunkLoading = mEnableChunkLoading.get();
 
-            blockBlacklistStrings = mBlockBlacklistStrings.get();
-            itemBlackListStrings = mItemBlackListStrings.get();
+            EnergyUtils.reloadBlacklist(mBlockBlacklistStrings.get(), mItemBlackListStrings.get());
         }
     }
 

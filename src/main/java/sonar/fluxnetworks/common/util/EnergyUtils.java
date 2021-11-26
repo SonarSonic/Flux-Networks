@@ -7,7 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.registries.ForgeRegistries;
-import sonar.fluxnetworks.FluxConfig;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
@@ -22,7 +23,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class EnergyUtils {
+public final class EnergyUtils {
+
+    private static final Marker MARKER = MarkerManager.getMarker("Energy");
 
     private static final List<IBlockEnergyBridge> sBlockEnergyBridges = new ArrayList<>();
     private static final Set<Block> sBlockBlacklist = new HashSet<>();
@@ -42,19 +45,18 @@ public class EnergyUtils {
             tileEnergyHandlers.add(GTEnergyHandler.INSTANCE);
             ItemEnergyHandler.itemEnergyHandlers.add(GTEnergyHandler.INSTANCE);
         }
-        if(Loader.isModLoaded("redstoneflux")) {
-            tileEnergyHandlers.add(RedstoneFluxHandler.INSTANCE);
-            ItemEnergyHandler.itemEnergyHandlers.add(RedstoneFluxHandler.INSTANCE);
-        }
         if(Loader.isModLoaded("ic2")) {
             tileEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
             ItemEnergyHandler.itemEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
         }*/
     }
 
-    public static void reloadBlacklist() {
+    private EnergyUtils() {
+    }
+
+    public static void reloadBlacklist(@Nonnull List<String> blockBlacklist, @Nonnull List<String> itemBlacklist) {
         sBlockBlacklist.clear();
-        for (String s : FluxConfig.blockBlacklistStrings) {
+        for (String s : blockBlacklist) {
             if (s == null || s.isEmpty()) {
                 continue;
             }
@@ -64,11 +66,11 @@ public class EnergyUtils {
                     sBlockBlacklist.add(block);
                 }
             } catch (Exception e) {
-                FluxNetworks.LOGGER.warn("BLACKLIST ERROR: " + s + " has incorrect formatting", e);
+                FluxNetworks.LOGGER.warn(MARKER, "Block blacklist error: {} has incorrect formatting", s, e);
             }
         }
         sItemBlacklist.clear();
-        for (String s : FluxConfig.itemBlackListStrings) {
+        for (String s : itemBlacklist) {
             if (s == null || s.isEmpty()) {
                 continue;
             }
@@ -78,15 +80,19 @@ public class EnergyUtils {
                     sItemBlacklist.add(item);
                 }
             } catch (Exception e) {
-                FluxNetworks.LOGGER.warn("BLACKLIST ERROR: " + s + " has incorrect formatting", e);
+                FluxNetworks.LOGGER.warn(MARKER, "Item blacklist error: {} has incorrect formatting", s, e);
             }
         }
-        FluxNetworks.LOGGER.info("BLACKLIST RELOADED");
+        FluxNetworks.LOGGER.info(MARKER, "Energy blacklist loaded: {} block entries, {} item entries",
+                sBlockBlacklist.size(), sItemBlacklist.size());
     }
 
     @Nullable
     public static IBlockEnergyBridge getBridge(@Nullable BlockEntity target, @Nonnull Direction side) {
         if (target == null) {
+            return null;
+        }
+        if (target.isRemoved()) {
             return null;
         }
         if (target instanceof IFluxDevice) {
@@ -95,9 +101,9 @@ public class EnergyUtils {
         if (sBlockBlacklist.contains(target.getBlockState().getBlock())) {
             return null;
         }
-        for (IBlockEnergyBridge handler : sBlockEnergyBridges) {
-            if (handler.hasCapability(target, side)) {
-                return handler;
+        for (IBlockEnergyBridge bridge : sBlockEnergyBridges) {
+            if (bridge.hasCapability(target, side)) {
+                return bridge;
             }
         }
         return null;
@@ -114,9 +120,9 @@ public class EnergyUtils {
         if (sItemBlacklist.contains(stack.getItem())) {
             return null;
         }
-        for (IItemEnergyBridge handler : sItemEnergyBridges) {
-            if (handler.hasCapability(stack)) {
-                return handler;
+        for (IItemEnergyBridge bridge : sItemEnergyBridges) {
+            if (bridge.hasCapability(stack)) {
+                return bridge;
             }
         }
         return null;

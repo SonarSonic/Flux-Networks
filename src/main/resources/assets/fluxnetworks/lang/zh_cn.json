@@ -1,7 +1,7 @@
 {
 	"itemGroup.fluxnetworks": "通量网络",
 
-	"block.fluxnetworks.flux_block": "通量块",
+	"block.fluxnetworks.flux_block": "通量方块",
 	"block.fluxnetworks.flux_controller": "通量网络控制器",
 	"block.fluxnetworks.flux_point": "通量网络接入点",
 	"block.fluxnetworks.flux_plug": "通量网络输入点",
@@ -19,7 +19,7 @@
 	"tooltip.fluxnetworks.flux_plug": "被动接收相邻方块的能量,向能量网络增加能量",
 	"tooltip.fluxnetworks.flux_point": "主动为相邻方块供给能量,从能量网络移除能量",
 	"tooltip.fluxnetworks.flux_storage": "为你的能量网络存储能量",
-	"tooltip.fluxnetworks.flux_storage_2": "能量容量: %s",
+	"tooltip.fluxnetworks.flux_storage_2": "储能容量: %s",
 
 	"info.fluxnetworks.tab.home": "主页",
 	"info.fluxnetworks.tab.selection": "网络选择",

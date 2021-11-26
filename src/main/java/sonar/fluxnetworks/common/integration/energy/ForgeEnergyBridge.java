@@ -52,9 +52,9 @@ public class ForgeEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge 
     }
 
     @Override
-    public long removeEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side) {
+    public long removeEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
         IEnergyStorage storage = FluxUtils.get(target.getCapability(CapabilityEnergy.ENERGY, side));
-        return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), false);
+        return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class ForgeEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge 
     }
 
     @Override
-    public long removeEnergy(long amount, @Nonnull ItemStack stack) {
+    public long removeEnergy(long amount, @Nonnull ItemStack stack, boolean simulate) {
         IEnergyStorage storage = FluxUtils.get(stack.getCapability(CapabilityEnergy.ENERGY));
-        return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), false);
+        return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 }

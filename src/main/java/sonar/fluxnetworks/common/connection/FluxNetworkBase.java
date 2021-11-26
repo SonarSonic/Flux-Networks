@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.misc.FluxConstants;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
@@ -24,7 +24,7 @@ import java.util.*;
  * Defines the base class of a flux network.
  * Instances of this class directly are expected on the client side.
  */
-public class FluxNetwork implements IFluxNetwork {
+public class FluxNetworkBase implements IFluxNetwork {
 
     private static final String NETWORK_NAME = "networkName";
     private static final String NETWORK_COLOR = "networkColor";
@@ -55,17 +55,17 @@ public class FluxNetwork implements IFluxNetwork {
     // On client: PhantomFluxDevice
     protected final HashMap<GlobalPos, IFluxDevice> mConnections = new HashMap<>();
 
-    public FluxNetwork() {
+    public FluxNetworkBase() {
     }
 
-    FluxNetwork(int id, String name, int color, UUID owner) {
+    FluxNetworkBase(int id, String name, int color, UUID owner) {
         mNetworkID = id;
         mNetworkName = name;
         mNetworkColor = color;
         mOwnerUUID = owner;
     }
 
-    FluxNetwork(int id, String name, int color, @Nonnull Player owner) {
+    FluxNetworkBase(int id, String name, int color, @Nonnull Player owner) {
         mNetworkID = id;
         mNetworkName = name;
         mNetworkColor = color;

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.misc;
+package sonar.fluxnetworks.api.energy;
 
 import sonar.fluxnetworks.common.util.FluxUtils;
 
