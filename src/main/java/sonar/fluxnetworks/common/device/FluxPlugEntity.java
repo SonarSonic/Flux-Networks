@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.blockentity;
+package sonar.fluxnetworks.common.device;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,8 +11,7 @@ import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.api.FluxCapabilities;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.common.connection.transfer.FluxPlugHandler;
+import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
 import sonar.fluxnetworks.register.RegistryBlocks;
 

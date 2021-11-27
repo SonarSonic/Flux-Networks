@@ -28,12 +28,13 @@ import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.api.network.ISuperAdmin;
+import sonar.fluxnetworks.client.mui.FluxDeviceUI;
 import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.blockentity.*;
+import sonar.fluxnetworks.common.capability.FluxPlayer;
+import sonar.fluxnetworks.common.device.*;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
 import sonar.fluxnetworks.common.item.*;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
@@ -58,7 +59,7 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        sNetwork = new NetworkHandler(FluxNetworks.MODID, null, null, "701", false);
+        sNetwork = new NetworkHandler(FluxNetworks.MODID, () -> Messages::msg, Messages::msg, "701", false);
     }
 
     @SubscribeEvent
@@ -165,7 +166,7 @@ public class CommonRegistration {
      */
     @SubscribeEvent
     public static void registerMenus(@Nonnull RegistryEvent.Register<MenuType<?>> event) {
-        event.getRegistry().register(IForgeContainerType.create(FluxContainerMenu::new).setRegistryName("flux_menu"));
+        event.getRegistry().register(IForgeContainerType.create(FluxDeviceMenu::new).setRegistryName("flux_menu"));
     }
 
     @SubscribeEvent
@@ -184,7 +185,7 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void registerCapabilities(@Nonnull RegisterCapabilitiesEvent event) {
-        event.register(ISuperAdmin.class);
+        event.register(FluxPlayer.class);
         event.register(IFNEnergyStorage.class);
     }
 
@@ -199,6 +200,8 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void openMenu(@Nonnull OpenMenuEvent event) {
-
+        if (event.getMenu() instanceof FluxDeviceMenu menu) {
+            event.setCallback(new FluxDeviceUI(menu.mDevice));
+        }
     }
 }

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.connection.transfer;
+package sonar.fluxnetworks.common.device;
 
 public class FluxPointHandler extends FluxConnectorHandler {
 

@@ -17,7 +17,7 @@ import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.common.test.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

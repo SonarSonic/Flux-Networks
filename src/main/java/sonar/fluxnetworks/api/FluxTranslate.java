@@ -141,8 +141,9 @@ public enum FluxTranslate {
 
     private static final ChatFormatting[] ERROR_STYLE = {ChatFormatting.BOLD, ChatFormatting.DARK_RED};
 
-    public static final String ACCESS_DENIED = "gui.fluxnetworks.access_denied";
-    public static final String ACCESS_OCCUPY = "gui.fluxnetworks.access_occupy";
+    public static final Component
+            ACCESS_DENIED = new TranslatableComponent("gui.fluxnetworks.access_denied").withStyle(ERROR_STYLE),
+            ACCESS_OCCUPY = new TranslatableComponent("gui.fluxnetworks.access_occupy").withStyle(ERROR_STYLE);
 
     @Nonnull
     public String t() {
@@ -170,10 +171,5 @@ public enum FluxTranslate {
     public String toString() {
         // work on server side which uses en_us
         return t();
-    }
-
-    @Nonnull
-    public static Component error(@Nonnull String key) {
-        return new TranslatableComponent(key).withStyle(ERROR_STYLE);
     }
 }

@@ -3,8 +3,7 @@ package sonar.fluxnetworks.common.connection;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.nbt.CompoundTag;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class NetworkStatistics {
 
     public static final int CHANGE_COUNT = 6;
 
-    private final IFluxNetwork network;
+    private final FluxNetwork network;
 
     private int timer;
 
@@ -38,7 +37,7 @@ public class NetworkStatistics {
 
     private long startNanoTime;
 
-    public NetworkStatistics(IFluxNetwork network) {
+    public NetworkStatistics(FluxNetwork network) {
         this.network = network;
         energyChange.size(CHANGE_COUNT);
     }
@@ -66,13 +65,13 @@ public class NetworkStatistics {
      * Called every 5 ticks
      */
     private void weakTick() {
-        List<FluxDeviceEntity> plugs = network.getLogicalEntities(IFluxNetwork.PLUG);
+        List<FluxDeviceEntity> plugs = network.getLogicalEntities(FluxNetwork.PLUG);
         plugs.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 energyInput4 += p.getTransferChange();
             }
         });
-        List<FluxDeviceEntity> points = network.getLogicalEntities(IFluxNetwork.POINT);
+        List<FluxDeviceEntity> points = network.getLogicalEntities(FluxNetwork.POINT);
         points.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 energyOutput4 -= p.getTransferChange();
@@ -86,18 +85,18 @@ public class NetworkStatistics {
     private void weakerTick() {
         totalBuffer = 0;
         totalEnergy = 0;
-        List<FluxDeviceEntity> devices = network.getLogicalEntities(IFluxNetwork.ANY);
+        List<FluxDeviceEntity> devices = network.getLogicalEntities(FluxNetwork.ANY);
         devices.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 totalBuffer += p.getTransferBuffer();
             }
         });
-        List<FluxDeviceEntity> storages = network.getLogicalEntities(IFluxNetwork.STORAGE);
+        List<FluxDeviceEntity> storages = network.getLogicalEntities(FluxNetwork.STORAGE);
         storages.forEach(p -> totalEnergy += p.getTransferBuffer());
-        fluxControllerCount = network.getLogicalEntities(IFluxNetwork.CONTROLLER).size();
+        fluxControllerCount = network.getLogicalEntities(FluxNetwork.CONTROLLER).size();
         fluxStorageCount = storages.size();
-        fluxPlugCount = network.getLogicalEntities(IFluxNetwork.PLUG).size() - fluxStorageCount;
-        fluxPointCount = network.getLogicalEntities(IFluxNetwork.POINT).size() - fluxStorageCount - fluxControllerCount;
+        fluxPlugCount = network.getLogicalEntities(FluxNetwork.PLUG).size() - fluxStorageCount;
+        fluxPointCount = network.getLogicalEntities(FluxNetwork.POINT).size() - fluxStorageCount - fluxControllerCount;
         energyInput = energyInput4 / 4;
         energyOutput = energyOutput4 / 4;
         energyInput4 = 0;

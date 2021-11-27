@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.network;
+package sonar.fluxnetworks.common.test;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

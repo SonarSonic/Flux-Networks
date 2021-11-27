@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.network;
+package sonar.fluxnetworks.common.test;
 
 public final class S2CNetMsg {
 

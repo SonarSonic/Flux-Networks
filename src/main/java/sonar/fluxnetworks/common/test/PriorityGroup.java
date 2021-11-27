@@ -1,8 +1,9 @@
-package sonar.fluxnetworks.common.connection;
+package sonar.fluxnetworks.common.test;
+
+import sonar.fluxnetworks.common.device.TransferHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +16,8 @@ import java.util.Optional;
 @Deprecated
 public class PriorityGroup<T extends TransferHandler> {
 
-    public static final Comparator<PriorityGroup<?>> DESCENDING_ORDER =
-            (a, b) -> Integer.compare(b.mPriority, a.mPriority);
+    /*public static final Comparator<PriorityGroup<?>> DESCENDING_ORDER =
+            (a, b) -> Integer.compare(b.mPriority, a.mPriority);*/
 
     private final int mPriority;
 

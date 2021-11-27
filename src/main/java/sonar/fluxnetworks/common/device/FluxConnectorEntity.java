@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.blockentity;
+package sonar.fluxnetworks.common.device;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.Constants;
 import sonar.fluxnetworks.common.block.FluxConnectorBlock;
-import sonar.fluxnetworks.common.connection.transfer.FluxConnectorHandler;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;

@@ -12,7 +12,6 @@ import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 
 import javax.annotation.Nonnull;
@@ -50,7 +49,7 @@ public final class FluxNetworkManager extends SavedData {
     public static String OLD_NETWORK_COLOR = "colour";
     public static String OLD_NETWORK_ACCESS = "access";*/
 
-    private final Int2ObjectMap<IFluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<FluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
     //private final Map<ResourceLocation, LongSet> tickets = new HashMap<>();
 
     private int mUniqueID = 1; // -1 for invalid
@@ -87,12 +86,12 @@ public final class FluxNetworkManager extends SavedData {
     }
 
     @Nonnull
-    public static IFluxNetwork getNetwork(int id) {
+    public static FluxNetwork getNetwork(int id) {
         return get().mNetworks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     @Nonnull
-    public static Collection<IFluxNetwork> getAllNetworks() {
+    public static Collection<FluxNetwork> getAllNetworks() {
         return get().mNetworks.values();
     }
 
@@ -109,8 +108,8 @@ public final class FluxNetworkManager extends SavedData {
     }*/
 
     @Nullable
-    public static IFluxNetwork createNetwork(@Nonnull Player creator, @Nonnull String name, int color,
-                                             @Nonnull SecurityLevel level, @Nonnull String password) {
+    public static FluxNetwork createNetwork(@Nonnull Player creator, @Nonnull String name, int color,
+                                            @Nonnull SecurityLevel level, @Nonnull String password) {
         final FluxNetworkManager t = get();
 
         final boolean limitReached;
@@ -135,7 +134,7 @@ public final class FluxNetworkManager extends SavedData {
         return network;
     }
 
-    public static void deleteNetwork(@Nonnull IFluxNetwork network) {
+    public static void deleteNetwork(@Nonnull FluxNetwork network) {
         if (get().mNetworks.remove(network.getNetworkID()) == network) {
             network.onDelete();
         }
@@ -182,7 +181,7 @@ public final class FluxNetworkManager extends SavedData {
         compound.putInt(UNIQUE_ID, mUniqueID);
 
         ListTag list = new ListTag();
-        for (IFluxNetwork network : mNetworks.values()) {
+        for (FluxNetwork network : mNetworks.values()) {
             CompoundTag tag = new CompoundTag();
             network.writeCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
             list.add(tag);

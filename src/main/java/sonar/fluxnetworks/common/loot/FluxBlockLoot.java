@@ -18,7 +18,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;

@@ -13,7 +13,7 @@ import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.common.test.C2SNetMsg;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;

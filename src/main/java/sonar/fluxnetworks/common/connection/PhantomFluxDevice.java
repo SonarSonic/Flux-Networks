@@ -2,13 +2,11 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.api.device.FluxDeviceType;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -126,16 +124,6 @@ public class PhantomFluxDevice implements IFluxDevice {
         return mPriority;
     }
 
-    @Override
-    public void onPlayerOpen(@Nonnull Player player) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
-    @Override
-    public void onPlayerClose(@Nonnull Player player) {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
-    }
-
     @Nonnull
     @Override
     public UUID getOwnerUUID() {
@@ -156,12 +144,6 @@ public class PhantomFluxDevice implements IFluxDevice {
     @Override
     public boolean isForcedLoading() {
         return mForcedLoading;
-    }
-
-    @Nonnull
-    @Override
-    public Level getFluxWorld() {
-        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override

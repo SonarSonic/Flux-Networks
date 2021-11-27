@@ -19,7 +19,7 @@ import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
 import sonar.fluxnetworks.common.util.FluxUtils;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.common.test.C2SNetMsg;
 import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;

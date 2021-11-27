@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.connection.transfer;
+package sonar.fluxnetworks.common.device;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;

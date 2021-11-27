@@ -1,11 +1,10 @@
-package sonar.fluxnetworks.common.blockentity;
+package sonar.fluxnetworks.common.device;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.api.device.IFluxController;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.common.connection.transfer.FluxControllerHandler;
+import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.register.RegistryBlocks;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
 

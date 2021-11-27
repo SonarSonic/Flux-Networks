@@ -40,9 +40,9 @@
 	"info.fluxnetworks.network.energy": "能量类型",
 	"info.fluxnetworks.network.color": "颜色",
 
-	"info.fluxnetworks.denied.access": "拒绝访问: 无权限",
-	"info.fluxnetworks.denied.occupy": "拒绝访问: 另一名玩家正在使用",
-	"info.fluxnetworks.denied.removal": "拒绝拆除: 无权限",
+	"info.fluxnetworks.denied_access": "拒绝访问: 无权限",
+	"info.fluxnetworks.denied_occupy": "拒绝访问: 另一名玩家正在使用",
+	"info.fluxnetworks.denied_removal": "拒绝拆除: 无权限",
 
 	"info.fluxnetworks.clickabove": "点击上方的%s",
 

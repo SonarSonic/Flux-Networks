@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import sonar.fluxnetworks.common.util.FluxUtils;
-import sonar.fluxnetworks.common.blockentity.FluxConnectorEntity;
+import sonar.fluxnetworks.common.device.FluxConnectorEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

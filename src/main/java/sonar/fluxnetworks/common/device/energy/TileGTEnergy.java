@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.blockentity.energy;
+package sonar.fluxnetworks.common.device.energy;
 /* TODO ADD BACK GREGTECH SUPPORT WHEN PORTED
 import sonar.fluxnetworks.common.core.GTEnergyWrapper;
 import gregtech.api.capability.GregtechCapabilities;

@@ -21,7 +21,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopupConnectionEdit;
 import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
 import sonar.fluxnetworks.common.util.FluxUtils;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.common.test.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

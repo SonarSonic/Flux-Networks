@@ -1,10 +1,9 @@
-package sonar.fluxnetworks.common.connection.transfer;
+package sonar.fluxnetworks.common.device;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
-import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 
 import javax.annotation.Nonnull;

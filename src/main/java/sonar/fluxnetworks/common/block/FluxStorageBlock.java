@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
-import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.FluxStorageEntity;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nullable;

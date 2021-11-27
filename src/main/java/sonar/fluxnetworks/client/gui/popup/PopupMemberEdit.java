@@ -9,7 +9,7 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.common.test.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 

@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import sonar.fluxnetworks.common.blockentity.FluxStorageEntity;
+import sonar.fluxnetworks.common.device.FluxStorageEntity;
 
 import javax.annotation.Nonnull;
 

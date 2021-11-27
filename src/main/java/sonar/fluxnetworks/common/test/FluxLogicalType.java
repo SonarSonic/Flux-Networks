@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.network;
+package sonar.fluxnetworks.common.test;
 
 import sonar.fluxnetworks.api.device.*;
 

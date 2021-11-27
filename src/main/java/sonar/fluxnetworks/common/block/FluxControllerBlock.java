@@ -15,8 +15,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.common.util.FluxShapes;
 import sonar.fluxnetworks.register.RegistryBlocks;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
-import sonar.fluxnetworks.common.blockentity.FluxControllerEntity;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.FluxControllerEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

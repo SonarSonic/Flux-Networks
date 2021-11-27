@@ -5,8 +5,8 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.*;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
-import sonar.fluxnetworks.common.capability.SuperAdmin;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -16,10 +16,10 @@ import java.util.function.Consumer;
 /**
  * This class handles a single flux Network on logical server side.
  */
-public class FluxNetworkServer extends FluxNetworkBase {
+public class FluxNetworkServer extends FluxNetwork {
 
     private static final Comparator<FluxDeviceEntity> DESCENDING_ORDER =
-            (a, b) -> Integer.compare(b.getTransferHandler().getPriority(), a.getTransferHandler().getPriority());
+            (a, b) -> Integer.compare(b.getTransferNode().getPriority(), a.getTransferNode().getPriority());
 
     private static final Consumer<FluxDeviceEntity> DISCONNECT = d -> d.connect(FluxNetworkInvalid.INSTANCE);
 
@@ -117,7 +117,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
 
         List<FluxDeviceEntity> devices = getLogicalEntities(ANY);
         for (var f : devices) {
-            f.getTransferHandler().onCycleStart();
+            f.getTransferNode().onCycleStart();
         }
 
         List<FluxDeviceEntity> plugs = getLogicalEntities(PLUG);
@@ -134,9 +134,9 @@ public class FluxNetworkServer extends FluxNetworkBase {
                         break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                     }
                     // we don't need to simulate this action
-                    long op = plug.getTransferHandler().extract(point.getTransferHandler().getRequest());
+                    long op = plug.getTransferNode().extract(point.getTransferNode().getRequest());
                     if (op > 0) {
-                        point.getTransferHandler().insert(op);
+                        point.getTransferNode().insert(op);
                         continue CYCLE;
                     } else {
                         // although the plug still need transfer (buffer > 0)
@@ -149,8 +149,8 @@ public class FluxNetworkServer extends FluxNetworkBase {
         }
 
         for (var f : devices) {
-            f.getTransferHandler().onCycleEnd();
-            mBufferLimiter += f.getTransferHandler().getRequest();
+            f.getTransferNode().onCycleEnd();
+            mBufferLimiter += f.getTransferNode().getRequest();
         }
 
         mStatistics.stopProfiling();
@@ -165,7 +165,7 @@ public class FluxNetworkServer extends FluxNetworkBase {
     @Override
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
         if (FluxConfig.enableSuperAdmin) {
-            if (SuperAdmin.isPlayerSuperAdmin(player)) {
+            if (FluxPlayer.isPlayerSuperAdmin(player)) {
                 return AccessLevel.SUPER_ADMIN;
             }
         }

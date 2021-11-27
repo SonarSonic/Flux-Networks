@@ -10,7 +10,7 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.common.test.C2SNetMsg;
 
 import javax.annotation.Nonnull;
 

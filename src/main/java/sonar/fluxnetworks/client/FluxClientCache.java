@@ -6,10 +6,9 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkBase;
+import sonar.fluxnetworks.api.misc.FeedbackInfo;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -20,7 +19,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class FluxClientCache {
 
-    private static final Int2ObjectOpenHashMap<IFluxNetwork> networks = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<FluxNetwork> networks = new Int2ObjectOpenHashMap<>();
 
     public static boolean superAdmin = false;
     public static boolean detailedNetworkView = false;
@@ -42,14 +41,14 @@ public class FluxClientCache {
         for (Int2ObjectMap.Entry<CompoundTag> entry : serverSideNetworks.int2ObjectEntrySet()) {
             int id = entry.getIntKey();
             CompoundTag nbt = entry.getValue();
-            IFluxNetwork network = networks.get(id);
+            FluxNetwork network = networks.get(id);
             if (type == FluxConstants.TYPE_NET_DELETE) {
                 if (network != null) {
                     networks.remove(id);
                 }
             } else {
                 if (network == null) {
-                    network = new FluxNetworkBase();
+                    network = new FluxNetwork();
                     network.readCustomTag(nbt, type);
                     networks.put(id, network);
                 } else {
@@ -60,7 +59,7 @@ public class FluxClientCache {
     }
 
     public static void updateConnections(int networkID, List<CompoundTag> tags) {
-        IFluxNetwork network = networks.get(networkID);
+        FluxNetwork network = networks.get(networkID);
         if (network != null) {
             for (CompoundTag tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
@@ -71,12 +70,12 @@ public class FluxClientCache {
     }
 
     @Nonnull
-    public static IFluxNetwork getNetwork(int id) {
+    public static FluxNetwork getNetwork(int id) {
         return networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     public static String getDisplayName(@Nonnull CompoundTag subTag) {
-        IFluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
+        FluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
         if (network.isValid()) {
             return network.getNetworkName();
         }
@@ -110,7 +109,7 @@ public class FluxClientCache {
     }
 
     @Nonnull
-    public static List<IFluxNetwork> getAllNetworks() {
+    public static List<FluxNetwork> getAllNetworks() {
         return new ArrayList<>(networks.values());
     }
 }

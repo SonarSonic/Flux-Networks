@@ -14,7 +14,7 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;

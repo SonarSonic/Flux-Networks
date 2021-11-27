@@ -1,9 +1,10 @@
-package sonar.fluxnetworks.common.connection;
+package sonar.fluxnetworks.common.device;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.common.connection.TransferNode;
 
 import javax.annotation.Nonnull;
 
@@ -12,7 +13,7 @@ import javax.annotation.Nonnull;
  * Any modification to this object should be invoked on
  * the device entity, since it has network listeners.
  */
-public abstract class TransferHandler {
+public abstract class TransferHandler extends TransferNode {
 
     public static final int PRI_USER_MIN = -9999;
     public static final int PRI_USER_MAX = 9999;
@@ -55,28 +56,9 @@ public abstract class TransferHandler {
     }
 
     /**
-     * Called before the start of the transfer cycle.
-     * In this time, energy transfer should be simulated.
-     */
-    protected abstract void onCycleStart();
-
-    /**
-     * Called after the end of the transfer cycle.
-     * In this time, energy change should be settled.
-     */
-    protected abstract void onCycleEnd();
-
-    protected void insert(long energy) {
-        throw new UnsupportedOperationException();
-    }
-
-    protected long extract(long energy) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * @return the internal buffer for this transfer handler.
      */
+    @Override
     public final long getBuffer() {
         return mBuffer;
     }
@@ -97,6 +79,7 @@ public abstract class TransferHandler {
     /**
      * @return the requested energy for this transfer handler.
      */
+    @Override
     public long getRequest() {
         throw new UnsupportedOperationException();
     }
@@ -114,6 +97,7 @@ public abstract class TransferHandler {
      *
      * @return the logical priority
      */
+    @Override
     public int getPriority() {
         return mSurge > 0 ? mSurge : mPriority;
     }
@@ -176,6 +160,13 @@ public abstract class TransferHandler {
     }
 
     /**
+     * @return the user-set priority without any gain
+     */
+    public int getRawLimit() {
+        return mPriority;
+    }
+
+    /**
      * Set a raw transfer limit for this handler.
      * After calling this method, bypass state will be reset to false.
      *
@@ -233,9 +224,15 @@ public abstract class TransferHandler {
     }
 
     public void writePacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.S2C_GUI_SYNC) {
-            buf.writeLong(mChange);
-            buf.writeLong(mBuffer);
+        switch (id) {
+            case FluxConstants.C2S_PRIORITY -> buf.writeInt(mPriority);
+            case FluxConstants.C2S_LIMIT -> buf.writeLong(mLimit);
+            case FluxConstants.C2S_SURGE_MODE -> buf.writeBoolean(getSurgeMode());
+            case FluxConstants.C2S_DISABLE_LIMIT -> buf.writeBoolean(getDisableLimit());
+            case FluxConstants.S2C_GUI_SYNC -> {
+                buf.writeLong(mChange);
+                buf.writeLong(mBuffer);
+            }
         }
     }
 

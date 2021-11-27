@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.blockentity.energy;
+package sonar.fluxnetworks.common.device.energy;
 /* TODO ADD BACK IC2 SUPPORT WHEN PORTED
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;

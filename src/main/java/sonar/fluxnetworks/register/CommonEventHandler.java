@@ -25,9 +25,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
-import sonar.fluxnetworks.common.capability.SuperAdmin;
-import sonar.fluxnetworks.common.capability.SuperAdminProvider;
+import sonar.fluxnetworks.common.capability.FluxPlayerProvider;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkManager;
 
 import javax.annotation.Nonnull;
@@ -49,9 +48,7 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onServerTick(@Nonnull TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            for (IFluxNetwork network : FluxNetworkManager.getAllNetworks()) {
-                network.onEndServerTick();
-            }
+            FluxNetworkManager.getAllNetworks().forEach(FluxNetwork::onEndServerTick);
         }
     }
 
@@ -100,10 +97,10 @@ public class CommonEventHandler {
                     }
                 }
             }
-            if (validEntities.isEmpty()) {
+            if (count == 0) {
                 return;
             }
-            final int max = Mth.clamp(count >> 2, 4, 64);
+            final int particles = Mth.clamp(count >> 2, 4, 64);
             if (!event.getWorld().isClientSide) {
                 ItemStack stack = new ItemStack(RegistryItems.FLUX_DUST, count);
                 validEntities.forEach(Entity::discard);
@@ -111,7 +108,7 @@ public class CommonEventHandler {
                 ItemEntity entity = new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack);
                 entity.setNoPickUpDelay();
                 world.addFreshEntity(entity);
-                if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 4)) {
+                if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 3)) {
                     world.setBlock(pos.below(), Blocks.COBBLESTONE.defaultBlockState(), Constants.BlockFlags.DEFAULT);
                     world.playSound(null, pos, SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 } else {
@@ -121,7 +118,7 @@ public class CommonEventHandler {
                 //FIXME
                 //S2CNetMsg.lavaEffect(pos, max).sendToTrackingEntity(event.getPlayer());
             } else {
-                for (int i = 0; i < max; i++) {
+                for (int i = 0; i < particles; i++) {
                     // speed won't work with lava particle, because its constructor doesn't use these params
                     world.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
                 }
@@ -162,7 +159,9 @@ public class CommonEventHandler {
     @SubscribeEvent
     public static void onAttachCapability(@Nonnull AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
-            event.addCapability(SuperAdmin.CAP_KEY, new SuperAdminProvider());
+            var provider = new FluxPlayerProvider();
+            event.addCapability(FluxPlayerProvider.CAP_KEY, provider);
+            event.addListener(provider);
         }
     }
 

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.blockentity;
+package sonar.fluxnetworks.common.device;
 
 import icyllis.modernui.mcgui.ContainerMenu;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,11 +11,11 @@ import javax.annotation.Nonnull;
 /**
  * Communication menu between client and server.
  */
-public class FluxContainerMenu extends ContainerMenu {
+public class FluxDeviceMenu extends ContainerMenu {
 
     public final FluxDeviceEntity mDevice;
 
-    public FluxContainerMenu(int containerId, @Nonnull Inventory inventory, @Nonnull FriendlyByteBuf buf) {
+    public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull FriendlyByteBuf buf) {
         super(RegistryBlocks.FLUX_MENU, containerId);
         if (inventory.player.level.getBlockEntity(buf.readBlockPos()) instanceof FluxDeviceEntity device) {
             mDevice = device;
@@ -25,7 +25,7 @@ public class FluxContainerMenu extends ContainerMenu {
         }
     }
 
-    public FluxContainerMenu(int containerId, @Nonnull Inventory inventory, @Nonnull FluxDeviceEntity device) {
+    public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull FluxDeviceEntity device) {
         super(RegistryBlocks.FLUX_MENU, containerId);
         mDevice = device;
         mDevice.onPlayerOpen(inventory.player);

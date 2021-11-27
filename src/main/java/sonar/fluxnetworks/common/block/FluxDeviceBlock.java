@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.register.RegistryItems;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

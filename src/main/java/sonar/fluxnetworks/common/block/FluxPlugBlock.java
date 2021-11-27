@@ -18,8 +18,8 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.common.util.FluxShapes;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.RegistryBlocks;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
-import sonar.fluxnetworks.common.blockentity.FluxPlugEntity;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.FluxPlugEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

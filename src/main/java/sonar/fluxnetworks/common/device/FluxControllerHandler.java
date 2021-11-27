@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.connection.transfer;
+package sonar.fluxnetworks.common.device;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,8 +14,6 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.IItemEnergyBridge;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.WirelessType;
-import sonar.fluxnetworks.common.blockentity.FluxControllerEntity;
-import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.common.integration.CuriosIntegration;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 

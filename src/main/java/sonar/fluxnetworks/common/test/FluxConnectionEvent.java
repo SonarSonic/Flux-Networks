@@ -2,7 +2,7 @@ package sonar.fluxnetworks.common.test;
 
 import net.minecraftforge.eventbus.api.Event;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 
 @Deprecated
 public class FluxConnectionEvent extends Event {
@@ -16,9 +16,9 @@ public class FluxConnectionEvent extends Event {
     @Deprecated
     public static class Connected extends FluxConnectionEvent {
 
-        public final IFluxNetwork network;
+        public final FluxNetwork network;
 
-        public Connected(IFluxDevice flux, IFluxNetwork network) {
+        public Connected(IFluxDevice flux, FluxNetwork network) {
             super(flux);
             this.network = network;
         }
@@ -27,9 +27,9 @@ public class FluxConnectionEvent extends Event {
     @Deprecated
     public static class Disconnected extends FluxConnectionEvent {
 
-        public final IFluxNetwork network;
+        public final FluxNetwork network;
 
-        public Disconnected(IFluxDevice flux, IFluxNetwork network) {
+        public Disconnected(IFluxDevice flux, FluxNetwork network) {
             super(flux);
             this.network = network;
         }

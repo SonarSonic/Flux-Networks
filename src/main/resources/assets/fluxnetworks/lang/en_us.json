@@ -40,9 +40,9 @@
 	"info.fluxnetworks.network.energy": "Energy Type",
 	"info.fluxnetworks.network.color": "Color",
 
-	"info.fluxnetworks.denied.access": "Access denied: No permission",
-	"info.fluxnetworks.denied.occupy": "Access denied: Another player is using",
-	"info.fluxnetworks.denied.removal": "Removal denied: No permission",
+	"info.fluxnetworks.denied_access": "Access denied: No permission",
+	"info.fluxnetworks.denied_occupy": "Access denied: Another player is using",
+	"info.fluxnetworks.denied_removal": "Removal denied: No permission",
 
 	"info.fluxnetworks.clickabove": "Click %s Above",
 

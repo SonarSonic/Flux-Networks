@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.blockentity;
+package sonar.fluxnetworks.common.device;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -7,8 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.api.device.IFluxStorage;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.common.connection.transfer.FluxStorageHandler;
+import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.register.RegistryBlocks;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
 

@@ -3,18 +3,23 @@ package sonar.fluxnetworks.api.device;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import sonar.fluxnetworks.api.network.FluxDeviceType;
-import sonar.fluxnetworks.api.network.IFluxBridge;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * Defines a device that can be connected to a flux network.
- * The implementation may not be a network entity.
+ * Defines a network device that can be connected to a specific network.
+ * The implementation may not be a logical entity.
  */
-public interface IFluxDevice extends IFluxBridge {
+public interface IFluxDevice {
+
+    /**
+     * Returns the network ID that this connector should be. However, this connector
+     * may not be currently connected to the network (waiting to connect).
+     *
+     * @return the network ID
+     */
+    int getNetworkID();
 
     /**
      * A constant value identifying the type of this device.
@@ -56,9 +61,6 @@ public interface IFluxDevice extends IFluxBridge {
     //boolean isActive();
 
     boolean isChunkLoaded();
-
-    @Nonnull
-    Level getFluxWorld();
 
     @Nonnull
     GlobalPos getGlobalPos();

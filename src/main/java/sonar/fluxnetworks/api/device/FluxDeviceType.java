@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.api.network;
+package sonar.fluxnetworks.api.device;
 
 public enum FluxDeviceType {
     POINT(0x882828),

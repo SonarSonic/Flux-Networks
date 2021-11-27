@@ -7,24 +7,35 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
-import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSecurity;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
-import sonar.fluxnetworks.common.capability.SuperAdmin;
+import sonar.fluxnetworks.common.capability.FluxPlayer;
+import sonar.fluxnetworks.common.device.FluxDeviceEntity;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
 /**
  * Defines the base class of a flux network.
  * Instances of this class directly are expected on the client side.
  */
-public class FluxNetworkBase implements IFluxNetwork {
+@ParametersAreNonnullByDefault
+public class FluxNetwork {
+
+    /**
+     * Define logical types of network transfer handlers.
+     */
+    public static final int
+            ANY = 0,
+            PLUG = 1,
+            POINT = 2,
+            STORAGE = 3,
+            CONTROLLER = 4;
 
     private static final String NETWORK_NAME = "networkName";
     private static final String NETWORK_COLOR = "networkColor";
@@ -55,17 +66,17 @@ public class FluxNetworkBase implements IFluxNetwork {
     // On client: PhantomFluxDevice
     protected final HashMap<GlobalPos, IFluxDevice> mConnections = new HashMap<>();
 
-    public FluxNetworkBase() {
+    public FluxNetwork() {
     }
 
-    FluxNetworkBase(int id, String name, int color, UUID owner) {
+    FluxNetwork(int id, String name, int color, UUID owner) {
         mNetworkID = id;
         mNetworkName = name;
         mNetworkColor = color;
         mOwnerUUID = owner;
     }
 
-    FluxNetworkBase(int id, String name, int color, @Nonnull Player owner) {
+    FluxNetwork(int id, String name, int color, @Nonnull Player owner) {
         mNetworkID = id;
         mNetworkName = name;
         mNetworkColor = color;
@@ -73,108 +84,138 @@ public class FluxNetworkBase implements IFluxNetwork {
         mMembers.put(mOwnerUUID, NetworkMember.create(owner, AccessLevel.OWNER));
     }
 
-    @Override
+    /**
+     * Returns the network ID
+     *
+     * @return a positive integer or {@link FluxConstants#INVALID_NETWORK_ID}
+     */
     public int getNetworkID() {
         return mNetworkID;
     }
 
     @Nonnull
-    @Override
     public UUID getOwnerUUID() {
         return mOwnerUUID;
     }
 
+    /**
+     * Returns the network name. For an invalid network this is empty,
+     * and client should display an alternative text instead.
+     *
+     * @return the name of this network
+     */
     @Nonnull
-    @Override
     public String getNetworkName() {
         return mNetworkName;
     }
 
-    @Override
     public void setNetworkName(@Nonnull String name) {
         mNetworkName = name;
     }
 
-    @Override
+    /**
+     * Returns the network color in 0xRRGGBB format
+     *
+     * @return network color
+     */
     public int getNetworkColor() {
         return mNetworkColor;
     }
 
-    @Override
     public void setNetworkColor(int color) {
         mNetworkColor = color;
     }
 
     @Nonnull
-    @Override
     public NetworkSecurity getSecurity() {
         return mSecurity;
     }
 
     @Nonnull
-    @Override
     public NetworkStatistics getStatistics() {
         return mStatistics;
     }
 
+    /**
+     * Returns a collection object that contains all network members
+     *
+     * @return all members
+     */
     @Nonnull
-    @Override
     public Collection<NetworkMember> getAllMembers() {
         return mMembers.values();
     }
 
     @Nonnull
-    @Override
     public Optional<NetworkMember> getMemberByUUID(@Nonnull UUID uuid) {
         return Optional.ofNullable(mMembers.get(uuid));
     }
 
+    /**
+     * Get all connections including loaded entities and unloaded devices.
+     *
+     * @return the list of all connections
+     * @see #getLogicalEntities(int)
+     */
     @Nonnull
-    @Override
     public Collection<IFluxDevice> getAllConnections() {
         return mConnections.values();
     }
 
+    /**
+     * Get connection by global pos from all connections collection
+     *
+     * @param pos global pos
+     * @return possible device
+     * @see #getAllConnections()
+     */
     @Nonnull
-    @Override
     public Optional<IFluxDevice> getConnectionByPos(@Nonnull GlobalPos pos) {
         return Optional.ofNullable(mConnections.get(pos));
     }
 
-    @Override
     public void onEndServerTick() {
         throw new IllegalStateException();
     }
 
-    @Override
     public void onDelete() {
         mMembers.clear();
         mConnections.clear();
     }
 
+    /**
+     * Helper method to get player's access level for this network including super admin,
+     * even if the player in not a member in the network.
+     * Note this method is server only.
+     *
+     * @param player the server player
+     * @return access level
+     */
     @Nonnull
-    @Override
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
         throw new IllegalStateException();
     }
 
+    /**
+     * Get all network device entities with given logical type,
+     * this method should be only invoked on the server side.
+     *
+     * @param logic the logical type
+     * @return a list of devices
+     */
     @Nonnull
-    @Override
     public List<FluxDeviceEntity> getLogicalEntities(int logic) {
         throw new IllegalStateException("Sincerely?");
     }
 
-    @Override
     public long getBufferLimiter() {
         throw new IllegalStateException();
     }
 
-    @Override
     public boolean enqueueConnectionAddition(@Nonnull FluxDeviceEntity device) {
         throw new IllegalStateException();
     }
 
-    @Override
     public void enqueueConnectionRemoval(@Nonnull FluxDeviceEntity device, boolean chunkUnload) {
         throw new IllegalStateException();
     }
@@ -189,12 +230,16 @@ public class FluxNetworkBase implements IFluxNetwork {
         settings.getValue(this).setValue(value);
     }*/
 
-    @Override
+    /**
+     * Returns whether this network is a valid network.
+     *
+     * @return {@code true} if it is valid, {@code false} otherwise
+     * @see FluxConstants#INVALID_NETWORK_ID
+     */
     public boolean isValid() {
         return true;
     }
 
-    @Override
     public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
             tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
@@ -247,7 +292,7 @@ public class FluxNetworkBase implements IFluxNetwork {
                     if (getMemberByUUID(p.getUUID()).isEmpty()) {
                         CompoundTag subTag = new CompoundTag();
                         NetworkMember m = NetworkMember.create(p,
-                                SuperAdmin.isPlayerSuperAdmin(p) ? AccessLevel.SUPER_ADMIN :
+                                FluxPlayer.isPlayerSuperAdmin(p) ? AccessLevel.SUPER_ADMIN :
                                         AccessLevel.BLOCKED);
                         m.writeNBT(subTag);
                         list.add(subTag);
@@ -305,7 +350,6 @@ public class FluxNetworkBase implements IFluxNetwork {
         }*/
     }
 
-    @Override
     public void readCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
             mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);

@@ -9,7 +9,7 @@ import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.blockentity.*;
+import sonar.fluxnetworks.common.device.*;
 
 @ObjectHolder(FluxNetworks.MODID)
 public class RegistryBlocks {
@@ -19,7 +19,7 @@ public class RegistryBlocks {
 
 
     @ObjectHolder("flux_menu")
-    public static MenuType<FluxContainerMenu> FLUX_MENU;
+    public static MenuType<FluxDeviceMenu> FLUX_MENU;
 
 
     @ObjectHolder("flux_plug")
