@@ -14,7 +14,7 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -44,7 +44,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
             if (!(FluxConfig.enableOneProbeBasicInfo || FluxConfig.enableOneProbeAdvancedInfo)) {
                 return;
             }
-            if (!(level.getBlockEntity(hitData.getPos()) instanceof FluxDeviceEntity device)) {
+            if (!(level.getBlockEntity(hitData.getPos()) instanceof TileFluxDevice device)) {
                 return;
             }
             if (FluxConfig.enableOneProbeBasicInfo) {
@@ -118,7 +118,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
         public boolean overrideStandardInfo(ProbeMode probeMode, IProbeInfo probeInfo, Player player,
                                             @Nonnull Level level, BlockState blockState,
                                             @Nonnull IProbeHitData hitData) {
-            if (level.getBlockEntity(hitData.getPos()) instanceof FluxDeviceEntity device) {
+            if (level.getBlockEntity(hitData.getPos()) instanceof TileFluxDevice device) {
                 ItemStack itemStack = device.getDisplayStack();
                 CompoundTag tag = itemStack.getOrCreateTagElement(FluxConstants.TAG_FLUX_DATA);
                 tag.putInt(FluxConstants.NETWORK_ID, device.getNetworkID());

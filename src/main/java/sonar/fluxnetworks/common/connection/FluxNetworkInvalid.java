@@ -4,7 +4,7 @@ import net.minecraft.Util;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class FluxNetworkInvalid extends FluxNetwork {
 
     @Nonnull
     @Override
-    public List<FluxDeviceEntity> getLogicalEntities(int logic) {
+    public List<TileFluxDevice> getLogicalEntities(int logic) {
         return Collections.emptyList();
     }
 
@@ -41,12 +41,12 @@ public class FluxNetworkInvalid extends FluxNetwork {
     }
 
     @Override
-    public boolean enqueueConnectionAddition(@Nonnull FluxDeviceEntity device) {
+    public boolean enqueueConnectionAddition(@Nonnull TileFluxDevice device) {
         return true;
     }
 
     @Override
-    public void enqueueConnectionRemoval(@Nonnull FluxDeviceEntity device, boolean chunkUnload) {
+    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
     }
 
     @Override

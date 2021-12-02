@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.register.RegistryItems;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +42,7 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
 
-        if (level.getBlockEntity(pos) instanceof FluxDeviceEntity device) {
+        if (level.getBlockEntity(pos) instanceof TileFluxDevice device) {
             device.interact(player);
         }
 
@@ -56,7 +56,7 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer,
                             ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (level.getBlockEntity(pos) instanceof FluxDeviceEntity device) {
+        if (level.getBlockEntity(pos) instanceof TileFluxDevice device) {
             if (stack.hasTag()) {
                 CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
                 if (tag != null) {

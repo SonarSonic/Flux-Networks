@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import sonar.fluxnetworks.common.util.FluxUtils;
-import sonar.fluxnetworks.common.device.FluxConnectorEntity;
+import sonar.fluxnetworks.common.device.TileFluxConnector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,7 +49,7 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock implements Simp
                                 BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, fromPos, isMoving);
         // block changed
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof FluxConnectorEntity c) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof TileFluxConnector c) {
             Direction dir = FluxUtils.getBlockDirection(pos, fromPos);
             if (dir != null) {
                 c.updateSideTransfer(dir, level.getBlockEntity(fromPos));
@@ -61,7 +61,7 @@ public abstract class FluxConnectorBlock extends FluxDeviceBlock implements Simp
     public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
         super.onNeighborChange(state, level, pos, neighbor);
         // block entity changed, not always being called, because some mods do not call related methods
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof FluxConnectorEntity c) {
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof TileFluxConnector c) {
             Direction dir = FluxUtils.getBlockDirection(pos, neighbor);
             if (dir != null) {
                 c.updateSideTransfer(dir, level.getBlockEntity(neighbor));

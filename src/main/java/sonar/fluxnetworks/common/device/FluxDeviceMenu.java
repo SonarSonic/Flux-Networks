@@ -1,9 +1,11 @@
 package sonar.fluxnetworks.common.device;
 
 import icyllis.modernui.mcgui.ContainerMenu;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;
@@ -13,22 +15,26 @@ import javax.annotation.Nonnull;
  */
 public class FluxDeviceMenu extends ContainerMenu {
 
-    public final FluxDeviceEntity mDevice;
+    public final TileFluxDevice mDevice;
 
     public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull FriendlyByteBuf buf) {
         super(RegistryBlocks.FLUX_MENU, containerId);
-        if (inventory.player.level.getBlockEntity(buf.readBlockPos()) instanceof FluxDeviceEntity device) {
+        if (inventory.player.level.getBlockEntity(buf.readBlockPos()) instanceof TileFluxDevice device) {
             mDevice = device;
             device.onPlayerOpen(inventory.player);
+            CompoundTag tag = buf.readNbt();
+            if (tag != null) {
+                device.readCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+            }
         } else {
             mDevice = null;
         }
     }
 
-    public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull FluxDeviceEntity device) {
+    public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull TileFluxDevice device) {
         super(RegistryBlocks.FLUX_MENU, containerId);
         mDevice = device;
-        mDevice.onPlayerOpen(inventory.player);
+        device.onPlayerOpen(inventory.player);
     }
 
     @Override

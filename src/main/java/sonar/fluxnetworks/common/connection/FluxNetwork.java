@@ -3,9 +3,9 @@ package sonar.fluxnetworks.common.connection;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
@@ -13,7 +13,7 @@ import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.NetworkSecurity;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -204,7 +204,7 @@ public class FluxNetwork {
      * @return a list of devices
      */
     @Nonnull
-    public List<FluxDeviceEntity> getLogicalEntities(int logic) {
+    public List<TileFluxDevice> getLogicalEntities(int logic) {
         throw new IllegalStateException("Sincerely?");
     }
 
@@ -212,11 +212,11 @@ public class FluxNetwork {
         throw new IllegalStateException();
     }
 
-    public boolean enqueueConnectionAddition(@Nonnull FluxDeviceEntity device) {
+    public boolean enqueueConnectionAddition(@Nonnull TileFluxDevice device) {
         throw new IllegalStateException();
     }
 
-    public void enqueueConnectionRemoval(@Nonnull FluxDeviceEntity device, boolean chunkUnload) {
+    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
         throw new IllegalStateException();
     }
 
@@ -307,7 +307,7 @@ public class FluxNetwork {
                 ListTag list = new ListTag();
                 for (IFluxDevice d : connections) {
                     CompoundTag subTag = new CompoundTag();
-                    d.writeCustomTag(subTag, FluxConstants.TYPE_CONNECTION_UPDATE);
+                    d.writeCustomTag(subTag, FluxConstants.TYPE_PHANTOM_UPDATE);
                     list.add(subTag);
                 }
                 tag.put(CONNECTIONS, list);
@@ -359,13 +359,13 @@ public class FluxNetwork {
             mSecurity.readNBT(tag.getCompound(SECURITY));
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
-            ListTag list = tag.getList(PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
+            ListTag list = tag.getList(PLAYER_LIST, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
                 mMembers.put(m.getPlayerUUID(), m);
             }
-            list = tag.getList(CONNECTIONS, Constants.NBT.TAG_COMPOUND);
+            list = tag.getList(CONNECTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 PhantomFluxDevice f = PhantomFluxDevice.load(c);
@@ -374,7 +374,7 @@ public class FluxNetwork {
         }
         if (type == FluxConstants.TYPE_NET_MEMBERS) {
             mMembers.clear();
-            ListTag list = tag.getList(PLAYER_LIST, Constants.NBT.TAG_COMPOUND);
+            ListTag list = tag.getList(PLAYER_LIST, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
@@ -387,13 +387,13 @@ public class FluxNetwork {
             // to player, so calling clear() here as a temporary solution, (f != null) is always false
             mConnections.clear();
 
-            ListTag list = tag.getList(CONNECTIONS, Constants.NBT.TAG_COMPOUND);
+            ListTag list = tag.getList(CONNECTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 GlobalPos pos = FluxUtils.readGlobalPos(c);
                 IFluxDevice f = mConnections.get(pos);
                 if (f != null) {
-                    f.readCustomTag(c, FluxConstants.TYPE_CONNECTION_UPDATE);
+                    f.readCustomTag(c, FluxConstants.TYPE_PHANTOM_UPDATE);
                 } else {
                     mConnections.put(pos, PhantomFluxDevice.update(pos, c));
                 }

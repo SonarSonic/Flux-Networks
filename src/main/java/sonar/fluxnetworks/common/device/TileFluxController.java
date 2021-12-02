@@ -10,11 +10,11 @@ import sonar.fluxnetworks.common.util.FluxGuiStack;
 
 import javax.annotation.Nonnull;
 
-public class FluxControllerEntity extends FluxDeviceEntity implements IFluxController {
+public class TileFluxController extends TileFluxDevice implements IFluxController {
 
     private final FluxControllerHandler mHandler = new FluxControllerHandler(this);
 
-    public FluxControllerEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+    public TileFluxController(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(RegistryBlocks.FLUX_CONTROLLER_ENTITY, pos, state);
     }
 

@@ -35,9 +35,9 @@ public class FluxControllerHandler extends TransferHandler {
 
     private long mDesired;
 
-    final FluxControllerEntity mDevice;
+    final TileFluxController mDevice;
 
-    public FluxControllerHandler(FluxControllerEntity fluxController) {
+    public FluxControllerHandler(TileFluxController fluxController) {
         super(FluxConfig.defaultLimit);
         mDevice = fluxController;
     }

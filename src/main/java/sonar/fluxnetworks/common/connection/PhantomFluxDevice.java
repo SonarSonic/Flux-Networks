@@ -3,22 +3,22 @@ package sonar.fluxnetworks.common.connection;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * This class represents a non-entity flux device (e.g. Network Connections tab)
+ * This class represents a non-entity flux device (e.g. Network Devices tab).
  * These devices may not exist on client world, so there's no entity instance on the client.
  * They just are loaded on the server world, or used to record unloaded flux devices on server.
  * Logical operations are not allowed here.
  *
- * @see FluxDeviceEntity
+ * @see TileFluxDevice
  */
 public class PhantomFluxDevice implements IFluxDevice {
 
@@ -39,12 +39,12 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     /**
-     * Copy data from TileFluxDevice on server
+     * Copy data from TileFluxDevice on server.
      *
-     * @param device loaded device
+     * @param device the loaded device entity
      */
     @Nonnull
-    public static PhantomFluxDevice unload(@Nonnull FluxDeviceEntity device) {
+    public static PhantomFluxDevice unload(@Nonnull TileFluxDevice device) {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.mNetworkID = device.getNetworkID();
         t.mCustomName = device.getCustomName();
@@ -62,7 +62,7 @@ public class PhantomFluxDevice implements IFluxDevice {
     public static PhantomFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.mGlobalPos = pos;
-        t.readCustomTag(tag, FluxConstants.TYPE_CONNECTION_UPDATE);
+        t.readCustomTag(tag, FluxConstants.TYPE_PHANTOM_UPDATE);
         return t;
     }
 
@@ -74,8 +74,8 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
             FluxUtils.writeGlobalPos(tag, mGlobalPos);
             tag.putByte(FluxConstants.DEVICE_TYPE, (byte) mDeviceType.ordinal());
             tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
@@ -91,11 +91,11 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.TYPE_SAVE_ALL) {
             mGlobalPos = FluxUtils.readGlobalPos(tag);
         }
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
             mDeviceType = FluxDeviceType.values()[tag.getByte(FluxConstants.DEVICE_TYPE)];
             mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
             mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
@@ -107,7 +107,7 @@ public class PhantomFluxDevice implements IFluxDevice {
             mBuffer = tag.getLong(FluxConstants.BUFFER);
             mDisplayStack = ItemStack.of(tag);
         }
-        if (type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+        if (type == FluxConstants.TYPE_PHANTOM_UPDATE) {
             mForcedLoading = tag.getBoolean(FluxConstants.FORCED_LOADING);
             mChunkLoaded = tag.getBoolean(FluxConstants.CHUNK_LOADED);
             mChange = tag.getLong(FluxConstants.CHANGE);

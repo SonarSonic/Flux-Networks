@@ -9,15 +9,15 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import sonar.fluxnetworks.common.device.FluxStorageEntity;
+import sonar.fluxnetworks.common.device.TileFluxStorage;
 
 import javax.annotation.Nonnull;
 
-public class FluxStorageEntityRenderer implements BlockEntityRenderer<FluxStorageEntity> {
+public class FluxStorageEntityRenderer implements BlockEntityRenderer<TileFluxStorage> {
 
     private static final FluxStorageEntityRenderer INSTANCE = new FluxStorageEntityRenderer();
 
-    public static final BlockEntityRendererProvider<FluxStorageEntity> PROVIDER = INSTANCE::onContextChanged;
+    public static final BlockEntityRendererProvider<TileFluxStorage> PROVIDER = INSTANCE::onContextChanged;
 
     private static final float START = 2.0f / 16.0f;
     private static final float END = 14.0f / 16.0f;
@@ -36,7 +36,7 @@ public class FluxStorageEntityRenderer implements BlockEntityRenderer<FluxStorag
     }
 
     @Override
-    public void render(@Nonnull FluxStorageEntity entity, float partialTick, @Nonnull PoseStack poseStack,
+    public void render(@Nonnull TileFluxStorage entity, float partialTick, @Nonnull PoseStack poseStack,
                        @Nonnull MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
         render(poseStack, bufferSource.getBuffer(FluxStorageRenderType.getType()), entity.mBlockTint,
                 packedOverlay, entity.getTransferBuffer(), entity.getMaxTransferLimit());

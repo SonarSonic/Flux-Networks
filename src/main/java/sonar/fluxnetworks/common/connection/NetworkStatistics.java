@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.connection;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import net.minecraft.nbt.CompoundTag;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import java.util.List;
 
@@ -65,13 +65,13 @@ public class NetworkStatistics {
      * Called every 5 ticks
      */
     private void weakTick() {
-        List<FluxDeviceEntity> plugs = network.getLogicalEntities(FluxNetwork.PLUG);
+        List<TileFluxDevice> plugs = network.getLogicalEntities(FluxNetwork.PLUG);
         plugs.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 energyInput4 += p.getTransferChange();
             }
         });
-        List<FluxDeviceEntity> points = network.getLogicalEntities(FluxNetwork.POINT);
+        List<TileFluxDevice> points = network.getLogicalEntities(FluxNetwork.POINT);
         points.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 energyOutput4 -= p.getTransferChange();
@@ -85,13 +85,13 @@ public class NetworkStatistics {
     private void weakerTick() {
         totalBuffer = 0;
         totalEnergy = 0;
-        List<FluxDeviceEntity> devices = network.getLogicalEntities(FluxNetwork.ANY);
+        List<TileFluxDevice> devices = network.getLogicalEntities(FluxNetwork.ANY);
         devices.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 totalBuffer += p.getTransferBuffer();
             }
         });
-        List<FluxDeviceEntity> storages = network.getLogicalEntities(FluxNetwork.STORAGE);
+        List<TileFluxDevice> storages = network.getLogicalEntities(FluxNetwork.STORAGE);
         storages.forEach(p -> totalEnergy += p.getTransferBuffer());
         fluxControllerCount = network.getLogicalEntities(FluxNetwork.CONTROLLER).size();
         fluxStorageCount = storages.size();

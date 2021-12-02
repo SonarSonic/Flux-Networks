@@ -15,8 +15,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.common.util.FluxShapes;
 import sonar.fluxnetworks.register.RegistryBlocks;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
-import sonar.fluxnetworks.common.device.FluxControllerEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.device.TileFluxController;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,7 +46,7 @@ public class FluxControllerBlock extends FluxDeviceBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new FluxControllerEntity(pos, state);
+        return new TileFluxController(pos, state);
     }
 
     @Nullable
@@ -54,7 +54,7 @@ public class FluxControllerBlock extends FluxDeviceBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                   BlockEntityType<T> type) {
         if (type == RegistryBlocks.FLUX_CONTROLLER_ENTITY) {
-            return FluxDeviceEntity.getTicker(level);
+            return TileFluxDevice.getTicker(level);
         }
         return null;
     }

@@ -17,7 +17,7 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -38,7 +38,7 @@ public class ItemFluxConfigurator extends Item {
         if (player == null) {
             return InteractionResult.PASS;
         }
-        if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof FluxDeviceEntity device) {
+        if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof TileFluxDevice device) {
             if (!device.canPlayerAccess(context.getPlayer())) {
                 player.displayClientMessage(FluxTranslate.ACCESS_DENIED, true);
                 return InteractionResult.FAIL;

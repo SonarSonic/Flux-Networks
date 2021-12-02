@@ -9,12 +9,12 @@ public enum SecurityLevel {
     ENCRYPTED(FluxTranslate.ENCRYPTED),
     PRIVATE(FluxTranslate.PRIVATE);
 
-    private static final SecurityLevel[] VALUES = values();
+    public static final SecurityLevel[] VALUES = values();
 
-    private final FluxTranslate localization;
+    private final String mTranslateKey;
 
-    SecurityLevel(FluxTranslate localization) {
-        this.localization = localization;
+    SecurityLevel(String translateKey) {
+        mTranslateKey = translateKey;
     }
 
     @Nonnull
@@ -28,6 +28,6 @@ public enum SecurityLevel {
 
     @Nonnull
     public String getName() {
-        return localization.t();
+        return FluxTranslate.translate(mTranslateKey);
     }
 }

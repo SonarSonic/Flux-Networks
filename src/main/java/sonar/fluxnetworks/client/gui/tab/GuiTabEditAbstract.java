@@ -4,7 +4,7 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;

@@ -5,7 +5,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.*;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -18,18 +18,18 @@ import java.util.function.Consumer;
  */
 public class FluxNetworkServer extends FluxNetwork {
 
-    private static final Comparator<FluxDeviceEntity> DESCENDING_ORDER =
+    private static final Comparator<TileFluxDevice> DESCENDING_ORDER =
             (a, b) -> Integer.compare(b.getTransferNode().getPriority(), a.getTransferNode().getPriority());
 
-    private static final Consumer<FluxDeviceEntity> DISCONNECT = d -> d.connect(FluxNetworkInvalid.INSTANCE);
+    private static final Consumer<TileFluxDevice> DISCONNECT = d -> d.connect(FluxNetworkInvalid.INSTANCE);
 
     private static final Class<?>[] LOGICAL_TYPES =
             {IFluxDevice.class, IFluxPlug.class, IFluxPoint.class, IFluxStorage.class, IFluxController.class};
 
-    private final List<List<FluxDeviceEntity>> mDevices = new ArrayList<>(LOGICAL_TYPES.length);
+    private final List<List<TileFluxDevice>> mDevices = new ArrayList<>(LOGICAL_TYPES.length);
 
-    private final Queue<FluxDeviceEntity> mToAdd = new LinkedList<>();
-    private final Queue<FluxDeviceEntity> mToRemove = new LinkedList<>();
+    private final Queue<TileFluxDevice> mToAdd = new LinkedList<>();
+    private final Queue<TileFluxDevice> mToRemove = new LinkedList<>();
 
     private boolean mSortConnections = true;
 
@@ -79,7 +79,7 @@ public class FluxNetworkServer extends FluxNetwork {
     }*/
 
     private void handleConnectionQueue() {
-        FluxDeviceEntity device;
+        TileFluxDevice device;
         while ((device = mToAdd.poll()) != null) {
             for (int i = 0; i < LOGICAL_TYPES.length; i++) {
                 if (LOGICAL_TYPES[i].isInstance(device)) {
@@ -103,7 +103,7 @@ public class FluxNetworkServer extends FluxNetwork {
 
     @Nonnull
     @Override
-    public List<FluxDeviceEntity> getLogicalEntities(int logic) {
+    public List<TileFluxDevice> getLogicalEntities(int logic) {
         return mDevices.get(logic);
     }
 
@@ -115,21 +115,21 @@ public class FluxNetworkServer extends FluxNetwork {
 
         mBufferLimiter = 0;
 
-        List<FluxDeviceEntity> devices = getLogicalEntities(ANY);
+        List<TileFluxDevice> devices = getLogicalEntities(ANY);
         for (var f : devices) {
             f.getTransferNode().onCycleStart();
         }
 
-        List<FluxDeviceEntity> plugs = getLogicalEntities(PLUG);
-        List<FluxDeviceEntity> points = getLogicalEntities(POINT);
+        List<TileFluxDevice> plugs = getLogicalEntities(PLUG);
+        List<TileFluxDevice> points = getLogicalEntities(POINT);
         if (!points.isEmpty() && !plugs.isEmpty()) {
             mPlugTransferIterator.reset(plugs);
             mPointTransferIterator.reset(points);
             CYCLE:
             while (mPointTransferIterator.hasNext()) {
                 while (mPlugTransferIterator.hasNext()) {
-                    FluxDeviceEntity plug = mPlugTransferIterator.next();
-                    FluxDeviceEntity point = mPointTransferIterator.next();
+                    TileFluxDevice plug = mPlugTransferIterator.next();
+                    TileFluxDevice point = mPointTransferIterator.next();
                     if (plug.getDeviceType() == point.getDeviceType()) {
                         break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                     }
@@ -190,7 +190,7 @@ public class FluxNetworkServer extends FluxNetwork {
     }
 
     @Override
-    public boolean enqueueConnectionAddition(@Nonnull FluxDeviceEntity device) {
+    public boolean enqueueConnectionAddition(@Nonnull TileFluxDevice device) {
         if (device.getDeviceType().isController() && getLogicalEntities(CONTROLLER).size() > 0) {
             return false;
         }
@@ -204,7 +204,7 @@ public class FluxNetworkServer extends FluxNetwork {
     }
 
     @Override
-    public void enqueueConnectionRemoval(@Nonnull FluxDeviceEntity device, boolean chunkUnload) {
+    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
         if (!mToRemove.contains(device) && getLogicalEntities(ANY).contains(device)) {
             mToRemove.offer(device);
             mToAdd.remove(device);

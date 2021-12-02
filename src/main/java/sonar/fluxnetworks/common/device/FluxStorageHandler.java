@@ -60,8 +60,8 @@ public abstract class FluxStorageHandler extends TransferHandler {
     }
 
     @Override
-    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
-        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
+        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
             super.writeCustomTag(tag, type); // read by PhantomFluxDevice
         }
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
@@ -70,7 +70,7 @@ public abstract class FluxStorageHandler extends TransferHandler {
     }
 
     @Override
-    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.TYPE_TILE_UPDATE) {
             super.readCustomTag(tag, type);
         }

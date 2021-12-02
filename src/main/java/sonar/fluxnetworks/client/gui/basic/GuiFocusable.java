@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.text.StringTextComponent;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
 import sonar.fluxnetworks.client.gui.popup.PopupCore;
 import sonar.fluxnetworks.register.RegistrySounds;

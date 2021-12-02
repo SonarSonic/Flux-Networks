@@ -26,11 +26,9 @@ public enum FluxTranslate {
     TAB_STATISTICS(true, "tab.statistics"),
     TAB_MEMBER(true, "tab.member"),
     TAB_SETTING(true, "tab.setting"),
-    TAB_CREATE(true, "tab.create"),
 
     NETWORK_NAME(true, "network.name"),
     NETWORK_FULL_NAME(true, "network.fullname"),
-    NETWORK_SECURITY(true, "network.security"),
     NETWORK_PASSWORD(true, "network.password"),
     NETWORK_ENERGY(true, "network.energy"),
     NETWORK_COLOR(true, "network.color"),
@@ -126,10 +124,6 @@ public enum FluxTranslate {
     BLOCKED(true, "access.blocked"),
     SUPER_ADMIN(true, "access.superadmin"),
 
-    ENCRYPTED(true, "security.encrypted"),
-    PUBLIC(true, "security.public"),
-    PRIVATE(true, "security.private"),
-
     JEI_CREATING_FLUX(true, "jei.creatingfluxrecipe"),
     JEI_LEFT_CLICK(true, "jei.leftclickhelp");
 
@@ -143,10 +137,22 @@ public enum FluxTranslate {
 
     public static final Component
             ACCESS_DENIED = new TranslatableComponent("gui.fluxnetworks.access_denied").withStyle(ERROR_STYLE),
-            ACCESS_OCCUPY = new TranslatableComponent("gui.fluxnetworks.access_occupy").withStyle(ERROR_STYLE);
+            ACCESS_OCCUPY = new TranslatableComponent("gui.fluxnetworks.denied_occupy").withStyle(ERROR_STYLE);
+
+    public static final String
+            TAB_CREATE = "gui.fluxnetworks.tab.create",
+            NETWORK_SECURITY = "gui.fluxnetworks.network.security",
+            ENCRYPTED = "gui.fluxnetworks.security.encrypted",
+            PUBLIC = "gui.fluxnetworks.security.public",
+            PRIVATE = "gui.fluxnetworks.security.private";
 
     @Nonnull
     public String t() {
+        return Language.getInstance().getOrDefault(key);
+    }
+
+    @Nonnull
+    public static String translate(String key) {
         return Language.getInstance().getOrDefault(key);
     }
 

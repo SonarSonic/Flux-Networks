@@ -12,7 +12,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -114,12 +114,12 @@ public class FluxColorHandler implements BlockColor, ItemColor {
         // called when renderer updated
         if (tintIndex == 1 && pos != null && world != null) {
             BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof FluxDeviceEntity) {
+            if (tile instanceof TileFluxDevice) {
                 /*TileFluxDevice t = (TileFluxDevice) tile;
                 if (t.getNetworkID() == -1) {
                     return NO_NETWORK_COLOR;
                 }*/
-                return ((FluxDeviceEntity) tile).mBlockTint;
+                return ((TileFluxDevice) tile).mBlockTint;
             }
             return EnumNetworkColor.BLUE.getRGB();
         }

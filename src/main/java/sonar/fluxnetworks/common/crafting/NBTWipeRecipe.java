@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.recipe;
+package sonar.fluxnetworks.common.crafting;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;

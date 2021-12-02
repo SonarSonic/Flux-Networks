@@ -57,6 +57,8 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             args '--mod', 'fluxnetworks', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
                 fluxnetworks {
@@ -142,6 +144,9 @@ dependencies {
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")*/
 
     implementation fg.deobf("curse.maven:the-one-probe-245211:3430022")
+
+    // for testing
+    runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3527063")
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")

@@ -32,9 +32,9 @@ public interface IFluxDevice {
     @Nonnull
     UUID getOwnerUUID();
 
-    void writeCustomTag(@Nonnull CompoundTag tag, int type);
+    void writeCustomTag(@Nonnull CompoundTag tag, byte type);
 
-    void readCustomTag(@Nonnull CompoundTag tag, int type);
+    void readCustomTag(@Nonnull CompoundTag tag, byte type);
 
     //boolean canPlayerAccess(Player player);
 

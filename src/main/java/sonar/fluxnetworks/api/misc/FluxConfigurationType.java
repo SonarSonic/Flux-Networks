@@ -2,7 +2,7 @@ package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundTag;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 
@@ -19,7 +19,7 @@ public enum FluxConfigurationType {
         this.key = key;
     }
 
-    public void copy(CompoundTag nbt, @Nonnull FluxDeviceEntity tile) {
+    public void copy(CompoundTag nbt, @Nonnull TileFluxDevice tile) {
         switch (this) {
             case NETWORK:
                 nbt.putInt(key, tile.getNetwork().getNetworkID());
@@ -39,7 +39,7 @@ public enum FluxConfigurationType {
         }
     }
 
-    public void paste(@Nonnull CompoundTag nbt, @Nonnull FluxDeviceEntity tile) {
+    public void paste(@Nonnull CompoundTag nbt, @Nonnull TileFluxDevice tile) {
         if (!nbt.contains(key)) {
             return;
         }

@@ -26,40 +26,40 @@ public class RegistryBlocks {
     public static FluxPlugBlock FLUX_PLUG;
 
     @ObjectHolder("flux_plug")
-    public static BlockEntityType<FluxPlugEntity> FLUX_PLUG_ENTITY;
+    public static BlockEntityType<TileFluxPlug> FLUX_PLUG_ENTITY;
 
 
     @ObjectHolder("flux_point")
     public static FluxPointBlock FLUX_POINT;
 
     @ObjectHolder("flux_point")
-    public static BlockEntityType<FluxPointEntity> FLUX_POINT_ENTITY;
+    public static BlockEntityType<TileFluxPoint> FLUX_POINT_ENTITY;
 
 
     @ObjectHolder("flux_controller")
     public static FluxControllerBlock FLUX_CONTROLLER;
 
     @ObjectHolder("flux_controller")
-    public static BlockEntityType<FluxControllerEntity> FLUX_CONTROLLER_ENTITY;
+    public static BlockEntityType<TileFluxController> FLUX_CONTROLLER_ENTITY;
 
 
     @ObjectHolder("basic_flux_storage")
     public static FluxStorageBlock BASIC_FLUX_STORAGE;
 
     @ObjectHolder("basic_flux_storage")
-    public static BlockEntityType<FluxStorageEntity.Basic> BASIC_FLUX_STORAGE_ENTITY;
+    public static BlockEntityType<TileFluxStorage.Basic> BASIC_FLUX_STORAGE_ENTITY;
 
 
     @ObjectHolder("herculean_flux_storage")
     public static FluxStorageBlock.Herculean HERCULEAN_FLUX_STORAGE;
 
     @ObjectHolder("herculean_flux_storage")
-    public static BlockEntityType<FluxStorageEntity.Herculean> HERCULEAN_FLUX_STORAGE_ENTITY;
+    public static BlockEntityType<TileFluxStorage.Herculean> HERCULEAN_FLUX_STORAGE_ENTITY;
 
 
     @ObjectHolder("gargantuan_flux_storage")
     public static FluxStorageBlock.Gargantuan GARGANTUAN_FLUX_STORAGE;
 
     @ObjectHolder("gargantuan_flux_storage")
-    public static BlockEntityType<FluxStorageEntity.Gargantuan> GARGANTUAN_FLUX_STORAGE_ENTITY;
+    public static BlockEntityType<TileFluxStorage.Gargantuan> GARGANTUAN_FLUX_STORAGE_ENTITY;
 }

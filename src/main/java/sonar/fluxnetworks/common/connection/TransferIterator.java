@@ -1,23 +1,23 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.List;
 
-public class TransferIterator implements Iterator<FluxDeviceEntity> {
+public class TransferIterator implements Iterator<TileFluxDevice> {
 
     private final boolean mPoint;
 
-    private Iterator<FluxDeviceEntity> mIterator;
-    private FluxDeviceEntity mNext;
+    private Iterator<TileFluxDevice> mIterator;
+    private TileFluxDevice mNext;
 
     public TransferIterator(boolean point) {
         mPoint = point;
     }
 
-    public void reset(@Nonnull List<FluxDeviceEntity> list) {
+    public void reset(@Nonnull List<TileFluxDevice> list) {
         mIterator = list.iterator();
         if (mIterator.hasNext()) {
             mNext = mIterator.next();
@@ -55,7 +55,7 @@ public class TransferIterator implements Iterator<FluxDeviceEntity> {
     }
 
     @Override
-    public FluxDeviceEntity next() {
+    public TileFluxDevice next() {
         return mNext;
     }
 }

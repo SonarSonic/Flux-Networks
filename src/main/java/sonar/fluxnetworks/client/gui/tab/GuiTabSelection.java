@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.api.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.FluxTranslate;

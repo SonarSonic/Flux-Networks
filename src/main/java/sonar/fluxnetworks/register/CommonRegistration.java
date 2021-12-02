@@ -37,9 +37,10 @@ import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.device.*;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
 import sonar.fluxnetworks.common.item.*;
-import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
-import sonar.fluxnetworks.common.recipe.FluxStorageRecipeSerializer;
-import sonar.fluxnetworks.common.recipe.NBTWipeRecipeSerializer;
+import sonar.fluxnetworks.common.crafting.FluxStorageRecipeSerializer;
+import sonar.fluxnetworks.common.crafting.NBTWipeRecipeSerializer;
+import sonar.fluxnetworks.data.loot.FluxLootTableProvider;
+import sonar.fluxnetworks.data.tags.FluxBlockTagsProvider;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
@@ -140,22 +141,22 @@ public class CommonRegistration {
     public static void registerBlockEntities(@Nonnull RegistryEvent.Register<BlockEntityType<?>> event) {
         IForgeRegistry<BlockEntityType<?>> registry = event.getRegistry();
 
-        registry.register(new BlockEntityType<>(FluxPlugEntity::new,
+        registry.register(new BlockEntityType<>(TileFluxPlug::new,
                 Set.of(RegistryBlocks.FLUX_PLUG), null)
                 .setRegistryName("flux_plug"));
-        registry.register(new BlockEntityType<>(FluxPointEntity::new,
+        registry.register(new BlockEntityType<>(TileFluxPoint::new,
                 Set.of(RegistryBlocks.FLUX_POINT), null)
                 .setRegistryName("flux_point"));
-        registry.register(new BlockEntityType<>(FluxControllerEntity::new,
+        registry.register(new BlockEntityType<>(TileFluxController::new,
                 Set.of(RegistryBlocks.FLUX_CONTROLLER), null)
                 .setRegistryName("flux_controller"));
-        registry.register(new BlockEntityType<>(FluxStorageEntity.Basic::new,
+        registry.register(new BlockEntityType<>(TileFluxStorage.Basic::new,
                 Set.of(RegistryBlocks.BASIC_FLUX_STORAGE), null)
                 .setRegistryName("basic_flux_storage"));
-        registry.register(new BlockEntityType<>(FluxStorageEntity.Herculean::new,
+        registry.register(new BlockEntityType<>(TileFluxStorage.Herculean::new,
                 Set.of(RegistryBlocks.HERCULEAN_FLUX_STORAGE), null)
                 .setRegistryName("herculean_flux_storage"));
-        registry.register(new BlockEntityType<>(FluxStorageEntity.Gargantuan::new,
+        registry.register(new BlockEntityType<>(TileFluxStorage.Gargantuan::new,
                 Set.of(RegistryBlocks.GARGANTUAN_FLUX_STORAGE), null)
                 .setRegistryName("gargantuan_flux_storage"));
     }
@@ -194,13 +195,13 @@ public class CommonRegistration {
         DataGenerator generator = event.getGenerator();
         if (event.includeServer()) {
             generator.addProvider(new FluxLootTableProvider(generator));
+            generator.addProvider(new FluxBlockTagsProvider(generator, event.getExistingFileHelper()));
         }
-        // language provider?
     }
 
     @SubscribeEvent
     public static void openMenu(@Nonnull OpenMenuEvent event) {
-        if (event.getMenu() instanceof FluxDeviceMenu menu) {
+        if (event.getMenu() instanceof FluxDeviceMenu menu && menu.mDevice != null) {
             event.setCallback(new FluxDeviceUI(menu.mDevice));
         }
     }

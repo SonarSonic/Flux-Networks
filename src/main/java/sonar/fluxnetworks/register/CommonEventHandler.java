@@ -11,10 +11,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -109,10 +109,10 @@ public class CommonEventHandler {
                 entity.setNoPickUpDelay();
                 world.addFreshEntity(entity);
                 if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 3)) {
-                    world.setBlock(pos.below(), Blocks.COBBLESTONE.defaultBlockState(), Constants.BlockFlags.DEFAULT);
+                    world.setBlock(pos.below(), Blocks.COBBLESTONE.defaultBlockState(), Block.UPDATE_ALL);
                     world.playSound(null, pos, SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 } else {
-                    world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), Constants.BlockFlags.DEFAULT);
+                    world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), Block.UPDATE_ALL);
                     world.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
                 //FIXME

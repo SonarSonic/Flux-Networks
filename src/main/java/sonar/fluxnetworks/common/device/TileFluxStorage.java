@@ -13,17 +13,17 @@ import sonar.fluxnetworks.common.util.FluxGuiStack;
 
 import javax.annotation.Nonnull;
 
-public abstract class FluxStorageEntity extends FluxDeviceEntity implements IFluxStorage {
+public abstract class TileFluxStorage extends TileFluxDevice implements IFluxStorage {
 
     private final FluxStorageHandler mHandler;
 
-    protected FluxStorageEntity(@Nonnull BlockEntityType<?> type, @Nonnull BlockPos pos, @Nonnull BlockState state,
-                                @Nonnull FluxStorageHandler handler) {
+    protected TileFluxStorage(@Nonnull BlockEntityType<?> type, @Nonnull BlockPos pos, @Nonnull BlockState state,
+                              @Nonnull FluxStorageHandler handler) {
         super(type, pos, state);
         mHandler = handler;
     }
 
-    public static class Basic extends FluxStorageEntity {
+    public static class Basic extends TileFluxStorage {
 
         public Basic(@Nonnull BlockPos pos, @Nonnull BlockState state) {
             super(RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY, pos, state, new FluxStorageHandler.Basic());
@@ -36,7 +36,7 @@ public abstract class FluxStorageEntity extends FluxDeviceEntity implements IFlu
         }
     }
 
-    public static class Herculean extends FluxStorageEntity {
+    public static class Herculean extends TileFluxStorage {
 
         public Herculean(@Nonnull BlockPos pos, @Nonnull BlockState state) {
             super(RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY, pos, state, new FluxStorageHandler.Herculean());
@@ -49,7 +49,7 @@ public abstract class FluxStorageEntity extends FluxDeviceEntity implements IFlu
         }
     }
 
-    public static class Gargantuan extends FluxStorageEntity {
+    public static class Gargantuan extends TileFluxStorage {
 
         public Gargantuan(@Nonnull BlockPos pos, @Nonnull BlockState state) {
             super(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY, pos, state, new FluxStorageHandler.Gargantuan());

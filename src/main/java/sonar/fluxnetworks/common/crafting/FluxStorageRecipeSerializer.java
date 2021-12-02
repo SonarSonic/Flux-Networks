@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.recipe;
+package sonar.fluxnetworks.common.crafting;
 
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.loot;
+package sonar.fluxnetworks.data.loot;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.core.BlockPos;
@@ -18,7 +18,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;
@@ -54,8 +54,8 @@ public class FluxBlockLoot extends BlockLoot {
     }
 
     /**
-     * Pick out needed NBT from {@link FluxDeviceEntity#save(CompoundTag)}
-     * Convert them to be readable by {@link FluxDeviceBlock#setPlacedBy(Level, BlockPos, BlockState, LivingEntity,
+     * Sift out needed NBT from {@link TileFluxDevice#save(CompoundTag)}, and
+     * convert them to be readable by {@link FluxDeviceBlock#setPlacedBy(Level, BlockPos, BlockState, LivingEntity,
      * ItemStack)}
      *
      * @param block flux device block
@@ -74,10 +74,11 @@ public class FluxBlockLoot extends BlockLoot {
         copyNbt.copy(FluxConstants.LIMIT, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.LIMIT);
         copyNbt.copy(FluxConstants.SURGE_MODE, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.SURGE_MODE);
         copyNbt.copy(FluxConstants.DISABLE_LIMIT, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.DISABLE_LIMIT);
-        if (block instanceof FluxStorageBlock)
+        if (block instanceof FluxStorageBlock) {
             copyNbt.copy(FluxConstants.ENERGY, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.ENERGY);
-        else
+        } else {
             copyNbt.copy(FluxConstants.BUFFER, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.BUFFER);
+        }
         return LootTable.lootTable().withPool(applyExplosionCondition(block,
                 LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))

@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "fluxnetworks:flux_block",
+    "fluxnetworks:flux_plug",
+    "fluxnetworks:flux_point",
+    "fluxnetworks:flux_controller",
+    "fluxnetworks:basic_flux_storage",
+    "fluxnetworks:herculean_flux_storage",
+    "fluxnetworks:gargantuan_flux_storage"
+  ]
+}

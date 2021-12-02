@@ -5,7 +5,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.FluxClientCache;

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.glfw.GLFW;
-import sonar.fluxnetworks.api.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.SecurityLevel;

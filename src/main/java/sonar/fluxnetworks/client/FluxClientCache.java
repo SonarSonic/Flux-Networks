@@ -64,7 +64,7 @@ public class FluxClientCache {
             for (CompoundTag tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
                 network.getConnectionByPos(globalPos).ifPresent(c -> c.readCustomTag(tag,
-                        FluxConstants.TYPE_CONNECTION_UPDATE));
+                        FluxConstants.TYPE_PHANTOM_UPDATE));
             }
         }
     }

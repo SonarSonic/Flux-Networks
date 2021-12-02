@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.entity.player.PlayerEntity;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.api.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxConfiguratorHome;

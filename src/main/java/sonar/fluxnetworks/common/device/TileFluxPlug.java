@@ -18,13 +18,13 @@ import sonar.fluxnetworks.register.RegistryBlocks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FluxPlugEntity extends FluxConnectorEntity implements IFluxPlug {
+public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
 
     private final FluxPlugHandler mHandler = new FluxPlugHandler();
 
     private final LazyOptional<?>[] mEnergyCaps = new LazyOptional[6];
 
-    public FluxPlugEntity(@Nonnull BlockPos pos, @Nonnull BlockState state) {
+    public TileFluxPlug(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(RegistryBlocks.FLUX_PLUG_ENTITY, pos, state);
     }
 

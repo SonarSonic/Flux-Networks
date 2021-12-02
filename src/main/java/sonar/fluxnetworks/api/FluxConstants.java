@@ -1,31 +1,48 @@
 package sonar.fluxnetworks.api;
 
 /**
- * Revision: 6.0.0
+ * Revision: 7.0.0
  */
-public class FluxConstants {
+public final class FluxConstants {
 
     public static final int INVALID_NETWORK_ID = -1;
     public static final int INVALID_NETWORK_COLOR = 0xb2b2b2;
 
-    // NBT access type, store data on server disk
-    public static final int TYPE_SAVE_ALL = 1;
+    /**
+     * NBT access type, save data to disk (R/W server only).
+     */
+    public static final byte TYPE_SAVE_ALL = 1;
 
-    // NBT access type, tile update or read stack
-    public static final int TYPE_TILE_UPDATE = 11;
-    public static final int TYPE_TILE_DROP = 15;
+    /**
+     * NBT access type, tile update or read stack.
+     * <ul>
+     * <li>UPDATE: S->C (Write - server, Read - client)</li>
+     * <li>DROP: Write - server, Read - client/server</li>
+     * </ul>
+     */
+    public static final byte
+            TYPE_TILE_UPDATE = 11,
+            TYPE_TILE_DROP = 15;
 
-    // NBT access type, update phantom flux device
-    public static final int TYPE_CONNECTION_UPDATE = 20;
+    /**
+     * NBT access type, update phantom flux device.
+     * S->C (Write - server, read - client).
+     */
+    public static final byte TYPE_PHANTOM_UPDATE = 20;
 
-    // NBT access type, network data-sync or operation
-    public static final int TYPE_NET_BASIC = 21;
-    public static final int TYPE_NET_MEMBERS = 22;
-    public static final int TYPE_NET_CONNECTIONS = 23;
-    public static final int TYPE_NET_STATISTICS = 24;
-    public static final int TYPE_NET_DELETE = 29;
+    /**
+     * NBT access type, network data-sync or operation.
+     * Write - server, Read - client/server.
+     */
+    public static final byte
+            TYPE_NET_BASIC = 21,
+            TYPE_NET_MEMBERS = 22,
+            TYPE_NET_CONNECTIONS = 23,
+            TYPE_NET_STATISTICS = 24,
+            TYPE_NET_DELETE = 29;
 
     // Network connections editing flags
+    //TODO remove, using NBT instead
     public static final int FLAG_EDIT_NAME = 1;
     public static final int FLAG_EDIT_PRIORITY = 1 << 1;
     public static final int FLAG_EDIT_LIMIT = 1 << 2;
@@ -52,7 +69,7 @@ public class FluxConstants {
     public static final byte S2C_GUI_SYNC = -1;
     public static final byte S2C_STORAGE_ENERGY = -2;
 
-    // NBT subtag key
+    // NBT sub-tag key
     public static final String TAG_FLUX_DATA = "FluxData";
     public static final String TAG_FLUX_CONFIG = "FluxConfig";
 
@@ -78,4 +95,7 @@ public class FluxConstants {
     public static final String BUFFER = "buffer";
     public static final String ENERGY = "energy"; // equals to buffer, but with different display text
     public static final String CHANGE = "change";
+
+    private FluxConstants() {
+    }
 }

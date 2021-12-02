@@ -160,10 +160,10 @@ public abstract class TransferHandler extends TransferNode {
     }
 
     /**
-     * @return the user-set priority without any gain
+     * @return the user-set limit without any bypass
      */
-    public int getRawLimit() {
-        return mPriority;
+    public long getRawLimit() {
+        return mLimit;
     }
 
     /**
@@ -203,17 +203,17 @@ public abstract class TransferHandler extends TransferNode {
         }
     }
 
-    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
             tag.putLong(FluxConstants.BUFFER, mBuffer);
         }
-        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
             tag.putLong(FluxConstants.BUFFER, mBuffer);
             tag.putLong(FluxConstants.CHANGE, mChange);
         }
     }
 
-    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
             mBuffer = tag.getLong(FluxConstants.BUFFER);
         }
@@ -237,9 +237,13 @@ public abstract class TransferHandler extends TransferNode {
     }
 
     public void readPacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.S2C_GUI_SYNC) {
-            mChange = buf.readLong();
-            mBuffer = buf.readLong();
+        switch (id) {
+            case FluxConstants.C2S_PRIORITY -> setPriority(buf.readVarInt());
+            case FluxConstants.C2S_LIMIT -> setLimit(buf.readVarLong());
+            case FluxConstants.S2C_GUI_SYNC -> {
+                mChange = buf.readLong();
+                mBuffer = buf.readLong();
+            }
         }
     }
 }

@@ -32,24 +32,26 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 
+/**
+ * Represents a network device entity (on server) and a block entity.
+ */
 @SuppressWarnings("ConstantConditions")
 @ParametersAreNonnullByDefault
-public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevice, MenuConstructor {
+public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice, MenuConstructor {
 
-    private static final BlockEntityTicker<? extends FluxDeviceEntity> sTickerServer =
+    private static final BlockEntityTicker<? extends TileFluxDevice> sTickerServer =
             (level, pos, state, entity) -> entity.onServerTick();
 
-    static final int CONNECTION_MASK = 0x3F;
-    static final int FLAG_FIRST_LOADED = 0x40; // server
-    static final int FLAG_SETTING_CHANGED = 0x80; // server
-    static final int FLAG_FORCED_LOADING = 0x100; // client and server
-    static final int FLAG_ENERGY_CHANGED = 0x200; // server
+    static final int CONNECTION_MASK = 0x0000003F; // server
+    static final int FLAG_FIRST_LOADED = 0x00000040; // server
+    static final int FLAG_SETTING_CHANGED = 0x00000080; // server
+    static final int FLAG_FORCED_LOADING = 0x00000100; // client and server
+    static final int FLAG_ENERGY_CHANGED = 0x00000200; // server
 
     // the server player who is using this device
     @Nullable
-    private Player mUsingPlayer;
+    private Player mPlayerUsing;
 
-    //TODO keep empty when created and client can use translated name as default, waiting for new UI framework
     private String mCustomName = "";
     private UUID mPlayerUUID = Util.NIL_UUID;
 
@@ -70,10 +72,11 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
     @Nullable
     private GlobalPos mGlobalPos;
 
+    // server only
     @Nonnull
     protected FluxNetwork mNetwork = FluxNetworkInvalid.INSTANCE;
 
-    protected FluxDeviceEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    protected TileFluxDevice(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
@@ -108,19 +111,18 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
 
     // server tick
     protected void onServerTick() {
-        if (mUsingPlayer != null && (mFlags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
+        if (mPlayerUsing != null && (mFlags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
             //S2CNetMsg.tileEntity(this, FluxConstants.S2C_GUI_SYNC).sendToPlayers(mUsingPlayer);
             mFlags &= ~FLAG_SETTING_CHANGED;
         }
-        if ((mFlags & FLAG_FIRST_LOADED) == 0) {
-            onFirstLoad();
-            mFlags |= FLAG_FIRST_LOADED;
-        }
     }
 
-    // first load called from server tick
-    protected void onFirstLoad() {
-        connect(FluxNetworkManager.getNetwork(mNetworkID));
+    @Override
+    public void onLoad() {
+        if (!level.isClientSide) {
+            connect(FluxNetworkManager.getNetwork(mNetworkID));
+        }
+        mFlags |= FLAG_FIRST_LOADED;
     }
 
     /**
@@ -129,22 +131,27 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
      * @param player the server player
      */
     public void interact(Player player) {
-        if (mUsingPlayer != null) {
+        if (mPlayerUsing != null) {
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
-            MuiForgeBridge.openMenu(player, this, worldPosition);
+            MuiForgeBridge.openMenu(player, this, buf -> {
+                buf.writeBlockPos(worldPosition);
+                CompoundTag tag = new CompoundTag();
+                writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+                buf.writeNbt(tag);
+            });
         } else {
             player.displayClientMessage(FluxTranslate.ACCESS_DENIED, true);
         }
     }
 
-    @Nullable
+    @Nonnull
     public final AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
         return new FluxDeviceMenu(containerId, inventory, this);
     }
 
     /**
-     * Connect this device to a flux network.
+     * Connect this device to a flux network. Server only.
      *
      * @param network the server network to connect, can be invalid
      */
@@ -175,16 +182,17 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
         return getTransferHandler();
     }
 
+    // for internal-use
     @Nonnull
-    abstract TransferHandler getTransferHandler();
+    protected abstract TransferHandler getTransferHandler();
 
     @Nonnull
     @Override
     public final ClientboundBlockEntityDataPacket getUpdatePacket() {
         // Server side, write block update data
-        CompoundTag nbt = new CompoundTag();
-        writeCustomTag(nbt, FluxConstants.TYPE_TILE_UPDATE);
-        return new ClientboundBlockEntityDataPacket(worldPosition, -1, nbt);
+        CompoundTag tag = new CompoundTag();
+        writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+        return new ClientboundBlockEntityDataPacket(worldPosition, -1, tag);
     }
 
     @Override
@@ -193,6 +201,7 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
         readCustomTag(packet.getTag(), FluxConstants.TYPE_TILE_UPDATE);
         // update chunk render whether state changed or not
         //world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), -1);
+        //TODO review model tint update?
     }
 
     @Nonnull
@@ -232,14 +241,38 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
     }
 
     @Override
-    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
-        if (type <= FluxConstants.TYPE_CONNECTION_UPDATE) {
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
+        // the two most basic data, regardless of type
+        tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
+        tag.putString(FluxConstants.CUSTOM_NAME, mCustomName);
+
+        switch (type) {
+            case FluxConstants.TYPE_SAVE_ALL -> {
+                tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+            }
+            case FluxConstants.TYPE_TILE_UPDATE -> {
+                tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
+                tag.putInt(FluxConstants.FLAGS, mFlags);
+            }
+            case FluxConstants.TYPE_TILE_DROP -> {
+                tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+            }
+            case FluxConstants.TYPE_PHANTOM_UPDATE -> {
+                FluxUtils.writeGlobalPos(tag, getGlobalPos());
+                tag.putByte(FluxConstants.DEVICE_TYPE, (byte) getDeviceType().ordinal());
+                tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+                tag.putBoolean(FluxConstants.FORCED_LOADING, isForcedLoading());
+                tag.putBoolean(FluxConstants.CHUNK_LOADED, isChunkLoaded());
+                getDisplayStack().save(tag);
+            }
+        }
+        if (type <= FluxConstants.TYPE_PHANTOM_UPDATE) {
             // TYPE_SAVE_ALL, TYPE_TILE_UPDATE, TYPE_TILE_DROP, TYPE_CONNECTION_UPDATE
             tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
             tag.putString(FluxConstants.CUSTOM_NAME, mCustomName);
-            /*tag.putInt(FluxConstants.PRIORITY, priority);
-            tag.putLong(FluxConstants.LIMIT, limit);
-            tag.putBoolean(FluxConstants.SURGE_MODE, surgeMode);
+            tag.putInt(FluxConstants.PRIORITY, getTransferHandler().getRawPriority());
+            tag.putLong(FluxConstants.LIMIT, getTransferHandler().getRawLimit());
+            /*tag.putBoolean(FluxConstants.SURGE_MODE, surgeMode);
             tag.putBoolean(FluxConstants.DISABLE_LIMIT, disableLimit);*/
         }
         if (type <= FluxConstants.TYPE_TILE_UPDATE) {
@@ -250,25 +283,26 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
             tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
             tag.putInt(FluxConstants.FLAGS, mFlags);
         }
-        if (type == FluxConstants.TYPE_CONNECTION_UPDATE) {
+        if (type == FluxConstants.TYPE_PHANTOM_UPDATE) {
             FluxUtils.writeGlobalPos(tag, getGlobalPos());
             tag.putByte(FluxConstants.DEVICE_TYPE, (byte) getDeviceType().ordinal());
             tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
             tag.putBoolean(FluxConstants.FORCED_LOADING, isForcedLoading());
             tag.putBoolean(FluxConstants.CHUNK_LOADED, isChunkLoaded());
+            // note the key conflict when writing into the root tag
             getDisplayStack().save(tag);
         }
         getTransferHandler().writeCustomTag(tag, type);
     }
 
     @Override
-    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type <= FluxConstants.TYPE_TILE_DROP) {
             mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
             mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
-            /*setPriority(tag.getInt(FluxConstants.PRIORITY));
-            setTransferLimit(tag.getLong(FluxConstants.LIMIT));
-            surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
+            getTransferHandler().setPriority(tag.getInt(FluxConstants.PRIORITY));
+            getTransferHandler().setLimit(tag.getLong(FluxConstants.LIMIT));
+            /*surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
             disableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);*/
         }
         if (type <= FluxConstants.TYPE_TILE_UPDATE) {
@@ -286,7 +320,14 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
         getTransferHandler().readCustomTag(tag, type);
     }
 
+    /**
+     * Server-only.
+     *
+     * @param player the player to access this
+     * @return should access
+     */
     public boolean canPlayerAccess(@Nonnull Player player) {
+        // devices without a network connection are not protected (e.g. abandoned).
         if (mNetwork.isValid()) {
             if (player.getUUID().equals(mPlayerUUID)) {
                 return true;
@@ -299,10 +340,12 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
     //// PACKETS\\\\
 
     /**
-     * Sends a block update
+     * Sends a block update. Including a {@link #getUpdatePacket()} and {@link Level#setBlock}
+     * with Flags 0b10011 on the client. Server only.
      */
     public void sendBlockUpdate() {
         assert level != null && !level.isClientSide;
+        // last param has no usage
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
     }
 
@@ -332,7 +375,6 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
     public void writePacket(FriendlyByteBuf buf, byte id) {
         getTransferHandler().writePacket(buf, id);
         switch (id) {
-            case FluxConstants.C2S_CUSTOM_NAME -> buf.writeUtf(mCustomName, 256);
             case FluxConstants.C2S_CHUNK_LOADING -> buf.writeBoolean(isForcedLoading());
             case FluxConstants.S2C_GUI_SYNC -> {
                 buf.writeUtf(mCustomName, 256);
@@ -343,28 +385,24 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
         }
     }
 
-    public void readPacket(FriendlyByteBuf buffer, byte id) {
-        getTransferHandler().readPacket(buffer, id);
+    public void readPacket(FriendlyByteBuf buf, Player player, byte id) {
+        if (id > 0 && mPlayerUsing != player) {
+            return;
+        }
+        getTransferHandler().readPacket(buf, id);
         switch (id) {
             case FluxConstants.C2S_CUSTOM_NAME:
-                mCustomName = buffer.readUtf(256);
+                mCustomName = buf.readUtf(96);
                 break;
-            /*case FluxConstants.C2S_PRIORITY:
-                setPriority(buffer.readInt());
-                mNetwork.markSortConnections();
-                break;
-            case FluxConstants.C2S_LIMIT:
-                setTransferLimit(buffer.readLong());
-                break;
-            case FluxConstants.C2S_SURGE_MODE:
-                surgeMode = buffer.readBoolean();
+            /*case FluxConstants.C2S_SURGE_MODE:
+                surgeMode = buf.readBoolean();
                 mNetwork.markSortConnections();
                 break;
             case FluxConstants.C2S_DISABLE_LIMIT:
-                disableLimit = buffer.readBoolean();
+                disableLimit = buf.readBoolean();
                 break;
             case FluxConstants.C2S_CHUNK_LOADING:
-                boolean toLoad = buffer.readBoolean();
+                boolean toLoad = buf.readBoolean();
                 if (FluxConfig.enableChunkLoading && !getDeviceType().isStorage()) {
                     if (toLoad && !isForcedLoading()) {
                         FluxChunkManager.addChunkLoader(this);
@@ -377,18 +415,23 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
                 }
                 break;
             case FluxConstants.S2C_GUI_SYNC:
-                if (buffer.readBoolean()) {
-                    mCustomName = buffer.readUtf(256);
-                    priority = buffer.readInt();
-                    limit = buffer.readLong();
-                    mFlags = (mFlags & 0x3f) | buffer.readByte() << 6;
+                if (buf.readBoolean()) {
+                    mCustomName = buf.readUtf(256);
+                    priority = buf.readInt();
+                    limit = buf.readLong();
+                    mFlags = (mFlags & 0x3f) | buf.readByte() << 6;
                 }
                 break;*/
         }
         // C2S
         if (id > 0) {
             mFlags |= FLAG_SETTING_CHANGED;
+            markUnsaved();
         }
+    }
+
+    public void markUnsaved() {
+        level.getChunkAt(worldPosition).markUnsaved();
     }
 
     /*@Override
@@ -417,10 +460,8 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
      * @param player the player
      */
     public void onPlayerOpen(Player player) {
-        mUsingPlayer = player;
-        if (!level.isClientSide) {
-            sendBlockUpdate();
-        }
+        assert mPlayerUsing == null : "Illegally Accessing";
+        mPlayerUsing = player;
     }
 
     /**
@@ -429,7 +470,8 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
      * @param player the player
      */
     public void onPlayerClose(Player player) {
-        mUsingPlayer = null;
+        assert level.isClientSide || mPlayerUsing == player : "Illegally Accessing";
+        mPlayerUsing = null;
     }
 
     @Override
@@ -515,6 +557,15 @@ public abstract class FluxDeviceEntity extends BlockEntity implements IFluxDevic
     @Override
     public final boolean getSurgeMode() {
         return getTransferHandler().getSurgeMode();
+    }
+
+    @Override
+    public String toString() {
+        return "FluxDeviceEntity{" +
+                "customName='" + mCustomName + '\'' +
+                ", networkID=" + mNetworkID +
+                ", globalPos=" + mGlobalPos +
+                '}';
     }
 
     /* TODO - FIX OPEN COMPUTERS INTEGRATION

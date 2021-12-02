@@ -11,9 +11,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.FluxTranslate;
+import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.EnergyType;
-import sonar.fluxnetworks.api.device.FluxDeviceType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,20 +42,20 @@ public class FluxUtils {
     }
 
     /**
-     * Returns the direction in which the target is adjacent to the center.
+     * Returns the direction in which the target is adjacent to the base.
      *
-     * @param center the center pos
+     * @param base   the base pos
      * @param target the target pos
      * @return the direction, or null if not adjacent
      */
     @Nullable
-    public static Direction getBlockDirection(@Nonnull BlockPos center, @Nonnull BlockPos target) {
-        if (center.equals(target)) {
+    public static Direction getBlockDirection(@Nonnull BlockPos base, @Nonnull BlockPos target) {
+        if (base.equals(target)) {
             return null;
         }
-        BlockPos.MutableBlockPos test = new BlockPos.MutableBlockPos();
-        for (Direction direction : DIRECTIONS) {
-            test.set(center);
+        var test = new BlockPos.MutableBlockPos();
+        for (var direction : DIRECTIONS) {
+            test.set(base);
             if (test.move(direction).equals(target)) {
                 return direction;
             }

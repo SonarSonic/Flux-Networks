@@ -18,8 +18,8 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.common.util.FluxShapes;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.RegistryBlocks;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
-import sonar.fluxnetworks.common.device.FluxPointEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.device.TileFluxPoint;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,7 +55,7 @@ public class FluxPointBlock extends FluxConnectorBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new FluxPointEntity(pos, state);
+        return new TileFluxPoint(pos, state);
     }
 
     @Nullable
@@ -63,7 +63,7 @@ public class FluxPointBlock extends FluxConnectorBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                   BlockEntityType<T> type) {
         if (type == RegistryBlocks.FLUX_POINT_ENTITY) {
-            return FluxDeviceEntity.getTicker(level);
+            return TileFluxDevice.getTicker(level);
         }
         return null;
     }

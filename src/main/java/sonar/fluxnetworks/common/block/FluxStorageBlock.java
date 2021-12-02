@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
-import sonar.fluxnetworks.common.device.FluxStorageEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.device.TileFluxStorage;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nullable;
@@ -52,7 +52,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Nullable
         @Override
         public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-            return new FluxStorageEntity.Basic(pos, state);
+            return new TileFluxStorage.Basic(pos, state);
         }
 
         @Nullable
@@ -60,7 +60,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
             if (type == RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY) {
-                return FluxDeviceEntity.getTicker(level);
+                return TileFluxDevice.getTicker(level);
             }
             return null;
         }
@@ -80,7 +80,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Nullable
         @Override
         public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-            return new FluxStorageEntity.Herculean(pos, state);
+            return new TileFluxStorage.Herculean(pos, state);
         }
 
         @Nullable
@@ -88,7 +88,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
             if (type == RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY) {
-                return FluxDeviceEntity.getTicker(level);
+                return TileFluxDevice.getTicker(level);
             }
             return null;
         }
@@ -108,7 +108,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Nullable
         @Override
         public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-            return new FluxStorageEntity.Gargantuan(pos, state);
+            return new TileFluxStorage.Gargantuan(pos, state);
         }
 
         @Nullable
@@ -116,7 +116,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
             if (type == RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY) {
-                return FluxDeviceEntity.getTicker(level);
+                return TileFluxDevice.getTicker(level);
             }
             return null;
         }

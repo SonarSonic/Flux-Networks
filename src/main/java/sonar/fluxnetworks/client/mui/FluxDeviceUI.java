@@ -9,8 +9,10 @@ import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.math.Rect;
 import icyllis.modernui.mcgui.CanvasForge;
 import icyllis.modernui.mcgui.ScreenCallback;
+import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.TextPaint;
 import icyllis.modernui.text.method.ArrowKeyMovementMethod;
+import icyllis.modernui.text.method.DigitsInputFilter;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.View;
 import icyllis.modernui.view.ViewConfiguration;
@@ -18,9 +20,14 @@ import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.FrameLayout;
 import icyllis.modernui.widget.LinearLayout;
 import icyllis.modernui.widget.TextView;
+import net.minecraft.locale.Language;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.device.TransferHandler;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 
@@ -28,11 +35,19 @@ public class FluxDeviceUI extends ScreenCallback {
 
     public static final int NETWORK_COLOR = 0xFF295E8A;
 
-    private final FluxDeviceEntity mDevice;
+    private final TileFluxDevice mDevice;
 
     private Image mButtonIcon;
 
-    public FluxDeviceUI(FluxDeviceEntity device) {
+    private TextView mCustomName;
+    private TextView mPriority;
+    private TextView mLimit;
+
+    private View[] mTabViews = new View[8];
+
+    private ViewGroup mTabContainer;
+
+    public FluxDeviceUI(@Nonnull TileFluxDevice device) {
         mDevice = device;
     }
 
@@ -43,10 +58,10 @@ public class FluxDeviceUI extends ScreenCallback {
         var content = new LinearLayout();
         content.setOrientation(LinearLayout.VERTICAL);
 
-        var navigation = new LinearLayout();
-        navigation.setOrientation(LinearLayout.HORIZONTAL);
-        navigation.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
-        navigation.setLayoutTransition(new LayoutTransition());
+        var navContainer = new LinearLayout();
+        navContainer.setOrientation(LinearLayout.HORIZONTAL);
+        navContainer.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
+        navContainer.setLayoutTransition(new LayoutTransition());
 
         if (mButtonIcon == null) {
             mButtonIcon = Image.create(ModernUI.ID, "gui/gui_icon.png");
@@ -54,44 +69,109 @@ public class FluxDeviceUI extends ScreenCallback {
 
         for (int i = 0; i < 8; i++) {
             var button = new NavigationButton(mButtonIcon, i * 32);
-            var params = new LinearLayout.LayoutParams(c.getViewSize(32), c.getViewSize(32));
+            var params = new LinearLayout.LayoutParams(c.view(32), c.view(32));
             button.setClickable(true);
             params.setMarginsRelative(i == 7 ? 26 : 2, 2, 2, 6);
             if (i == 0 || i == 7) {
-                navigation.addView(button, params);
+                navContainer.addView(button, params);
             } else {
                 int index = i;
-                content.postDelayed(() -> navigation.addView(button, index, params), i * 50);
+                content.postDelayed(() -> navContainer.addView(button, index, params), i * 50);
+            }
+            if (i == 7) {
+                button.setOnClickListener(__ -> {
+                    mTabContainer.removeAllViews();
+                    View tab = mTabViews[7];
+                    if (tab == null) {
+                        tab = new TabCreate().inflate();
+                        mTabViews[7] = tab;
+                    }
+                    mTabContainer.addView(tab);
+                });
+            } else if (i == 0) {
+                button.setOnClickListener(__ -> {
+                    mTabContainer.removeAllViews();
+                    View tab = mTabViews[0];
+                    mTabContainer.addView(tab);
+                });
             }
         }
 
-        content.addView(navigation,
+        content.addView(navContainer,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        var tabContainer = new FrameLayout();
+        tabContainer.setBackground(new TabBackground());
+        tabContainer.setLayoutTransition(new LayoutTransition());
+        mTabContainer = tabContainer;
+
+        var home = inflateHome();
+        mTabViews[0] = home;
+        tabContainer.addView(home);
+
+        int tabSize = c.view(340);
+        content.addView(tabContainer, new LinearLayout.LayoutParams(tabSize, tabSize));
+
+        setContentView(content, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+    }
+
+    private View inflateHome() {
+        final ViewConfiguration c = ViewConfiguration.get();
+        final Language lang = Language.getInstance();
 
         var tab = new LinearLayout();
         tab.setOrientation(LinearLayout.VERTICAL);
         tab.setLayoutTransition(new LayoutTransition());
-        tab.setBackground(new TabBackground());
 
         for (int i = 0; i < 3; i++) {
             var v = new TextView();
-            v.setText(switch (i) {
-                case 0:
-                    yield mDevice.getCustomName();
-                case 1:
-                    yield Integer.toString(mDevice.getRawPriority());
-                default:
-                    yield Long.toString(mDevice.getRawLimit());
-            }, TextView.BufferType.EDITABLE);
-            v.setHint(switch (i) {
-                case 0:
-                    yield mDevice.getBlockState().getBlock().getName().getString();
-                case 1:
-                    yield "Priority";
-                default:
-                    yield "Transfer Limit";
-            });
+            switch (i) {
+                case 0 -> {
+                    v.setText(mDevice.getCustomName(), TextView.BufferType.EDITABLE);
+                    v.setHint(lang.getOrDefault(mDevice.getBlockState().getBlock().getDescriptionId()));
+                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(24)});
+                    v.setOnFocusChangeListener((__, hasFocus) -> {
+                        if (!hasFocus) {
+                            // Do not check if it's changed on the client side,
+                            // in case of a packet is being sent to the client
+                            ClientMessages.sendDeviceEntity(mDevice, FluxConstants.C2S_CUSTOM_NAME,
+                                    mCustomName.getText().toString());
+                        }
+                    });
+                    mCustomName = v;
+                }
+                case 1 -> {
+                    v.setText(Integer.toString(mDevice.getRawPriority()), TextView.BufferType.EDITABLE);
+                    v.setHint("Priority");
+                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(5),
+                            DigitsInputFilter.getInstance(null, true, false)});
+                    v.setOnFocusChangeListener((__, hasFocus) -> {
+                        if (!hasFocus) {
+                            int priority = Mth.clamp(Integer.parseInt(mPriority.getText().toString()),
+                                    TransferHandler.PRI_USER_MIN, TransferHandler.PRI_USER_MAX);
+                            mPriority.setTextKeepState(Integer.toString(priority));
+                            ClientMessages.sendDeviceEntity(mDevice, FluxConstants.C2S_PRIORITY, priority);
+                        }
+                    });
+                    mPriority = v;
+                }
+                default -> {
+                    v.setText(Long.toString(mDevice.getRawLimit()), TextView.BufferType.EDITABLE);
+                    v.setHint("Transfer Limit");
+                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10),
+                            DigitsInputFilter.getInstance(null, false, false)});
+                    v.setOnFocusChangeListener((__, hasFocus) -> {
+                        if (!hasFocus) {
+                            long limit = Long.parseLong(mLimit.getText().toString());
+                            mLimit.setTextKeepState(Long.toString(limit));
+                            ClientMessages.sendDeviceEntity(mDevice, FluxConstants.C2S_LIMIT, limit);
+                        }
+                    });
+                    mLimit = v;
+                }
+            }
             v.setFocusableInTouchMode(true);
             v.setMovementMethod(ArrowKeyMovementMethod.getInstance());
             v.setSingleLine();
@@ -104,25 +184,22 @@ public class FluxDeviceUI extends ScreenCallback {
 
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(c.getViewSize(20), c.getViewSize(i == 0 ? 50 : 2), c.getViewSize(20),
-                    c.getViewSize(2));
+            params.setMargins(c.view(20), c.view(i == 0 ? 50 : 2), c.view(20), c.view(2));
 
-            content.postDelayed(() -> tab.addView(v, params), (i + 1) * 100);
+            tab.postDelayed(() -> tab.addView(v, params), (i + 1) * 100);
         }
 
         {
             var v = new ConnectorView(mButtonIcon);
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            params.setMargins(c.getViewSize(8), c.getViewSize(2), c.getViewSize(8), c.getViewSize(8));
-            content.postDelayed(() -> tab.addView(v, params), 400);
+            params.setMargins(c.view(8), c.view(2), c.view(8), c.view(8));
+            tab.postDelayed(() -> tab.addView(v, params), 400);
         }
 
-        int tabSize = c.getViewSize(340);
-        content.addView(tab, new LinearLayout.LayoutParams(tabSize, tabSize));
-
-        setContentView(content, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        tab.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        return tab;
     }
 
     private static class TabBackground extends Drawable {
@@ -131,9 +208,9 @@ public class FluxDeviceUI extends ScreenCallback {
         private final TextPaint mTextPaint;
 
         public TabBackground() {
-            mRadius = ViewConfiguration.get().getViewSize(16);
+            mRadius = ViewConfiguration.get().view(16);
             mTextPaint = new TextPaint();
-            mTextPaint.setFontSize(ViewConfiguration.get().getTextSize(16));
+            //mTextPaint.setFontSize(ViewConfiguration.get().text(16));
         }
 
         @Override
@@ -150,8 +227,8 @@ public class FluxDeviceUI extends ScreenCallback {
             paint.setColor(NETWORK_COLOR);
             canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
 
-            canvas.drawText("BloCamLimb's Network", 0, 20, b.exactCenterX(), b.top + mRadius * 1.8f,
-                    Gravity.CENTER_HORIZONTAL, mTextPaint);
+            /*canvas.drawText("BloCamLimb's Network", 0, 20, b.exactCenterX(), b.top + mRadius * 1.8f,
+                    Gravity.CENTER_HORIZONTAL, mTextPaint);*/
         }
     }
 
@@ -164,7 +241,7 @@ public class FluxDeviceUI extends ScreenCallback {
         public TextFieldStart(Image image, int srcLeft) {
             mImage = image;
             mSrcLeft = srcLeft;
-            mSize = ViewConfiguration.get().getViewSize(24);
+            mSize = ViewConfiguration.get().view(24);
         }
 
         @Override
@@ -192,12 +269,12 @@ public class FluxDeviceUI extends ScreenCallback {
         }
     }
 
-    private static class TextFieldBackground extends Drawable {
+    public static class TextFieldBackground extends Drawable {
 
         private final float mRadius;
 
         public TextFieldBackground() {
-            mRadius = ViewConfiguration.get().getViewSize(3);
+            mRadius = ViewConfiguration.get().view(3);
         }
 
         @Override
@@ -260,7 +337,7 @@ public class FluxDeviceUI extends ScreenCallback {
 
         public ConnectorView(Image image) {
             mImage = image;
-            mSize = ViewConfiguration.get().getViewSize(32);
+            mSize = ViewConfiguration.get().view(32);
             mRodAnimator = ObjectAnimator.ofFloat(this, new FloatProperty<>() {
                 @Override
                 public void setValue(@Nonnull ConnectorView target, float value) {
@@ -272,7 +349,7 @@ public class FluxDeviceUI extends ScreenCallback {
                 public Float get(@Nonnull ConnectorView target) {
                     return target.mRodLength;
                 }
-            }, 0, ViewConfiguration.get().getViewSize(32));
+            }, 0, ViewConfiguration.get().view(32));
             mRodAnimator.setInterpolator(TimeInterpolator.DECELERATE);
             mRodAnimator.setDuration(400);
             mRodAnimator.addListener(new Animator.AnimatorListener() {
@@ -295,13 +372,13 @@ public class FluxDeviceUI extends ScreenCallback {
             }, 0, 128);
             mRodAnimator.setInterpolator(TimeInterpolator.LINEAR);
             mBoxAnimator.setDuration(400);
-            mBoxPaint.setRGBA(64, 64, 64, 0);
         }
 
         @Override
         protected void onAttachedToWindow() {
             super.onAttachedToWindow();
             mRodAnimator.start();
+            mBoxPaint.setRGBA(64, 64, 64, 0);
         }
 
         @Override

@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.common.loot;
+package sonar.fluxnetworks.data.loot;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.data.DataGenerator;

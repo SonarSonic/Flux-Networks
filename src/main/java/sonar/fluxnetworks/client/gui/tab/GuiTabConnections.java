@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.GlobalPos;
 import net.minecraft.util.text.TextFormatting;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.FluxConstants;

@@ -1,11 +1,11 @@
 package sonar.fluxnetworks.common.connection;
 
-import sonar.fluxnetworks.common.device.FluxDeviceEntity;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 /**
  * A transfer node is associated with a logical entity in a network.
  *
- * @see FluxDeviceEntity#getTransferNode()
+ * @see TileFluxDevice#getTransferNode()
  */
 public abstract class TransferNode {
 
