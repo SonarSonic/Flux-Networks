@@ -22,6 +22,9 @@ import java.util.UUID;
  */
 public class PhantomFluxDevice implements IFluxDevice {
 
+    public static final int POWER_SURGE_MARKER = Integer.MAX_VALUE;
+    public static final long BYPASS_LIMIT_MARKER = -1;
+
     private int mNetworkID;
     private String mCustomName;
     private int mPriority;
@@ -48,8 +51,8 @@ public class PhantomFluxDevice implements IFluxDevice {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.mNetworkID = device.getNetworkID();
         t.mCustomName = device.getCustomName();
-        t.mPriority = device.getSurgeMode() ? Integer.MAX_VALUE : device.getRawPriority();
-        t.mLimit = device.getDisableLimit() ? -1 : device.getRawLimit();
+        t.mPriority = device.getSurgeMode() ? POWER_SURGE_MARKER : device.getRawPriority();
+        t.mLimit = device.getDisableLimit() ? BYPASS_LIMIT_MARKER : device.getRawLimit();
         t.mPlayerUUID = device.getOwnerUUID();
         t.mDeviceType = device.getDeviceType();
         t.mGlobalPos = device.getGlobalPos();

@@ -72,8 +72,6 @@ public class FluxBlockLoot extends BlockLoot {
         copyNbt.copy(FluxConstants.CUSTOM_NAME, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.CUSTOM_NAME);
         copyNbt.copy(FluxConstants.PRIORITY, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.PRIORITY);
         copyNbt.copy(FluxConstants.LIMIT, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.LIMIT);
-        copyNbt.copy(FluxConstants.SURGE_MODE, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.SURGE_MODE);
-        copyNbt.copy(FluxConstants.DISABLE_LIMIT, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.DISABLE_LIMIT);
         if (block instanceof FluxStorageBlock) {
             copyNbt.copy(FluxConstants.ENERGY, FluxConstants.TAG_FLUX_DATA + "." + FluxConstants.ENERGY);
         } else {

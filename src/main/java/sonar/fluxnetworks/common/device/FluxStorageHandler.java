@@ -61,28 +61,14 @@ public abstract class FluxStorageHandler extends TransferHandler {
 
     @Override
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
-            super.writeCustomTag(tag, type); // read by PhantomFluxDevice
-        }
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
-            tag.putLong(FluxConstants.ENERGY, mBuffer);
-        }
-    }
-
-    @Override
-    public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_TILE_UPDATE) {
-            super.readCustomTag(tag, type);
-        }
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
-            mBuffer = tag.getLong(FluxConstants.ENERGY);
-        }
+        super.writeCustomTag(tag, type);
+        tag.putLong(FluxConstants.ENERGY, mBuffer);
     }
 
     @Override
     public void writePacket(@Nonnull FriendlyByteBuf buffer, byte id) {
         if (id == FluxConstants.S2C_STORAGE_ENERGY) {
-            buffer.writeLong(this.mBuffer);
+            buffer.writeLong(mBuffer);
         } else {
             super.writePacket(buffer, id);
         }
@@ -91,7 +77,7 @@ public abstract class FluxStorageHandler extends TransferHandler {
     @Override
     public void readPacket(@Nonnull FriendlyByteBuf buffer, byte id) {
         if (id == FluxConstants.S2C_STORAGE_ENERGY) {
-            this.mBuffer = buffer.readLong();
+            mBuffer = buffer.readLong();
         } else {
             super.readPacket(buffer, id);
         }

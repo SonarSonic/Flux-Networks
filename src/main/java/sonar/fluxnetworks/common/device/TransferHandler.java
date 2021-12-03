@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.common.connection.PhantomFluxDevice;
 import sonar.fluxnetworks.common.connection.TransferNode;
 
 import javax.annotation.Nonnull;
@@ -105,7 +106,7 @@ public abstract class TransferHandler extends TransferNode {
     /**
      * @return the user-set priority without any gain
      */
-    public int getRawPriority() {
+    public int getUserPriority() {
         return mPriority;
     }
 
@@ -123,17 +124,17 @@ public abstract class TransferHandler extends TransferNode {
     /**
      * @return has surged
      */
-    public boolean getSurgeMode() {
+    public boolean hasPowerSurge() {
         return mSurge > 0;
     }
 
     /**
      * Set surge mode on this handler to get the highest priority in the network.
      *
-     * @param surge whether to surge
+     * @param enable whether to surge
      */
-    public void setSurgeMode(boolean surge) {
-        if (surge) {
+    public void setPowerSurge(boolean enable) {
+        if (enable) {
             mSurge = PRI_GAIN_MAX;
         } else {
             mSurge = 0;
@@ -160,10 +161,10 @@ public abstract class TransferHandler extends TransferNode {
     }
 
     /**
-     * @return the user-set limit without any bypass
+     * @return the user-set limit without any gain
      */
-    public long getRawLimit() {
-        return mLimit;
+    public long getUserLimit() {
+        return mLimit >= 0 ? mLimit : mLimit - Long.MIN_VALUE;
     }
 
     /**
@@ -184,17 +185,17 @@ public abstract class TransferHandler extends TransferNode {
      *
      * @return bypass limit
      */
-    public boolean getDisableLimit() {
+    public boolean canBypassLimit() {
         return mLimit < 0;
     }
 
     /**
      * Set whether currently set limit should be bypassed.
      *
-     * @param disable whether to bypass the limit
+     * @param enable whether to bypass the limit
      */
-    public void setDisableLimit(boolean disable) {
-        if (disable) {
+    public void setBypassLimit(boolean enable) {
+        if (enable) {
             if (mLimit >= 0) {
                 mLimit += Long.MIN_VALUE;
             }
@@ -204,46 +205,71 @@ public abstract class TransferHandler extends TransferNode {
     }
 
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
-            tag.putLong(FluxConstants.BUFFER, mBuffer);
-        }
-        if (type == FluxConstants.TYPE_TILE_UPDATE || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
-            tag.putLong(FluxConstants.BUFFER, mBuffer);
-            tag.putLong(FluxConstants.CHANGE, mChange);
+        switch (type) {
+            case FluxConstants.TYPE_SAVE_ALL, FluxConstants.TYPE_TILE_DROP -> {
+                tag.putInt(FluxConstants.PRIORITY, mPriority);
+                tag.putInt(FluxConstants.SURGE_MODE, mSurge);
+                tag.putLong(FluxConstants.LIMIT, mLimit);
+            }
+            case FluxConstants.TYPE_TILE_UPDATE -> {
+                tag.putLong(FluxConstants.CHANGE, mChange);
+                tag.putInt(FluxConstants.PRIORITY, mPriority);
+                tag.putInt(FluxConstants.SURGE_MODE, mSurge);
+                tag.putLong(FluxConstants.LIMIT, mLimit);
+            }
+            case FluxConstants.TYPE_PHANTOM_UPDATE -> {
+                tag.putLong(FluxConstants.CHANGE, mChange);
+                tag.putInt(FluxConstants.PRIORITY, hasPowerSurge() ? PhantomFluxDevice.POWER_SURGE_MARKER : mPriority);
+                tag.putLong(FluxConstants.LIMIT, canBypassLimit() ? PhantomFluxDevice.BYPASS_LIMIT_MARKER : mLimit);
+            }
         }
     }
 
     public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_TILE_DROP) {
-            mBuffer = tag.getLong(FluxConstants.BUFFER);
+        if (type == FluxConstants.TYPE_TILE_SETTING) {
+            if (tag.contains(FluxConstants.SURGE_MODE)) {
+                setPowerSurge(tag.getBoolean(FluxConstants.SURGE_MODE));
+            } else if (tag.contains(FluxConstants.PRIORITY)) {
+                setPriority(tag.getInt(FluxConstants.PRIORITY));
+            }
+            if (tag.contains(FluxConstants.DISABLE_LIMIT)) {
+                setBypassLimit(tag.getBoolean(FluxConstants.DISABLE_LIMIT));
+            } else if (tag.contains(FluxConstants.LIMIT)) {
+                setLimit(tag.getLong(FluxConstants.LIMIT));
+            }
+            return;
         }
-        if (type == FluxConstants.TYPE_TILE_UPDATE) {
+        if (tag.contains(FluxConstants.BUFFER)) {
             mBuffer = tag.getLong(FluxConstants.BUFFER);
-            mChange = tag.getLong(FluxConstants.CHANGE);
+        } else {
+            mBuffer = tag.getLong(FluxConstants.ENERGY);
+        }
+        switch (type) {
+            case FluxConstants.TYPE_SAVE_ALL, FluxConstants.TYPE_TILE_DROP -> {
+                mPriority = tag.getInt(FluxConstants.PRIORITY);
+                mSurge = tag.getInt(FluxConstants.SURGE_MODE);
+                mLimit = tag.getLong(FluxConstants.LIMIT);
+            }
+            case FluxConstants.TYPE_TILE_UPDATE -> {
+                mChange = tag.getLong(FluxConstants.CHANGE);
+                mPriority = tag.getInt(FluxConstants.PRIORITY);
+                mSurge = tag.getInt(FluxConstants.SURGE_MODE);
+                mLimit = tag.getLong(FluxConstants.LIMIT);
+            }
         }
     }
 
     public void writePacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        switch (id) {
-            case FluxConstants.C2S_PRIORITY -> buf.writeInt(mPriority);
-            case FluxConstants.C2S_LIMIT -> buf.writeLong(mLimit);
-            case FluxConstants.C2S_SURGE_MODE -> buf.writeBoolean(getSurgeMode());
-            case FluxConstants.C2S_DISABLE_LIMIT -> buf.writeBoolean(getDisableLimit());
-            case FluxConstants.S2C_GUI_SYNC -> {
-                buf.writeLong(mChange);
-                buf.writeLong(mBuffer);
-            }
+        if (id == FluxConstants.S2C_GUI_SYNC) {
+            buf.writeLong(mChange);
+            buf.writeLong(mBuffer);
         }
     }
 
     public void readPacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        switch (id) {
-            case FluxConstants.C2S_PRIORITY -> setPriority(buf.readVarInt());
-            case FluxConstants.C2S_LIMIT -> setLimit(buf.readVarLong());
-            case FluxConstants.S2C_GUI_SYNC -> {
-                mChange = buf.readLong();
-                mBuffer = buf.readLong();
-            }
+        if (id == FluxConstants.S2C_GUI_SYNC) {
+            mChange = buf.readLong();
+            mBuffer = buf.readLong();
         }
     }
 }

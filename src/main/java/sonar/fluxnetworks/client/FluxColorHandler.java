@@ -119,7 +119,7 @@ public class FluxColorHandler implements BlockColor, ItemColor {
                 if (t.getNetworkID() == -1) {
                     return NO_NETWORK_COLOR;
                 }*/
-                return ((TileFluxDevice) tile).mBlockTint;
+                return ((TileFluxDevice) tile).mClientColor;
             }
             return EnumNetworkColor.BLUE.getRGB();
         }

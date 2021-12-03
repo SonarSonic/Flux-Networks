@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
@@ -230,14 +231,41 @@ public class FluxUtils {
         return 0xFF000000 | red | green | blue;
     }*/
 
-    public static int getBrighterColor(int color, float factor) {
-        int red = (color >> 16) & 0xff;
-        int green = (color >> 8) & 0xff;
-        int blue = color & 0xff;
-        red = (int) Math.min(red * factor, 0xff);
-        green = (int) Math.min(green * factor, 0xff);
-        blue = (int) Math.min(blue * factor, 0xff);
-        return red << 16 | green << 8 | blue;
+    /**
+     * Get a brighter color in HSV color model, from an RGB color.
+     * With higher saturation and higher value.
+     *
+     * @param color an RGB color
+     * @return a brighter RGB color
+     */
+    public static int getBrighterColor(int color) {
+        int r = (color >> 16) & 0xff;
+        int g = (color >> 8) & 0xff;
+        int b = color & 0xff;
+
+        int max = Math.max(r, Math.max(g, b));
+        int min = Math.min(r, Math.min(g, b));
+
+        int delta = max - min;
+
+        if (delta == 0) {
+            return Mth.hsvToRgb(0, 0, Math.min(1.1f * max / 255.0f, 1.0f));
+        }
+
+        float h;
+
+        if (max == r) {
+            h = (float) (g - b) / delta;
+            if (h < 0.0f) {
+                h += 6.0f;
+            }
+        } else if (max == g) {
+            h = 2.0f + (float) (b - r) / delta;
+        } else {
+            h = 4.0f + (float) (r - g) / delta;
+        }
+
+        return Mth.hsvToRgb(h / 6.0f, Math.min(1.1f * delta / max, 1.0f), Math.min(1.1f * max / 255.0f, 1.0f));
     }
 
     /**

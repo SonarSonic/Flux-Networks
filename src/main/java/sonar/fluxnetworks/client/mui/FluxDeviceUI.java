@@ -136,8 +136,8 @@ public class FluxDeviceUI extends ScreenCallback {
                         if (!hasFocus) {
                             // Do not check if it's changed on the client side,
                             // in case of a packet is being sent to the client
-                            ClientMessages.sendDeviceEntity(mDevice, FluxConstants.C2S_CUSTOM_NAME,
-                                    mCustomName.getText().toString());
+                            /*ClientMessages.sendDeviceBuffer(mDevice, FluxConstants.C2S_CUSTOM_NAME,
+                                    mCustomName.getText().toString());*/
                         }
                     });
                     mCustomName = v;
@@ -152,7 +152,7 @@ public class FluxDeviceUI extends ScreenCallback {
                             int priority = Mth.clamp(Integer.parseInt(mPriority.getText().toString()),
                                     TransferHandler.PRI_USER_MIN, TransferHandler.PRI_USER_MAX);
                             mPriority.setTextKeepState(Integer.toString(priority));
-                            ClientMessages.sendDeviceEntity(mDevice, FluxConstants.C2S_PRIORITY, priority);
+                            //ClientMessages.sendDeviceBuffer(mDevice, FluxConstants.C2S_PRIORITY, priority);
                         }
                     });
                     mPriority = v;
@@ -166,7 +166,7 @@ public class FluxDeviceUI extends ScreenCallback {
                         if (!hasFocus) {
                             long limit = Long.parseLong(mLimit.getText().toString());
                             mLimit.setTextKeepState(Long.toString(limit));
-                            ClientMessages.sendDeviceEntity(mDevice, FluxConstants.C2S_LIMIT, limit);
+                            //ClientMessages.sendDeviceBuffer(mDevice, FluxConstants.C2S_LIMIT, limit);
                         }
                     });
                     mLimit = v;

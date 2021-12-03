@@ -18,11 +18,13 @@ public final class FluxConstants {
      * <ul>
      * <li>UPDATE: S->C (Write - server, Read - client)</li>
      * <li>DROP: Write - server, Read - client/server</li>
+     * <li>SETTING: C->S (Write - client, Read - server)</li>
      * </ul>
      */
     public static final byte
             TYPE_TILE_UPDATE = 11,
-            TYPE_TILE_DROP = 15;
+            TYPE_TILE_DROP = 15,
+            TYPE_TILE_SETTING = 19;
 
     /**
      * NBT access type, update phantom flux device.
@@ -58,7 +60,7 @@ public final class FluxConstants {
     public static final int TYPE_CANCEL_MEMBERSHIP = 4;
     public static final int TYPE_TRANSFER_OWNERSHIP = 5;
 
-    // Tile message type
+    // Device buffer message type
     public static final byte C2S_CUSTOM_NAME = 1;
     public static final byte C2S_PRIORITY = 2;
     public static final byte C2S_LIMIT = 3;

@@ -1,8 +1,10 @@
 package sonar.fluxnetworks.common.device;
 
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 
@@ -25,6 +27,12 @@ public abstract class FluxConnectorHandler extends TransferHandler {
                 transfer.onCycleStart();
             }
         }
+    }
+
+    @Override
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
+        super.writeCustomTag(tag, type);
+        tag.putLong(FluxConstants.BUFFER, mBuffer);
     }
 
     // server only

@@ -5,11 +5,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import sonar.fluxnetworks.api.device.IFluxStorage;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
-import sonar.fluxnetworks.register.RegistryBlocks;
+import sonar.fluxnetworks.api.device.IFluxStorage;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
+import sonar.fluxnetworks.register.Messages;
+import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;
 
@@ -77,8 +78,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             //noinspection ConstantConditions
             if ((level.getGameTime() & 0x3) == 0) {
                 // update model data to players who can see it
-                /*S2CNetMsg.tileEntity(this, FluxConstants.S2C_STORAGE_ENERGY)
-                        .sendToTrackingChunk(level.getChunkAt(worldPosition));*/
+                Messages.getDeviceBuffer(this, FluxConstants.S2C_STORAGE_ENERGY)
+                        .sendToTrackingChunk(level.getChunkAt(worldPosition));
                 mFlags &= ~FLAG_ENERGY_CHANGED;
             }
         }

@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.common.device;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.player.Inventory;
@@ -11,12 +12,14 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.energy.IItemEnergyBridge;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.common.integration.CuriosIntegration;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -76,6 +79,12 @@ public class FluxControllerHandler extends TransferHandler {
     public void clearLocalStates() {
         super.clearLocalStates();
         clearPlayers();
+    }
+
+    @Override
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
+        super.writeCustomTag(tag, type);
+        tag.putLong(FluxConstants.BUFFER, mBuffer);
     }
 
     private long sendToConsumers(long energy, boolean simulate) {

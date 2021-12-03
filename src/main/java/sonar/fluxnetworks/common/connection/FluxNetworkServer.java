@@ -130,7 +130,7 @@ public class FluxNetworkServer extends FluxNetwork {
                 while (mPlugTransferIterator.hasNext()) {
                     TileFluxDevice plug = mPlugTransferIterator.next();
                     TileFluxDevice point = mPointTransferIterator.next();
-                    if (plug.getDeviceType() == point.getDeviceType()) {
+                    if (plug.getDeviceType().is(point)) {
                         break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                     }
                     // we don't need to simulate this action
