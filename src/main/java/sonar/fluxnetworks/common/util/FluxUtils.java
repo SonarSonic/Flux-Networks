@@ -314,11 +314,15 @@ public class FluxUtils {
             }
             if (codePoint < 0x21 || codePoint >= 0x7f)
                 return false;*/
-            char c = str.charAt(i);
-            if (c < 0x21 || c >= 0x7f)
+            if (notPasswordChar(str.charAt(i))) {
                 return false;
+            }
         }
         return true;
+    }
+
+    public static boolean notPasswordChar(char c) {
+        return c < 0x21 || c >= 0x7f;
     }
 
     /*@Nullable

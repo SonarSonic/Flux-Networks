@@ -21,6 +21,7 @@ import icyllis.modernui.widget.FrameLayout;
 import icyllis.modernui.widget.LinearLayout;
 import icyllis.modernui.widget.TextView;
 import net.minecraft.locale.Language;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -117,6 +118,7 @@ public class FluxDeviceUI extends ScreenCallback {
                 ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
     }
 
+    @Nonnull
     private View inflateHome() {
         final ViewConfiguration c = ViewConfiguration.get();
         final Language lang = Language.getInstance();
@@ -131,13 +133,14 @@ public class FluxDeviceUI extends ScreenCallback {
                 case 0 -> {
                     v.setText(mDevice.getCustomName(), TextView.BufferType.EDITABLE);
                     v.setHint(lang.getOrDefault(mDevice.getBlockState().getBlock().getDescriptionId()));
-                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(24)});
+                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(TileFluxDevice.MAX_CUSTOM_NAME_LENGTH)});
                     v.setOnFocusChangeListener((__, hasFocus) -> {
                         if (!hasFocus) {
                             // Do not check if it's changed on the client side,
                             // in case of a packet is being sent to the client
-                            /*ClientMessages.sendDeviceBuffer(mDevice, FluxConstants.C2S_CUSTOM_NAME,
-                                    mCustomName.getText().toString());*/
+                            CompoundTag tag = new CompoundTag();
+                            tag.putString(FluxConstants.CUSTOM_NAME, mCustomName.getText().toString());
+                            ClientMessages.sendEditDevice(mDevice, tag);
                         }
                     });
                     mCustomName = v;
@@ -145,6 +148,7 @@ public class FluxDeviceUI extends ScreenCallback {
                 case 1 -> {
                     v.setText(Integer.toString(mDevice.getRawPriority()), TextView.BufferType.EDITABLE);
                     v.setHint("Priority");
+                    v.setHintTextColor(0xFF808080);
                     v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(5),
                             DigitsInputFilter.getInstance(null, true, false)});
                     v.setOnFocusChangeListener((__, hasFocus) -> {
@@ -152,7 +156,10 @@ public class FluxDeviceUI extends ScreenCallback {
                             int priority = Mth.clamp(Integer.parseInt(mPriority.getText().toString()),
                                     TransferHandler.PRI_USER_MIN, TransferHandler.PRI_USER_MAX);
                             mPriority.setTextKeepState(Integer.toString(priority));
-                            //ClientMessages.sendDeviceBuffer(mDevice, FluxConstants.C2S_PRIORITY, priority);
+
+                            CompoundTag tag = new CompoundTag();
+                            tag.putInt(FluxConstants.PRIORITY, priority);
+                            ClientMessages.sendEditDevice(mDevice, tag);
                         }
                     });
                     mPriority = v;
@@ -160,13 +167,17 @@ public class FluxDeviceUI extends ScreenCallback {
                 default -> {
                     v.setText(Long.toString(mDevice.getRawLimit()), TextView.BufferType.EDITABLE);
                     v.setHint("Transfer Limit");
+                    v.setHintTextColor(0xFF808080);
                     v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10),
                             DigitsInputFilter.getInstance(null, false, false)});
                     v.setOnFocusChangeListener((__, hasFocus) -> {
                         if (!hasFocus) {
                             long limit = Long.parseLong(mLimit.getText().toString());
                             mLimit.setTextKeepState(Long.toString(limit));
-                            //ClientMessages.sendDeviceBuffer(mDevice, FluxConstants.C2S_LIMIT, limit);
+
+                            CompoundTag tag = new CompoundTag();
+                            tag.putLong(FluxConstants.LIMIT, limit);
+                            ClientMessages.sendEditDevice(mDevice, tag);
                         }
                     });
                     mLimit = v;

@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.animation.LayoutTransition;
+import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.SpannableString;
 import icyllis.modernui.text.Spanned;
 import icyllis.modernui.text.method.ArrowKeyMovementMethod;
@@ -18,8 +19,11 @@ import net.minecraft.locale.Language;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class TabCreate {
@@ -72,6 +76,7 @@ public class TabCreate {
             if (player != null) {
                 text = player.getGameProfile().getName() + "'s Network";
             }
+            v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(FluxNetwork.MAX_NETWORK_NAME_LENGTH)});
             v.setText(text, TextView.BufferType.EDITABLE);
             v.setHint("Network Name");
             v.setHintTextColor(0xFF808080);
@@ -111,6 +116,8 @@ public class TabCreate {
             v.setText("", TextView.BufferType.EDITABLE);
             v.setHint("Password");
             v.setHintTextColor(0xFF808080);
+            v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(FluxNetwork.MAX_PASSWORD_LENGTH),
+                    PasswordFilter.INSTANCE});
             v.setFocusableInTouchMode(true);
             v.setSingleLine();
             v.setMovementMethod(ArrowKeyMovementMethod.getInstance());
@@ -130,5 +137,46 @@ public class TabCreate {
         content.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
         return mContent = content;
+    }
+
+    public static class PasswordFilter implements InputFilter {
+
+        private static final PasswordFilter INSTANCE = new PasswordFilter();
+
+        @Nullable
+        @Override
+        public CharSequence filter(@Nonnull CharSequence source, int start, int end,
+                                   @Nonnull Spanned dest, int dstart, int dend) {
+            int i;
+            for (i = start; i < end; i++) {
+                if (FluxUtils.notPasswordChar(source.charAt(i))) {
+                    break;
+                }
+            }
+
+            if (i == end) {
+                // It was all OK.
+                return null;
+            }
+
+            if (end - start == 1) {
+                // It was not OK, and there is only one char, so nothing remains.
+                return "";
+            }
+
+            StringBuilder filtered = new StringBuilder();
+            filtered.append(source, start, end);
+            i -= start;
+            end -= start;
+
+            // Only count down to i because the chars before that were all OK.
+            for (int j = end - 1; j >= i; j--) {
+                if (FluxUtils.notPasswordChar(source.charAt(j))) {
+                    filtered.delete(j, j + 1);
+                }
+            }
+
+            return filtered;
+        }
     }
 }

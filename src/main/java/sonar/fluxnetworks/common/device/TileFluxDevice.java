@@ -116,13 +116,11 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
 
     // server tick
     protected void onServerTick() {
-        if (mPlayerUsing != null) {
-            if ((mFlags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
-                sendBlockUpdate();
-                mFlags &= ~FLAG_SETTING_CHANGED;
-            } else {
-                Messages.getDeviceBuffer(this, FluxConstants.S2C_GUI_SYNC).sendToPlayer(mPlayerUsing);
-            }
+        if ((mFlags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
+            sendBlockUpdate();
+            mFlags &= ~FLAG_SETTING_CHANGED;
+        } else if (mPlayerUsing != null) {
+            Messages.getDeviceBuffer(this, FluxConstants.S2C_GUI_SYNC).sendToPlayer(mPlayerUsing);
         }
     }
 
@@ -173,7 +171,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
             mNetwork = network;
             mNetworkID = network.getNetworkID();
             getTransferHandler().clearLocalStates();
-            sendBlockUpdate();
+            mFlags |= FLAG_SETTING_CHANGED;
         }
     }
 
@@ -338,7 +336,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
      */
     public void sendBlockUpdate() {
         assert level != null && !level.isClientSide;
-        // last param has no usage
+        // last arg has no usage on server side
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
     }
 

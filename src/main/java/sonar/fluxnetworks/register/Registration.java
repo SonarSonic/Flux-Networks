@@ -34,11 +34,11 @@ import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
+import sonar.fluxnetworks.common.crafting.FluxStorageRecipeSerializer;
+import sonar.fluxnetworks.common.crafting.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.device.*;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
 import sonar.fluxnetworks.common.item.*;
-import sonar.fluxnetworks.common.crafting.FluxStorageRecipeSerializer;
-import sonar.fluxnetworks.common.crafting.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.data.loot.FluxLootTableProvider;
 import sonar.fluxnetworks.data.tags.FluxBlockTagsProvider;
 
@@ -46,7 +46,7 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 
 @Mod.EventBusSubscriber(modid = FluxNetworks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class CommonRegistration {
+public class Registration {
 
     static NetworkHandler sNetwork;
 

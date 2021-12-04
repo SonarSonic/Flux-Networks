@@ -53,6 +53,15 @@ public final class FluxConstants {
     public static final int FLAG_EDIT_CHUNK_LOADING = 1 << 5;
     public static final int FLAG_EDIT_DISCONNECT = 1 << 6;
 
+    /**
+     * Response codes.
+     */
+    public static final int RES_SUCCESS = -1;
+    public static final int RES_REJECT = 0;
+    public static final int RES_NO_OWNER = 1;
+    public static final int RES_NO_ADMIN = 2;
+    public static final int RES_NO_SPACE = 3;
+
     // Network members editing type
     public static final int TYPE_NEW_MEMBER = 1;
     public static final int TYPE_SET_ADMIN = 2;

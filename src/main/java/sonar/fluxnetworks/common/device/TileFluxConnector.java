@@ -58,6 +58,6 @@ public abstract class TileFluxConnector extends TileFluxDevice {
             state = state.setValue(FluxConnectorBlock.SIDES_CONNECTED[dir.get3DDataValue()],
                     (mFlags & (1 << dir.get3DDataValue())) != 0);
         }
-        level.setBlock(worldPosition, state, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE);
+        level.setBlock(worldPosition, state, Block.UPDATE_IMMEDIATE);
     }
 }

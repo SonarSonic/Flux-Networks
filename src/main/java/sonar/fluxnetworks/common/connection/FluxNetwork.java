@@ -37,6 +37,9 @@ public class FluxNetwork {
             STORAGE = 3,
             CONTROLLER = 4;
 
+    public static final int MAX_NETWORK_NAME_LENGTH = 24;
+    public static final int MAX_PASSWORD_LENGTH = 16;
+
     private static final String NETWORK_NAME = "networkName";
     private static final String NETWORK_COLOR = "networkColor";
     private static final String OWNER_UUID = "ownerUUID";

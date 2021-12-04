@@ -2,6 +2,7 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,8 +19,6 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
@@ -30,11 +28,10 @@ import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkManager;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber
-public class CommonEventHandler {
+public class EventHandler {
 
     //// SERVER EVENTS \\\\
 
@@ -54,76 +51,72 @@ public class CommonEventHandler {
 
     //// WORLD EVENTS \\\\
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    /*@SubscribeEvent(priority = EventPriority.LOW)
     public static void onWorldLoad(@Nonnull WorldEvent.Load event) {
-        /*if (!event.getWorld().isClientSide()) {
+        if (!event.getWorld().isClientSide()) {
             ServerLevel world = (ServerLevel) event.getWorld();
             world.getServer().enqueue(new TickDelayedTask(world.getServer().getTickCounter(), () ->
                     FluxChunkManager.loadWorld(world)));
-        }*/
+        }
     }
 
     @SubscribeEvent
     public static void onWorldTick(@Nonnull TickEvent.WorldTickEvent event) {
-        /*if (!event.world.isRemote && event.phase == TickEvent.Phase.END) {
+        if (!event.world.isRemote && event.phase == TickEvent.Phase.END) {
             FluxChunkManager.tickWorld((ServerWorld) event.world);
-        }*/
-    }
+        }
+    }*/
 
     //// PLAYER EVENTS \\\\
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onPlayerInteract(PlayerInteractEvent.LeftClickBlock event) {
-        if (!FluxConfig.enableFluxRecipe) {
+        if (!FluxConfig.enableFluxRecipe || event.getWorld().isClientSide) {
             return;
         }
-        Level world = event.getWorld();
+        ServerLevel level = (ServerLevel) event.getWorld();
         BlockPos pos = event.getPos();
-        BlockState crusher = world.getBlockState(pos);
-        BlockState base = world.getBlockState(pos.below(2));
-        if (crusher.getBlock() == Blocks.OBSIDIAN && (base.getBlock() == Blocks.BEDROCK || base.getBlock() == RegistryBlocks.FLUX_BLOCK)) {
-            List<ItemEntity> entities = world.getEntitiesOfClass(ItemEntity.class, new AABB(pos.below()));
+        BlockState crusher = level.getBlockState(pos);
+        BlockState base;
+        if (crusher.getBlock() == Blocks.OBSIDIAN &&
+                ((base = level.getBlockState(pos.below(2))).getBlock() == Blocks.BEDROCK ||
+                        base.getBlock() == RegistryBlocks.FLUX_BLOCK)) {
+            List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos.below()));
             if (entities.isEmpty()) {
                 return;
             }
-            final List<ItemEntity> validEntities = new ArrayList<>();
-            int count = 0;
+            int itemCount = 0;
             for (ItemEntity entity : entities) {
                 if (entity.getItem().is(Items.REDSTONE)) {
-                    validEntities.add(entity);
-                    count += entity.getItem().getCount();
-                    if (count >= 512) {
+                    itemCount += entity.getItem().getCount();
+                    entity.discard();
+                    if (itemCount >= 512) {
                         break;
                     }
                 }
             }
-            if (count == 0) {
+            if (itemCount == 0) {
                 return;
             }
-            final int particles = Mth.clamp(count >> 2, 4, 64);
-            if (!event.getWorld().isClientSide) {
-                ItemStack stack = new ItemStack(RegistryItems.FLUX_DUST, count);
-                validEntities.forEach(Entity::discard);
-                world.removeBlock(pos, false);
-                ItemEntity entity = new ItemEntity(world, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack);
-                entity.setNoPickUpDelay();
-                world.addFreshEntity(entity);
-                if (world.getRandom().nextDouble() > Math.pow(0.9, count >> 3)) {
-                    world.setBlock(pos.below(), Blocks.COBBLESTONE.defaultBlockState(), Block.UPDATE_ALL);
-                    world.playSound(null, pos, SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
-                } else {
-                    world.setBlock(pos.below(), Blocks.OBSIDIAN.defaultBlockState(), Block.UPDATE_ALL);
-                    world.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
-                }
-                //FIXME
-                //S2CNetMsg.lavaEffect(pos, max).sendToTrackingEntity(event.getPlayer());
+            ItemStack stack = new ItemStack(RegistryItems.FLUX_DUST, itemCount);
+            level.removeBlock(pos, false);
+            ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack);
+            entity.setNoPickUpDelay();
+            entity.setDeltaMovement(0, 0.2, 0);
+            level.addFreshEntity(entity);
+            // give it a chance to turn into cobbles
+            if (level.getRandom().nextDouble() > Math.pow(0.9, itemCount >> 3)) {
+                level.setBlock(pos.below(), Blocks.COBBLESTONE.defaultBlockState(), Block.UPDATE_ALL);
+                level.playSound(null, pos, SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
             } else {
-                for (int i = 0; i < particles; i++) {
-                    // speed won't work with lava particle, because its constructor doesn't use these params
-                    world.addParticle(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0, 0, 0);
-                }
+                level.setBlock(pos.below(), crusher, Block.UPDATE_ALL);
+                level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
             }
+            int particleCount = Mth.clamp(itemCount >> 2, 4, 64);
+            level.sendParticles(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(),
+                    pos.getZ() + 0.5, particleCount, 0, 0, 0, 0);
 
+            // we succeed
             event.setCanceled(true);
         }
     }

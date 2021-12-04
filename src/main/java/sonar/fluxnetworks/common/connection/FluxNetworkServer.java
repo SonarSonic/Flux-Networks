@@ -5,9 +5,8 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.*;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
-import sonar.fluxnetworks.common.util.FluxUtils;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -18,15 +17,15 @@ import java.util.function.Consumer;
  */
 public class FluxNetworkServer extends FluxNetwork {
 
-    private static final Comparator<TileFluxDevice> DESCENDING_ORDER =
+    private static final Comparator<TileFluxDevice> sDescendingOrder =
             (a, b) -> Integer.compare(b.getTransferNode().getPriority(), a.getTransferNode().getPriority());
 
-    private static final Consumer<TileFluxDevice> DISCONNECT = d -> d.connect(FluxNetworkInvalid.INSTANCE);
+    private static final Consumer<TileFluxDevice> sDisconnect = d -> d.connect(FluxNetworkInvalid.INSTANCE);
 
-    private static final Class<?>[] LOGICAL_TYPES =
+    private static final Class<?>[] sLogicalTypes =
             {IFluxDevice.class, IFluxPlug.class, IFluxPoint.class, IFluxStorage.class, IFluxController.class};
 
-    private final List<List<TileFluxDevice>> mDevices = new ArrayList<>(LOGICAL_TYPES.length);
+    private final List<List<TileFluxDevice>> mDevices = new ArrayList<>(sLogicalTypes.length);
 
     private final Queue<TileFluxDevice> mToAdd = new LinkedList<>();
     private final Queue<TileFluxDevice> mToRemove = new LinkedList<>();
@@ -39,15 +38,15 @@ public class FluxNetworkServer extends FluxNetwork {
     private long mBufferLimiter = 0;
 
     {
-        for (int i = 0; i < LOGICAL_TYPES.length; i++) {
+        for (int i = 0; i < sLogicalTypes.length; i++) {
             mDevices.add(new ArrayList<>());
         }
     }
 
-    public FluxNetworkServer() {
+    FluxNetworkServer() {
     }
 
-    public FluxNetworkServer(int id, @Nonnull String name, int color, @Nonnull Player owner) {
+    FluxNetworkServer(int id, @Nonnull String name, int color, @Nonnull Player owner) {
         super(id, name, color, owner);
     }
 
@@ -81,22 +80,26 @@ public class FluxNetworkServer extends FluxNetwork {
     private void handleConnectionQueue() {
         TileFluxDevice device;
         while ((device = mToAdd.poll()) != null) {
-            for (int i = 0; i < LOGICAL_TYPES.length; i++) {
-                if (LOGICAL_TYPES[i].isInstance(device)) {
-                    mSortConnections |= FluxUtils.addWithCheck(getLogicalEntities(i), device);
+            for (int i = 0; i < sLogicalTypes.length; i++) {
+                if (sLogicalTypes[i].isInstance(device)) {
+                    var list = getLogicalEntities(i);
+                    assert !list.contains(device);
+                    mSortConnections |= list.add(device);
                 }
             }
         }
         while ((device = mToRemove.poll()) != null) {
-            for (int i = 0; i < LOGICAL_TYPES.length; i++) {
-                if (LOGICAL_TYPES[i].isInstance(device)) {
-                    mSortConnections |= getLogicalEntities(i).remove(device);
+            for (int i = 0; i < sLogicalTypes.length; i++) {
+                if (sLogicalTypes[i].isInstance(device)) {
+                    var list = getLogicalEntities(i);
+                    assert list.contains(device);
+                    mSortConnections |= list.remove(device);
                 }
             }
         }
         if (mSortConnections) {
-            getLogicalEntities(PLUG).sort(DESCENDING_ORDER);
-            getLogicalEntities(POINT).sort(DESCENDING_ORDER);
+            getLogicalEntities(PLUG).sort(sDescendingOrder);
+            getLogicalEntities(POINT).sort(sDescendingOrder);
             mSortConnections = false;
         }
     }
@@ -183,7 +186,7 @@ public class FluxNetworkServer extends FluxNetwork {
     @Override
     public void onDelete() {
         super.onDelete();
-        getLogicalEntities(ANY).forEach(DISCONNECT);
+        getLogicalEntities(ANY).forEach(sDisconnect);
         mDevices.clear();
         mToAdd.clear();
         mToRemove.clear();
