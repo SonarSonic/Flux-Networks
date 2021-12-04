@@ -206,7 +206,7 @@ public abstract class TransferHandler extends TransferNode {
 
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         switch (type) {
-            case FluxConstants.TYPE_SAVE_ALL, FluxConstants.TYPE_TILE_DROP -> {
+            case FluxConstants.TYPE_SAVE_ALL -> {
                 tag.putInt(FluxConstants.PRIORITY, mPriority);
                 tag.putInt(FluxConstants.SURGE_MODE, mSurge);
                 tag.putLong(FluxConstants.LIMIT, mLimit);
@@ -215,6 +215,11 @@ public abstract class TransferHandler extends TransferNode {
                 tag.putLong(FluxConstants.CHANGE, mChange);
                 tag.putInt(FluxConstants.PRIORITY, mPriority);
                 tag.putInt(FluxConstants.SURGE_MODE, mSurge);
+                tag.putLong(FluxConstants.LIMIT, mLimit);
+            }
+            case FluxConstants.TYPE_TILE_DROP -> {
+                tag.putInt(FluxConstants.PRIORITY, mPriority);
+                tag.putBoolean(FluxConstants.SURGE_MODE, hasPowerSurge());
                 tag.putLong(FluxConstants.LIMIT, mLimit);
             }
             case FluxConstants.TYPE_PHANTOM_UPDATE -> {
@@ -245,7 +250,7 @@ public abstract class TransferHandler extends TransferNode {
             mBuffer = tag.getLong(FluxConstants.ENERGY);
         }
         switch (type) {
-            case FluxConstants.TYPE_SAVE_ALL, FluxConstants.TYPE_TILE_DROP -> {
+            case FluxConstants.TYPE_SAVE_ALL -> {
                 mPriority = tag.getInt(FluxConstants.PRIORITY);
                 mSurge = tag.getInt(FluxConstants.SURGE_MODE);
                 mLimit = tag.getLong(FluxConstants.LIMIT);
@@ -254,6 +259,11 @@ public abstract class TransferHandler extends TransferNode {
                 mChange = tag.getLong(FluxConstants.CHANGE);
                 mPriority = tag.getInt(FluxConstants.PRIORITY);
                 mSurge = tag.getInt(FluxConstants.SURGE_MODE);
+                mLimit = tag.getLong(FluxConstants.LIMIT);
+            }
+            case FluxConstants.TYPE_TILE_DROP -> {
+                mPriority = tag.getInt(FluxConstants.PRIORITY);
+                setPowerSurge(tag.getBoolean(FluxConstants.SURGE_MODE));
                 mLimit = tag.getLong(FluxConstants.LIMIT);
             }
         }
