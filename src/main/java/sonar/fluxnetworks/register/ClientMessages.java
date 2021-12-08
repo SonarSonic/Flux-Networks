@@ -106,7 +106,9 @@ public class ClientMessages {
         buf.writeUtf(name);
         buf.writeInt(color);
         buf.writeByte(level.getId());
-        buf.writeUtf(password);
+        if (level == SecurityLevel.ENCRYPTED) {
+            buf.writeUtf(password);
+        }
         sNetwork.sendToServer(buf);
     }
 

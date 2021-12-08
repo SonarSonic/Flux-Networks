@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -167,7 +167,7 @@ public class Registration {
      */
     @SubscribeEvent
     public static void registerMenus(@Nonnull RegistryEvent.Register<MenuType<?>> event) {
-        event.getRegistry().register(IForgeContainerType.create(FluxDeviceMenu::new).setRegistryName("flux_menu"));
+        event.getRegistry().register(IForgeMenuType.create(FluxDeviceMenu::new).setRegistryName("flux_menu"));
     }
 
     @SubscribeEvent

@@ -1,7 +1,10 @@
 package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.ModernUI;
-import icyllis.modernui.animation.*;
+import icyllis.modernui.animation.Animator;
+import icyllis.modernui.animation.LayoutTransition;
+import icyllis.modernui.animation.ObjectAnimator;
+import icyllis.modernui.animation.TimeInterpolator;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.Paint;
@@ -13,9 +16,10 @@ import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.TextPaint;
 import icyllis.modernui.text.method.ArrowKeyMovementMethod;
 import icyllis.modernui.text.method.DigitsInputFilter;
+import icyllis.modernui.util.FloatProperty;
+import icyllis.modernui.util.IntProperty;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.View;
-import icyllis.modernui.view.ViewConfiguration;
 import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.FrameLayout;
 import icyllis.modernui.widget.LinearLayout;
@@ -31,6 +35,8 @@ import sonar.fluxnetworks.common.device.TransferHandler;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
+
+import static icyllis.modernui.view.ViewConfiguration.dp;
 
 public class FluxDeviceUI extends ScreenCallback {
 
@@ -54,8 +60,6 @@ public class FluxDeviceUI extends ScreenCallback {
 
     @Override
     public void onCreate() {
-        final ViewConfiguration c = ViewConfiguration.get();
-
         var content = new LinearLayout();
         content.setOrientation(LinearLayout.VERTICAL);
 
@@ -70,9 +74,9 @@ public class FluxDeviceUI extends ScreenCallback {
 
         for (int i = 0; i < 8; i++) {
             var button = new NavigationButton(mButtonIcon, i * 32);
-            var params = new LinearLayout.LayoutParams(c.view(32), c.view(32));
+            var params = new LinearLayout.LayoutParams(dp(32), dp(32));
             button.setClickable(true);
-            params.setMarginsRelative(i == 7 ? 26 : 2, 2, 2, 6);
+            params.setMarginsRelative(dp(i == 7 ? 26 : 2), dp(2), dp(2), dp(6));
             if (i == 0 || i == 7) {
                 navContainer.addView(button, params);
             } else {
@@ -111,7 +115,7 @@ public class FluxDeviceUI extends ScreenCallback {
         mTabViews[0] = home;
         tabContainer.addView(home);
 
-        int tabSize = c.view(340);
+        int tabSize = dp(340);
         content.addView(tabContainer, new LinearLayout.LayoutParams(tabSize, tabSize));
 
         setContentView(content, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -120,12 +124,11 @@ public class FluxDeviceUI extends ScreenCallback {
 
     @Nonnull
     private View inflateHome() {
-        final ViewConfiguration c = ViewConfiguration.get();
         final Language lang = Language.getInstance();
 
-        var tab = new LinearLayout();
-        tab.setOrientation(LinearLayout.VERTICAL);
-        tab.setLayoutTransition(new LayoutTransition());
+        var content = new LinearLayout();
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setLayoutTransition(new LayoutTransition());
 
         for (int i = 0; i < 3; i++) {
             var v = new TextView();
@@ -195,22 +198,22 @@ public class FluxDeviceUI extends ScreenCallback {
 
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(c.view(20), c.view(i == 0 ? 50 : 2), c.view(20), c.view(2));
+            params.setMargins(dp(20), dp(i == 0 ? 50 : 2), dp(20), dp(2));
 
-            tab.postDelayed(() -> tab.addView(v, params), (i + 1) * 100);
+            content.postDelayed(() -> content.addView(v, params), (i + 1) * 100);
         }
 
         {
             var v = new ConnectorView(mButtonIcon);
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            params.setMargins(c.view(8), c.view(2), c.view(8), c.view(8));
-            tab.postDelayed(() -> tab.addView(v, params), 400);
+            params.setMargins(dp(8), dp(2), dp(8), dp(8));
+            content.postDelayed(() -> content.addView(v, params), 400);
         }
 
-        tab.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        content.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-        return tab;
+        return content;
     }
 
     private static class TabBackground extends Drawable {
@@ -219,7 +222,7 @@ public class FluxDeviceUI extends ScreenCallback {
         private final TextPaint mTextPaint;
 
         public TabBackground() {
-            mRadius = ViewConfiguration.get().view(16);
+            mRadius = dp(16);
             mTextPaint = new TextPaint();
             //mTextPaint.setFontSize(ViewConfiguration.get().text(16));
         }
@@ -252,7 +255,7 @@ public class FluxDeviceUI extends ScreenCallback {
         public TextFieldStart(Image image, int srcLeft) {
             mImage = image;
             mSrcLeft = srcLeft;
-            mSize = ViewConfiguration.get().view(24);
+            mSize = dp(24);
         }
 
         @Override
@@ -285,7 +288,7 @@ public class FluxDeviceUI extends ScreenCallback {
         private final float mRadius;
 
         public TextFieldBackground() {
-            mRadius = ViewConfiguration.get().view(3);
+            mRadius = dp(3);
         }
 
         @Override
@@ -348,19 +351,19 @@ public class FluxDeviceUI extends ScreenCallback {
 
         public ConnectorView(Image image) {
             mImage = image;
-            mSize = ViewConfiguration.get().view(32);
+            mSize = dp(32);
             mRodAnimator = ObjectAnimator.ofFloat(this, new FloatProperty<>() {
                 @Override
-                public void setValue(@Nonnull ConnectorView target, float value) {
-                    target.mRodLength = value;
+                public void setValue(@Nonnull ConnectorView object, float value) {
+                    object.mRodLength = value;
                     invalidate();
                 }
 
                 @Override
-                public Float get(@Nonnull ConnectorView target) {
-                    return target.mRodLength;
+                public Float get(@Nonnull ConnectorView object) {
+                    return object.mRodLength;
                 }
-            }, 0, ViewConfiguration.get().view(32));
+            }, 0, mSize);
             mRodAnimator.setInterpolator(TimeInterpolator.DECELERATE);
             mRodAnimator.setDuration(400);
             mRodAnimator.addListener(new Animator.AnimatorListener() {
@@ -371,14 +374,14 @@ public class FluxDeviceUI extends ScreenCallback {
             });
             mBoxAnimator = ObjectAnimator.ofInt(mBoxPaint, new IntProperty<>() {
                 @Override
-                public void setValue(@Nonnull Paint target, int value) {
-                    target.setAlpha(value);
+                public void setValue(@Nonnull Paint object, int value) {
+                    object.setAlpha(value);
                     invalidate();
                 }
 
                 @Override
-                public Integer get(@Nonnull Paint target) {
-                    return target.getColor() >>> 24;
+                public Integer get(@Nonnull Paint object) {
+                    return object.getColor() >>> 24;
                 }
             }, 0, 128);
             mRodAnimator.setInterpolator(TimeInterpolator.LINEAR);

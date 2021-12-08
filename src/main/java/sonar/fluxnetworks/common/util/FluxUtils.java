@@ -15,6 +15,7 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.EnergyType;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -297,7 +298,10 @@ public class FluxUtils {
         .getStorageSuffix()));
     }*/
 
-    public static boolean isLegalPassword(@Nonnull String str) {
+    public static boolean isBadPassword(@Nonnull String str) {
+        if (str.isEmpty() || str.length() > FluxNetwork.MAX_PASSWORD_LENGTH) {
+            return true;
+        }
         for (int i = 0; i < str.length(); i++) {
             /*int codePoint;
             char c1 = str.charAt(i);
@@ -315,14 +319,20 @@ public class FluxUtils {
             if (codePoint < 0x21 || codePoint >= 0x7f)
                 return false;*/
             if (notPasswordChar(str.charAt(i))) {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
+    /**
+     * Check if it's an invalid BMP character for network password.
+     *
+     * @param c the char
+     * @return true - invalid
+     */
     public static boolean notPasswordChar(char c) {
-        return c < 0x21 || c >= 0x7f;
+        return c >= 0x7f || c < 0x21;
     }
 
     /*@Nullable

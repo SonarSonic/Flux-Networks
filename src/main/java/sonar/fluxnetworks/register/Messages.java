@@ -9,11 +9,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.RunningOnDifferentThreadException;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkManager;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -84,6 +86,7 @@ public class Messages {
                 case C2S_DEVICE_BUFFER -> onDeviceBuffer(payload, player, server);
                 case C2S_SUPER_ADMIN -> onSuperAdmin(payload, player, server);
                 case C2S_EDIT_DEVICE -> onEditDevice(payload, player, server);
+                case C2S_CREATE_NETWORK -> onCreateNetwork(payload, player, server);
                 default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
             }
         } catch (RuntimeException e) {
@@ -92,8 +95,10 @@ public class Messages {
     }
 
     private static void kick(ServerPlayer p, RuntimeException e) {
-        p.connection.disconnect(new TranslatableComponent("multiplayer.disconnect.invalid_packet"));
-        FluxNetworks.LOGGER.info("Kicked {} due to protocol attack", p.getGameProfile().getName(), e);
+        if (p.server.isDedicatedServer()) {
+            p.connection.disconnect(new TranslatableComponent("multiplayer.disconnect.invalid_packet"));
+        }
+        FluxNetworks.LOGGER.info("Kicked {} because of protocol attack", p.getGameProfile().getName(), e);
     }
 
     private static void onDeviceBuffer(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
@@ -101,7 +106,7 @@ public class Messages {
         looper.execute(() -> {
             ServerPlayer p = player.get();
             try {
-                if (p != null && p.getLevel().getBlockEntity(payload.readBlockPos()) instanceof TileFluxDevice e) {
+                if (p != null && p.level.getBlockEntity(payload.readBlockPos()) instanceof TileFluxDevice e) {
                     if (e.canPlayerAccess(p)) {
                         byte id = payload.readByte();
                         if (id > 0) {
@@ -119,7 +124,7 @@ public class Messages {
             }
             payload.release();
         });
-        payload.retain();
+        throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
     }
 
     private static void onSuperAdmin(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
@@ -133,12 +138,15 @@ public class Messages {
         if (networkId == FluxConstants.INVALID_NETWORK_ID) {
             BlockPos pos = payload.readBlockPos();
             CompoundTag tag = payload.readNbt();
+            if (payload.readableBytes() > 0) {
+                throw new DecoderException();
+            }
             Objects.requireNonNull(tag);
             looper.execute(() -> {
                 ServerPlayer p = player.get();
                 if (p == null) return;
                 try {
-                    if (p.getLevel().getBlockEntity(pos) instanceof TileFluxDevice e) {
+                    if (p.level.getBlockEntity(pos) instanceof TileFluxDevice e) {
                         if (e.canPlayerAccess(p)) {
                             e.readCustomTag(tag, FluxConstants.TYPE_TILE_SETTING);
                         }
@@ -157,6 +165,9 @@ public class Messages {
                 list.add(FluxUtils.readGlobalPos(payload));
             }
             CompoundTag tag = payload.readNbt();
+            if (payload.readableBytes() > 0) {
+                throw new DecoderException();
+            }
             Objects.requireNonNull(tag);
             looper.execute(() -> {
                 ServerPlayer p = player.get();
@@ -177,8 +188,33 @@ public class Messages {
                 }
             });
         }
+    }
+
+    private static void onCreateNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                        BlockableEventLoop<?> looper) {
+        byte transaction = payload.readByte();
+        String name = payload.readUtf();
+        int color = payload.readInt();
+        SecurityLevel level = SecurityLevel.fromId(payload.readByte());
+        String password = level == SecurityLevel.ENCRYPTED ? payload.readUtf() : "";
+
+        if ((name.isEmpty() || name.length() > FluxNetwork.MAX_NETWORK_NAME_LENGTH) ||
+                (level == SecurityLevel.ENCRYPTED && FluxUtils.isBadPassword(password))) {
+            throw new IllegalStateException();
+        }
         if (payload.readableBytes() > 0) {
             throw new DecoderException();
         }
+
+        looper.execute(() -> {
+            ServerPlayer p = player.get();
+            if (p == null) return;
+            sendResponse(transaction, FluxConstants.RES_REJECT, p);
+            /*if (FluxNetworkManager.createNetwork(p, name, color, level, password) != null) {
+                sendResponse(transaction, FluxConstants.RES_SUCCESS, p);
+            } else {
+                sendResponse(transaction, FluxConstants.RES_REJECT, p);
+            }*/
+        });
     }
 }

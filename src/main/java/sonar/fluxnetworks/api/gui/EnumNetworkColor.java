@@ -16,6 +16,8 @@ public enum EnumNetworkColor {
     PEACH(0xFFDAB9),
     FLAX(0xEEDC82);
 
+    public static final EnumNetworkColor[] VALUES = values();
+
     private final int color;
 
     EnumNetworkColor(int color) {

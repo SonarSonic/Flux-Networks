@@ -19,9 +19,9 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.common.capability.FluxPlayerProvider;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
@@ -36,7 +36,7 @@ public class EventHandler {
     //// SERVER EVENTS \\\\
 
     @SubscribeEvent
-    public static void onServerStopped(FMLServerStoppedEvent event) {
+    public static void onServerStopped(ServerStoppedEvent event) {
         // mainly used to reload data while changing single-player saves, useless on dedicated server
         // because once server shut down, all memory deallocated
         FluxNetworkManager.release();

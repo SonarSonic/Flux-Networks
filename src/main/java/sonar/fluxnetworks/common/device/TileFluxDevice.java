@@ -198,9 +198,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
     @Override
     public final ClientboundBlockEntityDataPacket getUpdatePacket() {
         // Server side, write block update data
-        CompoundTag tag = new CompoundTag();
-        writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
-        return new ClientboundBlockEntityDataPacket(worldPosition, -1, tag);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
@@ -290,7 +288,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
             getTransferHandler().readCustomTag(tag, type);
             // notify listeners
             mFlags |= FLAG_SETTING_CHANGED;
-            markUnsaved();
+            requestChunkSave();
             return;
         }
         mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
@@ -404,8 +402,8 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
         //}
     }
 
-    public void markUnsaved() {
-        level.getChunkAt(worldPosition).markUnsaved();
+    public void requestChunkSave() {
+        level.getChunkAt(worldPosition).setUnsaved(true);
     }
 
     /*@Override
