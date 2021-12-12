@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
@@ -121,7 +120,6 @@ public class FluxColorHandler implements BlockColor, ItemColor {
                 }*/
                 return ((TileFluxDevice) tile).mClientColor;
             }
-            return EnumNetworkColor.BLUE.getRGB();
         }
         return ~0;
     }

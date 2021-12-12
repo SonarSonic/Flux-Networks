@@ -23,6 +23,7 @@ import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.capability.FluxPlayerProvider;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkManager;
@@ -30,7 +31,7 @@ import sonar.fluxnetworks.common.connection.FluxNetworkManager;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-@Mod.EventBusSubscriber
+@Mod.EventBusSubscriber(modid = FluxNetworks.MODID)
 public class EventHandler {
 
     //// SERVER EVENTS \\\\

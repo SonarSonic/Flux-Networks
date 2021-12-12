@@ -432,4 +432,13 @@ public class FluxNetwork {
             network_stats.getValue().readNBT(nbt);
         }*/
     }
+
+    @Override
+    public String toString() {
+        return "FluxNetwork{" +
+                "networkID=" + mNetworkID +
+                ", networkName='" + mNetworkName + '\'' +
+                ", ownerUUID=" + mOwnerUUID +
+                '}';
+    }
 }

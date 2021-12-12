@@ -13,6 +13,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.register.Messages;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,9 +22,9 @@ import java.util.Collection;
 import java.util.UUID;
 
 /**
- * Manages all logical flux networks and save their data to the save.
+ * Manage all logical flux networks and save their data to the world.
  * <p>
- * Only on logical server side.
+ * Only on logical server side. Only on server thread.
  */
 @NotThreadSafe
 public final class FluxNetworkManager extends SavedData {
@@ -52,7 +53,8 @@ public final class FluxNetworkManager extends SavedData {
     private final Int2ObjectMap<FluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
     //private final Map<ResourceLocation, LongSet> tickets = new HashMap<>();
 
-    private int mUniqueID = 1; // -1 for invalid
+    // next network id, -1 for invalid
+    private int mUniqueID;
 
     private FluxNetworkManager() {
     }
@@ -62,37 +64,32 @@ public final class FluxNetworkManager extends SavedData {
     }
 
     @Nonnull
-    private static FluxNetworkManager get() {
-        if (data != null) {
-            return data;
-        }
-        synchronized (FluxNetworkManager.class) {
-            if (data == null) {
-                ServerLevel level = ServerLifecycleHooks.getCurrentServer().overworld();
-                data = level.getDataStorage()
-                        .computeIfAbsent(FluxNetworkManager::new, FluxNetworkManager::new, NETWORK_DATA);
-                FluxNetworks.LOGGER.info("FluxNetworkData has been successfully loaded");
-            }
+    public static FluxNetworkManager getInstance() {
+        if (data == null) {
+            ServerLevel level = ServerLifecycleHooks.getCurrentServer().overworld();
+            data = level.getDataStorage()
+                    .computeIfAbsent(FluxNetworkManager::new, FluxNetworkManager::new, NETWORK_DATA);
+            FluxNetworks.LOGGER.debug("FluxNetworkData has been successfully loaded");
         }
         return data;
     }
 
-    // called when the server instance changed, e.g. switching single player worlds (saves)
+    // called when the server instance changed, e.g. switching single player saves
     public static void release() {
         if (data != null) {
             data = null;
-            FluxNetworks.LOGGER.info("FluxNetworkData has been unloaded");
+            FluxNetworks.LOGGER.debug("FluxNetworkData has been unloaded");
         }
     }
 
     @Nonnull
     public static FluxNetwork getNetwork(int id) {
-        return get().mNetworks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
+        return getInstance().mNetworks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     @Nonnull
     public static Collection<FluxNetwork> getAllNetworks() {
-        return get().mNetworks.values();
+        return getInstance().mNetworks.values();
     }
 
     /*
@@ -108,37 +105,33 @@ public final class FluxNetworkManager extends SavedData {
     }*/
 
     @Nullable
-    public static FluxNetwork createNetwork(@Nonnull Player creator, @Nonnull String name, int color,
-                                            @Nonnull SecurityLevel level, @Nonnull String password) {
-        final FluxNetworkManager t = get();
-
-        final boolean limitReached;
-        if (FluxConfig.maximumPerPlayer == -1) {
-            limitReached = false;
-        } else {
+    public FluxNetwork createNetwork(@Nonnull Player creator, @Nonnull String name, int color,
+                                     @Nonnull SecurityLevel level, @Nonnull String password) {
+        if (FluxConfig.maximumPerPlayer != -1) {
             UUID uuid = creator.getUUID();
-            long created = t.mNetworks.values().stream().filter(n -> n.getOwnerUUID().equals(uuid)).count();
-            limitReached = created >= FluxConfig.maximumPerPlayer;
-        }
-        if (limitReached) {
-            return null;
+            int count = 0;
+            for (var n : mNetworks.values()) {
+                if (n.getOwnerUUID().equals(uuid) && ++count >= FluxConfig.maximumPerPlayer) {
+                    return null;
+                }
+            }
         }
 
-        FluxNetworkServer network = new FluxNetworkServer(t.mUniqueID++, name, color, creator);
+        //noinspection StatementWithEmptyBody
+        while (mNetworks.containsKey(++mUniqueID)) ;
+        FluxNetworkServer network = new FluxNetworkServer(mUniqueID, name, color, creator);
         network.getSecurity().set(level, password);
 
-        if (t.mNetworks.put(network.getNetworkID(), network) != null) {
-            FluxNetworks.LOGGER.warn("Network IDs are not unique when creating network");
-        }
-        //S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_BASIC).sendToAll();
+        mNetworks.put(network.getNetworkID(), network);
+        Messages.getNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC).sendToAll();
         return network;
     }
 
-    public static void deleteNetwork(@Nonnull FluxNetwork network) {
-        if (get().mNetworks.remove(network.getNetworkID()) == network) {
+    public void deleteNetwork(@Nonnull FluxNetwork network) {
+        if (mNetworks.remove(network.getNetworkID()) == network) {
             network.onDelete();
+            Messages.sendNetworkDelete(network.getNetworkID());
         }
-        //S2CNetMsg.updateNetwork(network, FluxConstants.TYPE_NET_DELETE).sendToAll();
     }
 
     @Override
@@ -155,8 +148,13 @@ public final class FluxNetworkManager extends SavedData {
             CompoundTag tag = list.getCompound(i);
             FluxNetworkServer network = new FluxNetworkServer();
             network.readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
-            if (mNetworks.put(network.getNetworkID(), network) != null) {
-                FluxNetworks.LOGGER.warn("Network IDs are not unique when reading data");
+            FluxNetwork old = mNetworks.put(network.getNetworkID(), network);
+            if (old != null) {
+                FluxNetworks.LOGGER.warn("""
+                                Network IDs are not unique when reading data. Overriding it.
+                                Source: {}
+                                Dest: {}""",
+                        network, old);
             }
         }
 

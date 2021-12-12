@@ -29,7 +29,7 @@ public class PasswordInputFilter implements InputFilter {
         int i;
         for (i = start; i < end; i++) {
             // All chars are BMP.
-            if (FluxUtils.notPasswordChar(source.charAt(i))) {
+            if (FluxUtils.isBadPasswordChar(source.charAt(i))) {
                 break;
             }
         }
@@ -51,7 +51,7 @@ public class PasswordInputFilter implements InputFilter {
 
         // Only count down to i because the chars before that were all OK.
         for (int j = end - 1; j >= i; j--) {
-            if (FluxUtils.notPasswordChar(source.charAt(j))) {
+            if (FluxUtils.isBadPasswordChar(source.charAt(j))) {
                 filtered.delete(j, j + 1);
             }
         }

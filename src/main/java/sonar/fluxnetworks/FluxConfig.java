@@ -60,13 +60,13 @@ public class FluxConfig {
         final IConfigSpec<?> spec = event.getConfig().getSpec();
         if (spec == CLIENT_SPEC) {
             CLIENT_CONFIG.load();
-            FluxNetworks.LOGGER.info("CLIENT CONFIG LOADED");
+            FluxNetworks.LOGGER.debug("Client config loaded");
         } else if (spec == COMMON_SPEC) {
             COMMON_CONFIG.load();
-            FluxNetworks.LOGGER.info("COMMON CONFIG LOADED");
+            FluxNetworks.LOGGER.debug("Common config loaded");
         } else if (spec == SERVER_SPEC) {
             SERVER_CONFIG.load();
-            FluxNetworks.LOGGER.info("SERVER CONFIG LOADED");
+            FluxNetworks.LOGGER.debug("Server config loaded");
         }
     }
 

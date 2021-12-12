@@ -6,11 +6,13 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.RunningOnDifferentThreadException;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -74,9 +76,9 @@ public class ClientMessages {
         return buf;
     }
 
-    public static void sendSuperAdmin(boolean enable, @Nullable Callback cb) {
+    public static void sendSuperAdmin(boolean activate, @Nullable Callback cb) {
         var buf = withCallback(Messages.C2S_SUPER_ADMIN, cb);
-        buf.writeBoolean(enable);
+        buf.writeBoolean(activate);
         sNetwork.sendToServer(buf);
     }
 
@@ -118,6 +120,7 @@ public class ClientMessages {
             case Messages.S2C_DEVICE_BUFFER -> onDeviceBuffer(payload, player, minecraft);
             case Messages.S2C_RESPONSE -> onResponse(payload);
             case Messages.S2C_SUPER_ADMIN -> onSuperAdmin(payload, player, minecraft);
+            case Messages.S2C_NETWORK_UPDATE -> FluxClientCache.getInstance().onNetworkUpdate(payload);
         }
     }
 
@@ -133,7 +136,7 @@ public class ClientMessages {
             }
             payload.release();
         });
-        payload.retain();
+        throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
     }
 
     private static void onResponse(FriendlyByteBuf payload) {

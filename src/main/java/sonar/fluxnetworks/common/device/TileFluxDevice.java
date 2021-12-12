@@ -43,7 +43,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
     private static final BlockEntityTicker<? extends TileFluxDevice> sTickerServer =
             (level, pos, state, entity) -> entity.onServerTick();
 
-    private static final int INVALID_CLIENT_COLOR = FluxUtils.getBrighterColor(FluxConstants.INVALID_NETWORK_COLOR);
+    public static final int INVALID_CLIENT_COLOR = FluxUtils.getBrighterColor(FluxConstants.INVALID_NETWORK_COLOR);
 
     public static final int MAX_CUSTOM_NAME_LENGTH = 24;
 
@@ -206,8 +206,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
         // Client side, read block update data
         readCustomTag(packet.getTag(), FluxConstants.TYPE_TILE_UPDATE);
         // update chunk render whether state changed or not
-        //world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), -1);
-        //TODO review model tint update?
+        //level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
     }
 
     @Nonnull
@@ -226,12 +225,10 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
         readCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
     }
 
-    @Nonnull
     @Override
-    public final CompoundTag save(@Nonnull CompoundTag tag) {
-        super.save(tag);
+    protected final void saveAdditional(@Nonnull CompoundTag tag) {
+        super.saveAdditional(tag);
         writeCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
-        return tag;
     }
 
     @Override

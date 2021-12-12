@@ -3,28 +3,26 @@ package sonar.fluxnetworks.register;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.FluxClientCache;
 
-import javax.annotation.Nonnull;
-
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = FluxNetworks.MODID)
 public class ClientEventHandler {
 
     @SubscribeEvent
-    public static void onPlayerLeft(ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        FluxClientCache.release();
+    public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+        FluxClientCache.getInstance().invalidate();
         //FluxColorHandler.INSTANCE.reset();
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onClientTick(@Nonnull TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            FluxClientCache.tick();
+            //FluxClientCache.tick();
             //FluxColorHandler.INSTANCE.tick();
         }
-    }
+    }*/
 }

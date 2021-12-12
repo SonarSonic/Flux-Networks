@@ -94,6 +94,11 @@ public class TabCreate {
             v.setTextSize(16);
             v.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             v.setBackground(new FluxDeviceUI.TextFieldBackground());
+            v.setOnFocusChangeListener((__, focused) -> {
+                if (!focused) {
+                    checkCreateState();
+                }
+            });
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             params.setMargins(dp(20), dp(4), dp(20), dp(4));
@@ -110,6 +115,7 @@ public class TabCreate {
                 mSecurityLevel = FluxUtils.incrementEnum(mSecurityLevel, SecurityLevel.VALUES);
                 mSecurity.setText(mSecurityLevelTexts[mSecurityLevel.ordinal()]);
                 mPassword.setVisibility(mSecurityLevel == SecurityLevel.ENCRYPTED ? View.VISIBLE : View.INVISIBLE);
+                checkCreateState();
             });
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -134,6 +140,11 @@ public class TabCreate {
             v.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             v.setBackground(new FluxDeviceUI.TextFieldBackground());
             v.setVisibility(mSecurityLevel == SecurityLevel.ENCRYPTED ? View.VISIBLE : View.INVISIBLE);
+            v.setOnFocusChangeListener((__, focused) -> {
+                if (!focused) {
+                    checkCreateState();
+                }
+            });
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             params.setMargins(dp(20), dp(4), dp(20), dp(4));
@@ -226,4 +237,11 @@ public class TabCreate {
         return mContent = content;
     }
 
+    private void checkCreateState() {
+        if (mSecurityLevel == SecurityLevel.ENCRYPTED && mPassword.getText().isEmpty()) {
+            mCreate.setEnabled(false);
+            return;
+        }
+        mCreate.setEnabled(mName.getText().length() > 0);
+    }
 }

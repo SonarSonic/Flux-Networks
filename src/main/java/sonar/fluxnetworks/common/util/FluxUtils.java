@@ -318,7 +318,7 @@ public class FluxUtils {
             }
             if (codePoint < 0x21 || codePoint >= 0x7f)
                 return false;*/
-            if (notPasswordChar(str.charAt(i))) {
+            if (isBadPasswordChar(str.charAt(i))) {
                 return true;
             }
         }
@@ -326,13 +326,13 @@ public class FluxUtils {
     }
 
     /**
-     * Check if it's an invalid BMP character for network password.
+     * Check if it's an invalid BMP character used with network passwords.
      *
      * @param c the char
-     * @return true - invalid
+     * @return invalid or not
      */
-    public static boolean notPasswordChar(char c) {
-        return c >= 0x7f || c < 0x21;
+    public static boolean isBadPasswordChar(char c) {
+        return c >= 0x7f || c <= 0x20;
     }
 
     /*@Nullable

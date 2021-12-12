@@ -24,6 +24,7 @@ import sonar.fluxnetworks.common.util.FluxUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -49,6 +50,8 @@ public class Messages {
     static final int S2C_DEVICE_BUFFER = 0;
     static final int S2C_RESPONSE = 1;
     static final int S2C_SUPER_ADMIN = 2;
+    static final int S2C_NETWORK_UPDATE = 3;
+    static final int S2C_NETWORK_DELETE = 4;
 
     @Nonnull
     public static PacketDispatcher getDeviceBuffer(TileFluxDevice device, byte id) {
@@ -60,7 +63,7 @@ public class Messages {
         return sNetwork.dispatch(buf);
     }
 
-    private static void sendResponse(byte transaction, int code, Player player) {
+    private static void sendResponse(Player player, byte transaction, int code) {
         if (transaction < 0) return;
         var buf = NetworkHandler.buffer(S2C_RESPONSE);
         buf.writeByte(transaction);
@@ -68,10 +71,43 @@ public class Messages {
         sNetwork.dispatch(buf).sendToPlayer(player);
     }
 
-    public static void sendSuperAdmin(boolean enable, Player player) {
+    public static void sendSuperAdmin(Player player, boolean activated) {
         var buf = NetworkHandler.buffer(S2C_SUPER_ADMIN);
-        buf.writeBoolean(enable);
+        buf.writeBoolean(activated);
         sNetwork.dispatch(buf).sendToPlayer(player);
+    }
+
+    @Nonnull
+    public static PacketDispatcher getNetworkUpdate(FluxNetwork network, byte type) {
+        var buf = NetworkHandler.buffer(S2C_NETWORK_UPDATE);
+        buf.writeByte(type);
+        buf.writeVarInt(1);
+        buf.writeVarInt(network.getNetworkID());
+        final CompoundTag tag = new CompoundTag();
+        network.writeCustomTag(tag, type);
+        buf.writeNbt(tag);
+        return sNetwork.dispatch(buf);
+    }
+
+    @Nonnull
+    public static PacketDispatcher getNetworkUpdate(Collection<FluxNetwork> networks, byte type) {
+        assert !networks.isEmpty();
+        var buf = NetworkHandler.buffer(S2C_NETWORK_UPDATE);
+        buf.writeByte(type);
+        buf.writeVarInt(networks.size());
+        for (var network : networks) {
+            buf.writeVarInt(network.getNetworkID());
+            final CompoundTag tag = new CompoundTag();
+            network.writeCustomTag(tag, type);
+            buf.writeNbt(tag);
+        }
+        return sNetwork.dispatch(buf);
+    }
+
+    public static void sendNetworkDelete(int id) {
+        var buf = NetworkHandler.buffer(S2C_NETWORK_DELETE);
+        buf.writeVarInt(id);
+        sNetwork.dispatch(buf).sendToAll();
     }
 
     @Nonnull
@@ -81,16 +117,12 @@ public class Messages {
 
     static void msg(short index, FriendlyByteBuf payload, Supplier<ServerPlayer> player) {
         MinecraftServer server = player.get().getLevel().getServer();
-        try {
-            switch (index) {
-                case C2S_DEVICE_BUFFER -> onDeviceBuffer(payload, player, server);
-                case C2S_SUPER_ADMIN -> onSuperAdmin(payload, player, server);
-                case C2S_EDIT_DEVICE -> onEditDevice(payload, player, server);
-                case C2S_CREATE_NETWORK -> onCreateNetwork(payload, player, server);
-                default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
-            }
-        } catch (RuntimeException e) {
-            kick(player.get(), e);
+        switch (index) {
+            case C2S_DEVICE_BUFFER -> onDeviceBuffer(payload, player, server);
+            case C2S_SUPER_ADMIN -> onSuperAdmin(payload, player, server);
+            case C2S_EDIT_DEVICE -> onEditDevice(payload, player, server);
+            case C2S_CREATE_NETWORK -> onCreateNetwork(payload, player, server);
+            default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
         }
     }
 
@@ -98,7 +130,7 @@ public class Messages {
         if (p.server.isDedicatedServer()) {
             p.connection.disconnect(new TranslatableComponent("multiplayer.disconnect.invalid_packet"));
         }
-        FluxNetworks.LOGGER.info("Kicked {} because of protocol attack", p.getGameProfile().getName(), e);
+        FluxNetworks.LOGGER.info("Kicked {} because of protocol attack: {}", p.getGameProfile().getName(), e);
     }
 
     private static void onDeviceBuffer(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
@@ -112,7 +144,7 @@ public class Messages {
                         if (id > 0) {
                             e.readPacket(payload, id);
                         } else {
-                            throw new IllegalStateException();
+                            throw new IllegalArgumentException();
                         }
                         if (payload.readableBytes() > 0) {
                             throw new DecoderException();
@@ -158,7 +190,7 @@ public class Messages {
         } else {
             int size = payload.readVarInt();
             if (size <= 0) {
-                throw new IllegalStateException();
+                throw new IllegalArgumentException();
             }
             List<GlobalPos> list = new ArrayList<>(size);
             for (int i = 0; i < size; i++) {
@@ -198,18 +230,18 @@ public class Messages {
         SecurityLevel level = SecurityLevel.fromId(payload.readByte());
         String password = level == SecurityLevel.ENCRYPTED ? payload.readUtf() : "";
 
-        if ((name.isEmpty() || name.length() > FluxNetwork.MAX_NETWORK_NAME_LENGTH) ||
-                (level == SecurityLevel.ENCRYPTED && FluxUtils.isBadPassword(password))) {
-            throw new IllegalStateException();
-        }
         if (payload.readableBytes() > 0) {
             throw new DecoderException();
+        }
+        if ((name.isEmpty() || name.length() > FluxNetwork.MAX_NETWORK_NAME_LENGTH) ||
+                (level == SecurityLevel.ENCRYPTED && FluxUtils.isBadPassword(password))) {
+            throw new IllegalArgumentException();
         }
 
         looper.execute(() -> {
             ServerPlayer p = player.get();
             if (p == null) return;
-            sendResponse(transaction, FluxConstants.RES_REJECT, p);
+            sendResponse(p, transaction, FluxConstants.RES_REJECT);
             /*if (FluxNetworkManager.createNetwork(p, name, color, level, password) != null) {
                 sendResponse(transaction, FluxConstants.RES_SUCCESS, p);
             } else {

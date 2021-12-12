@@ -1,9 +1,10 @@
 package sonar.fluxnetworks.client;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -13,13 +14,17 @@ import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class FluxClientCache {
 
-    private static final Int2ObjectOpenHashMap<FluxNetwork> networks = new Int2ObjectOpenHashMap<>();
+    private static final FluxClientCache sInstance = new FluxClientCache();
+
+    private static final Int2ObjectFunction<FluxNetwork> sCacheNetwork = i -> new FluxNetwork();
+
+    private final Int2ObjectOpenHashMap<FluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
 
     public static boolean superAdmin = false;
     public static boolean detailedNetworkView = false;
@@ -30,36 +35,51 @@ public class FluxClientCache {
 
     private static int feedbackTimer = 0;
 
-    public static void release() {
-        networks.clear();
-        networks.trim();
+    private FluxClientCache() {
+    }
+
+    /**
+     * A constant pointer to the global cache instance.
+     *
+     * @return the global instance
+     */
+    public static FluxClientCache getInstance() {
+        return sInstance;
+    }
+
+    /**
+     * Release buffers and view models.
+     */
+    public void invalidate() {
+        synchronized (mNetworks) {
+            mNetworks.trim(0);
+        }
         adminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
         feedback = FeedbackInfo.NONE;
     }
 
-    public static void updateNetworks(@Nonnull Int2ObjectMap<CompoundTag> serverSideNetworks, int type) {
-        for (Int2ObjectMap.Entry<CompoundTag> entry : serverSideNetworks.int2ObjectEntrySet()) {
-            int id = entry.getIntKey();
-            CompoundTag nbt = entry.getValue();
-            FluxNetwork network = networks.get(id);
-            if (type == FluxConstants.TYPE_NET_DELETE) {
-                if (network != null) {
-                    networks.remove(id);
-                }
-            } else {
-                if (network == null) {
-                    network = new FluxNetwork();
-                    network.readCustomTag(nbt, type);
-                    networks.put(id, network);
-                } else {
-                    network.readCustomTag(nbt, type);
-                }
+    public void onNetworkUpdate(@Nonnull FriendlyByteBuf payload) {
+        final byte type = payload.readByte();
+        final int size = payload.readVarInt();
+        synchronized (mNetworks) {
+            for (int i = 0; i < size; i++) {
+                int id = payload.readVarInt();
+                CompoundTag tag = payload.readNbt();
+                assert tag != null;
+                mNetworks.computeIfAbsent(id, sCacheNetwork).readCustomTag(tag, type);
             }
+        }
+        //TODO notify view models
+    }
+
+    public void delete(int id) {
+        synchronized (mNetworks) {
+            mNetworks.remove(id);
         }
     }
 
     public static void updateConnections(int networkID, List<CompoundTag> tags) {
-        FluxNetwork network = networks.get(networkID);
+        FluxNetwork network = sInstance.mNetworks.get(networkID);
         if (network != null) {
             for (CompoundTag tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
@@ -71,7 +91,7 @@ public class FluxClientCache {
 
     @Nonnull
     public static FluxNetwork getNetwork(int id) {
-        return networks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
+        return sInstance.mNetworks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
     }
 
     public static String getDisplayName(@Nonnull CompoundTag subTag) {
@@ -100,16 +120,16 @@ public class FluxClientCache {
         }
     }
 
-    public static void tick() {
+    /*public static void tick() {
         if (feedback != FeedbackInfo.NONE) {
             if (--feedbackTimer <= 0) {
                 feedback = FeedbackInfo.NONE;
             }
         }
-    }
+    }*/
 
     @Nonnull
-    public static List<FluxNetwork> getAllNetworks() {
-        return new ArrayList<>(networks.values());
+    public static Collection<FluxNetwork> getAllNetworks() {
+        return sInstance.mNetworks.values();
     }
 }
