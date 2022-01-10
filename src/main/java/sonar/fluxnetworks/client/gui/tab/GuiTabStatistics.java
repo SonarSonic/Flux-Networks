@@ -12,7 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.common.connection.NetworkStatistics;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 
@@ -94,7 +94,7 @@ public class GuiTabStatistics extends GuiTabCore {
         super.tick();
         if (networkValid) {
             if (timer == 0) {
-                C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_STATISTICS);
+                NetworkHandler.C2S_RequestNetworkUpdate(network, FluxConstants.TYPE_NET_STATISTICS);
             }
             if (timer == 1) {
                 chart.updateData(stats.energyChange);

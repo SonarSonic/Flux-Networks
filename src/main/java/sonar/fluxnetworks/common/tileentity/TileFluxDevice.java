@@ -31,7 +31,7 @@ import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
 import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.S2CNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 import sonar.fluxnetworks.common.storage.FluxChunkManager;
 import sonar.fluxnetworks.common.storage.FluxNetworkData;
 
@@ -118,7 +118,7 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     // server tick
     protected void sTick() {
         if (!playerUsing.isEmpty()) {
-            S2CNetMsg.tileEntity(this, FluxConstants.S2C_GUI_SYNC).sendToPlayers(playerUsing);
+            NetworkHandler.sendToPlayers(NetworkHandler.S2C_TileEntity(this, FluxConstants.S2C_GUI_SYNC), playerUsing);
         }
         if ((flags & FLAG_LOAD) == 0) {
             connect(FluxNetworkData.getNetwork(networkID));
@@ -319,7 +319,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     private void sendTilePacketToUsing(byte packetID) {
         if (!world.isRemote) {
             for (PlayerEntity playerEntity : playerUsing) {
-                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity), new TilePacketBufferPacket(this, pos, packetID));
+                PacketHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) playerEntity),
+                new TilePacketBufferPacket(this, pos, packetID));
             }
         }
     }
@@ -327,7 +328,8 @@ public abstract class TileFluxDevice extends TileEntity implements IFluxDevice, 
     @Deprecated
     private void sendTilePacketToNearby(byte packetID) {
         if (!world.isRemote) {
-            PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunkAt(pos)), new TilePacketBufferPacket(this, pos, packetID));
+            PacketHandler.CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunkAt(pos)), new
+            TilePacketBufferPacket(this, pos, packetID));
         }
     }
 

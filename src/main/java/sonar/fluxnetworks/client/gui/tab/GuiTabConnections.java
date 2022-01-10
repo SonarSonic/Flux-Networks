@@ -21,7 +21,7 @@ import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopupConnectionEdit;
 import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         gridPerPage = 7;
         elementHeight = 18;
         elementWidth = 146;
-        C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_CONNECTIONS);
+        NetworkHandler.C2S_RequestNetworkUpdate(network, FluxConstants.TYPE_NET_CONNECTIONS);
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -182,7 +182,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
                     break;
                 case 2:
                     List<GlobalPos> list = batchConnections.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList());
-                    C2SNetMsg.disconnect(network.getNetworkID(), list);
+                    NetworkHandler.C2S_Disconnect(network.getNetworkID(), list);
                     break;
             }
         }
@@ -226,7 +226,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
             refreshPages(Lists.newArrayList(network.getAllConnections()));
         }
         if (timer % 5 == 0) {
-            C2SNetMsg.requestConnectionUpdate(network.getNetworkID(), current.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList()));
+            NetworkHandler.C2S_RequestConnectionUpdate(network.getNetworkID(), current.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList()));
         }
         timer++;
         timer %= 20;

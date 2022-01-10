@@ -14,7 +14,7 @@ import sonar.fluxnetworks.client.gui.button.SimpleToggleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabConnections;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -189,7 +189,7 @@ public class PopupConnectionEdit extends PopupCore<GuiTabConnections> {
                                     | FluxConstants.FLAG_EDIT_DISABLE_LIMIT | FluxConstants.FLAG_EDIT_CHUNK_LOADING;
                         }
                         //CompoundNBT tag = FluxUtils.getBatchEditingTag(fluxName, priority, limit, surgeMode, disableLimit, chunkLoading);
-                        C2SNetMsg.editConnections(host.network.getNetworkID(), list, flags,
+                        NetworkHandler.C2S_EditConnections(host.network.getNetworkID(), list, flags,
                                 fluxName.getText(), priority.getIntegerFromText(true), limit.getLongFromText(false),
                                 surgeMode != null && surgeMode.toggled,
                                 disableLimit != null && disableLimit.toggled,

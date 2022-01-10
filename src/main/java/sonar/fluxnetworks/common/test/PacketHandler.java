@@ -9,7 +9,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 /**
  * @deprecated use {@link NetworkHandler} instead

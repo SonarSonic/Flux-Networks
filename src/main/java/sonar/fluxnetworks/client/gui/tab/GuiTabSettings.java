@@ -15,7 +15,7 @@ import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 
@@ -101,11 +101,11 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (networkValid && button instanceof NormalButton) {
             switch (button.id) {
                 case 3:
-                    C2SNetMsg.editNetwork(network.getNetworkID(),
+                    NetworkHandler.C2S_EditNetwork(network.getNetworkID(),
                             nameField.getText(), colorBtn.color, securityType, passwordField.getText());
                     break;
                 case 4:
-                    C2SNetMsg.deleteNetwork(network.getNetworkID());
+                    NetworkHandler.C2S_DeleteNetwork(network.getNetworkID());
                     break;
             }
         }

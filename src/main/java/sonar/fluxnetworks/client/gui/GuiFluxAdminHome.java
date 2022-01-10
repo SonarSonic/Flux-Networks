@@ -12,7 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 
@@ -64,7 +64,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
             switchButton.switchButton();
             switch (switchButton.id) {
                 case 0:
-                    C2SNetMsg.requestSuperAdmin();
+                    NetworkHandler.C2S_RequestSuperAdmin();
                     break;
                 case 1:
                     FluxClientCache.detailedNetworkView = switchButton.toggled;
@@ -77,8 +77,8 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC);
-            C2SNetMsg.requestAccessUpdate(network.getNetworkID());
+            NetworkHandler.C2S_RequestNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC);
+            NetworkHandler.C2S_RequestAccessUpdate(network.getNetworkID());
         }
         timer++;
         timer %= 100;

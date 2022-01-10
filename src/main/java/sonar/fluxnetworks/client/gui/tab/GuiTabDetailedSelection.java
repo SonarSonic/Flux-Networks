@@ -9,7 +9,7 @@ import sonar.fluxnetworks.api.network.IFluxNetwork;
 import sonar.fluxnetworks.api.text.FluxTranslate;
 import sonar.fluxnetworks.client.gui.ScreenUtils;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 
@@ -70,7 +70,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
     @Override
     public void tick() {
         if (timer2 == 1) {
-            C2SNetMsg.requestNetworkUpdate(current, FluxConstants.TYPE_NET_STATISTICS);
+            NetworkHandler.C2S_RequestNetworkUpdate(current, FluxConstants.TYPE_NET_STATISTICS);
         }
         super.tick();
     }

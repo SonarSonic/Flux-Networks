@@ -16,7 +16,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopupMemberEdit;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         gridPerPage = 10;
         elementHeight = 12;
         elementWidth = 146;
-        C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_MEMBERS);
+        NetworkHandler.C2S_RequestNetworkUpdate(network, FluxConstants.TYPE_NET_MEMBERS);
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -172,7 +172,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            C2SNetMsg.requestAccessUpdate(network.getNetworkID());
+            NetworkHandler.C2S_RequestAccessUpdate(network.getNetworkID());
         }
         if (timer == 4 || timer == 14) {
             refreshPages(Lists.newArrayList(network.getAllMembers()));

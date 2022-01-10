@@ -17,7 +17,7 @@ import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -140,7 +140,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
                 tag.putBoolean(FluxConstants.SURGE_MODE, stackSurgeMode);
                 tag.putBoolean(FluxConstants.DISABLE_LIMIT, stackDisableLimit);
 
-                C2SNetMsg.configuratorEdit(stackCustomName, tag);
+                NetworkHandler.C2S_ConfiguratorEdit(stackCustomName, tag);
                 stack.setTagInfo(FluxConstants.TAG_FLUX_CONFIG, tag);
                 updateSettingsFromTag();
                 apply.setUnclickable();
@@ -185,7 +185,7 @@ public class GuiFluxConfiguratorHome extends GuiTabCore {
     public void tick() {
         super.tick();
         if (timer == 0) {
-            C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC);
+            NetworkHandler.C2S_RequestNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC);
         }
         timer++;
         timer %= 100;

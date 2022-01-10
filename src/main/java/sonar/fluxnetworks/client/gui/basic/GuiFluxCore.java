@@ -19,7 +19,7 @@ import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.misc.FluxMenu;
 import sonar.fluxnetworks.common.misc.FluxUtils;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -156,9 +156,9 @@ public abstract class GuiFluxCore extends GuiPopupHost {
 
     public void setConnectedNetwork(int networkID, String password) {
         if (container.bridge instanceof TileFluxDevice) {
-            C2SNetMsg.setNetwork(((TileFluxDevice) container.bridge).getPos(), networkID, password);
+            NetworkHandler.C2S_SetNetwork(((TileFluxDevice) container.bridge).getPos(), networkID, password);
         } else if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
-            C2SNetMsg.configuratorNet(networkID, password);
+            NetworkHandler.C2S_ConfiguratorNet(networkID, password);
         } else if (container.bridge instanceof ItemAdminConfigurator.MenuBridge) {
             FluxClientCache.adminViewingNetwork = networkID;
         }

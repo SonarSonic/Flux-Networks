@@ -2,7 +2,7 @@ package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import sonar.fluxnetworks.common.network.NetworkHandler;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 

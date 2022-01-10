@@ -39,7 +39,6 @@ import sonar.fluxnetworks.common.item.ItemFluxDevice;
 import sonar.fluxnetworks.common.item.ItemFluxDust;
 import sonar.fluxnetworks.common.loot.FluxLootTableProvider;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.NetworkHandler;
 import sonar.fluxnetworks.common.recipe.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.recipe.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.registry.RegistryBlocks;
@@ -62,7 +61,7 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        NetworkHandler.initialize();
+        NetworkHandler.register();
 
         // capabilities
         SuperAdmin.register();
@@ -110,11 +109,15 @@ public class CommonRegistration {
         registry.register(new ItemFluxDevice(RegistryBlocks.FLUX_CONTROLLER, props).setRegistryName("flux_controller"));
 
         // the 'new' method is in another class, so there will be no server crash
-        Item.Properties storageProps = new Item.Properties().group(ITEM_GROUP).setISTER(() -> FluxStorageItemRenderer::new);
+        Item.Properties storageProps =
+                new Item.Properties().group(ITEM_GROUP).setISTER(() -> FluxStorageItemRenderer::new);
 
-        registry.register(new ItemFluxDevice(RegistryBlocks.BASIC_FLUX_STORAGE, storageProps).setRegistryName("basic_flux_storage"));
-        registry.register(new ItemFluxDevice(RegistryBlocks.HERCULEAN_FLUX_STORAGE, storageProps).setRegistryName("herculean_flux_storage"));
-        registry.register(new ItemFluxDevice(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, storageProps).setRegistryName("gargantuan_flux_storage"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.BASIC_FLUX_STORAGE, storageProps).setRegistryName(
+                "basic_flux_storage"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.HERCULEAN_FLUX_STORAGE, storageProps).setRegistryName(
+                "herculean_flux_storage"));
+        registry.register(new ItemFluxDevice(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, storageProps).setRegistryName(
+                "gargantuan_flux_storage"));
 
         registry.register(new ItemFluxDust(props).setRegistryName("flux_dust"));
         registry.register(new Item(props).setRegistryName("flux_core"));
@@ -124,7 +127,8 @@ public class CommonRegistration {
 
     /*@SubscribeEvent
     public static void onEntityRegistry(@Nonnull final RegistryEvent.Register<EntityType<?>> event) {
-        event.getRegistry().register(EntityType.Builder.<FireItemEntity>create(FireItemEntity::new, EntityClassification.MISC).immuneToFire().build("fireitem").setRegistryName("fireitem"));
+        event.getRegistry().register(EntityType.Builder.<FireItemEntity>create(FireItemEntity::new,
+        EntityClassification.MISC).immuneToFire().build("fireitem").setRegistryName("fireitem"));
     }*/
 
     @SubscribeEvent
@@ -137,11 +141,14 @@ public class CommonRegistration {
                 .setRegistryName("flux_point"));
         registry.register(TileEntityType.Builder.create(TileFluxController::new, RegistryBlocks.FLUX_CONTROLLER).build(null)
                 .setRegistryName("flux_controller"));
-        registry.register(TileEntityType.Builder.create(TileFluxStorage.Basic::new, RegistryBlocks.BASIC_FLUX_STORAGE).build(null)
+        registry.register(TileEntityType.Builder.create(TileFluxStorage.Basic::new,
+                        RegistryBlocks.BASIC_FLUX_STORAGE).build(null)
                 .setRegistryName("basic_flux_storage"));
-        registry.register(TileEntityType.Builder.create(TileFluxStorage.Herculean::new, RegistryBlocks.HERCULEAN_FLUX_STORAGE).build(null).
+        registry.register(TileEntityType.Builder.create(TileFluxStorage.Herculean::new,
+                        RegistryBlocks.HERCULEAN_FLUX_STORAGE).build(null).
                 setRegistryName("herculean_flux_storage"));
-        registry.register(TileEntityType.Builder.create(TileFluxStorage.Gargantuan::new, RegistryBlocks.GARGANTUAN_FLUX_STORAGE).build(null)
+        registry.register(TileEntityType.Builder.create(TileFluxStorage.Gargantuan::new,
+                        RegistryBlocks.GARGANTUAN_FLUX_STORAGE).build(null)
                 .setRegistryName("gargantuan_flux_storage"));
     }
 
@@ -171,8 +178,10 @@ public class CommonRegistration {
 
     @SubscribeEvent
     public static void registerRecipeSerializers(@Nonnull RegistryEvent.Register<IRecipeSerializer<?>> event) {
-        event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "flux_storage_recipe"));
-        event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID, "nbt_wipe_recipe"));
+        event.getRegistry().register(FluxStorageRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID,
+                "flux_storage_recipe"));
+        event.getRegistry().register(NBTWipeRecipeSerializer.INSTANCE.setRegistryName(FluxNetworks.MODID,
+                "nbt_wipe_recipe"));
     }
 
     @SubscribeEvent

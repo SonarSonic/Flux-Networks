@@ -12,7 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.NormalButton;
 import sonar.fluxnetworks.common.misc.FluxMenu;
-import sonar.fluxnetworks.common.network.C2SNetMsg;
+import sonar.fluxnetworks.register.NetworkHandler;
 
 import javax.annotation.Nonnull;
 
@@ -58,7 +58,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         if (button instanceof NormalButton) {
             if (mouseButton == 0 && button.id == 3) {
                 //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK, GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
-                C2SNetMsg.createNetwork(nameField.getText(), colorBtn.color, securityType, passwordField.getText());
+                NetworkHandler.C2S_CreateNetwork(nameField.getText(), colorBtn.color, securityType, passwordField.getText());
             }
         }
     }
