@@ -10,7 +10,6 @@ import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -60,12 +59,10 @@ public class CommonEventHandler {
 
     //// WORLD EVENTS \\\\
 
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onWorldLoad(@Nonnull WorldEvent.Load event) {
         if (!event.getWorld().isRemote()) {
-            ServerWorld world = (ServerWorld) event.getWorld();
-            world.getServer().enqueue(new TickDelayedTask(world.getServer().getTickCounter(), () ->
-                    FluxChunkManager.loadWorld(world)));
+            FluxChunkManager.loadWorld((ServerWorld) event.getWorld());
         }
     }
 

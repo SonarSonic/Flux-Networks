@@ -1,6 +1,13 @@
-### Changelog 1.16.5-6.1.7.12 (2021-04-22)
+### Changelog 1.16.5-6.2.1.14 (2022-01-12)
 (Install Modern UI for better font looking)
-  
+
+* Fix chunk loading priority
+* Rewrite network handler and update network protocol
+* Add it_it translation (Hav3funDJ)
+* Release heavy buffers when logging out from a server
+* Fix invalidation for energy capability instances
+
+### Changelog 1.16.5-6.1.7.12 (2021-04-22)
 * Fix network packet security leaks
 * Fix super admin can't transfer ownership to self
 

@@ -2,7 +2,6 @@ package sonar.fluxnetworks.common.storage;
 
 import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -17,6 +16,7 @@ import sonar.fluxnetworks.common.tileentity.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
 
 public class FluxChunkManager {
@@ -42,7 +42,7 @@ public class FluxChunkManager {
         /*List<ChunkPos> chunks = tickets.stream().map(l -> new ChunkPos(BlockPos.fromLong(l)))
                 .distinct().collect(Collectors.toList());
         chunks.forEach(pos -> registerTicket(world, pos));*/
-        Set<ChunkPos> chunkPosSet = new ObjectArraySet<>();
+        Set<ChunkPos> chunkPosSet = new HashSet<>();
         if (!tickets.isEmpty()) {
             ServerChunkProvider chunkProvider = world.getChunkProvider();
             LongIterator iterator = tickets.iterator();
@@ -62,7 +62,7 @@ public class FluxChunkManager {
                 }
             }
         }
-        FluxNetworks.LOGGER.info("Loading {} chunks in {} by {} flux devices",
+        FluxNetworks.LOGGER.debug("Loading {} chunks in {} by {} flux devices",
                 chunkPosSet.size(), dim.getLocation(), tickets.size());
     }
 
@@ -98,7 +98,8 @@ public class FluxChunkManager {
             FluxNetworks.LOGGER.debug("Removing chunk loader in {}, chunk: {} at {}",
                     dim.getLocation(), chunkPos, blockPos);
         } else {
-            FluxNetworks.LOGGER.warn("There's no such a chunk loader to remove in {} at {}", dim.getLocation(), blockPos);
+            FluxNetworks.LOGGER.warn("There's no such a chunk loader to remove in {} at {}", dim.getLocation(),
+                    blockPos);
         }
     }
 
