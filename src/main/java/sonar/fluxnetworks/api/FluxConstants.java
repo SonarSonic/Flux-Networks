@@ -1,5 +1,7 @@
 package sonar.fluxnetworks.api;
 
+import sonar.fluxnetworks.FluxNetworks;
+
 /**
  * Revision: 7.0.0
  */
@@ -106,6 +108,12 @@ public final class FluxConstants {
     public static final String BUFFER = "buffer";
     public static final String ENERGY = "energy"; // equals to buffer, but with different display text
     public static final String CHANGE = "change";
+
+    static {
+        // we don't expect non-inline in this class, should in compile-time
+        FluxNetworks.LOGGER.warn("FluxConstants is class loading, this shouldn't happen...");
+        assert false;
+    }
 
     private FluxConstants() {
     }

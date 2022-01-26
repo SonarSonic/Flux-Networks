@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.register;
 
 import icyllis.modernui.forge.NetworkHandler;
-import icyllis.modernui.mcgui.OpenMenuEvent;
+import icyllis.modernui.forge.OpenMenuEvent;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -202,7 +202,7 @@ public class Registration {
     @SubscribeEvent
     public static void openMenu(@Nonnull OpenMenuEvent event) {
         if (event.getMenu() instanceof FluxDeviceMenu menu && menu.mDevice != null) {
-            event.setCallback(new FluxDeviceUI(menu.mDevice));
+            event.set(new FluxDeviceUI(menu.mDevice));
         }
     }
 }

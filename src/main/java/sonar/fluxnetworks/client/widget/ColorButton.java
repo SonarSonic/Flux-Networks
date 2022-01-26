@@ -68,7 +68,7 @@ public class ColorButton extends CompoundButton {
         canvas.drawRect(offset, offset, getWidth() - offset, getHeight() - offset, paint);
 
         if (isChecked()) {
-            paint.setStyle(Paint.Style.STROKE);
+            paint.setStyle(Paint.STROKE);
             paint.setStrokeWidth(mRadius);
             paint.setColor(0xFFFFFFFF);
             canvas.drawRoundRect(offset, offset, getWidth() - offset, getHeight() - offset, offset, paint);

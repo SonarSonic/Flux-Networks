@@ -5,17 +5,18 @@ import icyllis.modernui.animation.Animator;
 import icyllis.modernui.animation.LayoutTransition;
 import icyllis.modernui.animation.ObjectAnimator;
 import icyllis.modernui.animation.TimeInterpolator;
+import icyllis.modernui.forge.CanvasForge;
+import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.math.Rect;
-import icyllis.modernui.mcgui.CanvasForge;
-import icyllis.modernui.mcgui.ScreenCallback;
 import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.TextPaint;
 import icyllis.modernui.text.method.ArrowKeyMovementMethod;
 import icyllis.modernui.text.method.DigitsInputFilter;
+import icyllis.modernui.util.DataSet;
 import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.util.IntProperty;
 import icyllis.modernui.view.Gravity;
@@ -35,10 +36,11 @@ import sonar.fluxnetworks.common.device.TransferHandler;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static icyllis.modernui.view.ViewConfiguration.dp;
 
-public class FluxDeviceUI extends ScreenCallback {
+public class FluxDeviceUI extends Fragment {
 
     public static final int NETWORK_COLOR = 0xFF295E8A;
 
@@ -58,8 +60,9 @@ public class FluxDeviceUI extends ScreenCallback {
         mDevice = device;
     }
 
+    @Nullable
     @Override
-    public void onCreate() {
+    public View onCreateView(@Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
         var content = new LinearLayout();
         content.setOrientation(LinearLayout.VERTICAL);
 
@@ -118,8 +121,9 @@ public class FluxDeviceUI extends ScreenCallback {
         int tabSize = dp(340);
         content.addView(tabContainer, new LinearLayout.LayoutParams(tabSize, tabSize));
 
-        setContentView(content, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        content.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        return content;
     }
 
     @Nonnull
@@ -236,7 +240,7 @@ public class FluxDeviceUI extends ScreenCallback {
             Paint paint = Paint.take();
             paint.setRGBA(0, 0, 0, 180);
             canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
-            paint.setStyle(Paint.Style.STROKE);
+            paint.setStyle(Paint.STROKE);
             paint.setStrokeWidth(stroke);
             paint.setColor(NETWORK_COLOR);
             canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
@@ -297,7 +301,7 @@ public class FluxDeviceUI extends ScreenCallback {
             float start = mRadius * 0.5f;
 
             Paint paint = Paint.take();
-            paint.setStyle(Paint.Style.STROKE);
+            paint.setStyle(Paint.STROKE);
             paint.setStrokeWidth(mRadius);
             paint.setColor(NETWORK_COLOR);
             canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);

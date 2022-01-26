@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.device;
 
-import icyllis.modernui.forge.MuiForgeBridge;
+import icyllis.modernui.forge.MuiForgeApi;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -141,7 +141,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
         if (mPlayerUsing != null) {
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
-            MuiForgeBridge.openMenu(player, this, buf -> {
+            MuiForgeApi.openMenu(player, this, buf -> {
                 buf.writeBlockPos(worldPosition);
                 CompoundTag tag = new CompoundTag();
                 writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
@@ -285,7 +285,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
             getTransferHandler().readCustomTag(tag, type);
             // notify listeners
             mFlags |= FLAG_SETTING_CHANGED;
-            requestChunkSave();
+            markChunkUnsaved();
             return;
         }
         mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
@@ -399,7 +399,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
         //}
     }
 
-    public void requestChunkSave() {
+    public void markChunkUnsaved() {
         level.getChunkAt(worldPosition).setUnsaved(true);
     }
 

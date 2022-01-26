@@ -135,6 +135,7 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    mavenCentral()
 }
 
 dependencies {
@@ -143,10 +144,9 @@ dependencies {
     /*compileOnly "mekanism:Mekanism:${mekanism_version}:api"
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")*/
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:3550084")
+    implementation fg.deobf("curse.maven:the-one-probe-245211:3606616") // 1.18-5.0.3
 
-    // for testing
-    runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3554445")
+    //runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3554445")
 
     compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")

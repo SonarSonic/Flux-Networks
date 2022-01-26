@@ -1,10 +1,10 @@
 package sonar.fluxnetworks.common.device;
 
-import icyllis.modernui.mcgui.ContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 /**
  * Communication menu between client and server.
  */
-public class FluxDeviceMenu extends ContainerMenu {
+public class FluxDeviceMenu extends AbstractContainerMenu {
 
     public final TileFluxDevice mDevice;
 
