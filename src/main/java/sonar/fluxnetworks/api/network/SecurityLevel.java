@@ -5,9 +5,9 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import javax.annotation.Nonnull;
 
 public enum SecurityLevel {
-    PUBLIC(FluxTranslate.PUBLIC),
-    ENCRYPTED(FluxTranslate.ENCRYPTED),
-    PRIVATE(FluxTranslate.PRIVATE);
+    PUBLIC("gui.fluxnetworks.security.public"),
+    ENCRYPTED("gui.fluxnetworks.security.encrypted"),
+    PRIVATE("gui.fluxnetworks.security.private");
 
     public static final SecurityLevel[] VALUES = values();
 

@@ -26,7 +26,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.capability.FluxPlayerProvider;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkManager;
+import sonar.fluxnetworks.common.connection.FluxNetworkData;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -40,13 +40,13 @@ public class EventHandler {
     public static void onServerStopped(ServerStoppedEvent event) {
         // mainly used to reload data while changing single-player saves, useless on dedicated server
         // because once server shut down, all memory deallocated
-        FluxNetworkManager.release();
+        FluxNetworkData.release();
     }
 
     @SubscribeEvent
     public static void onServerTick(@Nonnull TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
-            FluxNetworkManager.getAllNetworks().forEach(FluxNetwork::onEndServerTick);
+            FluxNetworkData.getAllNetworks().forEach(FluxNetwork::onEndServerTick);
         }
     }
 

@@ -1,12 +1,10 @@
 package sonar.fluxnetworks.common.capability;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.players.ServerOpListEntry;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -40,20 +38,17 @@ public class FluxPlayer {
 
     //// UTIL METHODS \\\\
 
+    // server side only
     public static boolean canActivateSuperAdmin(Player player) {
-        if (ServerLifecycleHooks.getCurrentServer().isSingleplayer()) {
-            return true;
-        }
-        if (FluxConfig.enableSuperAdmin) {
-            ServerOpListEntry opEntry =
-                    ServerLifecycleHooks.getCurrentServer().getPlayerList().getOps().get(player.getGameProfile());
-            return opEntry != null && opEntry.getLevel() >= FluxConfig.superAdminRequiredPermission;
-        }
-        return false;
+        return FluxConfig.enableSuperAdmin && player.hasPermissions(FluxConfig.superAdminRequiredPermission);
     }
 
+    // server side only
     public static boolean isPlayerSuperAdmin(@Nonnull Player player) {
-        FluxPlayer instance = FluxUtils.get(player.getCapability(FLUX_PLAYER));
-        return instance != null && instance.isSuperAdmin();
+        if (FluxConfig.enableSuperAdmin) {
+            FluxPlayer instance = FluxUtils.get(player.getCapability(FLUX_PLAYER));
+            return instance != null && instance.isSuperAdmin();
+        }
+        return false;
     }
 }

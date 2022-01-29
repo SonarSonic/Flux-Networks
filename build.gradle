@@ -26,7 +26,7 @@ archivesBaseName = 'FluxNetworks'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.18'
+    mappings channel: 'official', version: '1.18.1'
 
     runs {
         client {

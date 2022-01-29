@@ -27,11 +27,11 @@ import java.util.UUID;
  * Only on logical server side. Only on server thread.
  */
 @NotThreadSafe
-public final class FluxNetworkManager extends SavedData {
+public final class FluxNetworkData extends SavedData {
 
     private static final String NETWORK_DATA = FluxNetworks.MODID + "data";
 
-    private static volatile FluxNetworkManager data;
+    private static volatile FluxNetworkData data;
 
     private static final String NETWORKS = "networks";
     //private static final String TICKETS = "tickets";
@@ -53,22 +53,21 @@ public final class FluxNetworkManager extends SavedData {
     private final Int2ObjectMap<FluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
     //private final Map<ResourceLocation, LongSet> tickets = new HashMap<>();
 
-    // next network id, -1 for invalid
-    private int mUniqueID;
+    private int mUniqueID = 0;
 
-    private FluxNetworkManager() {
+    private FluxNetworkData() {
     }
 
-    private FluxNetworkManager(@Nonnull CompoundTag tag) {
+    private FluxNetworkData(@Nonnull CompoundTag tag) {
         read(tag);
     }
 
     @Nonnull
-    public static FluxNetworkManager getInstance() {
+    public static FluxNetworkData getInstance() {
         if (data == null) {
             ServerLevel level = ServerLifecycleHooks.getCurrentServer().overworld();
             data = level.getDataStorage()
-                    .computeIfAbsent(FluxNetworkManager::new, FluxNetworkManager::new, NETWORK_DATA);
+                    .computeIfAbsent(FluxNetworkData::new, FluxNetworkData::new, NETWORK_DATA);
             FluxNetworks.LOGGER.debug("FluxNetworkData has been successfully loaded");
         }
         return data;
@@ -84,7 +83,7 @@ public final class FluxNetworkManager extends SavedData {
 
     @Nonnull
     public static FluxNetwork getNetwork(int id) {
-        return getInstance().mNetworks.getOrDefault(id, FluxNetworkInvalid.INSTANCE);
+        return getInstance().mNetworks.getOrDefault(id, FluxNetwork.WILDCARD);
     }
 
     @Nonnull
@@ -106,21 +105,25 @@ public final class FluxNetworkManager extends SavedData {
 
     @Nullable
     public FluxNetwork createNetwork(@Nonnull Player creator, @Nonnull String name, int color,
-                                     @Nonnull SecurityLevel level, @Nonnull String password) {
-        if (FluxConfig.maximumPerPlayer != -1) {
-            UUID uuid = creator.getUUID();
-            int count = 0;
+                                     @Nonnull SecurityLevel security, @Nonnull String password) {
+        final int max = FluxConfig.maximumPerPlayer;
+        if (max != -1) {
+            if (max <= 0) {
+                return null;
+            }
+            final UUID uuid = creator.getUUID();
+            int i = 0;
             for (var n : mNetworks.values()) {
-                if (n.getOwnerUUID().equals(uuid) && ++count >= FluxConfig.maximumPerPlayer) {
+                if (n.getOwnerUUID().equals(uuid) && ++i >= max) {
                     return null;
                 }
             }
         }
+        do {
+            mUniqueID++;
+        } while (mNetworks.containsKey(mUniqueID));
 
-        //noinspection StatementWithEmptyBody
-        while (mNetworks.containsKey(++mUniqueID)) ;
-        FluxNetworkServer network = new FluxNetworkServer(mUniqueID, name, color, creator);
-        network.getSecurity().set(level, password);
+        final ServerFluxNetwork network = new ServerFluxNetwork(mUniqueID, name, color, security, creator, password);
 
         mNetworks.put(network.getNetworkID(), network);
         Messages.getNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC).sendToAll();
@@ -145,16 +148,10 @@ public final class FluxNetworkManager extends SavedData {
 
         ListTag list = compound.getList(NETWORKS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
-            CompoundTag tag = list.getCompound(i);
-            FluxNetworkServer network = new FluxNetworkServer();
-            network.readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
-            FluxNetwork old = mNetworks.put(network.getNetworkID(), network);
-            if (old != null) {
-                FluxNetworks.LOGGER.warn("""
-                                Network IDs are not unique when reading data. Overriding it.
-                                Source: {}
-                                Dest: {}""",
-                        network, old);
+            ServerFluxNetwork network = new ServerFluxNetwork();
+            network.readCustomTag(list.getCompound(i), FluxConstants.TYPE_SAVE_ALL);
+            if (network.getNetworkID() > 0) {
+                mNetworks.put(network.getNetworkID(), network);
             }
         }
 

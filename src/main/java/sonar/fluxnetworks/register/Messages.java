@@ -15,9 +15,10 @@ import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkManager;
+import sonar.fluxnetworks.common.connection.FluxNetworkData;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -205,14 +206,13 @@ public class Messages {
                 ServerPlayer p = player.get();
                 if (p == null) return;
                 try {
-                    FluxNetwork network = FluxNetworkManager.getNetwork(networkId);
+                    FluxNetwork network = FluxNetworkData.getNetwork(networkId);
                     if (network.getPlayerAccess(p).canEdit()) {
                         for (GlobalPos pos : list) {
-                            network.getConnectionByPos(pos).ifPresent(f -> {
-                                if (f instanceof TileFluxDevice e) {
-                                    e.readCustomTag(tag, FluxConstants.TYPE_TILE_SETTING);
-                                }
-                            });
+                            IFluxDevice f = network.getConnection(pos);
+                            if (f instanceof TileFluxDevice e) {
+                                e.readCustomTag(tag, FluxConstants.TYPE_TILE_SETTING);
+                            }
                         }
                     }
                 } catch (RuntimeException e) {

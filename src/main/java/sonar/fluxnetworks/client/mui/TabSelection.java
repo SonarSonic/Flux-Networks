@@ -1,4 +1,8 @@
 package sonar.fluxnetworks.client.mui;
 
-public class TabSelection {
+import icyllis.modernui.fragment.Fragment;
+
+public class TabSelection extends Fragment {
+
+
 }

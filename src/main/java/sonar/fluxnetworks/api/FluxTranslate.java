@@ -141,10 +141,7 @@ public enum FluxTranslate {
 
     public static final String
             TAB_CREATE = "gui.fluxnetworks.tab.create",
-            NETWORK_SECURITY = "gui.fluxnetworks.network.security",
-            ENCRYPTED = "gui.fluxnetworks.security.encrypted",
-            PUBLIC = "gui.fluxnetworks.security.public",
-            PRIVATE = "gui.fluxnetworks.security.private";
+            NETWORK_SECURITY = "gui.fluxnetworks.network.security";
 
     @Nonnull
     public String t() {

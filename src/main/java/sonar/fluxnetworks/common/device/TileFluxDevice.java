@@ -22,8 +22,7 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkInvalid;
-import sonar.fluxnetworks.common.connection.FluxNetworkManager;
+import sonar.fluxnetworks.common.connection.FluxNetworkData;
 import sonar.fluxnetworks.common.connection.TransferNode;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.Messages;
@@ -43,7 +42,8 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
     private static final BlockEntityTicker<? extends TileFluxDevice> sTickerServer =
             (level, pos, state, entity) -> entity.onServerTick();
 
-    public static final int INVALID_CLIENT_COLOR = FluxUtils.getBrighterColor(FluxConstants.INVALID_NETWORK_COLOR);
+    public static final int INVALID_CLIENT_COLOR = FluxUtils.getModifiedColor(FluxConstants.INVALID_NETWORK_COLOR,
+            1.1f);
 
     public static final int MAX_CUSTOM_NAME_LENGTH = 24;
 
@@ -79,7 +79,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
 
     // server only
     @Nonnull
-    protected FluxNetwork mNetwork = FluxNetworkInvalid.INSTANCE;
+    protected FluxNetwork mNetwork = FluxNetwork.WILDCARD;
 
     protected TileFluxDevice(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -127,7 +127,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
     @Override
     public void onLoad() {
         if (!level.isClientSide) {
-            connect(FluxNetworkManager.getNetwork(mNetworkID));
+            connect(FluxNetworkData.getNetwork(mNetworkID));
         }
         mFlags |= FLAG_FIRST_LOADED;
     }
@@ -163,6 +163,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
      * @param network the server network to connect, can be invalid
      */
     public void connect(FluxNetwork network) {
+        assert !level.isClientSide;
         if (mNetwork == network) {
             return;
         }
@@ -295,12 +296,13 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
             case FluxConstants.TYPE_SAVE_ALL -> mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
             case FluxConstants.TYPE_TILE_UPDATE -> {
                 mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
-                mClientColor = FluxUtils.getBrighterColor(tag.getInt(FluxConstants.CLIENT_COLOR));
+                mClientColor = FluxUtils.getModifiedColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.1f);
                 mFlags = tag.getInt(FluxConstants.FLAGS);
             }
             case FluxConstants.TYPE_TILE_DROP -> {
                 if (level.isClientSide) {
-                    mClientColor = FluxUtils.getBrighterColor(FluxClientCache.getNetwork(mNetworkID).getNetworkColor());
+                    mClientColor =
+                            FluxUtils.getModifiedColor(FluxClientCache.getNetwork(mNetworkID).getNetworkColor(), 1.1f);
                 }
             }
         }

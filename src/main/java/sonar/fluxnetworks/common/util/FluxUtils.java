@@ -27,7 +27,7 @@ public class FluxUtils {
             0.000_000_000_000_001D, 0.000_000_000_000_000_001D};
 
     /**
-     * A read-only array preventing new object creation.
+     * A read-only array avoided new object creation.
      */
     public static final Direction[] DIRECTIONS = Direction.values();
 
@@ -35,7 +35,7 @@ public class FluxUtils {
     }
 
     @Nonnull
-    public static <E extends Enum<?>> E incrementEnum(@Nonnull E val, @Nonnull E[] values) {
+    public static <E extends Enum<E>> E cycle(@Nonnull E val, @Nonnull E[] values) {
         int next = val.ordinal() + 1;
         if (next < values.length) {
             return values[next];
@@ -56,10 +56,10 @@ public class FluxUtils {
             return null;
         }
         var test = new BlockPos.MutableBlockPos();
-        for (var direction : DIRECTIONS) {
+        for (var dir : DIRECTIONS) {
             test.set(base);
-            if (test.move(direction).equals(target)) {
-                return direction;
+            if (test.move(dir).equals(target)) {
+                return dir;
             }
         }
         return null;
@@ -239,7 +239,7 @@ public class FluxUtils {
      * @param color an RGB color
      * @return a brighter RGB color
      */
-    public static int getBrighterColor(int color) {
+    public static int getModifiedColor(int color, float factor) {
         int r = (color >> 16) & 0xff;
         int g = (color >> 8) & 0xff;
         int b = color & 0xff;
@@ -250,7 +250,7 @@ public class FluxUtils {
         int delta = max - min;
 
         if (delta == 0) {
-            return Mth.hsvToRgb(0, 0, Math.min(1.1f * max / 255.0f, 1.0f));
+            return Mth.hsvToRgb(0, 0, Math.min(factor * max / 255.0f, 1.0f));
         }
 
         float h;
@@ -266,7 +266,7 @@ public class FluxUtils {
             h = 4.0f + (float) (r - g) / delta;
         }
 
-        return Mth.hsvToRgb(h / 6.0f, Math.min(1.1f * delta / max, 1.0f), Math.min(1.1f * max / 255.0f, 1.0f));
+        return Mth.hsvToRgb(h / 6.0f, Math.min(factor * delta / max, 1.0f), Math.min(factor * max / 255.0f, 1.0f));
     }
 
     /**

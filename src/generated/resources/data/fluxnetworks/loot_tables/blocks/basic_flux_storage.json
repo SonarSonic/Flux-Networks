@@ -33,16 +33,6 @@
                   "op": "replace"
                 },
                 {
-                  "source": "surgeMode",
-                  "target": "FluxData.surgeMode",
-                  "op": "replace"
-                },
-                {
-                  "source": "disableLimit",
-                  "target": "FluxData.disableLimit",
-                  "op": "replace"
-                },
-                {
                   "source": "energy",
                   "target": "FluxData.energy",
                   "op": "replace"

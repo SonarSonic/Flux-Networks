@@ -13,14 +13,14 @@ import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
- * This class represents a non-entity flux device (e.g. Network Devices tab).
+ * This class represents a non-entity flux device (e.g. Network Connections tab).
  * These devices may not exist on client world, so there's no entity instance on the client.
  * They just are loaded on the server world, or used to record unloaded flux devices on server.
  * Logical operations are not allowed here.
  *
  * @see TileFluxDevice
  */
-public class PhantomFluxDevice implements IFluxDevice {
+public class FakeFluxDevice implements IFluxDevice {
 
     public static final int POWER_SURGE_MARKER = Integer.MAX_VALUE;
     public static final long BYPASS_LIMIT_MARKER = -1;
@@ -38,7 +38,7 @@ public class PhantomFluxDevice implements IFluxDevice {
     private long mChange;
     private ItemStack mDisplayStack;
 
-    public PhantomFluxDevice() {
+    public FakeFluxDevice() {
     }
 
     /**
@@ -47,8 +47,8 @@ public class PhantomFluxDevice implements IFluxDevice {
      * @param device the loaded device entity
      */
     @Nonnull
-    public static PhantomFluxDevice unload(@Nonnull TileFluxDevice device) {
-        PhantomFluxDevice t = new PhantomFluxDevice();
+    public static FakeFluxDevice unload(@Nonnull TileFluxDevice device) {
+        FakeFluxDevice t = new FakeFluxDevice();
         t.mNetworkID = device.getNetworkID();
         t.mCustomName = device.getCustomName();
         t.mPriority = device.getSurgeMode() ? POWER_SURGE_MARKER : device.getRawPriority();
@@ -62,16 +62,16 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Nonnull
-    public static PhantomFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
-        PhantomFluxDevice t = new PhantomFluxDevice();
+    public static FakeFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
+        FakeFluxDevice t = new FakeFluxDevice();
         t.mGlobalPos = pos;
         t.readCustomTag(tag, FluxConstants.TYPE_PHANTOM_UPDATE);
         return t;
     }
 
     @Nonnull
-    public static PhantomFluxDevice load(@Nonnull CompoundTag tag) {
-        PhantomFluxDevice t = new PhantomFluxDevice();
+    public static FakeFluxDevice load(@Nonnull CompoundTag tag) {
+        FakeFluxDevice t = new FakeFluxDevice();
         t.readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
         return t;
     }

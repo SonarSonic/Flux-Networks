@@ -17,13 +17,14 @@ public class TransferIterator implements Iterator<TileFluxDevice> {
         mPoint = point;
     }
 
-    public void reset(@Nonnull List<TileFluxDevice> list) {
+    public TransferIterator reset(@Nonnull List<TileFluxDevice> list) {
         mIterator = list.iterator();
         if (mIterator.hasNext()) {
             mNext = mIterator.next();
         } else {
             mNext = null;
         }
+        return this;
     }
 
     public boolean increment() {

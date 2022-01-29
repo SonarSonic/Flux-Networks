@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.connection;
 
+import net.minecraft.Util;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -11,24 +12,44 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.network.NetworkSecurity;
+import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
 /**
- * Defines the base class of a flux network.
- * Instances of this class directly are expected on the client side.
+ * The base class of a flux network.
+ * <p>
+ * There are two common types of implementation: client and server.
+ * Client instances are cache values that updated from server, used for pre-checks in UI.
+ * Server instances are logical networks and are responsible for energy transfer.
+ * <p>
+ * When the client operates the server-side network, it needs double side checks to ensure security.
+ * The server-side data will be persistent stored with the game save.
  */
 @ParametersAreNonnullByDefault
 public class FluxNetwork {
 
     /**
-     * Define logical types of network transfer handlers.
+     * An invalid network avoids nullability checks, any operation on this network is invalid.
+     * You can check {@link #isValid()} to skip your operations. Even if the operation is performed,
+     * there will be no error.
+     * <p>
+     * A disconnected device is considered connected to this network.
+     */
+    public static final FluxNetwork WILDCARD = new FluxNetwork(
+            FluxConstants.INVALID_NETWORK_ID, "", FluxConstants.INVALID_NETWORK_COLOR,
+            SecurityLevel.PRIVATE, Util.NIL_UUID);
+
+    /**
+     * Constant IDs used to identify logical devices.
+     *
+     * @see #getLogicalEntities(int)
      */
     public static final int
             ANY = 0,
@@ -37,15 +58,18 @@ public class FluxNetwork {
             STORAGE = 3,
             CONTROLLER = 4;
 
+    /**
+     * Some contracts.
+     */
     public static final int MAX_NETWORK_NAME_LENGTH = 24;
     public static final int MAX_PASSWORD_LENGTH = 16;
 
-    private static final String NETWORK_NAME = "networkName";
-    private static final String NETWORK_COLOR = "networkColor";
-    private static final String OWNER_UUID = "ownerUUID";
-    private static final String PLAYER_LIST = "playerList";
+    private static final String NETWORK_NAME = "name";
+    private static final String NETWORK_COLOR = "color";
+    private static final String OWNER_UUID = "owner";
+    private static final String SECURITY_LEVEL = "security";
+    private static final String MEMBERS = "members";
     private static final String CONNECTIONS = "connections";
-    private static final String SECURITY = "security";
 
     //public ICustomValue<Integer> network_id = new CustomValue<>();
     //public ICustomValue<String> network_name = new CustomValue<>();
@@ -61,43 +85,46 @@ public class FluxNetwork {
     private String mNetworkName;
     private int mNetworkColor;
     private UUID mOwnerUUID;
+    private SecurityLevel mSecurityLevel;
 
-    protected final NetworkSecurity mSecurity = new NetworkSecurity();
-    protected final NetworkStatistics mStatistics = new NetworkStatistics(this);
-    protected final HashMap<UUID, NetworkMember> mMembers = new HashMap<>();
-    // On server: FluxDeviceEntity (loaded) and PhantomFluxDevice (unloaded)
-    // On client: PhantomFluxDevice
-    protected final HashMap<GlobalPos, IFluxDevice> mConnections = new HashMap<>();
+    final NetworkStatistics mStatistics = new NetworkStatistics(this);
+    final HashMap<UUID, NetworkMember> mMembers = new HashMap<>();
+    /**
+     * Server: {@link TileFluxDevice} (loaded) and {@link FakeFluxDevice} (unloaded)
+     * <p>Client: {@link FakeFluxDevice}
+     */
+    final HashMap<GlobalPos, IFluxDevice> mConnections = new HashMap<>();
 
-    public FluxNetwork() {
+    FluxNetwork() {
     }
 
-    FluxNetwork(int id, String name, int color, UUID owner) {
+    private FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull UUID owner) {
         mNetworkID = id;
         mNetworkName = name;
         mNetworkColor = color;
+        mSecurityLevel = security;
         mOwnerUUID = owner;
     }
 
-    FluxNetwork(int id, String name, int color, @Nonnull Player owner) {
-        mNetworkID = id;
-        mNetworkName = name;
-        mNetworkColor = color;
-        mOwnerUUID = owner.getUUID();
+    FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull Player owner) {
+        this(id, name, color, security, owner.getUUID());
         mMembers.put(mOwnerUUID, NetworkMember.create(owner, AccessLevel.OWNER));
     }
 
     /**
-     * Returns the network ID
+     * Returns the unique ID of this network.
      *
      * @return a positive integer or {@link FluxConstants#INVALID_NETWORK_ID}
      */
-    public int getNetworkID() {
+    public final int getNetworkID() {
         return mNetworkID;
     }
 
+    /**
+     * @return the owner UUID
+     */
     @Nonnull
-    public UUID getOwnerUUID() {
+    public final UUID getOwnerUUID() {
         return mOwnerUUID;
     }
 
@@ -108,7 +135,7 @@ public class FluxNetwork {
      * @return the name of this network
      */
     @Nonnull
-    public String getNetworkName() {
+    public final String getNetworkName() {
         return mNetworkName;
     }
 
@@ -117,11 +144,11 @@ public class FluxNetwork {
     }
 
     /**
-     * Returns the network color in 0xRRGGBB format
+     * Returns the network color in 0xRRGGBB format.
      *
-     * @return network color
+     * @return the network color
      */
-    public int getNetworkColor() {
+    public final int getNetworkColor() {
         return mNetworkColor;
     }
 
@@ -129,14 +156,28 @@ public class FluxNetwork {
         mNetworkColor = color;
     }
 
+    /**
+     * Returns the security level of this network.
+     *
+     * @return the security level of this network
+     */
     @Nonnull
-    public NetworkSecurity getSecurity() {
-        return mSecurity;
+    public final SecurityLevel getSecurityLevel() {
+        return mSecurityLevel;
+    }
+
+    public void setSecurityLevel(@Nonnull SecurityLevel level) {
+        mSecurityLevel = level;
     }
 
     @Nonnull
     public NetworkStatistics getStatistics() {
         return mStatistics;
+    }
+
+    @Nullable
+    public NetworkMember getMember(@Nonnull UUID uuid) {
+        return mMembers.get(uuid);
     }
 
     /**
@@ -149,9 +190,16 @@ public class FluxNetwork {
         return mMembers.values();
     }
 
-    @Nonnull
-    public Optional<NetworkMember> getMemberByUUID(@Nonnull UUID uuid) {
-        return Optional.ofNullable(mMembers.get(uuid));
+    /**
+     * Get connection by global pos from all connections collection
+     *
+     * @param pos global pos
+     * @return possible device
+     * @see #getAllConnections()
+     */
+    @Nullable
+    public IFluxDevice getConnection(@Nonnull GlobalPos pos) {
+        return mConnections.get(pos);
     }
 
     /**
@@ -165,22 +213,12 @@ public class FluxNetwork {
         return mConnections.values();
     }
 
-    /**
-     * Get connection by global pos from all connections collection
-     *
-     * @param pos global pos
-     * @return possible device
-     * @see #getAllConnections()
-     */
-    @Nonnull
-    public Optional<IFluxDevice> getConnectionByPos(@Nonnull GlobalPos pos) {
-        return Optional.ofNullable(mConnections.get(pos));
-    }
-
     public void onEndServerTick() {
-        throw new IllegalStateException();
     }
 
+    /**
+     * Called when this network is deleted from its manager.
+     */
     public void onDelete() {
         mMembers.clear();
         mConnections.clear();
@@ -189,14 +227,19 @@ public class FluxNetwork {
     /**
      * Helper method to get player's access level for this network including super admin,
      * even if the player in not a member in the network.
-     * Note this method is server only.
+     * <p>
+     * Super admin only works on a server flux network.
      *
      * @param player the server player
      * @return access level
      */
     @Nonnull
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
-        throw new IllegalStateException();
+        NetworkMember member = getMember(player.getUUID());
+        if (member != null) {
+            return member.getAccessLevel();
+        }
+        return mSecurityLevel == SecurityLevel.PUBLIC ? AccessLevel.USER : AccessLevel.BLOCKED;
     }
 
     /**
@@ -208,19 +251,18 @@ public class FluxNetwork {
      */
     @Nonnull
     public List<TileFluxDevice> getLogicalEntities(int logic) {
-        throw new IllegalStateException("Sincerely?");
+        return Collections.emptyList();
     }
 
     public long getBufferLimiter() {
-        throw new IllegalStateException();
+        return 0;
     }
 
     public boolean enqueueConnectionAddition(@Nonnull TileFluxDevice device) {
-        throw new IllegalStateException();
+        return true;
     }
 
     public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
-        throw new IllegalStateException();
     }
 
     /*@Override
@@ -240,7 +282,7 @@ public class FluxNetwork {
      * @see FluxConstants#INVALID_NETWORK_ID
      */
     public boolean isValid() {
-        return true;
+        return false;
     }
 
     public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
@@ -249,9 +291,7 @@ public class FluxNetwork {
             tag.putString(NETWORK_NAME, mNetworkName);
             tag.putInt(NETWORK_COLOR, mNetworkColor);
             tag.putUUID(OWNER_UUID, mOwnerUUID);
-            CompoundTag subTag = new CompoundTag();
-            mSecurity.writeNBT(tag, type == FluxConstants.TYPE_SAVE_ALL);
-            tag.put(SECURITY, subTag);
+            tag.putByte(SECURITY_LEVEL, mSecurityLevel.getId());
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
             Collection<NetworkMember> members = getAllMembers();
@@ -262,7 +302,7 @@ public class FluxNetwork {
                     m.writeNBT(subTag);
                     list.add(subTag);
                 }
-                tag.put(PLAYER_LIST, list);
+                tag.put(MEMBERS, list);
             }
 
             Collection<IFluxDevice> connections = getAllConnections();
@@ -292,7 +332,7 @@ public class FluxNetwork {
             List<ServerPlayer> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
             if (!players.isEmpty()) {
                 for (ServerPlayer p : players) {
-                    if (getMemberByUUID(p.getUUID()).isEmpty()) {
+                    if (getMember(p.getUUID()) == null) {
                         CompoundTag subTag = new CompoundTag();
                         NetworkMember m = NetworkMember.create(p,
                                 FluxPlayer.isPlayerSuperAdmin(p) ? AccessLevel.SUPER_ADMIN :
@@ -302,7 +342,7 @@ public class FluxNetwork {
                     }
                 }
             }
-            tag.put(PLAYER_LIST, list);
+            tag.put(MEMBERS, list);
         }
         if (type == FluxConstants.TYPE_NET_CONNECTIONS) {
             Collection<IFluxDevice> connections = getAllConnections();
@@ -359,10 +399,10 @@ public class FluxNetwork {
             mNetworkName = tag.getString(NETWORK_NAME);
             mNetworkColor = tag.getInt(NETWORK_COLOR);
             mOwnerUUID = tag.getUUID(OWNER_UUID);
-            mSecurity.readNBT(tag.getCompound(SECURITY));
+            mSecurityLevel = SecurityLevel.fromId(tag.getByte(SECURITY_LEVEL));
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
-            ListTag list = tag.getList(PLAYER_LIST, Tag.TAG_COMPOUND);
+            ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
@@ -371,13 +411,13 @@ public class FluxNetwork {
             list = tag.getList(CONNECTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
-                PhantomFluxDevice f = PhantomFluxDevice.load(c);
+                FakeFluxDevice f = FakeFluxDevice.load(c);
                 mConnections.put(f.getGlobalPos(), f);
             }
         }
         if (type == FluxConstants.TYPE_NET_MEMBERS) {
             mMembers.clear();
-            ListTag list = tag.getList(PLAYER_LIST, Tag.TAG_COMPOUND);
+            ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
@@ -398,7 +438,7 @@ public class FluxNetwork {
                 if (f != null) {
                     f.readCustomTag(c, FluxConstants.TYPE_PHANTOM_UPDATE);
                 } else {
-                    mConnections.put(pos, PhantomFluxDevice.update(pos, c));
+                    mConnections.put(pos, FakeFluxDevice.update(pos, c));
                 }
             }
         }
