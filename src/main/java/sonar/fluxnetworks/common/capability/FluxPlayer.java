@@ -46,8 +46,8 @@ public class FluxPlayer {
     // server side only
     public static boolean isPlayerSuperAdmin(@Nonnull Player player) {
         if (FluxConfig.enableSuperAdmin) {
-            FluxPlayer instance = FluxUtils.get(player.getCapability(FLUX_PLAYER));
-            return instance != null && instance.isSuperAdmin();
+            FluxPlayer fluxPlayer = FluxUtils.get(player, FLUX_PLAYER);
+            return fluxPlayer != null && fluxPlayer.isSuperAdmin();
         }
         return false;
     }

@@ -10,7 +10,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.api.device.IFluxDevice;
@@ -340,10 +341,16 @@ public class FluxUtils {
         return cap(player.getCapability(capability));
     }*/
 
-    @SuppressWarnings("ConstantConditions")
     @Nullable
-    public static <T> T get(@Nonnull LazyOptional<T> lazyOptional) {
-        return lazyOptional.orElse(null);
+    @SuppressWarnings("ConstantConditions")
+    public static <T> T get(@Nonnull ICapabilityProvider provider, @Nonnull Capability<T> cap) {
+        return provider.getCapability(cap).orElse(null);
+    }
+
+    @Nullable
+    @SuppressWarnings("ConstantConditions")
+    public static <T> T get(@Nonnull ICapabilityProvider provider, @Nonnull Capability<T> cap, Direction dir) {
+        return provider.getCapability(cap, dir).orElse(null);
     }
 
     public static float getRed(int colour) {

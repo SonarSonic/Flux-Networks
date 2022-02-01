@@ -6,7 +6,7 @@ import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.energy.CapabilityEnergy;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 
-public class FluxCapabilities {
+public final class FluxCapabilities {
 
     /**
      * Only make use of this capability if your mod can send/receive energy at a rate greater than Integer.MAX_VALUE
@@ -17,4 +17,7 @@ public class FluxCapabilities {
      */
     public static final Capability<IFNEnergyStorage> FN_ENERGY_STORAGE = CapabilityManager.get(new CapabilityToken<>() {
     });
+
+    private FluxCapabilities() {
+    }
 }
