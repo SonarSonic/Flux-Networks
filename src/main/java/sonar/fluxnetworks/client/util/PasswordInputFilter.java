@@ -4,6 +4,7 @@ import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.Spanned;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -15,17 +16,29 @@ import javax.annotation.Nullable;
  * @see icyllis.modernui.widget.TextView#setFilters(InputFilter[])
  */
 @OnlyIn(Dist.CLIENT)
-public class PasswordInputFilter implements InputFilter {
+public class PasswordInputFilter extends InputFilter.LengthFilter {
 
-    public static final PasswordInputFilter sInstance = new PasswordInputFilter();
+    private static final PasswordInputFilter sInstance = new PasswordInputFilter();
 
     private PasswordInputFilter() {
+        super(FluxNetwork.MAX_PASSWORD_LENGTH);
+    }
+
+    @Nonnull
+    public static PasswordInputFilter getInstance() {
+        return sInstance;
     }
 
     @Nullable
     @Override
     public CharSequence filter(@Nonnull CharSequence source, int start, int end,
                                @Nonnull Spanned dest, int dstart, int dend) {
+        final CharSequence superResult = super.filter(source, start, end, dest, dstart, dend);
+        if (superResult != null) {
+            // Filtered by the super class.
+            return superResult;
+        }
+
         int i;
         for (i = start; i < end; i++) {
             // All chars are BMP.

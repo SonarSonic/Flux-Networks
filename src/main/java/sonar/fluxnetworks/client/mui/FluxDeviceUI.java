@@ -1,9 +1,9 @@
 package sonar.fluxnetworks.client.mui;
 
-import icyllis.modernui.ModernUI;
 import icyllis.modernui.animation.LayoutTransition;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.fragment.FragmentContainerView;
+import icyllis.modernui.fragment.FragmentManager;
 import icyllis.modernui.fragment.FragmentTransaction;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
@@ -21,7 +21,7 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static icyllis.modernui.view.ViewConfiguration.dp;
+import static icyllis.modernui.view.View.dp;
 import static icyllis.modernui.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static icyllis.modernui.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -50,7 +50,7 @@ public class FluxDeviceUI extends Fragment {
     @Override
     public void onCreate(@Nullable DataSet savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sButtonIcon = Image.create(ModernUI.ID, "gui/gui_icon.png");
+        sButtonIcon = Image.create("modernui", "gui/gui_icon.png");
 
         var fragment = new FluxConnectorHome(mDevice);
         getChildFragmentManager().beginTransaction()
@@ -58,6 +58,12 @@ public class FluxDeviceUI extends Fragment {
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .setReorderingAllowed(true)
                 .commit();
+        getChildFragmentManager().addOnBackStackChangedListener(() -> {
+            View view = requireView().findViewById(id_tab_container);
+            if (view.getBackground() instanceof TabBackground bg) {
+                bg.setColor(NETWORK_COLOR);
+            }
+        });
     }
 
     @Nullable
@@ -85,18 +91,19 @@ public class FluxDeviceUI extends Fragment {
             }
             if (i == 7) {
                 button.setOnClickListener(__ -> {
-                    var fm = getChildFragmentManager();
-                    var fragment = fm.findFragmentByTag("create");
-                    boolean add = false;
+                    FragmentManager fm = getChildFragmentManager();
+                    Fragment fragment = fm.findFragmentByTag("create");
+                    boolean addToBackStack = false;
                     if (fragment == null) {
                         fragment = new TabCreate();
-                        add = true;
+                        addToBackStack = true;
                     }
-                    var ft = fm.beginTransaction();
+                    FragmentTransaction ft = fm.beginTransaction();
                     ft.replace(id_tab_container, fragment, "create")
                             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                    if (add)
+                    if (addToBackStack) {
                         ft.addToBackStack(null);
+                    }
                     ft.setReorderingAllowed(true)
                             .commit();
                 });
@@ -118,12 +125,18 @@ public class FluxDeviceUI extends Fragment {
         return content;
     }
 
-    private static class TabBackground extends Drawable {
+    public static class TabBackground extends Drawable {
 
         private final float mRadius;
+        private int mColor;
 
         public TabBackground() {
             mRadius = dp(16);
+            setColor(NETWORK_COLOR);
+        }
+
+        public void setColor(int color) {
+            mColor = 0xFF000000 | color;
         }
 
         @Override
@@ -137,37 +150,8 @@ public class FluxDeviceUI extends Fragment {
             canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
             paint.setStyle(Paint.STROKE);
             paint.setStrokeWidth(stroke);
-            paint.setColor(NETWORK_COLOR);
+            paint.setColor(mColor);
             canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
-        }
-    }
-
-    public static class TextFieldBackground extends Drawable {
-
-        private final float mRadius;
-
-        public TextFieldBackground() {
-            mRadius = dp(3);
-        }
-
-        @Override
-        public void draw(@Nonnull Canvas canvas) {
-            Rect b = getBounds();
-            float start = mRadius * 0.5f;
-
-            Paint paint = Paint.take();
-            paint.setStyle(Paint.STROKE);
-            paint.setStrokeWidth(mRadius);
-            paint.setColor(NETWORK_COLOR);
-            canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
-        }
-
-        @Override
-        public boolean getPadding(@Nonnull Rect padding) {
-            int h = (int) Math.ceil(mRadius);
-            int v = (int) Math.ceil(mRadius * 0.5f);
-            padding.set(h, v, h, v);
-            return true;
         }
     }
 

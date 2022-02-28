@@ -227,7 +227,7 @@ public class Messages {
         byte transaction = payload.readByte();
         String name = payload.readUtf();
         int color = payload.readInt();
-        SecurityLevel level = SecurityLevel.fromId(payload.readByte());
+        SecurityLevel level = SecurityLevel.byId(payload.readByte());
         String password = level == SecurityLevel.ENCRYPTED ? payload.readUtf() : "";
 
         if (payload.readableBytes() > 0) {

@@ -399,7 +399,7 @@ public class FluxNetwork {
             mNetworkName = tag.getString(NETWORK_NAME);
             mNetworkColor = tag.getInt(NETWORK_COLOR);
             mOwnerUUID = tag.getUUID(OWNER_UUID);
-            mSecurityLevel = SecurityLevel.fromId(tag.getByte(SECURITY_LEVEL));
+            mSecurityLevel = SecurityLevel.byId(tag.getByte(SECURITY_LEVEL));
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
             ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);

@@ -9,6 +9,9 @@ public enum SecurityLevel {
     ENCRYPTED("gui.fluxnetworks.security.encrypted"),
     PRIVATE("gui.fluxnetworks.security.private");
 
+    /**
+     * Prefers this without creating new array objects.
+     */
     public static final SecurityLevel[] VALUES = values();
 
     private final String mTranslateKey;
@@ -18,7 +21,7 @@ public enum SecurityLevel {
     }
 
     @Nonnull
-    public static SecurityLevel fromId(byte id) {
+    public static SecurityLevel byId(int id) {
         return VALUES[id];
     }
 
@@ -27,7 +30,7 @@ public enum SecurityLevel {
     }
 
     @Nonnull
-    public String getName() {
+    public String getText() {
         return FluxTranslate.translate(mTranslateKey);
     }
 }

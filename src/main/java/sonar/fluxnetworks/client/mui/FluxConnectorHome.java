@@ -1,9 +1,6 @@
 package sonar.fluxnetworks.client.mui;
 
-import icyllis.modernui.animation.Animator;
-import icyllis.modernui.animation.LayoutTransition;
-import icyllis.modernui.animation.ObjectAnimator;
-import icyllis.modernui.animation.TimeInterpolator;
+import icyllis.modernui.animation.*;
 import icyllis.modernui.forge.CanvasForge;
 import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.graphics.Canvas;
@@ -12,14 +9,13 @@ import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.math.Rect;
 import icyllis.modernui.text.InputFilter;
-import icyllis.modernui.text.method.ArrowKeyMovementMethod;
 import icyllis.modernui.text.method.DigitsInputFilter;
 import icyllis.modernui.util.DataSet;
 import icyllis.modernui.util.FloatProperty;
 import icyllis.modernui.util.IntProperty;
-import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.View;
 import icyllis.modernui.view.ViewGroup;
+import icyllis.modernui.widget.EditText;
 import icyllis.modernui.widget.FrameLayout;
 import icyllis.modernui.widget.LinearLayout;
 import icyllis.modernui.widget.TextView;
@@ -29,6 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.client.widget.RoundTextBackground;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.device.TransferHandler;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -36,7 +33,7 @@ import sonar.fluxnetworks.register.ClientMessages;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static icyllis.modernui.view.ViewConfiguration.dp;
+import static icyllis.modernui.view.View.dp;
 
 /**
  * The home page for Flux Point and Flux Plug.
@@ -63,12 +60,12 @@ public class FluxConnectorHome extends Fragment {
         content.setLayoutTransition(new LayoutTransition());
 
         for (int i = 0; i < 3; i++) {
-            var v = new TextView();
+            var v = new EditText();
             switch (i) {
                 case 0 -> {
-                    v.setText(mDevice.getCustomName(), TextView.BufferType.EDITABLE);
+                    v.setText(mDevice.getCustomName());
                     v.setHint(lang.getOrDefault(mDevice.getBlockState().getBlock().getDescriptionId()));
-                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(TileFluxDevice.MAX_CUSTOM_NAME_LENGTH)});
+                    v.setFilters(new InputFilter.LengthFilter(TileFluxDevice.MAX_CUSTOM_NAME_LENGTH));
                     v.setOnFocusChangeListener((__, hasFocus) -> {
                         if (!hasFocus) {
                             // Do not check if it's changed on the client side,
@@ -81,11 +78,11 @@ public class FluxConnectorHome extends Fragment {
                     mCustomName = v;
                 }
                 case 1 -> {
-                    v.setText(Integer.toString(mDevice.getRawPriority()), TextView.BufferType.EDITABLE);
+                    v.setText(Integer.toString(mDevice.getRawPriority()));
                     v.setHint("Priority");
                     v.setHintTextColor(0xFF808080);
-                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(5),
-                            DigitsInputFilter.getInstance(null, true, false)});
+                    v.setFilters(new InputFilter.LengthFilter(5),
+                            DigitsInputFilter.getInstance(v.getTextLocale()));
                     v.setOnFocusChangeListener((__, hasFocus) -> {
                         if (!hasFocus) {
                             int priority = Mth.clamp(Integer.parseInt(mPriority.getText().toString()),
@@ -100,11 +97,11 @@ public class FluxConnectorHome extends Fragment {
                     mPriority = v;
                 }
                 default -> {
-                    v.setText(Long.toString(mDevice.getRawLimit()), TextView.BufferType.EDITABLE);
+                    v.setText(Long.toString(mDevice.getRawLimit()));
                     v.setHint("Transfer Limit");
                     v.setHintTextColor(0xFF808080);
-                    v.setFilters(new InputFilter[]{new InputFilter.LengthFilter(10),
-                            DigitsInputFilter.getInstance(null, false, false)});
+                    v.setFilters(new InputFilter.LengthFilter(10),
+                            DigitsInputFilter.getInstance(v.getTextLocale()));
                     v.setOnFocusChangeListener((__, hasFocus) -> {
                         if (!hasFocus) {
                             long limit = Long.parseLong(mLimit.getText().toString());
@@ -118,11 +115,8 @@ public class FluxConnectorHome extends Fragment {
                     mLimit = v;
                 }
             }
-            v.setFocusableInTouchMode(true);
-            v.setMovementMethod(ArrowKeyMovementMethod.getInstance());
             v.setSingleLine();
-            v.setBackground(new FluxDeviceUI.TextFieldBackground());
-            v.setGravity(Gravity.CENTER_VERTICAL);
+            v.setBackground(new RoundTextBackground());
             v.setTextSize(16);
             v.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     new TextFieldStart(FluxDeviceUI.sButtonIcon, (((i + 1) % 3) + 1) * 64), null, null, null);
@@ -177,9 +171,9 @@ public class FluxConnectorHome extends Fragment {
             }, 0, mSize);
             mRodAnimator.setInterpolator(TimeInterpolator.DECELERATE);
             mRodAnimator.setDuration(400);
-            mRodAnimator.addListener(new Animator.AnimatorListener() {
+            mRodAnimator.addListener(new AnimatorListener() {
                 @Override
-                public void onAnimationEnd(@Nonnull Animator animation, boolean isReverse) {
+                public void onAnimationEnd(@Nonnull Animator animation) {
                     mBoxAnimator.start();
                 }
             });
