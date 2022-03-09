@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.client.ClientRepository;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkData;
 import sonar.fluxnetworks.common.connection.TransferNode;
@@ -170,7 +170,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
         if (network.enqueueConnectionAddition(this)) {
             mNetwork.enqueueConnectionRemoval(this, false);
             mNetwork = network;
-            mNetworkID = network.getNetworkID();
+            mNetworkID = network.getID();
             getTransferHandler().clearLocalStates();
             mFlags |= FLAG_SETTING_CHANGED;
         }
@@ -254,7 +254,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
             case FluxConstants.TYPE_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
             case FluxConstants.TYPE_TILE_UPDATE -> {
                 tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
-                tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
+                tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getColor());
                 tag.putInt(FluxConstants.FLAGS, mFlags);
             }
             case FluxConstants.TYPE_PHANTOM_UPDATE -> {
@@ -302,7 +302,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
             case FluxConstants.TYPE_TILE_DROP -> {
                 if (level.isClientSide) {
                     mClientColor =
-                            FluxUtils.getModifiedColor(FluxClientCache.getNetwork(mNetworkID).getNetworkColor(), 1.1f);
+                            FluxUtils.getModifiedColor(ClientRepository.getNetwork(mNetworkID).getColor(), 1.1f);
                 }
             }
         }

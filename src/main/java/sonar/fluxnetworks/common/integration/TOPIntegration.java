@@ -49,20 +49,20 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
             }
             if (FluxConfig.enableOneProbeBasicInfo) {
                 if (device.getNetwork().isValid()) {
-                    probeInfo.text(new TextComponent(device.getNetwork().getNetworkName()).withStyle(ChatFormatting.AQUA));
+                    probeInfo.text(new TextComponent(device.getNetwork().getName()).withStyle(ChatFormatting.AQUA));
                 } else {
-                    probeInfo.text(FluxTranslate.ERROR_NO_SELECTED.getTextComponent().withStyle(ChatFormatting.AQUA));
+                    probeInfo.text(FluxTranslate.ERROR_NO_SELECTED.component().withStyle(ChatFormatting.AQUA));
                 }
 
                 probeInfo.text(new TextComponent(FluxUtils.getTransferInfo(device, EnergyType.FE)));
 
                 if (player.isShiftKeyDown()) {
                     if (device.getDeviceType().isStorage()) {
-                        probeInfo.text(FluxTranslate.ENERGY_STORED.getTextComponent()
+                        probeInfo.text(FluxTranslate.ENERGY_STORED.component()
                                 .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
                         );
                     } else {
-                        probeInfo.text(FluxTranslate.INTERNAL_BUFFER.getTextComponent()
+                        probeInfo.text(FluxTranslate.INTERNAL_BUFFER.component()
                                 .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
                         );
                     }
@@ -86,27 +86,27 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     (!FluxConfig.enableOneProbeSneaking || player.isShiftKeyDown())) {
 
                 if (device.getDisableLimit()) {
-                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
+                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.component()
                             .append(": " + ChatFormatting.GREEN + FluxTranslate.UNLIMITED)
                     );
                 } else {
-                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.getTextComponent()
+                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.component()
                             .append(": " + ChatFormatting.GREEN + EnergyType.usage(device.getRawLimit()))
                     );
                 }
 
                 if (device.getSurgeMode()) {
-                    probeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
+                    probeInfo.text(FluxTranslate.PRIORITY.component()
                             .append(": " + ChatFormatting.GREEN + FluxTranslate.SURGE)
                     );
                 } else {
-                    probeInfo.text(FluxTranslate.PRIORITY.getTextComponent()
+                    probeInfo.text(FluxTranslate.PRIORITY.component()
                             .append(": " + ChatFormatting.GREEN + device.getRawPriority())
                     );
                 }
 
                 if (device.isForcedLoading()) {
-                    probeInfo.text(FluxTranslate.FORCED_LOADING.getTextComponent().withStyle(ChatFormatting.GOLD));
+                    probeInfo.text(FluxTranslate.FORCED_LOADING.component().withStyle(ChatFormatting.GOLD));
                 }
             }
         }

@@ -2,9 +2,9 @@
 	"itemGroup.fluxnetworks": "通量网络",
 
 	"block.fluxnetworks.flux_block": "通量方块",
-	"block.fluxnetworks.flux_controller": "通量网络控制器",
-	"block.fluxnetworks.flux_point": "通量网络接入点",
-	"block.fluxnetworks.flux_plug": "通量网络输入点",
+	"block.fluxnetworks.flux_controller": "通量网控制器",
+	"block.fluxnetworks.flux_point": "通量网接入点",
+	"block.fluxnetworks.flux_plug": "通量网输入点",
 	"block.fluxnetworks.basic_flux_storage": "基础能量存储器",
 	"block.fluxnetworks.herculean_flux_storage": "大型能量存储器",
 	"block.fluxnetworks.gargantuan_flux_storage": "超大型能量存储器",
@@ -15,11 +15,11 @@
 	"item.fluxnetworks.admin_configurator": "管理员网络配置器",
 
 	"tooltip.fluxnetworks.flux_dust": "通过基岩与黑曜石压缩红石粉获得",
-	"tooltip.fluxnetworks.flux_controller": "给你的网络带来无线充电功能",
-	"tooltip.fluxnetworks.flux_plug": "被动接收相邻方块的能量,向能量网络增加能量",
-	"tooltip.fluxnetworks.flux_point": "主动为相邻方块供给能量,从能量网络移除能量",
-	"tooltip.fluxnetworks.flux_storage": "为你的能量网络存储能量",
-	"tooltip.fluxnetworks.flux_storage_2": "储能容量: %s",
+	"tooltip.fluxnetworks.flux_controller": "通量网络的中央控制器",
+	"tooltip.fluxnetworks.flux_plug": "被动接收相邻方块的能量，向通量网络增加能量",
+	"tooltip.fluxnetworks.flux_point": "主动向相邻方块供给能量，从通量网络移除能量",
+	"tooltip.fluxnetworks.flux_storage": "向你的通量网络存储能量",
+	"tooltip.fluxnetworks.flux_storage_2": "储能容量：%s",
 
 	"gui.fluxnetworks.tab.home": "主页",
 	"gui.fluxnetworks.tab.selection": "网络选择",
@@ -127,7 +127,7 @@
 	"gui.fluxnetworks.security.public": "公共",
 	"gui.fluxnetworks.security.private": "私人",
 
-	"info.fluxnetworks.access.owner": "所有人",
+	"info.fluxnetworks.access.owner": "所有者",
 	"info.fluxnetworks.access.admin": "管理员",
 	"info.fluxnetworks.access.user": "用户",
 	"info.fluxnetworks.access.blocked": "陌生人",

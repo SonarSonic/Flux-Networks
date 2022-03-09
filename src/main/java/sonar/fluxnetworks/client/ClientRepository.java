@@ -18,9 +18,9 @@ import java.util.Collection;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public class FluxClientCache {
+public final class ClientRepository {
 
-    private static final FluxClientCache sInstance = new FluxClientCache();
+    private static final ClientRepository sInstance = new ClientRepository();
 
     private final Int2ObjectOpenHashMap<FluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
 
@@ -33,15 +33,16 @@ public class FluxClientCache {
 
     private static int feedbackTimer = 0;
 
-    private FluxClientCache() {
+    private ClientRepository() {
     }
 
     /**
-     * A constant pointer to the global cache instance.
+     * Get the global repository.
      *
-     * @return the global instance
+     * @return the global repository instance
      */
-    public static FluxClientCache getInstance() {
+    @Nonnull
+    public static ClientRepository getInstance() {
         return sInstance;
     }
 
@@ -64,7 +65,7 @@ public class FluxClientCache {
             CompoundTag tag = payload.readNbt();
             assert tag != null;
             synchronized (mNetworks) {
-                mNetworks.computeIfAbsent(id, __ -> new ClientFluxNetwork())
+                mNetworks.computeIfAbsent(id, ______ -> new ClientFluxNetwork())
                         .readCustomTag(tag, type);
             }
         }
@@ -98,7 +99,7 @@ public class FluxClientCache {
     public static String getDisplayName(@Nonnull CompoundTag subTag) {
         FluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
         if (network.isValid()) {
-            return network.getNetworkName();
+            return network.getName();
         }
         return "NONE";
     }

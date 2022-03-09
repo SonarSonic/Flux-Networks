@@ -84,7 +84,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
     @Nonnull
     @Override
     public Component getTitle() {
-        return FluxTranslate.JEI_CREATING_FLUX.getTextComponent();
+        return FluxTranslate.JEI_CREATING_FLUX.component();
     }
 
     @Nonnull

@@ -59,10 +59,12 @@ public final class FluxConstants {
      * Response codes.
      */
     public static final int RES_SUCCESS = -1;
-    public static final int RES_REJECT = 0;
-    public static final int RES_NO_OWNER = 1;
-    public static final int RES_NO_ADMIN = 2;
-    public static final int RES_NO_SPACE = 3;
+    public static final int RES_REJECT = 1;
+    public static final int RES_NO_OWNER = 2;
+    public static final int RES_NO_ADMIN = 3;
+    public static final int RES_NO_SPACE = 4;
+
+    public static final int KEY_CREATE_NETWORK = 1;
 
     // Network members editing type
     public static final int TYPE_NEW_MEMBER = 1;

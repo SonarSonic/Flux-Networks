@@ -5,17 +5,21 @@ import icyllis.modernui.fragment.Fragment;
 import icyllis.modernui.fragment.FragmentContainerView;
 import icyllis.modernui.fragment.FragmentManager;
 import icyllis.modernui.fragment.FragmentTransaction;
-import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Image;
-import icyllis.modernui.graphics.Paint;
-import icyllis.modernui.graphics.drawable.Drawable;
-import icyllis.modernui.math.Rect;
+import icyllis.modernui.graphics.drawable.ImageDrawable;
+import icyllis.modernui.util.ColorStateList;
 import icyllis.modernui.util.DataSet;
+import icyllis.modernui.util.StateSet;
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.View;
 import icyllis.modernui.view.ViewGroup;
 import icyllis.modernui.widget.FrameLayout;
+import icyllis.modernui.widget.ImageButton;
 import icyllis.modernui.widget.LinearLayout;
+import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.client.design.FluxDesign;
+import sonar.fluxnetworks.client.design.TabBackground;
+import sonar.fluxnetworks.common.device.FluxDeviceMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -25,7 +29,7 @@ import static icyllis.modernui.view.View.dp;
 import static icyllis.modernui.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static icyllis.modernui.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-public class FluxDeviceUI extends Fragment {
+public class FluxDeviceUI extends Fragment implements FluxDeviceMenu.OnResultListener {
 
     public static final int NETWORK_COLOR = 0xFF295E8A;
 
@@ -35,8 +39,29 @@ public class FluxDeviceUI extends Fragment {
 
     private final TileFluxDevice mDevice;
 
+    private static final ColorStateList NAV_BUTTON_COLOR = new ColorStateList(
+            new int[][]{
+                    StateSet.get(StateSet.VIEW_STATE_SELECTED),
+                    StateSet.get(StateSet.VIEW_STATE_HOVERED),
+                    StateSet.WILD_CARD},
+            new int[]{
+                    FluxDesign.WHITE,
+                    0xFFE0E0E0,
+                    FluxDesign.LIGHT_GRAY}
+    );
+
     public FluxDeviceUI(@Nonnull TileFluxDevice device) {
         mDevice = device;
+    }
+
+    @Override
+    public void onResult(int key, int code) {
+        DataSet result = new DataSet();
+        result.putInt("code", code);
+        requireView().post(() -> getChildFragmentManager().setFragmentResult(switch (key) {
+            case FluxConstants.KEY_CREATE_NETWORK -> "create_network";
+            default -> "";
+        }, result));
     }
 
     @Override
@@ -52,7 +77,7 @@ public class FluxDeviceUI extends Fragment {
         super.onCreate(savedInstanceState);
         sButtonIcon = Image.create("modernui", "gui/gui_icon.png");
 
-        var fragment = new FluxConnectorHome(mDevice);
+        var fragment = new DeviceHomeTab(mDevice);
         getChildFragmentManager().beginTransaction()
                 .replace(id_tab_container, fragment, "home")
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -79,9 +104,17 @@ public class FluxDeviceUI extends Fragment {
 
         int buttonSize = dp(32);
         for (int i = 0; i < 8; i++) {
-            var button = new NavigationButton(sButtonIcon, i * 32);
+            var button = new ImageButton();
+            var drawable = new ImageDrawable(sButtonIcon);
+            if (i == 0) {
+                drawable.setSrcRect(2, 258, 66, 322);
+            } else {
+                drawable.setSrcRect(i * 32, 352, (i + 1) * 32, 384);
+            }
+            drawable.setTintList(NAV_BUTTON_COLOR);
+            button.setImageDrawable(drawable);
+
             var params = new LinearLayout.LayoutParams(buttonSize, buttonSize);
-            button.setClickable(true);
             params.setMarginsRelative(dp(i == 7 ? 26 : 2), dp(2), dp(2), dp(6));
             if (i == 0 || i == 7) {
                 buttonGroup.addView(button, params);
@@ -93,21 +126,24 @@ public class FluxDeviceUI extends Fragment {
                 button.setOnClickListener(__ -> {
                     FragmentManager fm = getChildFragmentManager();
                     Fragment fragment = fm.findFragmentByTag("create");
-                    boolean addToBackStack = false;
                     if (fragment == null) {
-                        fragment = new TabCreate();
-                        addToBackStack = true;
+                        fm.beginTransaction()
+                                .replace(id_tab_container, CreateTab.class, getArguments(), "create")
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .addToBackStack(null)
+                                .setReorderingAllowed(true)
+                                .commit();
+                    } else {
+                        fm.beginTransaction()
+                                .replace(id_tab_container, fragment, "create")
+                                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                                .setReorderingAllowed(true)
+                                .commit();
                     }
-                    FragmentTransaction ft = fm.beginTransaction();
-                    ft.replace(id_tab_container, fragment, "create")
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                    if (addToBackStack) {
-                        ft.addToBackStack(null);
-                    }
-                    ft.setReorderingAllowed(true)
-                            .commit();
+                    //__.setSelected(true);
                 });
             } else if (i == 0) {
+                button.setSelected(true);
                 button.setOnClickListener(__ -> getChildFragmentManager().popBackStack());
             }
         }
@@ -123,63 +159,5 @@ public class FluxDeviceUI extends Fragment {
 
         content.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER));
         return content;
-    }
-
-    public static class TabBackground extends Drawable {
-
-        private final float mRadius;
-        private int mColor;
-
-        public TabBackground() {
-            mRadius = dp(16);
-            setColor(NETWORK_COLOR);
-        }
-
-        public void setColor(int color) {
-            mColor = 0xFF000000 | color;
-        }
-
-        @Override
-        public void draw(@Nonnull Canvas canvas) {
-            Rect b = getBounds();
-            float stroke = mRadius * 0.25f;
-            float start = stroke * 0.5f;
-
-            Paint paint = Paint.take();
-            paint.setRGBA(0, 0, 0, 180);
-            canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
-            paint.setStyle(Paint.STROKE);
-            paint.setStrokeWidth(stroke);
-            paint.setColor(mColor);
-            canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
-        }
-    }
-
-    /**
-     * Waiting for drawable states and directly use View
-     */
-    private static class NavigationButton extends View {
-
-        private final Image mImage;
-        private final int mSrcLeft;
-
-        public NavigationButton(Image image, int srcLeft) {
-            mImage = image;
-            mSrcLeft = srcLeft;
-        }
-
-        @Override
-        protected void onDraw(@Nonnull Canvas canvas) {
-            Paint paint = Paint.take();
-            if (!isHovered())
-                paint.setRGBA(192, 192, 192, 255);
-            canvas.drawImage(mImage, mSrcLeft, 352, mSrcLeft + 32, 384, 0, 0, getWidth(), getHeight(), paint);
-        }
-
-        @Override
-        public void onHoverChanged(boolean hovered) {
-            super.onHoverChanged(hovered);
-            invalidate();
-        }
     }
 }

@@ -22,7 +22,7 @@ public enum FluxConfigurationType {
     public void copy(CompoundTag nbt, @Nonnull TileFluxDevice tile) {
         switch (this) {
             case NETWORK:
-                nbt.putInt(key, tile.getNetwork().getNetworkID());
+                nbt.putInt(key, tile.getNetwork().getID());
                 break;
             case PRIORITY:
                 nbt.putInt(key, tile.getRawPriority());

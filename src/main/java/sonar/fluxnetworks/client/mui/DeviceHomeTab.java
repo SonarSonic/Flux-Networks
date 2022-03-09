@@ -25,7 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.client.widget.RoundTextBackground;
+import sonar.fluxnetworks.client.design.RoundRectDrawable;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.device.TransferHandler;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -38,7 +38,7 @@ import static icyllis.modernui.view.View.dp;
 /**
  * The home page for Flux Point and Flux Plug.
  */
-public class FluxConnectorHome extends Fragment {
+public class DeviceHomeTab extends Fragment {
 
     private final TileFluxDevice mDevice;
 
@@ -46,7 +46,7 @@ public class FluxConnectorHome extends Fragment {
     private TextView mPriority;
     private TextView mLimit;
 
-    public FluxConnectorHome(@Nonnull TileFluxDevice device) {
+    public DeviceHomeTab(@Nonnull TileFluxDevice device) {
         mDevice = device;
     }
 
@@ -116,7 +116,7 @@ public class FluxConnectorHome extends Fragment {
                 }
             }
             v.setSingleLine();
-            v.setBackground(new RoundTextBackground());
+            v.setBackground(new RoundRectDrawable());
             v.setTextSize(16);
             v.setCompoundDrawablesRelativeWithIntrinsicBounds(
                     new TextFieldStart(FluxDeviceUI.sButtonIcon, (((i + 1) % 3) + 1) * 64), null, null, null);

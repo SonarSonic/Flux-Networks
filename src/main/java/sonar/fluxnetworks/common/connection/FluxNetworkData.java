@@ -125,15 +125,16 @@ public final class FluxNetworkData extends SavedData {
 
         final ServerFluxNetwork network = new ServerFluxNetwork(mUniqueID, name, color, security, creator, password);
 
-        mNetworks.put(network.getNetworkID(), network);
-        Messages.getNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC).sendToAll();
+        mNetworks.put(network.getID(), network);
+        Messages.getNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC)
+                .sendToAll();
         return network;
     }
 
     public void deleteNetwork(@Nonnull FluxNetwork network) {
-        if (mNetworks.remove(network.getNetworkID()) == network) {
+        if (mNetworks.remove(network.getID()) == network) {
             network.onDelete();
-            Messages.sendNetworkDelete(network.getNetworkID());
+            Messages.sendNetworkDelete(network.getID());
         }
     }
 
@@ -150,8 +151,8 @@ public final class FluxNetworkData extends SavedData {
         for (int i = 0; i < list.size(); i++) {
             ServerFluxNetwork network = new ServerFluxNetwork();
             network.readCustomTag(list.getCompound(i), FluxConstants.TYPE_SAVE_ALL);
-            if (network.getNetworkID() > 0) {
-                mNetworks.put(network.getNetworkID(), network);
+            if (network.getID() > 0) {
+                mNetworks.put(network.getID(), network);
             }
         }
 

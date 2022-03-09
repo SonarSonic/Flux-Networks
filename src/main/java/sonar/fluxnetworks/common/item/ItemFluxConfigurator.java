@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.client.ClientRepository;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nullable;
@@ -76,7 +76,7 @@ public class ItemFluxConfigurator extends Item {
         CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
             tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + ChatFormatting.WHITE +
-                    FluxClientCache.getDisplayName(tag)));
+                    ClientRepository.getDisplayName(tag)));
         }
     }
 

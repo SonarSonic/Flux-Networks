@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.client.util;
+package sonar.fluxnetworks.client.design;
 
 import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.Spanned;
@@ -16,16 +16,16 @@ import javax.annotation.Nullable;
  * @see icyllis.modernui.widget.TextView#setFilters(InputFilter[])
  */
 @OnlyIn(Dist.CLIENT)
-public class PasswordInputFilter extends InputFilter.LengthFilter {
+public class PasswordFilter extends InputFilter.LengthFilter {
 
-    private static final PasswordInputFilter sInstance = new PasswordInputFilter();
+    private static final PasswordFilter sInstance = new PasswordFilter();
 
-    private PasswordInputFilter() {
+    private PasswordFilter() {
         super(FluxNetwork.MAX_PASSWORD_LENGTH);
     }
 
     @Nonnull
-    public static PasswordInputFilter getInstance() {
+    public static PasswordFilter getInstance() {
         return sInstance;
     }
 

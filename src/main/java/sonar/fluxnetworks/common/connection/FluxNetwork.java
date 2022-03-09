@@ -81,8 +81,8 @@ public class FluxNetwork {
     //public ICustomValue<Integer> network_wireless = new CustomValue<>(0);
     //public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
 
-    private int mNetworkID;
-    private String mNetworkName;
+    private int mID;
+    private String mName;
     private int mNetworkColor;
     private UUID mOwnerUUID;
     private SecurityLevel mSecurityLevel;
@@ -99,8 +99,8 @@ public class FluxNetwork {
     }
 
     private FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull UUID owner) {
-        mNetworkID = id;
-        mNetworkName = name;
+        mID = id;
+        mName = name;
         mNetworkColor = color;
         mSecurityLevel = security;
         mOwnerUUID = owner;
@@ -116,8 +116,8 @@ public class FluxNetwork {
      *
      * @return a positive integer or {@link FluxConstants#INVALID_NETWORK_ID}
      */
-    public final int getNetworkID() {
-        return mNetworkID;
+    public final int getID() {
+        return mID;
     }
 
     /**
@@ -135,12 +135,12 @@ public class FluxNetwork {
      * @return the name of this network
      */
     @Nonnull
-    public final String getNetworkName() {
-        return mNetworkName;
+    public final String getName() {
+        return mName;
     }
 
-    public void setNetworkName(@Nonnull String name) {
-        mNetworkName = name;
+    public void setName(@Nonnull String name) {
+        mName = name;
     }
 
     /**
@@ -148,11 +148,11 @@ public class FluxNetwork {
      *
      * @return the network color
      */
-    public final int getNetworkColor() {
+    public final int getColor() {
         return mNetworkColor;
     }
 
-    public void setNetworkColor(int color) {
+    public void setColor(int color) {
         mNetworkColor = color;
     }
 
@@ -287,11 +287,11 @@ public class FluxNetwork {
 
     public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
-            tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
-            tag.putString(NETWORK_NAME, mNetworkName);
+            tag.putInt(FluxConstants.NETWORK_ID, mID);
+            tag.putString(NETWORK_NAME, mName);
             tag.putInt(NETWORK_COLOR, mNetworkColor);
             tag.putUUID(OWNER_UUID, mOwnerUUID);
-            tag.putByte(SECURITY_LEVEL, mSecurityLevel.getId());
+            tag.putByte(SECURITY_LEVEL, mSecurityLevel.index());
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
             Collection<NetworkMember> members = getAllMembers();
@@ -395,11 +395,11 @@ public class FluxNetwork {
 
     public void readCustomTag(@Nonnull CompoundTag tag, int type) {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
-            mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
-            mNetworkName = tag.getString(NETWORK_NAME);
+            mID = tag.getInt(FluxConstants.NETWORK_ID);
+            mName = tag.getString(NETWORK_NAME);
             mNetworkColor = tag.getInt(NETWORK_COLOR);
             mOwnerUUID = tag.getUUID(OWNER_UUID);
-            mSecurityLevel = SecurityLevel.byId(tag.getByte(SECURITY_LEVEL));
+            mSecurityLevel = SecurityLevel.get(tag.getByte(SECURITY_LEVEL));
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
             ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);
@@ -476,8 +476,8 @@ public class FluxNetwork {
     @Override
     public String toString() {
         return "FluxNetwork{" +
-                "networkID=" + mNetworkID +
-                ", networkName='" + mNetworkName + '\'' +
+                "networkID=" + mID +
+                ", networkName='" + mName + '\'' +
                 ", ownerUUID=" + mOwnerUUID +
                 '}';
     }

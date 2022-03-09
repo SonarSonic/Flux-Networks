@@ -22,7 +22,7 @@ public class FluxDustItem extends Item {
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip,
                                 @Nonnull TooltipFlag flag) {
         if (FluxConfig.enableFluxRecipe) {
-            tooltip.add(FluxTranslate.FLUX_DUST_TOOLTIP.getTextComponent());
+            tooltip.add(FluxTranslate.FLUX_DUST_TOOLTIP.component());
         }
     }
 }

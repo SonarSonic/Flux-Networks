@@ -299,27 +299,16 @@ public class FluxUtils {
         .getStorageSuffix()));
     }*/
 
-    public static boolean isBadPassword(@Nonnull String str) {
-        if (str.isEmpty() || str.length() > FluxNetwork.MAX_PASSWORD_LENGTH) {
+    public static boolean isBadNetworkName(@Nonnull String s) {
+        return s.isEmpty() || s.length() > FluxNetwork.MAX_NETWORK_NAME_LENGTH;
+    }
+
+    public static boolean isBadPassword(@Nonnull String s) {
+        if (s.isEmpty() || s.length() > FluxNetwork.MAX_PASSWORD_LENGTH) {
             return true;
         }
-        for (int i = 0; i < str.length(); i++) {
-            /*int codePoint;
-            char c1 = str.charAt(i);
-            if (Character.isHighSurrogate(c1) && i + 1 < str.length()) {
-                char c2 = str.charAt(i + 1);
-                if (Character.isLowSurrogate(c2)) {
-                    codePoint = Character.toCodePoint(c1, c2);
-                    ++i;
-                } else {
-                    codePoint = c1;
-                }
-            } else {
-                codePoint = c1;
-            }
-            if (codePoint < 0x21 || codePoint >= 0x7f)
-                return false;*/
-            if (isBadPasswordChar(str.charAt(i))) {
+        for (int i = 0, e = s.length(); i < e; i++) {
+            if (isBadPasswordChar(s.charAt(i))) {
                 return true;
             }
         }

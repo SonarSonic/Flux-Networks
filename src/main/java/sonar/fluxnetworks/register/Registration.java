@@ -2,6 +2,8 @@ package sonar.fluxnetworks.register;
 
 import icyllis.modernui.forge.NetworkHandler;
 import icyllis.modernui.forge.OpenMenuEvent;
+import icyllis.modernui.fragment.Fragment;
+import icyllis.modernui.util.DataSet;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -60,7 +62,7 @@ public class Registration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        sNetwork = new NetworkHandler(FluxNetworks.MODID, () -> Messages::msg, Messages::msg, "701", false);
+        sNetwork = new NetworkHandler(FluxNetworks.MODID, () -> Messages::msg, Messages::msg, Messages.PROTOCOL, false);
     }
 
     @SubscribeEvent
@@ -202,7 +204,12 @@ public class Registration {
     @SubscribeEvent
     public static void openMenu(@Nonnull OpenMenuEvent event) {
         if (event.getMenu() instanceof FluxDeviceMenu menu && menu.mDevice != null) {
-            event.set(new FluxDeviceUI(menu.mDevice));
+            FluxDeviceUI fragment = new FluxDeviceUI(menu.mDevice);
+            menu.mOnResultListener = fragment;
+            DataSet args = new DataSet();
+            args.putInt("token", menu.containerId);
+            fragment.setArguments(args);
+            event.set(fragment);
         }
     }
 }

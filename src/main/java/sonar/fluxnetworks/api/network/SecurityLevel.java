@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.api.network;
 
-import sonar.fluxnetworks.api.FluxTranslate;
+import net.minecraft.locale.Language;
 
 import javax.annotation.Nonnull;
 
@@ -12,7 +12,16 @@ public enum SecurityLevel {
     /**
      * Prefers this without creating new array objects.
      */
-    public static final SecurityLevel[] VALUES = values();
+    private static final SecurityLevel[] VALUES = values();
+
+    @Nonnull
+    public static SecurityLevel get(int id) {
+        return VALUES[id];
+    }
+
+    public static int size() {
+        return VALUES.length;
+    }
 
     private final String mTranslateKey;
 
@@ -20,17 +29,16 @@ public enum SecurityLevel {
         mTranslateKey = translateKey;
     }
 
-    @Nonnull
-    public static SecurityLevel byId(int id) {
-        return VALUES[id];
+    public byte index() {
+        return (byte) ordinal();
     }
 
-    public byte getId() {
-        return (byte) ordinal();
+    public boolean isEncrypted() {
+        return this == ENCRYPTED;
     }
 
     @Nonnull
     public String getText() {
-        return FluxTranslate.translate(mTranslateKey);
+        return Language.getInstance().getOrDefault(mTranslateKey);
     }
 }

@@ -1,23 +1,26 @@
-package sonar.fluxnetworks.client.widget;
+package sonar.fluxnetworks.client.design;
 
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.math.Rect;
-import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 
 import javax.annotation.Nonnull;
 
 import static icyllis.modernui.view.View.dp;
 
-public class RoundTextBackground extends Drawable {
+public class RoundRectDrawable extends Drawable {
 
     private final float mRadius;
     private int mColor;
 
-    public RoundTextBackground() {
+    public RoundRectDrawable() {
+        this(FluxDesign.LIGHT_GRAY);
+    }
+
+    public RoundRectDrawable(int color) {
         mRadius = dp(3);
-        setColor(EnumNetworkColor.BLUE.getRGB());
+        setColor(color);
     }
 
     public void setColor(int color) {

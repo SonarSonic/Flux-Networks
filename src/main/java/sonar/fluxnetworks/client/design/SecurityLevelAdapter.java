@@ -1,4 +1,4 @@
-package sonar.fluxnetworks.client.util;
+package sonar.fluxnetworks.client.design;
 
 import icyllis.modernui.view.Gravity;
 import icyllis.modernui.view.View;
@@ -18,12 +18,12 @@ public class SecurityLevelAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return SecurityLevel.VALUES.length;
+        return SecurityLevel.size();
     }
 
     @Override
     public SecurityLevel getItem(int position) {
-        return SecurityLevel.VALUES[position];
+        return SecurityLevel.get(position);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SecurityLevelAdapter extends BaseAdapter {
             view = (TextView) convertView;
         }
 
-        view.setText(SecurityLevel.VALUES[position].getText());
+        view.setText(getItem(position).getText());
 
         view.setTextSize(16);
         view.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);

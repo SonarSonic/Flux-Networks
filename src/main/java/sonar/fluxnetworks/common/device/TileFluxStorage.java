@@ -111,7 +111,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, true);
         else {
             stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, false);
-            subTag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
+            subTag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getColor());
         }
         subTag.putLong(FluxConstants.ENERGY, getTransferBuffer());
         return stack;

@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 public class FluxDeviceMenu extends AbstractContainerMenu {
 
     public final TileFluxDevice mDevice;
+    public OnResultListener mOnResultListener;
 
     public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull FriendlyByteBuf buf) {
         super(RegistryBlocks.FLUX_MENU, containerId);
@@ -50,5 +51,11 @@ public class FluxDeviceMenu extends AbstractContainerMenu {
     public void removed(@Nonnull Player player) {
         super.removed(player);
         mDevice.onPlayerClose(player);
+    }
+
+    @FunctionalInterface
+    public interface OnResultListener {
+
+        void onResult(int key, int code);
     }
 }
