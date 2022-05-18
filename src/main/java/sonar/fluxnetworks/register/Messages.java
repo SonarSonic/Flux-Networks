@@ -24,10 +24,7 @@ import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static sonar.fluxnetworks.register.Registration.sNetwork;
@@ -158,9 +155,9 @@ public class Messages {
         // do not kick the player in single-player mode
         if (p.server.isDedicatedServer()) {
             p.connection.disconnect(new TranslatableComponent("multiplayer.disconnect.invalid_packet"));
-            FluxNetworks.LOGGER.info("Kicked {} due to protocol attack", p.getGameProfile().getName(), e);
+            FluxNetworks.LOGGER.info("Kicked {} because of invalid packet", p.getGameProfile().getName(), e);
         } else {
-            FluxNetworks.LOGGER.debug("Received invalid packet", e);
+            FluxNetworks.LOGGER.info("Received invalid packet", e);
         }
     }
 
@@ -239,7 +236,7 @@ public class Messages {
                     FluxNetwork network = FluxNetworkData.getNetwork(networkId);
                     if (network.getPlayerAccess(p).canEdit()) {
                         for (GlobalPos pos : list) {
-                            IFluxDevice f = network.getConnection(pos);
+                            IFluxDevice f = network.getConnectionByPos(pos);
                             if (f instanceof TileFluxDevice e) {
                                 e.readCustomTag(tag, FluxConstants.TYPE_TILE_SETTING);
                             }

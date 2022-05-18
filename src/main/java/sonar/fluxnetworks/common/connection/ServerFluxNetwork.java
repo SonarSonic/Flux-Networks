@@ -206,7 +206,7 @@ public class ServerFluxNetwork extends FluxNetwork {
         if (!mToAdd.contains(device) && !getLogicalEntities(ANY).contains(device)) {
             mToAdd.offer(device);
             mToRemove.remove(device);
-            mConnections.put(device.getGlobalPos(), device);
+            mConnectionMap.put(device.getGlobalPos(), device);
             return true;
         }
         return false;
@@ -220,10 +220,10 @@ public class ServerFluxNetwork extends FluxNetwork {
             if (chunkUnload) {
                 // create a fake device on server side, representing it has ever connected to
                 // this network but currently unloaded
-                mConnections.put(device.getGlobalPos(), FakeFluxDevice.unload(device));
+                mConnectionMap.put(device.getGlobalPos(), FakeFluxDevice.unload(device));
             } else {
                 // remove the tile entity
-                mConnections.remove(device.getGlobalPos());
+                mConnectionMap.remove(device.getGlobalPos());
             }
         }
     }

@@ -22,14 +22,14 @@ public class NetworkMember {
 
     @Nonnull
     public static NetworkMember create(@Nonnull Player player, @Nonnull AccessLevel level) {
-        NetworkMember t = new NetworkMember();
-        t.mPlayerUUID = player.getUUID();
-        t.mCachedName = player.getGameProfile().getName();
-        if (t.mCachedName == null) {
-            t.mCachedName = "Anonymous";
+        final NetworkMember member = new NetworkMember();
+        member.mPlayerUUID = player.getUUID();
+        member.mCachedName = player.getGameProfile().getName();
+        if (member.mCachedName == null) {
+            member.mCachedName = "[Anonymous]";
         }
-        t.mAccessLevel = level;
-        return t;
+        member.mAccessLevel = level;
+        return member;
     }
 
     /*public static NetworkMember createMemberByUsername(String username) {

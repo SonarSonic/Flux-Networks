@@ -1,10 +1,7 @@
 package sonar.fluxnetworks.common.util;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -342,16 +339,16 @@ public class FluxUtils {
         return provider.getCapability(cap, dir).orElse(null);
     }
 
-    public static float getRed(int colour) {
-        return (float) (colour >> 16 & 255) / 255.0F;
+    public static float getRed(int color) {
+        return (float) (color >> 16 & 255) / 255.0F;
     }
 
-    public static float getGreen(int colour) {
-        return (float) (colour >> 8 & 255) / 255.0F;
+    public static float getGreen(int color) {
+        return (float) (color >> 8 & 255) / 255.0F;
     }
 
-    public static float getBlue(int colour) {
-        return (float) (colour & 255) / 255.0F;
+    public static float getBlue(int color) {
+        return (float) (color & 255) / 255.0F;
     }
 
     /*public static CompoundNBT copyConfiguration(TileFluxDevice flux, CompoundNBT config) {

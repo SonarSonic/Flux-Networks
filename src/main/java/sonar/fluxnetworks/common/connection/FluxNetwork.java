@@ -2,24 +2,18 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.Util;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.*;
 import java.util.*;
 
 /**
@@ -88,12 +82,12 @@ public class FluxNetwork {
     private SecurityLevel mSecurityLevel;
 
     final NetworkStatistics mStatistics = new NetworkStatistics(this);
-    final HashMap<UUID, NetworkMember> mMembers = new HashMap<>();
+    final HashMap<UUID, NetworkMember> mMemberMap = new HashMap<>();
     /**
      * Server: {@link TileFluxDevice} (loaded) and {@link FakeFluxDevice} (unloaded)
      * <p>Client: {@link FakeFluxDevice}
      */
-    final HashMap<GlobalPos, IFluxDevice> mConnections = new HashMap<>();
+    final HashMap<GlobalPos, IFluxDevice> mConnectionMap = new HashMap<>();
 
     FluxNetwork() {
     }
@@ -108,7 +102,7 @@ public class FluxNetwork {
 
     FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull Player owner) {
         this(id, name, color, security, owner.getUUID());
-        mMembers.put(mOwnerUUID, NetworkMember.create(owner, AccessLevel.OWNER));
+        mMemberMap.put(mOwnerUUID, NetworkMember.create(owner, AccessLevel.OWNER));
     }
 
     /**
@@ -176,8 +170,8 @@ public class FluxNetwork {
     }
 
     @Nullable
-    public NetworkMember getMember(@Nonnull UUID uuid) {
-        return mMembers.get(uuid);
+    public NetworkMember getMemberByUUID(@Nonnull UUID uuid) {
+        return mMemberMap.get(uuid);
     }
 
     /**
@@ -187,7 +181,7 @@ public class FluxNetwork {
      */
     @Nonnull
     public Collection<NetworkMember> getAllMembers() {
-        return mMembers.values();
+        return mMemberMap.values();
     }
 
     /**
@@ -198,8 +192,8 @@ public class FluxNetwork {
      * @see #getAllConnections()
      */
     @Nullable
-    public IFluxDevice getConnection(@Nonnull GlobalPos pos) {
-        return mConnections.get(pos);
+    public IFluxDevice getConnectionByPos(@Nonnull GlobalPos pos) {
+        return mConnectionMap.get(pos);
     }
 
     /**
@@ -210,7 +204,7 @@ public class FluxNetwork {
      */
     @Nonnull
     public Collection<IFluxDevice> getAllConnections() {
-        return mConnections.values();
+        return mConnectionMap.values();
     }
 
     public void onEndServerTick() {
@@ -220,8 +214,8 @@ public class FluxNetwork {
      * Called when this network is deleted from its manager.
      */
     public void onDelete() {
-        mMembers.clear();
-        mConnections.clear();
+        mMemberMap.clear();
+        mConnectionMap.clear();
     }
 
     /**
@@ -235,7 +229,7 @@ public class FluxNetwork {
      */
     @Nonnull
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
-        NetworkMember member = getMember(player.getUUID());
+        NetworkMember member = getMemberByUUID(player.getUUID());
         if (member != null) {
             return member.getAccessLevel();
         }
@@ -332,7 +326,7 @@ public class FluxNetwork {
             List<ServerPlayer> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
             if (!players.isEmpty()) {
                 for (ServerPlayer p : players) {
-                    if (getMember(p.getUUID()) == null) {
+                    if (getMemberByUUID(p.getUUID()) == null) {
                         CompoundTag subTag = new CompoundTag();
                         NetworkMember m = NetworkMember.create(p,
                                 FluxPlayer.isPlayerSuperAdmin(p) ? AccessLevel.SUPER_ADMIN :
@@ -406,39 +400,39 @@ public class FluxNetwork {
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
-                mMembers.put(m.getPlayerUUID(), m);
+                mMemberMap.put(m.getPlayerUUID(), m);
             }
             list = tag.getList(CONNECTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 FakeFluxDevice f = FakeFluxDevice.load(c);
-                mConnections.put(f.getGlobalPos(), f);
+                mConnectionMap.put(f.getGlobalPos(), f);
             }
         }
         if (type == FluxConstants.TYPE_NET_MEMBERS) {
-            mMembers.clear();
+            mMemberMap.clear();
             ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 NetworkMember m = new NetworkMember(c);
-                mMembers.put(m.getPlayerUUID(), m);
+                mMemberMap.put(m.getPlayerUUID(), m);
             }
         }
         if (type == FluxConstants.TYPE_NET_CONNECTIONS) {
             //TODO waiting for new GUI system, see GuiTabConnections, we request a full connections update
             // when we (re)open the gui, but if a tile removed by someone or on world unloads, this won't send
             // to player, so calling clear() here as a temporary solution, (f != null) is always false
-            mConnections.clear();
+            mConnectionMap.clear();
 
             ListTag list = tag.getList(CONNECTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 GlobalPos pos = FluxUtils.readGlobalPos(c);
-                IFluxDevice f = mConnections.get(pos);
+                IFluxDevice f = mConnectionMap.get(pos);
                 if (f != null) {
                     f.readCustomTag(c, FluxConstants.TYPE_PHANTOM_UPDATE);
                 } else {
-                    mConnections.put(pos, FakeFluxDevice.update(pos, c));
+                    mConnectionMap.put(pos, FakeFluxDevice.update(pos, c));
                 }
             }
         }

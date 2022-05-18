@@ -1,42 +1,45 @@
 package sonar.fluxnetworks.client.gui.button;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
-import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiButton;
 
-public class NavigationButton extends GuiButtonCore {
+public class NavigationButton extends GuiButton {
 
-    public EnumNavigationTab tab;
-    public boolean isCurrentTab = false;
+    private final EnumNavigationTab mTab;
+    private boolean mSelected = false;
 
-    public NavigationButton(int x, int y, EnumNavigationTab tab) {
-        super(x, y, 16, 16, 0);
-        this.tab = tab;
+    public NavigationButton(Minecraft mc, int x, int y, EnumNavigationTab tab) {
+        super(mc, x, y, 16, 16);
+        mTab = tab;
     }
 
     @Override
-    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
-        GlStateManager.pushMatrix();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableBlend();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0f);
-        mc.getTextureManager().bindTexture(ScreenUtils.BUTTONS);
-        blit(matrixStack, x, y, 16 * tab.ordinal(), 16 * getHoverState(isCurrentTab || isMouseHovered(mc, mouseX, mouseY)), 16, 16);
+    protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        RenderSystem.enableBlend();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
+        RenderSystem.setShaderTexture(0, BUTTONS);
 
-        if (isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
-            FontRenderer fontRenderer = mc.fontRenderer;
-            String text = tab.getTranslatedName();
-            fontRenderer.drawString(matrixStack, text, x - fontRenderer.getStringWidth(text) / 2f + 8, y - 10, 0xFFFFFF);
+        boolean hovered = isMouseHovered(mouseX, mouseY);
+        int state = (mSelected || hovered) ? 1 : 0;
+        blit(poseStack, x, y, 16 * mTab.ordinal(), 16 * state, 16, 16);
+
+        if (hovered) {
+            drawCenteredString(poseStack, mc.font, mTab.getTranslatedName(), x + width / 2, y - 10, 0xFFFFFFFF);
         }
-        GlStateManager.popMatrix();
     }
 
-    public void setMain() {
-        isCurrentTab = true;
+    public EnumNavigationTab getTab() {
+        return mTab;
     }
-}*/
+
+    public boolean isSelected() {
+        return mSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        mSelected = selected;
+    }
+}

@@ -1,19 +1,16 @@
 package sonar.fluxnetworks.client.gui.button;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.TextComponent;
 
-import javax.annotation.Nonnull;
-
-public class FluxTextWidget extends TextFieldWidget {
+public class FluxEditBox extends EditBox {
 
     private String origin;
     private String extraText;
     private int textWidth;
     private boolean hexOnly;
-    private FontRenderer font;
+    private Font font;
 
     ///digits
     private boolean digitsOnly;
@@ -22,18 +19,18 @@ public class FluxTextWidget extends TextFieldWidget {
 
     private int outlineColor = 0xffb4b4b4;
 
-    public FluxTextWidget(String text, FontRenderer fontRenderer, int x, int y, int totalWidth, int height, int headerWidth) {
-        super(fontRenderer, x + headerWidth, y, totalWidth - headerWidth, height, StringTextComponent.EMPTY);
+    public FluxEditBox(String text, Font fontRenderer, int x, int y, int totalWidth, int height, int headerWidth) {
+        super(fontRenderer, x + headerWidth, y, totalWidth - headerWidth, height, TextComponent.EMPTY);
         this.extraText = text;
         this.textWidth = headerWidth;
         this.font = fontRenderer;
     }
 
-    public static FluxTextWidget create(String text, FontRenderer fontRenderer, int x, int y, int width, int height) {
-        return new FluxTextWidget(text, fontRenderer, x, y, width, height, fontRenderer.getStringWidth(text));
+    public static FluxEditBox create(String text, Font fontRenderer, int x, int y, int width, int height) {
+        return new FluxEditBox(text, fontRenderer, x, y, width, height, fontRenderer.width(text));
     }
 
-    public int getIntegerFromText(boolean allowNegatives) {
+    /*public int getIntegerFromText(boolean allowNegatives) {
         if (getText().isEmpty() || getText().equals("-")) {
             return 0;
         }
@@ -57,7 +54,8 @@ public class FluxTextWidget extends TextFieldWidget {
     public void renderButton(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (this.getVisible()) {
             fill(matrixStack, this.x - textWidth - 1, this.y - 1, this.x + this.width + 1, this.y, outlineColor);
-            fill(matrixStack, this.x - textWidth - 1, this.y + this.height, this.x + this.width + 1, this.y + this.height + 1, outlineColor);
+            fill(matrixStack, this.x - textWidth - 1, this.y + this.height, this.x + this.width + 1,
+                    this.y + this.height + 1, outlineColor);
             fill(matrixStack, this.x - textWidth - 1, this.y, this.x - textWidth, this.y + this.height, outlineColor);
             fill(matrixStack, this.x + width, this.y, this.x + this.width + 1, this.y + this.height, outlineColor);
             fill(matrixStack, this.x - textWidth, this.y, this.x + this.width, this.y + this.height, 0x20000000);
@@ -134,24 +132,24 @@ public class FluxTextWidget extends TextFieldWidget {
         return (int) Math.min(getValidLong(), Integer.MAX_VALUE);
     }
 
-    public FluxTextWidget setOutlineColor(int color) {
+    public FluxEditBox setOutlineColor(int color) {
         this.outlineColor = color;
         return this;
     }
 
-    public FluxTextWidget setTextInvisible() {
+    public FluxEditBox setTextInvisible() {
         //this.setTextFormatter(FluxTextWidget::getInvisibleText);
         return this;
     }
 
     //TODO
-    *//*public static IReorderingProcessor getInvisibleText(String string, int cursorPos) {
+    public static IReorderingProcessor getInvisibleText(String string, int cursorPos) {
         StringBuilder builder = new StringBuilder();
-        for(int i = 0; i < string.length(); i++) {
+        for (int i = 0; i < string.length(); i++) {
             builder.append("*");
         }
         return IReorderingProcessor
-    }*//*
+    }
 
     public FluxTextWidget setDigitsOnly() {
         this.digitsOnly = true;
@@ -171,6 +169,6 @@ public class FluxTextWidget extends TextFieldWidget {
     public FluxTextWidget setHexOnly() {
         this.hexOnly = true;
         return this;
-    }
+    }*/
 
-}*/
+}

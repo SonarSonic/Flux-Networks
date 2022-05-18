@@ -1,31 +1,32 @@
 package sonar.fluxnetworks.client.gui.button;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiButton;
 
-public class ColorButton extends GuiButtonCore {
+public class ColorButton extends GuiButton {
 
-    public int color;
-    public boolean selected;
+    private final int mColor;
+    private boolean mSelected;
 
-    public ColorButton(int x, int y, int color) {
-        this(x, y, color, 0);
-    }
-
-    public ColorButton(int x, int y, int color, int id) {
-        super(x, y, 12, 12, id);
-        this.color = color;
+    public ColorButton(Minecraft mc, int x, int y, int color) {
+        super(mc, x, y, 12, 12);
+        this.mColor = color;
     }
 
     @Override
-    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
-        if (selected) {
-            drawRect(x - 1, y - 1, x + width + 1, y, 0xffffffff);
-            drawRect(x - 1, y + height, x + width + 1, y + height + 1, 0xffffffff);
-            drawRect(x - 1, y, x, y + height, 0xffffffff);
-            drawRect(x + width, y, x + width + 1, y + height, 0xffffffff);
+    protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        if (mSelected) {
+            drawOuterFrame(poseStack, x, y, width, height, 0xFFFFFFFF);
         }
-        drawRect(x, y, x + width, y + height, color | 0xaa000000);
+        fill(poseStack, x, y, x + width, y + height, mColor | 0xAA000000);
     }
-}*/
+
+    public boolean isSelected() {
+        return mSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        mSelected = selected;
+    }
+}

@@ -1,83 +1,69 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-/*
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.client.gui.popup.PopupCore;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.player.Player;
+import sonar.fluxnetworks.common.device.FluxDeviceMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
+public abstract class GuiPopupHost extends GuiFocusable {
 
-    public GuiPopupHost(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
-    }
+    private GuiPopup currentPopup;
 
-    public PopupCore<? extends GuiPopupHost> currentPopUp;
-
-    public final boolean hasActivePopup() {
-        return currentPopUp != null;
+    protected GuiPopupHost(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        super(menu, player);
     }
 
     //// OPEN POP UP \\\\
 
-    public final void openPopUp(PopupCore<? extends GuiPopupHost> popUp) {
-        if (popUp == null) {
+    public final void openPopup(GuiPopup popup) {
+        if (popup == null || popup.mHost != this) {
             return;
         }
-        if (currentPopUp != null) {
-            currentPopUp.closePopUp();
-            currentPopUp = null;
-        }
-        currentPopUp = popUp;
-        currentPopUp.openPopUp();
-        onPopUpOpen(popUp);
+        closePopup();
+        currentPopup = popup;
+        currentPopup.init(getMinecraft(), width, height);
+        onPopupOpen(currentPopup);
     }
 
-    public void onPopUpOpen(PopupCore<?> popUp) {
-
+    protected void onPopupOpen(GuiPopup popup) {
     }
 
     //// CLOSE POP UP \\\\\
 
-    public final void closePopUp() {
-        if (currentPopUp != null) {
-            onPopUpClose(currentPopUp);
-            currentPopUp.closePopUp();
-            currentPopUp = null;
+    public final void closePopup() {
+        if (currentPopup != null) {
+            onPopupClose(currentPopup);
+            currentPopup.onClose();
+            currentPopup = null;
         }
     }
 
-    // USED FOR OBTAINING INFO FROM POP UPS
-    public void onPopUpClose(PopupCore<?> popUp) {
-
+    // used for obtaining info from popups
+    protected void onPopupClose(GuiPopup popup) {
     }
 
     @Nullable
-    public IGuiEventListener getPopUp() {
-        return currentPopUp;
+    public final GuiPopup getCurrentPopup() {
+        return currentPopup;
     }
 
     //// mouse moved \\\\
 
     @Override
     public final void mouseMoved(double xPos, double yPos) {
-        if (getPopUp() != null) {
-            getPopUp().mouseMoved(xPos, yPos);
+        if (currentPopup != null) {
+            currentPopup.mouseMoved(xPos, yPos);
             return;
         }
-        if (mouseMovedMain(xPos, yPos)) {
+        if (onMouseMoved(xPos, yPos)) {
             return;
         }
         super.mouseMoved(xPos, yPos);
     }
 
-    public boolean mouseMovedMain(double xPos, double yPos) {
+    protected boolean onMouseMoved(double xPos, double yPos) {
         return false;
     }
 
@@ -85,13 +71,14 @@ public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
     @Override
     public final boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (getPopUp() != null) {
-            return getPopUp().mouseClicked(mouseX, mouseY, mouseButton);
+        if (currentPopup != null) {
+            return currentPopup.mouseClicked(mouseX, mouseY, mouseButton);
         }
-        return mouseClickedMain(mouseX, mouseY, mouseButton) || super.mouseClicked(mouseX, mouseY, mouseButton);
+        return onMouseClicked(mouseX, mouseY, mouseButton) ||
+                super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    public boolean mouseClickedMain(double mouseX, double mouseY, int mouseButton) {
+    protected boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
         return false;
     }
 
@@ -99,13 +86,14 @@ public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
     @Override
     public final boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
-        if (getPopUp() != null) {
-            return getPopUp().mouseReleased(mouseX, mouseY, mouseButton);
+        if (currentPopup != null) {
+            return currentPopup.mouseReleased(mouseX, mouseY, mouseButton);
         }
-        return mouseReleasedMain(mouseX, mouseY, mouseButton) || super.mouseReleased(mouseX, mouseY, mouseButton);
+        return onMouseReleased(mouseX, mouseY, mouseButton) ||
+                super.mouseReleased(mouseX, mouseY, mouseButton);
     }
 
-    public boolean mouseReleasedMain(double mouseX, double mouseY, int mouseButton) {
+    public boolean onMouseReleased(double mouseX, double mouseY, int mouseButton) {
         return false;
     }
 
@@ -113,13 +101,14 @@ public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
     @Override
     public final boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double startX, double startY) {
-        if (getPopUp() != null) {
-            return getPopUp().mouseDragged(mouseX, mouseY, mouseButton, startX, startY);
+        if (currentPopup != null) {
+            return currentPopup.mouseDragged(mouseX, mouseY, mouseButton, startX, startY);
         }
-        return mouseDraggedMain(mouseX, mouseY, mouseButton, startX, mouseY) || super.mouseDragged(mouseX, mouseY, mouseButton, startX, mouseY);
+        return onMouseDragged(mouseX, mouseY, mouseButton, startX, mouseY) ||
+                super.mouseDragged(mouseX, mouseY, mouseButton, startX, mouseY);
     }
 
-    public boolean mouseDraggedMain(double mouseX, double mouseY, int mouseButton, double startX, double startY) {
+    public boolean onMouseDragged(double mouseX, double mouseY, int mouseButton, double startX, double startY) {
         return false;
     }
 
@@ -127,13 +116,14 @@ public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
     @Override
     public final boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
-        if (getPopUp() != null) {
-            return getPopUp().mouseScrolled(mouseX, mouseY, scroll);
+        if (currentPopup != null) {
+            return currentPopup.mouseScrolled(mouseX, mouseY, scroll);
         }
-        return mouseScrolledMain(mouseX, mouseY, scroll) || super.mouseScrolled(mouseX, mouseY, scroll);
+        return onMouseScrolled(mouseX, mouseY, scroll) ||
+                super.mouseScrolled(mouseX, mouseY, scroll);
     }
 
-    public boolean mouseScrolledMain(double mouseX, double mouseY, double scroll) {
+    public boolean onMouseScrolled(double mouseX, double mouseY, double scroll) {
         return false;
     }
 
@@ -141,13 +131,14 @@ public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
     @Override
     public final boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (getPopUp() != null) {
-            return getPopUp().keyPressed(keyCode, scanCode, modifiers);
+        if (currentPopup != null) {
+            return currentPopup.keyPressed(keyCode, scanCode, modifiers);
         }
-        return keyPressedMain(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
+        return onKeyPressed(keyCode, scanCode, modifiers) ||
+                super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public boolean keyPressedMain(int keyCode, int scanCode, int modifiers) {
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
         return false;
     }
 
@@ -155,13 +146,14 @@ public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
     @Override
     public final boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (getPopUp() != null) {
-            return getPopUp().keyReleased(keyCode, scanCode, modifiers);
+        if (currentPopup != null) {
+            return currentPopup.keyReleased(keyCode, scanCode, modifiers);
         }
-        return keyReleasedMain(keyCode, scanCode, modifiers) || super.keyReleased(keyCode, scanCode, modifiers);
+        return onKeyReleased(keyCode, scanCode, modifiers) ||
+                super.keyReleased(keyCode, scanCode, modifiers);
     }
 
-    public boolean keyReleasedMain(int keyCode, int scanCode, int modifiers) {
+    public boolean onKeyReleased(int keyCode, int scanCode, int modifiers) {
         return false;
     }
 
@@ -169,54 +161,55 @@ public abstract class GuiPopupHost extends GuiFocusable<FluxContainerMenu> {
 
     @Override
     public final boolean charTyped(char typedChar, int keyCode) {
-        if (getPopUp() != null) {
-            return getPopUp().charTyped(typedChar, keyCode);
+        if (currentPopup != null) {
+            return currentPopup.charTyped(typedChar, keyCode);
         }
-        return charTypedMain(typedChar, keyCode) || super.charTyped(typedChar, keyCode);
+        return onCharTypes(typedChar, keyCode) ||
+                super.charTyped(typedChar, keyCode);
     }
 
-    public boolean charTypedMain(char typedChar, int keyCode) {
+    public boolean onCharTypes(char typedChar, int keyCode) {
         return false;
     }
 
     //// INIT \\\\
 
     @Override
-    public void init(@Nonnull Minecraft mc, int width, int height) {
-        super.init(mc, width, height);
-        if (currentPopUp != null) {
-            currentPopUp.init(mc, width, height);
+    public void init() {
+        super.init();
+        if (currentPopup != null) {
+            currentPopup.init(getMinecraft(), width, height);
         }
     }
 
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
+    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
     }
 
-    protected void drawBackgroundLayer(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
     }
 
     @Override
-    protected final void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
-        drawForegroundLayer(matrixStack, mouseX, mouseY);
+    public final void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.render(poseStack, mouseX, mouseY, deltaTicks);
+        drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
-        float partialTicks = Minecraft.getInstance().getTickLength();
-
-        if (currentPopUp != null) {
-            RenderSystem.disableDepthTest();
-            RenderSystem.pushMatrix();
-            RenderSystem.translatef(-guiLeft, -guiTop, 400);
-            currentPopUp.drawGuiContainerBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
-            RenderSystem.translatef(guiLeft, guiTop, 100);
-            currentPopUp.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-            RenderSystem.popMatrix();
-            RenderSystem.enableDepthTest();
+        if (currentPopup != null) {
+            poseStack.pushPose();
+            poseStack.translate(0, 0, 450);
+            currentPopup.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+            poseStack.translate(0, 0, 100);
+            currentPopup.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+            poseStack.popPose();
         }
     }
 
     @Override
-    protected final void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
-        renderBackground(matrixStack);
-        drawBackgroundLayer(matrixStack, partialTicks, mouseX, mouseY);
+    protected final void renderLabels(@Nonnull PoseStack poseStack, int mouseX, int mouseY) {
+    }
+
+    @Override
+    protected final void renderBg(@Nonnull PoseStack poseStack, float deltaTicks, int mouseX, int mouseY) {
+        renderBackground(poseStack);
+        drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
     }
 }
-*/

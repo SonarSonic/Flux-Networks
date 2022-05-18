@@ -19,14 +19,14 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${minecraft_version}-${mod_version}"
+version = "${minecraft_version}-${mod_version}" as String
 group = 'sonar.fluxnetworks'
 archivesBaseName = 'FluxNetworks'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.18.1'
+    mappings channel: 'parchment', version: "1.18.1-2022.03.06-${minecraft_version}"
 
     runs {
         client {
@@ -144,7 +144,7 @@ dependencies {
     /*compileOnly "mekanism:Mekanism:${mekanism_version}:api"
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")*/
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:3606616") // 1.18-5.0.3
+    implementation fg.deobf("curse.maven:the-one-probe-245211:3671753") // 1.18-5.1.0
 
     //runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3554445")
 

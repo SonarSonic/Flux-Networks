@@ -83,7 +83,7 @@ public final class ClientRepository {
         if (network != null) {
             for (CompoundTag tag : tags) {
                 GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
-                IFluxDevice d = network.getConnection(globalPos);
+                IFluxDevice d = network.getConnectionByPos(globalPos);
                 if (d != null) {
                     d.readCustomTag(tag, FluxConstants.TYPE_PHANTOM_UPDATE);
                 }
