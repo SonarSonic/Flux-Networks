@@ -10,16 +10,16 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GuiPopup extends GuiFocusable {
+public abstract class GuiPopupCore extends GuiFocusable {
 
-    protected final List<GuiButton> mButtons = new ArrayList<>();
+    protected final List<GuiButtonCore> mButtons = new ArrayList<>();
 
-    public final GuiFlux mHost;
+    public final GuiFluxCore mHost;
     public final Player mPlayer;
 
     protected float mAlpha = 0;
 
-    public GuiPopup(@Nonnull GuiFlux host, Player player) {
+    public GuiPopupCore(@Nonnull GuiFluxCore host, Player player) {
         super(host.getMenu(), player);
         mHost = host;
         mPlayer = player;
@@ -41,7 +41,7 @@ public abstract class GuiPopup extends GuiFocusable {
     }
 
     public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        for (GuiButton button : mButtons) {
+        for (GuiButtonCore button : mButtons) {
             button.drawButton(poseStack, mouseX, mouseY, deltaTicks);
         }
     }
@@ -51,12 +51,12 @@ public abstract class GuiPopup extends GuiFocusable {
 
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, mAlpha);
-        RenderSystem.setShaderTexture(0, GuiFlux.BACKGROUND);
+        RenderSystem.setShaderTexture(0, GuiFluxCore.BACKGROUND);
         blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);
 
         int color = mHost.mNetwork.getColor();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
-        RenderSystem.setShaderTexture(0, GuiFlux.FRAME);
+        RenderSystem.setShaderTexture(0, GuiFluxCore.FRAME);
         blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);
 
         // dimmer

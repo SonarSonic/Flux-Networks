@@ -78,7 +78,7 @@ public class DeviceHomeTab extends Fragment {
                     mCustomName = v;
                 }
                 case 1 -> {
-                    v.setText(Integer.toString(mDevice.getRawPriority()));
+                    v.setText(Integer.toString(mDevice.getLiteralPriority()));
                     v.setHint("Priority");
                     v.setHintTextColor(0xFF808080);
                     v.setFilters(new InputFilter.LengthFilter(5),
@@ -97,7 +97,7 @@ public class DeviceHomeTab extends Fragment {
                     mPriority = v;
                 }
                 default -> {
-                    v.setText(Long.toString(mDevice.getRawLimit()));
+                    v.setText(Long.toString(mDevice.getLiteralLimit()));
                     v.setHint("Transfer Limit");
                     v.setHintTextColor(0xFF808080);
                     v.setFilters(new InputFilter.LengthFilter(10),

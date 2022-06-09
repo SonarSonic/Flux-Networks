@@ -84,8 +84,8 @@ public class FluxNetwork {
     final NetworkStatistics mStatistics = new NetworkStatistics(this);
     final HashMap<UUID, NetworkMember> mMemberMap = new HashMap<>();
     /**
-     * Server: {@link TileFluxDevice} (loaded) and {@link FakeFluxDevice} (unloaded)
-     * <p>Client: {@link FakeFluxDevice}
+     * Server: {@link TileFluxDevice} (loaded) and {@link PhantomFluxDevice} (unloaded)
+     * <p>Client: {@link PhantomFluxDevice}
      */
     final HashMap<GlobalPos, IFluxDevice> mConnectionMap = new HashMap<>();
 
@@ -405,7 +405,7 @@ public class FluxNetwork {
             list = tag.getList(CONNECTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
-                FakeFluxDevice f = FakeFluxDevice.load(c);
+                PhantomFluxDevice f = PhantomFluxDevice.load(c);
                 mConnectionMap.put(f.getGlobalPos(), f);
             }
         }
@@ -432,7 +432,7 @@ public class FluxNetwork {
                 if (f != null) {
                     f.readCustomTag(c, FluxConstants.TYPE_PHANTOM_UPDATE);
                 } else {
-                    mConnectionMap.put(pos, FakeFluxDevice.update(pos, c));
+                    mConnectionMap.put(pos, PhantomFluxDevice.update(pos, c));
                 }
             }
         }

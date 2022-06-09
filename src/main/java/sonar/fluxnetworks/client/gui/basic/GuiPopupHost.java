@@ -1,15 +1,18 @@
 package sonar.fluxnetworks.client.gui.basic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.world.entity.player.Player;
-import sonar.fluxnetworks.common.device.FluxDeviceMenu;
+import org.lwjgl.glfw.GLFW;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class GuiPopupHost extends GuiFocusable {
 
-    private GuiPopup currentPopup;
+    private GuiPopupCore currentPopup;
 
     protected GuiPopupHost(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         super(menu, player);
@@ -17,7 +20,7 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     //// OPEN POP UP \\\\
 
-    public final void openPopup(GuiPopup popup) {
+    public final void openPopup(GuiPopupCore popup) {
         if (popup == null || popup.mHost != this) {
             return;
         }
@@ -27,7 +30,7 @@ public abstract class GuiPopupHost extends GuiFocusable {
         onPopupOpen(currentPopup);
     }
 
-    protected void onPopupOpen(GuiPopup popup) {
+    protected void onPopupOpen(GuiPopupCore popup) {
     }
 
     //// CLOSE POP UP \\\\\
@@ -41,29 +44,29 @@ public abstract class GuiPopupHost extends GuiFocusable {
     }
 
     // used for obtaining info from popups
-    protected void onPopupClose(GuiPopup popup) {
+    protected void onPopupClose(GuiPopupCore popup) {
     }
 
     @Nullable
-    public final GuiPopup getCurrentPopup() {
+    public final GuiPopupCore getCurrentPopup() {
         return currentPopup;
     }
 
     //// mouse moved \\\\
 
     @Override
-    public final void mouseMoved(double xPos, double yPos) {
+    public final void mouseMoved(double mouseX, double mouseY) {
         if (currentPopup != null) {
-            currentPopup.mouseMoved(xPos, yPos);
+            currentPopup.mouseMoved(mouseX, mouseY);
             return;
         }
-        if (onMouseMoved(xPos, yPos)) {
+        if (onMouseMoved(mouseX, mouseY)) {
             return;
         }
-        super.mouseMoved(xPos, yPos);
+        super.mouseMoved(mouseX, mouseY);
     }
 
-    protected boolean onMouseMoved(double xPos, double yPos) {
+    protected boolean onMouseMoved(double mouseX, double mouseY) {
         return false;
     }
 
@@ -74,8 +77,30 @@ public abstract class GuiPopupHost extends GuiFocusable {
         if (currentPopup != null) {
             return currentPopup.mouseClicked(mouseX, mouseY, mouseButton);
         }
-        return onMouseClicked(mouseX, mouseY, mouseButton) ||
-                super.mouseClicked(mouseX, mouseY, mouseButton);
+        if (onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
+        for (GuiEventListener child : children()) {
+            if (child.mouseClicked(mouseX, mouseY, mouseButton)) {
+                setFocused(child);
+                if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+                    setDragging(true);
+                }
+                return true;
+            }
+        }
+        boolean focused = false;
+        for (GuiEventListener child : children()) {
+            if (child instanceof EditBox editBox && editBox.isFocused()) {
+                focused = true;
+                break;
+            }
+        }
+        if (!focused) {
+            setFocused(null);
+            return true;
+        }
+        return false;
     }
 
     protected boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
@@ -100,30 +125,30 @@ public abstract class GuiPopupHost extends GuiFocusable {
     //// mouse dragged \\\\
 
     @Override
-    public final boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double startX, double startY) {
+    public final boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double deltaX, double deltaY) {
         if (currentPopup != null) {
-            return currentPopup.mouseDragged(mouseX, mouseY, mouseButton, startX, startY);
+            return currentPopup.mouseDragged(mouseX, mouseY, mouseButton, deltaX, deltaY);
         }
-        return onMouseDragged(mouseX, mouseY, mouseButton, startX, mouseY) ||
-                super.mouseDragged(mouseX, mouseY, mouseButton, startX, mouseY);
+        return onMouseDragged(mouseX, mouseY, mouseButton, deltaX, mouseY) ||
+                super.mouseDragged(mouseX, mouseY, mouseButton, deltaX, mouseY);
     }
 
-    public boolean onMouseDragged(double mouseX, double mouseY, int mouseButton, double startX, double startY) {
+    public boolean onMouseDragged(double mouseX, double mouseY, int mouseButton, double deltaX, double deltaY) {
         return false;
     }
 
     //// mouse scrolled \\\\
 
     @Override
-    public final boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+    public final boolean mouseScrolled(double mouseX, double mouseY, double vScroll) {
         if (currentPopup != null) {
-            return currentPopup.mouseScrolled(mouseX, mouseY, scroll);
+            return currentPopup.mouseScrolled(mouseX, mouseY, vScroll);
         }
-        return onMouseScrolled(mouseX, mouseY, scroll) ||
-                super.mouseScrolled(mouseX, mouseY, scroll);
+        return onMouseScrolled(mouseX, mouseY, vScroll) ||
+                super.mouseScrolled(mouseX, mouseY, vScroll);
     }
 
-    public boolean onMouseScrolled(double mouseX, double mouseY, double scroll) {
+    public boolean onMouseScrolled(double mouseX, double mouseY, double vScroll) {
         return false;
     }
 
@@ -160,15 +185,15 @@ public abstract class GuiPopupHost extends GuiFocusable {
     //// char typed \\\\
 
     @Override
-    public final boolean charTyped(char typedChar, int keyCode) {
+    public final boolean charTyped(char c, int modifiers) {
         if (currentPopup != null) {
-            return currentPopup.charTyped(typedChar, keyCode);
+            return currentPopup.charTyped(c, modifiers);
         }
-        return onCharTypes(typedChar, keyCode) ||
-                super.charTyped(typedChar, keyCode);
+        return onCharTypes(c, modifiers) ||
+                super.charTyped(c, modifiers);
     }
 
-    public boolean onCharTypes(char typedChar, int keyCode) {
+    public boolean onCharTypes(char c, int modifiers) {
         return false;
     }
 

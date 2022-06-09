@@ -92,7 +92,7 @@ public class CreateTab extends Fragment {
 
         {
             var v = new TextView();
-            v.setText(FluxTranslate.TAB_CREATE.t());
+            v.setText(FluxTranslate.TAB_CREATE.get());
             v.setTextSize(16);
             v.setTextColor(FluxDesign.LIGHT_GRAY);
             var params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
@@ -128,7 +128,7 @@ public class CreateTab extends Fragment {
 
             {
                 var title = new TextView();
-                title.setText(FluxTranslate.NETWORK_SECURITY.t());
+                title.setText(FluxTranslate.NETWORK_SECURITY.get());
                 title.setTextSize(16);
                 title.setTextColor(0xFF808080);
                 var params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1);

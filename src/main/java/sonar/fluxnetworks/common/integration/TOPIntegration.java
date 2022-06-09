@@ -11,9 +11,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
-import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -51,18 +51,18 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                 if (device.getNetwork().isValid()) {
                     probeInfo.text(new TextComponent(device.getNetwork().getName()).withStyle(ChatFormatting.AQUA));
                 } else {
-                    probeInfo.text(FluxTranslate.ERROR_NO_SELECTED.component().withStyle(ChatFormatting.AQUA));
+                    probeInfo.text(FluxTranslate.ERROR_NO_SELECTED.makeComponent().withStyle(ChatFormatting.AQUA));
                 }
 
                 probeInfo.text(new TextComponent(FluxUtils.getTransferInfo(device, EnergyType.FE)));
 
                 if (player.isShiftKeyDown()) {
                     if (device.getDeviceType().isStorage()) {
-                        probeInfo.text(FluxTranslate.ENERGY_STORED.component()
+                        probeInfo.text(FluxTranslate.ENERGY_STORED.makeComponent()
                                 .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
                         );
                     } else {
-                        probeInfo.text(FluxTranslate.INTERNAL_BUFFER.component()
+                        probeInfo.text(FluxTranslate.INTERNAL_BUFFER.makeComponent()
                                 .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
                         );
                     }
@@ -86,27 +86,28 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     (!FluxConfig.enableOneProbeSneaking || player.isShiftKeyDown())) {
 
                 if (device.getDisableLimit()) {
-                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.component()
+                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.makeComponent()
                             .append(": " + ChatFormatting.GREEN + FluxTranslate.UNLIMITED)
                     );
                 } else {
-                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.component()
-                            .append(": " + ChatFormatting.GREEN + EnergyType.usage(device.getRawLimit()))
+                    probeInfo.text(FluxTranslate.TRANSFER_LIMIT.makeComponent()
+                            .append(": " + ChatFormatting.GREEN + EnergyType.usage(device.getLiteralLimit()))
                     );
                 }
 
                 if (device.getSurgeMode()) {
-                    probeInfo.text(FluxTranslate.PRIORITY.component()
+                    probeInfo.text(FluxTranslate.PRIORITY.makeComponent()
                             .append(": " + ChatFormatting.GREEN + FluxTranslate.SURGE)
                     );
                 } else {
-                    probeInfo.text(FluxTranslate.PRIORITY.component()
-                            .append(": " + ChatFormatting.GREEN + device.getRawPriority())
+                    probeInfo.text(FluxTranslate.PRIORITY.makeComponent()
+                            .append(": " + ChatFormatting.GREEN + device.getLiteralPriority())
                     );
                 }
 
                 if (device.isForcedLoading()) {
-                    probeInfo.text(FluxTranslate.FORCED_LOADING.component().withStyle(ChatFormatting.GOLD));
+                    probeInfo.text(FluxTranslate.FORCED_LOADING.makeComponent()
+                            .withStyle(ChatFormatting.GOLD));
                 }
             }
         }

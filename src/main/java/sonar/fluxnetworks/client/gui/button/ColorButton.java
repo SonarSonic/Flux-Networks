@@ -2,9 +2,9 @@ package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.client.gui.basic.GuiButton;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
-public class ColorButton extends GuiButton {
+public class ColorButton extends GuiButtonCore {
 
     private final int mColor;
     private boolean mSelected;

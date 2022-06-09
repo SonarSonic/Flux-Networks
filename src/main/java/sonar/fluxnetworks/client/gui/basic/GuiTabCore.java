@@ -1,48 +1,43 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import com.google.common.collect.Lists;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.GuiTabType;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
-import sonar.fluxnetworks.common.device.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.register.RegistrySounds;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 /**
  * For guis which have navigation tabs along the top
  */
-public abstract class GuiTab extends GuiFlux {
+public abstract class GuiTabCore extends GuiFluxCore {
 
-    protected List<NavigationButton> navigationButtons = Lists.newArrayList();
-    public EnumNavigationTab[] navigationTabs;
-
-    public GuiTab(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiTabCore(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         super(menu, player);
-        setDefaultTabs();
     }
 
     @Override
     public void init() {
         super.init();
-        navigationButtons.clear();
+        for (GuiTabType tab : GuiTabType.VALUES) {
+            NavigationButton button;
+            if (tab != GuiTabType.TAB_CREATE) {
+                button = new NavigationButton(getMinecraft(), 12 + (18 * tab.ordinal()) + leftPos, -16 + topPos, tab);
+            } else {
+                button = new NavigationButton(getMinecraft(), 148 + leftPos, -16 + topPos, tab);
+            }
+            button.setSelected(tab == getCurrentTab());
+            mButtons.add(button);
+        }
     }
 
-    public abstract EnumNavigationTab getNavigationTab();
-
-    public void setDefaultTabs() {
-        this.navigationTabs = EnumNavigationTab.values();
-    }
-
-    public void setNavigationTabs(EnumNavigationTab[] navigationTabs) {
-        this.navigationTabs = navigationTabs;
-    }
+    public abstract GuiTabType getCurrentTab();
 
     @Override
-    public void onButtonClicked(GuiButton button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == 0 && button instanceof NavigationButton) {
             //switchTab(((NavigationButton) button).getTab());
@@ -50,19 +45,6 @@ public abstract class GuiTab extends GuiFlux {
                 getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));
             }
         }
-    }
-
-    public void configureNavigationButtons(EnumNavigationTab currentTab, @Nonnull EnumNavigationTab[] availableTabs) {
-       /* int posCount = 0;
-        for (EnumNavigationTab tab : availableTabs) {
-            if (tab != EnumNavigationTab.TAB_CREATE) {
-                navigationButtons.add(new NavigationButton(12 + (18 * posCount), -16, tab));
-                posCount++;
-            } else {
-                navigationButtons.add(new NavigationButton(148, -16, tab));
-            }
-        }
-        navigationButtons.get(currentTab.ordinal()).setSelected();*/
     }
 
     /*protected final void switchTab(@Nonnull EnumNavigationTab tab) {

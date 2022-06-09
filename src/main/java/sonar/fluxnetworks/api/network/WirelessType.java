@@ -28,6 +28,6 @@ public enum WirelessType {
 
     @Nonnull
     public String getTranslatedName() {
-        return typeName.t();
+        return typeName.get();
     }
 }

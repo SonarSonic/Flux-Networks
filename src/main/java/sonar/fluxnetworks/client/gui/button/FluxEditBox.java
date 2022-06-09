@@ -1,83 +1,93 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.FormattedCharSequence;
+
+import javax.annotation.Nonnull;
 
 public class FluxEditBox extends EditBox {
 
-    private String origin;
-    private String extraText;
-    private int textWidth;
-    private boolean hexOnly;
-    private Font font;
+    private final Font mFont;
+    private final String mHeader;
+    private final int mHeaderWidth;
+
+    private String mOrigin;
+    private boolean mHexOnly;
 
     ///digits
-    private boolean digitsOnly;
-    private long maxValue = Integer.MAX_VALUE;
-    private boolean allowNegatives = false;
+    private boolean mDigitsOnly;
+    private long mMaxValue = Integer.MAX_VALUE;
+    private boolean mAllowNegatives = false;
 
-    private int outlineColor = 0xffb4b4b4;
+    private int mOutlineColor = 0xffb4b4b4;
 
-    public FluxEditBox(String text, Font fontRenderer, int x, int y, int totalWidth, int height, int headerWidth) {
-        super(fontRenderer, x + headerWidth, y, totalWidth - headerWidth, height, TextComponent.EMPTY);
-        this.extraText = text;
-        this.textWidth = headerWidth;
-        this.font = fontRenderer;
+    private FluxEditBox(String header, Font font, int x, int y, int totalWidth, int height, int headerWidth) {
+        super(font, x + headerWidth, y, totalWidth - headerWidth, height, TextComponent.EMPTY);
+        mHeader = header;
+        mHeaderWidth = headerWidth;
+        mFont = font;
     }
 
-    public static FluxEditBox create(String text, Font fontRenderer, int x, int y, int width, int height) {
-        return new FluxEditBox(text, fontRenderer, x, y, width, height, fontRenderer.width(text));
+    @Nonnull
+    public static FluxEditBox create(String header, Font font, int x, int y, int width, int height) {
+        return new FluxEditBox(header, font, x, y, width, height, font.width(header));
     }
 
-    /*public int getIntegerFromText(boolean allowNegatives) {
-        if (getText().isEmpty() || getText().equals("-")) {
+    public int getIntegerFromText(boolean allowNegatives) {
+        if (getValue().isEmpty() || getValue().equals("-")) {
             return 0;
         }
-        int parseInt = Integer.parseInt(getText());
+        int parseInt = Integer.parseInt(getValue());
         return allowNegatives ? parseInt : Math.max(parseInt, 0);
     }
 
     public long getLongFromText(boolean allowNegatives) {
-        if (getText().isEmpty() || getText().equals("-")) {
+        if (getValue().isEmpty() || getValue().equals("-")) {
             return 0;
         }
-        long parseLong = Long.parseLong(getText());
+        long parseLong = Long.parseLong(getValue());
         return allowNegatives ? parseLong : Math.max(parseLong, 0);
     }
 
     public int getIntegerFromHex() {
-        return Integer.parseInt(getText(), 16);
+        return Integer.parseInt(getValue(), 16);
     }
 
     @Override
-    public void renderButton(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (this.getVisible()) {
-            fill(matrixStack, this.x - textWidth - 1, this.y - 1, this.x + this.width + 1, this.y, outlineColor);
-            fill(matrixStack, this.x - textWidth - 1, this.y + this.height, this.x + this.width + 1,
-                    this.y + this.height + 1, outlineColor);
-            fill(matrixStack, this.x - textWidth - 1, this.y, this.x - textWidth, this.y + this.height, outlineColor);
-            fill(matrixStack, this.x + width, this.y, this.x + this.width + 1, this.y + this.height, outlineColor);
-            fill(matrixStack, this.x - textWidth, this.y, this.x + this.width, this.y + this.height, 0x20000000);
+    public void renderButton(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        if (isVisible()) {
+            fill(poseStack, x - mHeaderWidth, y, x + width, y + height, 0x30000000);
         }
+
         x += 4;
-        y += (this.height - 8) / 2;
+        y += (height - 8) / 2;
 
-        setEnableBackgroundDrawing(false);
-        super.renderButton(matrixStack, mouseX, mouseY, partialTicks);
+        setBordered(false);
+        super.renderButton(poseStack, mouseX, mouseY, deltaTicks);
 
-        font.drawString(matrixStack, extraText, x - textWidth, y, outlineColor);
+        mFont.draw(poseStack, mHeader, x - mHeaderWidth, y, mOutlineColor);
         x -= 4;
-        y -= (this.height - 8) / 2;
+        y -= (height - 8) / 2;
+
+        if (isVisible()) {
+            fill(poseStack, x - mHeaderWidth - 1, y - 1, x + width + 1, y, mOutlineColor);
+            fill(poseStack, x - mHeaderWidth - 1, y + height, x + width + 1, y + height + 1, mOutlineColor);
+            fill(poseStack, x - mHeaderWidth - 1, y, x - mHeaderWidth, y + height, mOutlineColor);
+            fill(poseStack, x + width, y, x + width + 1, y + height, mOutlineColor);
+        }
     }
 
     @Override
-    public void writeText(@Nonnull String textToWrite) {
-        if (digitsOnly) {
+    public void insertText(@Nonnull String textToWrite) {
+        if (mDigitsOnly) {
             for (int i = 0; i < textToWrite.length(); i++) {
                 char c = textToWrite.charAt(i);
                 if (!Character.isDigit(c)) {
-                    if (getText().isEmpty()) {
+                    if (getValue().isEmpty()) {
                         if (c != '-') {
                             return;
                         }
@@ -87,88 +97,87 @@ public class FluxEditBox extends EditBox {
                 }
             }
         }
-        if (hexOnly) {
+        if (mHexOnly) {
             for (int i = 0; i < textToWrite.length(); i++) {
                 char c = textToWrite.charAt(i);
                 if (c == '-') {
                     return;
                 }
             }
-            String origin = getText();
-            super.writeText(textToWrite);
+            String origin = getValue();
+            super.insertText(textToWrite);
             try {
-                Integer.parseInt(getText(), 16);
+                Integer.parseInt(getValue(), 16);
             } catch (final NumberFormatException ignored) {
-                setText(origin);
+                setValue(origin);
             }
             return;
         }
-        super.writeText(textToWrite);
+        super.insertText(textToWrite);
     }
 
-
     @Override
-    public void setFocused2(boolean isFocusedIn) {
-        super.setFocused2(isFocusedIn);
-        if (digitsOnly) {
-            if (isFocusedIn) {
-                origin = getText();
+    public void setFocused(boolean isFocused) {
+        super.setFocused(isFocused);
+        if (mDigitsOnly) {
+            if (isFocused) {
+                mOrigin = getValue();
             } else {
                 try {
-                    setText(String.valueOf(getValidLong()));
+                    setValue(String.valueOf(getValidLong()));
                 } catch (final NumberFormatException ignored) {
-                    setText(origin);
-                    System.out.println(ignored.getMessage());
+                    setValue(mOrigin);
+                    //System.out.println(ignored.getMessage());
                 }
             }
         }
     }
 
     public long getValidLong() {
-        return Math.min(getLongFromText(allowNegatives), maxValue);
+        return Math.min(getLongFromText(mAllowNegatives), mMaxValue);
     }
 
     public int getValidInt() {
         return (int) Math.min(getValidLong(), Integer.MAX_VALUE);
     }
 
+    // ARGB
     public FluxEditBox setOutlineColor(int color) {
-        this.outlineColor = color;
+        mOutlineColor = color;
         return this;
+    }
+
+    public int getOutlineColor() {
+        return mOutlineColor;
     }
 
     public FluxEditBox setTextInvisible() {
-        //this.setTextFormatter(FluxTextWidget::getInvisibleText);
+        setFormatter(FluxEditBox::getInvisibleText);
         return this;
     }
 
-    //TODO
-    public static IReorderingProcessor getInvisibleText(String string, int cursorPos) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < string.length(); i++) {
-            builder.append("*");
-        }
-        return IReorderingProcessor
+    @Nonnull
+    public static FormattedCharSequence getInvisibleText(String string, int cursorPos) {
+        return FormattedCharSequence.forward("*".repeat(string.length()), Style.EMPTY);
     }
 
-    public FluxTextWidget setDigitsOnly() {
-        this.digitsOnly = true;
+    public FluxEditBox setDigitsOnly() {
+        mDigitsOnly = true;
         return this;
     }
 
-    public FluxTextWidget setAllowNegatives(boolean allowNegatives) {
-        this.allowNegatives = allowNegatives;
+    public FluxEditBox setAllowNegatives(boolean allowNegatives) {
+        mAllowNegatives = allowNegatives;
         return this;
     }
 
-    public FluxTextWidget setMaxValue(long max) {
-        this.maxValue = max;
+    public FluxEditBox setMaxValue(long max) {
+        mMaxValue = max;
         return this;
     }
 
-    public FluxTextWidget setHexOnly() {
-        this.hexOnly = true;
+    public FluxEditBox setHexOnly() {
+        mHexOnly = true;
         return this;
-    }*/
-
+    }
 }

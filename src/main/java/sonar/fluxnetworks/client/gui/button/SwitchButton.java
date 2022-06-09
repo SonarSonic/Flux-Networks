@@ -3,12 +3,13 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.client.gui.basic.GuiButton;
+import net.minecraft.util.Mth;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
 /**
  * A simple switch button with sliding thumb and track.
  */
-public class SwitchButton extends GuiButton {
+public class SwitchButton extends GuiButtonCore {
 
     private static final int WIDTH = 16;
     private static final int HEIGHT = 8;
@@ -16,7 +17,7 @@ public class SwitchButton extends GuiButton {
     // switch on/off
     private boolean mChecked = false;
 
-    // thumb offset, max value is (width/2)=8
+    // thumb offset, fraction (0..1)
     private float mOffset;
 
     // default check state skips the animation
@@ -24,47 +25,36 @@ public class SwitchButton extends GuiButton {
         super(mc, x, y, WIDTH, HEIGHT);
         if (checked) {
             mChecked = true;
-            mOffset = 8;
+            mOffset = 1;
         }
     }
 
     @Override
     protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         // Calculate animation
-        // Offset range is 0..8, 1000ms=20ticks, we multiply 2 so animation duration is (1000*8/20/2)=200ms
-        float delta = deltaTicks * 2;
-        if (mChecked) {
-            if (mOffset <= 8 - delta) {
-                mOffset += delta;
-            } else {
-                mOffset = 8;
-            }
-        } else {
-            if (mOffset >= delta) {
-                mOffset -= delta;
-            } else {
-                mOffset = 0;
-            }
-        }
+        // 1000ms=20ticks, so animation duration is (1000/20*4)=200ms
+        float delta = deltaTicks / 4f;
+        mOffset = Mth.clamp(mChecked ? mOffset + delta : mOffset - delta, 0, 1);
 
         // Whether to use selected or unselected texture
         final int state = mChecked || isMouseHovered(mouseX, mouseY) ? 0 : 1;
 
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BUTTONS);
 
+        final float thumbOffset = mOffset * HEIGHT;
         // Background
-        blit(poseStack, x, y, mOffset * 2, 8, 64, 64, mOffset * 4, 16);
+        blitF(poseStack, x, y, thumbOffset * 2, 8, 64, 64, thumbOffset * 4, 16);
 
         // Thumb
-        blit(poseStack, x + mOffset, y, 8, 8, 32 * state, 80, 16, 16);
+        blitF(poseStack, x + thumbOffset, y, 8, 8, 32 * state, 80, 16, 16);
 
         // Track
-        blit(poseStack, x, y, width, height, 32 * state, 64, 32, 16);
+        blitF(poseStack, x, y, width, height, 32 * state, 64, 32, 16);
     }
 
     public void toggle() {
-        mChecked = !mChecked;
+        setChecked(!isChecked());
     }
 
     public boolean isChecked() {

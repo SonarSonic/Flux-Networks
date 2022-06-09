@@ -69,25 +69,25 @@ public class FluxUtils {
         long change = flux.getTransferChange();
         if (type.isPlug()) {
             if (change == 0) {
-                return FluxTranslate.INPUT.t() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
+                return FluxTranslate.INPUT.get() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.INPUT.t() + ": " + ChatFormatting.GREEN + "+" + EnergyType.usage(change);
+                return FluxTranslate.INPUT.get() + ": " + ChatFormatting.GREEN + "+" + EnergyType.usage(change);
             }
         }
         if (type.isPoint() || type.isController()) {
             if (change == 0) {
-                return FluxTranslate.OUTPUT.t() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
+                return FluxTranslate.OUTPUT.get() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.OUTPUT.t() + ": " + ChatFormatting.RED + EnergyType.usage(change);
+                return FluxTranslate.OUTPUT.get() + ": " + ChatFormatting.RED + EnergyType.usage(change);
             }
         }
         if (type.isStorage()) {
             if (change == 0) {
-                return FluxTranslate.CHANGE.t() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
+                return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else if (change > 0) {
-                return FluxTranslate.CHANGE.t() + ": " + ChatFormatting.GREEN + "+" + EnergyType.usage(change);
+                return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.GREEN + "+" + EnergyType.usage(change);
             } else {
-                return FluxTranslate.CHANGE.t() + ": " + ChatFormatting.RED + EnergyType.usage(change);
+                return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.RED + EnergyType.usage(change);
             }
         }
         return "";

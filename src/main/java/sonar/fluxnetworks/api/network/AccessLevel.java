@@ -35,7 +35,7 @@ public enum AccessLevel {
 
     @Nonnull
     public String getName() {
-        return formatting + localization.t();
+        return formatting + localization.get();
     }
 
     public int getColor() {

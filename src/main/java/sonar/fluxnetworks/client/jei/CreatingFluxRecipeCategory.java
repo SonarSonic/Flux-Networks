@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+//TODO use new JEI API
 public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxRecipeType> {
 
     public static final ResourceLocation CATEGORY_UUID = new ResourceLocation(FluxNetworks.MODID, "creating_flux");
@@ -84,7 +85,7 @@ public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxR
     @Nonnull
     @Override
     public Component getTitle() {
-        return FluxTranslate.JEI_CREATING_FLUX.component();
+        return FluxTranslate.JEI_CREATING_FLUX.getComponent();
     }
 
     @Nonnull

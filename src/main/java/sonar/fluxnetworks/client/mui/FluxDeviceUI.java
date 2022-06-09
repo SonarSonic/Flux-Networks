@@ -19,7 +19,7 @@ import icyllis.modernui.widget.LinearLayout;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.design.FluxDesign;
 import sonar.fluxnetworks.client.design.TabBackground;
-import sonar.fluxnetworks.common.device.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;

@@ -1,17 +1,14 @@
 package sonar.fluxnetworks.register;
 
+import com.mojang.datafixers.DSL;
 import icyllis.modernui.forge.NetworkHandler;
-import icyllis.modernui.forge.OpenMenuEvent;
-import icyllis.modernui.fragment.Fragment;
-import icyllis.modernui.util.DataSet;
+import net.minecraft.core.BlockPos;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -29,13 +26,11 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.client.mui.FluxDeviceUI;
-import sonar.fluxnetworks.common.block.FluxControllerBlock;
-import sonar.fluxnetworks.common.block.FluxPlugBlock;
-import sonar.fluxnetworks.common.block.FluxPointBlock;
-import sonar.fluxnetworks.common.block.FluxStorageBlock;
+import sonar.fluxnetworks.common.block.*;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.crafting.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.crafting.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.device.*;
@@ -144,22 +139,22 @@ public class Registration {
         IForgeRegistry<BlockEntityType<?>> registry = event.getRegistry();
 
         registry.register(new BlockEntityType<>(TileFluxPlug::new,
-                Set.of(RegistryBlocks.FLUX_PLUG), null)
+                Set.of(RegistryBlocks.FLUX_PLUG), DSL.remainderType())
                 .setRegistryName("flux_plug"));
         registry.register(new BlockEntityType<>(TileFluxPoint::new,
-                Set.of(RegistryBlocks.FLUX_POINT), null)
+                Set.of(RegistryBlocks.FLUX_POINT), DSL.remainderType())
                 .setRegistryName("flux_point"));
         registry.register(new BlockEntityType<>(TileFluxController::new,
-                Set.of(RegistryBlocks.FLUX_CONTROLLER), null)
+                Set.of(RegistryBlocks.FLUX_CONTROLLER), DSL.remainderType())
                 .setRegistryName("flux_controller"));
         registry.register(new BlockEntityType<>(TileFluxStorage.Basic::new,
-                Set.of(RegistryBlocks.BASIC_FLUX_STORAGE), null)
+                Set.of(RegistryBlocks.BASIC_FLUX_STORAGE), DSL.remainderType())
                 .setRegistryName("basic_flux_storage"));
         registry.register(new BlockEntityType<>(TileFluxStorage.Herculean::new,
-                Set.of(RegistryBlocks.HERCULEAN_FLUX_STORAGE), null)
+                Set.of(RegistryBlocks.HERCULEAN_FLUX_STORAGE), DSL.remainderType())
                 .setRegistryName("herculean_flux_storage"));
         registry.register(new BlockEntityType<>(TileFluxStorage.Gargantuan::new,
-                Set.of(RegistryBlocks.GARGANTUAN_FLUX_STORAGE), null)
+                Set.of(RegistryBlocks.GARGANTUAN_FLUX_STORAGE), DSL.remainderType())
                 .setRegistryName("gargantuan_flux_storage"));
     }
 
@@ -169,7 +164,25 @@ public class Registration {
      */
     @SubscribeEvent
     public static void registerMenus(@Nonnull RegistryEvent.Register<MenuType<?>> event) {
-        event.getRegistry().register(IForgeMenuType.create(FluxDeviceMenu::new).setRegistryName("flux_menu"));
+        event.getRegistry().register(IForgeMenuType.create((containerId, inventory, buffer) -> {
+            // check if it's tile entity
+            if (buffer.readBoolean()) {
+                BlockPos pos = buffer.readBlockPos();
+                if (inventory.player.getLevel().getBlockEntity(pos) instanceof TileFluxDevice device) {
+                    CompoundTag tag = buffer.readNbt();
+                    if (tag != null) {
+                        device.readCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+                    }
+                    return new FluxDeviceMenu(containerId, inventory, device);
+                }
+            } else {
+                ItemStack stack = inventory.player.getMainHandItem();
+                if (stack.getItem() == RegistryItems.FLUX_CONFIGURATOR) {
+                    return new FluxDeviceMenu(containerId, inventory, new ItemFluxConfigurator.Provider(stack));
+                }
+            }
+            return new FluxDeviceMenu(containerId, inventory, new ItemAdminConfigurator.Provider());
+        }).setRegistryName("flux_menu"));
     }
 
     @SubscribeEvent
@@ -198,18 +211,6 @@ public class Registration {
         if (event.includeServer()) {
             generator.addProvider(new FluxLootTableProvider(generator));
             generator.addProvider(new FluxBlockTagsProvider(generator, event.getExistingFileHelper()));
-        }
-    }
-
-    @SubscribeEvent
-    public static void openMenu(@Nonnull OpenMenuEvent event) {
-        if (event.getMenu() instanceof FluxDeviceMenu menu && menu.mDevice != null) {
-            FluxDeviceUI fragment = new FluxDeviceUI(menu.mDevice);
-            menu.mOnResultListener = fragment;
-            DataSet args = new DataSet();
-            args.putInt("token", menu.containerId);
-            fragment.setArguments(args);
-            event.set(fragment);
         }
     }
 }

@@ -44,22 +44,22 @@ public class FluxDeviceItem extends BlockItem {
         CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
         if (tag != null) {
             if (tag.contains(FluxConstants.NETWORK_ID)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.t() + ": " +
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
                         ChatFormatting.RESET + ClientRepository.getDisplayName(tag)));
             }
 
             if (tag.contains(FluxConstants.LIMIT)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.t() + ": " +
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.get() + ": " +
                         ChatFormatting.RESET + EnergyType.storage(tag.getLong(FluxConstants.LIMIT))));
             }
 
             if (tag.contains(FluxConstants.PRIORITY)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.PRIORITY.t() + ": " +
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.PRIORITY.get() + ": " +
                         ChatFormatting.RESET + tag.getInt(FluxConstants.PRIORITY)));
             }
 
             if (tag.contains(FluxConstants.BUFFER)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.t() + ": " +
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.get() + ": " +
                         ChatFormatting.RESET + EnergyType.storage(tag.getLong(FluxConstants.BUFFER))));
             } else if (tag.contains(FluxConstants.ENERGY)) {
                 long energy = tag.getLong(FluxConstants.ENERGY);
@@ -69,7 +69,7 @@ public class FluxDeviceItem extends BlockItem {
                     percentage = Math.min((double) energy / ((FluxStorageBlock) block).getEnergyCapacity(), 1.0);
                 else
                     percentage = 0;
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.ENERGY_STORED.t() + ": " +
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.ENERGY_STORED.get() + ": " +
                         ChatFormatting.RESET + EnergyType.storage(energy) + String.format(" (%.1f%%)",
                         percentage * 100)));
             }

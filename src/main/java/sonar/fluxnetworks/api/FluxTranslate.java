@@ -3,9 +3,7 @@ package sonar.fluxnetworks.api;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -13,39 +11,41 @@ import javax.annotation.Nonnull;
 
 public class FluxTranslate {
 
-    public static final String TOOLTIP = "tooltip";
-    public static final String GUI = "gui";
-
     public static final FluxTranslate
             FLUX_DUST_TOOLTIP = new FluxTranslate("tooltip.fluxnetworks.flux_dust"),
             FLUX_CONTROLLER_TOOLTIP = new FluxTranslate("tooltip.fluxnetworks.flux_controller"),
             FLUX_PLUG_TOOLTIP = new FluxTranslate("tooltip.fluxnetworks.flux_plug"),
             FLUX_POINT_TOOLTIP = new FluxTranslate("tooltip.fluxnetworks.flux_point"),
             FLUX_STORAGE_TOOLTIP = new FluxTranslate("tooltip.fluxnetworks.flux_storage"),
-            FLUX_STORAGE_TOOLTIP_2 = new FluxTranslate("tooltip.fluxnetworks.flux_storage_2"),
+            FLUX_STORAGE_TOOLTIP_2 = new FluxTranslate("tooltip.fluxnetworks.flux_storage_2");
 
-    TAB_HOME = new FluxTranslate("gui.fluxnetworks.tab.home"),
+    public static final FluxTranslate
+            TAB_HOME = new FluxTranslate("gui.fluxnetworks.tab.home"),
             TAB_SELECTION = new FluxTranslate("gui.fluxnetworks.tab.selection"),
             TAB_WIRELESS = new FluxTranslate("gui.fluxnetworks.tab.wireless"),
             TAB_CONNECTION = new FluxTranslate("gui.fluxnetworks.tab.connection"),
             TAB_STATISTICS = new FluxTranslate("gui.fluxnetworks.tab.statistics"),
             TAB_MEMBER = new FluxTranslate("gui.fluxnetworks.tab.member"),
             TAB_SETTING = new FluxTranslate("gui.fluxnetworks.tab.setting"),
-            TAB_CREATE = new FluxTranslate("gui.fluxnetworks.tab.create"),
+            TAB_CREATE = new FluxTranslate("gui.fluxnetworks.tab.create");
 
-    NETWORK_NAME = new FluxTranslate("gui.fluxnetworks.network.name"),
+    public static final FluxTranslate
+            NETWORK_NAME = new FluxTranslate("gui.fluxnetworks.network.name"),
             NETWORK_FULL_NAME = new FluxTranslate("gui.fluxnetworks.network.fullname"),
             NETWORK_SECURITY = new FluxTranslate("gui.fluxnetworks.network.security"),
             NETWORK_PASSWORD = new FluxTranslate("gui.fluxnetworks.network.password"),
             NETWORK_ENERGY = new FluxTranslate("gui.fluxnetworks.network.energy"),
-            NETWORK_COLOR = new FluxTranslate("gui.fluxnetworks.network.color"),
+            NETWORK_COLOR = new FluxTranslate("gui.fluxnetworks.network.color");
 
-    CLICK_ABOVE = new FluxTranslate("gui.fluxnetworks.clickabove"),
+    public static final FluxTranslate
+            PROMPT_CLICK_STH_ABOVE = new FluxTranslate("gui.fluxnetworks.prompt.clickabove");
 
-    ERROR_NO_SELECTED = new FluxTranslate("gui.fluxnetworks.error.noselected"),
-            ERROR_NO_NETWORK = new FluxTranslate("gui.fluxnetworks.error.nonetwork"),
+    public static final FluxTranslate
+            ERROR_NO_SELECTED = new FluxTranslate("gui.fluxnetworks.error.noselected"),
+            ERROR_NO_NETWORK = new FluxTranslate("gui.fluxnetworks.error.nonetwork");
 
-    NAME = new FluxTranslate("gui.fluxnetworks.flux.name"),
+    public static final FluxTranslate
+            NAME = new FluxTranslate("gui.fluxnetworks.flux.name"),
             PRIORITY = new FluxTranslate("gui.fluxnetworks.flux.priority"),
             SURGE = new FluxTranslate("gui.fluxnetworks.flux.surge"),
             SURGE_MODE = new FluxTranslate("gui.fluxnetworks.flux.surgemode"),
@@ -63,32 +63,32 @@ public class FluxTranslate {
             INPUT = new FluxTranslate("gui.fluxnetworks.flux.input"),
             OUTPUT = new FluxTranslate("gui.fluxnetworks.flux.output"),
             CHANGE = new FluxTranslate("gui.fluxnetworks.flux.change"),
-            AVERAGE_TICK = new FluxTranslate("gui.fluxnetworks.flux.averagetick"),
+            AVERAGE_TICK = new FluxTranslate("gui.fluxnetworks.flux.averagetick");
 
+    public static final FluxTranslate
+            SORT_BY = new FluxTranslate("gui.fluxnetworks.label.sortby"),
+            SELECTED = new FluxTranslate("gui.fluxnetworks.label.selected"),
+            SINGLE_EDIT = new FluxTranslate("gui.fluxnetworks.label.singleedit"),
+            BATCH_EDIT = new FluxTranslate("gui.fluxnetworks.label.batchedit"),
+            EDITING_CONNECTIONS = new FluxTranslate("gui.fluxnetworks.label.editingconnections"),
+            CONNECTIONS = new FluxTranslate("gui.fluxnetworks.label.connections"),
+            CUSTOM_COLOR = new FluxTranslate("gui.fluxnetworks.label.customcolor"),
+            CONNECTING_TO = new FluxTranslate("gui.fluxnetworks.label.connectingto"),
+            TOTAL = new FluxTranslate("gui.fluxnetworks.label.total"),
+            DELETE_NETWORK = new FluxTranslate("gui.fluxnetworks.label.deletenetwork"),
+            DOUBLE_SHIFT = new FluxTranslate("gui.fluxnetworks.label.doubleshift"),
+            TRANSFER_OWNERSHIP = new FluxTranslate("gui.fluxnetworks.label.transferownership"),
+            SET_USER = new FluxTranslate("gui.fluxnetworks.label.setuser"),
+            SET_ADMIN = new FluxTranslate("gui.fluxnetworks.label.setadmin"),
+            USERNAME = new FluxTranslate("gui.fluxnetworks.label.playername"),
+            ACCESS = new FluxTranslate("gui.fluxnetworks.label.playeraccess"),
+            CANCEL_MEMBERSHIP = new FluxTranslate("gui.fluxnetworks.label.cancelmembership"),
+            YOU = new FluxTranslate("gui.fluxnetworks.label.you"),
+            DETAILED_VIEW = new FluxTranslate("gui.fluxnetworks.label.detailedview"),
 
-    SORT_BY = new FluxTranslate("gui.fluxnetworks.gui.sortby"),
-            SELECTED = new FluxTranslate("gui.fluxnetworks.gui.selected"),
-            SINGLE_EDIT = new FluxTranslate("gui.fluxnetworks.gui.singleedit"),
-            BATCH_EDIT = new FluxTranslate("gui.fluxnetworks.gui.batchedit"),
-            EDITING_CONNECTIONS = new FluxTranslate("gui.fluxnetworks.gui.editingconnections"),
-            CONNECTIONS = new FluxTranslate("gui.fluxnetworks.gui.connections"),
-            CUSTOM_COLOR = new FluxTranslate("gui.fluxnetworks.gui.customcolor"),
-            CONNECTING_TO = new FluxTranslate("gui.fluxnetworks.gui.connectingto"),
-            TOTAL = new FluxTranslate("gui.fluxnetworks.gui.total"),
-            DELETE_NETWORK = new FluxTranslate("gui.fluxnetworks.gui.deletenetwork"),
-            DOUBLE_SHIFT = new FluxTranslate("gui.fluxnetworks.gui.doubleshift"),
-            TRANSFER_OWNERSHIP = new FluxTranslate("gui.fluxnetworks.gui.transferownership"),
-            SET_USER = new FluxTranslate("gui.fluxnetworks.gui.setuser"),
-            SET_ADMIN = new FluxTranslate("gui.fluxnetworks.gui.setadmin"),
-            USERNAME = new FluxTranslate("gui.fluxnetworks.gui.playername"),
-            ACCESS = new FluxTranslate("gui.fluxnetworks.gui.playeraccess"),
-            CANCEL_MEMBERSHIP = new FluxTranslate("gui.fluxnetworks.gui.cancelmembership"),
-            YOU = new FluxTranslate("gui.fluxnetworks.gui.you"),
-            DETAILED_VIEW = new FluxTranslate("gui.fluxnetworks.gui.detailedview"),
-
-    SORTING_SMART = new FluxTranslate("gui.fluxnetworks.gui.sort.smart"),
-            SORTING_ID = new FluxTranslate("gui.fluxnetworks.gui.sort.id"),
-            SORTING_NAME = new FluxTranslate("gui.fluxnetworks.gui.sort.name"),
+    SORTING_SMART = new FluxTranslate("gui.fluxnetworks.label.sort.smart"),
+            SORTING_ID = new FluxTranslate("gui.fluxnetworks.label.sort.id"),
+            SORTING_NAME = new FluxTranslate("gui.fluxnetworks.label.sort.name"),
 
     BATCH_CLEAR_BUTTON = new FluxTranslate("gui.fluxnetworks.button.batchclear"),
             BATCH_EDIT_BUTTON = new FluxTranslate("gui.fluxnetworks.button.batchedit"),
@@ -135,9 +135,11 @@ public class FluxTranslate {
             JEI_LEFT_CLICK = new FluxTranslate("gui.fluxnetworks.jei.leftclickhelp");
 
     private final String mKey;
+    private final TranslatableComponent mComponent;
 
     public FluxTranslate(String key) {
         mKey = key;
+        mComponent = new TranslatableComponent(mKey);
     }
 
     private static final ChatFormatting[] ERROR_STYLE = {ChatFormatting.BOLD, ChatFormatting.DARK_RED};
@@ -147,8 +149,14 @@ public class FluxTranslate {
             ACCESS_OCCUPY = new TranslatableComponent("gui.fluxnetworks.denied_occupy").withStyle(ERROR_STYLE);
 
     @Nonnull
-    public String t() {
+    public String get() {
         return Language.getInstance().getOrDefault(mKey);
+    }
+
+    @Nonnull
+    @OnlyIn(Dist.CLIENT)
+    public String format() {
+        return get();
     }
 
     @Nonnull
@@ -158,12 +166,17 @@ public class FluxTranslate {
     }
 
     @Nonnull
-    public MutableComponent component() {
+    public Component getComponent() {
+        return mComponent;
+    }
+
+    @Nonnull
+    public MutableComponent makeComponent() {
         return new TranslatableComponent(mKey);
     }
 
     @Nonnull
-    public MutableComponent component(Object... args) {
+    public TranslatableComponent makeComponent(Object... args) {
         return new TranslatableComponent(mKey, args);
     }
 
@@ -171,6 +184,6 @@ public class FluxTranslate {
     @Override
     public String toString() {
         // also work on server side
-        return t();
+        return get();
     }
 }

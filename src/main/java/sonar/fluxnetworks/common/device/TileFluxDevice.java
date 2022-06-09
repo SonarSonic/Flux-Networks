@@ -8,28 +8,24 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuConstructor;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.NetworkHooks;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.client.ClientRepository;
-import sonar.fluxnetworks.common.connection.FluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkData;
-import sonar.fluxnetworks.common.connection.TransferNode;
+import sonar.fluxnetworks.common.connection.*;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.Messages;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.*;
 import java.util.UUID;
 
 /**
@@ -37,7 +33,7 @@ import java.util.UUID;
  */
 @SuppressWarnings("ConstantConditions")
 @ParametersAreNonnullByDefault
-public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice, MenuConstructor {
+public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice {
 
     private static final BlockEntityTicker<? extends TileFluxDevice> sTickerServer =
             (level, pos, state, entity) -> entity.onServerTick();
@@ -141,19 +137,31 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
         if (mPlayerUsing != null) {
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
-            MuiForgeApi.openMenu(player, this, buf -> {
-                buf.writeBlockPos(worldPosition);
-                CompoundTag tag = new CompoundTag();
-                writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
-                buf.writeNbt(tag);
-            });
+            if (FluxConfig.enableGuiDebug) {
+                MuiForgeApi.openMenu(player, this, buf -> {
+                    buf.writeBoolean(true);
+                    buf.writeBlockPos(worldPosition);
+                    CompoundTag tag = new CompoundTag();
+                    writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+                    buf.writeNbt(tag);
+                });
+            } else {
+                NetworkHooks.openGui((ServerPlayer) player, this, buf -> {
+                    buf.writeBoolean(true);
+                    buf.writeBlockPos(worldPosition);
+                    CompoundTag tag = new CompoundTag();
+                    writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+                    buf.writeNbt(tag);
+                });
+            }
         } else {
             player.displayClientMessage(FluxTranslate.ACCESS_DENIED, true);
         }
     }
 
     @Nonnull
-    public final AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+    @Override
+    public final FluxDeviceMenu createMenu(int containerId, Inventory inventory, Player player) {
         return new FluxDeviceMenu(containerId, inventory, this);
     }
 
@@ -428,9 +436,11 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
     /**
      * Called when the player started to interact with this connector.
      *
+     * @param menu
      * @param player the player
      */
-    void onPlayerOpen(Player player) {
+    @Override
+    public void onMenuOpened(FluxDeviceMenu menu, Player player) {
         assert mPlayerUsing == null;
         mPlayerUsing = player;
     }
@@ -438,9 +448,11 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
     /**
      * Called when the player stopped interacting with this connector.
      *
+     * @param menu
      * @param player the player
      */
-    void onPlayerClose(Player player) {
+    @Override
+    public void onMenuClosed(FluxDeviceMenu menu, Player player) {
         assert level.isClientSide || mPlayerUsing == player;
         mPlayerUsing = null;
     }
@@ -473,12 +485,12 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice,
     }
 
     @Override
-    public final int getRawPriority() {
+    public final int getLiteralPriority() {
         return getTransferHandler().getUserPriority();
     }
 
     @Override
-    public final long getRawLimit() {
+    public final long getLiteralLimit() {
         return getTransferHandler().getLimit();
     }
 

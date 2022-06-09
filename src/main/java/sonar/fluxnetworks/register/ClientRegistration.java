@@ -1,5 +1,8 @@
 package sonar.fluxnetworks.register;
 
+import icyllis.modernui.forge.OpenMenuEvent;
+import icyllis.modernui.util.DataSet;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -11,7 +14,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.FluxColorHandler;
+import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
+import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.client.mui.FluxDeviceUI;
 import sonar.fluxnetworks.client.render.FluxStorageEntityRenderer;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 
@@ -21,9 +29,12 @@ public class ClientRegistration {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
-        BlockEntityRenderers.register(RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY, FluxStorageEntityRenderer.PROVIDER);
-        BlockEntityRenderers.register(RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY, FluxStorageEntityRenderer.PROVIDER);
-        BlockEntityRenderers.register(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY, FluxStorageEntityRenderer.PROVIDER);
+        BlockEntityRenderers.register(RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY,
+                FluxStorageEntityRenderer.PROVIDER);
+        BlockEntityRenderers.register(RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY,
+                FluxStorageEntityRenderer.PROVIDER);
+        BlockEntityRenderers.register(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY,
+                FluxStorageEntityRenderer.PROVIDER);
 
         ItemBlockRenderTypes.setRenderLayer(RegistryBlocks.FLUX_PLUG, RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(RegistryBlocks.FLUX_POINT, RenderType.cutout());
@@ -34,20 +45,22 @@ public class ClientRegistration {
 
         //RenderingRegistry.registerEntityRenderingHandler(RegistryItems.FIRE_ITEM_ENTITY, manager -> new
         // ItemRenderer(manager, Minecraft.getInstance().getItemRenderer()));
+        MenuScreens.register(RegistryBlocks.FLUX_MENU, getScreenFactory());
     }
 
-    /*@Nonnull
-    private static ScreenManager.IScreenFactory<FluxContainerMenu, GuiTabCore> getScreenFactory() {
-        return (container, inventory, windowID) -> {
-            if (container.bridge instanceof FluxDeviceEntity) {
-                return new GuiFluxDeviceHome(container, inventory.player);
+    @Nonnull
+    private static MenuScreens.ScreenConstructor<FluxDeviceMenu, GuiTabCore> getScreenFactory() {
+        return (menu, inventory, title) -> {
+            /*if (menu.bridge instanceof FluxDeviceEntity) {
+                return new GuiFluxDeviceHome(menu, inventory.player);
             }
-            if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
-                return new GuiFluxConfiguratorHome(container, inventory.player);
+            if (menu.bridge instanceof ItemFluxConfigurator.MenuBridge) {
+                return new GuiFluxConfiguratorHome(menu, inventory.player);
             }
-            return new GuiFluxAdminHome(container, inventory.player);
+            return new GuiFluxAdminHome(menu, inventory.player);*/
+            return new GuiFluxDeviceHome(menu, inventory.player);
         };
-    }*/
+    }
 
     @SubscribeEvent
     public static void registerItemColorHandlers(@Nonnull ColorHandlerEvent.Item event) {
@@ -63,5 +76,17 @@ public class ClientRegistration {
                 RegistryBlocks.FLUX_CONTROLLER, RegistryBlocks.FLUX_POINT, RegistryBlocks.FLUX_PLUG,
                 RegistryBlocks.BASIC_FLUX_STORAGE, RegistryBlocks.HERCULEAN_FLUX_STORAGE,
                 RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
+    }
+
+    @SubscribeEvent
+    public static void openMenu(@Nonnull OpenMenuEvent event) {
+        if (event.getMenu() instanceof FluxDeviceMenu menu && menu.mProvider != null) {
+            FluxDeviceUI fragment = new FluxDeviceUI((TileFluxDevice) menu.mProvider);
+            menu.mOnResultListener = fragment;
+            DataSet args = new DataSet();
+            args.putInt("token", menu.containerId);
+            fragment.setArguments(args);
+            event.set(fragment);
+        }
     }
 }

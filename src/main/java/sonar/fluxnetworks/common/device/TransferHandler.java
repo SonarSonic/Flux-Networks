@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.common.connection.FakeFluxDevice;
+import sonar.fluxnetworks.common.connection.PhantomFluxDevice;
 import sonar.fluxnetworks.common.connection.TransferNode;
 
 import javax.annotation.Nonnull;
@@ -224,8 +224,8 @@ public abstract class TransferHandler extends TransferNode {
             }
             case FluxConstants.TYPE_PHANTOM_UPDATE -> {
                 tag.putLong(FluxConstants.CHANGE, mChange);
-                tag.putInt(FluxConstants.PRIORITY, hasPowerSurge() ? FakeFluxDevice.POWER_SURGE_MARKER : mPriority);
-                tag.putLong(FluxConstants.LIMIT, canBypassLimit() ? FakeFluxDevice.BYPASS_LIMIT_MARKER : mLimit);
+                tag.putInt(FluxConstants.PRIORITY, hasPowerSurge() ? PhantomFluxDevice.POWER_SURGE_MARKER : mPriority);
+                tag.putLong(FluxConstants.LIMIT, canBypassLimit() ? PhantomFluxDevice.BYPASS_LIMIT_MARKER : mLimit);
             }
         }
     }

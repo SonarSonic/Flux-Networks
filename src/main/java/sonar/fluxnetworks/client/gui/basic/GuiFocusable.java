@@ -6,10 +6,11 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.GuiTabType;
 import sonar.fluxnetworks.client.gui.button.FluxEditBox;
-import sonar.fluxnetworks.common.device.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.register.RegistrySounds;
 
 import javax.annotation.Nonnull;
@@ -25,51 +26,60 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxDeviceMen
     }
 
     /**
-     * de-focus other text elements
+     * Un-focus other text elements
      */
     @Override
     public void setFocused(@Nullable GuiEventListener listener) {
         super.setFocused(listener);
-        children().forEach(child -> {
+        for (GuiEventListener child : children()) {
             if (child != listener && child instanceof FluxEditBox editBox) {
                 if (editBox.isFocused()) {
-                    //editBox.setFocused2(false);
-                    //FIXME
+                    editBox.setFocused(false);
                 }
             }
-        });
+        }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
         if (getFocused() != null) {
-            if (keyCode == 256) {
-                this.setFocused(null);
+            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                setFocused(null);
                 return true;
             }
-            if (minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
+            if (getMinecraft().options.keyInventory.isActiveAndMatches(mouseKey)) {
                 return false; // allows the typing of "E"
             }
-        } else if (keyCode == 256 || minecraft.options.keyInventory.isActiveAndMatches(mouseKey)) {
-            if (this instanceof GuiPopup core) {
+        } else if (keyCode == GLFW.GLFW_KEY_ESCAPE || getMinecraft().options.keyInventory.isActiveAndMatches(mouseKey)) {
+            if (this instanceof GuiPopupCore core) {
                 core.mHost.closePopup();
                 return true;
             }
-            if (this instanceof GuiTab core) {
-                if (core.getNavigationTab() == EnumNavigationTab.TAB_HOME) {
+            if (this instanceof GuiTabCore core) {
+                if (core.getCurrentTab() == GuiTabType.TAB_HOME) {
                     onClose();
                 } else {
-                    //core.switchTab(EnumNavigationTab.TAB_HOME);
                     //FIXME
+                    //core.switchTab(EnumNavigationTab.TAB_HOME);
                     if (FluxConfig.enableButtonSound) {
-                        minecraft.getSoundManager().play(SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));
+                        getMinecraft().getSoundManager().play(
+                                SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));
                     }
                 }
             }
             return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        for (GuiEventListener child : children()) {
+            if (child instanceof FluxEditBox editBox) {
+                editBox.tick();
+            }
+        }
     }
 }

@@ -2,12 +2,12 @@ package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.client.gui.basic.GuiButton;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
 /**
  * Simple toggle button with a filled rectangle or hollow rectangle.
  */
-public class ToggleButton extends GuiButton {
+public class ToggleButton extends GuiButtonCore {
 
     // switch on/off
     private boolean mChecked = false;

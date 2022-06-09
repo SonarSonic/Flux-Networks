@@ -1,137 +1,159 @@
 package sonar.fluxnetworks.client.gui;
 
-/*
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.locale.Language;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
-import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.test.C2SNetMsg;
-import sonar.fluxnetworks.common.blockentity.FluxDeviceEntity;
+import sonar.fluxnetworks.client.gui.button.FluxEditBox;
+import sonar.fluxnetworks.client.gui.button.SwitchButton;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.device.TransferHandler;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 
-*/
 /**
  * The home page.
- *//*
-
+ */
 public class GuiFluxDeviceHome extends GuiTabCore {
 
-    public InvisibleButton redirectButton;
-    public FluxTextWidget fluxName, priority, limit;
+    //public InvisibleButton redirectButton;
+    public FluxEditBox mFluxName, mPriority, mLimit;
 
-    public SlidedSwitchButton surge, disableLimit, chunkLoading;
+    public SwitchButton mSurgeMode, mDisableLimit, mChunkLoading;
 
-    private final FluxDeviceEntity tileEntity;
     private int timer;
 
-    public GuiFluxDeviceHome(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
-        this.tileEntity = (FluxDeviceEntity) container.bridge;
+    public GuiFluxDeviceHome(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        super(menu, player);
     }
 
     @Override
-    public EnumNavigationTab getNavigationTab() {
-        return EnumNavigationTab.TAB_HOME;
+    public GuiTabType getCurrentTab() {
+        return GuiTabType.TAB_HOME;
     }
-
+    
+    public TileFluxDevice getDevice() {
+        return (TileFluxDevice) menu.mProvider;
+    }
 
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTab.TAB_HOME, navigationTabs);
 
-        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12,
+        /*redirectButton = new InvisibleButton(leftPos + 20, topPos + 8, 135, 12,
                 EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
-        addButton(redirectButton);
+        addButton(redirectButton);*/
 
-        int color = network.getNetworkColor() | 0xff000000;
-        fluxName = FluxTextWidget.create(FluxTranslate.NAME.t() + ": ", font, guiLeft + 16, guiTop + 28, 144, 12).setOutlineColor(color);
-        fluxName.setMaxStringLength(24);
-        fluxName.setText(tileEntity.getCustomName());
-        fluxName.setResponder(string -> {
-            tileEntity.setCustomName(fluxName.getText());
-            C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_CUSTOM_NAME);
+        int color = mNetwork.getColor() | 0xFF000000;
+        mFluxName = FluxEditBox.create(FluxTranslate.NAME.get() + ": ", font,
+                        leftPos + 16, topPos + 28, 144, 12)
+                .setOutlineColor(color);
+        mFluxName.setMaxLength(24);
+        mFluxName.setValue(getDevice().getCustomName());
+        mFluxName.setResponder(string -> {
+            CompoundTag tag = new CompoundTag();
+            tag.putString(FluxConstants.CUSTOM_NAME, mFluxName.getValue());
+            ClientMessages.sendEditDevice(getDevice(), tag);
         });
-        addButton(fluxName);
+        addRenderableWidget(mFluxName);
 
-        priority = FluxTextWidget.create(FluxTranslate.PRIORITY.t() + ": ", font, guiLeft + 16, guiTop + 45, 144, 12).setOutlineColor(color).setDigitsOnly().setAllowNegatives(true);
-        priority.setMaxStringLength(5);
-        priority.setText(String.valueOf(tileEntity.getRawPriority()));
-        priority.setResponder(string -> {
-            tileEntity.setPriority(priority.getValidInt());
-            C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_PRIORITY);
+        mPriority = FluxEditBox.create(FluxTranslate.PRIORITY.get() + ": ", font,
+                        leftPos + 16, topPos + 45, 144, 12)
+                .setOutlineColor(color)
+                .setDigitsOnly()
+                .setAllowNegatives(true);
+        mPriority.setMaxLength(5);
+        mPriority.setValue(String.valueOf(getDevice().getLiteralPriority()));
+        mPriority.setResponder(string -> {
+            int priority = Mth.clamp(mPriority.getValidInt(),
+                    TransferHandler.PRI_USER_MIN, TransferHandler.PRI_USER_MAX);
+            CompoundTag tag = new CompoundTag();
+            tag.putInt(FluxConstants.PRIORITY, priority);
+            ClientMessages.sendEditDevice(getDevice(), tag);
         });
-        addButton(priority);
+        addRenderableWidget(mPriority);
 
-        limit = FluxTextWidget.create(FluxTranslate.TRANSFER_LIMIT.t() + ": ", font, guiLeft + 16, guiTop + 62, 144, 12).setOutlineColor(color).setDigitsOnly().setMaxValue(tileEntity.getMaxTransferLimit());
-        limit.setMaxStringLength(9);
-        limit.setText(String.valueOf(tileEntity.getRawLimit()));
-        limit.setResponder(string -> {
-            tileEntity.setTransferLimit(limit.getValidLong());
-            C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_LIMIT);
+        mLimit = FluxEditBox.create(FluxTranslate.TRANSFER_LIMIT.get() + ": ", font,
+                        leftPos + 16, topPos + 62, 144, 12)
+                .setOutlineColor(color)
+                .setDigitsOnly()
+                .setMaxValue(getDevice().getMaxTransferLimit());
+        mLimit.setMaxLength(9);
+        mLimit.setValue(String.valueOf(getDevice().getLiteralLimit()));
+        mLimit.setResponder(string -> {
+            long limit = mLimit.getValidLong();
+            CompoundTag tag = new CompoundTag();
+            tag.putLong(FluxConstants.LIMIT, limit);
+            ClientMessages.sendEditDevice(getDevice(), tag);
         });
-        addButton(limit);
+        addRenderableWidget(mLimit);
 
-        surge = new SlidedSwitchButton(140, 120, 1, guiLeft, guiTop, tileEntity.getSurgeMode());
-        disableLimit = new SlidedSwitchButton(140, 132, 2, guiLeft, guiTop, tileEntity.getDisableLimit());
-        switches.add(surge);
-        switches.add(disableLimit);
+        mSurgeMode = new SwitchButton(minecraft, leftPos + 140, topPos + 120, getDevice().getSurgeMode());
+        mDisableLimit = new SwitchButton(minecraft, leftPos + 140, topPos + 132, getDevice().getDisableLimit());
+        mButtons.add(mSurgeMode);
+        mButtons.add(mDisableLimit);
 
-        if (!tileEntity.getDeviceType().isStorage()) {
-            chunkLoading = new SlidedSwitchButton(140, 144, 3, guiLeft, guiTop, tileEntity.isForcedLoading());
-            switches.add(chunkLoading);
+        if (!getDevice().getDeviceType().isStorage()) {
+            mChunkLoading = new SwitchButton(minecraft, leftPos + 140, topPos + 144, getDevice().isForcedLoading());
+            mButtons.add(mChunkLoading);
         }
     }
 
-
     @Override
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        renderTransfer(matrixStack, tileEntity);
-        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 89, 150, FluxClientCache.getFeedbackColor());
+    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
-        font.drawString(matrixStack, FluxTranslate.SURGE_MODE.t(), 20, 120, network.getNetworkColor());
-        font.drawString(matrixStack, FluxTranslate.DISABLE_LIMIT.t(), 20, 132, network.getNetworkColor());
-        if (!tileEntity.getDeviceType().isStorage()) {
-            font.drawString(matrixStack, FluxTranslate.CHUNK_LOADING.t(), 20, 144, network.getNetworkColor());
+        renderNetwork(poseStack, leftPos + 20, topPos + 8);
+        /*screenUtils.renderNetwork(poseStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
+        renderTransfer(poseStack, tileEntity);
+        drawCenterText(poseStack, FluxClientCache.getFeedbackText(), 89, 150, FluxClientCache.getFeedbackColor());*/
+
+        if (mFluxName.getValue().isEmpty()) {
+            int y = mFluxName.y + (mFluxName.getHeight() - 8) / 2;
+            font.draw(poseStack,
+                    Language.getInstance().getOrDefault(getDevice().getBlockState().getBlock().getDescriptionId()),
+                    mFluxName.x + 4, y, FluxConstants.INVALID_NETWORK_COLOR);
+        }
+
+        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(), 20 + leftPos, 120 + topPos, mNetwork.getColor());
+        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos, mNetwork.getColor());
+
+        if (mChunkLoading != null) {
+            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos, mNetwork.getColor());
         }
     }
 
     @Override
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if (mouseButton == 0 && button instanceof SlidedSwitchButton) {
-            SlidedSwitchButton switchButton = (SlidedSwitchButton) button;
-            switch (switchButton.id) {
-                case 1:
-                    switchButton.switchButton();
-                    tileEntity.setSurgeMode(switchButton.toggled);
-                    C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_SURGE_MODE);
-                    break;
-                case 2:
-                    switchButton.switchButton();
-                    tileEntity.setDisableLimit(switchButton.toggled);
-                    C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_DISABLE_LIMIT);
-                    break;
-                case 3:
-                    tileEntity.setForcedLoading(!switchButton.toggled); // delayed updating value
-                    C2SNetMsg.tileEntity(tileEntity, FluxConstants.C2S_CHUNK_LOADING);
-                    break;
-            }
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button instanceof SwitchButton switchButton) {
+            switchButton.toggle();
+            if (switchButton == mSurgeMode) {
+                CompoundTag tag = new CompoundTag();
+                tag.putBoolean(FluxConstants.SURGE_MODE, mSurgeMode.isChecked());
+                ClientMessages.sendEditDevice(getDevice(), tag);
+            } else if (switchButton == mDisableLimit) {
+                CompoundTag tag = new CompoundTag();
+                tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit.isChecked());
+                ClientMessages.sendEditDevice(getDevice(), tag);
+            }/* else if (switchButton == mChunkLoading) {
+                CompoundTag tag = new CompoundTag();
+                tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit.isChecked());
+                ClientMessages.sendEditDevice(menu.mDevice, tag);
+            }*/
+            //FIXME chunk loading
         }
     }
 
-    @Override
+    /*@Override
     public void tick() {
         super.tick();
         if (timer == 0) {
@@ -142,6 +164,5 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         }
         timer++;
         timer %= 100;
-    }
+    }*/
 }
-*/

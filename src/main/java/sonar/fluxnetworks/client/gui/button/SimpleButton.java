@@ -2,12 +2,12 @@ package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.client.gui.basic.GuiButton;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
 /**
  * A button with text and outer stroke.
  */
-public class SimpleButton extends GuiButton {
+public class SimpleButton extends GuiButtonCore {
 
     private int mColor = 0xFFFFFFFF;
     private String mText;

@@ -3,15 +3,15 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.client.gui.basic.GuiButton;
+import sonar.fluxnetworks.client.gui.GuiTabType;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
-public class NavigationButton extends GuiButton {
+public class NavigationButton extends GuiButtonCore {
 
-    private final EnumNavigationTab mTab;
+    private final GuiTabType mTab;
     private boolean mSelected = false;
 
-    public NavigationButton(Minecraft mc, int x, int y, EnumNavigationTab tab) {
+    public NavigationButton(Minecraft mc, int x, int y, GuiTabType tab) {
         super(mc, x, y, 16, 16);
         mTab = tab;
     }
@@ -31,7 +31,7 @@ public class NavigationButton extends GuiButton {
         }
     }
 
-    public EnumNavigationTab getTab() {
+    public GuiTabType getTab() {
         return mTab;
     }
 

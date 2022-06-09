@@ -25,13 +25,13 @@ public enum FluxConfigurationType {
                 nbt.putInt(key, tile.getNetwork().getID());
                 break;
             case PRIORITY:
-                nbt.putInt(key, tile.getRawPriority());
+                nbt.putInt(key, tile.getLiteralPriority());
                 break;
             case PRIORITY_SETTING:
                 nbt.putBoolean(key, tile.getSurgeMode());
                 break;
             case TRANSFER:
-                nbt.putLong(key, tile.getRawLimit());
+                nbt.putLong(key, tile.getLiteralLimit());
                 break;
             case TRANSFER_SETTING:
                 nbt.putBoolean(key, tile.getDisableLimit());

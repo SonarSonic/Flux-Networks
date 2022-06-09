@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 
-public abstract class GuiButton extends GuiComponent {
+public abstract class GuiButtonCore extends GuiComponent {
 
     public static final ResourceLocation BUTTONS = new ResourceLocation(
             FluxNetworks.MODID, "textures/gui/gui_button.png");
@@ -24,7 +24,7 @@ public abstract class GuiButton extends GuiComponent {
 
     protected boolean mClickable = true;
 
-    protected GuiButton(Minecraft mc, int x, int y, int width, int height) {
+    protected GuiButtonCore(Minecraft mc, int x, int y, int width, int height) {
         this.mc = mc;
         this.x = x;
         this.y = y;
@@ -46,8 +46,8 @@ public abstract class GuiButton extends GuiComponent {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
     }
 
-    public static void blit(PoseStack poseStack, float x, float y, float width, float height,
-                            float uOffset, float vOffset, float uWidth, float vHeight) {
+    public static void blitF(PoseStack poseStack, float x, float y, float width, float height,
+                             float uOffset, float vOffset, float uWidth, float vHeight) {
         Matrix4f matrix = poseStack.last().pose();
 
         float minU = uOffset / TEXTURE_SIZE;
@@ -56,13 +56,14 @@ public abstract class GuiButton extends GuiComponent {
         float maxV = (vOffset + vHeight) / TEXTURE_SIZE;
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        BufferBuilder builder = Tesselator.getInstance().getBuilder();
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder builder = tesselator.getBuilder();
         builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         builder.vertex(matrix, x, y + height, 0).uv(minU, maxV).endVertex();
         builder.vertex(matrix, x + width, y + height, 0).uv(maxU, maxV).endVertex();
         builder.vertex(matrix, x + width, y, 0).uv(maxU, minV).endVertex();
         builder.vertex(matrix, x, y, 0).uv(minU, minV).endVertex();
-        Tesselator.getInstance().end();
+        tesselator.end();
     }
 
     public static void drawOuterFrame(PoseStack poseStack, int x, int y, int width, int height, int color) {

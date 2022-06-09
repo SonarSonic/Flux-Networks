@@ -11,15 +11,7 @@ import java.util.UUID;
  * Defines a network device that can be connected to a specific network.
  * The implementation may not be a logical entity.
  */
-public interface IFluxDevice {
-
-    /**
-     * Returns the network ID that this connector should be. However, this connector
-     * may not be currently connected to the network (waiting to connect).
-     *
-     * @return the network ID
-     */
-    int getNetworkID();
+public interface IFluxDevice extends IFluxProvider {
 
     /**
      * A constant value identifying the type of this device.
@@ -40,13 +32,13 @@ public interface IFluxDevice {
 
     //int getLogicPriority(); // consider surge, for transfer on server
 
-    int getRawPriority(); // ignore surge, for numeric display on client
+    int getLiteralPriority(); // ignore surge, for numeric display on client
 
     //void setPriority(int priority);
 
     //long getLogicLimit(); // consider disable limit
 
-    long getRawLimit(); // ignore disable limit
+    long getLiteralLimit(); // ignore disable limit
 
     //void setTransferLimit(long limit);
 

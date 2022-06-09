@@ -4,21 +4,24 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.*;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.api.misc.FluxConfigurationType;
+import net.minecraftforge.network.NetworkHooks;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.api.FluxTranslate;
+import sonar.fluxnetworks.api.device.IFluxProvider;
+import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
@@ -61,8 +64,8 @@ public class ItemFluxConfigurator extends Item {
             }
             return InteractionResult.SUCCESS;
         }
-        /*NetworkHooks.openGui((ServerPlayerEntity) player,
-                new ContainerProvider(), buf -> buf.writeBoolean(false));*/
+        NetworkHooks.openGui((ServerPlayer) player,
+                new Provider(), buf -> buf.writeBoolean(false));
         return InteractionResult.SUCCESS;
     }
 
@@ -75,55 +78,43 @@ public class ItemFluxConfigurator extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
-            tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.t() + ": " + ChatFormatting.WHITE +
+            tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.get() + ": " + ChatFormatting.WHITE +
                     ClientRepository.getDisplayName(tag)));
         }
     }
 
-    /*public static class MenuBridge implements IFluxBridge {
+    public static class Provider implements IFluxProvider {
 
-        public final ItemStack stack;
-        public int networkID;
+        public final ItemStack mStack;
+        public int mNetworkID;
 
-        MenuBridge() {
-            stack = null;
+        Provider() {
+            mStack = null;
         }
 
-        public MenuBridge(@Nonnull ItemStack stack) {
-            this.stack = stack;
-            CompoundNBT tag = stack.getChildTag(FluxConstants.TAG_FLUX_CONFIG);
-            networkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
+        public Provider(@Nonnull ItemStack stack) {
+            this.mStack = stack;
+            CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
+            mNetworkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
         }
 
         @Override
         public int getNetworkID() {
-            return networkID;
+            return mNetworkID;
         }
 
         @Override
-        public void onPlayerOpen(PlayerEntity player) {
-
+        public void onMenuOpened(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         }
 
         @Override
-        public void onPlayerClose(PlayerEntity player) {
-
-        }
-    }
-
-    private static class ContainerProvider implements INamedContainerProvider {
-
-        @Nonnull
-        @Override
-        public ITextComponent getDisplayName() {
-            return StringTextComponent.EMPTY;
+        public void onMenuClosed(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         }
 
         @Nullable
         @Override
-        public Container createMenu(int windowID, @Nonnull PlayerInventory playerInventory,
-                                    @Nonnull PlayerEntity player) {
-            return new FluxContainerMenu(windowID, playerInventory, new MenuBridge());
+        public FluxDeviceMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
+            return new FluxDeviceMenu(containerId, inventory, this);
         }
-    }*/
+    }
 }

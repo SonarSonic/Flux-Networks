@@ -2,6 +2,9 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
@@ -10,6 +13,7 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
@@ -20,7 +24,7 @@ import java.util.UUID;
  *
  * @see TileFluxDevice
  */
-public class FakeFluxDevice implements IFluxDevice {
+public class PhantomFluxDevice implements IFluxDevice {
 
     public static final int POWER_SURGE_MARKER = Integer.MAX_VALUE;
     public static final long BYPASS_LIMIT_MARKER = -1;
@@ -38,7 +42,7 @@ public class FakeFluxDevice implements IFluxDevice {
     private long mChange;
     private ItemStack mDisplayStack;
 
-    public FakeFluxDevice() {
+    public PhantomFluxDevice() {
     }
 
     /**
@@ -47,12 +51,12 @@ public class FakeFluxDevice implements IFluxDevice {
      * @param device the loaded device entity
      */
     @Nonnull
-    public static FakeFluxDevice unload(@Nonnull TileFluxDevice device) {
-        FakeFluxDevice t = new FakeFluxDevice();
+    public static PhantomFluxDevice unload(@Nonnull TileFluxDevice device) {
+        PhantomFluxDevice t = new PhantomFluxDevice();
         t.mNetworkID = device.getNetworkID();
         t.mCustomName = device.getCustomName();
-        t.mPriority = device.getSurgeMode() ? POWER_SURGE_MARKER : device.getRawPriority();
-        t.mLimit = device.getDisableLimit() ? BYPASS_LIMIT_MARKER : device.getRawLimit();
+        t.mPriority = device.getSurgeMode() ? POWER_SURGE_MARKER : device.getLiteralPriority();
+        t.mLimit = device.getDisableLimit() ? BYPASS_LIMIT_MARKER : device.getLiteralLimit();
         t.mPlayerUUID = device.getOwnerUUID();
         t.mDeviceType = device.getDeviceType();
         t.mGlobalPos = device.getGlobalPos();
@@ -62,16 +66,16 @@ public class FakeFluxDevice implements IFluxDevice {
     }
 
     @Nonnull
-    public static FakeFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
-        FakeFluxDevice t = new FakeFluxDevice();
+    public static PhantomFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
+        PhantomFluxDevice t = new PhantomFluxDevice();
         t.mGlobalPos = pos;
         t.readCustomTag(tag, FluxConstants.TYPE_PHANTOM_UPDATE);
         return t;
     }
 
     @Nonnull
-    public static FakeFluxDevice load(@Nonnull CompoundTag tag) {
-        FakeFluxDevice t = new FakeFluxDevice();
+    public static PhantomFluxDevice load(@Nonnull CompoundTag tag) {
+        PhantomFluxDevice t = new PhantomFluxDevice();
         t.readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
         return t;
     }
@@ -123,7 +127,17 @@ public class FakeFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public int getRawPriority() {
+    public void onMenuOpened(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+    }
+
+    @Override
+    public void onMenuClosed(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
+    }
+
+    @Override
+    public int getLiteralPriority() {
         return mPriority;
     }
 
@@ -150,7 +164,7 @@ public class FakeFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public long getRawLimit() {
+    public long getLiteralLimit() {
         return mLimit;
     }
 
@@ -194,5 +208,11 @@ public class FakeFluxDevice implements IFluxDevice {
     @Override
     public long getTransferChange() {
         return mChange;
+    }
+
+    @Nullable
+    @Override
+    public FluxDeviceMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
+        throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 }

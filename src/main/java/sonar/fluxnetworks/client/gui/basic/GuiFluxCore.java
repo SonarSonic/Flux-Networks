@@ -10,14 +10,14 @@ import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.client.ClientRepository;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
-import sonar.fluxnetworks.common.device.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GuiFlux extends GuiPopupHost {
+public abstract class GuiFluxCore extends GuiPopupHost {
 
     public static final ResourceLocation BACKGROUND = new ResourceLocation(
             FluxNetworks.MODID, "textures/gui/gui_default_background.png");
@@ -26,17 +26,17 @@ public abstract class GuiFlux extends GuiPopupHost {
     public static final ResourceLocation GUI_BAR = new ResourceLocation(
             FluxNetworks.MODID, "textures/gui/gui_bar.png");
 
-    protected final List<GuiButton> mButtons = new ArrayList<>();
+    protected final List<GuiButtonCore> mButtons = new ArrayList<>();
 
     public final Player mPlayer; // client player
 
     public FluxNetwork mNetwork;
     public AccessLevel mAccessLevel = AccessLevel.BLOCKED;
 
-    public GuiFlux(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiFluxCore(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         super(menu, player);
         mPlayer = player;
-        mNetwork = ClientRepository.getNetwork(menu.mDevice.getNetworkID());
+        mNetwork = ClientRepository.getNetwork(menu.mProvider.getNetworkID());
         if (ClientRepository.superAdmin) {
             mAccessLevel = AccessLevel.SUPER_ADMIN;
         } else {
@@ -56,7 +56,7 @@ public abstract class GuiFlux extends GuiPopupHost {
     @Override
     protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-        for (GuiButton button : mButtons) {
+        for (GuiButtonCore button : mButtons) {
             button.drawButton(poseStack, mouseX, mouseY, deltaTicks);
         }
     }
@@ -77,7 +77,7 @@ public abstract class GuiFlux extends GuiPopupHost {
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
-        for (GuiButton button : mButtons) {
+        for (GuiButtonCore button : mButtons) {
             if (button.mClickable && button.isMouseHovered(mouseX, mouseY)) {
                 onButtonClicked(button, (int) mouseX, (int) mouseY, mouseButton);
                 return true;
@@ -86,13 +86,13 @@ public abstract class GuiFlux extends GuiPopupHost {
         return super.onMouseClicked(mouseX, mouseY, mouseButton);
     }
 
-    public void onButtonClicked(GuiButton button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
     }
 
     @Override
     protected void containerTick() {
         super.containerTick();
-        mNetwork = ClientRepository.getNetwork(menu.mDevice.getNetworkID());
+        mNetwork = ClientRepository.getNetwork(menu.mProvider.getNetworkID());
     }
 
     @Override
@@ -163,6 +163,15 @@ public abstract class GuiFlux extends GuiPopupHost {
             FluxClientCache.adminViewingNetwork = networkID;
         }
     }*/
+
+    protected void renderNetwork(PoseStack poseStack, int x, int y) {
+        RenderSystem.enableBlend();
+        int color = mNetwork.getColor();
+        RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
+        RenderSystem.setShaderTexture(0, GUI_BAR);
+        blit(poseStack, x, y, 0, 0, 135, 12, 256, 256);
+        font.draw(poseStack, mNetwork.getName(), x + 4, y + 2, 0xffffff);
+    }
 
     public void onFeedbackAction(@Nonnull FeedbackInfo info) {
     }

@@ -220,7 +220,7 @@ public class ServerFluxNetwork extends FluxNetwork {
             if (chunkUnload) {
                 // create a fake device on server side, representing it has ever connected to
                 // this network but currently unloaded
-                mConnectionMap.put(device.getGlobalPos(), FakeFluxDevice.unload(device));
+                mConnectionMap.put(device.getGlobalPos(), PhantomFluxDevice.unload(device));
             } else {
                 // remove the tile entity
                 mConnectionMap.remove(device.getGlobalPos());

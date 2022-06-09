@@ -35,6 +35,6 @@ public enum FeedbackInfo {
 
     @Nonnull
     public String getText() {
-        return localization == null ? "" : localization.t();
+        return localization == null ? "" : localization.get();
     }
 }
