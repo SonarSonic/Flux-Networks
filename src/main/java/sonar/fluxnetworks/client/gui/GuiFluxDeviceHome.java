@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 public class GuiFluxDeviceHome extends GuiTabCore {
 
     //public InvisibleButton redirectButton;
-    public FluxEditBox mFluxName, mPriority, mLimit;
+    public FluxEditBox mCustomName, mPriority, mLimit;
 
     public SwitchButton mSurgeMode, mDisableLimit, mChunkLoading;
 
@@ -39,7 +39,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     public GuiTabType getCurrentTab() {
         return GuiTabType.TAB_HOME;
     }
-    
+
     public TileFluxDevice getDevice() {
         return (TileFluxDevice) menu.mProvider;
     }
@@ -52,18 +52,18 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                 EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
         addButton(redirectButton);*/
 
-        int color = mNetwork.getColor() | 0xFF000000;
-        mFluxName = FluxEditBox.create(FluxTranslate.NAME.get() + ": ", font,
+        int color = mNetwork.getNetworkColor() | 0xFF000000;
+        mCustomName = FluxEditBox.create(FluxTranslate.NAME.get() + ": ", font,
                         leftPos + 16, topPos + 28, 144, 12)
                 .setOutlineColor(color);
-        mFluxName.setMaxLength(24);
-        mFluxName.setValue(getDevice().getCustomName());
-        mFluxName.setResponder(string -> {
+        mCustomName.setMaxLength(24);
+        mCustomName.setValue(getDevice().getCustomName());
+        mCustomName.setResponder(string -> {
             CompoundTag tag = new CompoundTag();
-            tag.putString(FluxConstants.CUSTOM_NAME, mFluxName.getValue());
+            tag.putString(FluxConstants.CUSTOM_NAME, mCustomName.getValue());
             ClientMessages.sendEditDevice(getDevice(), tag);
         });
-        addRenderableWidget(mFluxName);
+        addRenderableWidget(mCustomName);
 
         mPriority = FluxEditBox.create(FluxTranslate.PRIORITY.get() + ": ", font,
                         leftPos + 16, topPos + 45, 144, 12)
@@ -112,22 +112,20 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
         renderNetwork(poseStack, leftPos + 20, topPos + 8);
-        /*screenUtils.renderNetwork(poseStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        renderTransfer(poseStack, tileEntity);
-        drawCenterText(poseStack, FluxClientCache.getFeedbackText(), 89, 150, FluxClientCache.getFeedbackColor());*/
+        renderTransfer(poseStack, getDevice(), leftPos + 30, topPos + 90);
 
-        if (mFluxName.getValue().isEmpty()) {
-            int y = mFluxName.y + (mFluxName.getHeight() - 8) / 2;
+        if (mCustomName.getValue().isEmpty()) {
+            int y = mCustomName.y + (mCustomName.getHeight() - 8) / 2;
             font.draw(poseStack,
                     Language.getInstance().getOrDefault(getDevice().getBlockState().getBlock().getDescriptionId()),
-                    mFluxName.x + 4, y, FluxConstants.INVALID_NETWORK_COLOR);
+                    mCustomName.x + 4, y, FluxConstants.INVALID_NETWORK_COLOR);
         }
 
-        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(), 20 + leftPos, 120 + topPos, mNetwork.getColor());
-        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos, mNetwork.getColor());
+        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(), 20 + leftPos, 120 + topPos, mNetwork.getNetworkColor());
+        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos, mNetwork.getNetworkColor());
 
         if (mChunkLoading != null) {
-            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos, mNetwork.getColor());
+            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos, mNetwork.getNetworkColor());
         }
     }
 

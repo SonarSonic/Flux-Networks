@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -104,11 +103,11 @@ public class ItemFluxConfigurator extends Item {
         }
 
         @Override
-        public void onMenuOpened(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        public void onMenuOpened(@Nonnull Player player) {
         }
 
         @Override
-        public void onMenuClosed(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        public void onMenuClosed(@Nonnull Player player) {
         }
 
         @Nullable

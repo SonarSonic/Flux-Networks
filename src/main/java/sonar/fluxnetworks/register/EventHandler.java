@@ -24,6 +24,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.capability.FluxPlayerProvider;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkData;
@@ -144,9 +145,9 @@ public class EventHandler {
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
         //FIXME
-        /*S2CNetMsg.updateNetwork(FluxNetworkData.getAllNetworks(), FluxConstants.TYPE_NET_BASIC)
+        Messages.getNetworkUpdate(FluxNetworkData.getAllNetworks(), FluxConstants.TYPE_NET_BASIC)
                 .sendToPlayer(event.getPlayer());
-        S2CNetMsg.updateSuperAdmin(SuperAdmin.isPlayerSuperAdmin(event.getPlayer()))
+        /*S2CNetMsg.updateSuperAdmin(SuperAdmin.isPlayerSuperAdmin(event.getPlayer()))
                 .sendToPlayer(event.getPlayer());*/
     }
 

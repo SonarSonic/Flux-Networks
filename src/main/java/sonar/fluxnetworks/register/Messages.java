@@ -107,7 +107,7 @@ public class Messages {
         var buf = NetworkHandler.buffer(S2C_NETWORK_UPDATE);
         buf.writeByte(type);
         buf.writeVarInt(1);
-        buf.writeVarInt(network.getID());
+        buf.writeVarInt(network.getNetworkID());
         final CompoundTag tag = new CompoundTag();
         network.writeCustomTag(tag, type);
         buf.writeNbt(tag);
@@ -121,7 +121,7 @@ public class Messages {
         buf.writeByte(type);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
-            buf.writeVarInt(network.getID());
+            buf.writeVarInt(network.getNetworkID());
             final CompoundTag tag = new CompoundTag();
             network.writeCustomTag(tag, type);
             buf.writeNbt(tag);

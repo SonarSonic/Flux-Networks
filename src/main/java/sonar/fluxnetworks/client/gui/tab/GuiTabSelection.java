@@ -1,90 +1,80 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.network.IFluxNetwork;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
+import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.gui.GuiTabType;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
-import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.popup.PopupNetworkPassword;
-import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
 
-public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
+public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
-    public InvisibleButton redirectButton;
+    //public InvisibleButton redirectButton;
 
-    public IFluxNetwork selectedNetwork;
+    public FluxNetwork selectedNetwork;
 
     protected int timer2;
 
-    public GuiTabSelection(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
-        gridStartX = 15;
-        gridStartY = 22;
-        gridHeight = 13;
-        gridPerPage = 10;
-        elementHeight = 12;
-        elementWidth = 146;
-    }
-
-    public EnumNavigationTab getNavigationTab() {
-        return EnumNavigationTab.TAB_SELECTION;
+    public GuiTabSelection(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        super(menu, player);
+        mGridHeight = 13;
+        mGridPerPage = 10;
+        mElementWidth = 146;
+        mElementHeight = 12;
     }
 
     @Override
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        if (elements.size() == 0) {
-            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_NETWORK.t(), FluxTranslate.TAB_CREATE.t());
+    public GuiTabType getCurrentTab() {
+        return GuiTabType.TAB_SELECTION;
+    }
+
+    @Override
+    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+        if (mElements.isEmpty()) {
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_NETWORK.get(), FluxTranslate.TAB_CREATE.get());
         } else {
-            String amount = FluxTranslate.TOTAL.t() + ": " + elements.size();
-            font.drawString(matrixStack, amount, 158 - font.getStringWidth(amount), 10, 0xffffff);
-            font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + sortType.getTranslatedName(), 19, 10, 0xffffff);
-            if (!hasActivePopup()) {
-                drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 150, FluxClientCache.getFeedbackColor());
-            }
+            String total = FluxTranslate.TOTAL.get() + ": " + mElements.size();
+            String sortBy = FluxTranslate.SORT_BY.get() + ": " + ChatFormatting.AQUA + mSortType.getTranslatedName();
+            font.draw(poseStack, total, leftPos + 158 - font.width(total), topPos + 10, 0xffffff);
+            font.draw(poseStack, sortBy, leftPos + 19, topPos + 10, 0xffffff);
         }
     }
 
     @Override
-    protected void onElementClicked(IFluxNetwork element, int mouseButton) {
+    protected void onElementClicked(FluxNetwork element, int mouseButton) {
         if (mouseButton == 0) {
             selectedNetwork = element;
-            setConnectedNetwork(element.getNetworkID(), "");
+            //setConnectedNetwork(element.getNetworkID(), "");
         }
     }
 
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTab.TAB_SELECTION, navigationTabs);
-        if (FluxClientCache.getAllNetworks().isEmpty()) {
+        mGridStartX = leftPos + 15;
+        mGridStartY = topPos + 22;
+        /*if (FluxClientCache.getAllNetworks().isEmpty()) {
             redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
                     EnumNavigationTab.TAB_CREATE.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_CREATE));
             addButton(redirectButton);
-        }
-        refreshPages(FluxClientCache.getAllNetworks());
+        }*/
+        refreshPages(ClientRepository.getAllNetworks());
     }
 
     @Override
-    public void renderElement(MatrixStack matrixStack, IFluxNetwork element, int x, int y) {
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlphaTest();
-        RenderSystem.color3f(1.0f, 1.0f, 1.0f);
-        minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
+    public void renderElement(PoseStack poseStack, FluxNetwork element, int x, int y) {
+        RenderSystem.enableBlend();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        RenderSystem.setShaderTexture(0, GUI_BAR);
 
         int color = element.getNetworkColor();
 
@@ -92,54 +82,50 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         float f1 = (float) (color >> 8 & 255) / 255.0F;
         float f2 = (float) (color & 255) / 255.0F;
 
-        boolean selected = container.bridge.getNetworkID() == element.getNetworkID();
-        boolean isEncrypted = element.getSecurity().isEncrypted();
+        boolean selected = menu.mProvider.getNetworkID() == element.getNetworkID();
+        boolean isEncrypted = element.getSecurityLevel().isEncrypted();
 
         if (isEncrypted) {
             if (selected) {
-                blit(matrixStack, x + 131, y, 159, 16, 16, elementHeight);
+                blit(poseStack, x + 131, y, 159, 16, 16, mElementHeight);
             } else {
-                blit(matrixStack, x + 131, y, 175, 16, 16, elementHeight);
+                blit(poseStack, x + 131, y, 175, 16, 16, mElementHeight);
             }
         }
 
         String text = element.getNetworkName();
 
         if (selected) {
-            RenderSystem.color3f(f, f1, f2);
-            blit(matrixStack, x, y, 0, 16, elementWidth, elementHeight);
-            minecraft.fontRenderer.drawString(matrixStack, text, x + 4, y + 2, 0xffffff);
+            RenderSystem.setShaderColor(f, f1, f2, 1.0f);
+            blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
+            font.draw(poseStack, text, x + 4, y + 2, 0xffffff);
         } else {
-            RenderSystem.color3f(f * 0.75f, f1 * 0.75f, f2 * 0.75f);
-            blit(matrixStack, x, y, 0, 16, elementWidth, elementHeight);
-            minecraft.fontRenderer.drawString(matrixStack, text, x + 4, y + 2, 0x404040);
+            RenderSystem.setShaderColor(f * 0.75f, f1 * 0.75f, f2 * 0.75f, 1.0f);
+            blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
+            font.draw(poseStack, text, x + 4, y + 2, 0x404040);
         }
-
-        GlStateManager.popMatrix();
     }
 
     @Override
-    public void renderElementTooltip(MatrixStack matrixStack, IFluxNetwork element, int mouseX, int mouseY) {
-        if (hasActivePopup())
-            return;
-        *//*GlStateManager.pushMatrix();
-        GlStateManager.popMatrix();*//*
+    public void renderElementTooltip(PoseStack poseStack, FluxNetwork element, int mouseX, int mouseY) {
     }
 
     @Override
-    public boolean mouseClickedMain(double mouseX, double mouseY, int mouseButton) {
-        super.mouseClickedMain(mouseX, mouseY, mouseButton);
+    public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
         if (mouseButton == 0) {
-            if (mouseX > guiLeft + 45 && mouseX < guiLeft + 75 && mouseY > guiTop + 10 && mouseY < getGuiTop() + 17) {
-                sortType = FluxUtils.incrementEnum(sortType, SortType.values());
-                sortGrids(sortType);
+            if (mouseX >= leftPos + 45 && mouseX < leftPos + 75 && mouseY >= topPos + 10 && mouseY < topPos + 17) {
+                mSortType = FluxUtils.cycle(mSortType, SortType.values());
+                sortGrids(mSortType);
                 return true;
             }
         }
         return false;
     }
 
-    @Override
+    /*@Override
     public void onFeedbackAction(@Nonnull FeedbackInfo info) {
         super.onFeedbackAction(info);
         if (info == FeedbackInfo.PASSWORD_REQUIRE) {
@@ -162,19 +148,19 @@ public class GuiTabSelection extends GuiTabPages<IFluxNetwork> {
         }
         timer2++;
         timer2 %= 10;
-    }
+    }*/
 
     @Override
     protected void sortGrids(SortType sortType) {
         switch (sortType) {
-            case ID:
-                elements.sort(Comparator.comparing(IFluxNetwork::getNetworkID));
+            case ID -> {
+                mElements.sort(Comparator.comparing(FluxNetwork::getNetworkID));
                 refreshCurrentPageInternal();
-                break;
-            case NAME:
-                elements.sort(Comparator.comparing(IFluxNetwork::getNetworkName));
+            }
+            case NAME -> {
+                mElements.sort(Comparator.comparing(FluxNetwork::getNetworkName));
                 refreshCurrentPageInternal();
-                break;
+            }
         }
     }
-}*/
+}

@@ -99,7 +99,7 @@ public final class ClientRepository {
     public static String getDisplayName(@Nonnull CompoundTag subTag) {
         FluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
         if (network.isValid()) {
-            return network.getName();
+            return network.getNetworkName();
         }
         return "NONE";
     }

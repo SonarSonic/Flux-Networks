@@ -60,8 +60,7 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxDeviceMen
                 if (core.getCurrentTab() == GuiTabType.TAB_HOME) {
                     onClose();
                 } else {
-                    //FIXME
-                    //core.switchTab(EnumNavigationTab.TAB_HOME);
+                    core.switchTab(GuiTabType.TAB_HOME);
                     if (FluxConfig.enableButtonSound) {
                         getMinecraft().getSoundManager().play(
                                 SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));

@@ -54,7 +54,7 @@ public abstract class GuiPopupCore extends GuiFocusable {
         RenderSystem.setShaderTexture(0, GuiFluxCore.BACKGROUND);
         blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);
 
-        int color = mHost.mNetwork.getColor();
+        int color = mHost.mNetwork.getNetworkColor();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
         RenderSystem.setShaderTexture(0, GuiFluxCore.FRAME);
         blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);

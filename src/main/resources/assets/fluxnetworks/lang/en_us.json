@@ -44,7 +44,7 @@
 	"gui.fluxnetworks.denied_occupy": "Access denied: Another player is using",
 	"gui.fluxnetworks.denied_removal": "Removal denied: No permission",
 
-	"gui.fluxnetworks.clickabove": "Click %s Above",
+	"gui.fluxnetworks.prompt.clickabove": "Click %s Above",
 
 	"gui.fluxnetworks.error.noselected": "No network selected",
 	"gui.fluxnetworks.error.nonetwork": "No network available",

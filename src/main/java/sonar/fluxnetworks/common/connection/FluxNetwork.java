@@ -77,7 +77,7 @@ public class FluxNetwork {
 
     private int mID;
     private String mName;
-    private int mNetworkColor;
+    private int mColor;
     private UUID mOwnerUUID;
     private SecurityLevel mSecurityLevel;
 
@@ -95,7 +95,7 @@ public class FluxNetwork {
     private FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull UUID owner) {
         mID = id;
         mName = name;
-        mNetworkColor = color;
+        mColor = color;
         mSecurityLevel = security;
         mOwnerUUID = owner;
     }
@@ -110,7 +110,7 @@ public class FluxNetwork {
      *
      * @return a positive integer or {@link FluxConstants#INVALID_NETWORK_ID}
      */
-    public final int getID() {
+    public final int getNetworkID() {
         return mID;
     }
 
@@ -129,11 +129,11 @@ public class FluxNetwork {
      * @return the name of this network
      */
     @Nonnull
-    public final String getName() {
+    public final String getNetworkName() {
         return mName;
     }
 
-    public void setName(@Nonnull String name) {
+    public void setNetworkName(@Nonnull String name) {
         mName = name;
     }
 
@@ -142,12 +142,12 @@ public class FluxNetwork {
      *
      * @return the network color
      */
-    public final int getColor() {
-        return mNetworkColor;
+    public final int getNetworkColor() {
+        return mColor;
     }
 
-    public void setColor(int color) {
-        mNetworkColor = color;
+    public void setNetworkColor(int color) {
+        mColor = color;
     }
 
     /**
@@ -283,7 +283,7 @@ public class FluxNetwork {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
             tag.putInt(FluxConstants.NETWORK_ID, mID);
             tag.putString(NETWORK_NAME, mName);
-            tag.putInt(NETWORK_COLOR, mNetworkColor);
+            tag.putInt(NETWORK_COLOR, mColor);
             tag.putUUID(OWNER_UUID, mOwnerUUID);
             tag.putByte(SECURITY_LEVEL, mSecurityLevel.index());
         }
@@ -391,7 +391,7 @@ public class FluxNetwork {
         if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
             mID = tag.getInt(FluxConstants.NETWORK_ID);
             mName = tag.getString(NETWORK_NAME);
-            mNetworkColor = tag.getInt(NETWORK_COLOR);
+            mColor = tag.getInt(NETWORK_COLOR);
             mOwnerUUID = tag.getUUID(OWNER_UUID);
             mSecurityLevel = SecurityLevel.get(tag.getByte(SECURITY_LEVEL));
         }

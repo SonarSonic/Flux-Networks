@@ -7,7 +7,7 @@ import java.text.NumberFormat;
 
 public enum EnergyType {
     FE("Forge Energy", "FE", "FE/t"),
-    EU("Energy Units", "EU", "EU/t");
+    EU("Energy Unit", "EU", "EU/t");
 
     private final String name;
     private final String storage;
@@ -32,22 +32,22 @@ public enum EnergyType {
     }
 
     @Nonnull
-    public static String usage(long in) {
-        return NumberFormat.getInstance().format(in) + " " + FE.usage;
+    public String getUsage(long in) {
+        return NumberFormat.getInstance().format(in) + " " + usage;
     }
 
     @Nonnull
-    public static String usageCompact(long in) {
-        return FluxUtils.compact(in, FE.usage);
+    public String getUsageCompact(long in) {
+        return FluxUtils.compact(in, usage);
     }
 
     @Nonnull
-    public static String storage(long in) {
-        return NumberFormat.getInstance().format(in) + " " + FE.storage;
+    public String getStorage(long in) {
+        return NumberFormat.getInstance().format(in) + " " + storage;
     }
 
     @Nonnull
-    public static String storageCompact(long in) {
-        return FluxUtils.compact(in, FE.storage);
+    public String getStorageCompact(long in) {
+        return FluxUtils.compact(in, storage);
     }
 }

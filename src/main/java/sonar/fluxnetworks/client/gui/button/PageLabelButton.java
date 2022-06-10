@@ -1,72 +1,69 @@
 package sonar.fluxnetworks.client.gui.button;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.Mth;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
 public class PageLabelButton extends GuiButtonCore {
 
-    public int page, pages, color;
-    public double currentLeft, singleWidth;
-    public int hoveredPage, showTick;
+    public int mPage, mPages, mColor;
+    public int mHoveredPage = -1;
 
-    public PageLabelButton(int x, int y, int page, int pages, int color) {
-        super(x, y, 148, 4, 0);
-        this.color = color;
+    private int mShowTick;
+
+    public PageLabelButton(Minecraft mc, int x, int y, int width, int height, int page, int pages, int color) {
+        super(mc, x, y, width, height);
+        mColor = color;
         refreshPages(page, pages);
     }
 
     @Override
-    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
-        GlStateManager.pushMatrix();
-
-        drawRect(x, y, x + width, y + 1, 0x80ffffff);
-        drawRect(x, y + 3, x + width, y + height, 0x80ffffff);
-        drawRect(currentLeft, y + 1, currentLeft + singleWidth, y + 3, color | 0xf0000000);
-
-        boolean b = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
-
-        if (b) {
-            this.hoveredPage = (int) ((mouseX - guiLeft - x - 1) / singleWidth) + 1;
-            if (hoveredPage != page) {
-                double c = (hoveredPage - 1) * singleWidth + x + 1;
-                drawRect(c, y + 1, c + singleWidth, y + 3, color | 0x60000000);
-            }
-            drawCenterText(matrixStack, mc.fontRenderer, hoveredPage + " / " + pages, 88, y + 6, color);
-        } else if (showTick > 0) {
-
-            int alpha = Math.min(255, showTick * 32);
-
-            GlStateManager.enableAlphaTest();
-            GlStateManager.enableBlend();
-
-            drawCenterText(matrixStack, mc.fontRenderer, page + " / " + pages, 88, y + 6, color | alpha << 24);
-
-            GlStateManager.disableBlend();
-
-            showTick--;
+    public void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        int pages = mPages;
+        if (pages <= 0) {
+            return;
         }
-        drawRect(x + 1, y + 1, x + width - 1, y + 3, 0x20000000);
 
-        GlStateManager.popMatrix();
+        boolean hovered = isMouseHovered(mouseX, mouseY);
+
+        int dotsWidth = (pages * height) + (pages - 1); // spacing
+        int startX = x + (width - dotsWidth) / 2;
+
+        if (hovered) {
+            mHoveredPage = Mth.clamp((mouseX - startX) / height, 0, pages - 1);
+        } else {
+            mHoveredPage = -1;
+        }
+
+        for (int i = 0; i < pages; i++) {
+            if (i == mPage) {
+                fill(poseStack, startX, y, startX + height, y + height, mColor | 0xf0000000);
+            } else if (i == mHoveredPage) {
+                fill(poseStack, startX, y, startX + height, y + height, 0xf0808080);
+            } else {
+                int inset = height / 4;
+                fill(poseStack, startX + inset, y + inset, startX + height - inset, y + height - inset, 0xf0808080);
+            }
+        }
+
+        if (hovered) {
+            drawCenteredString(poseStack, mc.font, (mHoveredPage + 1) + " / " + pages, x + width / 2, y + 6, mColor);
+        } else if (mShowTick > 0) {
+            int alpha = Math.min(255, mShowTick * 32);
+            drawCenteredString(poseStack, mc.font, (mPage + 1) + " / " + pages, 88, y + 6, mColor | alpha << 24);
+            mShowTick--;
+        }
     }
 
-    @Override
-    public boolean isMouseHovered(Minecraft mc, int mouseX, int mouseY) {
-        return mouseX >= this.x + 1 && mouseY >= this.y && mouseX < this.x + this.width - 1 && mouseY < this.y + this.height;
-    }
-
+    /**
+     * @param page  0-based indexing
+     * @param pages max number of pages
+     */
     public void refreshPages(int page, int pages) {
-        this.page = page;
-        this.pages = pages;
-        singleWidth = (double) 146 / pages;
-        currentLeft = (page - 1) * singleWidth + x + 1;
-        showTick = 40;
+        mPage = page;
+        mPages = pages;
+        mHoveredPage = -1;
+        mShowTick = 40;
     }
-
-    public static void drawCenterText(MatrixStack matrixStack, FontRenderer fontRendererIn, String text, float x, float y, int color) {
-        fontRendererIn.drawString(matrixStack, text, x - fontRendererIn.getStringWidth(text) / 2f, y, color);
-    }
-}*/
+}

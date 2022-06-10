@@ -22,7 +22,7 @@ public class FluxDeviceMenu extends AbstractContainerMenu {
     public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull IFluxProvider provider) {
         super(RegistryBlocks.FLUX_MENU, containerId);
         mProvider = provider;
-        provider.onMenuOpened(this, inventory.player);
+        provider.onMenuOpened(inventory.player);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class FluxDeviceMenu extends AbstractContainerMenu {
     @Override
     public void removed(@Nonnull Player player) {
         super.removed(player);
-        mProvider.onMenuClosed(this, player);
+        mProvider.onMenuClosed(player);
     }
 
     @FunctionalInterface

@@ -44,7 +44,7 @@
 	"gui.fluxnetworks.denied_occupy": "拒绝访问: 另一名玩家正在使用",
 	"gui.fluxnetworks.denied_removal": "拒绝拆除: 无权限",
 
-	"gui.fluxnetworks.clickabove": "点击上方的%s",
+	"gui.fluxnetworks.prompt.clickabove": "点击上方的%s",
 
 	"gui.fluxnetworks.error.noselected": "未选择网络",
 	"gui.fluxnetworks.error.nonetwork": "无可用网络",

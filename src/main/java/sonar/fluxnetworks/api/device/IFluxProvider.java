@@ -3,12 +3,9 @@ package sonar.fluxnetworks.api.device;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Refers to anything which can be connected to a specific network: flux devices and configurators,
@@ -24,13 +21,9 @@ public interface IFluxProvider extends MenuProvider {
      */
     int getNetworkID();
 
-    void onMenuOpened(@Nonnull FluxDeviceMenu menu, @Nonnull Player player);
+    void onMenuOpened(@Nonnull Player player);
 
-    void onMenuClosed(@Nonnull FluxDeviceMenu menu, @Nonnull Player player);
-
-    @Nullable
-    @Override
-    FluxDeviceMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player);
+    void onMenuClosed(@Nonnull Player player);
 
     @Nonnull
     @Override

@@ -39,6 +39,7 @@ public class SwitchButton extends GuiButtonCore {
         // Whether to use selected or unselected texture
         final int state = mChecked || isMouseHovered(mouseX, mouseY) ? 0 : 1;
 
+        RenderSystem.enableBlend();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, BUTTONS);
 

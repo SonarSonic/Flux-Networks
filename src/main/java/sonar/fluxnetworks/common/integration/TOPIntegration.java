@@ -49,7 +49,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
             }
             if (FluxConfig.enableOneProbeBasicInfo) {
                 if (device.getNetwork().isValid()) {
-                    probeInfo.text(new TextComponent(device.getNetwork().getName()).withStyle(ChatFormatting.AQUA));
+                    probeInfo.text(new TextComponent(device.getNetwork().getNetworkName()).withStyle(ChatFormatting.AQUA));
                 } else {
                     probeInfo.text(FluxTranslate.ERROR_NO_SELECTED.makeComponent().withStyle(ChatFormatting.AQUA));
                 }
@@ -59,11 +59,11 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                 if (player.isShiftKeyDown()) {
                     if (device.getDeviceType().isStorage()) {
                         probeInfo.text(FluxTranslate.ENERGY_STORED.makeComponent()
-                                .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
+                                .append(": " + ChatFormatting.GREEN + EnergyType.FE.getStorage(device.getTransferBuffer()))
                         );
                     } else {
                         probeInfo.text(FluxTranslate.INTERNAL_BUFFER.makeComponent()
-                                .append(": " + ChatFormatting.GREEN + EnergyType.storage(device.getTransferBuffer()))
+                                .append(": " + ChatFormatting.GREEN + EnergyType.FE.getStorage(device.getTransferBuffer()))
                         );
                     }
                 }/* else {
@@ -91,7 +91,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     );
                 } else {
                     probeInfo.text(FluxTranslate.TRANSFER_LIMIT.makeComponent()
-                            .append(": " + ChatFormatting.GREEN + EnergyType.usage(device.getLiteralLimit()))
+                            .append(": " + ChatFormatting.GREEN + EnergyType.FE.getUsage(device.getLiteralLimit()))
                     );
                 }
 

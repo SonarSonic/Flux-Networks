@@ -38,7 +38,7 @@ public class FluxTranslate {
             NETWORK_COLOR = new FluxTranslate("gui.fluxnetworks.network.color");
 
     public static final FluxTranslate
-            PROMPT_CLICK_STH_ABOVE = new FluxTranslate("gui.fluxnetworks.prompt.clickabove");
+            PROMPT_CLICK_ABOVE = new FluxTranslate("gui.fluxnetworks.prompt.clickabove");
 
     public static final FluxTranslate
             ERROR_NO_SELECTED = new FluxTranslate("gui.fluxnetworks.error.noselected"),

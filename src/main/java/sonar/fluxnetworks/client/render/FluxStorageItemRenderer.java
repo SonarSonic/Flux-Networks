@@ -52,7 +52,7 @@ public class FluxStorageItemRenderer extends BlockEntityWithoutLevelRenderer {
                 color = tag.getInt(FluxConstants.CLIENT_COLOR);
             } else {
                 // ItemStack inventory
-                color = ClientRepository.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getColor();
+                color = ClientRepository.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
             energy = tag.getLong(FluxConstants.ENERGY);
         } else {

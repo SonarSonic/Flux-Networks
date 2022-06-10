@@ -71,23 +71,23 @@ public class FluxUtils {
             if (change == 0) {
                 return FluxTranslate.INPUT.get() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.INPUT.get() + ": " + ChatFormatting.GREEN + "+" + EnergyType.usage(change);
+                return FluxTranslate.INPUT.get() + ": " + ChatFormatting.GREEN + "+" + energyType.getUsage(change);
             }
         }
         if (type.isPoint() || type.isController()) {
             if (change == 0) {
                 return FluxTranslate.OUTPUT.get() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else {
-                return FluxTranslate.OUTPUT.get() + ": " + ChatFormatting.RED + EnergyType.usage(change);
+                return FluxTranslate.OUTPUT.get() + ": " + ChatFormatting.RED + energyType.getUsage(change);
             }
         }
         if (type.isStorage()) {
             if (change == 0) {
                 return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.GOLD + "0 " + energyType.getUsageSuffix();
             } else if (change > 0) {
-                return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.GREEN + "+" + EnergyType.usage(change);
+                return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.GREEN + "+" + energyType.getUsage(change);
             } else {
-                return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.RED + EnergyType.usage(change);
+                return FluxTranslate.CHANGE.get() + ": " + ChatFormatting.RED + energyType.getUsage(change);
             }
         }
         return "";

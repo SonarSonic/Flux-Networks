@@ -5,7 +5,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -40,11 +39,11 @@ public class ItemAdminConfigurator extends Item {
         }
 
         @Override
-        public void onMenuOpened(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        public void onMenuOpened(@Nonnull Player player) {
         }
 
         @Override
-        public void onMenuClosed(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        public void onMenuClosed(@Nonnull Player player) {
         }
 
         @Nullable

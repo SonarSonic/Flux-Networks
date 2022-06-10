@@ -11,7 +11,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,6 +26,7 @@ import sonar.fluxnetworks.register.Messages;
 
 import javax.annotation.*;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * Represents a network device entity (on server) and a block entity.
@@ -137,22 +137,17 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         if (mPlayerUsing != null) {
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
+            Consumer<FriendlyByteBuf> writer = buf -> {
+                buf.writeBoolean(true);
+                buf.writeBlockPos(worldPosition);
+                CompoundTag tag = new CompoundTag();
+                writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+                buf.writeNbt(tag);
+            };
             if (FluxConfig.enableGuiDebug) {
-                MuiForgeApi.openMenu(player, this, buf -> {
-                    buf.writeBoolean(true);
-                    buf.writeBlockPos(worldPosition);
-                    CompoundTag tag = new CompoundTag();
-                    writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
-                    buf.writeNbt(tag);
-                });
+                MuiForgeApi.openMenu(player, this, writer);
             } else {
-                NetworkHooks.openGui((ServerPlayer) player, this, buf -> {
-                    buf.writeBoolean(true);
-                    buf.writeBlockPos(worldPosition);
-                    CompoundTag tag = new CompoundTag();
-                    writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
-                    buf.writeNbt(tag);
-                });
+                NetworkHooks.openGui((ServerPlayer) player, this, writer);
             }
         } else {
             player.displayClientMessage(FluxTranslate.ACCESS_DENIED, true);
@@ -178,7 +173,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         if (network.enqueueConnectionAddition(this)) {
             mNetwork.enqueueConnectionRemoval(this, false);
             mNetwork = network;
-            mNetworkID = network.getID();
+            mNetworkID = network.getNetworkID();
             getTransferHandler().clearLocalStates();
             mFlags |= FLAG_SETTING_CHANGED;
         }
@@ -262,7 +257,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             case FluxConstants.TYPE_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
             case FluxConstants.TYPE_TILE_UPDATE -> {
                 tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
-                tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getColor());
+                tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
                 tag.putInt(FluxConstants.FLAGS, mFlags);
             }
             case FluxConstants.TYPE_PHANTOM_UPDATE -> {
@@ -310,7 +305,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             case FluxConstants.TYPE_TILE_DROP -> {
                 if (level.isClientSide) {
                     mClientColor =
-                            FluxUtils.getModifiedColor(ClientRepository.getNetwork(mNetworkID).getColor(), 1.1f);
+                            FluxUtils.getModifiedColor(ClientRepository.getNetwork(mNetworkID).getNetworkColor(), 1.1f);
                 }
             }
         }
@@ -436,11 +431,10 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     /**
      * Called when the player started to interact with this connector.
      *
-     * @param menu
      * @param player the player
      */
     @Override
-    public void onMenuOpened(FluxDeviceMenu menu, Player player) {
+    public void onMenuOpened(Player player) {
         assert mPlayerUsing == null;
         mPlayerUsing = player;
     }
@@ -448,11 +442,10 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     /**
      * Called when the player stopped interacting with this connector.
      *
-     * @param menu
      * @param player the player
      */
     @Override
-    public void onMenuClosed(FluxDeviceMenu menu, Player player) {
+    public void onMenuClosed(Player player) {
         assert level.isClientSide || mPlayerUsing == player;
         mPlayerUsing = null;
     }

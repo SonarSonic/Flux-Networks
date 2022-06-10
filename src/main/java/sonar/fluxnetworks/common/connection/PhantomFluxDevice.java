@@ -4,7 +4,6 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
@@ -127,12 +126,12 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void onMenuOpened(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public void onMenuOpened(@Nonnull Player player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
-    public void onMenuClosed(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public void onMenuClosed(@Nonnull Player player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
