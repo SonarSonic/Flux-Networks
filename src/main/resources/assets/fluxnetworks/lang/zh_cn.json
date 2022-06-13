@@ -44,8 +44,6 @@
 	"gui.fluxnetworks.denied_occupy": "拒绝访问: 另一名玩家正在使用",
 	"gui.fluxnetworks.denied_removal": "拒绝拆除: 无权限",
 
-	"gui.fluxnetworks.prompt.clickabove": "点击上方的%s",
-
 	"gui.fluxnetworks.error.noselected": "未选择网络",
 	"gui.fluxnetworks.error.nonetwork": "无可用网络",
 
@@ -57,7 +55,7 @@
 	"gui.fluxnetworks.flux.transferlimit": "传输上限",
 	"gui.fluxnetworks.flux.wireless": "开启无线充能",
 	"gui.fluxnetworks.flux.energy": "能量",
-	"gui.fluxnetworks.flux.energystored": "能量存储",
+	"gui.fluxnetworks.flux.energystored": "储存能量",
 	"gui.fluxnetworks.flux.buffer": "缓存",
 	"gui.fluxnetworks.flux.internalbuffer": "内部缓存",
 	"gui.fluxnetworks.flux.unlimited": "无限制",
@@ -69,14 +67,14 @@
 	"gui.fluxnetworks.flux.change": "变化",
 	"gui.fluxnetworks.flux.averagetick": "平均tick",
 
-	"gui.fluxnetworks.feedback.reject": "服务器拒绝了你的请求",
-	"gui.fluxnetworks.feedback.noowner": "你不是该网络的所有人",
-	"gui.fluxnetworks.feedback.noadmin": "你不是该网络的管理员",
-	"gui.fluxnetworks.feedback.nospace": "你无法创建更多的网络",
-	"gui.fluxnetworks.feedback.hascontroller": "该网络已经连接了控制器",
-	"gui.fluxnetworks.feedback.invaliduser": "选择了无效的用户",
-	"gui.fluxnetworks.feedback.illegalpassword": "密码格式错误,只能使用字母,数字或常用符号",
-	"gui.fluxnetworks.feedback.bannedloading": "服务器禁用了区块加载",
+	"gui.fluxnetworks.response.reject": "服务器拒绝了你的请求",
+	"gui.fluxnetworks.response.noowner": "你需要所有者权限才能执行该操作",
+	"gui.fluxnetworks.response.noadmin": "你需要管理员权限才能执行该操作",
+	"gui.fluxnetworks.response.nospace": "你已达到你可以创建的最大网络数",
+	"gui.fluxnetworks.response.hascontroller": "该网络已经连接了控制器",
+	"gui.fluxnetworks.response.invaliduser": "无效的用户",
+	"gui.fluxnetworks.response.invalidpassword": "无效的密码",
+	"gui.fluxnetworks.response.bannedloading": "服务器禁用了区块加载",
 
 	"gui.fluxnetworks.label.sortby": "分类方式",
 	"gui.fluxnetworks.label.selected": "已选择",
@@ -85,7 +83,7 @@
 	"gui.fluxnetworks.label.editingconnections": "正在编辑 %d 个连接点",
 	"gui.fluxnetworks.label.connections": "连接数",
 	"gui.fluxnetworks.label.customcolor": "自定义颜色",
-	"gui.fluxnetworks.label.connectingto": "正在连接至",
+	"gui.fluxnetworks.label.connectingto": "正在连接至 %s",
 	"gui.fluxnetworks.label.total": "共计",
 	"gui.fluxnetworks.label.deletenetwork": "删除网络",
 	"gui.fluxnetworks.label.doubleshift": "双击左Shift键",
@@ -97,6 +95,7 @@
 	"gui.fluxnetworks.label.cancelmembership": "撤销成员权限",
 	"gui.fluxnetworks.label.you": "你自己",
 	"gui.fluxnetworks.label.detailedview": "详细网络视图",
+	"gui.fluxnetworks.label.clickabove": "点击上方的%s",
 
 	"gui.fluxnetworks.label.sort.smart": "智能",
 	"gui.fluxnetworks.label.sort.id": "ID",

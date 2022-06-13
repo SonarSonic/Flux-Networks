@@ -57,7 +57,7 @@ import static sonar.fluxnetworks.register.Registration.sNetwork;
 public class Messages {
 
     /**
-     * Note: Increment this if this class is changed.
+     * Note: Increment this if any packet is changed.
      */
     static final String PROTOCOL = "701";
 
@@ -66,49 +66,60 @@ public class Messages {
      */
     static final int C2S_DEVICE_BUFFER = 0;
     static final int C2S_SUPER_ADMIN = 1;
-    static final int C2S_EDIT_DEVICE = 2;
-    static final int C2S_CREATE_NETWORK = 3;
+    static final int C2S_EDIT_MEMBER = 2;
+    static final int C2S_EDIT_NETWORK = 3;
+    static final int C2S_EDIT_DEVICE = 4;
+    static final int C2S_CREATE_NETWORK = 5;
+    static final int C2S_SET_TILE_NETWORK = 6;
 
     /**
      * S->C message indices, must be sequential, 0-based indexing
      */
     static final int S2C_DEVICE_BUFFER = 0;
-    static final int S2C_RESULT = 1;
+    static final int S2C_RESPONSE = 1;
     static final int S2C_SUPER_ADMIN = 2;
     static final int S2C_NETWORK_UPDATE = 3;
     static final int S2C_NETWORK_DELETE = 4;
 
+    /**
+     * @param device the block entity created by server
+     * @param type   for example, {@link FluxConstants#DEVICE_BUFFER_S2C_GUI_SYNC}
+     * @return dispatcher
+     */
     @Nonnull
-    public static PacketDispatcher getDeviceBuffer(TileFluxDevice device, byte id) {
-        assert id < 0;
+    public static PacketDispatcher deviceBuffer(TileFluxDevice device, byte type) {
+        assert type < 0; // S2C negative
         var buf = NetworkHandler.buffer(S2C_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
-        buf.writeByte(id);
-        device.writePacket(buf, id);
+        buf.writeByte(type);
+        device.writePacket(buf, type);
         return sNetwork.dispatch(buf);
     }
 
-    private static void sendResult(int token, int key, int code, Player player) {
-        FriendlyByteBuf buf = NetworkHandler.buffer(S2C_RESULT);
+    private static void response(int token, int key, int code, Player player) {
+        var buf = NetworkHandler.buffer(S2C_RESPONSE);
         buf.writeByte(token);
         buf.writeShort(key);
         buf.writeByte(code);
         sNetwork.sendToPlayer(buf, player);
     }
 
-    public static void sendSuperAdmin(Player player, boolean activated) {
+    public static void sendSuperAdmin(boolean enable, Player player) {
         var buf = NetworkHandler.buffer(S2C_SUPER_ADMIN);
-        buf.writeBoolean(activated);
-        sNetwork.dispatch(buf).sendToPlayer(player);
+        buf.writeBoolean(enable);
+        sNetwork.sendToPlayer(buf, player);
     }
 
+    /**
+     * Variation of {@link #getNetworkUpdate(Collection, byte)} that updates only one network.
+     */
     @Nonnull
     public static PacketDispatcher getNetworkUpdate(FluxNetwork network, byte type) {
         var buf = NetworkHandler.buffer(S2C_NETWORK_UPDATE);
         buf.writeByte(type);
-        buf.writeVarInt(1);
+        buf.writeVarInt(1); // size
         buf.writeVarInt(network.getNetworkID());
-        final CompoundTag tag = new CompoundTag();
+        final var tag = new CompoundTag();
         network.writeCustomTag(tag, type);
         buf.writeNbt(tag);
         return sNetwork.dispatch(buf);
@@ -116,13 +127,12 @@ public class Messages {
 
     @Nonnull
     public static PacketDispatcher getNetworkUpdate(Collection<FluxNetwork> networks, byte type) {
-        assert !networks.isEmpty();
         var buf = NetworkHandler.buffer(S2C_NETWORK_UPDATE);
         buf.writeByte(type);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
             buf.writeVarInt(network.getNetworkID());
-            final CompoundTag tag = new CompoundTag();
+            final var tag = new CompoundTag();
             network.writeCustomTag(tag, type);
             buf.writeNbt(tag);
         }
@@ -147,6 +157,7 @@ public class Messages {
             case C2S_SUPER_ADMIN -> onSuperAdmin(payload, player, server);
             case C2S_EDIT_DEVICE -> onEditDevice(payload, player, server);
             case C2S_CREATE_NETWORK -> onCreateNetwork(payload, player, server);
+            case C2S_SET_TILE_NETWORK -> onSetTileNetwork(payload, player, server);
             default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
         }
     }
@@ -193,7 +204,6 @@ public class Messages {
 
     private static void onSuperAdmin(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
                                      BlockableEventLoop<?> looper) {
-
     }
 
     private static void onEditDevice(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
@@ -255,10 +265,10 @@ public class Messages {
         final int token = payload.readByte();
         final String name = payload.readUtf();
         final int color = payload.readInt();
-        final SecurityLevel security = SecurityLevel.get(payload.readByte());
+        final SecurityLevel security = SecurityLevel.fromKey(payload.readByte());
         final String password = security.isEncrypted() ? payload.readUtf() : "";
 
-        // verify
+        // validate
         consumed(payload);
         if (FluxUtils.isBadNetworkName(name)) {
             throw new IllegalArgumentException("Invalid network name: " + name);
@@ -272,12 +282,57 @@ public class Messages {
             if (p == null) {
                 return;
             }
-            sendResult(token, FluxConstants.KEY_CREATE_NETWORK, FluxConstants.RES_REJECT, p);
-            /*if (FluxNetworkManager.createNetwork(p, name, color, security, password) != null) {
-                sendResponse(transaction, FluxConstants.RES_SUCCESS, p);
+            if (FluxNetworkData.getInstance().createNetwork(p, name, color, security, password) != null) {
+                response(token, FluxConstants.REQUEST_CREATE_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
             } else {
-                sendResponse(transaction, FluxConstants.RES_REJECT, p);
-            }*/
+                response(token, FluxConstants.REQUEST_CREATE_NETWORK, FluxConstants.RESPONSE_NO_SPACE, p);
+            }
+        });
+    }
+
+    private static void onSetTileNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                         BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final BlockPos pos = payload.readBlockPos();
+        final int networkID = payload.readVarInt();
+        final String password = payload.readUtf(256);
+
+        // validate
+        consumed(payload);
+        if (password.length() > FluxNetwork.MAX_PASSWORD_LENGTH) {
+            throw new IllegalArgumentException("Invalid network password: " + password);
+        }
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            if (p.level.getBlockEntity(pos) instanceof TileFluxDevice e) {
+                if (e.getNetworkID() == networkID) {
+                    return;
+                }
+                final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+                if (e.getDeviceType().isController() && network.getLogicalEntities(FluxNetwork.CONTROLLER).size() > 0) {
+                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_HAS_CONTROLLER, p);
+                    return;
+                }
+                // we can connect to an invalid network (i.e. disconnect)
+                if (!network.isValid() || network.canPlayerAccess(p, password)) {
+                    if (network.isValid()) {
+                        e.setConnectionOwner(p.getUUID());
+                    }
+                    e.connect(network);
+                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
+                    return;
+                }
+                if (password.isEmpty()) {
+                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_PASSWORD_REQUIRED, p);
+                } else {
+                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_INVALID_PASSWORD, p);
+                }
+            }
         });
     }
 }

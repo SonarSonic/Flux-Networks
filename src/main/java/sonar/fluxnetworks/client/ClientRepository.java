@@ -93,7 +93,7 @@ public final class ClientRepository {
 
     @Nonnull
     public static FluxNetwork getNetwork(int id) {
-        return sInstance.mNetworks.getOrDefault(id, FluxNetwork.WILDCARD);
+        return sInstance.mNetworks.getOrDefault(id, FluxNetwork.INVALID);
     }
 
     public static String getDisplayName(@Nonnull CompoundTag subTag) {

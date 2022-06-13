@@ -13,7 +13,7 @@ public enum FeedbackInfo {
     NO_SPACE(FluxTranslate.NO_SPACE),
     HAS_CONTROLLER(FluxTranslate.HAS_CONTROLLER),
     INVALID_USER(FluxTranslate.INVALID_USER),
-    ILLEGAL_PASSWORD(FluxTranslate.ILLEGAL_PASSWORD),
+    ILLEGAL_PASSWORD(FluxTranslate.INVALID_PASSWORD),
     BANNED_LOADING(FluxTranslate.BANNED_LOADING),
     SA_ON(FluxTranslate.SA_ON),
     SA_OFF(FluxTranslate.SA_OFF),

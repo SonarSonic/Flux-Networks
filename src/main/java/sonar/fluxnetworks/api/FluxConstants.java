@@ -58,13 +58,23 @@ public final class FluxConstants {
     /**
      * Response codes.
      */
-    public static final int RES_SUCCESS = -1;
-    public static final int RES_REJECT = 1;
-    public static final int RES_NO_OWNER = 2;
-    public static final int RES_NO_ADMIN = 3;
-    public static final int RES_NO_SPACE = 4;
+    public static final int RESPONSE_SUCCESS = -1;
+    public static final int RESPONSE_SUCCESS_SEPARATE = -2;
+    public static final int RESPONSE_PASSWORD_REQUIRED = -3;
+    public static final int RESPONSE_REJECT = 1;
+    public static final int RESPONSE_NO_OWNER = 2;
+    public static final int RESPONSE_NO_ADMIN = 3;
+    public static final int RESPONSE_NO_SPACE = 4;
+    public static final int RESPONSE_HAS_CONTROLLER = 5;
+    public static final int RESPONSE_INVALID_USER = 6;
+    public static final int RESPONSE_INVALID_PASSWORD = 7;
+    public static final int RESPONSE_BANNED_LOADING = 8;
 
-    public static final int KEY_CREATE_NETWORK = 1;
+    /**
+     * Request keys.
+     */
+    public static final int REQUEST_CREATE_NETWORK = 1;
+    public static final int REQUEST_SET_NETWORK = 2;
 
     // Network members editing type
     public static final int TYPE_NEW_MEMBER = 1;
@@ -73,16 +83,21 @@ public final class FluxConstants {
     public static final int TYPE_CANCEL_MEMBERSHIP = 4;
     public static final int TYPE_TRANSFER_OWNERSHIP = 5;
 
-    // Device buffer message type
-    public static final byte C2S_CUSTOM_NAME = 1;
-    public static final byte C2S_PRIORITY = 2;
-    public static final byte C2S_LIMIT = 3;
-    public static final byte C2S_SURGE_MODE = 4;
-    public static final byte C2S_DISABLE_LIMIT = 5;
-    public static final byte C2S_CHUNK_LOADING = 6;
+    /**
+     * Device buffer message type, C2S positive
+     */
+    public static final byte DEVICE_BUFFER_C2S_CUSTOM_NAME = 1;
+    public static final byte DEVICE_BUFFER_C2S_PRIORITY = 2;
+    public static final byte DEVICE_BUFFER_C2S_LIMIT = 3;
+    public static final byte DEVICE_BUFFER_C2S_SURGE_MODE = 4;
+    public static final byte DEVICE_BUFFER_C2S_DISABLE_LIMIT = 5;
+    public static final byte DEVICE_BUFFER_C2S_CHUNK_LOADING = 6;
 
-    public static final byte S2C_GUI_SYNC = -1;
-    public static final byte S2C_STORAGE_ENERGY = -2;
+    /**
+     * Device buffer message type, S2C negative
+     */
+    public static final byte DEVICE_BUFFER_S2C_GUI_SYNC = -1;
+    public static final byte DEVICE_BUFFER_S2C_STORAGE_ENERGY = -2;
 
     // NBT sub-tag key
     public static final String TAG_FLUX_DATA = "FluxData";

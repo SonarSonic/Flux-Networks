@@ -36,7 +36,7 @@ public class FluxNetwork {
      * <p>
      * A disconnected device is considered connected to this network.
      */
-    public static final FluxNetwork WILDCARD = new FluxNetwork(
+    public static final FluxNetwork INVALID = new FluxNetwork(
             FluxConstants.INVALID_NETWORK_ID, "", FluxConstants.INVALID_NETWORK_COLOR,
             SecurityLevel.PRIVATE, Util.NIL_UUID);
 
@@ -236,6 +236,10 @@ public class FluxNetwork {
         return mSecurityLevel == SecurityLevel.PUBLIC ? AccessLevel.USER : AccessLevel.BLOCKED;
     }
 
+    public boolean canPlayerAccess(@Nonnull Player player, @Nonnull String password) {
+        return getPlayerAccess(player).canUse();
+    }
+
     /**
      * Get all network device entities with given logical type,
      * this method should be only invoked on the server side.
@@ -285,7 +289,7 @@ public class FluxNetwork {
             tag.putString(NETWORK_NAME, mName);
             tag.putInt(NETWORK_COLOR, mColor);
             tag.putUUID(OWNER_UUID, mOwnerUUID);
-            tag.putByte(SECURITY_LEVEL, mSecurityLevel.index());
+            tag.putByte(SECURITY_LEVEL, mSecurityLevel.getKey());
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
             Collection<NetworkMember> members = getAllMembers();
@@ -393,7 +397,7 @@ public class FluxNetwork {
             mName = tag.getString(NETWORK_NAME);
             mColor = tag.getInt(NETWORK_COLOR);
             mOwnerUUID = tag.getUUID(OWNER_UUID);
-            mSecurityLevel = SecurityLevel.get(tag.getByte(SECURITY_LEVEL));
+            mSecurityLevel = SecurityLevel.fromKey(tag.getByte(SECURITY_LEVEL));
         }
         if (type == FluxConstants.TYPE_SAVE_ALL) {
             ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);

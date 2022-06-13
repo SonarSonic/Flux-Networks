@@ -44,8 +44,6 @@
 	"gui.fluxnetworks.denied_occupy": "Access denied: Another player is using",
 	"gui.fluxnetworks.denied_removal": "Removal denied: No permission",
 
-	"gui.fluxnetworks.prompt.clickabove": "Click %s Above",
-
 	"gui.fluxnetworks.error.noselected": "No network selected",
 	"gui.fluxnetworks.error.nonetwork": "No network available",
 
@@ -69,14 +67,14 @@
 	"gui.fluxnetworks.flux.change": "Change",
 	"gui.fluxnetworks.flux.averagetick": "Average Tick",
 
-	"gui.fluxnetworks.feedback.reject": "The server rejected your request",
-	"gui.fluxnetworks.feedback.noowner": "You aren't the owner of the network",
-	"gui.fluxnetworks.feedback.noadmin": "You aren't the admin of the network",
-	"gui.fluxnetworks.feedback.nospace": "You can't create more networks",
-	"gui.fluxnetworks.feedback.hascontroller": "The network already has a Flux Controller",
-	"gui.fluxnetworks.feedback.invaliduser": "Invalid user selected",
-	"gui.fluxnetworks.feedback.illegalpassword": "Wrong password format, must be digit, letter or common symbols",
-	"gui.fluxnetworks.feedback.bannedloading": "Chunk loading is banned on this server",
+	"gui.fluxnetworks.response.reject": "The request was rejected by the server",
+	"gui.fluxnetworks.response.noowner": "The operation requires owner access to perform",
+	"gui.fluxnetworks.response.noadmin": "The operation requires admin access to perform",
+	"gui.fluxnetworks.response.nospace": "You have reached the maximum number of networks you can create",
+	"gui.fluxnetworks.response.hascontroller": "The network already has a Flux Controller",
+	"gui.fluxnetworks.response.invaliduser": "The user is invalid",
+	"gui.fluxnetworks.response.invalidpassword": "The password is invalid",
+	"gui.fluxnetworks.response.bannedloading": "Chunk loading is banned on this server",
 
 	"gui.fluxnetworks.label.sortby": "Sort by",
 	"gui.fluxnetworks.label.selected": "Selected",
@@ -85,7 +83,7 @@
 	"gui.fluxnetworks.label.editingconnections": "Editing %d Connections",
 	"gui.fluxnetworks.label.connections": "Connections",
 	"gui.fluxnetworks.label.customcolor": "Custom Color",
-	"gui.fluxnetworks.label.connectingto": "Connecting to",
+	"gui.fluxnetworks.label.connectingto": "Connecting to %s",
 	"gui.fluxnetworks.label.total": "Total",
 	"gui.fluxnetworks.label.deletenetwork": "Delete Network",
 	"gui.fluxnetworks.label.doubleshift": "Double LShift",
@@ -95,8 +93,9 @@
 	"gui.fluxnetworks.label.playername": "Username",
 	"gui.fluxnetworks.label.playeraccess": "Access Level",
 	"gui.fluxnetworks.label.cancelmembership": "Cancel Membership",
-	"gui.fluxnetworks.label.you": "Yourself",
+	"gui.fluxnetworks.label.you": "You",
 	"gui.fluxnetworks.label.detailedview": "Detailed Network View",
+	"gui.fluxnetworks.label.clickabove": "Click %s Above",
 
 	"gui.fluxnetworks.label.sort.smart": "Smart",
 	"gui.fluxnetworks.label.sort.id": "ID",

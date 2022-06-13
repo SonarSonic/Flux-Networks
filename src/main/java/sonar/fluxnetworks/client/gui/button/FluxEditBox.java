@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Style;
@@ -59,8 +60,13 @@ public class FluxEditBox extends EditBox {
 
     @Override
     public void renderButton(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
         if (isVisible()) {
             fill(poseStack, x - mHeaderWidth, y, x + width, y + height, 0x30000000);
+            fill(poseStack, x - mHeaderWidth - 1, y - 1, x + width + 1, y, mOutlineColor);
+            fill(poseStack, x - mHeaderWidth - 1, y + height, x + width + 1, y + height + 1, mOutlineColor);
+            fill(poseStack, x - mHeaderWidth - 1, y, x - mHeaderWidth, y + height, mOutlineColor);
+            fill(poseStack, x + width, y, x + width + 1, y + height, mOutlineColor);
         }
 
         x += 4;
@@ -72,13 +78,6 @@ public class FluxEditBox extends EditBox {
         mFont.draw(poseStack, mHeader, x - mHeaderWidth, y, mOutlineColor);
         x -= 4;
         y -= (height - 8) / 2;
-
-        if (isVisible()) {
-            fill(poseStack, x - mHeaderWidth - 1, y - 1, x + width + 1, y, mOutlineColor);
-            fill(poseStack, x - mHeaderWidth - 1, y + height, x + width + 1, y + height + 1, mOutlineColor);
-            fill(poseStack, x - mHeaderWidth - 1, y, x - mHeaderWidth, y + height, mOutlineColor);
-            fill(poseStack, x + width, y, x + width + 1, y + height, mOutlineColor);
-        }
     }
 
     @Override

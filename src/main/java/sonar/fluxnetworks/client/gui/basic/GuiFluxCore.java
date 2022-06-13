@@ -2,11 +2,17 @@ package sonar.fluxnetworks.client.gui.basic;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import icyllis.modernui.forge.MuiForgeApi;
+import icyllis.modernui.text.SpannableString;
+import icyllis.modernui.text.Spanned;
+import icyllis.modernui.text.style.ForegroundColorSpan;
+import icyllis.modernui.widget.Toast;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import sonar.fluxnetworks.FluxNetworks;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.EnergyType;
@@ -16,7 +22,9 @@ import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.client.ClientRepository;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -50,6 +58,28 @@ public abstract class GuiFluxCore extends GuiPopupHost {
                 mAccessLevel = member.getAccessLevel();
             }
         }
+        // this called from main thread
+        menu.mOnResultListener = (__, key, code) -> {
+            final String s = switch (code) {
+                case FluxConstants.RESPONSE_REJECT -> FluxTranslate.REJECT.get();
+                case FluxConstants.RESPONSE_NO_OWNER -> FluxTranslate.NO_OWNER.get();
+                case FluxConstants.RESPONSE_NO_ADMIN -> FluxTranslate.NO_ADMIN.get();
+                case FluxConstants.RESPONSE_NO_SPACE -> FluxTranslate.NO_SPACE.get();
+                case FluxConstants.RESPONSE_HAS_CONTROLLER -> FluxTranslate.HAS_CONTROLLER.get();
+                case FluxConstants.RESPONSE_INVALID_USER -> FluxTranslate.INVALID_USER.get();
+                case FluxConstants.RESPONSE_INVALID_PASSWORD -> FluxTranslate.INVALID_PASSWORD.get();
+                case FluxConstants.RESPONSE_BANNED_LOADING -> FluxTranslate.BANNED_LOADING.get();
+                default -> null;
+            };
+            if (s != null) {
+                SpannableString text = new SpannableString(s);
+                text.setSpan(new ForegroundColorSpan(0xFFCF1515), 0, s.length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                MuiForgeApi.postToUiThread(() -> Toast.makeText(text, Toast.LENGTH_SHORT).show());
+            } else if (code < 0) {
+                onResponseAction(key, code);
+            } // else unknown code
+        };
     }
 
     @Override
@@ -111,8 +141,8 @@ public abstract class GuiFluxCore extends GuiPopupHost {
         poseStack.pushPose();
         poseStack.scale(0.75f, 0.75f, 1);
         drawCenteredString(poseStack, font,
-                FluxTranslate.PROMPT_CLICK_ABOVE.format(ChatFormatting.AQUA + prompt + ChatFormatting.RESET),
-                (int) (width / 2f / 0.75f), (int) ((topPos + 26) / 0.75f), 0x808080);
+                FluxTranslate.CLICK_ABOVE.format(ChatFormatting.AQUA + prompt + ChatFormatting.RESET),
+                (int) (width / 2f / 0.75f), (int) ((topPos + 28) / 0.75f), 0x808080);
         poseStack.popPose();
     }
 
@@ -163,17 +193,17 @@ public abstract class GuiFluxCore extends GuiPopupHost {
         list.add(TextFormatting.GRAY.toString() + TextFormatting.ITALIC + FluxUtils.getDisplayPos(flux.getGlobalPos()));
         list.add(TextFormatting.GRAY.toString() + TextFormatting.ITALIC + FluxUtils.getDisplayDim(flux.getGlobalPos()));
         return list;
-    }
+    }*/
 
     public void setConnectedNetwork(int networkID, String password) {
-        if (container.bridge instanceof FluxDeviceEntity) {
-            C2SNetMsg.setNetwork(((FluxDeviceEntity) container.bridge).getPos(), networkID, password);
-        } else if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
+        if (menu.mProvider instanceof TileFluxDevice) {
+            ClientMessages.setTileNetwork(menu.containerId, (TileFluxDevice) menu.mProvider, networkID, password);
+        } /*else if (menu.mProvider instanceof ItemFluxConfigurator.Provider) {
             C2SNetMsg.configuratorNet(networkID, password);
-        } else if (container.bridge instanceof ItemAdminConfigurator.MenuBridge) {
+        } else if (menu.mProvider instanceof ItemAdminConfigurator.Provider) {
             FluxClientCache.adminViewingNetwork = networkID;
-        }
-    }*/
+        }*/
+    }
 
     protected void renderNetwork(PoseStack poseStack, int x, int y) {
         RenderSystem.enableBlend();
@@ -184,6 +214,12 @@ public abstract class GuiFluxCore extends GuiPopupHost {
         font.draw(poseStack, mNetwork.getNetworkName(), x + 4, y + 2, 0xffffff);
     }
 
-    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
+    /**
+     * Called when a non-text response is received (i.e. code is negative).
+     *
+     * @param key  a request key
+     * @param code a response code
+     */
+    protected void onResponseAction(int key, int code) {
     }
 }

@@ -67,7 +67,7 @@ public abstract class FluxStorageHandler extends TransferHandler {
 
     @Override
     public void writePacket(@Nonnull FriendlyByteBuf buffer, byte id) {
-        if (id == FluxConstants.S2C_STORAGE_ENERGY) {
+        if (id == FluxConstants.DEVICE_BUFFER_S2C_STORAGE_ENERGY) {
             buffer.writeLong(mBuffer);
         } else {
             super.writePacket(buffer, id);
@@ -76,7 +76,7 @@ public abstract class FluxStorageHandler extends TransferHandler {
 
     @Override
     public void readPacket(@Nonnull FriendlyByteBuf buffer, byte id) {
-        if (id == FluxConstants.S2C_STORAGE_ENERGY) {
+        if (id == FluxConstants.DEVICE_BUFFER_S2C_STORAGE_ENERGY) {
             mBuffer = buffer.readLong();
         } else {
             super.readPacket(buffer, id);

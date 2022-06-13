@@ -18,12 +18,12 @@ public class SecurityLevelAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return SecurityLevel.size();
+        return SecurityLevel.VALUES.length;
     }
 
     @Override
     public SecurityLevel getItem(int position) {
-        return SecurityLevel.get(position);
+        return SecurityLevel.VALUES[position];
     }
 
     @Override

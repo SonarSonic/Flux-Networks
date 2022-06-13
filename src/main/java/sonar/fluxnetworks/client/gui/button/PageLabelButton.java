@@ -2,7 +2,6 @@ package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Mth;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
 public class PageLabelButton extends GuiButtonCore {
@@ -10,7 +9,7 @@ public class PageLabelButton extends GuiButtonCore {
     public int mPage, mPages, mColor;
     public int mHoveredPage = -1;
 
-    private int mShowTick;
+    private float mShowTick;
 
     public PageLabelButton(Minecraft mc, int x, int y, int width, int height, int page, int pages, int color) {
         super(mc, x, y, width, height);
@@ -25,34 +24,45 @@ public class PageLabelButton extends GuiButtonCore {
             return;
         }
 
-        boolean hovered = isMouseHovered(mouseX, mouseY);
-
-        int dotsWidth = (pages * height) + (pages - 1); // spacing
+        int dotSize = height;
+        int dotsWidth = (pages * dotSize) + (pages - 1); // with padding
         int startX = x + (width - dotsWidth) / 2;
 
+        boolean hovered = isMouseHovered(mouseX, mouseY);
+
         if (hovered) {
-            mHoveredPage = Mth.clamp((mouseX - startX) / height, 0, pages - 1);
+            int pos = (int) Math.floor((mouseX - startX) / (dotSize + 1F));
+            if (pos < 0 || pos >= pages) {
+                mHoveredPage = -1;
+            } else {
+                mHoveredPage = pos;
+            }
         } else {
             mHoveredPage = -1;
         }
 
         for (int i = 0; i < pages; i++) {
             if (i == mPage) {
-                fill(poseStack, startX, y, startX + height, y + height, mColor | 0xf0000000);
+                fill(poseStack, startX, y, startX + dotSize, y + dotSize, mColor | 0xF0000000);
             } else if (i == mHoveredPage) {
-                fill(poseStack, startX, y, startX + height, y + height, 0xf0808080);
+                fill(poseStack, startX, y, startX + dotSize, y + dotSize, 0xC0808080);
             } else {
-                int inset = height / 4;
-                fill(poseStack, startX + inset, y + inset, startX + height - inset, y + height - inset, 0xf0808080);
+                int inset = dotSize / 4;
+                fill(poseStack, startX + inset, y + inset, startX + dotSize - inset, y + dotSize - inset, 0xC0808080);
             }
+            startX += dotSize + 1;
         }
 
-        if (hovered) {
-            drawCenteredString(poseStack, mc.font, (mHoveredPage + 1) + " / " + pages, x + width / 2, y + 6, mColor);
+        if (mHoveredPage != -1) {
+            drawCenteredString(poseStack, mc.font, (mHoveredPage + 1) + " / " + pages,
+                    x + width / 2, y + 6, mColor);
         } else if (mShowTick > 0) {
-            int alpha = Math.min(255, mShowTick * 32);
-            drawCenteredString(poseStack, mc.font, (mPage + 1) + " / " + pages, 88, y + 6, mColor | alpha << 24);
-            mShowTick--;
+            int alpha = (int) Math.min(255, mShowTick * 24);
+            if (alpha > 3) {
+                drawCenteredString(poseStack, mc.font, (mPage + 1) + " / " + pages,
+                        x + width / 2, y + 6, mColor | alpha << 24);
+            }
+            mShowTick -= deltaTicks;
         }
     }
 
@@ -64,6 +74,6 @@ public class PageLabelButton extends GuiButtonCore {
         mPage = page;
         mPages = pages;
         mHoveredPage = -1;
-        mShowTick = 40;
+        mShowTick = 20;
     }
 }

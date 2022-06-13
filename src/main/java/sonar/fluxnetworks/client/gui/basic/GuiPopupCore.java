@@ -2,27 +2,27 @@ package sonar.fluxnetworks.client.gui.basic;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Widget;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GuiPopupCore extends GuiFocusable {
+public abstract class GuiPopupCore<T extends GuiFluxCore> extends GuiFocusable {
 
     protected final List<GuiButtonCore> mButtons = new ArrayList<>();
 
-    public final GuiFluxCore mHost;
-    public final Player mPlayer;
+    public final T mHost;
 
     protected float mAlpha = 0;
 
-    public GuiPopupCore(@Nonnull GuiFluxCore host, Player player) {
-        super(host.getMenu(), player);
+    public GuiPopupCore(@Nonnull T host) {
+        super(host.getMenu(), host.mPlayer);
         mHost = host;
-        mPlayer = player;
     }
 
     public void init() {
@@ -37,6 +37,11 @@ public abstract class GuiPopupCore extends GuiFocusable {
 
     @Override
     public final void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected final void renderBg(@Nonnull PoseStack poseStack, float deltaTicks, int mouseX, int mouseY) {
         throw new UnsupportedOperationException();
     }
 
@@ -61,10 +66,44 @@ public abstract class GuiPopupCore extends GuiFocusable {
 
         // dimmer
         int bgColor = (int) (mAlpha * 64) << 24;
-        fill(poseStack, 0, 0, this.width, this.height, bgColor);
+        fill(poseStack, 0, 0, width, height, bgColor);
 
         for (Widget widget : renderables) {
             widget.render(poseStack, mouseX, mouseY, deltaTicks);
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        for (GuiButtonCore button : mButtons) {
+            if (button.mClickable && button.isMouseHovered(mouseX, mouseY)) {
+                onButtonClicked(button, (int) mouseX, (int) mouseY, mouseButton);
+                return true;
+            }
+        }
+        for (GuiEventListener child : this.children()) {
+            if (child.mouseClicked(mouseX, mouseY, mouseButton)) {
+                setFocused(child);
+                if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+                    setDragging(true);
+                }
+                return true;
+            }
+        }
+        boolean focused = false;
+        for (GuiEventListener child : this.children()) {
+            if (child instanceof EditBox editBox && editBox.isFocused()) {
+                focused = true;
+                break;
+            }
+        }
+        if (!focused) {
+            setFocused(null);
+            return true;
+        }
+        return false;
+    }
+
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
     }
 }

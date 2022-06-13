@@ -33,6 +33,7 @@ public class SimpleButton extends GuiButtonCore {
             color = 0xFF000000 | (int) (r * 0.375) << 16 | (int) (g * 0.375) << 8 | (int) (b * 0.375);
         }
 
+        mc.gameRenderer.lightTexture().turnOnLightLayer();
         // outer stroke
         drawOuterFrame(poseStack, x, y, width, height, color);
 

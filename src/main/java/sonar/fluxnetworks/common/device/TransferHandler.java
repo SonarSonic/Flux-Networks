@@ -82,7 +82,7 @@ public abstract class TransferHandler extends TransferNode {
      */
     @Override
     public long getRequest() {
-        throw new UnsupportedOperationException();
+        return 0;
     }
 
     /**
@@ -270,14 +270,14 @@ public abstract class TransferHandler extends TransferNode {
     }
 
     public void writePacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.S2C_GUI_SYNC) {
+        if (id == FluxConstants.DEVICE_BUFFER_S2C_GUI_SYNC) {
             buf.writeLong(mChange);
             buf.writeLong(mBuffer);
         }
     }
 
     public void readPacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.S2C_GUI_SYNC) {
+        if (id == FluxConstants.DEVICE_BUFFER_S2C_GUI_SYNC) {
             mChange = buf.readLong();
             mBuffer = buf.readLong();
         }

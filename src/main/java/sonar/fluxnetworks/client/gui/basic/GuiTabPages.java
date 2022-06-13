@@ -151,7 +151,6 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     }
 
     protected void sortGrids(SortType sortType) {
-
     }
 
     public enum SortType {

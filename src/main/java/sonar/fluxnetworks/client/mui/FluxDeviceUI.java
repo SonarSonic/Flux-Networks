@@ -55,11 +55,11 @@ public class FluxDeviceUI extends Fragment implements FluxDeviceMenu.OnResultLis
     }
 
     @Override
-    public void onResult(int key, int code) {
+    public void onResult(FluxDeviceMenu menu, int key, int code) {
         DataSet result = new DataSet();
         result.putInt("code", code);
         requireView().post(() -> getChildFragmentManager().setFragmentResult(switch (key) {
-            case FluxConstants.KEY_CREATE_NETWORK -> "create_network";
+            case FluxConstants.REQUEST_CREATE_NETWORK -> "create_network";
             default -> "";
         }, result));
     }

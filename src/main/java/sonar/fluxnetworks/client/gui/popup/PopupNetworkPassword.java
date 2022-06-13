@@ -1,70 +1,71 @@
 package sonar.fluxnetworks.client.gui.popup;
 
-/*
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.client.gui.button.FluxTextWidget;
-import sonar.fluxnetworks.client.gui.button.NormalButton;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiPopupCore;
+import sonar.fluxnetworks.client.gui.button.FluxEditBox;
+import sonar.fluxnetworks.client.gui.button.SimpleButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabSelection;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 
 import javax.annotation.Nonnull;
 
-public class PopupNetworkPassword extends PopupCore<GuiTabSelection> {
+public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
 
-    public FluxTextWidget password;
+    private SimpleButton mCancel;
+    private SimpleButton mConnect;
+    private FluxEditBox mPassword;
 
-    public PopupNetworkPassword(GuiTabSelection host, PlayerEntity player) {
-        super(host, player);
+    public PopupNetworkPassword(GuiTabSelection host) {
+        super(host);
     }
 
     @Override
     public void init() {
         super.init();
-        popButtons.clear();
-        popButtons.add(new NormalButton(FluxTranslate.CANCEL.t(), 24, 86, 48, 12, 11));
-        popButtons.add(new NormalButton(FluxTranslate.CONNECT.t(), 102, 86, 48, 12, 12));
+        mCancel = new SimpleButton(minecraft, leftPos + 24, topPos + 86, 48, 12);
+        mCancel.setText(FluxTranslate.CANCEL.get());
+        mButtons.add(mCancel);
 
-        password = FluxTextWidget.create("", font, 70, 66, 81, 12);
-        password.setTextInvisible();
-        password.setMaxStringLength(16);
+        mConnect = new SimpleButton(minecraft, leftPos + 102, topPos + 86, 48, 12);
+        mConnect.setText(FluxTranslate.CONNECT.get());
+        mConnect.setClickable(false);
+        mButtons.add(mConnect);
 
-        addButton(password);
+        mPassword = FluxEditBox.create("", font, leftPos + 70, topPos + 66, 81, 12);
+        mPassword.setTextInvisible();
+        mPassword.setMaxLength(FluxNetwork.MAX_PASSWORD_LENGTH);
+        mPassword.setResponder(s -> mConnect.setClickable(!s.isEmpty()));
+        addRenderableWidget(mPassword);
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        if (host.selectedNetwork != null) {
-            drawCenterText(matrixStack, FluxTranslate.CONNECTING_TO.t() + " " + host.selectedNetwork.getNetworkName(), 88, 50, 0xffffff);
+    public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+        if (mHost.mConnectingNetwork != null) {
+            drawCenteredString(poseStack, font,
+                    FluxTranslate.CONNECTING_TO.format(mHost.mConnectingNetwork.getNetworkName()),
+                    leftPos + 88, topPos + 50, 0xffffff);
         }
-        drawCenterText(matrixStack, FluxTranslate.NETWORK_PASSWORD.t() + ":", 40, 68, 0xffffff);
-
-        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 110, FluxClientCache.getFeedbackColor());
+        drawCenteredString(poseStack, font, FluxTranslate.NETWORK_PASSWORD.get() + ":",
+                leftPos + 40, topPos + 68, 0xffffff);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (mouseButton == 0) {
-            for (NormalButton button : popButtons) {
-                if (button.isMouseHovered(minecraft, (int) mouseX - guiLeft, (int) mouseY - guiTop)) {
-                    if (button.id == 11) {
-                        host.closePopUp();
-                        return true;
-                    }
-                    if (button.id == 12) {
-                        if (password.getText().length() > 0) {
-                            host.setConnectedNetwork(host.selectedNetwork.getNetworkID(), password.getText());
-                            password.setText("");
-                        }
-                        return true;
-                    }
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+        super.onButtonClicked(button, mouseX, mouseY, mouseButton);
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (button == mCancel) {
+                mHost.closePopup();
+            } else if (button == mConnect) {
+                if (mPassword.getValue().length() > 0) {
+                    mHost.setConnectedNetwork(mHost.mConnectingNetwork.getNetworkID(), mPassword.getValue());
+                    mPassword.setValue("");
                 }
             }
         }
-        return false;
     }
 }
-*/

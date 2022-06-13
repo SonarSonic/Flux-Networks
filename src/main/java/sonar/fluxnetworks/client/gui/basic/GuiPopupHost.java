@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 
 public abstract class GuiPopupHost extends GuiFocusable {
 
-    private GuiPopupCore currentPopup;
+    private GuiPopupCore<?> mCurrentPopup;
 
     protected GuiPopupHost(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         super(menu, player);
@@ -20,44 +20,44 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     //// OPEN POP UP \\\\
 
-    public final void openPopup(GuiPopupCore popup) {
+    public final void openPopup(GuiPopupCore<?> popup) {
         if (popup == null || popup.mHost != this) {
             return;
         }
         closePopup();
-        currentPopup = popup;
-        currentPopup.init(getMinecraft(), width, height);
-        onPopupOpen(currentPopup);
+        mCurrentPopup = popup;
+        mCurrentPopup.init(getMinecraft(), width, height);
+        onPopupOpen(mCurrentPopup);
     }
 
-    protected void onPopupOpen(GuiPopupCore popup) {
+    protected void onPopupOpen(GuiPopupCore<?> popup) {
     }
 
     //// CLOSE POP UP \\\\\
 
     public final void closePopup() {
-        if (currentPopup != null) {
-            onPopupClose(currentPopup);
-            currentPopup.onClose();
-            currentPopup = null;
+        if (mCurrentPopup != null) {
+            onPopupClose(mCurrentPopup);
+            mCurrentPopup.onClose();
+            mCurrentPopup = null;
         }
     }
 
     // used for obtaining info from popups
-    protected void onPopupClose(GuiPopupCore popup) {
+    protected void onPopupClose(GuiPopupCore<?> popup) {
     }
 
     @Nullable
-    public final GuiPopupCore getCurrentPopup() {
-        return currentPopup;
+    public final GuiPopupCore<?> getCurrentPopup() {
+        return mCurrentPopup;
     }
 
     //// mouse moved \\\\
 
     @Override
     public final void mouseMoved(double mouseX, double mouseY) {
-        if (currentPopup != null) {
-            currentPopup.mouseMoved(mouseX, mouseY);
+        if (mCurrentPopup != null) {
+            mCurrentPopup.mouseMoved(mouseX, mouseY);
             return;
         }
         if (onMouseMoved(mouseX, mouseY)) {
@@ -74,8 +74,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     @Override
     public final boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (currentPopup != null) {
-            return currentPopup.mouseClicked(mouseX, mouseY, mouseButton);
+        if (mCurrentPopup != null) {
+            return mCurrentPopup.mouseClicked(mouseX, mouseY, mouseButton);
         }
         if (onMouseClicked(mouseX, mouseY, mouseButton)) {
             return true;
@@ -111,8 +111,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     @Override
     public final boolean mouseReleased(double mouseX, double mouseY, int mouseButton) {
-        if (currentPopup != null) {
-            return currentPopup.mouseReleased(mouseX, mouseY, mouseButton);
+        if (mCurrentPopup != null) {
+            return mCurrentPopup.mouseReleased(mouseX, mouseY, mouseButton);
         }
         return onMouseReleased(mouseX, mouseY, mouseButton) ||
                 super.mouseReleased(mouseX, mouseY, mouseButton);
@@ -126,8 +126,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     @Override
     public final boolean mouseDragged(double mouseX, double mouseY, int mouseButton, double deltaX, double deltaY) {
-        if (currentPopup != null) {
-            return currentPopup.mouseDragged(mouseX, mouseY, mouseButton, deltaX, deltaY);
+        if (mCurrentPopup != null) {
+            return mCurrentPopup.mouseDragged(mouseX, mouseY, mouseButton, deltaX, deltaY);
         }
         return onMouseDragged(mouseX, mouseY, mouseButton, deltaX, mouseY) ||
                 super.mouseDragged(mouseX, mouseY, mouseButton, deltaX, mouseY);
@@ -141,8 +141,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     @Override
     public final boolean mouseScrolled(double mouseX, double mouseY, double vScroll) {
-        if (currentPopup != null) {
-            return currentPopup.mouseScrolled(mouseX, mouseY, vScroll);
+        if (mCurrentPopup != null) {
+            return mCurrentPopup.mouseScrolled(mouseX, mouseY, vScroll);
         }
         return onMouseScrolled(mouseX, mouseY, vScroll) ||
                 super.mouseScrolled(mouseX, mouseY, vScroll);
@@ -156,8 +156,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     @Override
     public final boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (currentPopup != null) {
-            return currentPopup.keyPressed(keyCode, scanCode, modifiers);
+        if (mCurrentPopup != null) {
+            return mCurrentPopup.keyPressed(keyCode, scanCode, modifiers);
         }
         return onKeyPressed(keyCode, scanCode, modifiers) ||
                 super.keyPressed(keyCode, scanCode, modifiers);
@@ -171,8 +171,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     @Override
     public final boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if (currentPopup != null) {
-            return currentPopup.keyReleased(keyCode, scanCode, modifiers);
+        if (mCurrentPopup != null) {
+            return mCurrentPopup.keyReleased(keyCode, scanCode, modifiers);
         }
         return onKeyReleased(keyCode, scanCode, modifiers) ||
                 super.keyReleased(keyCode, scanCode, modifiers);
@@ -186,8 +186,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     @Override
     public final boolean charTyped(char c, int modifiers) {
-        if (currentPopup != null) {
-            return currentPopup.charTyped(c, modifiers);
+        if (mCurrentPopup != null) {
+            return mCurrentPopup.charTyped(c, modifiers);
         }
         return onCharTypes(c, modifiers) ||
                 super.charTyped(c, modifiers);
@@ -202,8 +202,8 @@ public abstract class GuiPopupHost extends GuiFocusable {
     @Override
     public void init() {
         super.init();
-        if (currentPopup != null) {
-            currentPopup.init(getMinecraft(), width, height);
+        if (mCurrentPopup != null) {
+            mCurrentPopup.init(getMinecraft(), width, height);
         }
     }
 
@@ -218,12 +218,12 @@ public abstract class GuiPopupHost extends GuiFocusable {
         super.render(poseStack, mouseX, mouseY, deltaTicks);
         drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
-        if (currentPopup != null) {
+        if (mCurrentPopup != null) {
             poseStack.pushPose();
             poseStack.translate(0, 0, 450);
-            currentPopup.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+            mCurrentPopup.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
             poseStack.translate(0, 0, 100);
-            currentPopup.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+            mCurrentPopup.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
             poseStack.popPose();
         }
     }
@@ -236,5 +236,13 @@ public abstract class GuiPopupHost extends GuiFocusable {
     protected final void renderBg(@Nonnull PoseStack poseStack, float deltaTicks, int mouseX, int mouseY) {
         renderBackground(poseStack);
         drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (mCurrentPopup != null) {
+            mCurrentPopup.containerTick();
+        }
     }
 }

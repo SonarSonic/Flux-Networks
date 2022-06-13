@@ -12,15 +12,11 @@ public enum SecurityLevel {
     /**
      * Prefers this without creating new array objects.
      */
-    private static final SecurityLevel[] VALUES = values();
+    public static final SecurityLevel[] VALUES = values();
 
     @Nonnull
-    public static SecurityLevel get(int id) {
+    public static SecurityLevel fromKey(int id) {
         return VALUES[id];
-    }
-
-    public static int size() {
-        return VALUES.length;
     }
 
     private final String mTranslateKey;
@@ -29,7 +25,7 @@ public enum SecurityLevel {
         mTranslateKey = translateKey;
     }
 
-    public byte index() {
+    public byte getKey() {
         return (byte) ordinal();
     }
 

@@ -22,7 +22,7 @@ public class ServerFluxNetwork extends FluxNetwork {
     private static final Comparator<TileFluxDevice> sDescendingOrder =
             (a, b) -> Integer.compare(b.getTransferNode().getPriority(), a.getTransferNode().getPriority());
 
-    private static final Consumer<TileFluxDevice> sDisconnect = d -> d.connect(FluxNetwork.WILDCARD);
+    private static final Consumer<TileFluxDevice> sDisconnect = d -> d.connect(FluxNetwork.INVALID);
 
     private static final Class<?>[] sLogicalTypes =
             {IFluxDevice.class, IFluxPlug.class, IFluxPoint.class, IFluxStorage.class, IFluxController.class};
@@ -182,6 +182,14 @@ public class ServerFluxNetwork extends FluxNetwork {
             return AccessLevel.SUPER_ADMIN;
         }
         return super.getPlayerAccess(player);
+    }
+
+    @Override
+    public boolean canPlayerAccess(@Nonnull Player player, @Nonnull String password) {
+        if (super.canPlayerAccess(player, password)) {
+            return true;
+        }
+        return !password.isEmpty() && password.equals(mPassword);
     }
 
     @Override

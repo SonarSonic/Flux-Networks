@@ -32,22 +32,22 @@ import static sonar.fluxnetworks.register.Registration.sNetwork;
 @ParametersAreNonnullByDefault
 public class ClientMessages {
 
-    public static void sendDeviceBuffer(TileFluxDevice device, byte id) {
-        assert id > 0;
+    public static void deviceBuffer(TileFluxDevice device, byte type) {
+        assert type > 0; // C2S positive
         var buf = NetworkHandler.buffer(Messages.C2S_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
-        buf.writeByte(id);
-        device.writePacket(buf, id);
+        buf.writeByte(type);
+        device.writePacket(buf, type);
         sNetwork.sendToServer(buf);
     }
 
-    public static void sendSuperAdmin(boolean activate) {
-        FriendlyByteBuf buf = NetworkHandler.buffer(Messages.C2S_SUPER_ADMIN);
-        buf.writeBoolean(activate);
+    public static void superAdmin(boolean enable) {
+        var buf = NetworkHandler.buffer(Messages.C2S_SUPER_ADMIN);
+        buf.writeBoolean(enable);
         sNetwork.sendToServer(buf);
     }
 
-    public static void sendEditDevice(TileFluxDevice device, CompoundTag tag) {
+    public static void editDevice(TileFluxDevice device, CompoundTag tag) {
         var buf = NetworkHandler.buffer(Messages.C2S_EDIT_DEVICE);
         buf.writeVarInt(FluxConstants.INVALID_NETWORK_ID);
         buf.writeBlockPos(device.getBlockPos());
@@ -55,7 +55,7 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
-    public static void sendEditDevice(int networkId, List<GlobalPos> list, CompoundTag tag) {
+    public static void editDevice(int networkId, List<GlobalPos> list, CompoundTag tag) {
         if (list.isEmpty()) return;
         var buf = NetworkHandler.buffer(Messages.C2S_EDIT_DEVICE);
         buf.writeVarInt(networkId);
@@ -67,16 +67,26 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
-    public static void sendCreateNetwork(int token, String name, int color,
-                                         SecurityLevel level, String password) {
-        FriendlyByteBuf buf = NetworkHandler.buffer(Messages.C2S_CREATE_NETWORK);
+    public static void createNetwork(int token, String name, int color,
+                                     SecurityLevel security, String password) {
+        var buf = NetworkHandler.buffer(Messages.C2S_CREATE_NETWORK);
         buf.writeByte(token);
         buf.writeUtf(name);
         buf.writeInt(color);
-        buf.writeByte(level.index());
-        if (level.isEncrypted()) {
+        buf.writeByte(security.getKey());
+        if (security.isEncrypted()) {
             buf.writeUtf(password);
         }
+        sNetwork.sendToServer(buf);
+    }
+
+    // set (connect to) network for a flux tile entity
+    public static void setTileNetwork(int token, TileFluxDevice device, int networkID, String password) {
+        var buf = NetworkHandler.buffer(Messages.C2S_SET_TILE_NETWORK);
+        buf.writeByte(token);
+        buf.writeBlockPos(device.getBlockPos());
+        buf.writeVarInt(networkID);
+        buf.writeUtf(password, 256);
         sNetwork.sendToServer(buf);
     }
 
@@ -84,7 +94,7 @@ public class ClientMessages {
         Minecraft minecraft = Minecraft.getInstance();
         switch (index) {
             case Messages.S2C_DEVICE_BUFFER -> onDeviceBuffer(payload, player, minecraft);
-            case Messages.S2C_RESULT -> onResult(payload, player, minecraft);
+            case Messages.S2C_RESPONSE -> onResponse(payload, player, minecraft);
             case Messages.S2C_SUPER_ADMIN -> onSuperAdmin(payload, player, minecraft);
             case Messages.S2C_NETWORK_UPDATE -> ClientRepository.getInstance().onNetworkUpdate(payload);
         }
@@ -105,11 +115,11 @@ public class ClientMessages {
         throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
     }
 
-    private static void onResult(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
-                                 BlockableEventLoop<?> looper) {
+    private static void onResponse(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
+                                   BlockableEventLoop<?> looper) {
         final int token = payload.readByte();
         final int key = payload.readShort();
-        final int code = payload.readUnsignedByte();
+        final int code = payload.readByte();
         looper.execute(() -> {
             LocalPlayer p = player.get();
             if (p == null) {
@@ -118,7 +128,7 @@ public class ClientMessages {
             if (p.containerMenu.containerId == token &&
                     p.containerMenu instanceof FluxDeviceMenu m &&
                     m.mOnResultListener != null) {
-                m.mOnResultListener.onResult(key, code);
+                m.mOnResultListener.onResult(m, key, code);
             }
         });
     }

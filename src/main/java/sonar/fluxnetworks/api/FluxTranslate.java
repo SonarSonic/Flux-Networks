@@ -38,9 +38,6 @@ public class FluxTranslate {
             NETWORK_COLOR = new FluxTranslate("gui.fluxnetworks.network.color");
 
     public static final FluxTranslate
-            PROMPT_CLICK_ABOVE = new FluxTranslate("gui.fluxnetworks.prompt.clickabove");
-
-    public static final FluxTranslate
             ERROR_NO_SELECTED = new FluxTranslate("gui.fluxnetworks.error.noselected"),
             ERROR_NO_NETWORK = new FluxTranslate("gui.fluxnetworks.error.nonetwork");
 
@@ -85,6 +82,7 @@ public class FluxTranslate {
             CANCEL_MEMBERSHIP = new FluxTranslate("gui.fluxnetworks.label.cancelmembership"),
             YOU = new FluxTranslate("gui.fluxnetworks.label.you"),
             DETAILED_VIEW = new FluxTranslate("gui.fluxnetworks.label.detailedview"),
+            CLICK_ABOVE = new FluxTranslate("gui.fluxnetworks.label.clickabove"),
 
     SORTING_SMART = new FluxTranslate("gui.fluxnetworks.label.sort.smart"),
             SORTING_ID = new FluxTranslate("gui.fluxnetworks.label.sort.id"),
@@ -113,17 +111,17 @@ public class FluxTranslate {
 
     REMOVAL_DENIED = new FluxTranslate("gui.fluxnetworks.denied.removal"),
             SA_ON = new FluxTranslate("gui.fluxnetworks.superadmin.on"),
-            SA_OFF = new FluxTranslate("gui.fluxnetworks.superadmin.off"),
+            SA_OFF = new FluxTranslate("gui.fluxnetworks.superadmin.off");
 
-    REJECT = new FluxTranslate("gui.fluxnetworks.feedback.reject"),
-            NO_OWNER = new FluxTranslate("gui.fluxnetworks.feedback.noowner"),
-            NO_ADMIN = new FluxTranslate("gui.fluxnetworks.feedback.noadmin"),
-            NO_SPACE = new FluxTranslate("gui.fluxnetworks.feedback.nospace"),
-            HAS_CONTROLLER = new FluxTranslate("gui.fluxnetworks.feedback.hascontroller"),
-
-    INVALID_USER = new FluxTranslate("gui.fluxnetworks.feedback.invaliduser"),
-            ILLEGAL_PASSWORD = new FluxTranslate("gui.fluxnetworks.feedback.illegalpassword"),
-            BANNED_LOADING = new FluxTranslate("gui.fluxnetworks.feedback.bannedloading"),
+    public static final FluxTranslate
+            REJECT = new FluxTranslate("gui.fluxnetworks.response.reject"),
+            NO_OWNER = new FluxTranslate("gui.fluxnetworks.response.noowner"),
+            NO_ADMIN = new FluxTranslate("gui.fluxnetworks.response.noadmin"),
+            NO_SPACE = new FluxTranslate("gui.fluxnetworks.response.nospace"),
+            HAS_CONTROLLER = new FluxTranslate("gui.fluxnetworks.response.hascontroller"),
+            INVALID_USER = new FluxTranslate("gui.fluxnetworks.response.invaliduser"),
+            INVALID_PASSWORD = new FluxTranslate("gui.fluxnetworks.response.invalidpassword"),
+            BANNED_LOADING = new FluxTranslate("gui.fluxnetworks.response.bannedloading"),
 
     OWNER = new FluxTranslate("gui.fluxnetworks.access.owner"),
             ADMIN = new FluxTranslate("gui.fluxnetworks.access.admin"),

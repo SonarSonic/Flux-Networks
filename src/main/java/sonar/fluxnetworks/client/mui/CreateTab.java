@@ -74,7 +74,7 @@ public class CreateTab extends Fragment {
         super.onCreate(savedInstanceState);
         getParentFragmentManager().setFragmentResultListener("create_network", this, (requestKey, result) -> {
             int code = result.getInt("code");
-            if (code == FluxConstants.RES_REJECT) {
+            if (code == FluxConstants.RESPONSE_REJECT) {
                 Toast.makeText("Your request was rejected by the server", Toast.LENGTH_SHORT)
                         .show();
             }
@@ -161,7 +161,7 @@ public class CreateTab extends Fragment {
                 spinner.setGravity(Gravity.END);
                 spinner.setPadding(dp(8), dp2, dp(8), dp2);
                 spinner.setAdapter(new SecurityLevelAdapter());
-                spinner.setSelection(mSecurityLevel.index());
+                spinner.setSelection(mSecurityLevel.getKey());
                 spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -245,7 +245,7 @@ public class CreateTab extends Fragment {
             v.setTextColor(FluxDesign.TEXT_COLOR);
             v.setBackground(mCreateButtonBg = new RoundRectDrawable());
             v.setPadding(dp(8), dp(4), dp(8), dp(4));
-            v.setOnClickListener(__ -> ClientMessages.sendCreateNetwork(
+            v.setOnClickListener(__ -> ClientMessages.createNetwork(
                     requireArguments().getInt("token"),
                     mName.getText().toString(),
                     mSelectedColor,

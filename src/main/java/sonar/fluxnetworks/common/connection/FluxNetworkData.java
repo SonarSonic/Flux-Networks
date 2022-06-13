@@ -83,7 +83,7 @@ public final class FluxNetworkData extends SavedData {
 
     @Nonnull
     public static FluxNetwork getNetwork(int id) {
-        return getInstance().mNetworks.getOrDefault(id, FluxNetwork.WILDCARD);
+        return getInstance().mNetworks.getOrDefault(id, FluxNetwork.INVALID);
     }
 
     @Nonnull

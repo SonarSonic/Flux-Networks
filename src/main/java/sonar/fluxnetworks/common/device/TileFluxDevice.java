@@ -75,7 +75,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     // server only
     @Nonnull
-    protected FluxNetwork mNetwork = FluxNetwork.WILDCARD;
+    protected FluxNetwork mNetwork = FluxNetwork.INVALID;
 
     protected TileFluxDevice(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -116,7 +116,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             sendBlockUpdate();
             mFlags &= ~FLAG_SETTING_CHANGED;
         } else if (mPlayerUsing != null) {
-            Messages.getDeviceBuffer(this, FluxConstants.S2C_GUI_SYNC).sendToPlayer(mPlayerUsing);
+            Messages.deviceBuffer(this, FluxConstants.DEVICE_BUFFER_S2C_GUI_SYNC).sendToPlayer(mPlayerUsing);
         }
     }
 
@@ -138,7 +138,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
             Consumer<FriendlyByteBuf> writer = buf -> {
-                buf.writeBoolean(true);
+                buf.writeBoolean(true); // tell it's BlockEntity rather than Configurator
                 buf.writeBlockPos(worldPosition);
                 CompoundTag tag = new CompoundTag();
                 writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
@@ -210,7 +210,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         // Client side, read block update data
         readCustomTag(packet.getTag(), FluxConstants.TYPE_TILE_UPDATE);
         // update chunk render whether state changed or not
-        //level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
     }
 
     @Nonnull

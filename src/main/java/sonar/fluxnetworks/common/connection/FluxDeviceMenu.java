@@ -44,6 +44,6 @@ public class FluxDeviceMenu extends AbstractContainerMenu {
     @FunctionalInterface
     public interface OnResultListener {
 
-        void onResult(int key, int code);
+        void onResult(FluxDeviceMenu menu, int key, int code);
     }
 }

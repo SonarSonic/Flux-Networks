@@ -61,7 +61,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         mCustomName.setResponder(string -> {
             CompoundTag tag = new CompoundTag();
             tag.putString(FluxConstants.CUSTOM_NAME, mCustomName.getValue());
-            ClientMessages.sendEditDevice(getDevice(), tag);
+            ClientMessages.editDevice(getDevice(), tag);
         });
         addRenderableWidget(mCustomName);
 
@@ -77,7 +77,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                     TransferHandler.PRI_USER_MIN, TransferHandler.PRI_USER_MAX);
             CompoundTag tag = new CompoundTag();
             tag.putInt(FluxConstants.PRIORITY, priority);
-            ClientMessages.sendEditDevice(getDevice(), tag);
+            ClientMessages.editDevice(getDevice(), tag);
         });
         addRenderableWidget(mPriority);
 
@@ -92,7 +92,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
             long limit = mLimit.getValidLong();
             CompoundTag tag = new CompoundTag();
             tag.putLong(FluxConstants.LIMIT, limit);
-            ClientMessages.sendEditDevice(getDevice(), tag);
+            ClientMessages.editDevice(getDevice(), tag);
         });
         addRenderableWidget(mLimit);
 
@@ -137,11 +137,11 @@ public class GuiFluxDeviceHome extends GuiTabCore {
             if (switchButton == mSurgeMode) {
                 CompoundTag tag = new CompoundTag();
                 tag.putBoolean(FluxConstants.SURGE_MODE, mSurgeMode.isChecked());
-                ClientMessages.sendEditDevice(getDevice(), tag);
+                ClientMessages.editDevice(getDevice(), tag);
             } else if (switchButton == mDisableLimit) {
                 CompoundTag tag = new CompoundTag();
                 tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit.isChecked());
-                ClientMessages.sendEditDevice(getDevice(), tag);
+                ClientMessages.editDevice(getDevice(), tag);
             }/* else if (switchButton == mChunkLoading) {
                 CompoundTag tag = new CompoundTag();
                 tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit.isChecked());
