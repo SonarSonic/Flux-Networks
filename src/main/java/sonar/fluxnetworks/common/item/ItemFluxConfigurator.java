@@ -18,6 +18,7 @@ import sonar.fluxnetworks.api.device.IFluxProvider;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.ClientRepository;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -68,17 +69,23 @@ public class ItemFluxConfigurator extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        return super.use(pLevel, pPlayer, pUsedHand);
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player,
+                                                  @Nonnull InteractionHand hand) {
+        return super.use(level, player, hand);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip,
+                                @Nonnull TooltipFlag flag) {
         CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
-            tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.get() + ": " + ChatFormatting.WHITE +
-                    ClientRepository.getDisplayName(tag)));
+            final FluxNetwork network = ClientRepository.getNetwork(tag.getInt(FluxConstants.NETWORK_ID));
+            if (network.isValid()) {
+                tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.get() + ": " + ChatFormatting.WHITE +
+                        network.getNetworkName()));
+            }
         }
     }
 

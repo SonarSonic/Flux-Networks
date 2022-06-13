@@ -8,7 +8,7 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.ClientRepository;
-import sonar.fluxnetworks.client.gui.GuiTabType;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.popup.PopupNetworkPassword;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
@@ -36,8 +36,8 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     }
 
     @Override
-    public GuiTabType getCurrentTab() {
-        return GuiTabType.TAB_SELECTION;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_SELECTION;
     }
 
     @Override
@@ -107,6 +107,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
     @Override
     public void renderElementTooltip(PoseStack poseStack, FluxNetwork element, int mouseX, int mouseY) {
+        //TODO
     }
 
     @Override
@@ -136,7 +137,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
         if (key == FluxConstants.REQUEST_SET_NETWORK) {
-            if (code == FluxConstants.RESPONSE_PASSWORD_REQUIRED) {
+            if (code == FluxConstants.RESPONSE_REQUIRE_PASSWORD) {
                 openPopup(new PopupNetworkPassword(this));
             } else if (code == FluxConstants.RESPONSE_SUCCESS) {
                 closePopup();

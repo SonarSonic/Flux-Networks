@@ -41,7 +41,7 @@ public class SecurityLevelAdapter extends BaseAdapter {
             view = (TextView) convertView;
         }
 
-        view.setText(getItem(position).getText());
+        view.setText(getItem(position).getName());
 
         view.setTextSize(16);
         view.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);

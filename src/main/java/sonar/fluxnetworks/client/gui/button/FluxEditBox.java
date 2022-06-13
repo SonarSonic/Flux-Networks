@@ -157,7 +157,7 @@ public class FluxEditBox extends EditBox {
 
     @Nonnull
     public static FormattedCharSequence getInvisibleText(String string, int cursorPos) {
-        return FormattedCharSequence.forward("*".repeat(string.length()), Style.EMPTY);
+        return FormattedCharSequence.forward("\u2022".repeat(string.length()), Style.EMPTY);
     }
 
     public FluxEditBox setDigitsOnly() {

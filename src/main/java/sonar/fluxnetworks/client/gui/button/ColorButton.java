@@ -6,12 +6,12 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 
 public class ColorButton extends GuiButtonCore {
 
-    private final int mColor;
+    public int mColor;
     private boolean mSelected;
 
     public ColorButton(Minecraft mc, int x, int y, int color) {
         super(mc, x, y, 12, 12);
-        this.mColor = color;
+        mColor = color;
     }
 
     @Override

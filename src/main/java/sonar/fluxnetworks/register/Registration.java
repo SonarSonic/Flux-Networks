@@ -171,7 +171,7 @@ public class Registration {
                 if (inventory.player.getLevel().getBlockEntity(pos) instanceof TileFluxDevice device) {
                     CompoundTag tag = buffer.readNbt();
                     if (tag != null) {
-                        device.readCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+                        device.readCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
                     }
                     return new FluxDeviceMenu(containerId, inventory, device);
                 }

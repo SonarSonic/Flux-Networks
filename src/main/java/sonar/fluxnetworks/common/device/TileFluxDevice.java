@@ -116,7 +116,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             sendBlockUpdate();
             mFlags &= ~FLAG_SETTING_CHANGED;
         } else if (mPlayerUsing != null) {
-            Messages.deviceBuffer(this, FluxConstants.DEVICE_BUFFER_S2C_GUI_SYNC).sendToPlayer(mPlayerUsing);
+            Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC).sendToPlayer(mPlayerUsing);
         }
     }
 
@@ -141,7 +141,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 buf.writeBoolean(true); // tell it's BlockEntity rather than Configurator
                 buf.writeBlockPos(worldPosition);
                 CompoundTag tag = new CompoundTag();
-                writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+                writeCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
                 buf.writeNbt(tag);
             };
             if (FluxConfig.enableGuiDebug) {
@@ -208,7 +208,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     @Override
     public final void onDataPacket(Connection net, ClientboundBlockEntityDataPacket packet) {
         // Client side, read block update data
-        readCustomTag(packet.getTag(), FluxConstants.TYPE_TILE_UPDATE);
+        readCustomTag(packet.getTag(), FluxConstants.NBT_TILE_UPDATE);
         // update chunk render whether state changed or not
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
     }
@@ -218,7 +218,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     public final CompoundTag getUpdateTag() {
         // Server side, read NBT when updating chunk data
         CompoundTag tag = super.getUpdateTag();
-        writeCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+        writeCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
         return tag;
     }
 
@@ -226,19 +226,19 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     public final void handleUpdateTag(CompoundTag tag) {
         // Client side, read NBT when updating chunk data
         super.load(tag);
-        readCustomTag(tag, FluxConstants.TYPE_TILE_UPDATE);
+        readCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
     }
 
     @Override
     protected final void saveAdditional(@Nonnull CompoundTag tag) {
         super.saveAdditional(tag);
-        writeCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
+        writeCustomTag(tag, FluxConstants.NBT_SAVE_ALL);
     }
 
     @Override
     public final void load(@Nonnull CompoundTag tag) {
         super.load(tag);
-        readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
+        readCustomTag(tag, FluxConstants.NBT_SAVE_ALL);
     }
 
     @Override
@@ -254,13 +254,13 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         tag.putString(FluxConstants.CUSTOM_NAME, mCustomName);
         getTransferHandler().writeCustomTag(tag, type);
         switch (type) {
-            case FluxConstants.TYPE_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
-            case FluxConstants.TYPE_TILE_UPDATE -> {
+            case FluxConstants.NBT_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+            case FluxConstants.NBT_TILE_UPDATE -> {
                 tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
                 tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
                 tag.putInt(FluxConstants.FLAGS, mFlags);
             }
-            case FluxConstants.TYPE_PHANTOM_UPDATE -> {
+            case FluxConstants.NBT_PHANTOM_UPDATE -> {
                 // note the key may conflict when writing into the root tag
                 FluxUtils.writeGlobalPos(tag, getGlobalPos());
                 tag.putByte(FluxConstants.DEVICE_TYPE, getDeviceType().getId());
@@ -274,7 +274,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     @Override
     public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_TILE_SETTING) {
+        if (type == FluxConstants.NBT_TILE_SETTING) {
             assert !level.isClientSide;
             if (tag.isEmpty()) {
                 return;
@@ -296,16 +296,16 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
         getTransferHandler().readCustomTag(tag, type);
         switch (type) {
-            case FluxConstants.TYPE_SAVE_ALL -> mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
-            case FluxConstants.TYPE_TILE_UPDATE -> {
+            case FluxConstants.NBT_SAVE_ALL -> mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
+            case FluxConstants.NBT_TILE_UPDATE -> {
                 mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
                 mClientColor = FluxUtils.getModifiedColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.1f);
                 mFlags = tag.getInt(FluxConstants.FLAGS);
             }
-            case FluxConstants.TYPE_TILE_DROP -> {
+            case FluxConstants.NBT_TILE_DROP -> {
                 if (level.isClientSide) {
-                    mClientColor =
-                            FluxUtils.getModifiedColor(ClientRepository.getNetwork(mNetworkID).getNetworkColor(), 1.1f);
+                    mClientColor = FluxUtils.getModifiedColor(
+                            ClientRepository.getNetwork(mNetworkID).getNetworkColor(), 1.1f);
                 }
             }
         }

@@ -83,6 +83,7 @@ public class FluxTranslate {
             YOU = new FluxTranslate("gui.fluxnetworks.label.you"),
             DETAILED_VIEW = new FluxTranslate("gui.fluxnetworks.label.detailedview"),
             CLICK_ABOVE = new FluxTranslate("gui.fluxnetworks.label.clickabove"),
+            PLAYERS_NETWORK = new FluxTranslate("gui.fluxnetworks.label.playersnetwork"),
 
     SORTING_SMART = new FluxTranslate("gui.fluxnetworks.label.sort.smart"),
             SORTING_ID = new FluxTranslate("gui.fluxnetworks.label.sort.id"),

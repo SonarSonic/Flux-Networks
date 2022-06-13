@@ -36,8 +36,8 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     }
 
     @Override
-    public GuiTabType getCurrentTab() {
-        return GuiTabType.TAB_HOME;
+    public EnumNavigationTab getNavigationTab() {
+        return EnumNavigationTab.TAB_HOME;
     }
 
     public TileFluxDevice getDevice() {
@@ -56,7 +56,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         mCustomName = FluxEditBox.create(FluxTranslate.NAME.get() + ": ", font,
                         leftPos + 16, topPos + 28, 144, 12)
                 .setOutlineColor(color);
-        mCustomName.setMaxLength(24);
+        mCustomName.setMaxLength(TileFluxDevice.MAX_CUSTOM_NAME_LENGTH);
         mCustomName.setValue(getDevice().getCustomName());
         mCustomName.setResponder(string -> {
             CompoundTag tag = new CompoundTag();
@@ -111,7 +111,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
-        renderNetwork(poseStack, leftPos + 20, topPos + 8);
+        renderNetwork(poseStack, mNetwork.getNetworkName(), mNetwork.getNetworkColor(), leftPos + 20, topPos + 8);
         renderTransfer(poseStack, getDevice(), leftPos + 30, topPos + 90);
 
         if (mCustomName.getValue().isEmpty()) {
@@ -125,7 +125,8 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos, mNetwork.getNetworkColor());
 
         if (mChunkLoading != null) {
-            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos, mNetwork.getNetworkColor());
+            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos,
+                    mNetwork.getNetworkColor());
         }
     }
 

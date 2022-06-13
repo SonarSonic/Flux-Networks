@@ -25,11 +25,11 @@ public enum AccessLevel {
     }
 
     @Nonnull
-    public static AccessLevel fromId(byte id) {
-        return VALUES[id];
+    public static AccessLevel fromKey(byte key) {
+        return VALUES[key];
     }
 
-    public byte getId() {
+    public byte getKey() {
         return (byte) ordinal();
     }
 

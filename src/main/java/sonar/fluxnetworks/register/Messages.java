@@ -83,7 +83,7 @@ public class Messages {
 
     /**
      * @param device the block entity created by server
-     * @param type   for example, {@link FluxConstants#DEVICE_BUFFER_S2C_GUI_SYNC}
+     * @param type   for example, {@link FluxConstants#DEVICE_S2C_GUI_SYNC}
      * @return dispatcher
      */
     @Nonnull
@@ -220,7 +220,7 @@ public class Messages {
                 try {
                     if (p.level.getBlockEntity(pos) instanceof TileFluxDevice e) {
                         if (e.canPlayerAccess(p)) {
-                            e.readCustomTag(tag, FluxConstants.TYPE_TILE_SETTING);
+                            e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTING);
                         }
                     }
                 } catch (RuntimeException e) {
@@ -248,7 +248,7 @@ public class Messages {
                         for (GlobalPos pos : list) {
                             IFluxDevice f = network.getConnectionByPos(pos);
                             if (f instanceof TileFluxDevice e) {
-                                e.readCustomTag(tag, FluxConstants.TYPE_TILE_SETTING);
+                                e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTING);
                             }
                         }
                     }
@@ -328,7 +328,7 @@ public class Messages {
                     return;
                 }
                 if (password.isEmpty()) {
-                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_PASSWORD_REQUIRED, p);
+                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_REQUIRE_PASSWORD, p);
                 } else {
                     response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_INVALID_PASSWORD, p);
                 }

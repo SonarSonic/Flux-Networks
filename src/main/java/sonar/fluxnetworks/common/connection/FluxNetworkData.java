@@ -126,7 +126,7 @@ public final class FluxNetworkData extends SavedData {
         final ServerFluxNetwork network = new ServerFluxNetwork(mUniqueID, name, color, security, creator, password);
 
         mNetworks.put(network.getNetworkID(), network);
-        Messages.getNetworkUpdate(network, FluxConstants.TYPE_NET_BASIC)
+        Messages.getNetworkUpdate(network, FluxConstants.NBT_NET_BASIC)
                 .sendToAll();
         return network;
     }
@@ -150,7 +150,7 @@ public final class FluxNetworkData extends SavedData {
         ListTag list = compound.getList(NETWORKS, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             ServerFluxNetwork network = new ServerFluxNetwork();
-            network.readCustomTag(list.getCompound(i), FluxConstants.TYPE_SAVE_ALL);
+            network.readCustomTag(list.getCompound(i), FluxConstants.NBT_SAVE_ALL);
             if (network.getNetworkID() > 0) {
                 mNetworks.put(network.getNetworkID(), network);
             }
@@ -179,7 +179,7 @@ public final class FluxNetworkData extends SavedData {
         ListTag list = new ListTag();
         for (FluxNetwork network : mNetworks.values()) {
             CompoundTag tag = new CompoundTag();
-            network.writeCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
+            network.writeCustomTag(tag, FluxConstants.NBT_SAVE_ALL);
             list.add(tag);
         }
         compound.put(NETWORKS, list);

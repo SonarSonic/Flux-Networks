@@ -34,7 +34,7 @@ public enum SecurityLevel {
     }
 
     @Nonnull
-    public String getText() {
+    public String getName() {
         return Language.getInstance().getOrDefault(mTranslateKey);
     }
 }

@@ -43,7 +43,8 @@ public class FluxDeviceItem extends BlockItem {
         if (tag != null) {
             if (tag.contains(FluxConstants.NETWORK_ID)) {
                 tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
-                        ChatFormatting.RESET + ClientRepository.getDisplayName(tag)));
+                        ChatFormatting.RESET + ClientRepository.getNetwork(
+                        tag.getInt(FluxConstants.NETWORK_ID)).getNetworkName()));
             }
 
             if (tag.contains(FluxConstants.LIMIT)) {

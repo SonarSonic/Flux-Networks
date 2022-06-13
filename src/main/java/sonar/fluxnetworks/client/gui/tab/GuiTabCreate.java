@@ -1,31 +1,31 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-/*
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.gui.EnumNetworkColor;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.network.SecurityLevel;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.api.gui.EnumNetworkColor;
+import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
-import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.test.C2SNetMsg;
+import sonar.fluxnetworks.client.gui.button.SimpleButton;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 
 public class GuiTabCreate extends GuiTabEditAbstract {
 
-    public NormalButton apply, create;
+    public SimpleButton mCreate;
 
-    public GuiTabCreate(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
+    public GuiTabCreate(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        super(menu, player);
         mSecurityLevel = SecurityLevel.ENCRYPTED;
     }
 
+    @Override
     public EnumNavigationTab getNavigationTab() {
         return EnumNavigationTab.TAB_CREATE;
     }
@@ -33,51 +33,62 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     public void init() {
         super.init();
-        nameField.setText(player.getDisplayName().getString() + "'s Network");
-        int i = 0;
-        for (EnumNetworkColor color : EnumNetworkColor.values()) {
-            colorButtons.add(new ColorButton(48 + (i >= 7 ? i - 7 : i) * 16, 91 + (i >= 7 ? 1 : 0) * 16, color.getRGB()));
-            i++;
-        }
-        colorBtn = colorButtons.get(0);
-        colorBtn.selected = true;
+        mNetworkName.setValue(FluxTranslate.PLAYERS_NETWORK.format(mPlayer.getGameProfile().getName()));
 
-        buttons.add(create = new NormalButton(FluxTranslate.CREATE.t(), 70, 150, 36, 12, 3).setUnclickable());
+        // two rows
+        for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
+            final EnumNetworkColor color = EnumNetworkColor.VALUES[i];
+            ColorButton button = new ColorButton(minecraft,
+                    leftPos + 48 + (i % 7) * 16, topPos + 90 + (i / 7) * 16, color.getRGB());
+            if (i == 0) {
+                mColorButton = button;
+                button.setSelected(true);
+            }
+            mButtons.add(button);
+        }
+
+        mCreate = new SimpleButton(minecraft, leftPos + 70, topPos + 150, 36, 12);
+        mCreate.setText(FluxTranslate.CREATE.get());
+        mCreate.setClickable(false);
+        mButtons.add(mCreate);
     }
 
     @Override
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-
-        screenUtils.renderNetwork(matrixStack, nameField.getText(), colorBtn.color, 20, 129);
-        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 150, FluxClientCache.getFeedbackColor());
+    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+        renderNetwork(poseStack, mNetworkName.getValue(), mColorButton.mColor, leftPos + 20, topPos + 129);
     }
 
     @Override
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if (button instanceof NormalButton) {
-            if (mouseButton == 0 && button.id == 3) {
-                //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK, GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType, password.getText())));
-                C2SNetMsg.createNetwork(nameField.getText(), colorBtn.color, mSecurityLevel, passwordField.getText());
-            }
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button == mCreate) {
+            //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK,
+            // GeneralPacketHandler.getCreateNetworkPacket(name.getText(), color.color, securityType, energyType,
+            // password.getText())));
+
+            //C2SNetMsg.createNetwork(nameField.getText(), colorBtn.color, mSecurityLevel, passwordField.getText());
+
+            ClientMessages.createNetwork(menu.containerId, mNetworkName.getValue(),
+                    mColorButton.mColor, mSecurityLevel, mPassword.getValue());
         }
     }
 
     @Override
     public void onEditSettingsChanged() {
-        if (create != null) {
-            create.clickable = (mSecurityLevel != SecurityLevel.ENCRYPTED
-                    || passwordField.getText().length() != 0) && nameField.getText().length() != 0;
+        if (mCreate != null) {
+            mCreate.setClickable((!mSecurityLevel.isEncrypted() || !mPassword.getValue().isEmpty()) &&
+                    !mNetworkName.getValue().isEmpty());
         }
     }
 
     @Override
-    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
-        super.onFeedbackAction(info);
-        if (info == FeedbackInfo.SUCCESS) {
-            switchTab(EnumNavigationTab.TAB_SELECTION);
+    protected void onResponseAction(int key, int code) {
+        super.onResponseAction(key, code);
+        if (key == FluxConstants.REQUEST_CREATE_NETWORK) {
+            if (code == FluxConstants.RESPONSE_SUCCESS) {
+                switchTab(EnumNavigationTab.TAB_SELECTION);
+            }
         }
     }
 }
-*/

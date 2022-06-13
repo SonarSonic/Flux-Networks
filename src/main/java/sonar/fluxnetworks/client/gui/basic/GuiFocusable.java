@@ -8,7 +8,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.client.gui.GuiTabType;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.button.FluxEditBox;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.register.RegistrySounds;
@@ -57,10 +57,10 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxDeviceMen
                 return true;
             }
             if (this instanceof GuiTabCore core) {
-                if (core.getCurrentTab() == GuiTabType.TAB_HOME) {
+                if (core.getNavigationTab() == EnumNavigationTab.TAB_HOME) {
                     onClose();
                 } else {
-                    core.switchTab(GuiTabType.TAB_HOME);
+                    core.switchTab(EnumNavigationTab.TAB_HOME);
                     if (FluxConfig.enableButtonSound) {
                         getMinecraft().getSoundManager().play(
                                 SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));

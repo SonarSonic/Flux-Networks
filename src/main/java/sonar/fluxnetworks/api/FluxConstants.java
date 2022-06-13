@@ -13,68 +13,82 @@ public final class FluxConstants {
     /**
      * NBT access type, save data to disk (R/W server only).
      */
-    public static final byte TYPE_SAVE_ALL = 1;
-
+    public static final byte NBT_SAVE_ALL = 1;
     /**
      * NBT access type, tile update or read stack.
      * <ul>
      * <li>UPDATE: S->C (Write - server, Read - client)</li>
-     * <li>DROP: Write - server, Read - client/server</li>
+     * <li>DROP: (Write - server, Read - client/server)</li>
      * <li>SETTING: C->S (Write - client, Read - server)</li>
      * </ul>
      */
     public static final byte
-            TYPE_TILE_UPDATE = 11,
-            TYPE_TILE_DROP = 15,
-            TYPE_TILE_SETTING = 19;
-
+            NBT_TILE_UPDATE = 11,
+            NBT_TILE_DROP = 15,
+            NBT_TILE_SETTING = 19;
     /**
      * NBT access type, update phantom flux device.
      * S->C (Write - server, read - client).
      */
-    public static final byte TYPE_PHANTOM_UPDATE = 20;
-
+    public static final byte NBT_PHANTOM_UPDATE = 20;
     /**
      * NBT access type, network data-sync or operation.
      * Write - server, Read - client/server.
+     * <ul>
+     *     <li>Basic (two cases):
+     *      <ul>
+     *         <li>Server initiated: network ID, network name, network color (for Tooltip and Rendering)</li>
+     *         <li>Client requested: network ID, network name, network color, ownerUUID, securityLevel,
+     *          this player's member info (all data) and owner's member info (public data only)</li>
+     *      </ul></li>
+     *     <li>(Client requested) Members: All network members (public data only)</li>
+     *     <li>(Client requested) Connections: All network connections (i.e. loaded and unloaded)</li>
+     *     <li>(Client requested) Statistics: Latest network statistics</li>
+     *     <li>(Server initiated) Delete: A network is deleted (drop any data)</li>
+     * </ul>
+     * Note that password is always opaque to clients (even if you are super admin).
      */
+    //TODO update relevant message handling
     public static final byte
-            TYPE_NET_BASIC = 21,
-            TYPE_NET_MEMBERS = 22,
-            TYPE_NET_CONNECTIONS = 23,
-            TYPE_NET_STATISTICS = 24,
-            TYPE_NET_DELETE = 29;
+            NBT_NET_BASIC = 21,
+            NBT_NET_MEMBERS = 22,
+            NBT_NET_CONNECTIONS = 23,
+            NBT_NET_STATISTICS = 24,
+            NBT_NET_DELETE = 29;
 
     // Network connections editing flags
     //TODO remove, using NBT instead
-    public static final int FLAG_EDIT_NAME = 1;
-    public static final int FLAG_EDIT_PRIORITY = 1 << 1;
-    public static final int FLAG_EDIT_LIMIT = 1 << 2;
-    public static final int FLAG_EDIT_SURGE_MODE = 1 << 3;
-    public static final int FLAG_EDIT_DISABLE_LIMIT = 1 << 4;
-    public static final int FLAG_EDIT_CHUNK_LOADING = 1 << 5;
-    public static final int FLAG_EDIT_DISCONNECT = 1 << 6;
+    public static final int
+            FLAG_EDIT_NAME = 1,
+            FLAG_EDIT_PRIORITY = 1 << 1,
+            FLAG_EDIT_LIMIT = 1 << 2,
+            FLAG_EDIT_SURGE_MODE = 1 << 3,
+            FLAG_EDIT_DISABLE_LIMIT = 1 << 4,
+            FLAG_EDIT_CHUNK_LOADING = 1 << 5,
+            FLAG_EDIT_DISCONNECT = 1 << 6;
 
     /**
-     * Response codes.
+     * Response codes. Positive - Toast, Negative - Action.
      */
-    public static final int RESPONSE_SUCCESS = -1;
-    public static final int RESPONSE_SUCCESS_SEPARATE = -2;
-    public static final int RESPONSE_PASSWORD_REQUIRED = -3;
-    public static final int RESPONSE_REJECT = 1;
-    public static final int RESPONSE_NO_OWNER = 2;
-    public static final int RESPONSE_NO_ADMIN = 3;
-    public static final int RESPONSE_NO_SPACE = 4;
-    public static final int RESPONSE_HAS_CONTROLLER = 5;
-    public static final int RESPONSE_INVALID_USER = 6;
-    public static final int RESPONSE_INVALID_PASSWORD = 7;
-    public static final int RESPONSE_BANNED_LOADING = 8;
+    public static final int
+            RESPONSE_SUCCESS = -1,
+            RESPONSE_SUCCESS_2 = -2,
+            RESPONSE_REQUIRE_PASSWORD = -3;
+    public static final int RESPONSE_REJECT = 1,
+            RESPONSE_NO_OWNER = 2,
+            RESPONSE_NO_ADMIN = 3,
+            RESPONSE_NO_SPACE = 4,
+            RESPONSE_HAS_CONTROLLER = 5,
+            RESPONSE_INVALID_USER = 6,
+            RESPONSE_INVALID_PASSWORD = 7,
+            RESPONSE_BANNED_LOADING = 8;
 
     /**
      * Request keys.
      */
-    public static final int REQUEST_CREATE_NETWORK = 1;
-    public static final int REQUEST_SET_NETWORK = 2;
+    public static final int
+            REQUEST_CREATE_NETWORK = 1,
+            REQUEST_SET_NETWORK = 2;
 
     // Network members editing type
     public static final int TYPE_NEW_MEMBER = 1;
@@ -86,18 +100,18 @@ public final class FluxConstants {
     /**
      * Device buffer message type, C2S positive
      */
-    public static final byte DEVICE_BUFFER_C2S_CUSTOM_NAME = 1;
-    public static final byte DEVICE_BUFFER_C2S_PRIORITY = 2;
-    public static final byte DEVICE_BUFFER_C2S_LIMIT = 3;
-    public static final byte DEVICE_BUFFER_C2S_SURGE_MODE = 4;
-    public static final byte DEVICE_BUFFER_C2S_DISABLE_LIMIT = 5;
-    public static final byte DEVICE_BUFFER_C2S_CHUNK_LOADING = 6;
+    public static final byte DEVICE_C2S_CUSTOM_NAME = 1;
+    public static final byte DEVICE_C2S_PRIORITY = 2;
+    public static final byte DEVICE_C2S_LIMIT = 3;
+    public static final byte DEVICE_C2S_SURGE_MODE = 4;
+    public static final byte DEVICE_C2S_DISABLE_LIMIT = 5;
+    public static final byte DEVICE_C2S_CHUNK_LOADING = 6;
 
     /**
      * Device buffer message type, S2C negative
      */
-    public static final byte DEVICE_BUFFER_S2C_GUI_SYNC = -1;
-    public static final byte DEVICE_BUFFER_S2C_STORAGE_ENERGY = -2;
+    public static final byte DEVICE_S2C_GUI_SYNC = -1;
+    public static final byte DEVICE_S2C_STORAGE_ENERGY = -2;
 
     // NBT sub-tag key
     public static final String TAG_FLUX_DATA = "FluxData";
@@ -127,7 +141,7 @@ public final class FluxConstants {
     public static final String CHANGE = "change";
 
     static {
-        // we don't expect non-inline in this class, should in compile-time
+        // we expect all constants are inline at compile-time
         FluxNetworks.LOGGER.warn("FluxConstants is class loading, this shouldn't happen...");
         assert false;
     }

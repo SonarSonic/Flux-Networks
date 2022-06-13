@@ -145,7 +145,7 @@ public class EventHandler {
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
         //FIXME
-        Messages.getNetworkUpdate(FluxNetworkData.getAllNetworks(), FluxConstants.TYPE_NET_BASIC)
+        Messages.getNetworkUpdate(FluxNetworkData.getAllNetworks(), FluxConstants.NBT_NET_BASIC)
                 .sendToPlayer(event.getPlayer());
         /*S2CNetMsg.updateSuperAdmin(SuperAdmin.isPlayerSuperAdmin(event.getPlayer()))
                 .sendToPlayer(event.getPlayer());*/

@@ -239,7 +239,7 @@ public class ServerFluxNetwork extends FluxNetwork {
     @Override
     public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
         super.writeCustomTag(tag, type);
-        if (type == FluxConstants.TYPE_SAVE_ALL) {
+        if (type == FluxConstants.NBT_SAVE_ALL) {
             tag.putString("password", mPassword);
         }
     }

@@ -16,7 +16,6 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.EnergyType;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
 import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.client.ClientRepository;
@@ -133,7 +132,6 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     @Override
     public void onClose() {
         super.onClose();
-        ClientRepository.setFeedbackText(FeedbackInfo.NONE);
     }
 
     protected void renderNavigationPrompt(PoseStack poseStack, String error, String prompt) {
@@ -205,13 +203,12 @@ public abstract class GuiFluxCore extends GuiPopupHost {
         }*/
     }
 
-    protected void renderNetwork(PoseStack poseStack, int x, int y) {
+    protected void renderNetwork(PoseStack poseStack, String name, int color, int x, int y) {
         RenderSystem.enableBlend();
-        int color = mNetwork.getNetworkColor();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
         RenderSystem.setShaderTexture(0, GUI_BAR);
         blit(poseStack, x, y, 0, 0, 135, 12, 256, 256);
-        font.draw(poseStack, mNetwork.getNetworkName(), x + 4, y + 2, 0xffffff);
+        font.draw(poseStack, name, x + 4, y + 2, 0xffffff);
     }
 
     /**

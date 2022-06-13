@@ -96,6 +96,7 @@
 	"gui.fluxnetworks.label.you": "You",
 	"gui.fluxnetworks.label.detailedview": "Detailed Network View",
 	"gui.fluxnetworks.label.clickabove": "Click %s Above",
+	"gui.fluxnetworks.label.playersnetwork": "%s's Network",
 
 	"gui.fluxnetworks.label.sort.smart": "Smart",
 	"gui.fluxnetworks.label.sort.id": "ID",

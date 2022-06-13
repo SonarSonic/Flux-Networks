@@ -78,7 +78,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             //noinspection ConstantConditions
             if ((level.getGameTime() & 0x3) == 0) {
                 // update model data to players who can see it
-                Messages.deviceBuffer(this, FluxConstants.DEVICE_BUFFER_S2C_STORAGE_ENERGY)
+                Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_STORAGE_ENERGY)
                         .sendToTrackingChunk(level.getChunkAt(worldPosition));
                 mFlags &= ~FLAG_ENERGY_CHANGED;
             }

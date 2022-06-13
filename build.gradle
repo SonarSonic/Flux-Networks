@@ -26,7 +26,7 @@ archivesBaseName = 'FluxNetworks'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: "1.18.1-2022.03.06-${minecraft_version}"
+    mappings channel: 'parchment', version: "2022.06.05-1.18.2"
 
     runs {
         client {
@@ -141,8 +141,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    /*compileOnly "mekanism:Mekanism:${mekanism_version}:api"
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")*/
+    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
     implementation fg.deobf("curse.maven:the-one-probe-245211:3671753") // 1.18-5.1.0
 

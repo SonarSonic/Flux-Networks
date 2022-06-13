@@ -30,7 +30,7 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
         mCancel.setText(FluxTranslate.CANCEL.get());
         mButtons.add(mCancel);
 
-        mConnect = new SimpleButton(minecraft, leftPos + 102, topPos + 86, 48, 12);
+        mConnect = new SimpleButton(minecraft, leftPos + 104, topPos + 86, 48, 12);
         mConnect.setText(FluxTranslate.CONNECT.get());
         mConnect.setClickable(false);
         mButtons.add(mConnect);

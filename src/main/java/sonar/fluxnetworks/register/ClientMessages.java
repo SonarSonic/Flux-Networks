@@ -96,7 +96,7 @@ public class ClientMessages {
             case Messages.S2C_DEVICE_BUFFER -> onDeviceBuffer(payload, player, minecraft);
             case Messages.S2C_RESPONSE -> onResponse(payload, player, minecraft);
             case Messages.S2C_SUPER_ADMIN -> onSuperAdmin(payload, player, minecraft);
-            case Messages.S2C_NETWORK_UPDATE -> ClientRepository.getInstance().onNetworkUpdate(payload);
+            case Messages.S2C_NETWORK_UPDATE -> ClientRepository.onNetworkUpdate(payload); // TODO
         }
     }
 

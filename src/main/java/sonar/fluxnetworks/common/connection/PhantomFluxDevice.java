@@ -68,20 +68,20 @@ public class PhantomFluxDevice implements IFluxDevice {
     public static PhantomFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.mGlobalPos = pos;
-        t.readCustomTag(tag, FluxConstants.TYPE_PHANTOM_UPDATE);
+        t.readCustomTag(tag, FluxConstants.NBT_PHANTOM_UPDATE);
         return t;
     }
 
     @Nonnull
     public static PhantomFluxDevice load(@Nonnull CompoundTag tag) {
         PhantomFluxDevice t = new PhantomFluxDevice();
-        t.readCustomTag(tag, FluxConstants.TYPE_SAVE_ALL);
+        t.readCustomTag(tag, FluxConstants.NBT_SAVE_ALL);
         return t;
     }
 
     @Override
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
+        if (type == FluxConstants.NBT_SAVE_ALL || type == FluxConstants.NBT_PHANTOM_UPDATE) {
             FluxUtils.writeGlobalPos(tag, mGlobalPos);
             tag.putByte(FluxConstants.DEVICE_TYPE, (byte) mDeviceType.ordinal());
             tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
@@ -98,10 +98,10 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_SAVE_ALL) {
+        if (type == FluxConstants.NBT_SAVE_ALL) {
             mGlobalPos = FluxUtils.readGlobalPos(tag);
         }
-        if (type == FluxConstants.TYPE_SAVE_ALL || type == FluxConstants.TYPE_PHANTOM_UPDATE) {
+        if (type == FluxConstants.NBT_SAVE_ALL || type == FluxConstants.NBT_PHANTOM_UPDATE) {
             mDeviceType = FluxDeviceType.values()[tag.getByte(FluxConstants.DEVICE_TYPE)];
             mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
             mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
@@ -113,7 +113,7 @@ public class PhantomFluxDevice implements IFluxDevice {
             mBuffer = tag.getLong(FluxConstants.BUFFER);
             mDisplayStack = ItemStack.of(tag);
         }
-        if (type == FluxConstants.TYPE_PHANTOM_UPDATE) {
+        if (type == FluxConstants.NBT_PHANTOM_UPDATE) {
             mForcedLoading = tag.getBoolean(FluxConstants.FORCED_LOADING);
             mChunkLoaded = tag.getBoolean(FluxConstants.CHUNK_LOADED);
             mChange = tag.getLong(FluxConstants.CHANGE);

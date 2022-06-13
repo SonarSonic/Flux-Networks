@@ -85,7 +85,8 @@ public class FluxNetwork {
     final HashMap<UUID, NetworkMember> mMemberMap = new HashMap<>();
     /**
      * Server: {@link TileFluxDevice} (loaded) and {@link PhantomFluxDevice} (unloaded)
-     * <p>Client: {@link PhantomFluxDevice}
+     * <p>
+     * Client: {@link PhantomFluxDevice} (data container)
      */
     final HashMap<GlobalPos, IFluxDevice> mConnectionMap = new HashMap<>();
 
@@ -284,20 +285,20 @@ public class FluxNetwork {
     }
 
     public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
-        if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
+        if (type == FluxConstants.NBT_NET_BASIC || type == FluxConstants.NBT_SAVE_ALL) {
             tag.putInt(FluxConstants.NETWORK_ID, mID);
             tag.putString(NETWORK_NAME, mName);
             tag.putInt(NETWORK_COLOR, mColor);
             tag.putUUID(OWNER_UUID, mOwnerUUID);
             tag.putByte(SECURITY_LEVEL, mSecurityLevel.getKey());
         }
-        if (type == FluxConstants.TYPE_SAVE_ALL) {
+        if (type == FluxConstants.NBT_SAVE_ALL) {
             Collection<NetworkMember> members = getAllMembers();
             if (!members.isEmpty()) {
                 ListTag list = new ListTag();
                 for (NetworkMember m : members) {
                     CompoundTag subTag = new CompoundTag();
-                    m.writeNBT(subTag);
+                    m.writeNBT(subTag, true);
                     list.add(subTag);
                 }
                 tag.put(MEMBERS, list);
@@ -310,20 +311,20 @@ public class FluxNetwork {
                 for (IFluxDevice d : connections) {
                     if (!d.isChunkLoaded()) {
                         CompoundTag subTag = new CompoundTag();
-                        d.writeCustomTag(subTag, FluxConstants.TYPE_SAVE_ALL);
+                        d.writeCustomTag(subTag, FluxConstants.NBT_SAVE_ALL);
                         list.add(subTag);
                     }
                 }
                 tag.put(CONNECTIONS, list);
             }
         }
-        if (type == FluxConstants.TYPE_NET_MEMBERS) {
+        if (type == FluxConstants.NBT_NET_MEMBERS) {
             Collection<NetworkMember> members = getAllMembers();
             ListTag list = new ListTag();
             if (!members.isEmpty()) {
                 for (NetworkMember m : members) {
                     CompoundTag subTag = new CompoundTag();
-                    m.writeNBT(subTag);
+                    m.writeNBT(subTag, false);
                     list.add(subTag);
                 }
             }
@@ -335,26 +336,26 @@ public class FluxNetwork {
                         NetworkMember m = NetworkMember.create(p,
                                 FluxPlayer.isPlayerSuperAdmin(p) ? AccessLevel.SUPER_ADMIN :
                                         AccessLevel.BLOCKED);
-                        m.writeNBT(subTag);
+                        m.writeNBT(subTag, false);
                         list.add(subTag);
                     }
                 }
             }
             tag.put(MEMBERS, list);
         }
-        if (type == FluxConstants.TYPE_NET_CONNECTIONS) {
+        if (type == FluxConstants.NBT_NET_CONNECTIONS) {
             Collection<IFluxDevice> connections = getAllConnections();
             if (!connections.isEmpty()) {
                 ListTag list = new ListTag();
                 for (IFluxDevice d : connections) {
                     CompoundTag subTag = new CompoundTag();
-                    d.writeCustomTag(subTag, FluxConstants.TYPE_PHANTOM_UPDATE);
+                    d.writeCustomTag(subTag, FluxConstants.NBT_PHANTOM_UPDATE);
                     list.add(subTag);
                 }
                 tag.put(CONNECTIONS, list);
             }
         }
-        if (type == FluxConstants.TYPE_NET_STATISTICS) {
+        if (type == FluxConstants.NBT_NET_STATISTICS) {
             mStatistics.writeNBT(tag);
         }
         /*if (flags == NBTType.NETWORK_GENERAL || flags == NBTType.ALL_SAVE) {
@@ -392,14 +393,14 @@ public class FluxNetwork {
     }
 
     public void readCustomTag(@Nonnull CompoundTag tag, int type) {
-        if (type == FluxConstants.TYPE_NET_BASIC || type == FluxConstants.TYPE_SAVE_ALL) {
+        if (type == FluxConstants.NBT_NET_BASIC || type == FluxConstants.NBT_SAVE_ALL) {
             mID = tag.getInt(FluxConstants.NETWORK_ID);
             mName = tag.getString(NETWORK_NAME);
             mColor = tag.getInt(NETWORK_COLOR);
             mOwnerUUID = tag.getUUID(OWNER_UUID);
             mSecurityLevel = SecurityLevel.fromKey(tag.getByte(SECURITY_LEVEL));
         }
-        if (type == FluxConstants.TYPE_SAVE_ALL) {
+        if (type == FluxConstants.NBT_SAVE_ALL) {
             ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
@@ -413,7 +414,7 @@ public class FluxNetwork {
                 mConnectionMap.put(f.getGlobalPos(), f);
             }
         }
-        if (type == FluxConstants.TYPE_NET_MEMBERS) {
+        if (type == FluxConstants.NBT_NET_MEMBERS) {
             mMemberMap.clear();
             ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
@@ -422,7 +423,7 @@ public class FluxNetwork {
                 mMemberMap.put(m.getPlayerUUID(), m);
             }
         }
-        if (type == FluxConstants.TYPE_NET_CONNECTIONS) {
+        if (type == FluxConstants.NBT_NET_CONNECTIONS) {
             //TODO waiting for new GUI system, see GuiTabConnections, we request a full connections update
             // when we (re)open the gui, but if a tile removed by someone or on world unloads, this won't send
             // to player, so calling clear() here as a temporary solution, (f != null) is always false
@@ -434,13 +435,13 @@ public class FluxNetwork {
                 GlobalPos pos = FluxUtils.readGlobalPos(c);
                 IFluxDevice f = mConnectionMap.get(pos);
                 if (f != null) {
-                    f.readCustomTag(c, FluxConstants.TYPE_PHANTOM_UPDATE);
+                    f.readCustomTag(c, FluxConstants.NBT_PHANTOM_UPDATE);
                 } else {
                     mConnectionMap.put(pos, PhantomFluxDevice.update(pos, c));
                 }
             }
         }
-        if (type == FluxConstants.TYPE_NET_STATISTICS) {
+        if (type == FluxConstants.NBT_NET_STATISTICS) {
             mStatistics.readNBT(tag);
         }
         /*if (flags == NBTType.NETWORK_GENERAL || flags == NBTType.ALL_SAVE) {

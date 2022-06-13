@@ -62,7 +62,7 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
                 if (tag != null) {
                     // doing this client side to prevent network flickering when placing, we send a block update next
                     // tick anyway.
-                    device.readCustomTag(tag, FluxConstants.TYPE_TILE_DROP);
+                    device.readCustomTag(tag, FluxConstants.NBT_TILE_DROP);
                 }
             }
             if (placer instanceof Player) {

@@ -8,9 +8,12 @@ import java.util.UUID;
 
 public class NetworkMember {
 
+    // public data
     private UUID mPlayerUUID;
     private String mCachedName;
     private AccessLevel mAccessLevel;
+
+    // private data (only visible to this player)
     private int mWirelessMode;
 
     private NetworkMember() {
@@ -21,14 +24,14 @@ public class NetworkMember {
     }
 
     @Nonnull
-    public static NetworkMember create(@Nonnull Player player, @Nonnull AccessLevel level) {
+    public static NetworkMember create(@Nonnull Player player, @Nonnull AccessLevel accessLevel) {
         final NetworkMember member = new NetworkMember();
         member.mPlayerUUID = player.getUUID();
         member.mCachedName = player.getGameProfile().getName();
         if (member.mCachedName == null) {
             member.mCachedName = "[Anonymous]";
         }
-        member.mAccessLevel = level;
+        member.mAccessLevel = accessLevel;
         return member;
     }
 
@@ -81,14 +84,16 @@ public class NetworkMember {
     public void readNBT(@Nonnull CompoundTag tag) {
         mPlayerUUID = tag.getUUID("playerUUID");
         mCachedName = tag.getString("cachedName");
-        mAccessLevel = AccessLevel.fromId(tag.getByte("accessLevel"));
+        mAccessLevel = AccessLevel.fromKey(tag.getByte("accessLevel"));
         mWirelessMode = tag.getInt("wirelessMode");
     }
 
-    public void writeNBT(@Nonnull CompoundTag tag) {
+    public void writeNBT(@Nonnull CompoundTag tag, boolean saveAll) {
         tag.putUUID("playerUUID", mPlayerUUID);
         tag.putString("cachedName", mCachedName);
-        tag.putByte("accessLevel", mAccessLevel.getId());
-        tag.putInt("wirelessMode", mWirelessMode);
+        tag.putByte("accessLevel", mAccessLevel.getKey());
+        if (saveAll) {
+            tag.putInt("wirelessMode", mWirelessMode);
+        }
     }
 }

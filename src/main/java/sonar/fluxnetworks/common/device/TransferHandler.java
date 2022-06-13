@@ -206,23 +206,23 @@ public abstract class TransferHandler extends TransferNode {
 
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         switch (type) {
-            case FluxConstants.TYPE_SAVE_ALL -> {
+            case FluxConstants.NBT_SAVE_ALL -> {
                 tag.putInt(FluxConstants.PRIORITY, mPriority);
                 tag.putInt(FluxConstants.SURGE_MODE, mSurge);
                 tag.putLong(FluxConstants.LIMIT, mLimit);
             }
-            case FluxConstants.TYPE_TILE_UPDATE -> {
+            case FluxConstants.NBT_TILE_UPDATE -> {
                 tag.putLong(FluxConstants.CHANGE, mChange);
                 tag.putInt(FluxConstants.PRIORITY, mPriority);
                 tag.putInt(FluxConstants.SURGE_MODE, mSurge);
                 tag.putLong(FluxConstants.LIMIT, mLimit);
             }
-            case FluxConstants.TYPE_TILE_DROP -> {
+            case FluxConstants.NBT_TILE_DROP -> {
                 tag.putInt(FluxConstants.PRIORITY, mPriority);
                 tag.putBoolean(FluxConstants.SURGE_MODE, hasPowerSurge());
                 tag.putLong(FluxConstants.LIMIT, mLimit);
             }
-            case FluxConstants.TYPE_PHANTOM_UPDATE -> {
+            case FluxConstants.NBT_PHANTOM_UPDATE -> {
                 tag.putLong(FluxConstants.CHANGE, mChange);
                 tag.putInt(FluxConstants.PRIORITY, hasPowerSurge() ? PhantomFluxDevice.POWER_SURGE_MARKER : mPriority);
                 tag.putLong(FluxConstants.LIMIT, canBypassLimit() ? PhantomFluxDevice.BYPASS_LIMIT_MARKER : mLimit);
@@ -231,7 +231,7 @@ public abstract class TransferHandler extends TransferNode {
     }
 
     public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.TYPE_TILE_SETTING) {
+        if (type == FluxConstants.NBT_TILE_SETTING) {
             if (tag.contains(FluxConstants.SURGE_MODE)) {
                 setPowerSurge(tag.getBoolean(FluxConstants.SURGE_MODE));
             } else if (tag.contains(FluxConstants.PRIORITY)) {
@@ -250,18 +250,18 @@ public abstract class TransferHandler extends TransferNode {
             mBuffer = tag.getLong(FluxConstants.ENERGY);
         }
         switch (type) {
-            case FluxConstants.TYPE_SAVE_ALL -> {
+            case FluxConstants.NBT_SAVE_ALL -> {
                 mPriority = tag.getInt(FluxConstants.PRIORITY);
                 mSurge = tag.getInt(FluxConstants.SURGE_MODE);
                 mLimit = tag.getLong(FluxConstants.LIMIT);
             }
-            case FluxConstants.TYPE_TILE_UPDATE -> {
+            case FluxConstants.NBT_TILE_UPDATE -> {
                 mChange = tag.getLong(FluxConstants.CHANGE);
                 mPriority = tag.getInt(FluxConstants.PRIORITY);
                 mSurge = tag.getInt(FluxConstants.SURGE_MODE);
                 mLimit = tag.getLong(FluxConstants.LIMIT);
             }
-            case FluxConstants.TYPE_TILE_DROP -> {
+            case FluxConstants.NBT_TILE_DROP -> {
                 mPriority = tag.getInt(FluxConstants.PRIORITY);
                 setPowerSurge(tag.getBoolean(FluxConstants.SURGE_MODE));
                 mLimit = tag.getLong(FluxConstants.LIMIT);
@@ -270,14 +270,14 @@ public abstract class TransferHandler extends TransferNode {
     }
 
     public void writePacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.DEVICE_BUFFER_S2C_GUI_SYNC) {
+        if (id == FluxConstants.DEVICE_S2C_GUI_SYNC) {
             buf.writeLong(mChange);
             buf.writeLong(mBuffer);
         }
     }
 
     public void readPacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.DEVICE_BUFFER_S2C_GUI_SYNC) {
+        if (id == FluxConstants.DEVICE_S2C_GUI_SYNC) {
             mChange = buf.readLong();
             mBuffer = buf.readLong();
         }

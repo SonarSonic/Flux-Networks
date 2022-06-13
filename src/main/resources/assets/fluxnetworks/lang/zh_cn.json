@@ -93,9 +93,10 @@
 	"gui.fluxnetworks.label.playername": "玩家名字",
 	"gui.fluxnetworks.label.playeraccess": "访问等级",
 	"gui.fluxnetworks.label.cancelmembership": "撤销成员权限",
-	"gui.fluxnetworks.label.you": "你自己",
+	"gui.fluxnetworks.label.you": "你",
 	"gui.fluxnetworks.label.detailedview": "详细网络视图",
 	"gui.fluxnetworks.label.clickabove": "点击上方的%s",
+	"gui.fluxnetworks.label.playersnetwork": "%s的网络",
 
 	"gui.fluxnetworks.label.sort.smart": "智能",
 	"gui.fluxnetworks.label.sort.id": "ID",

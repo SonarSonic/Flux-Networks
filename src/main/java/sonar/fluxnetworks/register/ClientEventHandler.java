@@ -14,7 +14,7 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
-        ClientRepository.getInstance().invalidate();
+        ClientRepository.release();
         //FluxColorHandler.INSTANCE.reset();
     }
 

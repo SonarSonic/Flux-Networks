@@ -5,8 +5,9 @@ import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.client.ClientRepository;
 import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
-import sonar.fluxnetworks.client.gui.GuiTabType;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
+import sonar.fluxnetworks.client.gui.tab.GuiTabCreate;
 import sonar.fluxnetworks.client.gui.tab.GuiTabSelection;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -27,19 +28,19 @@ public abstract class GuiTabCore extends GuiFluxCore {
     @Override
     public void init() {
         super.init();
-        for (GuiTabType tab : GuiTabType.VALUES) {
+        for (EnumNavigationTab tab : EnumNavigationTab.VALUES) {
             NavigationButton button;
-            if (tab != GuiTabType.TAB_CREATE) {
+            if (tab != EnumNavigationTab.TAB_CREATE) {
                 button = new NavigationButton(getMinecraft(), 12 + (18 * tab.ordinal()) + leftPos, -16 + topPos, tab);
             } else {
                 button = new NavigationButton(getMinecraft(), 148 + leftPos, -16 + topPos, tab);
             }
-            button.setSelected(tab == getCurrentTab());
+            button.setSelected(tab == getNavigationTab());
             mButtons.add(button);
         }
     }
 
-    public abstract GuiTabType getCurrentTab();
+    public abstract EnumNavigationTab getNavigationTab();
 
     @Override
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
@@ -52,7 +53,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
         }
     }
 
-    protected final void switchTab(@Nonnull GuiTabType tab) {
+    protected final void switchTab(@Nonnull EnumNavigationTab tab) {
         switch (tab) {
             case TAB_HOME:
                 if (menu.mProvider instanceof TileFluxDevice) {
@@ -86,10 +87,10 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 break;
             case TAB_SETTING:
                 getMinecraft().setScreen(new GuiTabSettings(menu, mPlayer));
-                break;
+                break;*/
             case TAB_CREATE:
                 getMinecraft().setScreen(new GuiTabCreate(menu, mPlayer));
-                break;*/
+                break;
         }
     }
 }
