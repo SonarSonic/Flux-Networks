@@ -1,118 +1,151 @@
 package sonar.fluxnetworks.client.gui.popup;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
-import sonar.fluxnetworks.client.gui.button.NormalButton;
+import sonar.fluxnetworks.api.network.AccessLevel;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiPopupCore;
+import sonar.fluxnetworks.client.gui.button.SimpleButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabMembers;
-import sonar.fluxnetworks.common.test.C2SNetMsg;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 
-public class PopupMemberEdit extends PopupCore<GuiTabMembers> {
+public class PopupMemberEdit extends GuiPopupCore<GuiTabMembers> {
 
-    public NormalButton transferOwnership;
-    public int transferOwnershipCount;
+    public SimpleButton mSetAsUser;
+    public SimpleButton mSetAsAdmin;
+    public SimpleButton mCancelMembership;
+    public SimpleButton mTransferOwnership;
+    public int mTransferOwnershipCount;
 
-    public PopupMemberEdit(GuiTabMembers host, PlayerEntity player) {
-        super(host, player);
+    public PopupMemberEdit(GuiTabMembers host) {
+        super(host);
     }
 
     @Override
     public void init() {
         super.init();
-        popButtons.clear();
-        boolean editPermission = host.accessLevel.canEdit();
-        boolean ownerPermission = host.accessLevel.canDelete();
-        if (host.selectedPlayer.getAccessLevel() != AccessLevel.OWNER && editPermission) {
+        boolean editPermission = mHost.getAccessLevel().canEdit();
+        boolean ownerPermission = mHost.getAccessLevel().canDelete();
+        AccessLevel targetAccess = mHost.mSelectedMember.getAccessLevel();
+        if (targetAccess != AccessLevel.OWNER && editPermission) {
             String text;
-            int length;
-            int i = 0;
-            if (host.selectedPlayer.getAccessLevel() == AccessLevel.BLOCKED || host.selectedPlayer.getAccessLevel() == AccessLevel.SUPER_ADMIN) {
-                text = FluxTranslate.SET_USER.t();
-                length = Math.max(64, font.getStringWidth(text) + 4);
-                popButtons.add(new NormalButton(text, 88 - length / 2, 76, length, 12, FluxConstants.TYPE_NEW_MEMBER));
-                ++i;
-                if (host.selectedPlayer.getAccessLevel() == AccessLevel.SUPER_ADMIN && ownerPermission) {
-                    text = FluxTranslate.TRANSFER_OWNERSHIP.t();
-                    length = Math.max(64, font.getStringWidth(text) + 4);
-                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i, length, 12, 4).setUnclickable().setTextColor(0xffaa00aa);
-                    popButtons.add(transferOwnership);
-                }
-            } else {
-                if (ownerPermission) {
-                    if (host.selectedPlayer.getAccessLevel() == AccessLevel.USER) {
-                        text = FluxTranslate.SET_ADMIN.t();
-                        length = Math.max(64, font.getStringWidth(text) + 4);
-                        popButtons.add(new NormalButton(text, 88 - length / 2, 76, length, 12, FluxConstants.TYPE_SET_ADMIN));
-                    } else if (host.selectedPlayer.getAccessLevel() == AccessLevel.ADMIN) {
-                        text = FluxTranslate.SET_USER.t();
-                        length = Math.max(64, font.getStringWidth(text) + 4);
-                        popButtons.add(new NormalButton(text, 88 - length / 2, 76, length, 12, FluxConstants.TYPE_SET_USER));
-                    }
-                    ++i;
-                }
-                if (!host.selectedPlayer.getAccessLevel().canEdit() || ownerPermission) {
-                    text = FluxTranslate.CANCEL_MEMBERSHIP.t();
-                    length = Math.max(64, font.getStringWidth(text) + 4);
-                    popButtons.add(new NormalButton(text, 88 - length / 2, 76 + 16 * i++, length, 12,
-                            FluxConstants.TYPE_CANCEL_MEMBERSHIP).setTextColor(0xffff5555));
-                }
-                if (ownerPermission) {
-                    text = FluxTranslate.TRANSFER_OWNERSHIP.t();
-                    length = Math.max(64, font.getStringWidth(text) + 4);
-                    transferOwnership = new NormalButton(text, 88 - length / 2, 76 + 16 * i, length, 12,
-                            FluxConstants.TYPE_TRANSFER_OWNERSHIP).setUnclickable().setTextColor(0xffaa00aa);
-                    popButtons.add(transferOwnership);
-                }
-            }
+            int width;
+            text = FluxTranslate.SET_USER.get();
+            width = Math.max(64, font.width(text) + 4);
+            mSetAsUser = new SimpleButton(minecraft,
+                    leftPos + (imageWidth - width) / 2, topPos + 78, width, 12);
+            mSetAsUser.setText(text);
+            mSetAsUser.setClickable(targetAccess == AccessLevel.BLOCKED ||
+                    targetAccess == AccessLevel.SUPER_ADMIN ||
+                    (targetAccess == AccessLevel.ADMIN && ownerPermission));
+            mButtons.add(mSetAsUser);
+
+            text = FluxTranslate.SET_ADMIN.get();
+            width = Math.max(64, font.width(text) + 4);
+            mSetAsAdmin = new SimpleButton(minecraft,
+                    leftPos + (imageWidth - width) / 2, topPos + 78 + 16, width, 12);
+            mSetAsAdmin.setText(text);
+            mSetAsAdmin.setClickable(targetAccess == AccessLevel.USER && ownerPermission);
+            mButtons.add(mSetAsAdmin);
+
+            text = FluxTranslate.CANCEL_MEMBERSHIP.get();
+            width = Math.max(64, font.width(text) + 4);
+            mCancelMembership = new SimpleButton(minecraft,
+                    leftPos + (imageWidth - width) / 2, topPos + 78 + 32, width, 12);
+            mCancelMembership.setText(text);
+            mCancelMembership.setColor(0xFFFF5555);
+            mCancelMembership.setClickable(targetAccess == AccessLevel.USER ||
+                    (targetAccess == AccessLevel.ADMIN && ownerPermission));
+            mButtons.add(mCancelMembership);
+
+            text = FluxTranslate.TRANSFER_OWNERSHIP.get();
+            width = Math.max(64, font.width(text) + 4);
+            mTransferOwnership = new SimpleButton(minecraft,
+                    leftPos + (imageWidth - width) / 2, topPos + 78 + 48, width, 12);
+            mTransferOwnership.setText(text);
+            mTransferOwnership.setClickable(false);
+            mTransferOwnership.setColor(0xFFFF00FF);
+            mButtons.add(mTransferOwnership);
         }
     }
 
     @Override
-    public void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
-        //screenUtils.drawRectWithBackground(20, 34, 100, 138, 0xccffffff, 0x80000000);
-        super.drawGuiContainerForegroundLayer(matrixStack, mouseX, mouseY);
-        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 162, FluxClientCache.getFeedbackColor());
-        drawCenterText(matrixStack, TextFormatting.AQUA + host.selectedPlayer.getCachedName(), 88, 38, 0xffffff);
-        drawCenterText(matrixStack, host.selectedPlayer.getAccessLevel().getName(), 88, 48, 0xffffff);
-        String text = host.selectedPlayer.getPlayerUUID().toString();
-        matrixStack.push();
-        matrixStack.scale(0.625f, 0.625f, 1);
-        drawCenterText(matrixStack, "UUID: " + text.substring(0, 16), 88 * 1.6f, 60 * 1.6f, 0xffffff);
-        drawCenterText(matrixStack, text.substring(16), 88 * 1.6f, 66 * 1.6f, 0xffffff);
-        matrixStack.pop();
+    public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+        drawCenteredString(poseStack, font,
+                ChatFormatting.AQUA + mHost.mSelectedMember.getCachedName(),
+                leftPos + (imageWidth / 2), topPos + 38, 0xffffff);
+        drawCenteredString(poseStack, font, mHost.mSelectedMember.getAccessLevel().getFormattedName(),
+                leftPos + (imageWidth / 2), topPos + 48, 0xffffff);
+
+        final String uuid = mHost.mSelectedMember.getPlayerUUID().toString();
+        poseStack.pushPose();
+        poseStack.scale(0.75f, 0.75f, 1);
+        drawCenteredString(poseStack, font, "UUID: " + uuid.substring(0, 16),
+                (int) ((leftPos + (imageWidth / 2)) / 0.75f), (int) ((topPos + 60) / 0.75f), 0xffffff);
+        drawCenteredString(poseStack, font, uuid.substring(16),
+                (int) ((leftPos + (imageWidth / 2)) / 0.75f), (int) ((topPos + 68) / 0.75f), 0xffffff);
+        poseStack.popPose();
+
+        if (mTransferOwnership != null &&
+                mTransferOwnership.isMouseHovered(mouseX, mouseY) &&
+                !mTransferOwnership.isClickable() &&
+                mHost.mSelectedMember.getAccessLevel() != AccessLevel.BLOCKED &&
+                mHost.getAccessLevel().canDelete()) {
+            drawCenteredString(poseStack, font, FluxTranslate.DOUBLE_SHIFT.get(),
+                    mTransferOwnership.x + mTransferOwnership.width / 2, mTransferOwnership.y + 14, 0xffffff);
+        }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        for (NormalButton button : popButtons) {
-            if (button.clickable && button.isMouseHovered(minecraft, (int) mouseX - guiLeft, (int) mouseY - guiTop)) {
-                C2SNetMsg.editMember(host.network.getNetworkID(), host.selectedPlayer.getPlayerUUID(), button.id);
-                return true;
+        return super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+        super.onButtonClicked(button, mouseX, mouseY, mouseButton);
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            byte type = 0;
+            boolean send = true;
+            if (button == mSetAsUser) {
+                type = FluxConstants.MEMBERSHIP_SET_USER;
+            } else if (button == mSetAsAdmin) {
+                type = FluxConstants.MEMBERSHIP_SET_ADMIN;
+            } else if (button == mCancelMembership) {
+                type = FluxConstants.MEMBERSHIP_CANCEL_MEMBERSHIP;
+            } else if (button == mTransferOwnership) {
+                type = FluxConstants.MEMBERSHIP_TRANSFER_OWNERSHIP;
+            } else {
+                send = false;
+            }
+            if (send) {
+                ClientMessages.editMember(
+                        mHost.getToken(), mHost.getNetwork(), mHost.mSelectedMember.getPlayerUUID(), type);
+                mHost.closePopup();
             }
         }
-        return false;
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (transferOwnership != null) {
-            if (scanCode == 42) {
-                transferOwnershipCount++;
-                if (transferOwnershipCount > 1) {
-                    transferOwnership.clickable = true;
+        if (mTransferOwnership != null) {
+            if ((modifiers & GLFW.GLFW_MOD_SHIFT) != 0) {
+                mTransferOwnershipCount++;
+                if (mTransferOwnershipCount > 1) {
+                    mTransferOwnership.setClickable(mHost.getAccessLevel().canDelete() &&
+                            mHost.mSelectedMember.getAccessLevel() != AccessLevel.BLOCKED);
                 }
             } else {
-                transferOwnershipCount = 0;
-                transferOwnership.clickable = false;
+                mTransferOwnershipCount = 0;
+                mTransferOwnership.setClickable(false);
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
-}*/
+}

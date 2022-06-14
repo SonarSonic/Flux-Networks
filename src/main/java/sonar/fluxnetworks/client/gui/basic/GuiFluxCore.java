@@ -16,8 +16,9 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.EnergyType;
+import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.client.ClientCache;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -45,7 +46,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
 
     private FluxNetwork mNetwork;
 
-    public GuiFluxCore(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiFluxCore(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
         mPlayer = player;
         mNetwork = ClientCache.getNetwork(menu.mProvider.getNetworkID());
@@ -67,10 +68,14 @@ public abstract class GuiFluxCore extends GuiPopupHost {
                 text.setSpan(new ForegroundColorSpan(0xFFCF1515), 0, s.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MuiForgeApi.postToUiThread(() -> Toast.makeText(text, Toast.LENGTH_SHORT).show());
-            } else if (code < 0) {
+            } else {
                 onResponseAction(key, code);
-            } // else unknown code
+            }
         };
+    }
+
+    public int getToken() {
+        return menu.containerId;
     }
 
     /**
@@ -79,6 +84,14 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     @Nonnull
     public FluxNetwork getNetwork() {
         return mNetwork;
+    }
+
+    /**
+     * @return current access
+     */
+    @Nonnull
+    public AccessLevel getAccessLevel() {
+        return mNetwork.getPlayerAccess(mPlayer);
     }
 
     @Override
@@ -195,7 +208,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
 
     public void setConnectedNetwork(int networkID, String password) {
         if (menu.mProvider instanceof TileFluxDevice) {
-            ClientMessages.setTileNetwork(menu.containerId, (TileFluxDevice) menu.mProvider, networkID, password);
+            ClientMessages.setTileNetwork(getToken(), (TileFluxDevice) menu.mProvider, networkID, password);
         } /*else if (menu.mProvider instanceof ItemFluxConfigurator.Provider) {
             C2SNetMsg.configuratorNet(networkID, password);
         } else if (menu.mProvider instanceof ItemAdminConfigurator.Provider) {
@@ -212,7 +225,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     }
 
     /**
-     * Called when a non-text response is received (i.e. code is negative).
+     * Called when a non-text response is received.
      *
      * @param key  a request key
      * @param code a response code

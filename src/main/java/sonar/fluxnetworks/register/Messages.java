@@ -74,9 +74,10 @@ public class Messages {
     static final int C2S_EDIT_MEMBER = 8;
     static final int C2S_EDIT_NETWORK = 9;
     static final int C2S_EDIT_CONNECTIONS = 10;
-    static final int C2S_TRACK_MEMBERS = 11;
-    static final int C2S_TRACK_NETWORKS = 12;
+    static final int C2S_UPDATE_NETWORK = 11;
+    static final int C2S_TRACK_MEMBERS = 12;
     static final int C2S_TRACK_CONNECTIONS = 13;
+    static final int C2S_TRACK_STATISTICS = 14;
 
     /**
      * S->C message indices, must be sequential, 0-based indexing
@@ -90,6 +91,8 @@ public class Messages {
     static final int S2C_UPDATE_CONNECTIONS = 6;
 
     /**
+     * Byte stream.
+     *
      * @param device the block entity created by server
      * @param type   for example, {@link FluxConstants#DEVICE_S2C_GUI_SYNC}
      * @return dispatcher
@@ -104,6 +107,13 @@ public class Messages {
         return sNetwork.dispatch(buf);
     }
 
+    /**
+     * Response to client.
+     *
+     * @param token the container id
+     * @param key   the request key
+     * @param code  the response code
+     */
     private static void response(int token, int key, int code, Player player) {
         var buf = NetworkHandler.buffer(S2C_RESPONSE);
         buf.writeByte(token);
@@ -112,6 +122,9 @@ public class Messages {
         sNetwork.sendToPlayer(buf, player);
     }
 
+    /**
+     * Update player's super admin.
+     */
     public static void superAdmin(boolean enable, Player player) {
         var buf = NetworkHandler.buffer(S2C_SUPER_ADMIN);
         buf.writeBoolean(enable);
@@ -168,6 +181,8 @@ public class Messages {
             case C2S_DELETE_NETWORK -> onDeleteNetwork(payload, player, server);
             case C2S_EDIT_NETWORK -> onEditNetwork(payload, player, server);
             case C2S_CONNECT_DEVICE -> onSetTileNetwork(payload, player, server);
+            case C2S_UPDATE_NETWORK -> onUpdateNetwork(payload, player, server);
+            case C2S_EDIT_MEMBER -> onEditMember(payload, player, server);
             default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
         }
     }
@@ -433,6 +448,56 @@ public class Messages {
             } else {
                 response(token, FluxConstants.REQUEST_EDIT_NETWORK, FluxConstants.RESPONSE_REJECT, p);
             }
+        });
+    }
+
+    private static void onUpdateNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                        BlockableEventLoop<?> looper) {
+        // decode
+        final int networkID = payload.readVarInt();
+        final byte type = payload.readByte();
+
+        // validate
+        consume(payload);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+            if (network.isValid()) {
+                updateNetwork(network, type).sendToPlayer(p);
+            }
+        });
+    }
+
+    private static void onEditMember(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                     BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final int networkID = payload.readVarInt();
+        final UUID targetUUID = payload.readUUID();
+        final byte type = payload.readByte();
+
+        // validate
+        consume(payload);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+            if (!network.isValid()) {
+                response(token, FluxConstants.REQUEST_EDIT_MEMBER, FluxConstants.RESPONSE_REJECT, p);
+                return;
+            }
+            int code = network.changeMembership(p, targetUUID, type);
+            if (code == FluxConstants.RESPONSE_SUCCESS) {
+                updateNetwork(network, FluxConstants.NBT_NET_MEMBERS).sendToPlayer(p);
+            }
+            response(token, FluxConstants.REQUEST_EDIT_MEMBER, code, p);
         });
     }
 }

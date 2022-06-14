@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import sonar.fluxnetworks.api.device.IFluxProvider;
 import sonar.fluxnetworks.client.ClientCache;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,8 +48,8 @@ public class ItemAdminConfigurator extends Item {
 
         @Nullable
         @Override
-        public FluxDeviceMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
-            return new FluxDeviceMenu(containerId, inventory, this);
+        public FluxMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
+            return new FluxMenu(containerId, inventory, this);
         }
     }
 }

@@ -1,172 +1,171 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-/*
-import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
+import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
-import sonar.fluxnetworks.client.gui.button.InvisibleButton;
 import sonar.fluxnetworks.client.gui.popup.PopupMemberEdit;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.test.C2SNetMsg;
+import sonar.fluxnetworks.common.connection.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxUtils;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class GuiTabMembers extends GuiTabPages<NetworkMember> {
 
-    public InvisibleButton redirectButton;
+    public NetworkMember mSelectedMember;
 
-    public NetworkMember selectedPlayer;
+    //private int timer;
 
-    private int timer;
-
-    public GuiTabMembers(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
-        gridStartX = 15;
-        gridStartY = 22;
-        gridHeight = 13;
-        gridPerPage = 10;
-        elementHeight = 12;
-        elementWidth = 146;
-        C2SNetMsg.requestNetworkUpdate(network, FluxConstants.TYPE_NET_MEMBERS);
+    public GuiTabMembers(@Nonnull FluxMenu menu, @Nonnull Player player) {
+        super(menu, player);
+        mGridHeight = 13;
+        mGridPerPage = 9;
+        mElementWidth = 146;
+        mElementHeight = 12;
+        ClientMessages.updateNetwork(getNetwork(), FluxConstants.NBT_NET_MEMBERS);
     }
 
+    @Nonnull
     public EnumNavigationTab getNavigationTab() {
         return EnumNavigationTab.TAB_MEMBER;
     }
 
     @Override
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        if (networkValid) {
-            String str2 = accessLevel.getName();
-            font.drawString(matrixStack, str2, 158 - font.getStringWidth(str2), 10, 0xffffff);
-            font.drawString(matrixStack, FluxTranslate.SORT_BY.t() + ": " + TextFormatting.AQUA + FluxTranslate.SORTING_SMART.t(), 19, 10, 0xffffff);
-            super.drawForegroundLayer(matrixStack, mouseX, mouseY);
+    protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+        if (getNetwork().isValid()) {
+            String access = getAccessLevel().getFormattedName();
+            font.draw(poseStack, access, leftPos + 158 - font.width(access), topPos + 24, 0xffffff);
+            String sortBy = FluxTranslate.SORT_BY.get() + ": " + ChatFormatting.AQUA + mSortType.getTranslatedName();
+            font.draw(poseStack, sortBy, leftPos + 19, topPos + 24, 0xffffff);
+
+            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(),
+                    leftPos + 20, topPos + 8);
         } else {
-            super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
         }
     }
 
     @Override
     public void init() {
-        */
-/*if(networkValid) {
-
-            buttons.add(new NormalButton("+", 152, 150, 12, 12, 1));
-
-            player = TextboxButton.create(this, "", 1, fontRenderer, 14, 150, 130, 12);
-            player.setMaxStringLength(32);
-
-            textBoxes.add(player);
-        }*//*
-
-
         super.init();
-        configureNavigationButtons(EnumNavigationTab.TAB_MEMBER, navigationTabs);
-        if (!networkValid) {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
-                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
-            addButton(redirectButton);
-        }
-        refreshPages(Lists.newArrayList(network.getAllMembers()));
+        mGridStartX = leftPos + 15;
+        mGridStartY = topPos + 36;
+        refreshPages(getNetwork().getAllMembers());
     }
 
     @Override
     protected void onElementClicked(NetworkMember element, int mouseButton) {
-        */
-/*if(mouseButton == 0) {
-            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_PERMISSION, PacketGeneralHandler.getChangePermissionPacket(network.getNetworkID(), element.getPlayerUUID())));
+        /*if(mouseButton == 0) {
+            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.CHANGE_PERMISSION,
+            PacketGeneralHandler.getChangePermissionPacket(network.getNetworkID(), element.getPlayerUUID())));
         } else if(mouseButton == 1) {
-            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.REMOVE_MEMBER, PacketGeneralHandler.getRemoveMemberPacket(network.getNetworkID(), element.getPlayerUUID())));
-        }*//*
-
-        if (mouseButton == 0) {
-            selectedPlayer = element;
-            openPopUp(new PopupMemberEdit(this, player));
+            PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.REMOVE_MEMBER,
+            PacketGeneralHandler.getRemoveMemberPacket(network.getNetworkID(), element.getPlayerUUID())));
+        }*/
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            mSelectedMember = element;
+            openPopup(new PopupMemberEdit(this));
         }
     }
 
     @Override
-    public void renderElement(MatrixStack matrixStack, NetworkMember element, int x, int y) {
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlphaTest();
+    public void renderElement(PoseStack poseStack, NetworkMember element, int x, int y) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
 
         int color = element.getAccessLevel().getColor();
 
-        float f = (float) (color >> 16 & 255) / 255.0F;
-        float f1 = (float) (color >> 8 & 255) / 255.0F;
-        float f2 = (float) (color & 255) / 255.0F;
+        float r = FluxUtils.getRed(color);
+        float g = FluxUtils.getGreen(color);
+        float b = FluxUtils.getBlue(color);
 
-        RenderSystem.color4f(f, f1, f2, 0.8f);
+        RenderSystem.setShaderColor(r, g, b, 1.0f);
+        RenderSystem.setShaderTexture(0, GUI_BAR);
 
-        minecraft.getTextureManager().bindTexture(ScreenUtils.GUI_BAR);
-        blit(matrixStack, x, y, 0, 16, elementWidth, elementHeight);
+        blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
 
-        if (element.getPlayerUUID().equals(player.getUniqueID())) {
-            fill(matrixStack, x - 4, y + 1, x - 2, y + elementHeight - 1, 0xccffffff);
-            fill(matrixStack, x + elementWidth + 2, y + 1, x + elementWidth + 4, y + elementHeight - 1, 0xccffffff);
+        if (element.getPlayerUUID().equals(mPlayer.getUUID())) {
+            fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
+            fill(poseStack, x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
         }
 
-        font.drawString(matrixStack, TextFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
+        font.draw(poseStack, ChatFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
 
-        String p = element.getAccessLevel().getName();
-        font.drawString(matrixStack, p, x + 142 - font.getStringWidth(p), y + 2, 0xffffff);
+        String access = element.getAccessLevel().getFormattedName();
+        font.draw(poseStack, access, x + mElementWidth - 4 - font.width(access), y + 2, 0xffffff);
     }
 
     @Override
-    public void renderElementTooltip(MatrixStack matrixStack, NetworkMember element, int mouseX, int mouseY) {
-        if (hasActivePopup())
-            return;
-        List<String> strings = new ArrayList<>();
-        strings.add(FluxTranslate.USERNAME.t() + ": " + TextFormatting.AQUA + element.getCachedName());
-        String permission = element.getAccessLevel().getName() + (element.getPlayerUUID().equals(player.getUniqueID()) ? " (" + FluxTranslate.YOU.t() + ")" : "");
-        strings.add(FluxTranslate.ACCESS.t() + ": " + TextFormatting.RESET + permission);
-        //strings.add(TextFormatting.GRAY + "UUID: " + TextFormatting.RESET + element.getPlayerUUID().toString());
-        */
-/*if(element.getPlayerUUID().equals(player.getUniqueID())) {
-            strings.add(TextFormatting.WHITE + "You");
-        }*//*
+    public void renderElementTooltip(PoseStack poseStack, NetworkMember element, int mouseX, int mouseY) {
+        List<Component> components = new ArrayList<>();
+        components.add(FluxTranslate.USERNAME.makeComponent().append(": " + ChatFormatting.AQUA + element.getCachedName()));
+        components.add(FluxTranslate.ACCESS.makeComponent().append(": " + element.getAccessLevel().getFormattedName()));
+        //components.add(TextFormatting.GRAY + "UUID: " + TextFormatting.RESET + element.getPlayerUUID().toString());
 
-        screenUtils.drawHoverTooltip(matrixStack, strings, mouseX + 4, mouseY - 8);
+        /*if(element.getPlayerUUID().equals(player.getUniqueID())) {
+            components.add(TextFormatting.WHITE + "You");
+        }*/
+
+        renderComponentTooltip(poseStack, components, mouseX, mouseY);
     }
 
     @Override
-    public boolean mouseClickedMain(double mouseX, double mouseY, int mouseButton) {
-        super.mouseClickedMain(mouseX, mouseY, mouseButton);
-        */
-/*for(NormalButton button : buttons) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (mouseX >= leftPos + 45 && mouseX < leftPos + 75 && mouseY >= topPos + 24 && mouseY < topPos + 32) {
+                mSortType = FluxUtils.cycle(mSortType, SortType.values());
+                sortGrids(mSortType);
+                return true;
+            }
+            if (!getNetwork().isValid()) {
+                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
+                    switchTab(EnumNavigationTab.TAB_SELECTION);
+                    return true;
+                }
+            }
+        }
+        /*for(NormalButton button : buttons) {
             if(button.isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop)) {
                 if(button.id == 1 && !player.getText().isEmpty()) {
-                    PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.ADD_MEMBER, PacketGeneralHandler.getAddMemberPacket(network.getNetworkID(), player.getText())));
+                    PacketHandler.network.sendToServer(new PacketGeneral.GeneralMessage(PacketGeneralType.ADD_MEMBER,
+                     PacketGeneralHandler.getAddMemberPacket(network.getNetworkID(), player.getText())));
                     player.setText("");
                 }
             }
-        }*//*
-
+        }*/
         return false;
     }
 
     @Override
+    protected void onResponseAction(int key, int code) {
+        super.onResponseAction(key, code);
+        if (key == FluxConstants.REQUEST_UPDATE_NETWORK) {
+            refreshPages(getNetwork().getAllMembers());
+        }
+    }
+
+    /*@Override
     public void onFeedbackAction(@Nonnull FeedbackInfo info) {
         super.onFeedbackAction(info);
         if (info == FeedbackInfo.SUCCESS) {
             if (hasActivePopup()) {
                 // re-open
-                Optional<NetworkMember> n = elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID())).findFirst();
+                Optional<NetworkMember> n =
+                        elements.stream().filter(f -> f.getPlayerUUID().equals(selectedPlayer.getPlayerUUID()))
+                        .findFirst();
                 if (n.isPresent()) {
                     selectedPlayer = n.get();
                     openPopUp(new PopupMemberEdit(this, player));
@@ -188,12 +187,19 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         }
         timer++;
         timer %= 40;
-    }
+    }*/
 
     @Override
     protected void sortGrids(SortType sortType) {
-        elements.sort(Comparator.comparing(NetworkMember::getAccessLevel).thenComparing(NetworkMember::getCachedName));
-        refreshCurrentPageInternal();
+        switch (sortType) {
+            case ID -> {
+                mElements.sort(Comparator.comparing(NetworkMember::getAccessLevel).thenComparing(NetworkMember::getPlayerUUID));
+                refreshCurrentPageInternal();
+            }
+            case NAME -> {
+                mElements.sort(Comparator.comparing(NetworkMember::getAccessLevel).thenComparing(NetworkMember::getCachedName));
+                refreshCurrentPageInternal();
+            }
+        }
     }
 }
-*/

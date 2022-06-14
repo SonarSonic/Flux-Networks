@@ -65,8 +65,12 @@ public class NetworkMember {
         return mAccessLevel;
     }
 
-    public void setAccessLevel(@Nonnull AccessLevel accessLevel) {
-        mAccessLevel = accessLevel;
+    public boolean setAccessLevel(@Nonnull AccessLevel accessLevel) {
+        if (mAccessLevel != accessLevel) {
+            mAccessLevel = accessLevel;
+            return true;
+        }
+        return false;
     }
 
     public void readNBT(@Nonnull CompoundTag tag) {

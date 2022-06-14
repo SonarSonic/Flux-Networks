@@ -2,13 +2,14 @@ package sonar.fluxnetworks.client.gui.basic;
 
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
 import sonar.fluxnetworks.client.gui.tab.*;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.register.RegistrySounds;
@@ -20,7 +21,7 @@ import javax.annotation.Nonnull;
  */
 public abstract class GuiTabCore extends GuiFluxCore {
 
-    public GuiTabCore(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiTabCore(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
     }
 
@@ -44,7 +45,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
     @Override
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if (mouseButton == 0 && button instanceof NavigationButton) {
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button instanceof NavigationButton) {
             switchTab(((NavigationButton) button).getTab());
             if (FluxConfig.enableButtonSound) {
                 getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));
@@ -80,10 +81,10 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 break;
             case TAB_STATISTICS:
                 getMinecraft().setScreen(new GuiTabStatistics(menu, mPlayer));
-                break;
+                break;*/
             case TAB_MEMBER:
                 getMinecraft().setScreen(new GuiTabMembers(menu, mPlayer));
-                break;*/
+                break;
             case TAB_SETTING:
                 getMinecraft().setScreen(new GuiTabSettings(menu, mPlayer));
                 break;

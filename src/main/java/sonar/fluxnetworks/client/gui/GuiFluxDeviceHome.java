@@ -12,7 +12,7 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.FluxEditBox;
 import sonar.fluxnetworks.client.gui.button.SwitchButton;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.device.TransferHandler;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -31,7 +31,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
 
     private int timer;
 
-    public GuiFluxDeviceHome(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiFluxDeviceHome(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
     }
 

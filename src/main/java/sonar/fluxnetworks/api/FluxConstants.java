@@ -35,7 +35,8 @@ public final class FluxConstants {
      * NBT access type, network data-sync or operation.
      * Write - server, Read - client/server.
      * <ul>
-     *     <li>(Both) Basic: network ID, network name, network color, ownerUUID, securityLevel, wirelessMode</li>
+     *     <li>(Server to client) Basic: network ID, network name, network color</li>
+     *     <li>(Client requests) General: ownerUUID, securityLevel, wirelessMode</li>
      *     <li>(Client requests) Members: All network members</li>
      *     <li>(Client requests) Connections: All network connections (i.e. loaded and unloaded)</li>
      *     <li>(Client requests) Statistics: Latest network statistics</li>
@@ -45,9 +46,10 @@ public final class FluxConstants {
     //TODO update relevant message handling
     public static final byte
             NBT_NET_BASIC = 21,
-            NBT_NET_MEMBERS = 22,
-            NBT_NET_CONNECTIONS = 23,
-            NBT_NET_STATISTICS = 24;
+            NBT_NET_GENERAL = 22,
+            NBT_NET_MEMBERS = 23,
+            NBT_NET_CONNECTIONS = 24,
+            NBT_NET_STATISTICS = 25;
 
     // Network connections editing flags
     //TODO remove, using NBT instead
@@ -83,14 +85,14 @@ public final class FluxConstants {
             REQUEST_SET_NETWORK = 2,
             REQUEST_UPDATE_NETWORK = 3,
             REQUEST_DELETE_NETWORK = 4,
-            REQUEST_EDIT_NETWORK = 5;
+            REQUEST_EDIT_NETWORK = 5,
+            REQUEST_EDIT_MEMBER = 6;
 
     // Network members editing type
-    public static final int TYPE_NEW_MEMBER = 1;
-    public static final int TYPE_SET_ADMIN = 2;
-    public static final int TYPE_SET_USER = 3;
-    public static final int TYPE_CANCEL_MEMBERSHIP = 4;
-    public static final int TYPE_TRANSFER_OWNERSHIP = 5;
+    public static final byte MEMBERSHIP_SET_USER = 1;
+    public static final byte MEMBERSHIP_SET_ADMIN = 2;
+    public static final byte MEMBERSHIP_CANCEL_MEMBERSHIP = 3;
+    public static final byte MEMBERSHIP_TRANSFER_OWNERSHIP = 4;
 
     /**
      * Device buffer message type, C2S positive

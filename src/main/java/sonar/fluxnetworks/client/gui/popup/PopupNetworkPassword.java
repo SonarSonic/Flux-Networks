@@ -17,7 +17,7 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
 
     private SimpleButton mCancel;
     private SimpleButton mConnect;
-    private FluxEditBox mPassword;
+    public FluxEditBox mPassword;
 
     public PopupNetworkPassword(GuiTabSelection host) {
         super(host);
@@ -60,10 +60,8 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
             if (button == mCancel) {
                 mHost.closePopup();
             } else if (button == mConnect) {
-                if (mPassword.getValue().length() > 0) {
-                    mHost.setConnectedNetwork(mHost.mSelectedNetwork.getNetworkID(), mPassword.getValue());
-                    mPassword.setValue("");
-                }
+                mHost.setConnectedNetwork(mHost.mSelectedNetwork.getNetworkID(), mPassword.getValue());
+                mConnect.setClickable(false);
             }
         }
     }

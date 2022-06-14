@@ -30,7 +30,7 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.common.block.*;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.crafting.FluxStorageRecipeSerializer;
 import sonar.fluxnetworks.common.crafting.NBTWipeRecipeSerializer;
 import sonar.fluxnetworks.common.device.*;
@@ -173,15 +173,15 @@ public class Registration {
                     if (tag != null) {
                         device.readCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
                     }
-                    return new FluxDeviceMenu(containerId, inventory, device);
+                    return new FluxMenu(containerId, inventory, device);
                 }
             } else {
                 ItemStack stack = inventory.player.getMainHandItem();
                 if (stack.getItem() == RegistryItems.FLUX_CONFIGURATOR) {
-                    return new FluxDeviceMenu(containerId, inventory, new ItemFluxConfigurator.Provider(stack));
+                    return new FluxMenu(containerId, inventory, new ItemFluxConfigurator.Provider(stack));
                 }
             }
-            return new FluxDeviceMenu(containerId, inventory, new ItemAdminConfigurator.Provider());
+            return new FluxMenu(containerId, inventory, new ItemAdminConfigurator.Provider());
         }).setRegistryName("flux_menu"));
     }
 

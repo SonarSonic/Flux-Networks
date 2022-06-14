@@ -78,7 +78,7 @@ public class FluxNetwork {
     private int mID;
     private String mName;
     private int mColor;
-    private UUID mOwnerUUID;
+    UUID mOwnerUUID;
     private SecurityLevel mSecurityLevel;
     private int mWirelessMode;
 
@@ -282,6 +282,13 @@ public class FluxNetwork {
     }*/
 
     /**
+     * @return a response code
+     */
+    public int changeMembership(Player player, UUID targetUUID, byte type) {
+        throw new IllegalStateException();
+    }
+
+    /**
      * Returns whether this network is a valid network.
      *
      * @return {@code true} if it is valid, {@code false} otherwise
@@ -336,16 +343,13 @@ public class FluxNetwork {
                 }
             }
             List<ServerPlayer> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
-            if (!players.isEmpty()) {
-                for (ServerPlayer p : players) {
-                    if (getMemberByUUID(p.getUUID()) == null) {
-                        CompoundTag subTag = new CompoundTag();
-                        NetworkMember m = NetworkMember.create(p,
-                                FluxPlayer.isPlayerSuperAdmin(p) ? AccessLevel.SUPER_ADMIN :
-                                        AccessLevel.BLOCKED);
-                        m.writeNBT(subTag);
-                        list.add(subTag);
-                    }
+            for (ServerPlayer p : players) {
+                if (getMemberByUUID(p.getUUID()) == null) {
+                    CompoundTag subTag = new CompoundTag();
+                    NetworkMember.create(p, FluxPlayer.isPlayerSuperAdmin(p) ?
+                                    AccessLevel.SUPER_ADMIN : AccessLevel.BLOCKED)
+                            .writeNBT(subTag);
+                    list.add(subTag);
                 }
             }
             tag.put(MEMBERS, list);

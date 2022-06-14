@@ -156,8 +156,8 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     @Nonnull
     @Override
-    public final FluxDeviceMenu createMenu(int containerId, Inventory inventory, Player player) {
-        return new FluxDeviceMenu(containerId, inventory, this);
+    public final FluxMenu createMenu(int containerId, Inventory inventory, Player player) {
+        return new FluxMenu(containerId, inventory, this);
     }
 
     /**

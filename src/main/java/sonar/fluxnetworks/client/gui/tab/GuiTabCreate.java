@@ -11,7 +11,7 @@ import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.SimpleButton;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
@@ -20,7 +20,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
     public SimpleButton mCreate;
 
-    public GuiTabCreate(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiTabCreate(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
         mSecurityLevel = SecurityLevel.ENCRYPTED;
     }
@@ -68,7 +68,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
             //C2SNetMsg.createNetwork(nameField.getText(), colorBtn.color, mSecurityLevel, passwordField.getText());
 
-            ClientMessages.createNetwork(menu.containerId, mNetworkName.getValue(),
+            ClientMessages.createNetwork(getToken(), mNetworkName.getValue(),
                     mColorButton.mColor, mSecurityLevel, mPassword.getValue());
             mCreate.setClickable(false);
         }

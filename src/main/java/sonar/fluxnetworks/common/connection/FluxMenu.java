@@ -14,17 +14,21 @@ import javax.annotation.Nonnull;
 /**
  * Communication menu between client and server.
  */
-public class FluxDeviceMenu extends AbstractContainerMenu {
+public class FluxMenu extends AbstractContainerMenu {
 
+    // both side
     public final IFluxProvider mProvider;
+    // client only
     public OnResultListener mOnResultListener;
 
-    public FluxDeviceMenu(int containerId, @Nonnull Inventory inventory, @Nonnull IFluxProvider provider) {
+    // both side
+    public FluxMenu(int containerId, @Nonnull Inventory inventory, @Nonnull IFluxProvider provider) {
         super(RegistryBlocks.FLUX_MENU, containerId);
         mProvider = provider;
         provider.onMenuOpened(inventory.player);
     }
 
+    // server only
     @Override
     public boolean stillValid(@Nonnull Player player) {
         if (mProvider instanceof TileFluxDevice device) {
@@ -35,15 +39,17 @@ public class FluxDeviceMenu extends AbstractContainerMenu {
         return player.getMainHandItem().is(RegistryItems.ADMIN_CONFIGURATOR);
     }
 
+    // both side
     @Override
     public void removed(@Nonnull Player player) {
         super.removed(player);
         mProvider.onMenuClosed(player);
     }
 
+    // client only
     @FunctionalInterface
     public interface OnResultListener {
 
-        void onResult(FluxDeviceMenu menu, int key, int code);
+        void onResult(FluxMenu menu, int key, int code);
     }
 }

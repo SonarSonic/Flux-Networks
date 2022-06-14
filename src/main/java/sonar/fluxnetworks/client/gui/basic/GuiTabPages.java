@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.button.PageLabelButton;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     public int mElementWidth = 0;
     public int mElementHeight = 0;
 
-    public GuiTabPages(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiTabPages(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
     }
 
@@ -47,7 +47,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         }
 
         T hovered = getHoveredElement(mouseX, mouseY);
-        if (hovered != null) {
+        if (hovered != null && getCurrentPopup() == null) {
             renderElementTooltip(poseStack, hovered, mouseX, mouseY);
         }
     }

@@ -19,7 +19,7 @@ import icyllis.modernui.widget.LinearLayout;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.design.FluxDesign;
 import sonar.fluxnetworks.client.design.TabBackground;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -29,7 +29,7 @@ import static icyllis.modernui.view.View.dp;
 import static icyllis.modernui.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static icyllis.modernui.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-public class FluxDeviceUI extends Fragment implements FluxDeviceMenu.OnResultListener {
+public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener {
 
     public static final int NETWORK_COLOR = 0xFF295E8A;
 
@@ -55,7 +55,7 @@ public class FluxDeviceUI extends Fragment implements FluxDeviceMenu.OnResultLis
     }
 
     @Override
-    public void onResult(FluxDeviceMenu menu, int key, int code) {
+    public void onResult(FluxMenu menu, int key, int code) {
         DataSet result = new DataSet();
         result.putInt("code", code);
         requireView().post(() -> getChildFragmentManager().setFragmentResult(switch (key) {

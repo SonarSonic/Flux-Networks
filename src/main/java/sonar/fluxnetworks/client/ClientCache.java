@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.client;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.*;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,7 +21,12 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public final class ClientCache {
 
-    private static final Int2ObjectOpenHashMap<FluxNetwork> sNetworks = new Int2ObjectOpenHashMap<>();
+    private static final int MAX_RECENT_PASSWORD_COUNT = 5;
+
+    private static final Int2ObjectOpenHashMap<FluxNetwork> sNetworks =
+            new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectLinkedOpenHashMap<String> sRecentPasswords =
+            new Int2ObjectLinkedOpenHashMap<>(MAX_RECENT_PASSWORD_COUNT); // LRU cache
 
     public static boolean sSuperAdmin = false;
     public static boolean sDetailedNetworkView = false;
@@ -38,6 +42,7 @@ public final class ClientCache {
     public static void release() {
         sNetworks.clear();
         sNetworks.trim(); // rehash
+        sRecentPasswords.clear(); // preserved memory, no need to rehash
         sAdminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
     }
 
@@ -73,6 +78,19 @@ public final class ClientCache {
 
     public static void deleteNetwork(int id) {
         sNetworks.remove(id);
+    }
+
+    @Nonnull
+    public static String getRecentPassword(int id) {
+        return sRecentPasswords.getOrDefault(id, "");
+    }
+
+    public static void updateRecentPassword(int id, String password) {
+        // remember last 5 passwords so that no need to enter password again
+        for (int i = MAX_RECENT_PASSWORD_COUNT; i < sRecentPasswords.size(); i++) {
+            sRecentPasswords.removeFirst();
+        }
+        sRecentPasswords.put(id, password);
     }
 
     /*public String getDisplayName(@Nonnull CompoundTag subTag) {

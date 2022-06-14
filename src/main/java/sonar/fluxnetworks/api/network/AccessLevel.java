@@ -34,7 +34,7 @@ public enum AccessLevel {
     }
 
     @Nonnull
-    public String getName() {
+    public String getFormattedName() {
         return formatting + localization.get();
     }
 

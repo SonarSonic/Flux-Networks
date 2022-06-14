@@ -2,10 +2,10 @@ package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.*;
-import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.api.network.*;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
@@ -238,6 +238,91 @@ public class ServerFluxNetwork extends FluxNetwork {
 
     public void setPassword(@Nonnull String password) {
         mPassword = password;
+    }
+
+    @Override
+    public int changeMembership(@Nonnull Player player, @Nonnull UUID targetUUID, byte type) {
+        final AccessLevel access = getPlayerAccess(player);
+        boolean editPermission = access.canEdit();
+        boolean ownerPermission = access.canDelete();
+        // check permission
+        if (!editPermission) {
+            return FluxConstants.RESPONSE_NO_ADMIN;
+        }
+
+        // editing yourself
+        final boolean self = player.getUUID().equals(targetUUID);
+        // current member in the network
+        final NetworkMember current = getMemberByUUID(targetUUID);
+
+        // create new member
+        if (type == FluxConstants.MEMBERSHIP_SET_USER && current == null) {
+            final Player target = ServerLifecycleHooks.getCurrentServer()
+                    .getPlayerList().getPlayer(targetUUID);
+            if (target != null) {
+                NetworkMember m = NetworkMember.create(target, AccessLevel.USER);
+                mMemberMap.put(m.getPlayerUUID(), m);
+                return FluxConstants.RESPONSE_SUCCESS;
+            } else {
+                // the player is offline now
+                return FluxConstants.RESPONSE_INVALID_USER;
+            }
+        } else if (current != null) {
+            // super admin can still transfer ownership to self
+            if (self && current.getAccessLevel() == AccessLevel.OWNER) {
+                return FluxConstants.RESPONSE_INVALID_USER;
+            }
+            boolean changed = false;
+            if (type == FluxConstants.MEMBERSHIP_SET_ADMIN) {
+                // we are not owner or super admin
+                if (!ownerPermission) {
+                    return FluxConstants.RESPONSE_NO_OWNER;
+                }
+                changed = current.setAccessLevel(AccessLevel.ADMIN);
+            } else if (type == FluxConstants.MEMBERSHIP_SET_USER) {
+                changed = current.setAccessLevel(AccessLevel.USER);
+            } else if (type == FluxConstants.MEMBERSHIP_CANCEL_MEMBERSHIP) {
+                changed = mMemberMap.remove(targetUUID) != null;
+            } else if (type == FluxConstants.MEMBERSHIP_TRANSFER_OWNERSHIP) {
+                if (!ownerPermission) {
+                    return FluxConstants.RESPONSE_NO_OWNER;
+                }
+                getAllMembers().forEach(f -> {
+                    if (f.getAccessLevel().canDelete()) {
+                        f.setAccessLevel(AccessLevel.USER);
+                    }
+                });
+                mOwnerUUID = targetUUID;
+                current.setAccessLevel(AccessLevel.OWNER);
+                changed = true;
+            }
+            return changed ? FluxConstants.RESPONSE_SUCCESS : FluxConstants.RESPONSE_INVALID_USER;
+        } else if (type == FluxConstants.MEMBERSHIP_TRANSFER_OWNERSHIP) {
+            if (!ownerPermission) {
+                return FluxConstants.RESPONSE_NO_OWNER;
+            }
+            // super admin can still transfer ownership to self
+            if (self && access == AccessLevel.OWNER) {
+                return FluxConstants.RESPONSE_INVALID_USER;
+            }
+            Player target = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(targetUUID);
+            // is online
+            if (target != null) {
+                getAllMembers().forEach(f -> {
+                    if (f.getAccessLevel().canDelete()) {
+                        f.setAccessLevel(AccessLevel.USER);
+                    }
+                });
+                NetworkMember m = NetworkMember.create(target, AccessLevel.OWNER);
+                mMemberMap.put(m.getPlayerUUID(), m);
+                mOwnerUUID = targetUUID;
+                return FluxConstants.RESPONSE_SUCCESS;
+            } else {
+                return FluxConstants.RESPONSE_INVALID_USER;
+            }
+        } else {
+            return FluxConstants.RESPONSE_INVALID_USER;
+        }
     }
 
     @Override

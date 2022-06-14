@@ -17,7 +17,7 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxProvider;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.ClientCache;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
@@ -119,8 +119,8 @@ public class ItemFluxConfigurator extends Item {
 
         @Nullable
         @Override
-        public FluxDeviceMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
-            return new FluxDeviceMenu(containerId, inventory, this);
+        public FluxMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
+            return new FluxMenu(containerId, inventory, this);
         }
     }
 }

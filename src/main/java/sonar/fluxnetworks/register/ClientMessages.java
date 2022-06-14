@@ -15,12 +15,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.ClientCache;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import static sonar.fluxnetworks.register.Registration.sNetwork;
@@ -62,10 +64,10 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
-    public static void deleteNetwork(int token, int networkID) {
+    public static void deleteNetwork(int token, FluxNetwork network) {
         var buf = NetworkHandler.buffer(Messages.C2S_DELETE_NETWORK);
         buf.writeByte(token);
-        buf.writeVarInt(networkID);
+        buf.writeVarInt(network.getNetworkID());
         sNetwork.sendToServer(buf);
     }
 
@@ -89,6 +91,15 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
+    public static void editMember(int token, FluxNetwork network, UUID uuid, byte type) {
+        var buf = NetworkHandler.buffer(Messages.C2S_EDIT_MEMBER);
+        buf.writeByte(token);
+        buf.writeVarInt(network.getNetworkID());
+        buf.writeUUID(uuid);
+        buf.writeByte(type);
+        sNetwork.sendToServer(buf);
+    }
+
     // set (connect to) network for a block entity
     public static void setTileNetwork(int token, TileFluxDevice device, int networkID, String password) {
         var buf = NetworkHandler.buffer(Messages.C2S_CONNECT_DEVICE);
@@ -99,11 +110,11 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
-    public static void editNetwork(int token, int networkID, String name, int color,
+    public static void editNetwork(int token, FluxNetwork network, String name, int color,
                                    SecurityLevel security, String password, int wireless) {
         var buf = NetworkHandler.buffer(Messages.C2S_EDIT_NETWORK);
         buf.writeByte(token);
-        buf.writeVarInt(networkID);
+        buf.writeVarInt(network.getNetworkID());
         buf.writeUtf(name, 256);
         buf.writeInt(color);
         buf.writeByte(security.getKey());
@@ -111,6 +122,16 @@ public class ClientMessages {
             buf.writeUtf(password, 256);
         }
         buf.writeInt(wireless);
+        sNetwork.sendToServer(buf);
+    }
+
+    /**
+     * Request the server to update all certain data of a network.
+     */
+    public static void updateNetwork(FluxNetwork network, byte type) {
+        var buf = NetworkHandler.buffer(Messages.C2S_UPDATE_NETWORK);
+        buf.writeVarInt(network.getNetworkID());
+        buf.writeByte(type);
         sNetwork.sendToServer(buf);
     }
 
@@ -151,7 +172,7 @@ public class ClientMessages {
                 return;
             }
             if (p.containerMenu.containerId == token &&
-                    p.containerMenu instanceof FluxDeviceMenu m &&
+                    p.containerMenu instanceof FluxMenu m &&
                     m.mOnResultListener != null) {
                 m.mOnResultListener.onResult(m, key, code);
             }
@@ -188,7 +209,7 @@ public class ClientMessages {
                 return;
             }
             ClientCache.updateNetwork(map, type);
-            if (p.containerMenu instanceof FluxDeviceMenu m && m.mOnResultListener != null) {
+            if (p.containerMenu instanceof FluxMenu m && m.mOnResultListener != null) {
                 m.mOnResultListener.onResult(m, FluxConstants.REQUEST_UPDATE_NETWORK, 0);
             }
         });
@@ -203,7 +224,7 @@ public class ClientMessages {
                 return;
             }
             ClientCache.deleteNetwork(id);
-            if (p.containerMenu instanceof FluxDeviceMenu m && m.mOnResultListener != null) {
+            if (p.containerMenu instanceof FluxMenu m && m.mOnResultListener != null) {
                 m.mOnResultListener.onResult(m, FluxConstants.REQUEST_DELETE_NETWORK, 0);
             }
         });

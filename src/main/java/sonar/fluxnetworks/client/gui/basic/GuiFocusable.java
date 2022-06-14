@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.button.FluxEditBox;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.register.RegistrySounds;
 
 import javax.annotation.Nonnull;
@@ -19,9 +19,9 @@ import javax.annotation.Nullable;
 /**
  * Fixes the focus of popup host and dialog popup.
  */
-public abstract class GuiFocusable extends AbstractContainerScreen<FluxDeviceMenu> {
+public abstract class GuiFocusable extends AbstractContainerScreen<FluxMenu> {
 
-    public GuiFocusable(FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiFocusable(FluxMenu menu, @Nonnull Player player) {
         super(menu, player.getInventory(), TextComponent.EMPTY);
     }
 

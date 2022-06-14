@@ -11,7 +11,7 @@ import sonar.fluxnetworks.client.gui.basic.*;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.FluxEditBox;
 import sonar.fluxnetworks.client.gui.popup.PopupCustomColor;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -27,7 +27,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     public FluxEditBox mNetworkName;
     public FluxEditBox mPassword;
 
-    public GuiTabEditAbstract(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiTabEditAbstract(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
     }
 

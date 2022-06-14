@@ -11,7 +11,7 @@ import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.SimpleButton;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
@@ -22,7 +22,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     public SimpleButton mDelete;
     public int mDeleteCount;
 
-    public GuiTabSettings(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiTabSettings(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
         mSecurityLevel = getNetwork().getSecurityLevel();
     }
@@ -64,6 +64,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
 
             mDelete = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 12 - 48, topPos + 150, 48, 12);
             mDelete.setText(FluxTranslate.DELETE.get());
+            mDelete.setColor(0xFFFF5555);
             mDelete.setClickable(false);
             mButtons.add(mDelete);
 
@@ -107,11 +108,11 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (button == mApply) {
-                ClientMessages.editNetwork(menu.containerId, getNetwork().getNetworkID(),
+                ClientMessages.editNetwork(getToken(), getNetwork(),
                         mNetworkName.getValue(), mColorButton.mColor, mSecurityLevel, mPassword.getValue(), -1);
                 mApply.setClickable(false);
             } else if (button == mDelete) {
-                ClientMessages.deleteNetwork(menu.containerId, getNetwork().getNetworkID());
+                ClientMessages.deleteNetwork(getToken(), getNetwork());
                 mDelete.setClickable(false);
             }
         }

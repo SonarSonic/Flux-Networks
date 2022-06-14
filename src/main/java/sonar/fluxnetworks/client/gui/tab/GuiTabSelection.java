@@ -12,7 +12,7 @@ import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.popup.PopupNetworkPassword;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -24,10 +24,10 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
     public FluxNetwork mSelectedNetwork;
 
-    public GuiTabSelection(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    public GuiTabSelection(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
         mGridHeight = 13;
-        mGridPerPage = 10;
+        mGridPerPage = 9;
         mElementWidth = 146;
         mElementHeight = 12;
     }
@@ -44,9 +44,12 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_NETWORK.get(), FluxTranslate.TAB_CREATE.get());
         } else {
             String total = FluxTranslate.TOTAL.get() + ": " + mElements.size();
+            font.draw(poseStack, total, leftPos + 158 - font.width(total), topPos + 24, 0xffffff);
             String sortBy = FluxTranslate.SORT_BY.get() + ": " + ChatFormatting.AQUA + mSortType.getTranslatedName();
-            font.draw(poseStack, total, leftPos + 158 - font.width(total), topPos + 10, 0xffffff);
-            font.draw(poseStack, sortBy, leftPos + 19, topPos + 10, 0xffffff);
+            font.draw(poseStack, sortBy, leftPos + 19, topPos + 24, 0xffffff);
+
+            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(),
+                    leftPos + 20, topPos + 8);
         }
     }
 
@@ -54,7 +57,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     public void init() {
         super.init();
         mGridStartX = leftPos + 15;
-        mGridStartY = topPos + 22;
+        mGridStartY = topPos + 36;
         refreshPages(ClientCache.getAllNetworks());
     }
 
@@ -64,12 +67,6 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, GUI_BAR);
-
-        int color = element.getNetworkColor();
-
-        float r = (float) (color >> 16 & 255) / 255.0F;
-        float g = (float) (color >> 8 & 255) / 255.0F;
-        float b = (float) (color & 255) / 255.0F;
 
         boolean selected = getNetwork() == element;
         boolean locked = element.getSecurityLevel() != SecurityLevel.PUBLIC;
@@ -82,18 +79,20 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             }
         }
 
-        String name = element.getNetworkName();
         if (selected) {
             fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
             fill(poseStack, x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
-            RenderSystem.setShaderColor(r, g, b, 1.0f);
-            blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
-            font.draw(poseStack, name, x + 4, y + 2, 0xffffff);
-        } else {
-            RenderSystem.setShaderColor(r * 0.75f, g * 0.75f, b * 0.75f, 1.0f);
-            blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
-            font.draw(poseStack, name, x + 4, y + 2, 0x404040);
         }
+
+        int color = element.getNetworkColor();
+
+        float r = FluxUtils.getRed(color);
+        float g = FluxUtils.getGreen(color);
+        float b = FluxUtils.getBlue(color);
+
+        RenderSystem.setShaderColor(r, g, b, 1.0f);
+        blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
+        font.draw(poseStack, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
     }
 
     @Override
@@ -103,9 +102,9 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
     @Override
     protected void onElementClicked(FluxNetwork element, int mouseButton) {
-        if (mouseButton == 0) {
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             mSelectedNetwork = element;
-            setConnectedNetwork(element.getNetworkID(), "");
+            setConnectedNetwork(element.getNetworkID(), ClientCache.getRecentPassword(element.getNetworkID()));
         }
     }
 
@@ -115,7 +114,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             return true;
         }
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            if (mouseX >= leftPos + 45 && mouseX < leftPos + 75 && mouseY >= topPos + 10 && mouseY < topPos + 17) {
+            if (mouseX >= leftPos + 45 && mouseX < leftPos + 75 && mouseY >= topPos + 24 && mouseY < topPos + 32) {
                 mSortType = FluxUtils.cycle(mSortType, SortType.values());
                 sortGrids(mSortType);
                 return true;
@@ -137,10 +136,15 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             if (code == FluxConstants.RESPONSE_REQUIRE_PASSWORD) {
                 openPopup(new PopupNetworkPassword(this));
             } else if (code == FluxConstants.RESPONSE_SUCCESS) {
-                closePopup();
-                if (mSelectedNetwork != null && menu.mProvider instanceof ItemFluxConfigurator.Provider p) {
-                    p.mNetworkID = mSelectedNetwork.getNetworkID();
+                if (mSelectedNetwork != null) {
+                    if (getCurrentPopup() instanceof PopupNetworkPassword p) {
+                        ClientCache.updateRecentPassword(mSelectedNetwork.getNetworkID(), p.mPassword.getValue());
+                    }
+                    if (menu.mProvider instanceof ItemFluxConfigurator.Provider p) {
+                        p.mNetworkID = mSelectedNetwork.getNetworkID();
+                    }
                 }
+                closePopup();
                 mSelectedNetwork = null;
             }
         } else if (key == FluxConstants.REQUEST_UPDATE_NETWORK) {

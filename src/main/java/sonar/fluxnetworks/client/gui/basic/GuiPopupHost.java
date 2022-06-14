@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,7 +14,7 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
     private GuiPopupCore<?> mCurrentPopup;
 
-    protected GuiPopupHost(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+    protected GuiPopupHost(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
     }
 

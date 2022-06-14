@@ -211,7 +211,7 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Nullable
     @Override
-    public FluxDeviceMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
+    public FluxMenu createMenu(int containerId, @Nonnull Inventory inventory, @Nonnull Player player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 }

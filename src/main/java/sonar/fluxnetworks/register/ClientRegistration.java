@@ -18,7 +18,7 @@ import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.mui.FluxDeviceUI;
 import sonar.fluxnetworks.client.render.FluxStorageEntityRenderer;
-import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -49,7 +49,7 @@ public class ClientRegistration {
     }
 
     @Nonnull
-    private static MenuScreens.ScreenConstructor<FluxDeviceMenu, GuiTabCore> getScreenFactory() {
+    private static MenuScreens.ScreenConstructor<FluxMenu, GuiTabCore> getScreenFactory() {
         return (menu, inventory, title) -> {
             /*if (menu.bridge instanceof FluxDeviceEntity) {
                 return new GuiFluxDeviceHome(menu, inventory.player);
@@ -80,7 +80,7 @@ public class ClientRegistration {
 
     @SubscribeEvent
     public static void openMenu(@Nonnull OpenMenuEvent event) {
-        if (event.getMenu() instanceof FluxDeviceMenu menu && menu.mProvider != null) {
+        if (event.getMenu() instanceof FluxMenu menu && menu.mProvider != null) {
             FluxDeviceUI fragment = new FluxDeviceUI((TileFluxDevice) menu.mProvider);
             menu.mOnResultListener = fragment;
             DataSet args = new DataSet();
