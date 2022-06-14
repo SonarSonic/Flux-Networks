@@ -35,16 +35,10 @@ public final class FluxConstants {
      * NBT access type, network data-sync or operation.
      * Write - server, Read - client/server.
      * <ul>
-     *     <li>Basic (two cases):
-     *      <ul>
-     *         <li>Server initiated: network ID, network name, network color (for Tooltip and Rendering)</li>
-     *         <li>Client requested: network ID, network name, network color, ownerUUID, securityLevel,
-     *          this player's member info (all data) and owner's member info (public data only)</li>
-     *      </ul></li>
-     *     <li>(Client requested) Members: All network members (public data only)</li>
-     *     <li>(Client requested) Connections: All network connections (i.e. loaded and unloaded)</li>
-     *     <li>(Client requested) Statistics: Latest network statistics</li>
-     *     <li>(Server initiated) Delete: A network is deleted (drop any data)</li>
+     *     <li>(Both) Basic: network ID, network name, network color, ownerUUID, securityLevel, wirelessMode</li>
+     *     <li>(Client requests) Members: All network members</li>
+     *     <li>(Client requests) Connections: All network connections (i.e. loaded and unloaded)</li>
+     *     <li>(Client requests) Statistics: Latest network statistics</li>
      * </ul>
      * Note that password is always opaque to clients (even if you are super admin).
      */
@@ -53,8 +47,7 @@ public final class FluxConstants {
             NBT_NET_BASIC = 21,
             NBT_NET_MEMBERS = 22,
             NBT_NET_CONNECTIONS = 23,
-            NBT_NET_STATISTICS = 24,
-            NBT_NET_DELETE = 29;
+            NBT_NET_STATISTICS = 24;
 
     // Network connections editing flags
     //TODO remove, using NBT instead
@@ -72,8 +65,7 @@ public final class FluxConstants {
      */
     public static final int
             RESPONSE_SUCCESS = -1,
-            RESPONSE_SUCCESS_2 = -2,
-            RESPONSE_REQUIRE_PASSWORD = -3;
+            RESPONSE_REQUIRE_PASSWORD = -2;
     public static final int RESPONSE_REJECT = 1,
             RESPONSE_NO_OWNER = 2,
             RESPONSE_NO_ADMIN = 3,
@@ -88,7 +80,10 @@ public final class FluxConstants {
      */
     public static final int
             REQUEST_CREATE_NETWORK = 1,
-            REQUEST_SET_NETWORK = 2;
+            REQUEST_SET_NETWORK = 2,
+            REQUEST_UPDATE_NETWORK = 3,
+            REQUEST_DELETE_NETWORK = 4,
+            REQUEST_EDIT_NETWORK = 5;
 
     // Network members editing type
     public static final int TYPE_NEW_MEMBER = 1;

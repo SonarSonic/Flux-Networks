@@ -59,7 +59,7 @@ public abstract class GuiPopupCore<T extends GuiFluxCore> extends GuiFocusable {
         RenderSystem.setShaderTexture(0, GuiFluxCore.BACKGROUND);
         blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);
 
-        int color = mHost.mNetwork.getNetworkColor();
+        int color = mHost.getNetwork().getNetworkColor();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
         RenderSystem.setShaderTexture(0, GuiFluxCore.FRAME);
         blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);
@@ -75,10 +75,12 @@ public abstract class GuiPopupCore<T extends GuiFluxCore> extends GuiFocusable {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        boolean result = false;
         for (GuiButtonCore button : mButtons) {
             if (button.mClickable && button.isMouseHovered(mouseX, mouseY)) {
                 onButtonClicked(button, (int) mouseX, (int) mouseY, mouseButton);
-                return true;
+                result = true;
+                break;
             }
         }
         for (GuiEventListener child : this.children()) {
@@ -101,7 +103,7 @@ public abstract class GuiPopupCore<T extends GuiFluxCore> extends GuiFocusable {
             setFocused(null);
             return true;
         }
-        return false;
+        return result;
     }
 
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {

@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.Block;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
-import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 
 import javax.annotation.Nonnull;
@@ -43,7 +43,7 @@ public class FluxDeviceItem extends BlockItem {
         if (tag != null) {
             if (tag.contains(FluxConstants.NETWORK_ID)) {
                 tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
-                        ChatFormatting.RESET + ClientRepository.getNetwork(
+                        ChatFormatting.RESET + ClientCache.getNetwork(
                         tag.getInt(FluxConstants.NETWORK_ID)).getNetworkName()));
             }
 

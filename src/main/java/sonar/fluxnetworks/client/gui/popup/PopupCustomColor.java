@@ -10,6 +10,7 @@ import sonar.fluxnetworks.client.gui.button.SimpleButton;
 import sonar.fluxnetworks.client.gui.tab.GuiTabEditAbstract;
 
 import javax.annotation.Nonnull;
+import java.util.Locale;
 
 public class PopupCustomColor extends GuiPopupCore<GuiTabEditAbstract> {
 
@@ -26,18 +27,18 @@ public class PopupCustomColor extends GuiPopupCore<GuiTabEditAbstract> {
     @Override
     public void init() {
         super.init();
-        mCancel = new SimpleButton(minecraft, leftPos + 24, topPos + 86, 48, 12);
+        mCancel = new SimpleButton(minecraft, leftPos + (imageWidth / 2) + 12, topPos + 86, 48, 12);
         mCancel.setText(FluxTranslate.CANCEL.get());
         mButtons.add(mCancel);
 
-        mApply = new SimpleButton(minecraft, leftPos + 104, topPos + 86, 48, 12);
+        mApply = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 12 - 48, topPos + 86, 48, 12);
         mApply.setText(FluxTranslate.APPLY.get());
         mButtons.add(mApply);
 
-        mColor = FluxEditBox.create("0x", font, leftPos + 52, topPos + 64, 72, 12)
+        mColor = FluxEditBox.create("0x", font, leftPos + (imageWidth / 2) - 40, topPos + 64, 80, 12)
                 .setHexOnly();
         mColor.setMaxLength(6);
-        mColor.setValue(Integer.toHexString(mCurrentColor));
+        mColor.setValue(Integer.toHexString(mCurrentColor).toUpperCase(Locale.ROOT));
         mColor.setResponder(string -> mApply.setClickable(string.length() == 6));
         addRenderableWidget(mColor);
     }

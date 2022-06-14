@@ -1,37 +1,30 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-/*
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TextFormatting;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.gui.EnumNetworkColor;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.api.gui.EnumNetworkColor;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
-import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.test.C2SNetMsg;
+import sonar.fluxnetworks.client.gui.button.SimpleButton;
+import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 
 public class GuiTabSettings extends GuiTabEditAbstract {
 
-    public InvisibleButton redirectButton;
+    public SimpleButton mApply;
+    public SimpleButton mDelete;
+    public int mDeleteCount;
 
-    public NormalButton apply, delete;
-    public int deleteCount;
-
-    public GuiTabSettings(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
-        if (networkValid) {
-            mSecurityLevel = network.getSecurity().getLevel();
-        }
+    public GuiTabSettings(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
+        super(menu, player);
+        mSecurityLevel = getNetwork().getSecurityLevel();
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -39,103 +32,132 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     }
 
     @Override
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        if (networkValid) {
-            if (mouseX > 30 + guiLeft && mouseX < 66 + guiLeft && mouseY > 140 + guiTop && mouseY < 152 + guiTop) {
-                if (delete.clickable) {
-                    drawCenterText(matrixStack, TextFormatting.BOLD + FluxTranslate.DELETE_NETWORK.t(), 48, 128, 0xff0000);
+    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+        if (getNetwork().isValid()) {
+            if (mDelete.isMouseHovered(mouseX, mouseY)) {
+                if (mDelete.isClickable()) {
+                    drawCenteredString(poseStack, font,
+                            ChatFormatting.BOLD + FluxTranslate.DELETE_NETWORK.get(),
+                            mDelete.x + mDelete.width / 2, mDelete.y - 12, 0xff0000);
                 } else {
-                    drawCenterText(matrixStack, FluxTranslate.DOUBLE_SHIFT.t(), 48, 128, 0xffffff);
+                    drawCenteredString(poseStack, font,
+                            FluxTranslate.DOUBLE_SHIFT.get(),
+                            mDelete.x + mDelete.width / 2, mDelete.y - 12, 0xffffff);
                 }
             }
-            drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 156, FluxClientCache.getFeedbackColor());
         } else {
-            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
         }
     }
 
     @Override
     public void init() {
         super.init();
-        if (networkValid) {
-            nameField.setText(network.getNetworkName());
+        if (getNetwork().isValid()) {
+            mNetworkName.setValue(getNetwork().getNetworkName());
 
-            buttons.add(apply = new NormalButton(FluxTranslate.APPLY.t(), 112, 140, 36, 12, 3).setUnclickable());
-            buttons.add(delete = new NormalButton(FluxTranslate.DELETE.t(), 30, 140, 36, 12, 4).setUnclickable());
+            mApply = new SimpleButton(minecraft, leftPos + (imageWidth / 2) + 12, topPos + 150, 48, 12);
+            mApply.setText(FluxTranslate.APPLY.get());
+            mApply.setClickable(false);
+            mButtons.add(mApply);
 
-            int i = 0;
+            mDelete = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 12 - 48, topPos + 150, 48, 12);
+            mDelete.setText(FluxTranslate.DELETE.get());
+            mDelete.setClickable(false);
+            mButtons.add(mDelete);
+
             boolean colorSet = false;
-            for (EnumNetworkColor color : EnumNetworkColor.values()) {
-                ColorButton b = new ColorButton(48 + ((i >= 7 ? i - 7 : i) * 16), 91 + ((i >= 7 ? 1 : 0) * 16), color.getRGB());
-                colorButtons.add(b);
-                if (!colorSet && color.getRGB() == network.getNetworkColor()) {
-                    this.colorBtn = b;
-                    this.colorBtn.selected = true;
+            // two rows
+            for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
+                final EnumNetworkColor color = EnumNetworkColor.VALUES[i];
+                ColorButton button = new ColorButton(minecraft,
+                        leftPos + 48 + (i % 7) * 16, topPos + 87 + (i / 7) * 16, color.getRGB());
+                if (!colorSet && color.getRGB() == getNetwork().getNetworkColor()) {
+                    mColorButton = button;
+                    button.setSelected(true);
                     colorSet = true;
                 }
-                i++;
+                mButtons.add(button);
             }
+
+            // it's a custom color
             if (!colorSet) {
-                ColorButton c = new ColorButton(32, 107, network.getNetworkColor());
-                colorButtons.add(c);
-                this.colorBtn = c;
-                this.colorBtn.selected = true;
+                ColorButton button = new ColorButton(minecraft,
+                        leftPos + 32, topPos + 107, getNetwork().getNetworkColor());
+                mColorButton = button;
+                button.setSelected(true);
+                mButtons.add(button);
             }
-        } else {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
-                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
-            addButton(redirectButton);
         }
     }
 
     @Override
     public void onEditSettingsChanged() {
-        if (networkValid && apply != null) {
-            apply.clickable = ((mSecurityLevel != SecurityLevel.ENCRYPTED || passwordField.getText().length() != 0) && nameField.getText().length() != 0);
+        if (mApply != null) {
+            mApply.setClickable((!mSecurityLevel.isEncrypted() ||
+                    !mPassword.getValue().isEmpty() ||
+                    getNetwork().getSecurityLevel().isEncrypted()) &&
+                    !mNetworkName.getValue().isEmpty());
         }
     }
 
     @Override
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if (networkValid && button instanceof NormalButton) {
-            switch (button.id) {
-                case 3:
-                    C2SNetMsg.editNetwork(network.getNetworkID(),
-                            nameField.getText(), colorBtn.color, mSecurityLevel, passwordField.getText());
-                    break;
-                case 4:
-                    C2SNetMsg.deleteNetwork(network.getNetworkID());
-                    break;
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (button == mApply) {
+                ClientMessages.editNetwork(menu.containerId, getNetwork().getNetworkID(),
+                        mNetworkName.getValue(), mColorButton.mColor, mSecurityLevel, mPassword.getValue(), -1);
+                mApply.setClickable(false);
+            } else if (button == mDelete) {
+                ClientMessages.deleteNetwork(menu.containerId, getNetwork().getNetworkID());
+                mDelete.setClickable(false);
             }
         }
     }
 
     @Override
-    public boolean keyPressedMain(int keyCode, int scanCode, int modifiers) {
-        if (delete != null) {
-            if (keyCode == GLFW.GLFW_KEY_LEFT_SHIFT) {
-                deleteCount++;
-                if (deleteCount > 1) {
-                    delete.clickable = true;
+    public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (!getNetwork().isValid()) {
+                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
+                    switchTab(EnumNavigationTab.TAB_SELECTION);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        if (mDelete != null) {
+            if ((modifiers & GLFW.GLFW_MOD_SHIFT) != 0) {
+                mDeleteCount++;
+                if (mDeleteCount > 1) {
+                    mDelete.setClickable(true);
                 }
             } else {
-                deleteCount = 0;
-                delete.clickable = false;
+                mDeleteCount = 0;
+                mDelete.setClickable(false);
             }
         }
-        return super.keyPressedMain(keyCode, scanCode, modifiers);
+        return super.onKeyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
-        super.onFeedbackAction(info);
-        if (info == FeedbackInfo.SUCCESS) {
-            switchTab(EnumNavigationTab.TAB_HOME);
-        } else if (info == FeedbackInfo.SUCCESS_2) {
-            apply.clickable = false;
+    protected void onResponseAction(int key, int code) {
+        super.onResponseAction(key, code);
+        if (code == FluxConstants.RESPONSE_SUCCESS) {
+            if (key == FluxConstants.REQUEST_DELETE_NETWORK) {
+                switchTab(EnumNavigationTab.TAB_HOME);
+            } else if (key == FluxConstants.REQUEST_EDIT_NETWORK) {
+                // ignored
+            }
         }
     }
 }
-*/

@@ -15,7 +15,7 @@ public enum SecurityLevel {
     public static final SecurityLevel[] VALUES = values();
 
     @Nonnull
-    public static SecurityLevel fromKey(int id) {
+    public static SecurityLevel fromKey(byte id) {
         return VALUES[id];
     }
 

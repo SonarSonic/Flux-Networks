@@ -36,7 +36,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     @Override
     public void init() {
         super.init();
-        if (mNetwork.isValid() || getNavigationTab() == EnumNavigationTab.TAB_CREATE) {
+        if (getNetwork().isValid() || getNavigationTab() == EnumNavigationTab.TAB_CREATE) {
             mNetworkName = FluxEditBox.create(FluxTranslate.NETWORK_NAME.get() + ": ", font,
                             leftPos + 16, topPos + 28, 144, 12)
                     .setOutlineColor(0xFF808080);
@@ -45,7 +45,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             addRenderableWidget(mNetworkName);
 
             mPassword = FluxEditBox.create(FluxTranslate.NETWORK_PASSWORD.get() + ": ", font,
-                            leftPos + 16, topPos + 63, 144, 12)
+                            leftPos + 16, topPos + 62, 144, 12)
                     .setOutlineColor(0xFF808080)
                     .setTextInvisible();
             mPassword.setMaxLength(FluxNetwork.MAX_PASSWORD_LENGTH);
@@ -58,15 +58,17 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     @Override
     protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-        if (mNetwork.isValid() || getNavigationTab() == EnumNavigationTab.TAB_CREATE) {
+        if (getNetwork().isValid() || getNavigationTab() == EnumNavigationTab.TAB_CREATE) {
             drawCenteredString(poseStack, font, getNavigationTab().getTranslatedName(),
-                    leftPos + 88, topPos + 10, 0xb4b4b4);
+                    leftPos + 88, topPos + 10, 0xFFB4B4B4);
             font.draw(poseStack,
                     FluxTranslate.NETWORK_SECURITY.get() + ": " + ChatFormatting.AQUA + mSecurityLevel.getName(),
-                    leftPos + 16, topPos + 48, 0x808080);
+                    leftPos + 16, topPos + 47, 0xFF808080);
             //font.drawString(matrixStack, FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType
             // .getName(), 14, 78, 0x606060);
-            font.draw(poseStack, FluxTranslate.NETWORK_COLOR.get() + ":", leftPos + 16, topPos + 92, 0x808080);
+            font.draw(poseStack, FluxTranslate.NETWORK_COLOR.get() + ":", leftPos + 16, topPos + 89, 0xFF808080);
+
+            renderNetwork(poseStack, mNetworkName.getValue(), mColorButton.mColor, leftPos + 20, topPos + 126);
         }
     }
 
@@ -81,11 +83,6 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
                 mPassword.setVisible(mSecurityLevel.isEncrypted());
                 onEditSettingsChanged();
                 return true;
-            }
-            if (!mNetwork.isValid() && getNavigationTab() != EnumNavigationTab.TAB_CREATE) {
-                if (mouseX >= leftPos + 20 && mouseX < leftPos + 154 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
-                    switchTab(EnumNavigationTab.TAB_SELECTION);
-                }
             }
             /*if (mouseX > guiLeft + 50 && mouseX < guiLeft + 150 && mouseY > guiTop + 76 && mouseY < getGuiTop() +
             88) {

@@ -142,7 +142,7 @@ public class FluxColorHandler implements BlockColor, ItemColor {
             }
             tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
             if (tag != null) {
-                return ClientRepository.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
+                return ClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
             return FluxConstants.INVALID_NETWORK_COLOR;
         }
@@ -160,7 +160,7 @@ public class FluxColorHandler implements BlockColor, ItemColor {
             }*/
             CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
             if (tag != null) {
-                return ClientRepository.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
+                return ClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID)).getNetworkColor();
             }
             return FluxConstants.INVALID_NETWORK_COLOR;
         }

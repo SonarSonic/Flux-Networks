@@ -17,8 +17,7 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.SecurityLevel;
-import sonar.fluxnetworks.common.connection.FluxNetwork;
-import sonar.fluxnetworks.common.connection.FluxNetworkData;
+import sonar.fluxnetworks.common.connection.*;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -66,11 +65,18 @@ public class Messages {
      */
     static final int C2S_DEVICE_BUFFER = 0;
     static final int C2S_SUPER_ADMIN = 1;
-    static final int C2S_EDIT_MEMBER = 2;
-    static final int C2S_EDIT_NETWORK = 3;
+    static final int C2S_CREATE_NETWORK = 2;
+    static final int C2S_DELETE_NETWORK = 3;
     static final int C2S_EDIT_DEVICE = 4;
-    static final int C2S_CREATE_NETWORK = 5;
-    static final int C2S_SET_TILE_NETWORK = 6;
+    static final int C2S_CONNECT_DEVICE = 5;
+    static final int C2S_EDIT_CONFIGURATOR = 6;
+    static final int C2S_CONNECT_CONFIGURATOR = 7;
+    static final int C2S_EDIT_MEMBER = 8;
+    static final int C2S_EDIT_NETWORK = 9;
+    static final int C2S_EDIT_CONNECTIONS = 10;
+    static final int C2S_TRACK_MEMBERS = 11;
+    static final int C2S_TRACK_NETWORKS = 12;
+    static final int C2S_TRACK_CONNECTIONS = 13;
 
     /**
      * S->C message indices, must be sequential, 0-based indexing
@@ -78,8 +84,10 @@ public class Messages {
     static final int S2C_DEVICE_BUFFER = 0;
     static final int S2C_RESPONSE = 1;
     static final int S2C_SUPER_ADMIN = 2;
-    static final int S2C_NETWORK_UPDATE = 3;
-    static final int S2C_NETWORK_DELETE = 4;
+    static final int S2C_UPDATE_NETWORK = 3;
+    static final int S2C_DELETE_NETWORK = 4;
+    static final int S2C_UPDATE_MEMBERS = 5;
+    static final int S2C_UPDATE_CONNECTIONS = 6;
 
     /**
      * @param device the block entity created by server
@@ -104,18 +112,18 @@ public class Messages {
         sNetwork.sendToPlayer(buf, player);
     }
 
-    public static void sendSuperAdmin(boolean enable, Player player) {
+    public static void superAdmin(boolean enable, Player player) {
         var buf = NetworkHandler.buffer(S2C_SUPER_ADMIN);
         buf.writeBoolean(enable);
         sNetwork.sendToPlayer(buf, player);
     }
 
     /**
-     * Variation of {@link #getNetworkUpdate(Collection, byte)} that updates only one network.
+     * Variation of {@link #updateNetwork(Collection, byte)} that updates only one network.
      */
     @Nonnull
-    public static PacketDispatcher getNetworkUpdate(FluxNetwork network, byte type) {
-        var buf = NetworkHandler.buffer(S2C_NETWORK_UPDATE);
+    public static PacketDispatcher updateNetwork(FluxNetwork network, byte type) {
+        var buf = NetworkHandler.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(1); // size
         buf.writeVarInt(network.getNetworkID());
@@ -126,8 +134,8 @@ public class Messages {
     }
 
     @Nonnull
-    public static PacketDispatcher getNetworkUpdate(Collection<FluxNetwork> networks, byte type) {
-        var buf = NetworkHandler.buffer(S2C_NETWORK_UPDATE);
+    public static PacketDispatcher updateNetwork(Collection<FluxNetwork> networks, byte type) {
+        var buf = NetworkHandler.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
@@ -139,10 +147,10 @@ public class Messages {
         return sNetwork.dispatch(buf);
     }
 
-    public static void sendNetworkDelete(int id) {
-        var buf = NetworkHandler.buffer(S2C_NETWORK_DELETE);
+    public static void deleteNetwork(int id) {
+        var buf = NetworkHandler.buffer(S2C_DELETE_NETWORK);
         buf.writeVarInt(id);
-        sNetwork.dispatch(buf).sendToAll();
+        sNetwork.sendToAll(buf);
     }
 
     @Nonnull
@@ -157,24 +165,25 @@ public class Messages {
             case C2S_SUPER_ADMIN -> onSuperAdmin(payload, player, server);
             case C2S_EDIT_DEVICE -> onEditDevice(payload, player, server);
             case C2S_CREATE_NETWORK -> onCreateNetwork(payload, player, server);
-            case C2S_SET_TILE_NETWORK -> onSetTileNetwork(payload, player, server);
+            case C2S_DELETE_NETWORK -> onDeleteNetwork(payload, player, server);
+            case C2S_EDIT_NETWORK -> onEditNetwork(payload, player, server);
+            case C2S_CONNECT_DEVICE -> onSetTileNetwork(payload, player, server);
             default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
         }
     }
 
     private static void kick(ServerPlayer p, RuntimeException e) {
-        // do not kick the player in single-player mode
         if (p.server.isDedicatedServer()) {
             p.connection.disconnect(new TranslatableComponent("multiplayer.disconnect.invalid_packet"));
-            FluxNetworks.LOGGER.info("Kicked {} because of invalid packet", p.getGameProfile().getName(), e);
+            FluxNetworks.LOGGER.info("Received invalid packet from player {}", p.getGameProfile().getName(), e);
         } else {
             FluxNetworks.LOGGER.info("Received invalid packet", e);
         }
     }
 
-    private static void consumed(FriendlyByteBuf payload) {
+    private static void consume(FriendlyByteBuf payload) {
         if (payload.isReadable()) {
-            throw new DecoderException();
+            throw new DecoderException("Payload is not fully consumed");
         }
     }
 
@@ -191,7 +200,7 @@ public class Messages {
                         } else {
                             throw new IllegalArgumentException();
                         }
-                        consumed(payload);
+                        consume(payload);
                     }
                 }
             } catch (RuntimeException e) {
@@ -212,7 +221,7 @@ public class Messages {
         if (networkId == FluxConstants.INVALID_NETWORK_ID) {
             BlockPos pos = payload.readBlockPos();
             CompoundTag tag = payload.readNbt();
-            consumed(payload);
+            consume(payload);
             Objects.requireNonNull(tag);
             looper.execute(() -> {
                 ServerPlayer p = player.get();
@@ -237,7 +246,7 @@ public class Messages {
                 list.add(FluxUtils.readGlobalPos(payload));
             }
             CompoundTag tag = payload.readNbt();
-            consumed(payload);
+            consume(payload);
             Objects.requireNonNull(tag);
             looper.execute(() -> {
                 ServerPlayer p = player.get();
@@ -263,13 +272,13 @@ public class Messages {
                                         BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
-        final String name = payload.readUtf();
+        final String name = payload.readUtf(256);
         final int color = payload.readInt();
         final SecurityLevel security = SecurityLevel.fromKey(payload.readByte());
-        final String password = security.isEncrypted() ? payload.readUtf() : "";
+        final String password = security.isEncrypted() ? payload.readUtf(256) : "";
 
         // validate
-        consumed(payload);
+        consume(payload);
         if (FluxUtils.isBadNetworkName(name)) {
             throw new IllegalArgumentException("Invalid network name: " + name);
         }
@@ -290,6 +299,34 @@ public class Messages {
         });
     }
 
+    private static void onDeleteNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                        BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final int networkID = payload.readVarInt();
+
+        // validate
+        consume(payload);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+            if (network.isValid()) {
+                if (network.getPlayerAccess(p).canDelete()) {
+                    FluxNetworkData.getInstance().deleteNetwork(network);
+                    response(token, FluxConstants.REQUEST_DELETE_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
+                } else {
+                    response(token, FluxConstants.REQUEST_DELETE_NETWORK, FluxConstants.RESPONSE_NO_OWNER, p);
+                }
+            } else {
+                response(token, FluxConstants.REQUEST_DELETE_NETWORK, FluxConstants.RESPONSE_REJECT, p);
+            }
+        });
+    }
+
     private static void onSetTileNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
                                          BlockableEventLoop<?> looper) {
         // decode
@@ -299,8 +336,8 @@ public class Messages {
         final String password = payload.readUtf(256);
 
         // validate
-        consumed(payload);
-        if (password.length() > FluxNetwork.MAX_PASSWORD_LENGTH) {
+        consume(payload);
+        if (!password.isEmpty() && FluxUtils.isBadPassword(password)) {
             throw new IllegalArgumentException("Invalid network password: " + password);
         }
 
@@ -314,7 +351,7 @@ public class Messages {
                     return;
                 }
                 final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
-                if (e.getDeviceType().isController() && network.getLogicalEntities(FluxNetwork.CONTROLLER).size() > 0) {
+                if (e.getDeviceType().isController() && network.getLogicalDevices(FluxNetwork.CONTROLLER).size() > 0) {
                     response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_HAS_CONTROLLER, p);
                     return;
                 }
@@ -332,6 +369,69 @@ public class Messages {
                 } else {
                     response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_INVALID_PASSWORD, p);
                 }
+            }
+        });
+    }
+
+    private static void onEditNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                      BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final int networkID = payload.readVarInt();
+        final String name = payload.readUtf(256);
+        final int color = payload.readInt();
+        final SecurityLevel security = SecurityLevel.fromKey(payload.readByte());
+        final String password = security.isEncrypted() ? payload.readUtf(256) : "";
+        final int wireless = payload.readInt();
+
+        // validate
+        consume(payload);
+        if (FluxUtils.isBadNetworkName(name)) {
+            throw new IllegalArgumentException("Invalid network name: " + name);
+        }
+        if (!password.isEmpty() && FluxUtils.isBadPassword(password)) {
+            throw new IllegalArgumentException("Invalid network password: " + password);
+        }
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+            if (network.isValid()) {
+                if (network.getPlayerAccess(p).canEdit()) {
+                    boolean changed = false;
+                    if (!network.getNetworkName().equals(name)) {
+                        network.setNetworkName(name);
+                        changed = true;
+                    }
+                    if (network.getNetworkColor() != color) {
+                        network.setNetworkColor(color);
+                        // update renderer
+                        network.getLogicalDevices(FluxNetwork.ANY).forEach(TileFluxDevice::sendBlockUpdate);
+                        changed = true;
+                    }
+                    if (network.getSecurityLevel() != security) {
+                        network.setSecurityLevel(security);
+                        changed = true;
+                    }
+                    if (!password.isEmpty()) {
+                        ((ServerFluxNetwork) network).setPassword(password);
+                    }
+                    if (wireless != -1 && network.getWirelessMode() != wireless) {
+                        network.setWirelessMode(wireless);
+                        changed = true;
+                    }
+                    if (changed) {
+                        updateNetwork(network, FluxConstants.NBT_NET_BASIC).sendToAll();
+                    }
+                    response(token, FluxConstants.REQUEST_EDIT_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
+                } else {
+                    response(token, FluxConstants.REQUEST_EDIT_NETWORK, FluxConstants.RESPONSE_NO_ADMIN, p);
+                }
+            } else {
+                response(token, FluxConstants.REQUEST_EDIT_NETWORK, FluxConstants.RESPONSE_REJECT, p);
             }
         });
     }

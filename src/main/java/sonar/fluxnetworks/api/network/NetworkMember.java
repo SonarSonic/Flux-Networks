@@ -8,13 +8,9 @@ import java.util.UUID;
 
 public class NetworkMember {
 
-    // public data
     private UUID mPlayerUUID;
     private String mCachedName;
     private AccessLevel mAccessLevel;
-
-    // private data (only visible to this player)
-    private int mWirelessMode;
 
     private NetworkMember() {
     }
@@ -73,27 +69,15 @@ public class NetworkMember {
         mAccessLevel = accessLevel;
     }
 
-    public int getWirelessMode() {
-        return mWirelessMode;
-    }
-
-    public void setWirelessMode(int wirelessMode) {
-        mWirelessMode = wirelessMode;
-    }
-
     public void readNBT(@Nonnull CompoundTag tag) {
         mPlayerUUID = tag.getUUID("playerUUID");
         mCachedName = tag.getString("cachedName");
         mAccessLevel = AccessLevel.fromKey(tag.getByte("accessLevel"));
-        mWirelessMode = tag.getInt("wirelessMode");
     }
 
-    public void writeNBT(@Nonnull CompoundTag tag, boolean saveAll) {
+    public void writeNBT(@Nonnull CompoundTag tag) {
         tag.putUUID("playerUUID", mPlayerUUID);
         tag.putString("cachedName", mCachedName);
         tag.putByte("accessLevel", mAccessLevel.getKey());
-        if (saveAll) {
-            tag.putInt("wirelessMode", mWirelessMode);
-        }
     }
 }

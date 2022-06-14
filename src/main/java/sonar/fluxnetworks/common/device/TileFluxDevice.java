@@ -19,7 +19,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.*;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.Messages;
@@ -305,7 +305,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             case FluxConstants.NBT_TILE_DROP -> {
                 if (level.isClientSide) {
                     mClientColor = FluxUtils.getModifiedColor(
-                            ClientRepository.getNetwork(mNetworkID).getNetworkColor(), 1.1f);
+                            ClientCache.getNetwork(mNetworkID).getNetworkColor(), 1.1f);
                 }
             }
         }

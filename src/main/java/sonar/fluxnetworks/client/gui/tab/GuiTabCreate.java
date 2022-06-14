@@ -39,7 +39,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
             final EnumNetworkColor color = EnumNetworkColor.VALUES[i];
             ColorButton button = new ColorButton(minecraft,
-                    leftPos + 48 + (i % 7) * 16, topPos + 90 + (i / 7) * 16, color.getRGB());
+                    leftPos + 48 + (i % 7) * 16, topPos + 87 + (i / 7) * 16, color.getRGB());
             if (i == 0) {
                 mColorButton = button;
                 button.setSelected(true);
@@ -47,7 +47,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
             mButtons.add(button);
         }
 
-        mCreate = new SimpleButton(minecraft, leftPos + 70, topPos + 150, 36, 12);
+        mCreate = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 24, topPos + 150, 48, 12);
         mCreate.setText(FluxTranslate.CREATE.get());
         mCreate.setClickable(false);
         mButtons.add(mCreate);
@@ -56,7 +56,6 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     @Override
     protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-        renderNetwork(poseStack, mNetworkName.getValue(), mColorButton.mColor, leftPos + 20, topPos + 129);
     }
 
     @Override
@@ -71,6 +70,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
 
             ClientMessages.createNetwork(menu.containerId, mNetworkName.getValue(),
                     mColorButton.mColor, mSecurityLevel, mPassword.getValue());
+            mCreate.setClickable(false);
         }
     }
 

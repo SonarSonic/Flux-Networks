@@ -1,7 +1,10 @@
 package sonar.fluxnetworks.common.connection;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sonar.fluxnetworks.api.network.AccessLevel;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -10,7 +13,7 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class ClientFluxNetwork extends FluxNetwork {
 
-    public ClientFluxNetwork() {
+    public ClientFluxNetwork(int ignored) {
     }
 
     @Override
@@ -20,7 +23,7 @@ public class ClientFluxNetwork extends FluxNetwork {
 
     @Nonnull
     @Override
-    public List<TileFluxDevice> getLogicalEntities(int logic) {
+    public List<TileFluxDevice> getLogicalDevices(int logic) {
         throw new IllegalStateException();
     }
 
@@ -42,5 +45,14 @@ public class ClientFluxNetwork extends FluxNetwork {
     @Override
     public boolean isValid() {
         return true;
+    }
+
+    @Nonnull
+    @Override
+    public AccessLevel getPlayerAccess(@Nonnull Player player) {
+        if (ClientCache.sSuperAdmin) {
+            return AccessLevel.SUPER_ADMIN;
+        }
+        return super.getPlayerAccess(player);
     }
 }

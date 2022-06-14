@@ -16,7 +16,7 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxProvider;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
-import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -81,7 +81,7 @@ public class ItemFluxConfigurator extends Item {
                                 @Nonnull TooltipFlag flag) {
         CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
         if (tag != null) {
-            final FluxNetwork network = ClientRepository.getNetwork(tag.getInt(FluxConstants.NETWORK_ID));
+            final FluxNetwork network = ClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID));
             if (network.isValid()) {
                 tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.get() + ": " + ChatFormatting.WHITE +
                         network.getNetworkName()));

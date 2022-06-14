@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
 import sonar.fluxnetworks.api.device.IFluxProvider;
-import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 
 import javax.annotation.Nonnull;
@@ -35,7 +35,7 @@ public class ItemAdminConfigurator extends Item {
 
         @Override
         public int getNetworkID() {
-            return ClientRepository.adminViewingNetwork;
+            return ClientCache.sAdminViewingNetwork;
         }
 
         @Override

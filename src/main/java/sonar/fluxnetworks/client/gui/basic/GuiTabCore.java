@@ -3,12 +3,11 @@ package sonar.fluxnetworks.client.gui.basic;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.FluxConfig;
-import sonar.fluxnetworks.client.ClientRepository;
-import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
-import sonar.fluxnetworks.client.gui.tab.GuiTabCreate;
-import sonar.fluxnetworks.client.gui.tab.GuiTabSelection;
+import sonar.fluxnetworks.client.gui.tab.*;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
@@ -67,7 +66,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 }*/
                 break;
             case TAB_SELECTION:
-                if (menu.mProvider instanceof ItemAdminConfigurator.Provider && ClientRepository.detailedNetworkView) {
+                if (menu.mProvider instanceof ItemAdminConfigurator.Provider && ClientCache.sDetailedNetworkView) {
                     //getMinecraft().setScreen(new GuiTabDetailedSelection(menu, mPlayer));
                 } else {
                     getMinecraft().setScreen(new GuiTabSelection(menu, mPlayer));
@@ -84,10 +83,10 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 break;
             case TAB_MEMBER:
                 getMinecraft().setScreen(new GuiTabMembers(menu, mPlayer));
-                break;
+                break;*/
             case TAB_SETTING:
                 getMinecraft().setScreen(new GuiTabSettings(menu, mPlayer));
-                break;*/
+                break;
             case TAB_CREATE:
                 getMinecraft().setScreen(new GuiTabCreate(menu, mPlayer));
                 break;

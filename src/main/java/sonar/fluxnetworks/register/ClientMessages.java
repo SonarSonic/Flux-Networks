@@ -1,6 +1,8 @@
 package sonar.fluxnetworks.register;
 
 import icyllis.modernui.forge.NetworkHandler;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.GlobalPos;
@@ -12,7 +14,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.SecurityLevel;
-import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -47,6 +49,26 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
+    public static void createNetwork(int token, String name, int color,
+                                     SecurityLevel security, String password) {
+        var buf = NetworkHandler.buffer(Messages.C2S_CREATE_NETWORK);
+        buf.writeByte(token);
+        buf.writeUtf(name, 256);
+        buf.writeInt(color);
+        buf.writeByte(security.getKey());
+        if (security.isEncrypted()) {
+            buf.writeUtf(password, 256);
+        }
+        sNetwork.sendToServer(buf);
+    }
+
+    public static void deleteNetwork(int token, int networkID) {
+        var buf = NetworkHandler.buffer(Messages.C2S_DELETE_NETWORK);
+        buf.writeByte(token);
+        buf.writeVarInt(networkID);
+        sNetwork.sendToServer(buf);
+    }
+
     public static void editDevice(TileFluxDevice device, CompoundTag tag) {
         var buf = NetworkHandler.buffer(Messages.C2S_EDIT_DEVICE);
         buf.writeVarInt(FluxConstants.INVALID_NETWORK_ID);
@@ -67,26 +89,28 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
-    public static void createNetwork(int token, String name, int color,
-                                     SecurityLevel security, String password) {
-        var buf = NetworkHandler.buffer(Messages.C2S_CREATE_NETWORK);
-        buf.writeByte(token);
-        buf.writeUtf(name);
-        buf.writeInt(color);
-        buf.writeByte(security.getKey());
-        if (security.isEncrypted()) {
-            buf.writeUtf(password);
-        }
-        sNetwork.sendToServer(buf);
-    }
-
-    // set (connect to) network for a flux tile entity
+    // set (connect to) network for a block entity
     public static void setTileNetwork(int token, TileFluxDevice device, int networkID, String password) {
-        var buf = NetworkHandler.buffer(Messages.C2S_SET_TILE_NETWORK);
+        var buf = NetworkHandler.buffer(Messages.C2S_CONNECT_DEVICE);
         buf.writeByte(token);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeVarInt(networkID);
         buf.writeUtf(password, 256);
+        sNetwork.sendToServer(buf);
+    }
+
+    public static void editNetwork(int token, int networkID, String name, int color,
+                                   SecurityLevel security, String password, int wireless) {
+        var buf = NetworkHandler.buffer(Messages.C2S_EDIT_NETWORK);
+        buf.writeByte(token);
+        buf.writeVarInt(networkID);
+        buf.writeUtf(name, 256);
+        buf.writeInt(color);
+        buf.writeByte(security.getKey());
+        if (security.isEncrypted()) {
+            buf.writeUtf(password, 256);
+        }
+        buf.writeInt(wireless);
         sNetwork.sendToServer(buf);
     }
 
@@ -96,7 +120,8 @@ public class ClientMessages {
             case Messages.S2C_DEVICE_BUFFER -> onDeviceBuffer(payload, player, minecraft);
             case Messages.S2C_RESPONSE -> onResponse(payload, player, minecraft);
             case Messages.S2C_SUPER_ADMIN -> onSuperAdmin(payload, player, minecraft);
-            case Messages.S2C_NETWORK_UPDATE -> ClientRepository.onNetworkUpdate(payload); // TODO
+            case Messages.S2C_UPDATE_NETWORK -> onUpdateNetwork(payload, player, minecraft);
+            case Messages.S2C_DELETE_NETWORK -> onDeleteNetwork(payload, player, minecraft);
         }
     }
 
@@ -135,6 +160,52 @@ public class ClientMessages {
 
     private static void onSuperAdmin(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
                                      BlockableEventLoop<?> looper) {
+        final boolean enable = payload.readBoolean();
+        looper.execute(() -> {
+            LocalPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            ClientCache.sSuperAdmin = enable;
+            // this is lightweight, so do not trigger an event explicitly
+        });
+    }
 
+    private static void onUpdateNetwork(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
+                                        BlockableEventLoop<?> looper) {
+        final Int2ObjectMap<CompoundTag> map = new Int2ObjectArrayMap<>();
+        final byte type = payload.readByte();
+        final int size = payload.readVarInt();
+        for (int i = 0; i < size; i++) {
+            final int id = payload.readVarInt();
+            final CompoundTag tag = payload.readNbt();
+            assert tag != null;
+            map.put(id, tag);
+        }
+        looper.execute(() -> {
+            LocalPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            ClientCache.updateNetwork(map, type);
+            if (p.containerMenu instanceof FluxDeviceMenu m && m.mOnResultListener != null) {
+                m.mOnResultListener.onResult(m, FluxConstants.REQUEST_UPDATE_NETWORK, 0);
+            }
+        });
+    }
+
+    private static void onDeleteNetwork(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
+                                        BlockableEventLoop<?> looper) {
+        final int id = payload.readVarInt();
+        looper.execute(() -> {
+            LocalPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            ClientCache.deleteNetwork(id);
+            if (p.containerMenu instanceof FluxDeviceMenu m && m.mOnResultListener != null) {
+                m.mOnResultListener.onResult(m, FluxConstants.REQUEST_DELETE_NETWORK, 0);
+            }
+        });
     }
 }

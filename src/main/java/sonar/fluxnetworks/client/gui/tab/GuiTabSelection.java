@@ -4,10 +4,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.network.SecurityLevel;
-import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.popup.PopupNetworkPassword;
@@ -21,11 +22,7 @@ import java.util.Comparator;
 
 public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
-    //public InvisibleButton redirectButton;
-
-    public FluxNetwork mConnectingNetwork;
-
-    protected int timer2;
+    public FluxNetwork mSelectedNetwork;
 
     public GuiTabSelection(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         super(menu, player);
@@ -58,12 +55,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         super.init();
         mGridStartX = leftPos + 15;
         mGridStartY = topPos + 22;
-        /*if (FluxClientCache.getAllNetworks().isEmpty()) {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
-                    EnumNavigationTab.TAB_CREATE.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_CREATE));
-            addButton(redirectButton);
-        }*/
-        refreshPages(ClientRepository.getAllNetworks());
+        refreshPages(ClientCache.getAllNetworks());
     }
 
     @Override
@@ -79,10 +71,10 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
 
-        boolean selected = menu.mProvider.getNetworkID() == element.getNetworkID();
-        boolean renderLock = element.getSecurityLevel() != SecurityLevel.PUBLIC;
+        boolean selected = getNetwork() == element;
+        boolean locked = element.getSecurityLevel() != SecurityLevel.PUBLIC;
 
-        if (renderLock) {
+        if (locked) {
             if (selected) {
                 blit(poseStack, x + 131, y, 159, 16, 16, mElementHeight);
             } else {
@@ -91,7 +83,6 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         }
 
         String name = element.getNetworkName();
-
         if (selected) {
             fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
             fill(poseStack, x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
@@ -113,7 +104,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     @Override
     protected void onElementClicked(FluxNetwork element, int mouseButton) {
         if (mouseButton == 0) {
-            mConnectingNetwork = element;
+            mSelectedNetwork = element;
             setConnectedNetwork(element.getNetworkID(), "");
         }
     }
@@ -123,11 +114,17 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
             return true;
         }
-        if (mouseButton == 0) {
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (mouseX >= leftPos + 45 && mouseX < leftPos + 75 && mouseY >= topPos + 10 && mouseY < topPos + 17) {
                 mSortType = FluxUtils.cycle(mSortType, SortType.values());
                 sortGrids(mSortType);
                 return true;
+            }
+            if (mElements.isEmpty()) {
+                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
+                    switchTab(EnumNavigationTab.TAB_CREATE);
+                    return true;
+                }
             }
         }
         return false;
@@ -141,11 +138,13 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
                 openPopup(new PopupNetworkPassword(this));
             } else if (code == FluxConstants.RESPONSE_SUCCESS) {
                 closePopup();
-                if (mConnectingNetwork != null && menu.mProvider instanceof ItemFluxConfigurator.Provider p) {
-                    p.mNetworkID = mConnectingNetwork.getNetworkID();
+                if (mSelectedNetwork != null && menu.mProvider instanceof ItemFluxConfigurator.Provider p) {
+                    p.mNetworkID = mSelectedNetwork.getNetworkID();
                 }
-                mConnectingNetwork = null;
+                mSelectedNetwork = null;
             }
+        } else if (key == FluxConstants.REQUEST_UPDATE_NETWORK) {
+            refreshPages(ClientCache.getAllNetworks());
         }
     }
 
@@ -153,34 +152,9 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     protected void containerTick() {
         super.containerTick();
         if (mLabelButton != null) {
-            mLabelButton.mColor = mNetwork.getNetworkColor();
+            mLabelButton.mColor = getNetwork().getNetworkColor();
         }
     }
-
-    /*@Override
-    public void onFeedbackAction(@Nonnull FeedbackInfo info) {
-        super.onFeedbackAction(info);
-        if (info == FeedbackInfo.PASSWORD_REQUIRE) {
-            openPopUp(new PopupNetworkPassword(this, player));
-        } else if (selectedNetwork != null && info == FeedbackInfo.SUCCESS) {
-            closePopUp();
-            if (container.bridge instanceof ItemFluxConfigurator.MenuBridge) {
-                ((ItemFluxConfigurator.MenuBridge) container.bridge).networkID = selectedNetwork.getNetworkID();
-                network = selectedNetwork;
-                networkValid = selectedNetwork.isValid();
-            }
-        }
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if (timer2 == 9) {
-            refreshPages(FluxClientCache.getAllNetworks());
-        }
-        timer2++;
-        timer2 %= 10;
-    }*/
 
     @Override
     protected void sortGrids(SortType sortType) {

@@ -43,7 +43,7 @@ public class FluxNetwork {
     /**
      * Constant IDs used to identify logical devices.
      *
-     * @see #getLogicalEntities(int)
+     * @see #getLogicalDevices(int)
      */
     public static final int
             ANY = 0,
@@ -80,6 +80,7 @@ public class FluxNetwork {
     private int mColor;
     private UUID mOwnerUUID;
     private SecurityLevel mSecurityLevel;
+    private int mWirelessMode;
 
     final NetworkStatistics mStatistics = new NetworkStatistics(this);
     final HashMap<UUID, NetworkMember> mMemberMap = new HashMap<>();
@@ -165,6 +166,14 @@ public class FluxNetwork {
         mSecurityLevel = level;
     }
 
+    public int getWirelessMode() {
+        return mWirelessMode;
+    }
+
+    public void setWirelessMode(int wirelessMode) {
+        mWirelessMode = wirelessMode;
+    }
+
     @Nonnull
     public NetworkStatistics getStatistics() {
         return mStatistics;
@@ -201,7 +210,7 @@ public class FluxNetwork {
      * Get all connections including loaded entities and unloaded devices.
      *
      * @return the list of all connections
-     * @see #getLogicalEntities(int)
+     * @see #getLogicalDevices(int)
      */
     @Nonnull
     public Collection<IFluxDevice> getAllConnections() {
@@ -222,15 +231,13 @@ public class FluxNetwork {
     /**
      * Helper method to get player's access level for this network including super admin,
      * even if the player in not a member in the network.
-     * <p>
-     * Super admin only works on a server flux network.
      *
      * @param player the server player
      * @return access level
      */
     @Nonnull
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
-        NetworkMember member = getMemberByUUID(player.getUUID());
+        final NetworkMember member = getMemberByUUID(player.getUUID());
         if (member != null) {
             return member.getAccessLevel();
         }
@@ -249,7 +256,7 @@ public class FluxNetwork {
      * @return a list of devices
      */
     @Nonnull
-    public List<TileFluxDevice> getLogicalEntities(int logic) {
+    public List<TileFluxDevice> getLogicalDevices(int logic) {
         return Collections.emptyList();
     }
 
@@ -284,7 +291,7 @@ public class FluxNetwork {
         return false;
     }
 
-    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.NBT_NET_BASIC || type == FluxConstants.NBT_SAVE_ALL) {
             tag.putInt(FluxConstants.NETWORK_ID, mID);
             tag.putString(NETWORK_NAME, mName);
@@ -298,7 +305,7 @@ public class FluxNetwork {
                 ListTag list = new ListTag();
                 for (NetworkMember m : members) {
                     CompoundTag subTag = new CompoundTag();
-                    m.writeNBT(subTag, true);
+                    m.writeNBT(subTag);
                     list.add(subTag);
                 }
                 tag.put(MEMBERS, list);
@@ -324,7 +331,7 @@ public class FluxNetwork {
             if (!members.isEmpty()) {
                 for (NetworkMember m : members) {
                     CompoundTag subTag = new CompoundTag();
-                    m.writeNBT(subTag, false);
+                    m.writeNBT(subTag);
                     list.add(subTag);
                 }
             }
@@ -336,7 +343,7 @@ public class FluxNetwork {
                         NetworkMember m = NetworkMember.create(p,
                                 FluxPlayer.isPlayerSuperAdmin(p) ? AccessLevel.SUPER_ADMIN :
                                         AccessLevel.BLOCKED);
-                        m.writeNBT(subTag, false);
+                        m.writeNBT(subTag);
                         list.add(subTag);
                     }
                 }
@@ -392,7 +399,7 @@ public class FluxNetwork {
         }*/
     }
 
-    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.NBT_NET_BASIC || type == FluxConstants.NBT_SAVE_ALL) {
             mID = tag.getInt(FluxConstants.NETWORK_ID);
             mName = tag.getString(NETWORK_NAME);

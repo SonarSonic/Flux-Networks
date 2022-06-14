@@ -16,9 +16,7 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.EnergyType;
-import sonar.fluxnetworks.api.network.AccessLevel;
-import sonar.fluxnetworks.api.network.NetworkMember;
-import sonar.fluxnetworks.client.ClientRepository;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxDeviceMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -29,6 +27,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Gui that interacts flux networks.
+ */
 public abstract class GuiFluxCore extends GuiPopupHost {
 
     public static final ResourceLocation BACKGROUND = new ResourceLocation(
@@ -42,21 +43,12 @@ public abstract class GuiFluxCore extends GuiPopupHost {
 
     public final Player mPlayer; // client player
 
-    public FluxNetwork mNetwork;
-    public AccessLevel mAccessLevel = AccessLevel.BLOCKED;
+    private FluxNetwork mNetwork;
 
     public GuiFluxCore(@Nonnull FluxDeviceMenu menu, @Nonnull Player player) {
         super(menu, player);
         mPlayer = player;
-        mNetwork = ClientRepository.getNetwork(menu.mProvider.getNetworkID());
-        if (ClientRepository.superAdmin) {
-            mAccessLevel = AccessLevel.SUPER_ADMIN;
-        } else {
-            NetworkMember member = mNetwork.getMemberByUUID(player.getUUID());
-            if (member != null) {
-                mAccessLevel = member.getAccessLevel();
-            }
-        }
+        mNetwork = ClientCache.getNetwork(menu.mProvider.getNetworkID());
         // this called from main thread
         menu.mOnResultListener = (__, key, code) -> {
             final String s = switch (code) {
@@ -79,6 +71,14 @@ public abstract class GuiFluxCore extends GuiPopupHost {
                 onResponseAction(key, code);
             } // else unknown code
         };
+    }
+
+    /**
+     * @return current network
+     */
+    @Nonnull
+    public FluxNetwork getNetwork() {
+        return mNetwork;
     }
 
     @Override
@@ -126,7 +126,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     @Override
     protected void containerTick() {
         super.containerTick();
-        mNetwork = ClientRepository.getNetwork(menu.mProvider.getNetworkID());
+        mNetwork = ClientCache.getNetwork(menu.mProvider.getNetworkID());
     }
 
     @Override

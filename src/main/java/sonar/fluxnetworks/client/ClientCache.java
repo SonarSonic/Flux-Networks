@@ -1,9 +1,9 @@
 package sonar.fluxnetworks.client;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -16,62 +16,46 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Main thread only.
+ */
 @OnlyIn(Dist.CLIENT)
-public final class ClientRepository {
+public final class ClientCache {
 
     private static final Int2ObjectOpenHashMap<FluxNetwork> sNetworks = new Int2ObjectOpenHashMap<>();
 
-    public static boolean superAdmin = false;
-    public static boolean detailedNetworkView = false;
+    public static boolean sSuperAdmin = false;
+    public static boolean sDetailedNetworkView = false;
 
-    public static int adminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
+    public static int sAdminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
 
-    //private static FeedbackInfo feedback = FeedbackInfo.NONE; // Text message.
-    //private static int feedbackTimer = 0;
-
-    private ClientRepository() {
+    private ClientCache() {
     }
 
     /**
      * Release buffers and view models.
      */
     public static void release() {
-        synchronized (sNetworks) {
-            sNetworks.trim(0);
-        }
-        adminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
-        //feedback = FeedbackInfo.NONE;
+        sNetworks.clear();
+        sNetworks.trim(); // rehash
+        sAdminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
     }
 
-    public static void onNetworkUpdate(@Nonnull FriendlyByteBuf payload) {
-        final byte type = payload.readByte();
-        final int size = payload.readVarInt();
-        for (int i = 0; i < size; i++) {
-            int id = payload.readVarInt();
-            CompoundTag tag = payload.readNbt();
-            assert tag != null;
-            synchronized (sNetworks) {
-                sNetworks.computeIfAbsent(id, ______ -> new ClientFluxNetwork())
-                        .readCustomTag(tag, type);
-            }
-        }
-        //TODO notify view models
-    }
-
-    public static void delete(int id) {
-        synchronized (sNetworks) {
-            sNetworks.remove(id);
+    public static void updateNetwork(@Nonnull Int2ObjectMap<CompoundTag> map, byte type) {
+        for (var e : map.int2ObjectEntrySet()) {
+            sNetworks.computeIfAbsent(e.getIntKey(), ClientFluxNetwork::new)
+                    .readCustomTag(e.getValue(), type);
         }
     }
 
-    public static void updateConnections(int networkID, List<CompoundTag> tags) {
-        FluxNetwork network = sNetworks.get(networkID);
+    public static void updateConnections(int networkID, @Nonnull List<CompoundTag> tags) {
+        final FluxNetwork network = sNetworks.get(networkID);
         if (network != null) {
-            for (CompoundTag tag : tags) {
-                GlobalPos globalPos = FluxUtils.readGlobalPos(tag);
-                IFluxDevice d = network.getConnectionByPos(globalPos);
-                if (d != null) {
-                    d.readCustomTag(tag, FluxConstants.NBT_PHANTOM_UPDATE);
+            for (var tag : tags) {
+                final GlobalPos pos = FluxUtils.readGlobalPos(tag);
+                final IFluxDevice device = network.getConnectionByPos(pos);
+                if (device != null) {
+                    device.readCustomTag(tag, FluxConstants.NBT_PHANTOM_UPDATE);
                 }
             }
         }
@@ -85,6 +69,10 @@ public final class ClientRepository {
     @Nonnull
     public static Collection<FluxNetwork> getAllNetworks() {
         return sNetworks.values();
+    }
+
+    public static void deleteNetwork(int id) {
+        sNetworks.remove(id);
     }
 
     /*public String getDisplayName(@Nonnull CompoundTag subTag) {

@@ -77,9 +77,7 @@ public abstract class GuiPopupHost extends GuiFocusable {
         if (mCurrentPopup != null) {
             return mCurrentPopup.mouseClicked(mouseX, mouseY, mouseButton);
         }
-        if (onMouseClicked(mouseX, mouseY, mouseButton)) {
-            return true;
-        }
+        boolean result = onMouseClicked(mouseX, mouseY, mouseButton);
         for (GuiEventListener child : children()) {
             if (child.mouseClicked(mouseX, mouseY, mouseButton)) {
                 setFocused(child);
@@ -100,7 +98,7 @@ public abstract class GuiPopupHost extends GuiFocusable {
             setFocused(null);
             return true;
         }
-        return false;
+        return result;
     }
 
     protected boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {

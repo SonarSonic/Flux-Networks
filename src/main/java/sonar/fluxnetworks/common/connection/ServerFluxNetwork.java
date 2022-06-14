@@ -90,7 +90,7 @@ public class ServerFluxNetwork extends FluxNetwork {
         while ((device = mToAdd.poll()) != null) {
             for (int i = 0; i < sLogicalTypes.length; i++) {
                 if (sLogicalTypes[i].isInstance(device)) {
-                    ArrayList<TileFluxDevice> list = getLogicalEntities(i);
+                    ArrayList<TileFluxDevice> list = getLogicalDevices(i);
                     assert !list.contains(device);
                     mSortConnections |= list.add(device);
                 }
@@ -99,22 +99,22 @@ public class ServerFluxNetwork extends FluxNetwork {
         while ((device = mToRemove.poll()) != null) {
             for (int i = 0; i < sLogicalTypes.length; i++) {
                 if (sLogicalTypes[i].isInstance(device)) {
-                    ArrayList<TileFluxDevice> list = getLogicalEntities(i);
+                    ArrayList<TileFluxDevice> list = getLogicalDevices(i);
                     assert list.contains(device);
                     mSortConnections |= list.remove(device);
                 }
             }
         }
         if (mSortConnections) {
-            getLogicalEntities(PLUG).sort(sDescendingOrder);
-            getLogicalEntities(POINT).sort(sDescendingOrder);
+            getLogicalDevices(PLUG).sort(sDescendingOrder);
+            getLogicalDevices(POINT).sort(sDescendingOrder);
             mSortConnections = false;
         }
     }
 
     @Nonnull
     @Override
-    public ArrayList<TileFluxDevice> getLogicalEntities(int logic) {
+    public ArrayList<TileFluxDevice> getLogicalDevices(int logic) {
         return mDevices[logic];
     }
 
@@ -126,13 +126,13 @@ public class ServerFluxNetwork extends FluxNetwork {
 
         mBufferLimiter = 0;
 
-        List<TileFluxDevice> devices = getLogicalEntities(ANY);
+        List<TileFluxDevice> devices = getLogicalDevices(ANY);
         for (var f : devices) {
             f.getTransferNode().onCycleStart();
         }
 
-        List<TileFluxDevice> plugs = getLogicalEntities(PLUG);
-        List<TileFluxDevice> points = getLogicalEntities(POINT);
+        List<TileFluxDevice> plugs = getLogicalDevices(PLUG);
+        List<TileFluxDevice> points = getLogicalDevices(POINT);
         if (!points.isEmpty() && !plugs.isEmpty()) {
             // push into stack because they called too many times below
             final TransferIterator plugIterator = mPlugTransferIterator.reset(plugs);
@@ -195,7 +195,7 @@ public class ServerFluxNetwork extends FluxNetwork {
     @Override
     public void onDelete() {
         super.onDelete();
-        getLogicalEntities(ANY).forEach(sDisconnect);
+        getLogicalDevices(ANY).forEach(sDisconnect);
         Arrays.fill(mDevices, null);
         mToAdd.clear();
         mToRemove.clear();
@@ -208,10 +208,10 @@ public class ServerFluxNetwork extends FluxNetwork {
 
     @Override
     public boolean enqueueConnectionAddition(@Nonnull TileFluxDevice device) {
-        if (device.getDeviceType().isController() && getLogicalEntities(CONTROLLER).size() > 0) {
+        if (device.getDeviceType().isController() && getLogicalDevices(CONTROLLER).size() > 0) {
             return false;
         }
-        if (!mToAdd.contains(device) && !getLogicalEntities(ANY).contains(device)) {
+        if (!mToAdd.contains(device) && !getLogicalDevices(ANY).contains(device)) {
             mToAdd.offer(device);
             mToRemove.remove(device);
             mConnectionMap.put(device.getGlobalPos(), device);
@@ -222,7 +222,7 @@ public class ServerFluxNetwork extends FluxNetwork {
 
     @Override
     public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
-        if (!mToRemove.contains(device) && getLogicalEntities(ANY).contains(device)) {
+        if (!mToRemove.contains(device) && getLogicalDevices(ANY).contains(device)) {
             mToRemove.offer(device);
             mToAdd.remove(device);
             if (chunkUnload) {
@@ -236,8 +236,12 @@ public class ServerFluxNetwork extends FluxNetwork {
         }
     }
 
+    public void setPassword(@Nonnull String password) {
+        mPassword = password;
+    }
+
     @Override
-    public void writeCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         super.writeCustomTag(tag, type);
         if (type == FluxConstants.NBT_SAVE_ALL) {
             tag.putString("password", mPassword);
@@ -245,7 +249,7 @@ public class ServerFluxNetwork extends FluxNetwork {
     }
 
     @Override
-    public void readCustomTag(@Nonnull CompoundTag tag, int type) {
+    public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
         super.readCustomTag(tag, type);
         mPassword = tag.getString("password");
     }

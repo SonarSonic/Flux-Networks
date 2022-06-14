@@ -65,13 +65,13 @@ public class NetworkStatistics {
      * Called every 5 ticks
      */
     private void weakTick() {
-        List<TileFluxDevice> plugs = network.getLogicalEntities(FluxNetwork.PLUG);
+        List<TileFluxDevice> plugs = network.getLogicalDevices(FluxNetwork.PLUG);
         plugs.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 energyInput4 += p.getTransferChange();
             }
         });
-        List<TileFluxDevice> points = network.getLogicalEntities(FluxNetwork.POINT);
+        List<TileFluxDevice> points = network.getLogicalDevices(FluxNetwork.POINT);
         points.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 energyOutput4 -= p.getTransferChange();
@@ -85,18 +85,18 @@ public class NetworkStatistics {
     private void weakerTick() {
         totalBuffer = 0;
         totalEnergy = 0;
-        List<TileFluxDevice> devices = network.getLogicalEntities(FluxNetwork.ANY);
+        List<TileFluxDevice> devices = network.getLogicalDevices(FluxNetwork.ANY);
         devices.forEach(p -> {
             if (!p.getDeviceType().isStorage()) {
                 totalBuffer += p.getTransferBuffer();
             }
         });
-        List<TileFluxDevice> storages = network.getLogicalEntities(FluxNetwork.STORAGE);
+        List<TileFluxDevice> storages = network.getLogicalDevices(FluxNetwork.STORAGE);
         storages.forEach(p -> totalEnergy += p.getTransferBuffer());
-        fluxControllerCount = network.getLogicalEntities(FluxNetwork.CONTROLLER).size();
+        fluxControllerCount = network.getLogicalDevices(FluxNetwork.CONTROLLER).size();
         fluxStorageCount = storages.size();
-        fluxPlugCount = network.getLogicalEntities(FluxNetwork.PLUG).size() - fluxStorageCount;
-        fluxPointCount = network.getLogicalEntities(FluxNetwork.POINT).size() - fluxStorageCount - fluxControllerCount;
+        fluxPlugCount = network.getLogicalDevices(FluxNetwork.PLUG).size() - fluxStorageCount;
+        fluxPointCount = network.getLogicalDevices(FluxNetwork.POINT).size() - fluxStorageCount - fluxControllerCount;
         energyInput = energyInput4 / 4;
         energyOutput = energyOutput4 / 4;
         energyInput4 = 0;

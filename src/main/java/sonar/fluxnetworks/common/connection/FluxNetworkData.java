@@ -2,9 +2,7 @@ package sonar.fluxnetworks.common.connection;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -108,9 +106,6 @@ public final class FluxNetworkData extends SavedData {
                                      @Nonnull SecurityLevel security, @Nonnull String password) {
         final int max = FluxConfig.maximumPerPlayer;
         if (max != -1) {
-            if (max <= 0) {
-                return null;
-            }
             final UUID uuid = creator.getUUID();
             int i = 0;
             for (var n : mNetworks.values()) {
@@ -126,7 +121,7 @@ public final class FluxNetworkData extends SavedData {
         final ServerFluxNetwork network = new ServerFluxNetwork(mUniqueID, name, color, security, creator, password);
 
         mNetworks.put(network.getNetworkID(), network);
-        Messages.getNetworkUpdate(network, FluxConstants.NBT_NET_BASIC)
+        Messages.updateNetwork(network, FluxConstants.NBT_NET_BASIC)
                 .sendToAll();
         return network;
     }
@@ -134,7 +129,7 @@ public final class FluxNetworkData extends SavedData {
     public void deleteNetwork(@Nonnull FluxNetwork network) {
         if (mNetworks.remove(network.getNetworkID()) == network) {
             network.onDelete();
-            Messages.sendNetworkDelete(network.getNetworkID());
+            Messages.deleteNetwork(network.getNetworkID());
         }
     }
 

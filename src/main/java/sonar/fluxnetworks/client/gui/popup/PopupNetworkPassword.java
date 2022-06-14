@@ -26,16 +26,17 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
     @Override
     public void init() {
         super.init();
-        mCancel = new SimpleButton(minecraft, leftPos + 24, topPos + 86, 48, 12);
+        mCancel = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 12 - 48, topPos + 86, 48, 12);
         mCancel.setText(FluxTranslate.CANCEL.get());
         mButtons.add(mCancel);
 
-        mConnect = new SimpleButton(minecraft, leftPos + 104, topPos + 86, 48, 12);
+        mConnect = new SimpleButton(minecraft, leftPos + (imageWidth / 2) + 12, topPos + 86, 48, 12);
         mConnect.setText(FluxTranslate.CONNECT.get());
         mConnect.setClickable(false);
         mButtons.add(mConnect);
 
-        mPassword = FluxEditBox.create("", font, leftPos + 70, topPos + 66, 81, 12);
+        mPassword = FluxEditBox.create(FluxTranslate.NETWORK_PASSWORD.get() + ": ", font,
+                leftPos + (imageWidth / 2) - 60, topPos + 64, 120, 12);
         mPassword.setTextInvisible();
         mPassword.setMaxLength(FluxNetwork.MAX_PASSWORD_LENGTH);
         mPassword.setResponder(s -> mConnect.setClickable(!s.isEmpty()));
@@ -45,13 +46,11 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
     @Override
     public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-        if (mHost.mConnectingNetwork != null) {
+        if (mHost.mSelectedNetwork != null) {
             drawCenteredString(poseStack, font,
-                    FluxTranslate.CONNECTING_TO.format(mHost.mConnectingNetwork.getNetworkName()),
-                    leftPos + 88, topPos + 50, 0xffffff);
+                    FluxTranslate.CONNECTING_TO.format(mHost.mSelectedNetwork.getNetworkName()),
+                    leftPos + 88, topPos + 48, 0xffffff);
         }
-        drawCenteredString(poseStack, font, FluxTranslate.NETWORK_PASSWORD.get() + ":",
-                leftPos + 40, topPos + 68, 0xffffff);
     }
 
     @Override
@@ -62,7 +61,7 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
                 mHost.closePopup();
             } else if (button == mConnect) {
                 if (mPassword.getValue().length() > 0) {
-                    mHost.setConnectedNetwork(mHost.mConnectingNetwork.getNetworkID(), mPassword.getValue());
+                    mHost.setConnectedNetwork(mHost.mSelectedNetwork.getNetworkID(), mPassword.getValue());
                     mPassword.setValue("");
                 }
             }
