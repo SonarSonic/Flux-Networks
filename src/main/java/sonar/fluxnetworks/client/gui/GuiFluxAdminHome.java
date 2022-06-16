@@ -1,30 +1,25 @@
 package sonar.fluxnetworks.client.gui;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.network.AccessLevel;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.api.network.AccessLevel;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.test.C2SNetMsg;
+import sonar.fluxnetworks.client.gui.button.SwitchButton;
+import sonar.fluxnetworks.common.connection.FluxMenu;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 
 public class GuiFluxAdminHome extends GuiTabCore {
 
-    public InvisibleButton redirectButton;
+    public SwitchButton mDetailedNetworkView, mSuperAdmin;
 
-    private int timer;
-    public SlidedSwitchButton detailedNetworkView, superAdmin;
-
-    public GuiFluxAdminHome(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
+    public GuiFluxAdminHome(@Nonnull FluxMenu menu, @Nonnull Player player) {
+        super(menu, player);
     }
 
     public EnumNavigationTab getNavigationTab() {
@@ -32,48 +27,44 @@ public class GuiFluxAdminHome extends GuiTabCore {
     }
 
     @Override
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        screenUtils.renderNetwork(matrixStack, network.getNetworkName(), network.getNetworkColor(), 20, 8);
-        drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 89, 150, FluxClientCache.getFeedbackColor());
+    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
-        font.drawString(matrixStack, AccessLevel.SUPER_ADMIN.getName(), 20, 30, network.getNetworkColor());
-        font.drawString(matrixStack, FluxTranslate.DETAILED_VIEW.t(), 20, 42, network.getNetworkColor());
+        int color = getNetwork().getNetworkColor();
+        renderNetwork(poseStack, getNetwork().getNetworkName(), color, leftPos + 20, topPos + 8);
+
+        font.draw(poseStack, AccessLevel.SUPER_ADMIN.getFormattedName(), leftPos + 20, topPos + 30, color);
+        font.draw(poseStack, FluxTranslate.DETAILED_VIEW.get(), leftPos + 20, topPos + 42, color);
     }
 
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTab.TAB_HOME, navigationTabs);
 
-        redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 8, 135, 12,
-                EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
-        addButton(redirectButton);
+        mSuperAdmin = new SwitchButton(minecraft, leftPos + 140, topPos + 30, ClientCache.sSuperAdmin);
+        mButtons.add(mSuperAdmin);
 
-        superAdmin = new SlidedSwitchButton(140, 30, 0, guiLeft, guiTop, FluxClientCache.superAdmin);
-        switches.add(superAdmin);
-
-        detailedNetworkView = new SlidedSwitchButton(140, 42, 1, guiLeft, guiTop, FluxClientCache.detailedNetworkView);
-        switches.add(detailedNetworkView);
+        mDetailedNetworkView = new SwitchButton(minecraft, leftPos + 140, topPos + 42,
+                ClientCache.sDetailedNetworkView);
+        mDetailedNetworkView.setClickable(ClientCache.sSuperAdmin);
+        mButtons.add(mDetailedNetworkView);
     }
 
+    @Override
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if (mouseButton == 0 && button instanceof SlidedSwitchButton) {
-            SlidedSwitchButton switchButton = (SlidedSwitchButton) button;
-            switchButton.switchButton();
-            switch (switchButton.id) {
-                case 0:
-                    C2SNetMsg.requestSuperAdmin();
-                    break;
-                case 1:
-                    FluxClientCache.detailedNetworkView = switchButton.toggled;
-                    break;
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (button == mSuperAdmin) {
+                // delayed toggle, wait for server response
+                ClientMessages.superAdmin(getToken(), !mSuperAdmin.isChecked());
+            } else if (button == mDetailedNetworkView) {
+                mDetailedNetworkView.toggle();
+                ClientCache.sDetailedNetworkView = mDetailedNetworkView.isChecked();
             }
         }
     }
 
-    @Override
+    /*@Override
     public void tick() {
         super.tick();
         if (timer == 0) {
@@ -82,5 +73,26 @@ public class GuiFluxAdminHome extends GuiTabCore {
         }
         timer++;
         timer %= 100;
+    }*/
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        mSuperAdmin.setChecked(ClientCache.sSuperAdmin);
+        mDetailedNetworkView.setClickable(ClientCache.sSuperAdmin);
     }
-}*/
+
+    @Override
+    public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 8 && mouseY < topPos + 20) {
+                switchTab(EnumNavigationTab.TAB_SELECTION);
+                return true;
+            }
+        }
+        return false;
+    }
+}

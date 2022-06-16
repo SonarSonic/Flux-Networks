@@ -17,8 +17,10 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.connection.*;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -160,6 +162,23 @@ public class Messages {
         return sNetwork.dispatch(buf);
     }
 
+    @Nonnull
+    private static PacketDispatcher updateNetwork(int[] networkIDs, byte type) {
+        var buf = NetworkHandler.buffer(S2C_UPDATE_NETWORK);
+        buf.writeByte(type);
+        buf.writeVarInt(networkIDs.length);
+        for (var networkID : networkIDs) {
+            buf.writeVarInt(networkID);
+            final var tag = new CompoundTag();
+            FluxNetworkData.getNetwork(networkID).writeCustomTag(tag, type);
+            buf.writeNbt(tag);
+        }
+        return sNetwork.dispatch(buf);
+    }
+
+    /**
+     * Notify all clients that a network was deleted.
+     */
     public static void deleteNetwork(int id) {
         var buf = NetworkHandler.buffer(S2C_DELETE_NETWORK);
         buf.writeVarInt(id);
@@ -228,6 +247,26 @@ public class Messages {
 
     private static void onSuperAdmin(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
                                      BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final boolean enable = payload.readBoolean();
+
+        // validate
+        consume(payload);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxPlayer fp = FluxUtils.get(p, FluxPlayer.FLUX_PLAYER);
+            if (fp != null && (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(p))) {
+                fp.setSuperAdmin(enable);
+                superAdmin(fp.isSuperAdmin(), p);
+            } else {
+                response(token, 0, FluxConstants.RESPONSE_REJECT, p);
+            }
+        });
     }
 
     private static void onEditDevice(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
@@ -252,7 +291,7 @@ public class Messages {
                 }
             });
         } else {
-            int size = payload.readVarInt();
+            final int size = payload.readVarInt();
             if (size <= 0) {
                 throw new IllegalArgumentException();
             }
@@ -365,6 +404,10 @@ public class Messages {
                 if (e.getNetworkID() == networkID) {
                     return;
                 }
+                if (!e.canPlayerAccess(p)) {
+                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_REJECT, p);
+                    return;
+                }
                 final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
                 if (e.getDeviceType().isController() && network.getLogicalDevices(FluxNetwork.CONTROLLER).size() > 0) {
                     response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_HAS_CONTROLLER, p);
@@ -454,7 +497,15 @@ public class Messages {
     private static void onUpdateNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
                                         BlockableEventLoop<?> looper) {
         // decode
-        final int networkID = payload.readVarInt();
+        final int token = payload.readByte();
+        final int size = payload.readVarInt();
+        if (size <= 0) {
+            throw new IllegalArgumentException();
+        }
+        final int[] networkIDs = new int[size];
+        for (int i = 0; i < size; i++) {
+            networkIDs[i] = payload.readVarInt();
+        }
         final byte type = payload.readByte();
 
         // validate
@@ -465,9 +516,25 @@ public class Messages {
             if (p == null) {
                 return;
             }
-            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
-            if (network.isValid()) {
-                updateNetwork(network, type).sendToPlayer(p);
+            boolean reject = true;
+            if (p.containerMenu.containerId == token && p.containerMenu instanceof FluxMenu menu) {
+                if (FluxPlayer.isPlayerSuperAdmin(p)) {
+                    reject = false;
+                } else if (networkIDs.length == 1) {
+                    // admin configurator is decoration, check access permission
+                    if (!(menu.mProvider instanceof ItemAdminConfigurator.Provider)) {
+                        final FluxNetwork network = FluxNetworkData.getNetwork(networkIDs[0]);
+                        if (network.isValid() && menu.mProvider.getNetworkID() == networkIDs[0]) {
+                            reject = false;
+                        }
+                    }
+                }
+            }
+            if (reject) {
+                response(token, FluxConstants.REQUEST_UPDATE_NETWORK, FluxConstants.RESPONSE_REJECT, p);
+            } else {
+                // this packet always triggers an event, so no response
+                updateNetwork(networkIDs, type).sendToPlayer(p);
             }
         });
     }

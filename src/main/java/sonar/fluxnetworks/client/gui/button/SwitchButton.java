@@ -37,10 +37,14 @@ public class SwitchButton extends GuiButtonCore {
         mOffset = Mth.clamp(mChecked ? mOffset + delta : mOffset - delta, 0, 1);
 
         // Whether to use selected or unselected texture
-        final int state = mChecked || isMouseHovered(mouseX, mouseY) ? 0 : 1;
+        final int state = mClickable ? mChecked || isMouseHovered(mouseX, mouseY) ? 0 : 1 : 1;
 
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        if (mClickable) {
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        } else {
+            RenderSystem.setShaderColor(0.5F, 0.5F, 0.5F, 1.0F);
+        }
         RenderSystem.setShaderTexture(0, BUTTONS);
 
         final float thumbOffset = mOffset * HEIGHT;

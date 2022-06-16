@@ -65,7 +65,7 @@ public class ItemFluxConfigurator extends Item {
             return InteractionResult.SUCCESS;
         }
         NetworkHooks.openGui((ServerPlayer) player,
-                new Provider(), buf -> buf.writeBoolean(false));
+                new Provider(stack), buf -> buf.writeBoolean(false));
         return InteractionResult.SUCCESS;
     }
 
@@ -92,21 +92,15 @@ public class ItemFluxConfigurator extends Item {
     public static class Provider implements IFluxProvider {
 
         public final ItemStack mStack;
-        public int mNetworkID;
-
-        Provider() {
-            mStack = null;
-        }
 
         public Provider(@Nonnull ItemStack stack) {
-            this.mStack = stack;
-            CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
-            mNetworkID = tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
+            mStack = stack;
         }
 
         @Override
         public int getNetworkID() {
-            return mNetworkID;
+            CompoundTag tag = mStack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
+            return tag != null ? tag.getInt(FluxConstants.NETWORK_ID) : FluxConstants.INVALID_NETWORK_ID;
         }
 
         @Override

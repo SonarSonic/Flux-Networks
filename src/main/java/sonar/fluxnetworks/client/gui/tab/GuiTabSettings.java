@@ -113,6 +113,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 mApply.setClickable(false);
             } else if (button == mDelete) {
                 ClientMessages.deleteNetwork(getToken(), getNetwork());
+                mDeleteCount = 0;
                 mDelete.setClickable(false);
             }
         }
@@ -153,6 +154,10 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
+        if (code == FluxConstants.RESPONSE_REJECT) {
+            switchTab(EnumNavigationTab.TAB_HOME);
+            return;
+        }
         if (code == FluxConstants.RESPONSE_SUCCESS) {
             if (key == FluxConstants.REQUEST_DELETE_NETWORK) {
                 switchTab(EnumNavigationTab.TAB_HOME);

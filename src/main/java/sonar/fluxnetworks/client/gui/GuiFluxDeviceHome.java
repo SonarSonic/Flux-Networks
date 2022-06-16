@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
  */
 public class GuiFluxDeviceHome extends GuiTabCore {
 
-    //public InvisibleButton redirectButton;
     public FluxEditBox mCustomName, mPriority, mLimit;
 
     public SwitchButton mSurgeMode, mDisableLimit, mChunkLoading;
@@ -47,10 +46,6 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     @Override
     public void init() {
         super.init();
-
-        /*redirectButton = new InvisibleButton(leftPos + 20, topPos + 8, 135, 12,
-                EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
-        addButton(redirectButton);*/
 
         int color = getNetwork().getNetworkColor() | 0xFF000000;
         mCustomName = FluxEditBox.create(FluxTranslate.NAME.get() + ": ", font,
@@ -111,7 +106,8 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
-        renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), leftPos + 20, topPos + 8);
+        renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), leftPos + 20,
+                topPos + 8);
         renderTransfer(poseStack, getDevice(), leftPos + 30, topPos + 90);
 
         if (mCustomName.getValue().isEmpty()) {
@@ -121,8 +117,10 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                     mCustomName.x + 4, y, FluxConstants.INVALID_NETWORK_COLOR);
         }
 
-        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(), 20 + leftPos, 120 + topPos, getNetwork().getNetworkColor());
-        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos, getNetwork().getNetworkColor());
+        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(), 20 + leftPos, 120 + topPos,
+                getNetwork().getNetworkColor());
+        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos,
+                getNetwork().getNetworkColor());
 
         if (mChunkLoading != null) {
             font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos,
@@ -164,4 +162,18 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         timer++;
         timer %= 100;
     }*/
+
+    @Override
+    public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 8 && mouseY < topPos + 20) {
+                switchTab(EnumNavigationTab.TAB_SELECTION);
+                return true;
+            }
+        }
+        return false;
+    }
 }

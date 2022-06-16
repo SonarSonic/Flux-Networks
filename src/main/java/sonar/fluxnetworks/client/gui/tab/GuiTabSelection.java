@@ -3,6 +3,9 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -18,7 +21,7 @@ import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
-import java.util.Comparator;
+import java.util.*;
 
 public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
@@ -38,8 +41,8 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     }
 
     @Override
-    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
         if (mElements.isEmpty()) {
             renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_NETWORK.get(), FluxTranslate.TAB_CREATE.get());
         } else {
@@ -73,9 +76,9 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
         if (locked) {
             if (selected) {
-                blit(poseStack, x + 131, y, 159, 16, 16, mElementHeight);
+                blit(poseStack, x + 131, y, 159, 16, 16, 12);
             } else {
-                blit(poseStack, x + 131, y, 175, 16, 16, mElementHeight);
+                blit(poseStack, x + 131, y, 175, 16, 16, 12);
             }
         }
 
@@ -91,13 +94,24 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         float b = FluxUtils.getBlue(color);
 
         RenderSystem.setShaderColor(r, g, b, 1.0f);
+        renderBarAndName(poseStack, element, x, y, selected);
+    }
+
+    protected void renderBarAndName(PoseStack poseStack, FluxNetwork element, int x, int y, boolean selected) {
         blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
         font.draw(poseStack, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
     }
 
     @Override
     public void renderElementTooltip(PoseStack poseStack, FluxNetwork element, int mouseX, int mouseY) {
-        //TODO
+        List<Component> components = new ArrayList<>();
+        components.add(new TextComponent("ID: " + element.getNetworkID()));
+        components.add(FluxTranslate.NETWORK_NAME.makeComponent().append(": " +
+                ChatFormatting.AQUA + element.getNetworkName()));
+        components.add(FluxTranslate.NETWORK_SECURITY.makeComponent().append(": " +
+                ChatFormatting.GOLD + element.getSecurityLevel().getName()));
+
+        renderComponentTooltip(poseStack, components, mouseX, mouseY);
     }
 
     @Override
@@ -132,6 +146,10 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     @Override
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
+        if (code == FluxConstants.RESPONSE_REJECT) {
+            switchTab(EnumNavigationTab.TAB_HOME);
+            return;
+        }
         if (key == FluxConstants.REQUEST_SET_NETWORK) {
             if (code == FluxConstants.RESPONSE_REQUIRE_PASSWORD) {
                 openPopup(new PopupNetworkPassword(this));
@@ -141,7 +159,8 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
                         ClientCache.updateRecentPassword(mSelectedNetwork.getNetworkID(), p.mPassword.getValue());
                     }
                     if (menu.mProvider instanceof ItemFluxConfigurator.Provider p) {
-                        p.mNetworkID = mSelectedNetwork.getNetworkID();
+                        CompoundTag tag = p.mStack.getOrCreateTagElement(FluxConstants.TAG_FLUX_DATA);
+                        tag.putInt(FluxConstants.NETWORK_ID, mSelectedNetwork.getNetworkID());
                     }
                 }
                 closePopup();

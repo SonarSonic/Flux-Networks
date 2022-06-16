@@ -21,6 +21,7 @@ import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.ClientMessages;
 
@@ -68,9 +69,8 @@ public abstract class GuiFluxCore extends GuiPopupHost {
                 text.setSpan(new ForegroundColorSpan(0xFFCF1515), 0, s.length(),
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MuiForgeApi.postToUiThread(() -> Toast.makeText(text, Toast.LENGTH_SHORT).show());
-            } else {
-                onResponseAction(key, code);
             }
+            onResponseAction(key, code);
         };
     }
 
@@ -211,9 +211,9 @@ public abstract class GuiFluxCore extends GuiPopupHost {
             ClientMessages.setTileNetwork(getToken(), (TileFluxDevice) menu.mProvider, networkID, password);
         } /*else if (menu.mProvider instanceof ItemFluxConfigurator.Provider) {
             C2SNetMsg.configuratorNet(networkID, password);
-        } else if (menu.mProvider instanceof ItemAdminConfigurator.Provider) {
-            FluxClientCache.adminViewingNetwork = networkID;
-        }*/
+        }*/ else if (menu.mProvider instanceof ItemAdminConfigurator.Provider) {
+            ClientCache.sAdminViewingNetwork = networkID;
+        }
     }
 
     protected void renderNetwork(PoseStack poseStack, String name, int color, int x, int y) {

@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import sonar.fluxnetworks.api.device.IFluxProvider;
 import sonar.fluxnetworks.client.ClientCache;
@@ -22,19 +23,22 @@ public class ItemAdminConfigurator extends Item {
         super(props);
     }
 
+    @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        if (!pLevel.isClientSide) {
-            NetworkHooks.openGui((ServerPlayer) pPlayer,
+    public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player,
+                                                  @Nonnull InteractionHand hand) {
+        if (!level.isClientSide) {
+            NetworkHooks.openGui((ServerPlayer) player,
                     new Provider(), buf -> buf.writeBoolean(false));
         }
-        return InteractionResultHolder.success(pPlayer.getItemInHand(pUsedHand));
+        return InteractionResultHolder.success(player.getItemInHand(hand));
     }
 
     public static class Provider implements IFluxProvider {
 
         @Override
         public int getNetworkID() {
+            assert EffectiveSide.get().isClient();
             return ClientCache.sAdminViewingNetwork;
         }
 

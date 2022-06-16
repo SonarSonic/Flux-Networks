@@ -31,7 +31,9 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         mGridPerPage = 9;
         mElementWidth = 146;
         mElementHeight = 12;
-        ClientMessages.updateNetwork(getNetwork(), FluxConstants.NBT_NET_MEMBERS);
+        if (getNetwork().isValid()) {
+            ClientMessages.updateNetwork(getToken(), getNetwork(), FluxConstants.NBT_NET_MEMBERS);
+        }
     }
 
     @Nonnull
@@ -152,6 +154,10 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
+        if (code == FluxConstants.RESPONSE_REJECT) {
+            switchTab(EnumNavigationTab.TAB_HOME);
+            return;
+        }
         if (key == FluxConstants.REQUEST_UPDATE_NETWORK) {
             refreshPages(getNetwork().getAllMembers());
         }

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.FluxColorHandler;
+import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.mui.FluxDeviceUI;
@@ -51,14 +52,13 @@ public class ClientRegistration {
     @Nonnull
     private static MenuScreens.ScreenConstructor<FluxMenu, GuiTabCore> getScreenFactory() {
         return (menu, inventory, title) -> {
-            /*if (menu.bridge instanceof FluxDeviceEntity) {
+            if (menu.mProvider instanceof TileFluxDevice) {
                 return new GuiFluxDeviceHome(menu, inventory.player);
             }
-            if (menu.bridge instanceof ItemFluxConfigurator.MenuBridge) {
+            /*if (menu.bridge instanceof ItemFluxConfigurator.MenuBridge) {
                 return new GuiFluxConfiguratorHome(menu, inventory.player);
-            }
-            return new GuiFluxAdminHome(menu, inventory.player);*/
-            return new GuiFluxDeviceHome(menu, inventory.player);
+            }*/
+            return new GuiFluxAdminHome(menu, inventory.player);
         };
     }
 

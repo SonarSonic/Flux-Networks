@@ -5,8 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.client.ClientCache;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
+import sonar.fluxnetworks.client.gui.*;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
 import sonar.fluxnetworks.client.gui.tab.*;
 import sonar.fluxnetworks.common.connection.FluxMenu;
@@ -58,17 +57,19 @@ public abstract class GuiTabCore extends GuiFluxCore {
             case TAB_HOME:
                 if (menu.mProvider instanceof TileFluxDevice) {
                     getMinecraft().setScreen(new GuiFluxDeviceHome(menu, mPlayer));
-                }/* else if (menu.mDevice instanceof ItemFluxConfigurator.MenuBridge) {
+                } /*else if (menu.mDevice instanceof ItemFluxConfigurator.MenuBridge) {
                     getMinecraft().setScreen(new GuiFluxConfiguratorHome(menu, mPlayer));
-                } else if (menu.mDevice instanceof ItemAdminConfigurator.MenuBridge) {
+                }*/ else if (menu.mProvider instanceof ItemAdminConfigurator.Provider) {
                     getMinecraft().setScreen(new GuiFluxAdminHome(menu, mPlayer));
                 } else {
-                    closeScreen();
-                }*/
+                    onClose();
+                }
                 break;
             case TAB_SELECTION:
-                if (menu.mProvider instanceof ItemAdminConfigurator.Provider && ClientCache.sDetailedNetworkView) {
-                    //getMinecraft().setScreen(new GuiTabDetailedSelection(menu, mPlayer));
+                if (menu.mProvider instanceof ItemAdminConfigurator.Provider &&
+                        ClientCache.sSuperAdmin &&
+                        ClientCache.sDetailedNetworkView) {
+                    getMinecraft().setScreen(new GuiTabDetailedSelection(menu, mPlayer));
                 } else {
                     getMinecraft().setScreen(new GuiTabSelection(menu, mPlayer));
                 }
@@ -78,10 +79,10 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 break;
             case TAB_CONNECTION:
                 getMinecraft().setScreen(new GuiTabConnections(menu, mPlayer));
-                break;
+                break;*/
             case TAB_STATISTICS:
                 getMinecraft().setScreen(new GuiTabStatistics(menu, mPlayer));
-                break;*/
+                break;
             case TAB_MEMBER:
                 getMinecraft().setScreen(new GuiTabMembers(menu, mPlayer));
                 break;

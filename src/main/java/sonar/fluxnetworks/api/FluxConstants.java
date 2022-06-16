@@ -63,12 +63,13 @@ public final class FluxConstants {
             FLAG_EDIT_DISCONNECT = 1 << 6;
 
     /**
-     * Response codes. Positive - Toast, Negative - Action.
+     * Response codes. Positive - Have Toast, Negative - Action Only.
      */
     public static final int
             RESPONSE_SUCCESS = -1,
             RESPONSE_REQUIRE_PASSWORD = -2;
-    public static final int RESPONSE_REJECT = 1,
+    public static final int
+            RESPONSE_REJECT = 1,
             RESPONSE_NO_OWNER = 2,
             RESPONSE_NO_ADMIN = 3,
             RESPONSE_NO_SPACE = 4,

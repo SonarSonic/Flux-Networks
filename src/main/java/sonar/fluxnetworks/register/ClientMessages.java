@@ -21,8 +21,7 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static sonar.fluxnetworks.register.Registration.sNetwork;
@@ -45,12 +44,21 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
-    public static void superAdmin(boolean enable) {
+    /**
+     * Request super admin permission.
+     *
+     * @param token a token, can be invalid (0)
+     */
+    public static void superAdmin(int token, boolean enable) {
         var buf = NetworkHandler.buffer(Messages.C2S_SUPER_ADMIN);
+        buf.writeByte(token);
         buf.writeBoolean(enable);
         sNetwork.sendToServer(buf);
     }
 
+    /**
+     * Request to create a new network
+     */
     public static void createNetwork(int token, String name, int color,
                                      SecurityLevel security, String password) {
         var buf = NetworkHandler.buffer(Messages.C2S_CREATE_NETWORK);
@@ -64,6 +72,9 @@ public class ClientMessages {
         sNetwork.sendToServer(buf);
     }
 
+    /**
+     * Request to delete an existing network
+     */
     public static void deleteNetwork(int token, FluxNetwork network) {
         var buf = NetworkHandler.buffer(Messages.C2S_DELETE_NETWORK);
         buf.writeByte(token);
@@ -127,10 +138,33 @@ public class ClientMessages {
 
     /**
      * Request the server to update all certain data of a network.
+     *
+     * @param token a valid token
      */
-    public static void updateNetwork(FluxNetwork network, byte type) {
+    public static void updateNetwork(int token, FluxNetwork network, byte type) {
         var buf = NetworkHandler.buffer(Messages.C2S_UPDATE_NETWORK);
+        buf.writeByte(token);
+        buf.writeVarInt(1); // size
         buf.writeVarInt(network.getNetworkID());
+        buf.writeByte(type);
+        sNetwork.sendToServer(buf);
+    }
+
+    /**
+     * Request the server to update all certain data of networks.
+     *
+     * @param token a valid token
+     */
+    public static void updateNetwork(int token, Collection<FluxNetwork> networks, byte type) {
+        if (networks.isEmpty()) {
+            return;
+        }
+        var buf = NetworkHandler.buffer(Messages.C2S_UPDATE_NETWORK);
+        buf.writeByte(token);
+        buf.writeVarInt(networks.size());
+        for (var network : networks) {
+            buf.writeVarInt(network.getNetworkID());
+        }
         buf.writeByte(type);
         sNetwork.sendToServer(buf);
     }
