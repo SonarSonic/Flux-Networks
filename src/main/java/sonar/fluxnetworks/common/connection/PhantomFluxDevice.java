@@ -83,7 +83,7 @@ public class PhantomFluxDevice implements IFluxDevice {
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.NBT_SAVE_ALL || type == FluxConstants.NBT_PHANTOM_UPDATE) {
             FluxUtils.writeGlobalPos(tag, mGlobalPos);
-            tag.putByte(FluxConstants.DEVICE_TYPE, (byte) mDeviceType.ordinal());
+            tag.putByte(FluxConstants.DEVICE_TYPE, mDeviceType.getId());
             tag.putInt(FluxConstants.NETWORK_ID, mNetworkID);
             tag.putString(FluxConstants.CUSTOM_NAME, mCustomName);
             tag.putInt(FluxConstants.PRIORITY, mPriority);
@@ -102,7 +102,7 @@ public class PhantomFluxDevice implements IFluxDevice {
             mGlobalPos = FluxUtils.readGlobalPos(tag);
         }
         if (type == FluxConstants.NBT_SAVE_ALL || type == FluxConstants.NBT_PHANTOM_UPDATE) {
-            mDeviceType = FluxDeviceType.values()[tag.getByte(FluxConstants.DEVICE_TYPE)];
+            mDeviceType = FluxDeviceType.fromId(tag.getByte(FluxConstants.DEVICE_TYPE));
             mNetworkID = tag.getInt(FluxConstants.NETWORK_ID);
             mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
             mPriority = tag.getInt(FluxConstants.PRIORITY);

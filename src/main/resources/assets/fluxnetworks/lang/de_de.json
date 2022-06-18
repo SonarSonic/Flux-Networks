@@ -43,6 +43,8 @@
     "gui.fluxnetworks.denied_access": "Zugang verweigert: Keine Berechtigung",
     "gui.fluxnetworks.denied_occupy": "Zugang verweigert: Wird gerade von einem anderen Spieler verwendet",
     "gui.fluxnetworks.denied_removal": "Entfernen verweigert: Keine Berechtigung",
+    "gui.fluxnetworks.config_copied": "Copied Configuration",
+    "gui.fluxnetworks.config_pasted": "Pasted Configuration",
 
     "gui.fluxnetworks.error.noselected": "Kein netzwerk ausgewählt",
     "gui.fluxnetworks.error.nonetwork": "Kein Netzwerk verfügbar",

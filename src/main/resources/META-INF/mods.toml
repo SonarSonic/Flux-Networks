@@ -25,3 +25,9 @@ license="MIT"
     versionRange="[1.18,1.19)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.fluxnetworks]]
+    modId="modernui"
+    mandatory=true
+    versionRange="[3.4.7,)"
+    ordering="NONE"
+    side="BOTH"

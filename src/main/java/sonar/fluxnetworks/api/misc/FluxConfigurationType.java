@@ -2,6 +2,8 @@ package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundTag;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetworkData;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -13,55 +15,34 @@ public enum FluxConfigurationType {
     TRANSFER(FluxConstants.LIMIT),
     TRANSFER_SETTING(FluxConstants.DISABLE_LIMIT);
 
+    public static final FluxConfigurationType[] VALUES = values();
+
     private final String key;
 
     FluxConfigurationType(String key) {
         this.key = key;
     }
 
-    public void copy(CompoundTag nbt, @Nonnull TileFluxDevice tile) {
+    public void copy(CompoundTag tag, @Nonnull TileFluxDevice device) {
         switch (this) {
-            case NETWORK:
-                nbt.putInt(key, tile.getNetwork().getNetworkID());
-                break;
-            case PRIORITY:
-                nbt.putInt(key, tile.getLiteralPriority());
-                break;
-            case PRIORITY_SETTING:
-                nbt.putBoolean(key, tile.getSurgeMode());
-                break;
-            case TRANSFER:
-                nbt.putLong(key, tile.getLiteralLimit());
-                break;
-            case TRANSFER_SETTING:
-                nbt.putBoolean(key, tile.getDisableLimit());
-                break;
+            case NETWORK -> tag.putInt(key, device.getNetworkID());
+            case PRIORITY -> tag.putInt(key, device.getLiteralPriority());
+            case PRIORITY_SETTING -> tag.putBoolean(key, device.getSurgeMode());
+            case TRANSFER -> tag.putLong(key, device.getLiteralLimit());
+            case TRANSFER_SETTING -> tag.putBoolean(key, device.getDisableLimit());
         }
     }
 
-    public void paste(@Nonnull CompoundTag nbt, @Nonnull TileFluxDevice tile) {
-        if (!nbt.contains(key)) {
+    public void paste(@Nonnull CompoundTag tag, @Nonnull TileFluxDevice device) {
+        if (!tag.contains(key)) {
             return;
         }
-        //FIXME
-        /*switch (this) {
-            case NETWORK:
-                IFluxNetwork network = FluxNetworkData.getNetwork(nbt.getInt(key));
-                tile.connect(network);
-                break;
-            case PRIORITY:
-                tile.setPriority(nbt.getInt(key));
-                break;
-            case PRIORITY_SETTING:
-                tile.setSurgeMode(nbt.getBoolean(key));
-                break;
-            case TRANSFER:
-                tile.setTransferLimit(nbt.getLong(key));
-                break;
-            case TRANSFER_SETTING:
-                tile.setDisableLimit(nbt.getBoolean(key));
-                break;
-        }*/
+        if (this == NETWORK) {
+            FluxNetwork network = FluxNetworkData.getNetwork(tag.getInt(key));
+            device.connect(network);
+        } else {
+            device.readCustomTag(tag, FluxConstants.NBT_TILE_SETTING);
+        }
     }
 
     //// NETWORK \\\\

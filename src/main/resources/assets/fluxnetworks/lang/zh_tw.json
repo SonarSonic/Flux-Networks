@@ -43,6 +43,8 @@
 	"gui.fluxnetworks.denied_access": "拒絕訪問:無權限",
 	"gui.fluxnetworks.denied_occupy": "拒絕訪問:另一名玩家正在使用",
 	"gui.fluxnetworks.denied_removal": "拒絕移除:無權限",
+	"gui.fluxnetworks.config_copied": "Copied Configuration",
+	"gui.fluxnetworks.config_pasted": "Pasted Configuration",
 
 	"gui.fluxnetworks.error.noselected": "尚未選擇網路",
 	"gui.fluxnetworks.error.nonetwork": "暫無可用網路",

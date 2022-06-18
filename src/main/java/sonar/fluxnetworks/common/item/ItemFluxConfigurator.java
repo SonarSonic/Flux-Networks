@@ -15,6 +15,7 @@ import net.minecraftforge.network.NetworkHooks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxProvider;
+import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.api.misc.FluxConfigurationType;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxMenu;
@@ -24,7 +25,6 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.UUID;
 
 public class ItemFluxConfigurator extends Item {
 
@@ -47,19 +47,18 @@ public class ItemFluxConfigurator extends Item {
                 return InteractionResult.FAIL;
             }
             if (player.isShiftKeyDown()) {
-                CompoundTag configs = new CompoundTag();
-                for (FluxConfigurationType type : FluxConfigurationType.values()) {
-                    type.copy(configs, device);
+                CompoundTag tag = stack.getOrCreateTagElement(FluxConstants.TAG_FLUX_CONFIG);
+                for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
+                    type.copy(tag, device);
                 }
-                stack.addTagElement(FluxConstants.TAG_FLUX_CONFIG, configs);
-                player.sendMessage(new TextComponent("Copied Configuration"), UUID.randomUUID());
+                player.displayClientMessage(FluxTranslate.CONFIG_COPIED, false);
             } else {
-                CompoundTag configs = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
-                if (configs != null) {
-                    for (FluxConfigurationType type : FluxConfigurationType.values()) {
-                        type.paste(configs, device);
+                CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
+                if (tag != null) {
+                    for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
+                        type.paste(tag, device);
                     }
-                    player.sendMessage(new TextComponent("Pasted Configuration"), UUID.randomUUID());
+                    player.displayClientMessage(FluxTranslate.CONFIG_PASTED, false);
                 }
             }
             return InteractionResult.SUCCESS;
@@ -83,8 +82,18 @@ public class ItemFluxConfigurator extends Item {
         if (tag != null) {
             final FluxNetwork network = ClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID));
             if (network.isValid()) {
-                tooltip.add(new TextComponent(FluxTranslate.NETWORK_FULL_NAME.get() + ": " + ChatFormatting.WHITE +
-                        network.getNetworkName()));
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
+                        ChatFormatting.RESET + network.getNetworkName()));
+            }
+
+            if (tag.contains(FluxConstants.LIMIT)) {
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.get() + ": " +
+                        ChatFormatting.RESET + EnergyType.FE.getStorage(tag.getLong(FluxConstants.LIMIT))));
+            }
+
+            if (tag.contains(FluxConstants.PRIORITY)) {
+                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.PRIORITY.get() + ": " +
+                        ChatFormatting.RESET + tag.getInt(FluxConstants.PRIORITY)));
             }
         }
     }

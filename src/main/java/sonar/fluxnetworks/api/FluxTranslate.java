@@ -144,8 +144,11 @@ public class FluxTranslate {
     private static final ChatFormatting[] ERROR_STYLE = {ChatFormatting.BOLD, ChatFormatting.DARK_RED};
 
     public static final Component
-            ACCESS_DENIED = new TranslatableComponent("gui.fluxnetworks.access_denied").withStyle(ERROR_STYLE),
+            ACCESS_DENIED = new TranslatableComponent("gui.fluxnetworks.denied_access").withStyle(ERROR_STYLE),
             ACCESS_OCCUPY = new TranslatableComponent("gui.fluxnetworks.denied_occupy").withStyle(ERROR_STYLE);
+    public static final Component
+            CONFIG_COPIED = new TranslatableComponent("gui.fluxnetworks.config_copied"),
+            CONFIG_PASTED = new TranslatableComponent("gui.fluxnetworks.config_pasted");
 
     @Nonnull
     public String get() {

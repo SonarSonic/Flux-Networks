@@ -43,6 +43,8 @@
 	"gui.fluxnetworks.denied_access": "Acesso negado: Sem permissão",
 	"gui.fluxnetworks.denied_occupy": "Acesso negado: Outro jogador já está usando",
 	"gui.fluxnetworks.denied_removal": "Remoção negada: Sem permissão",
+	"gui.fluxnetworks.config_copied": "Copied Configuration",
+	"gui.fluxnetworks.config_pasted": "Pasted Configuration",
 
 	"gui.fluxnetworks.error.noselected": "Nenhuma rede selecionada",
 	"gui.fluxnetworks.error.nonetwork": "Nenhuma rede disponível",

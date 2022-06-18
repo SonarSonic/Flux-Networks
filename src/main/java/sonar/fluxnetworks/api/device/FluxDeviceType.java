@@ -40,8 +40,4 @@ public enum FluxDeviceType {
     public boolean isStorage() {
         return this == STORAGE;
     }
-
-    public boolean is(@Nonnull IFluxDevice device) {
-        return this == device.getDeviceType();
-    }
 }

@@ -43,6 +43,8 @@
 	"gui.fluxnetworks.denied_access": "Доступ запрещен: Нет разрешения",
 	"gui.fluxnetworks.denied_occupy": "Доступ запрещен: Другой игрок использует",
 	"gui.fluxnetworks.denied_removal": "В удалениии отказано: Нет разрешения",
+	"gui.fluxnetworks.config_copied": "Copied Configuration",
+	"gui.fluxnetworks.config_pasted": "Pasted Configuration",
 
 	"gui.fluxnetworks.error.noselected": "Сеть не выбрана",
 	"gui.fluxnetworks.error.nonetwork": "Сеть недоступна",

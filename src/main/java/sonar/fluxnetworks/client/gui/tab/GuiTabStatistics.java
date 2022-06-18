@@ -62,16 +62,16 @@ public class GuiTabStatistics extends GuiTabCore {
                     ChatFormatting.RESET + stats.fluxControllerCount, 82, 36, color);
             font.draw(poseStack,
                     ChatFormatting.GRAY + FluxTranslate.INPUT.get() + ChatFormatting.GRAY + ": " + ChatFormatting.RESET +
-                            EnergyType.FE.getUsageCompact(stats.energyInput), 12, 48, color);
+                            EnergyType.FE.getUsage(stats.energyInput), 12, 48, color);
             font.draw(poseStack,
                     ChatFormatting.GRAY + FluxTranslate.OUTPUT.get() + ChatFormatting.GRAY + ": " + ChatFormatting.RESET +
-                            EnergyType.FE.getUsageCompact(stats.energyOutput), 12, 60, color);
+                            EnergyType.FE.getUsage(stats.energyOutput), 12, 60, color);
             font.draw(poseStack,
                     ChatFormatting.GRAY + FluxTranslate.BUFFER.get() + ChatFormatting.GRAY + ": " + ChatFormatting.RESET +
-                            EnergyType.FE.getStorageCompact(stats.totalBuffer), 12, 72, color);
+                            EnergyType.FE.getStorage(stats.totalBuffer), 12, 72, color);
             font.draw(poseStack,
                     ChatFormatting.GRAY + FluxTranslate.ENERGY.get() + ChatFormatting.GRAY + ": " + ChatFormatting.RESET +
-                            EnergyType.FE.getStorageCompact(stats.totalEnergy), 12, 84, color);
+                            EnergyType.FE.getStorage(stats.totalEnergy), 12, 84, color);
             poseStack.scale(0.75f, 0.75f, 1);
             drawCenteredString(poseStack, font,
                     FluxTranslate.AVERAGE_TICK.get() + ": " + stats.averageTickMicro + " \u00b5s/t",

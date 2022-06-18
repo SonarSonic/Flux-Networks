@@ -20,9 +20,9 @@ import java.util.function.Consumer;
 public class ServerFluxNetwork extends FluxNetwork {
 
     private static final Comparator<TileFluxDevice> sDescendingOrder =
-            (a, b) -> Integer.compare(b.getTransferNode().getPriority(), a.getTransferNode().getPriority());
+            (lhs, rhs) -> Integer.compare(rhs.getTransferNode().getPriority(), lhs.getTransferNode().getPriority());
 
-    private static final Consumer<TileFluxDevice> sDisconnect = d -> d.connect(FluxNetwork.INVALID);
+    private static final Consumer<TileFluxDevice> sDisconnect = d -> d.connect(INVALID);
 
     private static final Class<?>[] sLogicalTypes =
             {IFluxDevice.class, IFluxPlug.class, IFluxPoint.class, IFluxStorage.class, IFluxController.class};
@@ -142,7 +142,7 @@ public class ServerFluxNetwork extends FluxNetwork {
                 while (plugIterator.hasNext()) {
                     TileFluxDevice plug = plugIterator.next();
                     TileFluxDevice point = pointIterator.next();
-                    if (plug.getDeviceType().is(point)) {
+                    if (plug.getDeviceType() == point.getDeviceType()) {
                         break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                     }
                     // we don't need to simulate this action

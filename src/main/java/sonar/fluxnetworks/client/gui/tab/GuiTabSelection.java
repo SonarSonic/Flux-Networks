@@ -82,11 +82,6 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             }
         }
 
-        if (selected) {
-            fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
-            fill(poseStack, x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
-        }
-
         int color = element.getNetworkColor();
 
         float r = FluxUtils.getRed(color);
@@ -94,6 +89,11 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         float b = FluxUtils.getBlue(color);
 
         RenderSystem.setShaderColor(r, g, b, 1.0f);
+        if (selected) {
+            fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
+            fill(poseStack, x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
+        }
+
         renderBarAndName(poseStack, element, x, y, selected);
     }
 

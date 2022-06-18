@@ -112,6 +112,10 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     // server tick
     protected void onServerTick() {
+        if ((mFlags & FLAG_FIRST_LOADED) == 0) {
+            connect(FluxNetworkData.getNetwork(mNetworkID));
+            mFlags |= FLAG_FIRST_LOADED;
+        }
         if ((mFlags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
             sendBlockUpdate();
             mFlags &= ~FLAG_SETTING_CHANGED;
@@ -122,10 +126,6 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     @Override
     public void onLoad() {
-        if (!level.isClientSide) {
-            connect(FluxNetworkData.getNetwork(mNetworkID));
-        }
-        mFlags |= FLAG_FIRST_LOADED;
     }
 
     /**
@@ -165,6 +165,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      *
      * @param network the server network to connect, can be invalid
      */
+    //TODO security check
     public void connect(FluxNetwork network) {
         assert !level.isClientSide;
         if (mNetwork == network) {
@@ -257,7 +258,9 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             case FluxConstants.NBT_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
             case FluxConstants.NBT_TILE_UPDATE -> {
                 tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
-                tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
+                if ((mFlags & FLAG_FIRST_LOADED) != 0) {
+                    tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
+                }
                 tag.putInt(FluxConstants.FLAGS, mFlags);
             }
             case FluxConstants.NBT_PHANTOM_UPDATE -> {
@@ -299,7 +302,9 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             case FluxConstants.NBT_SAVE_ALL -> mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
             case FluxConstants.NBT_TILE_UPDATE -> {
                 mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
-                mClientColor = FluxUtils.getModifiedColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.1f);
+                if (tag.contains(FluxConstants.CLIENT_COLOR)) {
+                    mClientColor = FluxUtils.getModifiedColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.1f);
+                }
                 mFlags = tag.getInt(FluxConstants.FLAGS);
             }
             case FluxConstants.NBT_TILE_DROP -> {

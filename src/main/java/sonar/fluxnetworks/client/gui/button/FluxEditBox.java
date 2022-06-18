@@ -117,11 +117,12 @@ public class FluxEditBox extends EditBox {
 
     @Override
     public void setFocused(boolean isFocused) {
-        super.setFocused(isFocused);
-        if (mDigitsOnly) {
-            if (isFocused) {
+        if (isFocused) {
+            if (mDigitsOnly) {
                 mOrigin = getValue();
-            } else {
+            }
+        } else if (isFocused()) {
+            if (mDigitsOnly) {
                 try {
                     setValue(String.valueOf(getValidLong()));
                 } catch (final NumberFormatException ignored) {
@@ -130,6 +131,7 @@ public class FluxEditBox extends EditBox {
                 }
             }
         }
+        super.setFocused(isFocused);
     }
 
     public long getValidLong() {
