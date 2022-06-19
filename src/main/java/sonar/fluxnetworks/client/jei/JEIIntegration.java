@@ -12,10 +12,19 @@ import javax.annotation.Nonnull;
 @JeiPlugin
 public class JEIIntegration implements IModPlugin {
 
+    public static final ResourceLocation UID = new ResourceLocation(FluxNetworks.MODID, "jei");
+
     @Nonnull
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(FluxNetworks.MODID, "jei");
+        return UID;
+    }
+
+    @Override
+    public void registerCategories(@Nonnull IRecipeCategoryRegistration registration) {
+        if (FluxConfig.enableFluxRecipe) {
+            registration.addRecipeCategories(new CreatingFluxRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+        }
     }
 
     @Override
@@ -30,13 +39,6 @@ public class JEIIntegration implements IModPlugin {
         if (FluxConfig.enableFluxRecipe) {
             CreatingFluxRecipeCategory.getCatalysts().forEach(itemStack -> registration.addRecipeCatalyst(itemStack,
                     CreatingFluxRecipeCategory.RECIPE_TYPE));
-        }
-    }
-
-    @Override
-    public void registerCategories(@Nonnull IRecipeCategoryRegistration registration) {
-        if (FluxConfig.enableFluxRecipe) {
-            registration.addRecipeCategories(new CreatingFluxRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         }
     }
 }
