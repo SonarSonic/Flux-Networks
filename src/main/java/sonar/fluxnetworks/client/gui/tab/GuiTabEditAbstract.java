@@ -48,6 +48,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
                             leftPos + 16, topPos + 62, 144, 12)
                     .setOutlineColor(0xFF808080)
                     .setTextInvisible();
+            mPassword.setFilter(string -> string != null && !FluxUtils.isBadPassword(string));
             mPassword.setMaxLength(FluxNetwork.MAX_PASSWORD_LENGTH);
             mPassword.setResponder(string -> onEditSettingsChanged());
             mPassword.setVisible(mSecurityLevel.isEncrypted());

@@ -228,9 +228,9 @@ public class ClientMessages {
 
     private static void onUpdateNetwork(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
                                         BlockableEventLoop<?> looper) {
-        final Int2ObjectMap<CompoundTag> map = new Int2ObjectArrayMap<>();
         final byte type = payload.readByte();
         final int size = payload.readVarInt();
+        final Int2ObjectMap<CompoundTag> map = new Int2ObjectArrayMap<>(size);
         for (int i = 0; i < size; i++) {
             final int id = payload.readVarInt();
             final CompoundTag tag = payload.readNbt();

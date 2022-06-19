@@ -63,7 +63,7 @@
 	"gui.fluxnetworks.flux.unlimited": "Unlimited",
 	"gui.fluxnetworks.flux.forcedloading": "Forced Loading",
 	"gui.fluxnetworks.flux.chunkunloaded": "Chunk Unloaded",
-	"gui.fluxnetworks.flux.surge": "Surge",
+	"gui.fluxnetworks.flux.surge": "Very High",
 	"gui.fluxnetworks.flux.input": "Input",
 	"gui.fluxnetworks.flux.output": "Output",
 	"gui.fluxnetworks.flux.change": "Change",

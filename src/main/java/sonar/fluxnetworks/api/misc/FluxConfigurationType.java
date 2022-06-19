@@ -1,7 +1,9 @@
 package sonar.fluxnetworks.api.misc;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkData;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -23,7 +25,7 @@ public enum FluxConfigurationType {
         this.key = key;
     }
 
-    public void copy(CompoundTag tag, @Nonnull TileFluxDevice device) {
+    public void copy(@Nonnull Player player, @Nonnull CompoundTag tag, @Nonnull TileFluxDevice device) {
         switch (this) {
             case NETWORK -> tag.putInt(key, device.getNetworkID());
             case PRIORITY -> tag.putInt(key, device.getLiteralPriority());
@@ -33,13 +35,21 @@ public enum FluxConfigurationType {
         }
     }
 
-    public void paste(@Nonnull CompoundTag tag, @Nonnull TileFluxDevice device) {
+    public void paste(@Nonnull Player player, @Nonnull CompoundTag tag, @Nonnull TileFluxDevice device) {
         if (!tag.contains(key)) {
             return;
         }
         if (this == NETWORK) {
-            FluxNetwork network = FluxNetworkData.getNetwork(tag.getInt(key));
-            device.connect(network);
+            if (device.getDeviceType() != FluxDeviceType.CONTROLLER) {
+                FluxNetwork network = FluxNetworkData.getNetwork(tag.getInt(key));
+                // we can connect to an invalid network (i.e. disconnect)
+                if (!network.isValid() || network.canPlayerAccess(player, "")) {
+                    if (network.isValid()) {
+                        device.setConnectionOwner(player.getUUID());
+                    }
+                    device.connect(network);
+                }
+            }
         } else {
             device.readCustomTag(tag, FluxConstants.NBT_TILE_SETTING);
         }

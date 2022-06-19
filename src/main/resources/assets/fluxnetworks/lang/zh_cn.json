@@ -63,7 +63,7 @@
 	"gui.fluxnetworks.flux.unlimited": "无限制",
 	"gui.fluxnetworks.flux.forcedloading": "强制区块加载",
 	"gui.fluxnetworks.flux.chunkunloaded": "区块未加载",
-	"gui.fluxnetworks.flux.surge": "电涌",
+	"gui.fluxnetworks.flux.surge": "非常高",
 	"gui.fluxnetworks.flux.input": "输入",
 	"gui.fluxnetworks.flux.output": "输出",
 	"gui.fluxnetworks.flux.change": "变化",

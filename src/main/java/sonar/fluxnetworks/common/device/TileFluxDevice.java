@@ -165,7 +165,6 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      *
      * @param network the server network to connect, can be invalid
      */
-    //TODO security check
     public void connect(FluxNetwork network) {
         assert !level.isClientSide;
         if (mNetwork == network) {
@@ -542,7 +541,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     @Override
     public String toString() {
-        return "FluxDeviceEntity{" +
+        return "TileFluxDevice{" +
                 "customName='" + mCustomName + '\'' +
                 ", networkID=" + mNetworkID +
                 ", globalPos=" + mGlobalPos +

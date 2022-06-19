@@ -42,21 +42,21 @@ public class ItemFluxConfigurator extends Item {
             return InteractionResult.PASS;
         }
         if (context.getLevel().getBlockEntity(context.getClickedPos()) instanceof TileFluxDevice device) {
-            if (!device.canPlayerAccess(context.getPlayer())) {
+            if (!device.canPlayerAccess(player)) {
                 player.displayClientMessage(FluxTranslate.ACCESS_DENIED, true);
                 return InteractionResult.FAIL;
             }
             if (player.isShiftKeyDown()) {
                 CompoundTag tag = stack.getOrCreateTagElement(FluxConstants.TAG_FLUX_CONFIG);
                 for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
-                    type.copy(tag, device);
+                    type.copy(player, tag, device);
                 }
                 player.displayClientMessage(FluxTranslate.CONFIG_COPIED, false);
             } else {
                 CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_CONFIG);
                 if (tag != null) {
                     for (FluxConfigurationType type : FluxConfigurationType.VALUES) {
-                        type.paste(tag, device);
+                        type.paste(player, tag, device);
                     }
                     player.displayClientMessage(FluxTranslate.CONFIG_PASTED, false);
                 }
