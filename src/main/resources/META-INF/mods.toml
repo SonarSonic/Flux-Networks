@@ -31,3 +31,9 @@ license="MIT"
     versionRange="[3.4.7,)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.fluxnetworks]]
+    modId="jei"
+    mandatory=false
+    versionRange="[9.7.0,)"
+    ordering="NONE"
+    side="BOTH"
