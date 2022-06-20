@@ -145,8 +145,8 @@ public class EventHandler {
     @SubscribeEvent
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
-        Messages.updateNetwork(FluxNetworkData.getAllNetworks(), FluxConstants.NBT_NET_BASIC)
-                .sendToPlayer(event.getPlayer());
+        Network.get().sendToPlayer(Messages.updateNetwork(
+                FluxNetworkData.getAllNetworks(), FluxConstants.NBT_NET_BASIC), event.getPlayer());
         Messages.superAdmin(FluxPlayer.isPlayerSuperAdmin(event.getPlayer()), event.getPlayer());
     }
 

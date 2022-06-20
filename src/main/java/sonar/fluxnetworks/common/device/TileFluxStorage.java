@@ -9,8 +9,7 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.api.device.IFluxStorage;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
-import sonar.fluxnetworks.register.Messages;
-import sonar.fluxnetworks.register.RegistryBlocks;
+import sonar.fluxnetworks.register.*;
 
 import javax.annotation.Nonnull;
 
@@ -76,10 +75,10 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
         }
         if ((mFlags & FLAG_ENERGY_CHANGED) == FLAG_ENERGY_CHANGED) {
             //noinspection ConstantConditions
-            if ((level.getGameTime() & 0x3) == 0) {
+            if ((level.getGameTime() & 0b111) == 0) {
                 // update model data to players who can see it
-                Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_STORAGE_ENERGY)
-                        .sendToTrackingChunk(level.getChunkAt(worldPosition));
+                Network.get().sendToTrackingChunk(Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_STORAGE_ENERGY),
+                        level.getChunkAt(worldPosition));
                 mFlags &= ~FLAG_ENERGY_CHANGED;
             }
         }

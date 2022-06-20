@@ -2,8 +2,10 @@ package sonar.fluxnetworks;
 
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sonar.fluxnetworks.common.integration.MUIIntegration;
 
 @Mod(FluxNetworks.MODID)
 public class FluxNetworks {
@@ -14,15 +16,24 @@ public class FluxNetworks {
 
     public static final Logger LOGGER = LogManager.getLogger(NAME_CPT);
 
-    private static boolean curiosLoaded;
+    private static boolean sCuriosLoaded;
+    private static boolean sModernUILoaded;
 
     public FluxNetworks() {
-        curiosLoaded = ModList.get().isLoaded("curios");
+        sCuriosLoaded = ModList.get().isLoaded("curios");
+        sModernUILoaded = ModList.get().isLoaded("modernui");
 
         FluxConfig.init();
+        if (sModernUILoaded) {
+            FMLJavaModLoadingContext.get().getModEventBus().register(MUIIntegration.class);
+        }
     }
 
     public static boolean isCuriosLoaded() {
-        return curiosLoaded;
+        return sCuriosLoaded;
+    }
+
+    public static boolean isModernUILoaded() {
+        return sModernUILoaded;
     }
 }

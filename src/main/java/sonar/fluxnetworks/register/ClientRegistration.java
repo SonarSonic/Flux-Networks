@@ -1,7 +1,5 @@
 package sonar.fluxnetworks.register;
 
-import icyllis.modernui.forge.OpenMenuEvent;
-import icyllis.modernui.util.DataSet;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -17,7 +15,6 @@ import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.client.mui.FluxDeviceUI;
 import sonar.fluxnetworks.client.render.FluxStorageEntityRenderer;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -76,17 +73,5 @@ public class ClientRegistration {
                 RegistryBlocks.FLUX_CONTROLLER, RegistryBlocks.FLUX_POINT, RegistryBlocks.FLUX_PLUG,
                 RegistryBlocks.BASIC_FLUX_STORAGE, RegistryBlocks.HERCULEAN_FLUX_STORAGE,
                 RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
-    }
-
-    @SubscribeEvent
-    public static void openMenu(@Nonnull OpenMenuEvent event) {
-        if (event.getMenu() instanceof FluxMenu menu && menu.mProvider != null) {
-            FluxDeviceUI fragment = new FluxDeviceUI((TileFluxDevice) menu.mProvider);
-            menu.mOnResultListener = fragment;
-            DataSet args = new DataSet();
-            args.putInt("token", menu.containerId);
-            fragment.setArguments(args);
-            event.set(fragment);
-        }
     }
 }

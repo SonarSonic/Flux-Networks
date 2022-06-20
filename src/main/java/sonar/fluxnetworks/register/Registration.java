@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.register;
 
 import com.mojang.datafixers.DSL;
-import icyllis.modernui.forge.NetworkHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.nbt.CompoundTag;
@@ -45,8 +44,6 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = FluxNetworks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Registration {
 
-    static NetworkHandler sNetwork;
-
     public static final CreativeModeTab CREATIVE_MODE_TAB = new CreativeModeTab(FluxNetworks.MODID) {
         @Nonnull
         @Override
@@ -57,7 +54,7 @@ public class Registration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        sNetwork = new NetworkHandler(FluxNetworks.MODID, () -> Messages::msg, Messages::msg, Messages.PROTOCOL, false);
+        Network.sNetwork = FluxNetworks.isModernUILoaded() ? new MUINetwork() : new FMLNetwork();
     }
 
     @SubscribeEvent

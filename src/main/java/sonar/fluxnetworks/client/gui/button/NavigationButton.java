@@ -23,10 +23,10 @@ public class NavigationButton extends GuiButtonCore {
         RenderSystem.setShaderTexture(0, BUTTONS);
 
         boolean hovered = isMouseHovered(mouseX, mouseY);
-        int state = (mSelected || hovered) ? 1 : 0;
+        int state = mClickable && (mSelected || hovered) ? 1 : 0;
         blit(poseStack, x, y, 16 * mTab.ordinal(), 16 * state, 16, 16);
 
-        if (hovered) {
+        if (mClickable && hovered) {
             drawCenteredString(poseStack, mc.font, mTab.getTranslatedName(), x + width / 2, y - 10, 0xFFFFFFFF);
         }
     }

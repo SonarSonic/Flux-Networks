@@ -35,6 +35,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 button = new NavigationButton(getMinecraft(), 148 + leftPos, -16 + topPos, tab);
             }
             button.setSelected(tab == getNavigationTab());
+            button.setClickable(tab != EnumNavigationTab.TAB_CONNECTION);
             mButtons.add(button);
         }
     }

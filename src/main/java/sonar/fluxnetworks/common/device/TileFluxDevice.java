@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.device;
 
-import icyllis.modernui.forge.MuiForgeApi;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -16,13 +15,16 @@ import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkHooks;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.*;
+import sonar.fluxnetworks.common.integration.MUIIntegration;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.Messages;
+import sonar.fluxnetworks.register.Network;
 
 import javax.annotation.*;
 import java.util.UUID;
@@ -120,7 +122,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             sendBlockUpdate();
             mFlags &= ~FLAG_SETTING_CHANGED;
         } else if (mPlayerUsing != null) {
-            Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC).sendToPlayer(mPlayerUsing);
+            Network.get().sendToPlayer(Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC), mPlayerUsing);
         }
     }
 
@@ -144,8 +146,8 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 writeCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
                 buf.writeNbt(tag);
             };
-            if (FluxConfig.enableGuiDebug) {
-                MuiForgeApi.openMenu(player, this, writer);
+            if (FluxConfig.enableGuiDebug && FluxNetworks.isModernUILoaded()) {
+                MUIIntegration.openMenu(player, this, writer);
             } else {
                 NetworkHooks.openGui((ServerPlayer) player, this, writer);
             }

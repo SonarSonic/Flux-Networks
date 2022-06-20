@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.register;
 
-import icyllis.modernui.forge.NetworkHandler;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.Minecraft;
@@ -8,7 +7,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.RunningOnDifferentThreadException;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static sonar.fluxnetworks.register.Registration.sNetwork;
+import static sonar.fluxnetworks.register.Network.sNetwork;
 
 /**
  * C2S message specs and S2C message handling.
@@ -37,7 +35,7 @@ public class ClientMessages {
 
     public static void deviceBuffer(TileFluxDevice device, byte type) {
         assert type > 0; // C2S positive
-        var buf = NetworkHandler.buffer(Messages.C2S_DEVICE_BUFFER);
+        var buf = Network.buffer(Messages.C2S_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeByte(type);
         device.writePacket(buf, type);
@@ -50,7 +48,7 @@ public class ClientMessages {
      * @param token a token, can be invalid (0)
      */
     public static void superAdmin(int token, boolean enable) {
-        var buf = NetworkHandler.buffer(Messages.C2S_SUPER_ADMIN);
+        var buf = Network.buffer(Messages.C2S_SUPER_ADMIN);
         buf.writeByte(token);
         buf.writeBoolean(enable);
         sNetwork.sendToServer(buf);
@@ -61,7 +59,7 @@ public class ClientMessages {
      */
     public static void createNetwork(int token, String name, int color,
                                      SecurityLevel security, String password) {
-        var buf = NetworkHandler.buffer(Messages.C2S_CREATE_NETWORK);
+        var buf = Network.buffer(Messages.C2S_CREATE_NETWORK);
         buf.writeByte(token);
         buf.writeUtf(name, 256);
         buf.writeInt(color);
@@ -76,14 +74,14 @@ public class ClientMessages {
      * Request to delete an existing network
      */
     public static void deleteNetwork(int token, FluxNetwork network) {
-        var buf = NetworkHandler.buffer(Messages.C2S_DELETE_NETWORK);
+        var buf = Network.buffer(Messages.C2S_DELETE_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
         sNetwork.sendToServer(buf);
     }
 
     public static void editDevice(TileFluxDevice device, CompoundTag tag) {
-        var buf = NetworkHandler.buffer(Messages.C2S_EDIT_DEVICE);
+        var buf = Network.buffer(Messages.C2S_EDIT_DEVICE);
         buf.writeVarInt(FluxConstants.INVALID_NETWORK_ID);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeNbt(tag);
@@ -92,7 +90,7 @@ public class ClientMessages {
 
     public static void editDevice(int networkId, List<GlobalPos> list, CompoundTag tag) {
         if (list.isEmpty()) return;
-        var buf = NetworkHandler.buffer(Messages.C2S_EDIT_DEVICE);
+        var buf = Network.buffer(Messages.C2S_EDIT_DEVICE);
         buf.writeVarInt(networkId);
         buf.writeVarInt(list.size());
         for (var pos : list) {
@@ -103,7 +101,7 @@ public class ClientMessages {
     }
 
     public static void editMember(int token, FluxNetwork network, UUID uuid, byte type) {
-        var buf = NetworkHandler.buffer(Messages.C2S_EDIT_MEMBER);
+        var buf = Network.buffer(Messages.C2S_EDIT_MEMBER);
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
         buf.writeUUID(uuid);
@@ -113,7 +111,7 @@ public class ClientMessages {
 
     // set (connect to) network for a block entity
     public static void setTileNetwork(int token, TileFluxDevice device, int networkID, String password) {
-        var buf = NetworkHandler.buffer(Messages.C2S_CONNECT_DEVICE);
+        var buf = Network.buffer(Messages.C2S_CONNECT_DEVICE);
         buf.writeByte(token);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeVarInt(networkID);
@@ -123,7 +121,7 @@ public class ClientMessages {
 
     public static void editNetwork(int token, FluxNetwork network, String name, int color,
                                    SecurityLevel security, String password, int wireless) {
-        var buf = NetworkHandler.buffer(Messages.C2S_EDIT_NETWORK);
+        var buf = Network.buffer(Messages.C2S_EDIT_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
         buf.writeUtf(name, 256);
@@ -142,7 +140,7 @@ public class ClientMessages {
      * @param token a valid token
      */
     public static void updateNetwork(int token, FluxNetwork network, byte type) {
-        var buf = NetworkHandler.buffer(Messages.C2S_UPDATE_NETWORK);
+        var buf = Network.buffer(Messages.C2S_UPDATE_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(1); // size
         buf.writeVarInt(network.getNetworkID());
@@ -159,7 +157,7 @@ public class ClientMessages {
         if (networks.isEmpty()) {
             return;
         }
-        var buf = NetworkHandler.buffer(Messages.C2S_UPDATE_NETWORK);
+        var buf = Network.buffer(Messages.C2S_UPDATE_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
@@ -182,6 +180,7 @@ public class ClientMessages {
 
     private static void onDeviceBuffer(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
                                        BlockableEventLoop<?> looper) {
+        payload.retain();
         looper.execute(() -> {
             LocalPlayer p = player.get();
             if (p != null && p.clientLevel.getBlockEntity(payload.readBlockPos()) instanceof TileFluxDevice e) {
@@ -192,7 +191,6 @@ public class ClientMessages {
             }
             payload.release();
         });
-        throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
     }
 
     private static void onResponse(FriendlyByteBuf payload, Supplier<LocalPlayer> player,

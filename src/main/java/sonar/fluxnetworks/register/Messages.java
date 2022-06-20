@@ -1,7 +1,5 @@
 package sonar.fluxnetworks.register;
 
-import icyllis.modernui.forge.NetworkHandler;
-import icyllis.modernui.forge.PacketDispatcher;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
@@ -9,7 +7,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.RunningOnDifferentThreadException;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static sonar.fluxnetworks.register.Registration.sNetwork;
+import static sonar.fluxnetworks.register.Network.sNetwork;
 
 /**
  * Network messages, TCP protocol. This class contains common messages, S2C message specs
@@ -56,11 +53,6 @@ import static sonar.fluxnetworks.register.Registration.sNetwork;
  */
 @ParametersAreNonnullByDefault
 public class Messages {
-
-    /**
-     * Note: Increment this if any packet is changed.
-     */
-    static final String PROTOCOL = "700";
 
     /**
      * C->S message indices, must be sequential, 0-based indexing
@@ -100,13 +92,13 @@ public class Messages {
      * @return dispatcher
      */
     @Nonnull
-    public static PacketDispatcher deviceBuffer(TileFluxDevice device, byte type) {
+    public static FriendlyByteBuf deviceBuffer(TileFluxDevice device, byte type) {
         assert type < 0; // S2C negative
-        var buf = NetworkHandler.buffer(S2C_DEVICE_BUFFER);
+        var buf = Network.buffer(S2C_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeByte(type);
         device.writePacket(buf, type);
-        return sNetwork.dispatch(buf);
+        return buf;
     }
 
     /**
@@ -117,7 +109,7 @@ public class Messages {
      * @param code  the response code
      */
     private static void response(int token, int key, int code, Player player) {
-        var buf = NetworkHandler.buffer(S2C_RESPONSE);
+        var buf = Network.buffer(S2C_RESPONSE);
         buf.writeByte(token);
         buf.writeShort(key);
         buf.writeByte(code);
@@ -128,7 +120,7 @@ public class Messages {
      * Update player's super admin.
      */
     public static void superAdmin(boolean enable, Player player) {
-        var buf = NetworkHandler.buffer(S2C_SUPER_ADMIN);
+        var buf = Network.buffer(S2C_SUPER_ADMIN);
         buf.writeBoolean(enable);
         sNetwork.sendToPlayer(buf, player);
     }
@@ -137,20 +129,20 @@ public class Messages {
      * Variation of {@link #updateNetwork(Collection, byte)} that updates only one network.
      */
     @Nonnull
-    public static PacketDispatcher updateNetwork(FluxNetwork network, byte type) {
-        var buf = NetworkHandler.buffer(S2C_UPDATE_NETWORK);
+    public static FriendlyByteBuf updateNetwork(FluxNetwork network, byte type) {
+        var buf = Network.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(1); // size
         buf.writeVarInt(network.getNetworkID());
         final var tag = new CompoundTag();
         network.writeCustomTag(tag, type);
         buf.writeNbt(tag);
-        return sNetwork.dispatch(buf);
+        return buf;
     }
 
     @Nonnull
-    public static PacketDispatcher updateNetwork(Collection<FluxNetwork> networks, byte type) {
-        var buf = NetworkHandler.buffer(S2C_UPDATE_NETWORK);
+    public static FriendlyByteBuf updateNetwork(Collection<FluxNetwork> networks, byte type) {
+        var buf = Network.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
@@ -159,12 +151,12 @@ public class Messages {
             network.writeCustomTag(tag, type);
             buf.writeNbt(tag);
         }
-        return sNetwork.dispatch(buf);
+        return buf;
     }
 
     @Nonnull
-    private static PacketDispatcher updateNetwork(int[] networkIDs, byte type) {
-        var buf = NetworkHandler.buffer(S2C_UPDATE_NETWORK);
+    private static FriendlyByteBuf updateNetwork(int[] networkIDs, byte type) {
+        var buf = Network.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(networkIDs.length);
         for (var networkID : networkIDs) {
@@ -173,21 +165,16 @@ public class Messages {
             FluxNetworkData.getNetwork(networkID).writeCustomTag(tag, type);
             buf.writeNbt(tag);
         }
-        return sNetwork.dispatch(buf);
+        return buf;
     }
 
     /**
      * Notify all clients that a network was deleted.
      */
     public static void deleteNetwork(int id) {
-        var buf = NetworkHandler.buffer(S2C_DELETE_NETWORK);
+        var buf = Network.buffer(S2C_DELETE_NETWORK);
         buf.writeVarInt(id);
         sNetwork.sendToAll(buf);
-    }
-
-    @Nonnull
-    static NetworkHandler.ClientListener msg() {
-        return ClientMessages::msg;
     }
 
     static void msg(short index, FriendlyByteBuf payload, Supplier<ServerPlayer> player) {
@@ -223,6 +210,7 @@ public class Messages {
 
     private static void onDeviceBuffer(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
                                        BlockableEventLoop<?> looper) {
+        payload.retain();
         looper.execute(() -> {
             ServerPlayer p = player.get();
             try {
@@ -242,7 +230,6 @@ public class Messages {
             }
             payload.release();
         });
-        throw RunningOnDifferentThreadException.RUNNING_ON_DIFFERENT_THREAD;
     }
 
     private static void onSuperAdmin(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
@@ -495,7 +482,7 @@ public class Messages {
                     changed = true;
                 }
                 if (changed) {
-                    updateNetwork(network, FluxConstants.NBT_NET_BASIC).sendToAll();
+                    sNetwork.sendToAll(updateNetwork(network, FluxConstants.NBT_NET_BASIC));
                 }
                 response(token, FluxConstants.REQUEST_EDIT_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
             } else {
@@ -551,7 +538,7 @@ public class Messages {
                 response(token, FluxConstants.REQUEST_UPDATE_NETWORK, FluxConstants.RESPONSE_REJECT, p);
             } else {
                 // this packet always triggers an event, so no response
-                updateNetwork(networkIDs, type).sendToPlayer(p);
+                sNetwork.sendToPlayer(updateNetwork(networkIDs, type), p);
             }
         });
     }
@@ -581,7 +568,7 @@ public class Messages {
             assert network.isValid();
             int code = network.changeMembership(p, targetUUID, type);
             if (code == FluxConstants.RESPONSE_SUCCESS) {
-                updateNetwork(network, FluxConstants.NBT_NET_MEMBERS).sendToPlayer(p);
+                sNetwork.sendToPlayer(updateNetwork(network, FluxConstants.NBT_NET_MEMBERS), p);
             }
             response(token, FluxConstants.REQUEST_EDIT_MEMBER, code, p);
         });

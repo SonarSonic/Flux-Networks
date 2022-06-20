@@ -2,12 +2,9 @@ package sonar.fluxnetworks.client.gui.basic;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import icyllis.modernui.forge.MuiForgeApi;
-import icyllis.modernui.text.SpannableString;
-import icyllis.modernui.text.Spanned;
-import icyllis.modernui.text.style.ForegroundColorSpan;
-import icyllis.modernui.widget.Toast;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +18,7 @@ import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.integration.MUIIntegration;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -53,22 +51,26 @@ public abstract class GuiFluxCore extends GuiPopupHost {
         mNetwork = ClientCache.getNetwork(menu.mProvider.getNetworkID());
         // this called from main thread
         menu.mOnResultListener = (__, key, code) -> {
-            final String s = switch (code) {
-                case FluxConstants.RESPONSE_REJECT -> FluxTranslate.REJECT.get();
-                case FluxConstants.RESPONSE_NO_OWNER -> FluxTranslate.NO_OWNER.get();
-                case FluxConstants.RESPONSE_NO_ADMIN -> FluxTranslate.NO_ADMIN.get();
-                case FluxConstants.RESPONSE_NO_SPACE -> FluxTranslate.NO_SPACE.get();
-                case FluxConstants.RESPONSE_HAS_CONTROLLER -> FluxTranslate.HAS_CONTROLLER.get();
-                case FluxConstants.RESPONSE_INVALID_USER -> FluxTranslate.INVALID_USER.get();
-                case FluxConstants.RESPONSE_INVALID_PASSWORD -> FluxTranslate.INVALID_PASSWORD.get();
-                case FluxConstants.RESPONSE_BANNED_LOADING -> FluxTranslate.BANNED_LOADING.get();
+            final FluxTranslate t = switch (code) {
+                case FluxConstants.RESPONSE_REJECT -> FluxTranslate.REJECT;
+                case FluxConstants.RESPONSE_NO_OWNER -> FluxTranslate.NO_OWNER;
+                case FluxConstants.RESPONSE_NO_ADMIN -> FluxTranslate.NO_ADMIN;
+                case FluxConstants.RESPONSE_NO_SPACE -> FluxTranslate.NO_SPACE;
+                case FluxConstants.RESPONSE_HAS_CONTROLLER -> FluxTranslate.HAS_CONTROLLER;
+                case FluxConstants.RESPONSE_INVALID_USER -> FluxTranslate.INVALID_USER;
+                case FluxConstants.RESPONSE_INVALID_PASSWORD -> FluxTranslate.INVALID_PASSWORD;
+                case FluxConstants.RESPONSE_BANNED_LOADING -> FluxTranslate.BANNED_LOADING;
                 default -> null;
             };
-            if (s != null) {
-                SpannableString text = new SpannableString(s);
-                text.setSpan(new ForegroundColorSpan(0xFFCF1515), 0, s.length(),
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                MuiForgeApi.postToUiThread(() -> Toast.makeText(text, Toast.LENGTH_SHORT).show());
+            if (t != null) {
+                if (FluxNetworks.isModernUILoaded()) {
+                    MUIIntegration.showToastError(t);
+                } else {
+                    getMinecraft().getToasts().addToast(SystemToast.multiline(getMinecraft(),
+                            SystemToast.SystemToastIds.TUTORIAL_HINT,
+                            Component.nullToEmpty(FluxNetworks.NAME),
+                            t.getComponent()));
+                }
             }
             onResponseAction(key, code);
         };
