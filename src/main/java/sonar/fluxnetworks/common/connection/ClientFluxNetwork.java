@@ -38,7 +38,7 @@ public class ClientFluxNetwork extends FluxNetwork {
     }
 
     @Override
-    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
+    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean unload) {
         throw new IllegalStateException();
     }
 
@@ -50,7 +50,7 @@ public class ClientFluxNetwork extends FluxNetwork {
     @Nonnull
     @Override
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
-        if (ClientCache.sSuperAdmin) {
+        if (ClientCache.isSuperAdmin(player)) {
             return AccessLevel.SUPER_ADMIN;
         }
         return super.getPlayerAccess(player);

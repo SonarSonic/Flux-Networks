@@ -20,11 +20,11 @@ public abstract class TileFluxConnector extends TileFluxDevice {
 
     @Nonnull
     @Override
-    protected abstract FluxConnectorHandler getTransferHandler();
+    public abstract FluxSidedHandler getTransferHandler();
 
     @Override
-    public void onLoad() {
-        super.onLoad();
+    public void onFirstLoad() {
+        super.onFirstLoad();
         //noinspection ConstantConditions
         if (!level.isClientSide) {
             int newState = 0;

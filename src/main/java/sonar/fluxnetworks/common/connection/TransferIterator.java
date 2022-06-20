@@ -41,9 +41,9 @@ public class TransferIterator implements Iterator<TileFluxDevice> {
             return false;
         }*/
         if (mPoint) {
-            return mNext.getTransferNode().getRequest() > 0;
+            return mNext.getTransferHandler().getRequest() > 0;
         } else {
-            return mNext.getTransferNode().getBuffer() > 0;
+            return mNext.getTransferHandler().getBuffer() > 0;
         }
     }
 

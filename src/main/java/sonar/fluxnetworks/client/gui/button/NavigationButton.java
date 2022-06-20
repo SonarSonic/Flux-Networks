@@ -19,16 +19,21 @@ public class NavigationButton extends GuiButtonCore {
     @Override
     protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
+        if (mClickable) {
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
+        } else {
+            RenderSystem.setShaderColor(0.75f, 0.75f, 0.75f, 1.0f);
+        }
         RenderSystem.setShaderTexture(0, BUTTONS);
 
-        boolean hovered = isMouseHovered(mouseX, mouseY);
-        int state = mClickable && (mSelected || hovered) ? 1 : 0;
+        boolean hovered = mClickable && isMouseHovered(mouseX, mouseY);
+        int state = (mSelected || hovered) ? 1 : 0;
         blit(poseStack, x, y, 16 * mTab.ordinal(), 16 * state, 16, 16);
 
-        if (mClickable && hovered) {
+        if (hovered) {
             drawCenteredString(poseStack, mc.font, mTab.getTranslatedName(), x + width / 2, y - 10, 0xFFFFFFFF);
         }
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0f);
     }
 
     public EnumNavigationTab getTab() {

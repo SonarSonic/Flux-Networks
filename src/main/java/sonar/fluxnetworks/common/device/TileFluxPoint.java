@@ -59,7 +59,7 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if ((mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
+        //if ((mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
             if (cap == CapabilityEnergy.ENERGY || cap == FluxCapabilities.FN_ENERGY_STORAGE) {
                 if (mEnergyCap == null) {
                     final EnergyStorage storage = new EnergyStorage();
@@ -68,7 +68,7 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
                 }
                 return mEnergyCap.cast();
             }
-        }
+        //}
         return super.getCapability(cap, side);
     }
 

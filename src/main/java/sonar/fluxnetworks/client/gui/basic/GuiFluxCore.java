@@ -18,7 +18,7 @@ import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
-import sonar.fluxnetworks.common.integration.MUIIntegration;
+import sonar.fluxnetworks.common.integration.MuiIntegration;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -64,7 +64,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
             };
             if (t != null) {
                 if (FluxNetworks.isModernUILoaded()) {
-                    MUIIntegration.showToastError(t);
+                    MuiIntegration.showToastError(t);
                 } else {
                     getMinecraft().getToasts().addToast(SystemToast.multiline(getMinecraft(),
                             SystemToast.SystemToastIds.TUTORIAL_HINT,

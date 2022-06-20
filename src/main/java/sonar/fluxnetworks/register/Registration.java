@@ -54,7 +54,7 @@ public class Registration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        Network.sNetwork = FluxNetworks.isModernUILoaded() ? new MUINetwork() : new FMLNetwork();
+        Channel.sChannel = FluxNetworks.isModernUILoaded() ? new MUIChannel() : new FMLChannel();
     }
 
     @SubscribeEvent

@@ -25,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static sonar.fluxnetworks.register.Network.sNetwork;
+import static sonar.fluxnetworks.register.Channel.sChannel;
 
 /**
  * Network messages, TCP protocol. This class contains common messages, S2C message specs
@@ -72,13 +72,14 @@ public class Messages {
     static final int C2S_TRACK_MEMBERS = 12;
     static final int C2S_TRACK_CONNECTIONS = 13;
     static final int C2S_TRACK_STATISTICS = 14;
+    static final int C2S_WIRELESS_MODE = 15;
 
     /**
      * S->C message indices, must be sequential, 0-based indexing
      */
     static final int S2C_DEVICE_BUFFER = 0;
     static final int S2C_RESPONSE = 1;
-    static final int S2C_SUPER_ADMIN = 2;
+    static final int S2C_CAPABILITY = 2;
     static final int S2C_UPDATE_NETWORK = 3;
     static final int S2C_DELETE_NETWORK = 4;
     static final int S2C_UPDATE_MEMBERS = 5;
@@ -94,7 +95,7 @@ public class Messages {
     @Nonnull
     public static FriendlyByteBuf deviceBuffer(TileFluxDevice device, byte type) {
         assert type < 0; // S2C negative
-        var buf = Network.buffer(S2C_DEVICE_BUFFER);
+        var buf = Channel.buffer(S2C_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeByte(type);
         device.writePacket(buf, type);
@@ -109,20 +110,26 @@ public class Messages {
      * @param code  the response code
      */
     private static void response(int token, int key, int code, Player player) {
-        var buf = Network.buffer(S2C_RESPONSE);
+        var buf = Channel.buffer(S2C_RESPONSE);
         buf.writeByte(token);
         buf.writeShort(key);
         buf.writeByte(code);
-        sNetwork.sendToPlayer(buf, player);
+        sChannel.sendToPlayer(buf, player);
     }
 
     /**
-     * Update player's super admin.
+     * Update player's capability.
      */
-    public static void superAdmin(boolean enable, Player player) {
-        var buf = Network.buffer(S2C_SUPER_ADMIN);
-        buf.writeBoolean(enable);
-        sNetwork.sendToPlayer(buf, player);
+    public static void capability(boolean superAdminOverride, Player player) {
+        var buf = Channel.buffer(S2C_CAPABILITY);
+        FluxPlayer fluxPlayer = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
+        if (fluxPlayer != null) {
+            CompoundTag tag = new CompoundTag();
+            fluxPlayer.writeNBT(tag);
+            tag.putBoolean(FluxPlayer.SUPER_ADMIN_KEY, superAdminOverride);
+            buf.writeNbt(tag);
+            sChannel.sendToPlayer(buf, player);
+        }
     }
 
     /**
@@ -130,7 +137,7 @@ public class Messages {
      */
     @Nonnull
     public static FriendlyByteBuf updateNetwork(FluxNetwork network, byte type) {
-        var buf = Network.buffer(S2C_UPDATE_NETWORK);
+        var buf = Channel.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(1); // size
         buf.writeVarInt(network.getNetworkID());
@@ -142,7 +149,7 @@ public class Messages {
 
     @Nonnull
     public static FriendlyByteBuf updateNetwork(Collection<FluxNetwork> networks, byte type) {
-        var buf = Network.buffer(S2C_UPDATE_NETWORK);
+        var buf = Channel.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
@@ -156,7 +163,7 @@ public class Messages {
 
     @Nonnull
     private static FriendlyByteBuf updateNetwork(int[] networkIDs, byte type) {
-        var buf = Network.buffer(S2C_UPDATE_NETWORK);
+        var buf = Channel.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(networkIDs.length);
         for (var networkID : networkIDs) {
@@ -172,9 +179,9 @@ public class Messages {
      * Notify all clients that a network was deleted.
      */
     public static void deleteNetwork(int id) {
-        var buf = Network.buffer(S2C_DELETE_NETWORK);
+        var buf = Channel.buffer(S2C_DELETE_NETWORK);
         buf.writeVarInt(id);
-        sNetwork.sendToAll(buf);
+        sChannel.sendToAll(buf);
     }
 
     static void msg(short index, FriendlyByteBuf payload, Supplier<ServerPlayer> player) {
@@ -189,6 +196,7 @@ public class Messages {
             case C2S_CONNECT_DEVICE -> onSetTileNetwork(payload, player, server);
             case C2S_UPDATE_NETWORK -> onUpdateNetwork(payload, player, server);
             case C2S_EDIT_MEMBER -> onEditMember(payload, player, server);
+            case C2S_WIRELESS_MODE -> onWirelessMode(payload, player, server);
             default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
         }
     }
@@ -249,7 +257,7 @@ public class Messages {
             final FluxPlayer fp = FluxUtils.get(p, FluxPlayer.FLUX_PLAYER);
             if (fp != null && (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(p))) {
                 fp.setSuperAdmin(enable);
-                superAdmin(fp.isSuperAdmin(), p);
+                capability(fp.isSuperAdmin(), p);
             } else {
                 response(token, 0, FluxConstants.RESPONSE_REJECT, p);
             }
@@ -316,14 +324,14 @@ public class Messages {
         final String name = payload.readUtf(256);
         final int color = payload.readInt();
         final SecurityLevel security = SecurityLevel.fromKey(payload.readByte());
-        final String password = security.isEncrypted() ? payload.readUtf(256) : "";
+        final String password = security == SecurityLevel.ENCRYPTED ? payload.readUtf(256) : "";
 
         // validate
         consume(payload);
         if (FluxUtils.isBadNetworkName(name)) {
             throw new IllegalArgumentException("Invalid network name: " + name);
         }
-        if (security.isEncrypted() && FluxUtils.isBadPassword(password)) {
+        if (security == SecurityLevel.ENCRYPTED && FluxUtils.isBadPassword(password)) {
             throw new IllegalArgumentException("Invalid network password: " + password);
         }
 
@@ -408,7 +416,7 @@ public class Messages {
                 // we can connect to an invalid network (i.e. disconnect)
                 if (!network.isValid() || network.canPlayerAccess(p, password)) {
                     if (network.isValid()) {
-                        e.setConnectionOwner(p.getUUID());
+                        e.setDeviceOwner(p.getUUID());
                     }
                     e.connect(network);
                     response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
@@ -433,8 +441,7 @@ public class Messages {
         final String name = payload.readUtf(256);
         final int color = payload.readInt();
         final SecurityLevel security = SecurityLevel.fromKey(payload.readByte());
-        final String password = security.isEncrypted() ? payload.readUtf(256) : "";
-        final int wireless = payload.readInt();
+        final String password = security == SecurityLevel.ENCRYPTED ? payload.readUtf(256) : "";
 
         // validate
         consume(payload);
@@ -458,31 +465,19 @@ public class Messages {
             }
             assert network.isValid();
             if (network.getPlayerAccess(p).canEdit()) {
-                boolean changed = false;
-                if (!network.getNetworkName().equals(name)) {
-                    network.setNetworkName(name);
-                    changed = true;
-                }
-                if (network.getNetworkColor() != color) {
-                    network.setNetworkColor(color);
+                boolean changed = network.setNetworkName(name);
+                if (network.setNetworkColor(color)) {
                     // update renderer
                     network.getLogicalDevices(FluxNetwork.ANY).forEach(TileFluxDevice::sendBlockUpdate);
                     changed = true;
                 }
-                if (network.getSecurityLevel() != security) {
-                    network.setSecurityLevel(security);
-                    changed = true;
-                }
+                changed |= network.setSecurityLevel(security);
                 if (!password.isEmpty()) {
                     ((ServerFluxNetwork) network).setPassword(password);
                     // silently changed
                 }
-                if (wireless != -1 && network.getWirelessMode() != wireless) {
-                    network.setWirelessMode(wireless);
-                    changed = true;
-                }
                 if (changed) {
-                    sNetwork.sendToAll(updateNetwork(network, FluxConstants.NBT_NET_BASIC));
+                    sChannel.sendToAll(updateNetwork(network, FluxConstants.NBT_NET_BASIC));
                 }
                 response(token, FluxConstants.REQUEST_EDIT_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
             } else {
@@ -538,7 +533,7 @@ public class Messages {
                 response(token, FluxConstants.REQUEST_UPDATE_NETWORK, FluxConstants.RESPONSE_REJECT, p);
             } else {
                 // this packet always triggers an event, so no response
-                sNetwork.sendToPlayer(updateNetwork(networkIDs, type), p);
+                sChannel.sendToPlayer(updateNetwork(networkIDs, type), p);
             }
         });
     }
@@ -568,7 +563,7 @@ public class Messages {
             assert network.isValid();
             int code = network.changeMembership(p, targetUUID, type);
             if (code == FluxConstants.RESPONSE_SUCCESS) {
-                sNetwork.sendToPlayer(updateNetwork(network, FluxConstants.NBT_NET_MEMBERS), p);
+                sChannel.sendToPlayer(updateNetwork(network, FluxConstants.NBT_NET_MEMBERS), p);
             }
             response(token, FluxConstants.REQUEST_EDIT_MEMBER, code, p);
         });
@@ -591,5 +586,37 @@ public class Messages {
         }
         // reject
         return true;
+    }
+
+    private static void onWirelessMode(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                       BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final int wirelessMode = payload.readInt();
+        final int wirelessNetwork = payload.readVarInt();
+
+        // validate
+        consume(payload);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxPlayer fp = FluxUtils.get(p, FluxPlayer.FLUX_PLAYER);
+            if (fp != null) {
+                final FluxNetwork network = FluxNetworkData.getNetwork(wirelessNetwork);
+                boolean reject = checkToken(token, p, network);
+                if (reject) {
+                    response(token, FluxConstants.REQUEST_EDIT_MEMBER, FluxConstants.RESPONSE_REJECT, p);
+                    return;
+                }
+                fp.setWirelessMode(wirelessMode);
+                fp.setWirelessNetwork(wirelessNetwork);
+                capability(fp.isSuperAdmin(), p);
+            } else {
+                response(token, FluxConstants.REQUEST_EDIT_MEMBER, FluxConstants.RESPONSE_REJECT, p);
+            }
+        });
     }
 }

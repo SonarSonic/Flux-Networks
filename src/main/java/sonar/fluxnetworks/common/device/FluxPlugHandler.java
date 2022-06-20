@@ -4,7 +4,7 @@ import net.minecraft.core.Direction;
 
 import javax.annotation.Nonnull;
 
-public class FluxPlugHandler extends FluxConnectorHandler {
+public class FluxPlugHandler extends FluxSidedHandler {
 
     // external received energy happen outside the transfer cycle
     private long mReceived;
@@ -23,7 +23,7 @@ public class FluxPlugHandler extends FluxConnectorHandler {
     }
 
     @Override
-    public long extract(long energy) {
+    public long removeFromBuffer(long energy) {
         long op = Math.min(Math.min(energy, mBuffer), getLimit() - mRemoved);
         assert op >= 0;
         mBuffer -= op;

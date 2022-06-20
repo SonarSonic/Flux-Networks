@@ -1,20 +1,20 @@
-package sonar.fluxnetworks.common.device;
+package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.common.connection.PhantomFluxDevice;
-import sonar.fluxnetworks.common.connection.TransferNode;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
 
 /**
- * The energy transfer handler of a network device entity.
- * Any modification to this object should be invoked on
- * the device entity, since it has network listeners.
+ * A transfer handler is associated with a logical entity in a network.
+ * Any modification to this object should be invoked on the device entity.
+ *
+ * @see TileFluxDevice#getTransferHandler()
  */
-public abstract class TransferHandler extends TransferNode {
+public abstract class TransferHandler {
 
     public static final int PRI_USER_MIN = -9999;
     public static final int PRI_USER_MAX = 9999;
@@ -37,29 +37,59 @@ public abstract class TransferHandler extends TransferNode {
     protected long mChange;
 
     /**
-     * The raw priority. Can be negative.
+     * The user-set priority. Can be negative.
      */
     private int mPriority;
+    private boolean mSurgeMode;
 
     /**
-     * The power surge priority. When not zero, it replaces normal priority.
-     */
-    private int mSurge;
-
-    /**
-     * The raw transfer limit that is used to limit the maximum external energy transfer
+     * The user-set transfer limit that is used to limit the maximum external energy transfer
      * in each cycle. Note that sign bit representing no limit set by user.
      */
     private long mLimit;
+    private boolean mDisableLimit;
 
+    /**
+     * @param limit the initial limit
+     */
     protected TransferHandler(long limit) {
         setLimit(limit);
     }
 
     /**
+     * Called before the start of the internal transfer cycle.
+     * In this time, external energy transfer should be simulated.
+     */
+    protected abstract void onCycleStart();
+
+    /**
+     * Called after the end of the internal transfer cycle.
+     * In this time, external energy transfer should be performed.
+     */
+    protected abstract void onCycleEnd();
+
+    /**
+     * Insert energy to the internal buffer.
+     *
+     * @param energy the amount
+     */
+    protected void addToBuffer(long energy) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Extract energy from the internal buffer.
+     *
+     * @param energy the desired amount
+     * @return the actual energy in Flux Energy units
+     */
+    protected long removeFromBuffer(long energy) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * @return the internal buffer for this transfer handler.
      */
-    @Override
     public final long getBuffer() {
         return mBuffer;
     }
@@ -80,7 +110,6 @@ public abstract class TransferHandler extends TransferNode {
     /**
      * @return the requested energy for this transfer handler.
      */
-    @Override
     public long getRequest() {
         return 0;
     }
@@ -98,57 +127,40 @@ public abstract class TransferHandler extends TransferNode {
      *
      * @return the logical priority
      */
-    @Override
     public int getPriority() {
-        return mSurge > 0 ? mSurge : mPriority;
+        return mSurgeMode ? PRI_GAIN_MAX : mPriority;
     }
 
     /**
      * @return the user-set priority without any gain
      */
-    public int getUserPriority() {
+    public int getRawPriority() {
         return mPriority;
     }
 
     /**
      * Set a raw priority to this device.
-     * After calling, surge mode will be disabled.
      *
      * @param priority the priority to set
      */
     public void setPriority(int priority) {
         mPriority = Mth.clamp(priority, PRI_USER_MIN, PRI_USER_MAX);
-        mSurge = 0;
     }
 
     /**
      * @return has surged
      */
-    public boolean hasPowerSurge() {
-        return mSurge > 0;
+    public boolean getSurgeMode() {
+        return mSurgeMode;
     }
 
     /**
      * Set surge mode on this handler to get the highest priority in the network.
      *
-     * @param enable whether to surge
+     * @param surgeMode whether to surge
      */
-    public void setPowerSurge(boolean enable) {
-        if (enable) {
-            mSurge = PRI_GAIN_MAX;
-        } else {
-            mSurge = 0;
-        }
-    }
-
-    /**
-     * Called when another network device surged. So that other devices should
-     * decrease its surge mode priority.
-     */
-    void onPowerSurge() {
-        if (mSurge > PRI_GAIN_MIN) {
-            mSurge--;
-        }
+    public void setSurgeMode(boolean surgeMode) {
+        mSurgeMode = surgeMode;
     }
 
     /**
@@ -157,14 +169,14 @@ public abstract class TransferHandler extends TransferNode {
      * @return the logical transfer limit
      */
     public long getLimit() {
-        return mLimit >= 0 ? mLimit : Long.MAX_VALUE;
+        return mDisableLimit ? Long.MAX_VALUE : mLimit;
     }
 
     /**
      * @return the user-set limit without any gain
      */
-    public long getUserLimit() {
-        return mLimit >= 0 ? mLimit : mLimit - Long.MIN_VALUE;
+    public long getRawLimit() {
+        return mLimit;
     }
 
     /**
@@ -185,47 +197,33 @@ public abstract class TransferHandler extends TransferNode {
      *
      * @return bypass limit
      */
-    public boolean canBypassLimit() {
-        return mLimit < 0;
+    public boolean getDisableLimit() {
+        return mDisableLimit;
     }
 
     /**
      * Set whether currently set limit should be bypassed.
      *
-     * @param enable whether to bypass the limit
+     * @param disableLimit whether to bypass the limit
      */
-    public void setBypassLimit(boolean enable) {
-        if (enable) {
-            if (mLimit >= 0) {
-                mLimit += Long.MIN_VALUE;
-            }
-        } else if (mLimit < 0) {
-            mLimit -= Long.MIN_VALUE;
-        }
+    public void setDisableLimit(boolean disableLimit) {
+        mDisableLimit = disableLimit;
     }
 
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         switch (type) {
-            case FluxConstants.NBT_SAVE_ALL -> {
+            case FluxConstants.NBT_SAVE_ALL, FluxConstants.NBT_TILE_DROP -> {
                 tag.putInt(FluxConstants.PRIORITY, mPriority);
-                tag.putInt(FluxConstants.SURGE_MODE, mSurge);
+                tag.putBoolean(FluxConstants.SURGE_MODE, mSurgeMode);
                 tag.putLong(FluxConstants.LIMIT, mLimit);
+                tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit);
             }
-            case FluxConstants.NBT_TILE_UPDATE -> {
+            case FluxConstants.NBT_TILE_UPDATE, FluxConstants.NBT_PHANTOM_UPDATE -> {
                 tag.putLong(FluxConstants.CHANGE, mChange);
                 tag.putInt(FluxConstants.PRIORITY, mPriority);
-                tag.putInt(FluxConstants.SURGE_MODE, mSurge);
+                tag.putBoolean(FluxConstants.SURGE_MODE, mSurgeMode);
                 tag.putLong(FluxConstants.LIMIT, mLimit);
-            }
-            case FluxConstants.NBT_TILE_DROP -> {
-                tag.putInt(FluxConstants.PRIORITY, mPriority);
-                tag.putBoolean(FluxConstants.SURGE_MODE, hasPowerSurge());
-                tag.putLong(FluxConstants.LIMIT, mLimit);
-            }
-            case FluxConstants.NBT_PHANTOM_UPDATE -> {
-                tag.putLong(FluxConstants.CHANGE, mChange);
-                tag.putInt(FluxConstants.PRIORITY, hasPowerSurge() ? PhantomFluxDevice.POWER_SURGE_MARKER : mPriority);
-                tag.putLong(FluxConstants.LIMIT, canBypassLimit() ? PhantomFluxDevice.BYPASS_LIMIT_MARKER : mLimit);
+                tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit);
             }
         }
     }
@@ -233,13 +231,15 @@ public abstract class TransferHandler extends TransferNode {
     public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
         if (type == FluxConstants.NBT_TILE_SETTING) {
             if (tag.contains(FluxConstants.SURGE_MODE)) {
-                setPowerSurge(tag.getBoolean(FluxConstants.SURGE_MODE));
-            } else if (tag.contains(FluxConstants.PRIORITY)) {
+                setSurgeMode(tag.getBoolean(FluxConstants.SURGE_MODE));
+            }
+            if (tag.contains(FluxConstants.PRIORITY)) {
                 setPriority(tag.getInt(FluxConstants.PRIORITY));
             }
             if (tag.contains(FluxConstants.DISABLE_LIMIT)) {
-                setBypassLimit(tag.getBoolean(FluxConstants.DISABLE_LIMIT));
-            } else if (tag.contains(FluxConstants.LIMIT)) {
+                setDisableLimit(tag.getBoolean(FluxConstants.DISABLE_LIMIT));
+            }
+            if (tag.contains(FluxConstants.LIMIT)) {
                 setLimit(tag.getLong(FluxConstants.LIMIT));
             }
             return;
@@ -250,34 +250,31 @@ public abstract class TransferHandler extends TransferNode {
             mBuffer = tag.getLong(FluxConstants.ENERGY);
         }
         switch (type) {
-            case FluxConstants.NBT_SAVE_ALL -> {
+            case FluxConstants.NBT_SAVE_ALL, FluxConstants.NBT_TILE_DROP -> {
                 mPriority = tag.getInt(FluxConstants.PRIORITY);
-                mSurge = tag.getInt(FluxConstants.SURGE_MODE);
+                mSurgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
                 mLimit = tag.getLong(FluxConstants.LIMIT);
+                mDisableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
             }
             case FluxConstants.NBT_TILE_UPDATE -> {
                 mChange = tag.getLong(FluxConstants.CHANGE);
                 mPriority = tag.getInt(FluxConstants.PRIORITY);
-                mSurge = tag.getInt(FluxConstants.SURGE_MODE);
+                mSurgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
                 mLimit = tag.getLong(FluxConstants.LIMIT);
-            }
-            case FluxConstants.NBT_TILE_DROP -> {
-                mPriority = tag.getInt(FluxConstants.PRIORITY);
-                setPowerSurge(tag.getBoolean(FluxConstants.SURGE_MODE));
-                mLimit = tag.getLong(FluxConstants.LIMIT);
+                mDisableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
             }
         }
     }
 
-    public void writePacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.DEVICE_S2C_GUI_SYNC) {
+    public void writePacket(@Nonnull FriendlyByteBuf buf, byte type) {
+        if (type == FluxConstants.DEVICE_S2C_GUI_SYNC) {
             buf.writeLong(mChange);
             buf.writeLong(mBuffer);
         }
     }
 
-    public void readPacket(@Nonnull FriendlyByteBuf buf, byte id) {
-        if (id == FluxConstants.DEVICE_S2C_GUI_SYNC) {
+    public void readPacket(@Nonnull FriendlyByteBuf buf, byte type) {
+        if (type == FluxConstants.DEVICE_S2C_GUI_SYNC) {
             mChange = buf.readLong();
             mBuffer = buf.readLong();
         }

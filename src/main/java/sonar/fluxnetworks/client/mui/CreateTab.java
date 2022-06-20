@@ -161,7 +161,7 @@ public class CreateTab extends Fragment {
                 spinner.setGravity(Gravity.END);
                 spinner.setPadding(dp(8), dp2, dp(8), dp2);
                 spinner.setAdapter(new SecurityLevelAdapter());
-                spinner.setSelection(mSecurityLevel.getKey());
+                spinner.setSelection(mSecurityLevel.toKey());
                 spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -191,7 +191,7 @@ public class CreateTab extends Fragment {
             mPassword.setHintTextColor(FluxDesign.GRAY);
             mPassword.setFilters(PasswordFilter.getInstance());
             mPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            mPassword.setVisibility(mSecurityLevel.isEncrypted() ? View.VISIBLE : View.GONE);
+            mPassword.setVisibility(mSecurityLevel == SecurityLevel.ENCRYPTED ? View.VISIBLE : View.GONE);
             mPassword.addTextChangedListener(mTextWatcher);
 
             var params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
@@ -266,7 +266,7 @@ public class CreateTab extends Fragment {
     }
 
     private void updateViewStates() {
-        boolean password = mSecurityLevel.isEncrypted();
+        boolean password = mSecurityLevel == SecurityLevel.ENCRYPTED;
         mPassword.setVisibility(password ? View.VISIBLE : View.GONE);
         if (password && mPassword.getText().isEmpty()) {
             mCreateButton.setEnabled(false);

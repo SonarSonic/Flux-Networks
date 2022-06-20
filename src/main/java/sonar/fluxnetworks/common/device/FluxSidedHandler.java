@@ -6,17 +6,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
+import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class FluxConnectorHandler extends TransferHandler {
+public abstract class FluxSidedHandler extends TransferHandler {
 
     // lazy-loading elements
     protected final SideTransfer[] mTransfers = new SideTransfer[6];
 
-    protected FluxConnectorHandler() {
+    protected FluxSidedHandler() {
         super(FluxConfig.defaultLimit);
     }
 

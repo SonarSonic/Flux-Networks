@@ -12,7 +12,7 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.register.Messages;
-import sonar.fluxnetworks.register.Network;
+import sonar.fluxnetworks.register.Channel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -122,7 +122,7 @@ public final class FluxNetworkData extends SavedData {
         final ServerFluxNetwork network = new ServerFluxNetwork(mUniqueID, name, color, security, creator, password);
 
         mNetworks.put(network.getNetworkID(), network);
-        Network.get().sendToAll(Messages.updateNetwork(network, FluxConstants.NBT_NET_BASIC));
+        Channel.get().sendToAll(Messages.updateNetwork(network, FluxConstants.NBT_NET_BASIC));
         return network;
     }
 

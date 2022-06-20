@@ -8,10 +8,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import sonar.fluxnetworks.api.device.IFluxPlug;
-import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.api.FluxCapabilities;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
+import sonar.fluxnetworks.api.device.IFluxPlug;
+import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
@@ -60,20 +60,20 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if ((mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
-            if (cap == CapabilityEnergy.ENERGY || cap == FluxCapabilities.FN_ENERGY_STORAGE) {
-                final int index = side == null ? 0 : side.get3DDataValue();
-                LazyOptional<?> handler = mEnergyCaps[index];
-                if (handler == null) {
-                    final EnergyStorage storage = new EnergyStorage(
-                            side == null ? Direction.from3DDataValue(0) : side);
-                    // save an immutable pointer to an immutable object
-                    handler = LazyOptional.of(() -> storage);
-                    mEnergyCaps[index] = handler;
-                }
-                return handler.cast();
+        //if ((mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
+        if (cap == CapabilityEnergy.ENERGY || cap == FluxCapabilities.FN_ENERGY_STORAGE) {
+            final int index = side == null ? 0 : side.get3DDataValue();
+            LazyOptional<?> handler = mEnergyCaps[index];
+            if (handler == null) {
+                final EnergyStorage storage = new EnergyStorage(
+                        side == null ? Direction.from3DDataValue(0) : side);
+                // save an immutable pointer to an immutable object
+                handler = LazyOptional.of(() -> storage);
+                mEnergyCaps[index] = handler;
             }
+            return handler.cast();
         }
+        //}
         return super.getCapability(cap, side);
     }
 

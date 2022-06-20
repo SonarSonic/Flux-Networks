@@ -8,15 +8,15 @@ import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
 
-public class MUINetwork extends Network {
+public class MUIChannel extends Channel {
 
     private final NetworkHandler mNetwork;
 
     static {
-        FluxNetworks.LOGGER.info("Use MUI network (high performance)");
+        FluxNetworks.LOGGER.info("Use MUI network channel (high performance)");
     }
 
-    MUINetwork() {
+    MUIChannel() {
         mNetwork = new NetworkHandler(FluxNetworks.MODID, () -> Holder::msg, Messages::msg, PROTOCOL, false);
     }
 

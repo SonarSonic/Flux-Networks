@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.test;
 
-import sonar.fluxnetworks.common.device.TransferHandler;
+import sonar.fluxnetworks.common.connection.TransferHandler;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

@@ -51,7 +51,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             mPassword.setFilter(string -> string != null && !FluxUtils.isBadPassword(string));
             mPassword.setMaxLength(FluxNetwork.MAX_PASSWORD_LENGTH);
             mPassword.setResponder(string -> onEditSettingsChanged());
-            mPassword.setVisible(mSecurityLevel.isEncrypted());
+            mPassword.setVisible(mSecurityLevel == SecurityLevel.ENCRYPTED);
             addRenderableWidget(mPassword);
         }
     }
@@ -81,7 +81,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (mouseX >= leftPos + 36 && mouseX < leftPos + 96 && mouseY >= topPos + 48 && mouseY < topPos + 56) {
                 mSecurityLevel = FluxUtils.cycle(mSecurityLevel, SecurityLevel.VALUES);
-                mPassword.setVisible(mSecurityLevel.isEncrypted());
+                mPassword.setVisible(mSecurityLevel == SecurityLevel.ENCRYPTED);
                 onEditSettingsChanged();
                 return true;
             }

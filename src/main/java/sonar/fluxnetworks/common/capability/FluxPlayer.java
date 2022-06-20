@@ -2,9 +2,7 @@ package sonar.fluxnetworks.common.capability;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.*;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -18,7 +16,11 @@ public class FluxPlayer {
     public static final Capability<FluxPlayer> FLUX_PLAYER = CapabilityManager.get(new CapabilityToken<>() {
     });
 
+    public static final String SUPER_ADMIN_KEY = "superAdmin";
+
     private boolean mSuperAdmin;
+    private int mWirelessMode;
+    private int mWirelessNetwork;
 
     public boolean isSuperAdmin() {
         return mSuperAdmin;
@@ -28,12 +30,32 @@ public class FluxPlayer {
         mSuperAdmin = superAdmin;
     }
 
+    public int getWirelessMode() {
+        return mWirelessMode;
+    }
+
+    public void setWirelessMode(int wirelessMode) {
+        mWirelessMode = wirelessMode;
+    }
+
+    public int getWirelessNetwork() {
+        return mWirelessNetwork;
+    }
+
+    public void setWirelessNetwork(int wirelessNetwork) {
+        mWirelessNetwork = wirelessNetwork;
+    }
+
     public void writeNBT(@Nonnull CompoundTag tag) {
-        tag.putBoolean("superAdmin", mSuperAdmin);
+        tag.putBoolean(SUPER_ADMIN_KEY, mSuperAdmin);
+        tag.putInt("wirelessMode", mWirelessMode);
+        tag.putInt("wirelessNetwork", mWirelessNetwork);
     }
 
     public void readNBT(@Nonnull CompoundTag tag) {
-        mSuperAdmin = tag.getBoolean("superAdmin");
+        mSuperAdmin = tag.getBoolean(SUPER_ADMIN_KEY);
+        mWirelessMode = tag.getInt("wirelessMode");
+        mWirelessNetwork = tag.getInt("wirelessNetwork");
     }
 
     //// UTIL METHODS \\\\

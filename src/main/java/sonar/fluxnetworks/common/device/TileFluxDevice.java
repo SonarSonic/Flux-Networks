@@ -21,10 +21,10 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.*;
-import sonar.fluxnetworks.common.integration.MUIIntegration;
+import sonar.fluxnetworks.common.integration.MuiIntegration;
 import sonar.fluxnetworks.common.util.FluxUtils;
+import sonar.fluxnetworks.register.Channel;
 import sonar.fluxnetworks.register.Messages;
-import sonar.fluxnetworks.register.Network;
 
 import javax.annotation.*;
 import java.util.UUID;
@@ -40,8 +40,8 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     private static final BlockEntityTicker<? extends TileFluxDevice> sTickerServer =
             (level, pos, state, entity) -> entity.onServerTick();
 
-    public static final int INVALID_CLIENT_COLOR = FluxUtils.getModifiedColor(FluxConstants.INVALID_NETWORK_COLOR,
-            1.1f);
+    public static final int INVALID_CLIENT_COLOR =
+            FluxUtils.getModifiedColor(FluxConstants.INVALID_NETWORK_COLOR, 1.1f);
 
     public static final int MAX_CUSTOM_NAME_LENGTH = 24;
 
@@ -55,10 +55,11 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     @Nullable
     private Player mPlayerUsing;
 
+    // leave empty to show a localized name
     private String mCustomName = "";
-    private UUID mPlayerUUID = Util.NIL_UUID;
+    private UUID mDeviceOwner = Util.NIL_UUID;
 
-    private int mNetworkID;
+    private int mNetworkID = FluxConstants.INVALID_NETWORK_ID;
 
     /**
      * Tint color in 0xRRGGBB, this value is only valid on client for rendering, updated from server.
@@ -115,19 +116,19 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     // server tick
     protected void onServerTick() {
         if ((mFlags & FLAG_FIRST_LOADED) == 0) {
-            connect(FluxNetworkData.getNetwork(mNetworkID));
+            onFirstLoad();
             mFlags |= FLAG_FIRST_LOADED;
         }
         if ((mFlags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
             sendBlockUpdate();
             mFlags &= ~FLAG_SETTING_CHANGED;
         } else if (mPlayerUsing != null) {
-            Network.get().sendToPlayer(Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC), mPlayerUsing);
+            Channel.get().sendToPlayer(Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC), mPlayerUsing);
         }
     }
 
-    @Override
-    public void onLoad() {
+    public void onFirstLoad() {
+        connect(FluxNetworkData.getNetwork(mNetworkID));
     }
 
     /**
@@ -135,7 +136,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      *
      * @param player the server player
      */
-    public void interact(Player player) {
+    public void onPlayerInteract(Player player) {
         if (mPlayerUsing != null) {
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
@@ -147,7 +148,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 buf.writeNbt(tag);
             };
             if (FluxConfig.enableGuiDebug && FluxNetworks.isModernUILoaded()) {
-                MUIIntegration.openMenu(player, this, writer);
+                MuiIntegration.openMenu(player, this, writer);
             } else {
                 NetworkHooks.openGui((ServerPlayer) player, this, writer);
             }
@@ -192,13 +193,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     }
 
     @Nonnull
-    public final TransferNode getTransferNode() {
-        return getTransferHandler();
-    }
-
-    // for internal-use
-    @Nonnull
-    protected abstract TransferHandler getTransferHandler();
+    public abstract TransferHandler getTransferHandler();
 
     @Nonnull
     @Override
@@ -256,9 +251,9 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         tag.putString(FluxConstants.CUSTOM_NAME, mCustomName);
         getTransferHandler().writeCustomTag(tag, type);
         switch (type) {
-            case FluxConstants.NBT_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+            case FluxConstants.NBT_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mDeviceOwner);
             case FluxConstants.NBT_TILE_UPDATE -> {
-                tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+                tag.putUUID(FluxConstants.PLAYER_UUID, mDeviceOwner);
                 if ((mFlags & FLAG_FIRST_LOADED) != 0) {
                     tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
                 }
@@ -268,7 +263,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 // note the key may conflict when writing into the root tag
                 FluxUtils.writeGlobalPos(tag, getGlobalPos());
                 tag.putByte(FluxConstants.DEVICE_TYPE, getDeviceType().getId());
-                tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+                tag.putUUID(FluxConstants.PLAYER_UUID, mDeviceOwner);
                 tag.putBoolean(FluxConstants.FORCED_LOADING, isForcedLoading());
                 tag.putBoolean(FluxConstants.CHUNK_LOADED, isChunkLoaded());
                 getDisplayStack().save(tag);
@@ -300,9 +295,9 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
         getTransferHandler().readCustomTag(tag, type);
         switch (type) {
-            case FluxConstants.NBT_SAVE_ALL -> mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
+            case FluxConstants.NBT_SAVE_ALL -> mDeviceOwner = tag.getUUID(FluxConstants.PLAYER_UUID);
             case FluxConstants.NBT_TILE_UPDATE -> {
-                mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
+                mDeviceOwner = tag.getUUID(FluxConstants.PLAYER_UUID);
                 if (tag.contains(FluxConstants.CLIENT_COLOR)) {
                     mClientColor = FluxUtils.getModifiedColor(tag.getInt(FluxConstants.CLIENT_COLOR), 1.1f);
                 }
@@ -326,7 +321,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     public boolean canPlayerAccess(@Nonnull Player player) {
         // devices without a network connection are not protected (e.g. abandoned).
         if (mNetwork.isValid()) {
-            if (player.getUUID().equals(mPlayerUUID)) {
+            if (player.getUUID().equals(mDeviceOwner)) {
                 return true;
             }
             return mNetwork.getPlayerAccess(player).canUse();
@@ -369,12 +364,12 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         PacketHandler.CHANNEL.sendToServer(new TilePacketBufferPacket(this, pos, packetID));
     }*/
 
-    public void writePacket(FriendlyByteBuf buf, byte id) {
-        getTransferHandler().writePacket(buf, id);
+    public void writePacket(FriendlyByteBuf buf, byte type) {
+        getTransferHandler().writePacket(buf, type);
     }
 
-    public void readPacket(FriendlyByteBuf buf, byte id) {
-        getTransferHandler().readPacket(buf, id);
+    public void readPacket(FriendlyByteBuf buf, byte type) {
+        getTransferHandler().readPacket(buf, type);
         /*switch (id) {
             case FluxConstants.C2S_CUSTOM_NAME:
                 mCustomName = buf.readUtf(96);
@@ -427,11 +422,11 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     @Nonnull
     @Override
     public final UUID getOwnerUUID() {
-        return mPlayerUUID;
+        return mDeviceOwner;
     }
 
-    public final void setConnectionOwner(UUID uuid) {
-        mPlayerUUID = uuid;
+    public final void setDeviceOwner(UUID uuid) {
+        mDeviceOwner = uuid;
     }
 
     /**
@@ -484,13 +479,13 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     }
 
     @Override
-    public final int getLiteralPriority() {
-        return getTransferHandler().getUserPriority();
+    public final int getRawPriority() {
+        return getTransferHandler().getRawPriority();
     }
 
     @Override
-    public final long getLiteralLimit() {
-        return getTransferHandler().getLimit();
+    public final long getRawLimit() {
+        return getTransferHandler().getRawLimit();
     }
 
     @Override
@@ -533,12 +528,12 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     @Override
     public final boolean getDisableLimit() {
-        return getTransferHandler().canBypassLimit();
+        return getTransferHandler().getDisableLimit();
     }
 
     @Override
     public final boolean getSurgeMode() {
-        return getTransferHandler().hasPowerSurge();
+        return getTransferHandler().getSurgeMode();
     }
 
     @Override

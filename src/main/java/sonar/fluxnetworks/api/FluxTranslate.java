@@ -50,6 +50,8 @@ public class FluxTranslate {
             DISABLE_LIMIT = new FluxTranslate("gui.fluxnetworks.flux.disablelimit"),
             CHUNK_LOADING = new FluxTranslate("gui.fluxnetworks.flux.chunkloading"),
             ENABLE_WIRELESS = new FluxTranslate("gui.fluxnetworks.flux.wireless"),
+            EFFECTIVE_WIRELESS_NETWORK = new FluxTranslate("gui.fluxnetworks.flux.wirelessnetwork"),
+            INEFFECTIVE_WIRELESS_NETWORK = new FluxTranslate("gui.fluxnetworks.flux.nonwirelessnetwork"),
             ENERGY = new FluxTranslate("gui.fluxnetworks.flux.energy"),
             ENERGY_STORED = new FluxTranslate("gui.fluxnetworks.flux.energystored"),
             BUFFER = new FluxTranslate("gui.fluxnetworks.flux.buffer"),
@@ -83,9 +85,15 @@ public class FluxTranslate {
             YOU = new FluxTranslate("gui.fluxnetworks.label.you"),
             DETAILED_VIEW = new FluxTranslate("gui.fluxnetworks.label.detailedview"),
             CLICK_ABOVE = new FluxTranslate("gui.fluxnetworks.label.clickabove"),
-            PLAYERS_NETWORK = new FluxTranslate("gui.fluxnetworks.label.playersnetwork"),
+            PLAYERS_NETWORK = new FluxTranslate("gui.fluxnetworks.label.playersnetwork");
 
-    SORTING_SMART = new FluxTranslate("gui.fluxnetworks.label.sort.smart"),
+    public static final FluxTranslate
+            PUBLIC = new FluxTranslate("gui.fluxnetworks.security.public"),
+            ENCRYPTED = new FluxTranslate("gui.fluxnetworks.security.encrypted"),
+            PRIVATE = new FluxTranslate("gui.fluxnetworks.security.private");
+
+    public static final FluxTranslate
+            SORTING_SMART = new FluxTranslate("gui.fluxnetworks.label.sort.smart"),
             SORTING_ID = new FluxTranslate("gui.fluxnetworks.label.sort.id"),
             SORTING_NAME = new FluxTranslate("gui.fluxnetworks.label.sort.name"),
 

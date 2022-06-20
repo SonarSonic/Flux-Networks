@@ -56,6 +56,8 @@
 	"gui.fluxnetworks.flux.name": "Название",
 	"gui.fluxnetworks.flux.transferlimit": "Предел передачи",
 	"gui.fluxnetworks.flux.wireless": "Включить беспроводную",
+	"gui.fluxnetworks.flux.wirelessnetwork": "Effective Wireless Network",
+	"gui.fluxnetworks.flux.nonwirelessnetwork": "Ineffective Wireless Network",
 	"gui.fluxnetworks.flux.energy": "Энергия",
 	"gui.fluxnetworks.flux.energystored": "Энергии хранится",
 	"gui.fluxnetworks.flux.buffer": "Буфер",

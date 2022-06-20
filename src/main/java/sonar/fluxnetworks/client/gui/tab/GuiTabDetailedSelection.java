@@ -3,7 +3,6 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
@@ -12,7 +11,6 @@ import sonar.fluxnetworks.common.connection.*;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 public class GuiTabDetailedSelection extends GuiTabSelection {
@@ -44,13 +42,8 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
     }
 
     @Override
-    public void renderElementTooltip(PoseStack poseStack, FluxNetwork element, int mouseX, int mouseY) {
-        final List<Component> components = new ArrayList<>();
-        components.add(new TextComponent("ID: " + element.getNetworkID()));
-        components.add(FluxTranslate.NETWORK_NAME.makeComponent().append(": " +
-                ChatFormatting.AQUA + element.getNetworkName()));
-        components.add(FluxTranslate.NETWORK_SECURITY.makeComponent().append(": " +
-                ChatFormatting.GOLD + element.getSecurityLevel().getName()));
+    protected List<Component> getElementTooltips(FluxNetwork element) {
+        final List<Component> components = super.getElementTooltips(element);
         final NetworkStatistics stats = element.getStatistics();
         components.add(FluxTranslate.PLUGS.makeComponent().append(ChatFormatting.GRAY + ": " +
                 ChatFormatting.RESET + stats.fluxPlugCount));
@@ -69,8 +62,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
         components.add(FluxTranslate.ENERGY.makeComponent().append(ChatFormatting.GRAY + ": " + ChatFormatting.RESET +
                 EnergyType.FE.getStorageCompact(stats.totalEnergy)));
         components.add(FluxTranslate.AVERAGE_TICK.makeComponent().append(": " + stats.averageTickMicro + " \u00b5s/t"));
-
-        renderComponentTooltip(poseStack, components, mouseX, mouseY);
+        return components;
     }
 
     @Override

@@ -28,9 +28,9 @@ public enum FluxConfigurationType {
     public void copy(@Nonnull Player player, @Nonnull CompoundTag tag, @Nonnull TileFluxDevice device) {
         switch (this) {
             case NETWORK -> tag.putInt(key, device.getNetworkID());
-            case PRIORITY -> tag.putInt(key, device.getLiteralPriority());
+            case PRIORITY -> tag.putInt(key, device.getRawPriority());
             case PRIORITY_SETTING -> tag.putBoolean(key, device.getSurgeMode());
-            case TRANSFER -> tag.putLong(key, device.getLiteralLimit());
+            case TRANSFER -> tag.putLong(key, device.getRawLimit());
             case TRANSFER_SETTING -> tag.putBoolean(key, device.getDisableLimit());
         }
     }
@@ -45,7 +45,7 @@ public enum FluxConfigurationType {
                 // we can connect to an invalid network (i.e. disconnect)
                 if (!network.isValid() || network.canPlayerAccess(player, "")) {
                     if (network.isValid()) {
-                        device.setConnectionOwner(player.getUUID());
+                        device.setDeviceOwner(player.getUUID());
                     }
                     device.connect(network);
                 }

@@ -15,21 +15,25 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * This class controls a flux Network on server thread.
+ * The class represents a flux Network on the logical server side.
  */
 public class ServerFluxNetwork extends FluxNetwork {
 
     private static final Comparator<TileFluxDevice> sDescendingOrder =
-            (lhs, rhs) -> Integer.compare(rhs.getTransferNode().getPriority(), lhs.getTransferNode().getPriority());
+            (lhs, rhs) -> Integer.compare(rhs.getTransferHandler().getPriority(),
+                    lhs.getTransferHandler().getPriority());
 
     private static final Consumer<TileFluxDevice> sDisconnect = d -> d.connect(INVALID);
 
+    /**
+     * See {@link #ANY}
+     */
     private static final Class<?>[] sLogicalTypes =
             {IFluxDevice.class, IFluxPlug.class, IFluxPoint.class, IFluxStorage.class, IFluxController.class};
 
     private final ArrayList<TileFluxDevice>[] mDevices;
 
-    // LinkedList doesn't create large arrays, no need to use ArrayDeque
+    // LinkedList doesn't create large arrays, should be better
     private final LinkedList<TileFluxDevice> mToAdd = new LinkedList<>();
     private final LinkedList<TileFluxDevice> mToRemove = new LinkedList<>();
 
@@ -45,7 +49,7 @@ public class ServerFluxNetwork extends FluxNetwork {
     {
         @SuppressWarnings("unchecked") final ArrayList<TileFluxDevice>[] devices =
                 (ArrayList<TileFluxDevice>[]) Array.newInstance(ArrayList.class, sLogicalTypes.length);
-        Arrays.setAll(devices, i -> new ArrayList<>());
+        Arrays.setAll(devices, type -> new ArrayList<>());
         mDevices = devices;
     }
 
@@ -88,18 +92,18 @@ public class ServerFluxNetwork extends FluxNetwork {
     private void handleConnectionQueue() {
         TileFluxDevice device;
         while ((device = mToAdd.poll()) != null) {
-            for (int i = 0; i < sLogicalTypes.length; i++) {
-                if (sLogicalTypes[i].isInstance(device)) {
-                    ArrayList<TileFluxDevice> list = getLogicalDevices(i);
+            for (int type = 0; type < sLogicalTypes.length; type++) {
+                if (sLogicalTypes[type].isInstance(device)) {
+                    var list = getLogicalDevices(type);
                     assert !list.contains(device);
                     mSortConnections |= list.add(device);
                 }
             }
         }
         while ((device = mToRemove.poll()) != null) {
-            for (int i = 0; i < sLogicalTypes.length; i++) {
-                if (sLogicalTypes[i].isInstance(device)) {
-                    ArrayList<TileFluxDevice> list = getLogicalDevices(i);
+            for (int type = 0; type < sLogicalTypes.length; type++) {
+                if (sLogicalTypes[type].isInstance(device)) {
+                    var list = getLogicalDevices(type);
                     assert list.contains(device);
                     mSortConnections |= list.remove(device);
                 }
@@ -127,8 +131,8 @@ public class ServerFluxNetwork extends FluxNetwork {
         mBufferLimiter = 0;
 
         List<TileFluxDevice> devices = getLogicalDevices(ANY);
-        for (var f : devices) {
-            f.getTransferNode().onCycleStart();
+        for (var d : devices) {
+            d.getTransferHandler().onCycleStart();
         }
 
         List<TileFluxDevice> plugs = getLogicalDevices(PLUG);
@@ -146,9 +150,9 @@ public class ServerFluxNetwork extends FluxNetwork {
                         break CYCLE; // Storage always have the lowest priority, the cycle can be broken here.
                     }
                     // we don't need to simulate this action
-                    long actual = plug.getTransferNode().extract(point.getTransferNode().getRequest());
+                    long actual = plug.getTransferHandler().removeFromBuffer(point.getTransferHandler().getRequest());
                     if (actual > 0) {
-                        point.getTransferNode().insert(actual);
+                        point.getTransferHandler().addToBuffer(actual);
                         continue CYCLE;
                     } else {
                         // although the plug still need transfer (buffer > 0)
@@ -161,9 +165,9 @@ public class ServerFluxNetwork extends FluxNetwork {
         }
 
         long limiter = 0;
-        for (var f : devices) {
-            f.getTransferNode().onCycleEnd();
-            limiter += f.getTransferNode().getRequest();
+        for (var d : devices) {
+            d.getTransferHandler().onCycleEnd();
+            limiter += d.getTransferHandler().getRequest();
         }
         mBufferLimiter = limiter;
 
@@ -189,11 +193,12 @@ public class ServerFluxNetwork extends FluxNetwork {
         if (super.canPlayerAccess(player, password)) {
             return true;
         }
+        // password is required if non-public network and non-network member
         return !password.isEmpty() && password.equals(mPassword);
     }
 
     @Override
-    public void onDelete() {
+    protected void onDelete() {
         super.onDelete();
         getLogicalDevices(ANY).forEach(sDisconnect);
         Arrays.fill(mDevices, null);
@@ -221,14 +226,14 @@ public class ServerFluxNetwork extends FluxNetwork {
     }
 
     @Override
-    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
+    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean unload) {
         if (!mToRemove.contains(device) && getLogicalDevices(ANY).contains(device)) {
             mToRemove.offer(device);
             mToAdd.remove(device);
-            if (chunkUnload) {
+            if (unload) {
                 // create a fake device on server side, representing it has ever connected to
                 // this network but currently unloaded
-                mConnectionMap.put(device.getGlobalPos(), PhantomFluxDevice.unload(device));
+                mConnectionMap.put(device.getGlobalPos(), PhantomFluxDevice.makeUnloaded(device));
             } else {
                 // remove the tile entity
                 mConnectionMap.remove(device.getGlobalPos());

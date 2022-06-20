@@ -1,12 +1,16 @@
 package sonar.fluxnetworks.client;
 
 import it.unimi.dsi.fastutil.ints.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.connection.ClientFluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -28,7 +32,6 @@ public final class ClientCache {
     private static final Int2ObjectLinkedOpenHashMap<String> sRecentPasswords =
             new Int2ObjectLinkedOpenHashMap<>(MAX_RECENT_PASSWORD_COUNT); // LRU cache
 
-    public static boolean sSuperAdmin = false;
     public static boolean sDetailedNetworkView = false;
 
     public static int sAdminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
@@ -91,6 +94,26 @@ public final class ClientCache {
             sRecentPasswords.removeFirst();
         }
         sRecentPasswords.put(id, password);
+    }
+
+    public static boolean isSuperAdmin() {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            return isSuperAdmin(player);
+        }
+        return false;
+    }
+
+    public static boolean isSuperAdmin(Player player) {
+        FluxPlayer fluxPlayer = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
+        return fluxPlayer != null && fluxPlayer.isSuperAdmin();
+    }
+
+    public static void updateCapability(Player player, CompoundTag tag) {
+        FluxPlayer fluxPlayer = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
+        if (fluxPlayer != null) {
+            fluxPlayer.readNBT(tag);
+        }
     }
 
     /*public String getDisplayName(@Nonnull CompoundTag subTag) {

@@ -46,10 +46,9 @@ public final class FluxConstants {
     //TODO update relevant message handling
     public static final byte
             NBT_NET_BASIC = 21,
-            NBT_NET_GENERAL = 22,
-            NBT_NET_MEMBERS = 23,
-            NBT_NET_CONNECTIONS = 24,
-            NBT_NET_STATISTICS = 25;
+            NBT_NET_MEMBERS = 22,
+            NBT_NET_CONNECTIONS = 23,
+            NBT_NET_STATISTICS = 24;
 
     // Network connections editing flags
     //TODO remove, using NBT instead

@@ -4,6 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.UUID;
 
 public class NetworkMember {
@@ -12,7 +14,10 @@ public class NetworkMember {
     private String mCachedName;
     private AccessLevel mAccessLevel;
 
-    private NetworkMember() {
+    private NetworkMember(@Nonnull UUID uuid, @Nullable String name, @Nonnull AccessLevel access) {
+        mPlayerUUID = Objects.requireNonNull(uuid);
+        mCachedName = Objects.requireNonNullElse(name, "[Anonymous]");
+        mAccessLevel = access;
     }
 
     public NetworkMember(@Nonnull CompoundTag tag) {
@@ -20,15 +25,8 @@ public class NetworkMember {
     }
 
     @Nonnull
-    public static NetworkMember create(@Nonnull Player player, @Nonnull AccessLevel accessLevel) {
-        final NetworkMember member = new NetworkMember();
-        member.mPlayerUUID = player.getUUID();
-        member.mCachedName = player.getGameProfile().getName();
-        if (member.mCachedName == null) {
-            member.mCachedName = "[Anonymous]";
-        }
-        member.mAccessLevel = accessLevel;
-        return member;
+    public static NetworkMember create(@Nonnull Player player, @Nonnull AccessLevel access) {
+        return new NetworkMember(player.getUUID(), player.getGameProfile().getName(), access);
     }
 
     /*public static NetworkMember createMemberByUsername(String username) {
@@ -53,14 +51,17 @@ public class NetworkMember {
         return t;
     }*/
 
+    @Nonnull
     public UUID getPlayerUUID() {
         return mPlayerUUID;
     }
 
+    @Nonnull
     public String getCachedName() {
         return mCachedName;
     }
 
+    @Nonnull
     public AccessLevel getAccessLevel() {
         return mAccessLevel;
     }
@@ -73,15 +74,24 @@ public class NetworkMember {
         return false;
     }
 
+    public void writeNBT(@Nonnull CompoundTag tag) {
+        tag.putUUID("playerUUID", mPlayerUUID);
+        tag.putString("cachedName", mCachedName);
+        tag.putByte("accessLevel", mAccessLevel.getKey());
+    }
+
     public void readNBT(@Nonnull CompoundTag tag) {
         mPlayerUUID = tag.getUUID("playerUUID");
         mCachedName = tag.getString("cachedName");
         mAccessLevel = AccessLevel.fromKey(tag.getByte("accessLevel"));
     }
 
-    public void writeNBT(@Nonnull CompoundTag tag) {
-        tag.putUUID("playerUUID", mPlayerUUID);
-        tag.putString("cachedName", mCachedName);
-        tag.putByte("accessLevel", mAccessLevel.getKey());
+    @Override
+    public String toString() {
+        return "NetworkMember{" +
+                "uuid=" + mPlayerUUID +
+                ", name='" + mCachedName + '\'' +
+                ", access=" + mAccessLevel +
+                '}';
     }
 }

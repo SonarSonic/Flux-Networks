@@ -41,12 +41,13 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public void init() {
         super.init();
 
-        mSuperAdmin = new SwitchButton(minecraft, leftPos + 140, topPos + 30, ClientCache.sSuperAdmin);
+        boolean superAdmin = ClientCache.isSuperAdmin();
+        mSuperAdmin = new SwitchButton(minecraft, leftPos + 140, topPos + 30, superAdmin);
         mButtons.add(mSuperAdmin);
 
         mDetailedNetworkView = new SwitchButton(minecraft, leftPos + 140, topPos + 42,
                 ClientCache.sDetailedNetworkView);
-        mDetailedNetworkView.setClickable(ClientCache.sSuperAdmin);
+        mDetailedNetworkView.setClickable(superAdmin);
         mButtons.add(mDetailedNetworkView);
     }
 
@@ -78,8 +79,9 @@ public class GuiFluxAdminHome extends GuiTabCore {
     @Override
     protected void containerTick() {
         super.containerTick();
-        mSuperAdmin.setChecked(ClientCache.sSuperAdmin);
-        mDetailedNetworkView.setClickable(ClientCache.sSuperAdmin);
+        boolean superAdmin = ClientCache.isSuperAdmin();
+        mSuperAdmin.setChecked(superAdmin);
+        mDetailedNetworkView.setClickable(superAdmin);
     }
 
     @Override

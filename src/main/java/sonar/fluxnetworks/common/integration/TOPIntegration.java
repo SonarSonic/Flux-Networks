@@ -91,7 +91,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     );
                 } else {
                     probeInfo.text(FluxTranslate.TRANSFER_LIMIT.makeComponent()
-                            .append(": " + ChatFormatting.GREEN + EnergyType.FE.getUsage(device.getLiteralLimit()))
+                            .append(": " + ChatFormatting.GREEN + EnergyType.FE.getUsage(device.getRawLimit()))
                     );
                 }
 
@@ -101,7 +101,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                     );
                 } else {
                     probeInfo.text(FluxTranslate.PRIORITY.makeComponent()
-                            .append(": " + ChatFormatting.GREEN + device.getLiteralPriority())
+                            .append(": " + ChatFormatting.GREEN + device.getRawPriority())
                     );
                 }
 

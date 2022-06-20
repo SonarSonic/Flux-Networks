@@ -32,13 +32,13 @@ public interface IFluxDevice extends IFluxProvider {
 
     //int getLogicPriority(); // consider surge, for transfer on server
 
-    int getLiteralPriority(); // ignore surge, for numeric display on client
+    int getRawPriority(); // ignore surge, for numeric display on client
 
     //void setPriority(int priority);
 
     //long getLogicLimit(); // consider disable limit
 
-    long getLiteralLimit(); // ignore disable limit
+    long getRawLimit(); // ignore disable limit
 
     //void setTransferLimit(long limit);
 

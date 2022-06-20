@@ -43,7 +43,7 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
         }
 
         if (level.getBlockEntity(pos) instanceof TileFluxDevice device) {
-            device.interact(player);
+            device.onPlayerInteract(player);
         }
 
         return InteractionResult.CONSUME;
@@ -66,7 +66,7 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
                 }
             }
             if (placer instanceof Player) {
-                device.setConnectionOwner(placer.getUUID());
+                device.setDeviceOwner(placer.getUUID());
             }
         }
     }

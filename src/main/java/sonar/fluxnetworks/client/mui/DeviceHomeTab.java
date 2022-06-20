@@ -27,7 +27,7 @@ import net.minecraft.world.item.Items;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.design.RoundRectDrawable;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
-import sonar.fluxnetworks.common.device.TransferHandler;
+import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
@@ -78,7 +78,7 @@ public class DeviceHomeTab extends Fragment {
                     mCustomName = v;
                 }
                 case 1 -> {
-                    v.setText(Integer.toString(mDevice.getLiteralPriority()));
+                    v.setText(Integer.toString(mDevice.getRawPriority()));
                     v.setHint("Priority");
                     v.setHintTextColor(0xFF808080);
                     v.setFilters(new InputFilter.LengthFilter(5),
@@ -97,7 +97,7 @@ public class DeviceHomeTab extends Fragment {
                     mPriority = v;
                 }
                 default -> {
-                    v.setText(Long.toString(mDevice.getLiteralLimit()));
+                    v.setText(Long.toString(mDevice.getRawLimit()));
                     v.setHint("Transfer Limit");
                     v.setHintTextColor(0xFF808080);
                     v.setFilters(new InputFilter.LengthFilter(10),

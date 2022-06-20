@@ -56,6 +56,8 @@
 	"gui.fluxnetworks.flux.name": "Nome",
 	"gui.fluxnetworks.flux.transferlimit": "Limite de Transferência",
 	"gui.fluxnetworks.flux.wireless": "Ativar Sem Fio",
+	"gui.fluxnetworks.flux.wirelessnetwork": "Effective Wireless Network",
+	"gui.fluxnetworks.flux.nonwirelessnetwork": "Ineffective Wireless Network",
 	"gui.fluxnetworks.flux.energy": "Energia",
 	"gui.fluxnetworks.flux.energystored": "Energia Armazenada",
 	"gui.fluxnetworks.flux.buffer": "Buffer",

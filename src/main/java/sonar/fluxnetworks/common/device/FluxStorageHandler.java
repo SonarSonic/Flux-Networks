@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.common.connection.TransferHandler;
 
 import javax.annotation.Nonnull;
 
@@ -28,13 +29,13 @@ public abstract class FluxStorageHandler extends TransferHandler {
     }
 
     @Override
-    public void insert(long energy) {
+    public void addToBuffer(long energy) {
         mBuffer += energy;
         mAdded += energy;
     }
 
     @Override
-    public long extract(long energy) {
+    public long removeFromBuffer(long energy) {
         long op = Math.min(Math.min(energy, mBuffer), getLimit() - mRemoved);
         assert op >= 0;
         mBuffer -= op;
@@ -66,20 +67,20 @@ public abstract class FluxStorageHandler extends TransferHandler {
     }
 
     @Override
-    public void writePacket(@Nonnull FriendlyByteBuf buffer, byte id) {
-        if (id == FluxConstants.DEVICE_S2C_STORAGE_ENERGY) {
+    public void writePacket(@Nonnull FriendlyByteBuf buffer, byte type) {
+        if (type == FluxConstants.DEVICE_S2C_STORAGE_ENERGY) {
             buffer.writeLong(mBuffer);
         } else {
-            super.writePacket(buffer, id);
+            super.writePacket(buffer, type);
         }
     }
 
     @Override
-    public void readPacket(@Nonnull FriendlyByteBuf buffer, byte id) {
-        if (id == FluxConstants.DEVICE_S2C_STORAGE_ENERGY) {
+    public void readPacket(@Nonnull FriendlyByteBuf buffer, byte type) {
+        if (type == FluxConstants.DEVICE_S2C_STORAGE_ENERGY) {
             mBuffer = buffer.readLong();
         } else {
-            super.readPacket(buffer, id);
+            super.readPacket(buffer, type);
         }
     }
 

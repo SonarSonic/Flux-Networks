@@ -19,15 +19,15 @@ import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
 
-public class FMLNetwork extends Network {
+public class FMLChannel extends Channel {
 
     private static final ResourceLocation LOCATION = new ResourceLocation(FluxNetworks.MODID, "network");
 
     static {
-        FluxNetworks.LOGGER.warn("Use FML network (low performance)");
+        FluxNetworks.LOGGER.warn("Use FML network channel (low performance)");
     }
 
-    FMLNetwork() {
+    FMLChannel() {
         NetworkRegistry.newEventChannel(LOCATION, () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals)
                 .registerObject(this);
     }

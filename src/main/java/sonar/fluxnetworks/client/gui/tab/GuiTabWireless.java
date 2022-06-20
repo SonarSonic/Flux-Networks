@@ -1,114 +1,157 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import sonar.fluxnetworks.client.gui.EnumNavigationTab;
-import sonar.fluxnetworks.api.misc.FeedbackInfo;
-import sonar.fluxnetworks.api.network.WirelessType;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.player.Player;
+import org.lwjgl.glfw.GLFW;
+import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.client.FluxClientCache;
+import sonar.fluxnetworks.api.network.WirelessType;
+import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
-import sonar.fluxnetworks.client.gui.button.InventoryButton;
-import sonar.fluxnetworks.client.gui.button.InvisibleButton;
-import sonar.fluxnetworks.client.gui.button.NormalButton;
-import sonar.fluxnetworks.client.gui.button.SlidedSwitchButton;
-import sonar.fluxnetworks.common.blockentity.FluxContainerMenu;
-import sonar.fluxnetworks.common.test.C2SNetMsg;
+import sonar.fluxnetworks.client.gui.button.*;
+import sonar.fluxnetworks.common.capability.FluxPlayer;
+import sonar.fluxnetworks.common.connection.FluxMenu;
+import sonar.fluxnetworks.common.util.FluxUtils;
+import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GuiTabWireless extends GuiTabCore {
 
-    public InvisibleButton redirectButton;
+    public SwitchButton mEnable;
+    public SimpleButton mApply;
 
-    public List<InventoryButton> inventoryButtonList = new ArrayList<>();
-    public NormalButton apply;
+    public int mWirelessMode;
 
-    public int wirelessMode;
-
-    public GuiTabWireless(@Nonnull FluxContainerMenu container, @Nonnull PlayerEntity player) {
-        super(container, player);
+    public GuiTabWireless(@Nonnull FluxMenu menu, @Nonnull Player player) {
+        super(menu, player);
     }
 
+    @Override
     public EnumNavigationTab getNavigationTab() {
         return EnumNavigationTab.TAB_WIRELESS;
     }
 
     @Override
-    protected void drawForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.drawForegroundLayer(matrixStack, mouseX, mouseY);
-        if (networkValid) {
-            int color = network.getNetworkColor();
-            drawCenterText(matrixStack, FluxTranslate.TAB_WIRELESS.t(), 88, 12, 0xb4b4b4);
-            font.drawString(matrixStack, FluxTranslate.ENABLE_WIRELESS.t(), 20, 156, color);
-            drawCenterText(matrixStack, FluxClientCache.getFeedbackText(), 88, 146, FluxClientCache.getFeedbackColor());
+    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+        if (getNetwork().isValid()) {
+            int color = getNetwork().getNetworkColor();
+            drawCenteredString(poseStack, font, FluxTranslate.TAB_WIRELESS.get(), leftPos + 88, topPos + 10, 0xb4b4b4);
+            font.draw(poseStack, FluxTranslate.ENABLE_WIRELESS.get(), leftPos + 20, topPos + 148, color);
+
+            FluxPlayer fp = FluxUtils.get(mPlayer, FluxPlayer.FLUX_PLAYER);
+            if (fp != null) {
+                int wireless = fp.getWirelessNetwork();
+                if (wireless == getNetwork().getNetworkID()) {
+                    drawCenteredString(poseStack, font,
+                            '(' + FluxTranslate.EFFECTIVE_WIRELESS_NETWORK.get() + ')',
+                            leftPos + 88, topPos + 158, color);
+                } else {
+                    drawCenteredString(poseStack, font,
+                            '(' + FluxTranslate.INEFFECTIVE_WIRELESS_NETWORK.get() + ')',
+                            leftPos + 88, topPos + 158, 0xb4b4b4);
+                }
+            }
         } else {
-            renderNavigationPrompt(matrixStack, FluxTranslate.ERROR_NO_SELECTED.t(), FluxTranslate.TAB_SELECTION.t());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
         }
     }
 
     @Override
     public void init() {
         super.init();
-        configureNavigationButtons(EnumNavigationTab.TAB_WIRELESS, navigationTabs);
-        inventoryButtonList.clear();
-        buttonLists.add(inventoryButtonList);
-        if (networkValid) {
+        if (getNetwork().isValid()) {
 
-            wirelessMode = network.getWirelessMode();
-
-            switches.add(new SlidedSwitchButton(140, 156, 4, guiLeft, guiTop, WirelessType.ENABLE_WIRELESS.isActivated(wirelessMode)));
-            inventoryButtonList.add(new InventoryButton(WirelessType.ARMOR, this, 24, 32, 0, 80, 52, 16));
-            inventoryButtonList.add(new InventoryButton(WirelessType.CURIOS, this, 100, 32, 0, 80, 52, 16));
-            inventoryButtonList.add(new InventoryButton(WirelessType.INVENTORY, this, 32, 56, 0, 0, 112, 40));
-            inventoryButtonList.add(new InventoryButton(WirelessType.HOT_BAR, this, 32, 104, 112, 0, 112, 16));
-            inventoryButtonList.add(new InventoryButton(WirelessType.MAIN_HAND, this, 136, 128, 52, 80, 16, 16));
-            inventoryButtonList.add(new InventoryButton(WirelessType.OFF_HAND, this, 24, 128, 52, 80, 16, 16));
-
-            apply = new NormalButton(FluxTranslate.APPLY.t(), 73, 130, 32, 12, 0).setUnclickable();
-            buttons.add(apply);
-        } else {
-            redirectButton = new InvisibleButton(guiLeft + 20, guiTop + 16, 135, 20,
-                    EnumNavigationTab.TAB_SELECTION.getTranslatedName(), b -> switchTab(EnumNavigationTab.TAB_SELECTION));
-            addButton(redirectButton);
-        }
-    }
-
-
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
-        super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if (mouseButton != 0) {
-            return;
-        }
-        if (button instanceof InventoryButton) {
-            switchSetting(((InventoryButton) button).type);
-        }
-        if (button instanceof NormalButton && button.id == 0) {
-            C2SNetMsg.editWireless(network.getNetworkID(), wirelessMode);
-        }
-        if (button instanceof SlidedSwitchButton) {
-            ((SlidedSwitchButton) button).switchButton();
-            if (button.id == 4) {
-                switchSetting(WirelessType.ENABLE_WIRELESS);
+            FluxPlayer fp = FluxUtils.get(mPlayer, FluxPlayer.FLUX_PLAYER);
+            if (fp != null) {
+                mWirelessMode = fp.getWirelessMode();
             }
-        }
-    }
 
-    public void switchSetting(WirelessType type) {
-        if (type != WirelessType.INVENTORY) {
-            wirelessMode ^= 1 << type.ordinal();
-            apply.clickable = true;
+            mEnable = new SwitchButton(minecraft, leftPos + 140, topPos + 148,
+                    WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode));
+            mButtons.add(mEnable);
+            mButtons.add(new InventoryButton(minecraft, leftPos + 24, topPos + 28, 52, 16,
+                    WirelessType.ARMOR, 0, 80, this));
+            mButtons.add(new InventoryButton(minecraft, leftPos + 100, topPos + 28, 52, 16,
+                    WirelessType.CURIOS, 0, 80, this));
+            mButtons.add(new InventoryButton(minecraft, leftPos + 32, topPos + 52, 112, 40,
+                    WirelessType.INVENTORY, 0, 0, this));
+            mButtons.add(new InventoryButton(minecraft, leftPos + 32, topPos + 100, 112, 16,
+                    WirelessType.HOT_BAR, 112, 0, this));
+            mButtons.add(new InventoryButton(minecraft, leftPos + 136, topPos + 124, 16, 16,
+                    WirelessType.MAIN_HAND, 52, 80, this));
+            mButtons.add(new InventoryButton(minecraft, leftPos + 24, topPos + 124, 16, 16,
+                    WirelessType.OFF_HAND, 52, 80, this));
+
+            mApply = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 24, topPos + 126, 48, 12);
+            mApply.setText(FluxTranslate.APPLY.get());
+            mApply.setClickable(false);
+            mButtons.add(mApply);
         }
     }
 
     @Override
+    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+        super.onButtonClicked(button, mouseX, mouseY, mouseButton);
+        if (mouseButton != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            return;
+        }
+        if (button instanceof InventoryButton btn) {
+            if (btn.mType != WirelessType.INVENTORY) {
+                mWirelessMode ^= 1 << btn.mType.ordinal();
+                mApply.setClickable(true);
+            }
+        } else if (button instanceof SwitchButton btn) {
+            btn.toggle();
+            if (btn.isChecked()) {
+                mWirelessMode |= 1 << WirelessType.ENABLE_WIRELESS.ordinal();
+            } else {
+                mWirelessMode &= ~(1 << WirelessType.ENABLE_WIRELESS.ordinal());
+            }
+            mApply.setClickable(true);
+        } else if (button == mApply) {
+            ClientMessages.wirelessMode(getToken(), mWirelessMode, getNetwork().getNetworkID());
+            mApply.setClickable(false);
+        }
+    }
+
+    @Override
+    public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
+            return true;
+        }
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (!getNetwork().isValid()) {
+                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
+                    switchTab(EnumNavigationTab.TAB_SELECTION);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onResponseAction(int key, int code) {
+        super.onResponseAction(key, code);
+        if (code == FluxConstants.RESPONSE_REJECT) {
+            FluxPlayer fp = FluxUtils.get(mPlayer, FluxPlayer.FLUX_PLAYER);
+            if (fp != null) {
+                mWirelessMode = fp.getWirelessMode();
+            }
+            if (mEnable != null) {
+                mEnable.setChecked(WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode));
+            }
+        }
+    }
+
+    /* @Override
     public void onFeedbackAction(@Nonnull FeedbackInfo info) {
         super.onFeedbackAction(info);
         if (apply != null && info == FeedbackInfo.SUCCESS) {
             apply.clickable = false;
         }
-    }
-}*/
+    }*/
+}

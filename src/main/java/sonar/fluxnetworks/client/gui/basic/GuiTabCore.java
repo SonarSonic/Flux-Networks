@@ -68,17 +68,17 @@ public abstract class GuiTabCore extends GuiFluxCore {
                 break;
             case TAB_SELECTION:
                 if (menu.mProvider instanceof ItemAdminConfigurator.Provider &&
-                        ClientCache.sSuperAdmin &&
-                        ClientCache.sDetailedNetworkView) {
+                        ClientCache.sDetailedNetworkView &&
+                        ClientCache.isSuperAdmin()) {
                     getMinecraft().setScreen(new GuiTabDetailedSelection(menu, mPlayer));
                 } else {
                     getMinecraft().setScreen(new GuiTabSelection(menu, mPlayer));
                 }
                 break;
-            /*case TAB_WIRELESS:
+            case TAB_WIRELESS:
                 getMinecraft().setScreen(new GuiTabWireless(menu, mPlayer));
                 break;
-            case TAB_CONNECTION:
+            /*case TAB_CONNECTION:
                 getMinecraft().setScreen(new GuiTabConnections(menu, mPlayer));
                 break;*/
             case TAB_STATISTICS:

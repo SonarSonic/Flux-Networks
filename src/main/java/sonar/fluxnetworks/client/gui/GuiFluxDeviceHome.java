@@ -14,7 +14,7 @@ import sonar.fluxnetworks.client.gui.button.FluxEditBox;
 import sonar.fluxnetworks.client.gui.button.SwitchButton;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
-import sonar.fluxnetworks.common.device.TransferHandler;
+import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
@@ -66,7 +66,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                 .setDigitsOnly()
                 .setAllowNegatives(true);
         mPriority.setMaxLength(5);
-        mPriority.setValue(String.valueOf(getDevice().getLiteralPriority()));
+        mPriority.setValue(String.valueOf(getDevice().getRawPriority()));
         mPriority.setResponder(string -> {
             int priority = Mth.clamp(mPriority.getValidInt(),
                     TransferHandler.PRI_USER_MIN, TransferHandler.PRI_USER_MAX);
@@ -82,7 +82,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                 .setDigitsOnly()
                 .setMaxValue(getDevice().getMaxTransferLimit());
         mLimit.setMaxLength(9);
-        mLimit.setValue(String.valueOf(getDevice().getLiteralLimit()));
+        mLimit.setValue(String.valueOf(getDevice().getRawLimit()));
         mLimit.setResponder(string -> {
             long limit = mLimit.getValidLong();
             CompoundTag tag = new CompoundTag();

@@ -50,12 +50,12 @@ public class PhantomFluxDevice implements IFluxDevice {
      * @param device the loaded device entity
      */
     @Nonnull
-    public static PhantomFluxDevice unload(@Nonnull TileFluxDevice device) {
+    public static PhantomFluxDevice makeUnloaded(@Nonnull TileFluxDevice device) {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.mNetworkID = device.getNetworkID();
         t.mCustomName = device.getCustomName();
-        t.mPriority = device.getSurgeMode() ? POWER_SURGE_MARKER : device.getLiteralPriority();
-        t.mLimit = device.getDisableLimit() ? BYPASS_LIMIT_MARKER : device.getLiteralLimit();
+        t.mPriority = device.getSurgeMode() ? POWER_SURGE_MARKER : device.getRawPriority();
+        t.mLimit = device.getDisableLimit() ? BYPASS_LIMIT_MARKER : device.getRawLimit();
         t.mPlayerUUID = device.getOwnerUUID();
         t.mDeviceType = device.getDeviceType();
         t.mGlobalPos = device.getGlobalPos();
@@ -136,7 +136,7 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public int getLiteralPriority() {
+    public int getRawPriority() {
         return mPriority;
     }
 
@@ -163,7 +163,7 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public long getLiteralLimit() {
+    public long getRawLimit() {
         return mLimit;
     }
 

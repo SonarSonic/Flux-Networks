@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.device;
 
-public class FluxPointHandler extends FluxConnectorHandler {
+public class FluxPointHandler extends FluxSidedHandler {
 
     private long mDesired;
 
@@ -10,16 +10,16 @@ public class FluxPointHandler extends FluxConnectorHandler {
     @Override
     public void onCycleStart() {
         super.onCycleStart();
-        mDesired = send(getLimit(), true);
+        mDesired = sendToConsumers(getLimit(), true);
     }
 
     @Override
     public void onCycleEnd() {
-        mBuffer += mChange = -send(Math.min(mBuffer, getLimit()), false);
+        mBuffer += mChange = -sendToConsumers(Math.min(mBuffer, getLimit()), false);
     }
 
     @Override
-    public void insert(long energy) {
+    public void addToBuffer(long energy) {
         mBuffer += energy;
     }
 
@@ -28,7 +28,7 @@ public class FluxPointHandler extends FluxConnectorHandler {
         return Math.max(mDesired - mBuffer, 0);
     }
 
-    private long send(long energy, boolean simulate) {
+    private long sendToConsumers(long energy, boolean simulate) {
         long leftover = energy;
         for (SideTransfer transfer : mTransfers) {
             if (transfer != null) {

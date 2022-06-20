@@ -75,12 +75,11 @@ public class FluxNetwork {
     //public ICustomValue<Integer> network_wireless = new CustomValue<>(0);
     //public ICustomValue<NetworkStatistics> network_stats = new CustomValue<>(new NetworkStatistics(this));
 
-    private int mID;
-    private String mName;
-    private int mColor;
+    int mID;
+    String mName;
+    int mColor;
     UUID mOwnerUUID;
-    private SecurityLevel mSecurityLevel;
-    private int mWirelessMode;
+    SecurityLevel mSecurityLevel;
 
     final NetworkStatistics mStatistics = new NetworkStatistics(this);
     final HashMap<UUID, NetworkMember> mMemberMap = new HashMap<>();
@@ -135,8 +134,12 @@ public class FluxNetwork {
         return mName;
     }
 
-    public void setNetworkName(@Nonnull String name) {
-        mName = name;
+    public boolean setNetworkName(@Nonnull String name) {
+        if (!name.equals(mName) && !FluxUtils.isBadNetworkName(name)) {
+            mName = name;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -148,8 +151,13 @@ public class FluxNetwork {
         return mColor;
     }
 
-    public void setNetworkColor(int color) {
-        mColor = color;
+    public boolean setNetworkColor(int color) {
+        color &= 0xFFFFFF;
+        if (mColor != color) {
+            mColor = color;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -162,16 +170,12 @@ public class FluxNetwork {
         return mSecurityLevel;
     }
 
-    public void setSecurityLevel(@Nonnull SecurityLevel level) {
-        mSecurityLevel = level;
-    }
-
-    public int getWirelessMode() {
-        return mWirelessMode;
-    }
-
-    public void setWirelessMode(int wirelessMode) {
-        mWirelessMode = wirelessMode;
+    public boolean setSecurityLevel(@Nonnull SecurityLevel level) {
+        if (mSecurityLevel != level) {
+            mSecurityLevel = level;
+            return true;
+        }
+        return false;
     }
 
     @Nonnull
@@ -185,7 +189,7 @@ public class FluxNetwork {
     }
 
     /**
-     * Returns a collection object that contains all network members
+     * Returns a collection view that contains all network members
      *
      * @return all members
      */
@@ -207,7 +211,7 @@ public class FluxNetwork {
     }
 
     /**
-     * Get all connections including loaded entities and unloaded devices.
+     * Returns a collection view that contains all loaded entities and unloaded devices.
      *
      * @return the list of all connections
      * @see #getLogicalDevices(int)
@@ -217,13 +221,16 @@ public class FluxNetwork {
         return mConnectionMap.values();
     }
 
+    /**
+     * Ticks the server. Server only.
+     */
     public void onEndServerTick() {
     }
 
     /**
      * Called when this network is deleted from its manager.
      */
-    public void onDelete() {
+    protected void onDelete() {
         mMemberMap.clear();
         mConnectionMap.clear();
     }
@@ -244,6 +251,13 @@ public class FluxNetwork {
         return mSecurityLevel == SecurityLevel.PUBLIC ? AccessLevel.USER : AccessLevel.BLOCKED;
     }
 
+    /**
+     * Can player access this network logically, with or without password?
+     *
+     * @param player   the player
+     * @param password the password
+     * @return has permission or not
+     */
     public boolean canPlayerAccess(@Nonnull Player player, @Nonnull String password) {
         return getPlayerAccess(player).canUse();
     }
@@ -260,15 +274,32 @@ public class FluxNetwork {
         return Collections.emptyList();
     }
 
+    /**
+     * A sum value that limits energy going to device's buffer. Server only.
+     *
+     * @return buffer limit
+     */
     public long getBufferLimiter() {
         return 0;
     }
 
+    /**
+     * Add a logical device to this network.
+     *
+     * @param device logical device
+     * @return success or not
+     */
     public boolean enqueueConnectionAddition(@Nonnull TileFluxDevice device) {
         return true;
     }
 
-    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean chunkUnload) {
+    /**
+     * Remove a logical device from this network.
+     *
+     * @param device logical device
+     * @param unload become phantom (unloaded) or actually remove
+     */
+    public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean unload) {
     }
 
     /*@Override
@@ -282,6 +313,11 @@ public class FluxNetwork {
     }*/
 
     /**
+     * Change the membership of a target. Check valid first.
+     *
+     * @param player     the player performing this action
+     * @param targetUUID the UUID of the player to change
+     * @param type       the operation type, e.g. {@link FluxConstants#MEMBERSHIP_SET_USER}
      * @return a response code
      */
     public int changeMembership(Player player, UUID targetUUID, byte type) {
@@ -290,6 +326,7 @@ public class FluxNetwork {
 
     /**
      * Returns whether this network is a valid network.
+     * An invalid network is actually a null network, but we use a singleton to avoid nullability checks.
      *
      * @return {@code true} if it is valid, {@code false} otherwise
      * @see FluxConstants#INVALID_NETWORK_ID
@@ -304,7 +341,7 @@ public class FluxNetwork {
             tag.putString(NETWORK_NAME, mName);
             tag.putInt(NETWORK_COLOR, mColor);
             tag.putUUID(OWNER_UUID, mOwnerUUID);
-            tag.putByte(SECURITY_LEVEL, mSecurityLevel.getKey());
+            tag.putByte(SECURITY_LEVEL, mSecurityLevel.toKey());
         }
         if (type == FluxConstants.NBT_SAVE_ALL) {
             Collection<NetworkMember> members = getAllMembers();
@@ -486,9 +523,9 @@ public class FluxNetwork {
     @Override
     public String toString() {
         return "FluxNetwork{" +
-                "networkID=" + mID +
-                ", networkName='" + mName + '\'' +
-                ", ownerUUID=" + mOwnerUUID +
+                "id=" + mID +
+                ", name='" + mName + '\'' +
+                ", owner=" + mOwnerUUID +
                 '}';
     }
 }

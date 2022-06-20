@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
+import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.button.ColorButton;
@@ -96,9 +97,9 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void onEditSettingsChanged() {
         if (mApply != null) {
-            mApply.setClickable((!mSecurityLevel.isEncrypted() ||
+            mApply.setClickable((mSecurityLevel != SecurityLevel.ENCRYPTED ||
                     !mPassword.getValue().isEmpty() ||
-                    getNetwork().getSecurityLevel().isEncrypted()) &&
+                    getNetwork().getSecurityLevel() == SecurityLevel.ENCRYPTED) &&
                     !mNetworkName.getValue().isEmpty());
         }
     }
@@ -109,7 +110,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (button == mApply) {
                 ClientMessages.editNetwork(getToken(), getNetwork(),
-                        mNetworkName.getValue(), mColorButton.mColor, mSecurityLevel, mPassword.getValue(), -1);
+                        mNetworkName.getValue(), mColorButton.mColor, mSecurityLevel, mPassword.getValue());
                 mApply.setClickable(false);
             } else if (button == mDelete) {
                 ClientMessages.deleteNetwork(getToken(), getNetwork());

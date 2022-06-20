@@ -56,6 +56,8 @@
 	"gui.fluxnetworks.flux.name": "名称",
 	"gui.fluxnetworks.flux.transferlimit": "传输上限",
 	"gui.fluxnetworks.flux.wireless": "开启无线充能",
+	"gui.fluxnetworks.flux.wirelessnetwork": "生效的无线网络",
+	"gui.fluxnetworks.flux.nonwirelessnetwork": "非生效的无线网络",
 	"gui.fluxnetworks.flux.energy": "能量",
 	"gui.fluxnetworks.flux.energystored": "储存能量",
 	"gui.fluxnetworks.flux.buffer": "缓存",

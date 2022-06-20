@@ -22,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static sonar.fluxnetworks.register.Network.sNetwork;
+import static sonar.fluxnetworks.register.Channel.sChannel;
 
 /**
  * C2S message specs and S2C message handling.
@@ -35,11 +35,11 @@ public class ClientMessages {
 
     public static void deviceBuffer(TileFluxDevice device, byte type) {
         assert type > 0; // C2S positive
-        var buf = Network.buffer(Messages.C2S_DEVICE_BUFFER);
+        var buf = Channel.buffer(Messages.C2S_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeByte(type);
         device.writePacket(buf, type);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     /**
@@ -48,10 +48,10 @@ public class ClientMessages {
      * @param token a token, can be invalid (0)
      */
     public static void superAdmin(int token, boolean enable) {
-        var buf = Network.buffer(Messages.C2S_SUPER_ADMIN);
+        var buf = Channel.buffer(Messages.C2S_SUPER_ADMIN);
         buf.writeByte(token);
         buf.writeBoolean(enable);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     /**
@@ -59,79 +59,78 @@ public class ClientMessages {
      */
     public static void createNetwork(int token, String name, int color,
                                      SecurityLevel security, String password) {
-        var buf = Network.buffer(Messages.C2S_CREATE_NETWORK);
+        var buf = Channel.buffer(Messages.C2S_CREATE_NETWORK);
         buf.writeByte(token);
         buf.writeUtf(name, 256);
         buf.writeInt(color);
-        buf.writeByte(security.getKey());
-        if (security.isEncrypted()) {
+        buf.writeByte(security.toKey());
+        if (security == SecurityLevel.ENCRYPTED) {
             buf.writeUtf(password, 256);
         }
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     /**
      * Request to delete an existing network
      */
     public static void deleteNetwork(int token, FluxNetwork network) {
-        var buf = Network.buffer(Messages.C2S_DELETE_NETWORK);
+        var buf = Channel.buffer(Messages.C2S_DELETE_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     public static void editDevice(TileFluxDevice device, CompoundTag tag) {
-        var buf = Network.buffer(Messages.C2S_EDIT_DEVICE);
+        var buf = Channel.buffer(Messages.C2S_EDIT_DEVICE);
         buf.writeVarInt(FluxConstants.INVALID_NETWORK_ID);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeNbt(tag);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     public static void editDevice(int networkId, List<GlobalPos> list, CompoundTag tag) {
         if (list.isEmpty()) return;
-        var buf = Network.buffer(Messages.C2S_EDIT_DEVICE);
+        var buf = Channel.buffer(Messages.C2S_EDIT_DEVICE);
         buf.writeVarInt(networkId);
         buf.writeVarInt(list.size());
         for (var pos : list) {
             FluxUtils.writeGlobalPos(buf, pos);
         }
         buf.writeNbt(tag);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     public static void editMember(int token, FluxNetwork network, UUID uuid, byte type) {
-        var buf = Network.buffer(Messages.C2S_EDIT_MEMBER);
+        var buf = Channel.buffer(Messages.C2S_EDIT_MEMBER);
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
         buf.writeUUID(uuid);
         buf.writeByte(type);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     // set (connect to) network for a block entity
     public static void setTileNetwork(int token, TileFluxDevice device, int networkID, String password) {
-        var buf = Network.buffer(Messages.C2S_CONNECT_DEVICE);
+        var buf = Channel.buffer(Messages.C2S_CONNECT_DEVICE);
         buf.writeByte(token);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeVarInt(networkID);
         buf.writeUtf(password, 256);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     public static void editNetwork(int token, FluxNetwork network, String name, int color,
-                                   SecurityLevel security, String password, int wireless) {
-        var buf = Network.buffer(Messages.C2S_EDIT_NETWORK);
+                                   SecurityLevel security, String password) {
+        var buf = Channel.buffer(Messages.C2S_EDIT_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
         buf.writeUtf(name, 256);
         buf.writeInt(color);
-        buf.writeByte(security.getKey());
-        if (security.isEncrypted()) {
+        buf.writeByte(security.toKey());
+        if (security == SecurityLevel.ENCRYPTED) {
             buf.writeUtf(password, 256);
         }
-        buf.writeInt(wireless);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     /**
@@ -140,12 +139,12 @@ public class ClientMessages {
      * @param token a valid token
      */
     public static void updateNetwork(int token, FluxNetwork network, byte type) {
-        var buf = Network.buffer(Messages.C2S_UPDATE_NETWORK);
+        var buf = Channel.buffer(Messages.C2S_UPDATE_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(1); // size
         buf.writeVarInt(network.getNetworkID());
         buf.writeByte(type);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
     }
 
     /**
@@ -157,14 +156,22 @@ public class ClientMessages {
         if (networks.isEmpty()) {
             return;
         }
-        var buf = Network.buffer(Messages.C2S_UPDATE_NETWORK);
+        var buf = Channel.buffer(Messages.C2S_UPDATE_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
             buf.writeVarInt(network.getNetworkID());
         }
         buf.writeByte(type);
-        sNetwork.sendToServer(buf);
+        sChannel.sendToServer(buf);
+    }
+
+    public static void wirelessMode(int token, int wirelessMode, int wirelessNetwork) {
+        var buf = Channel.buffer(Messages.C2S_WIRELESS_MODE);
+        buf.writeByte(token);
+        buf.writeInt(wirelessMode);
+        buf.writeVarInt(wirelessNetwork);
+        sChannel.sendToServer(buf);
     }
 
     static void msg(short index, FriendlyByteBuf payload, Supplier<LocalPlayer> player) {
@@ -172,7 +179,7 @@ public class ClientMessages {
         switch (index) {
             case Messages.S2C_DEVICE_BUFFER -> onDeviceBuffer(payload, player, minecraft);
             case Messages.S2C_RESPONSE -> onResponse(payload, player, minecraft);
-            case Messages.S2C_SUPER_ADMIN -> onSuperAdmin(payload, player, minecraft);
+            case Messages.S2C_CAPABILITY -> onCapability(payload, player, minecraft);
             case Messages.S2C_UPDATE_NETWORK -> onUpdateNetwork(payload, player, minecraft);
             case Messages.S2C_DELETE_NETWORK -> onDeleteNetwork(payload, player, minecraft);
         }
@@ -211,16 +218,15 @@ public class ClientMessages {
         });
     }
 
-    private static void onSuperAdmin(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
+    private static void onCapability(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
                                      BlockableEventLoop<?> looper) {
-        final boolean enable = payload.readBoolean();
+        final CompoundTag tag = payload.readNbt();
         looper.execute(() -> {
             LocalPlayer p = player.get();
             if (p == null) {
                 return;
             }
-            ClientCache.sSuperAdmin = enable;
-            // this is lightweight, so do not trigger an event explicitly
+            ClientCache.updateCapability(p, tag);
         });
     }
 

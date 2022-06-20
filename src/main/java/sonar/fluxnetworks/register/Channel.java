@@ -10,13 +10,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-public abstract class Network {
+public abstract class Channel {
 
     /**
      * Note: Increment this if any packet is changed.
      */
-    static final String PROTOCOL = "700";
-    static Network sNetwork;
+    static final String PROTOCOL = "701";
+    static Channel sChannel;
 
     @Nonnull
     static FriendlyByteBuf buffer(int index) {
@@ -25,8 +25,8 @@ public abstract class Network {
         return buffer;
     }
 
-    public static Network get() {
-        return sNetwork;
+    public static Channel get() {
+        return sChannel;
     }
 
     @OnlyIn(Dist.CLIENT)
