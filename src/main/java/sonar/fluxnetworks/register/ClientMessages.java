@@ -13,7 +13,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.ClientCache;
-import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -221,17 +220,17 @@ public class ClientMessages {
 
     private static void onCapability(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
                                      BlockableEventLoop<?> looper) {
-        final CompoundTag tag = payload.readNbt();
-        assert tag != null;
+        final boolean superAdmin = payload.readBoolean();
+        final int wirelessMode = payload.readInt();
+        final int wirelessNetwork = payload.readVarInt();
         looper.execute(() -> {
             LocalPlayer p = player.get();
             if (p == null) {
                 return;
             }
-            FluxPlayer fluxPlayer = FluxUtils.get(p, FluxPlayer.FLUX_PLAYER);
-            if (fluxPlayer != null) {
-                fluxPlayer.readNBT(tag);
-            }
+            ClientCache.sSuperAdmin = superAdmin;
+            ClientCache.sWirelessMode = wirelessMode;
+            ClientCache.sWirelessNetwork = wirelessNetwork;
         });
     }
 

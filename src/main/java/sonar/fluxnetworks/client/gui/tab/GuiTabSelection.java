@@ -16,7 +16,6 @@ import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
 import sonar.fluxnetworks.client.gui.popup.PopupNetworkPassword;
-import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
@@ -123,13 +122,9 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         if (access != AccessLevel.BLOCKED) {
             components.add(FluxTranslate.ACCESS.makeComponent().append(": " + access.getFormattedName()));
         }
-        FluxPlayer fp = FluxUtils.get(mPlayer, FluxPlayer.FLUX_PLAYER);
-        if (fp != null) {
-            int wirelessNetwork = fp.getWirelessNetwork();
-            if (wirelessNetwork == element.getNetworkID()) {
-                components.add(FluxTranslate.EFFECTIVE_WIRELESS_NETWORK.makeComponent()
-                        .withStyle(ChatFormatting.YELLOW));
-            }
+        if (ClientCache.sWirelessNetwork == element.getNetworkID()) {
+            components.add(FluxTranslate.EFFECTIVE_WIRELESS_NETWORK.makeComponent()
+                    .withStyle(ChatFormatting.YELLOW));
         }
         return components;
     }

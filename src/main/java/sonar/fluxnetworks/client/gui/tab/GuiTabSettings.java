@@ -97,10 +97,13 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     @Override
     public void onEditSettingsChanged() {
         if (mApply != null) {
-            mApply.setClickable((mSecurityLevel != SecurityLevel.ENCRYPTED ||
-                    !mPassword.getValue().isEmpty() ||
-                    getNetwork().getSecurityLevel() == SecurityLevel.ENCRYPTED) &&
-                    !mNetworkName.getValue().isEmpty());
+            boolean clickable = true;
+            if (getNetwork().getSecurityLevel() != SecurityLevel.ENCRYPTED) {
+                if (mSecurityLevel == SecurityLevel.ENCRYPTED) {
+                    clickable = !mPassword.getValue().isEmpty();
+                }
+            }
+            mApply.setClickable(clickable && !mNetworkName.getValue().isEmpty());
         }
     }
 
@@ -162,9 +165,9 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (code == FluxConstants.RESPONSE_SUCCESS) {
             if (key == FluxConstants.REQUEST_DELETE_NETWORK) {
                 switchTab(EnumNavigationTab.TAB_HOME);
-            } else if (key == FluxConstants.REQUEST_EDIT_NETWORK) {
+            } /*else if (key == FluxConstants.REQUEST_EDIT_NETWORK) {
                 // ignored
-            }
+            }*/
         }
     }
 }

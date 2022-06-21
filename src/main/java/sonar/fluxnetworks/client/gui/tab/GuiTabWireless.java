@@ -3,16 +3,14 @@ package sonar.fluxnetworks.client.gui.tab;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
-import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.network.WirelessType;
+import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.*;
-import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.connection.FluxMenu;
-import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
@@ -41,18 +39,14 @@ public class GuiTabWireless extends GuiTabCore {
             drawCenteredString(poseStack, font, FluxTranslate.TAB_WIRELESS.get(), leftPos + 88, topPos + 10, 0xb4b4b4);
             font.draw(poseStack, FluxTranslate.ENABLE_WIRELESS.get(), leftPos + 20, topPos + 148, color);
 
-            FluxPlayer fp = FluxUtils.get(mPlayer, FluxPlayer.FLUX_PLAYER);
-            if (fp != null) {
-                int wireless = fp.getWirelessNetwork();
-                if (wireless == getNetwork().getNetworkID()) {
-                    drawCenteredString(poseStack, font,
-                            '(' + FluxTranslate.EFFECTIVE_WIRELESS_NETWORK.get() + ')',
-                            leftPos + 88, topPos + 158, color);
-                } else {
-                    drawCenteredString(poseStack, font,
-                            '(' + FluxTranslate.INEFFECTIVE_WIRELESS_NETWORK.get() + ')',
-                            leftPos + 88, topPos + 158, 0xb4b4b4);
-                }
+            if (ClientCache.sWirelessNetwork == getNetwork().getNetworkID()) {
+                drawCenteredString(poseStack, font,
+                        '(' + FluxTranslate.EFFECTIVE_WIRELESS_NETWORK.get() + ')',
+                        leftPos + 88, topPos + 158, color);
+            } else {
+                drawCenteredString(poseStack, font,
+                        '(' + FluxTranslate.INEFFECTIVE_WIRELESS_NETWORK.get() + ')',
+                        leftPos + 88, topPos + 158, 0xb4b4b4);
             }
         } else {
             renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
@@ -64,10 +58,7 @@ public class GuiTabWireless extends GuiTabCore {
         super.init();
         if (getNetwork().isValid()) {
 
-            FluxPlayer fp = FluxUtils.get(mPlayer, FluxPlayer.FLUX_PLAYER);
-            if (fp != null) {
-                mWirelessMode = fp.getWirelessMode();
-            }
+            mWirelessMode = ClientCache.sWirelessMode;
 
             mEnable = new SwitchButton(minecraft, leftPos + 140, topPos + 148,
                     WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode));
@@ -87,7 +78,7 @@ public class GuiTabWireless extends GuiTabCore {
 
             mApply = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 24, topPos + 126, 48, 12);
             mApply.setText(FluxTranslate.APPLY.get());
-            mApply.setClickable(false);
+            mApply.setClickable(ClientCache.sWirelessNetwork != getNetwork().getNetworkID());
             mButtons.add(mApply);
         }
     }
@@ -136,11 +127,8 @@ public class GuiTabWireless extends GuiTabCore {
     @Override
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
-        if (code == FluxConstants.RESPONSE_REJECT) {
-            FluxPlayer fp = FluxUtils.get(mPlayer, FluxPlayer.FLUX_PLAYER);
-            if (fp != null) {
-                mWirelessMode = fp.getWirelessMode();
-            }
+        if (code > 0) {
+            mWirelessMode = ClientCache.sWirelessMode;
             if (mEnable != null) {
                 mEnable.setChecked(WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode));
             }

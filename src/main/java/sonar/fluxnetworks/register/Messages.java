@@ -120,14 +120,13 @@ public class Messages {
     /**
      * Update player's capability.
      */
-    public static void capability(boolean superAdminOverride, Player player) {
+    public static void capability(Player player) {
         var buf = Channel.buffer(S2C_CAPABILITY);
         FluxPlayer fluxPlayer = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
         if (fluxPlayer != null) {
-            CompoundTag tag = new CompoundTag();
-            fluxPlayer.writeNBT(tag);
-            tag.putBoolean(FluxPlayer.SUPER_ADMIN_KEY, superAdminOverride);
-            buf.writeNbt(tag);
+            buf.writeBoolean(FluxPlayer.isPlayerSuperAdmin(player));
+            buf.writeInt(fluxPlayer.getWirelessMode());
+            buf.writeVarInt(fluxPlayer.getWirelessNetwork());
             sChannel.sendToPlayer(buf, player);
         }
     }
@@ -258,7 +257,7 @@ public class Messages {
             if (fp != null) {
                 if (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(p)) {
                     fp.setSuperAdmin(enable);
-                    capability(fp.isSuperAdmin(), p);
+                    capability(p);
                 } else {
                     response(token, 0, FluxConstants.RESPONSE_REJECT, p);
                 }
@@ -618,7 +617,7 @@ public class Messages {
                 }
                 fp.setWirelessMode(wirelessMode);
                 fp.setWirelessNetwork(wirelessNetwork);
-                capability(fp.isSuperAdmin(), p);
+                capability(p);
             } else {
                 response(token, 0, FluxConstants.RESPONSE_INVALID_USER, p);
             }

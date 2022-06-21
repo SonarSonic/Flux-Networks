@@ -2,14 +2,13 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -42,8 +41,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
-        // mainly used to reload data while changing single-player saves, useless on dedicated server
-        // because once server shut down, all memory deallocated
+        // mainly used to reload data while changing single-player saves, unnecessary on dedicated server
         FluxNetworkData.release();
     }
 
@@ -149,37 +147,32 @@ public class EventHandler {
         // this event only fired on server
         Channel.get().sendToPlayer(Messages.updateNetwork(
                 FluxNetworkData.getAllNetworks(), FluxConstants.NBT_NET_BASIC), event.getPlayer());
-        Messages.capability(FluxPlayer.isPlayerSuperAdmin(event.getPlayer()), event.getPlayer());
+        Messages.capability(event.getPlayer());
     }
 
     @SubscribeEvent
     public static void onAttachCapability(@Nonnull AttachCapabilitiesEvent<Entity> event) {
-        if (event.getObject() instanceof Player) {
+        // make server only
+        if (event.getObject() instanceof ServerPlayer) {
             var provider = new FluxPlayerProvider();
             event.addCapability(FluxPlayerProvider.CAP_KEY, provider);
-            // XXX: should not be a problem
+            // XXX: no invalidation should not be a problem
             //event.addListener(provider);
         }
     }
 
     @SubscribeEvent
     public static void onPlayerClone(@Nonnull PlayerEvent.Clone event) {
-        Player oPlayer = event.getOriginal();
-        oPlayer.reviveCaps();
-        FluxPlayer oFluxPlayer = FluxUtils.get(oPlayer, FluxPlayer.FLUX_PLAYER);
+        // server only event
+        event.getOriginal().reviveCaps();
+        FluxPlayer oFluxPlayer = FluxUtils.get(event.getOriginal(), FluxPlayer.FLUX_PLAYER);
         if (oFluxPlayer != null) {
-            Player nPlayer = event.getPlayer();
-            FluxPlayer nFluxPlayer = FluxUtils.get(nPlayer, FluxPlayer.FLUX_PLAYER);
+            FluxPlayer nFluxPlayer = FluxUtils.get(event.getPlayer(), FluxPlayer.FLUX_PLAYER);
             if (nFluxPlayer != null) {
                 nFluxPlayer.set(oFluxPlayer);
-                MinecraftServer server = nPlayer.getServer();
-                if (server != null) {
-                    // sync after client receives respawn packet
-                    server.execute(() -> Messages.capability(nFluxPlayer.isSuperAdmin(), nPlayer));
-                }
             }
         }
-        oPlayer.invalidateCaps();
+        event.getOriginal().invalidateCaps();
     }
 
     //// TILE EVENTS \\\\

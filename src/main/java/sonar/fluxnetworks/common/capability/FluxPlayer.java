@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
  */
 public class FluxPlayer {
 
+    // server only
     public static final Capability<FluxPlayer> FLUX_PLAYER = CapabilityManager.get(new CapabilityToken<>() {
     });
 

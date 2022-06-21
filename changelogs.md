@@ -1,6 +1,7 @@
 ### Changelog 1.18.2-7.0.2.3 (2022-06-21)
 (Install Modern UI for new GUI system and better server performance)
-
+  
+* Fix wireless charging bugs
 * Update JEI API
 * Change wireless settings to individual player
 * Enhance and update localization
