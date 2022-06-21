@@ -13,8 +13,8 @@ import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.gui.button.FluxEditBox;
 import sonar.fluxnetworks.client.gui.button.SwitchButton;
 import sonar.fluxnetworks.common.connection.FluxMenu;
-import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.connection.TransferHandler;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
@@ -98,6 +98,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
 
         if (!getDevice().getDeviceType().isStorage()) {
             mChunkLoading = new SwitchButton(minecraft, leftPos + 140, topPos + 144, getDevice().isForcedLoading());
+            mChunkLoading.setClickable(false);
             mButtons.add(mChunkLoading);
         }
     }

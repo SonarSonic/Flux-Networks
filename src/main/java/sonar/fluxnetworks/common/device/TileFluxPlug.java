@@ -60,20 +60,20 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        //if ((mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
-        if (cap == CapabilityEnergy.ENERGY || cap == FluxCapabilities.FN_ENERGY_STORAGE) {
-            final int index = side == null ? 0 : side.get3DDataValue();
-            LazyOptional<?> handler = mEnergyCaps[index];
-            if (handler == null) {
-                final EnergyStorage storage = new EnergyStorage(
-                        side == null ? Direction.from3DDataValue(0) : side);
-                // save an immutable pointer to an immutable object
-                handler = LazyOptional.of(() -> storage);
-                mEnergyCaps[index] = handler;
+        if (!isRemoved()) {
+            if (cap == CapabilityEnergy.ENERGY || cap == FluxCapabilities.FN_ENERGY_STORAGE) {
+                final int index = side == null ? 0 : side.get3DDataValue();
+                LazyOptional<?> handler = mEnergyCaps[index];
+                if (handler == null) {
+                    final EnergyStorage storage = new EnergyStorage(
+                            side == null ? Direction.from3DDataValue(0) : side);
+                    // save an immutable pointer to an immutable object
+                    handler = LazyOptional.of(() -> storage);
+                    mEnergyCaps[index] = handler;
+                }
+                return handler.cast();
             }
-            return handler.cast();
         }
-        //}
         return super.getCapability(cap, side);
     }
 

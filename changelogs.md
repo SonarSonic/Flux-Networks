@@ -1,6 +1,19 @@
+### Changelog 1.18.2-7.0.2.3 (2022-06-21)
+(Install Modern UI for new GUI system and better server performance)
+
+* Update JEI API
+* Change wireless settings to individual player
+* Enhance and update localization
+* Enhance network packet security
+* Enhance overall GUI flexibility
+* Optimize network packet handling
+* Optimize energy transfer system
+* Optimize data synchronization
+* Optimize client cache usage
+* Fix Flux Storage lighting glitch
+* Fix capability invalidation
+
 ### Changelog 1.16.5-6.1.7.12 (2021-04-22)
-(Install Modern UI for better font looking)
-  
 * Fix network packet security leaks
 * Fix super admin can't transfer ownership to self
 
