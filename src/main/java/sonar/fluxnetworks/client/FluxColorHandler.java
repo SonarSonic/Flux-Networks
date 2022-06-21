@@ -1,7 +1,9 @@
 package sonar.fluxnetworks.client;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.ItemColor;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -11,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
 import javax.annotation.Nonnull;
@@ -134,11 +137,10 @@ public class FluxColorHandler implements BlockColor, ItemColor {
                     return NavigationHome.network.isInvalid() ? NO_NETWORK_COLOR : NavigationHome.network.getSetting
                     (NetworkSettings.NETWORK_COLOR) | 0xff000000;
                 }*/
-                /*Screen screen = Minecraft.getInstance().currentScreen;
-                if (screen instanceof GuiFluxCore) {
-                    GuiFluxCore gui = (GuiFluxCore) screen;
-                    return gui.network.getNetworkColor();
-                }*/
+                Screen screen = Minecraft.getInstance().screen;
+                if (screen instanceof GuiFluxCore gui) {
+                    return gui.getNetwork().getNetworkColor();
+                }
             }
             tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
             if (tag != null) {

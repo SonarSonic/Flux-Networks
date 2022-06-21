@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 /**
  * A class holding the capability instance of each player.
  */
-public class FluxPlayerProvider implements ICapabilitySerializable<CompoundTag>, Runnable {
+public class FluxPlayerProvider implements ICapabilitySerializable<CompoundTag>/*, Runnable*/ {
 
     public static final ResourceLocation CAP_KEY = new ResourceLocation(FluxNetworks.MODID, "flux_player");
 
@@ -28,10 +28,10 @@ public class FluxPlayerProvider implements ICapabilitySerializable<CompoundTag>,
         mHandler = LazyOptional.of(() -> mCap);
     }
 
-    @Override
+    /*@Override
     public void run() {
         mHandler.invalidate();
-    }
+    }*/
 
     @Nonnull
     @Override

@@ -46,6 +46,12 @@ public class FluxPlayer {
         mWirelessNetwork = wirelessNetwork;
     }
 
+    public void set(FluxPlayer other) {
+        mSuperAdmin = other.mSuperAdmin;
+        mWirelessMode = other.mWirelessMode;
+        mWirelessNetwork = other.mWirelessNetwork;
+    }
+
     public void writeNBT(@Nonnull CompoundTag tag) {
         tag.putBoolean(SUPER_ADMIN_KEY, mSuperAdmin);
         tag.putInt("wirelessMode", mWirelessMode);

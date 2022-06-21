@@ -255,11 +255,15 @@ public class Messages {
                 return;
             }
             final FluxPlayer fp = FluxUtils.get(p, FluxPlayer.FLUX_PLAYER);
-            if (fp != null && (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(p))) {
-                fp.setSuperAdmin(enable);
-                capability(fp.isSuperAdmin(), p);
+            if (fp != null) {
+                if (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(p)) {
+                    fp.setSuperAdmin(enable);
+                    capability(fp.isSuperAdmin(), p);
+                } else {
+                    response(token, 0, FluxConstants.RESPONSE_REJECT, p);
+                }
             } else {
-                response(token, 0, FluxConstants.RESPONSE_REJECT, p);
+                response(token, 0, FluxConstants.RESPONSE_INVALID_USER, p);
             }
         });
     }
@@ -578,7 +582,8 @@ public class Messages {
                 return false;
             } else {
                 if (!(menu.mProvider instanceof ItemAdminConfigurator.Provider)) {
-                    return menu.mProvider.getNetworkID() != network.getNetworkID();
+                    return menu.mProvider.getNetworkID() != network.getNetworkID() &&
+                            !network.canPlayerAccess(p, "");
                 } else {
                     return !network.canPlayerAccess(p, "");
                 }
@@ -608,14 +613,14 @@ public class Messages {
                 final FluxNetwork network = FluxNetworkData.getNetwork(wirelessNetwork);
                 boolean reject = checkToken(token, p, network);
                 if (reject) {
-                    response(token, FluxConstants.REQUEST_EDIT_MEMBER, FluxConstants.RESPONSE_REJECT, p);
+                    response(token, 0, FluxConstants.RESPONSE_REJECT, p);
                     return;
                 }
                 fp.setWirelessMode(wirelessMode);
                 fp.setWirelessNetwork(wirelessNetwork);
                 capability(fp.isSuperAdmin(), p);
             } else {
-                response(token, FluxConstants.REQUEST_EDIT_MEMBER, FluxConstants.RESPONSE_REJECT, p);
+                response(token, 0, FluxConstants.RESPONSE_INVALID_USER, p);
             }
         });
     }

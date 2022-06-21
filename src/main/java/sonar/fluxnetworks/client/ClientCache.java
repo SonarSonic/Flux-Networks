@@ -109,13 +109,6 @@ public final class ClientCache {
         return fluxPlayer != null && fluxPlayer.isSuperAdmin();
     }
 
-    public static void updateCapability(Player player, CompoundTag tag) {
-        FluxPlayer fluxPlayer = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
-        if (fluxPlayer != null) {
-            fluxPlayer.readNBT(tag);
-        }
-    }
-
     /*public String getDisplayName(@Nonnull CompoundTag subTag) {
         FluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
         if (network.isValid()) {

@@ -2,6 +2,7 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -29,6 +30,7 @@ import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.capability.FluxPlayerProvider;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkData;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -155,8 +157,29 @@ public class EventHandler {
         if (event.getObject() instanceof Player) {
             var provider = new FluxPlayerProvider();
             event.addCapability(FluxPlayerProvider.CAP_KEY, provider);
-            event.addListener(provider);
+            // XXX: should not be a problem
+            //event.addListener(provider);
         }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerClone(@Nonnull PlayerEvent.Clone event) {
+        Player oPlayer = event.getOriginal();
+        oPlayer.reviveCaps();
+        FluxPlayer oFluxPlayer = FluxUtils.get(oPlayer, FluxPlayer.FLUX_PLAYER);
+        if (oFluxPlayer != null) {
+            Player nPlayer = event.getPlayer();
+            FluxPlayer nFluxPlayer = FluxUtils.get(nPlayer, FluxPlayer.FLUX_PLAYER);
+            if (nFluxPlayer != null) {
+                nFluxPlayer.set(oFluxPlayer);
+                MinecraftServer server = nPlayer.getServer();
+                if (server != null) {
+                    // sync after client receives respawn packet
+                    server.execute(() -> Messages.capability(nFluxPlayer.isSuperAdmin(), nPlayer));
+                }
+            }
+        }
+        oPlayer.invalidateCaps();
     }
 
     //// TILE EVENTS \\\\
