@@ -461,7 +461,7 @@ public class Messages {
                 return;
             }
             final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
-            boolean reject = checkToken(token, p, network);
+            boolean reject = checkTokenFailed(token, p, network);
             if (reject) {
                 response(token, FluxConstants.REQUEST_EDIT_NETWORK, FluxConstants.RESPONSE_REJECT, p);
                 return;
@@ -558,7 +558,7 @@ public class Messages {
                 return;
             }
             final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
-            boolean reject = checkToken(token, p, network);
+            boolean reject = checkTokenFailed(token, p, network);
             if (reject) {
                 response(token, FluxConstants.REQUEST_EDIT_MEMBER, FluxConstants.RESPONSE_REJECT, p);
                 return;
@@ -572,7 +572,7 @@ public class Messages {
         });
     }
 
-    private static boolean checkToken(int token, Player p, FluxNetwork network) {
+    private static boolean checkTokenFailed(int token, Player p, FluxNetwork network) {
         if (!network.isValid()) {
             return true;
         }
@@ -610,7 +610,8 @@ public class Messages {
             final FluxPlayer fp = FluxUtils.get(p, FluxPlayer.FLUX_PLAYER);
             if (fp != null) {
                 final FluxNetwork network = FluxNetworkData.getNetwork(wirelessNetwork);
-                boolean reject = checkToken(token, p, network);
+                // allow set to invalid
+                boolean reject = network.isValid() && checkTokenFailed(token, p, network);
                 if (reject) {
                     response(token, 0, FluxConstants.RESPONSE_REJECT, p);
                     return;
