@@ -23,6 +23,7 @@ public abstract class TransferHandler {
     public static final int PRI_GAIN_MAX = 100000;
 
     // to get the lowest priority across the network
+    // contrast: STORAGE_PRI_DECR > PRI_USER_MAX + PRI_GAIN_MAX
     public static final int STORAGE_PRI_DECR = 1000000;
 
     /**
@@ -143,8 +144,13 @@ public abstract class TransferHandler {
      *
      * @param priority the priority to set
      */
-    public void setPriority(int priority) {
-        mPriority = Mth.clamp(priority, PRI_USER_MIN, PRI_USER_MAX);
+    public boolean setPriority(int priority) {
+        priority = Mth.clamp(priority, PRI_USER_MIN, PRI_USER_MAX);
+        if (mPriority != priority) {
+            mPriority = priority;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -159,8 +165,12 @@ public abstract class TransferHandler {
      *
      * @param surgeMode whether to surge
      */
-    public void setSurgeMode(boolean surgeMode) {
-        mSurgeMode = surgeMode;
+    public boolean setSurgeMode(boolean surgeMode) {
+        if (mSurgeMode != surgeMode) {
+            mSurgeMode = surgeMode;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -229,20 +239,9 @@ public abstract class TransferHandler {
     }
 
     public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.NBT_TILE_SETTING) {
-            if (tag.contains(FluxConstants.SURGE_MODE)) {
-                setSurgeMode(tag.getBoolean(FluxConstants.SURGE_MODE));
-            }
-            if (tag.contains(FluxConstants.PRIORITY)) {
-                setPriority(tag.getInt(FluxConstants.PRIORITY));
-            }
-            if (tag.contains(FluxConstants.DISABLE_LIMIT)) {
-                setDisableLimit(tag.getBoolean(FluxConstants.DISABLE_LIMIT));
-            }
-            if (tag.contains(FluxConstants.LIMIT)) {
-                setLimit(tag.getLong(FluxConstants.LIMIT));
-            }
-            return;
+        if (type == FluxConstants.NBT_TILE_SETTINGS) {
+            // use changeSettings()
+            throw new IllegalArgumentException();
         }
         if (tag.contains(FluxConstants.BUFFER)) {
             mBuffer = tag.getLong(FluxConstants.BUFFER);
@@ -264,6 +263,26 @@ public abstract class TransferHandler {
                 mDisableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
             }
         }
+    }
+
+    /**
+     * @return true if sorting is required
+     */
+    public boolean changeSettings(@Nonnull CompoundTag tag) {
+        boolean sort = false;
+        if (tag.contains(FluxConstants.SURGE_MODE)) {
+            sort = setSurgeMode(tag.getBoolean(FluxConstants.SURGE_MODE));
+        }
+        if (tag.contains(FluxConstants.PRIORITY)) {
+            sort |= setPriority(tag.getInt(FluxConstants.PRIORITY));
+        }
+        if (tag.contains(FluxConstants.DISABLE_LIMIT)) {
+            setDisableLimit(tag.getBoolean(FluxConstants.DISABLE_LIMIT));
+        }
+        if (tag.contains(FluxConstants.LIMIT)) {
+            setLimit(tag.getLong(FluxConstants.LIMIT));
+        }
+        return sort;
     }
 
     public void writePacket(@Nonnull FriendlyByteBuf buf, byte type) {

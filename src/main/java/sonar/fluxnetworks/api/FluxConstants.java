@@ -19,13 +19,13 @@ public final class FluxConstants {
      * <ul>
      * <li>UPDATE: S->C (Write - server, Read - client)</li>
      * <li>DROP: (Write - server, Read - client/server)</li>
-     * <li>SETTING: C->S (Write - client, Read - server)</li>
+     * <li>SETTINGS: C->S (Write - client, Read - server)</li>
      * </ul>
      */
     public static final byte
             NBT_TILE_UPDATE = 11,
             NBT_TILE_DROP = 15,
-            NBT_TILE_SETTING = 19;
+            NBT_TILE_SETTINGS = 19;
     /**
      * NBT access type, update phantom flux device.
      * S->C (Write - server, read - client).

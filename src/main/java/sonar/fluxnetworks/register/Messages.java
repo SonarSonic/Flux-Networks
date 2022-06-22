@@ -281,7 +281,7 @@ public class Messages {
                 try {
                     if (p.level.getBlockEntity(pos) instanceof TileFluxDevice e) {
                         if (e.canPlayerAccess(p)) {
-                            e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTING);
+                            e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
                         }
                     }
                 } catch (RuntimeException e) {
@@ -309,7 +309,7 @@ public class Messages {
                         for (GlobalPos pos : list) {
                             IFluxDevice f = network.getConnectionByPos(pos);
                             if (f instanceof TileFluxDevice e) {
-                                e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTING);
+                                e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
                             }
                         }
                     }
@@ -419,7 +419,8 @@ public class Messages {
                 // we can connect to an invalid network (i.e. disconnect)
                 if (!network.isValid() || network.canPlayerAccess(p, password)) {
                     if (network.isValid()) {
-                        e.setDeviceOwner(p.getUUID());
+                        // silently ignored on disconnect
+                        e.setOwnerUUID(p.getUUID());
                     }
                     e.connect(network);
                     response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);

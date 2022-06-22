@@ -245,6 +245,10 @@ public class ServerFluxNetwork extends FluxNetwork {
         mPassword = password;
     }
 
+    public void markSortConnections() {
+        mSortConnections = true;
+    }
+
     @Override
     public int changeMembership(@Nonnull Player player, @Nonnull UUID targetUUID, byte type) {
         final AccessLevel access = getPlayerAccess(player);

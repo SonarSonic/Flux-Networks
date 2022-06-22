@@ -4,7 +4,7 @@ import net.minecraft.core.Direction;
 
 import javax.annotation.Nonnull;
 
-public class FluxPlugHandler extends FluxSidedHandler {
+public class FluxPlugHandler extends FluxConnectorHandler {
 
     // external received energy happen outside the transfer cycle
     private long mReceived;

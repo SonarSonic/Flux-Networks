@@ -66,7 +66,7 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
                 }
             }
             if (placer instanceof Player) {
-                device.setDeviceOwner(placer.getUUID());
+                device.setOwnerUUID(placer.getUUID());
             }
         }
     }

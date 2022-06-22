@@ -12,12 +12,12 @@ import sonar.fluxnetworks.common.util.EnergyUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class FluxSidedHandler extends TransferHandler {
+public abstract class FluxConnectorHandler extends TransferHandler {
 
     // lazy-loading elements
     protected final SideTransfer[] mTransfers = new SideTransfer[6];
 
-    protected FluxSidedHandler() {
+    protected FluxConnectorHandler() {
         super(FluxConfig.defaultLimit);
     }
 

@@ -45,13 +45,13 @@ public enum FluxConfigurationType {
                 // we can connect to an invalid network (i.e. disconnect)
                 if (!network.isValid() || network.canPlayerAccess(player, "")) {
                     if (network.isValid()) {
-                        device.setDeviceOwner(player.getUUID());
+                        device.setOwnerUUID(player.getUUID());
                     }
                     device.connect(network);
                 }
             }
         } else {
-            device.readCustomTag(tag, FluxConstants.NBT_TILE_SETTING);
+            device.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
         }
     }
 

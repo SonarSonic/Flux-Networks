@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.common.device;
 
-public class FluxPointHandler extends FluxSidedHandler {
+public class FluxPointHandler extends FluxConnectorHandler {
 
     private long mDesired;
 
