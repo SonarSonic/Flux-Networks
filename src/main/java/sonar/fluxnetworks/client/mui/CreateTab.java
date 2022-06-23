@@ -6,14 +6,10 @@ import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.graphics.drawable.Drawable;
 import icyllis.modernui.math.Rect;
-import icyllis.modernui.text.Editable;
-import icyllis.modernui.text.InputFilter;
-import icyllis.modernui.text.TextWatcher;
+import icyllis.modernui.text.*;
 import icyllis.modernui.text.method.PasswordTransformationMethod;
 import icyllis.modernui.util.DataSet;
-import icyllis.modernui.view.Gravity;
-import icyllis.modernui.view.View;
-import icyllis.modernui.view.ViewGroup;
+import icyllis.modernui.view.*;
 import icyllis.modernui.widget.*;
 import icyllis.modernui.widget.AdapterView.OnItemSelectedListener;
 import net.minecraft.client.Minecraft;
@@ -27,14 +23,14 @@ import sonar.fluxnetworks.client.widget.ColorButton;
 import sonar.fluxnetworks.client.widget.ColorPicker;
 import sonar.fluxnetworks.client.widget.ColorPicker.OnColorChangeListener;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
+import sonar.fluxnetworks.common.integration.MuiIntegration;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static icyllis.modernui.view.View.dp;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static icyllis.modernui.view.ViewGroup.LayoutParams.*;
 
 public class CreateTab extends Fragment {
 
@@ -74,9 +70,19 @@ public class CreateTab extends Fragment {
         super.onCreate(savedInstanceState);
         getParentFragmentManager().setFragmentResultListener("create_network", this, (requestKey, result) -> {
             int code = result.getInt("code");
-            if (code == FluxConstants.RESPONSE_REJECT) {
-                Toast.makeText("Your request was rejected by the server", Toast.LENGTH_SHORT)
-                        .show();
+            final FluxTranslate t = switch (code) {
+                case FluxConstants.RESPONSE_REJECT -> FluxTranslate.REJECT;
+                case FluxConstants.RESPONSE_NO_OWNER -> FluxTranslate.NO_OWNER;
+                case FluxConstants.RESPONSE_NO_ADMIN -> FluxTranslate.NO_ADMIN;
+                case FluxConstants.RESPONSE_NO_SPACE -> FluxTranslate.NO_SPACE;
+                case FluxConstants.RESPONSE_HAS_CONTROLLER -> FluxTranslate.HAS_CONTROLLER;
+                case FluxConstants.RESPONSE_INVALID_USER -> FluxTranslate.INVALID_USER;
+                case FluxConstants.RESPONSE_INVALID_PASSWORD -> FluxTranslate.INVALID_PASSWORD;
+                case FluxConstants.RESPONSE_BANNED_LOADING -> FluxTranslate.BANNED_LOADING;
+                default -> null;
+            };
+            if (t != null) {
+                MuiIntegration.showToastError(t);
             }
         });
     }

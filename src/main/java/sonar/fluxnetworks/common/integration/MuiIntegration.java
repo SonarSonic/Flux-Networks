@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.common.integration;
 
+import icyllis.modernui.core.Core;
 import icyllis.modernui.forge.MuiForgeApi;
 import icyllis.modernui.forge.OpenMenuEvent;
 import icyllis.modernui.text.SpannableString;
@@ -34,7 +35,11 @@ public class MuiIntegration {
         SpannableString text = new SpannableString(translate.get());
         text.setSpan(new ForegroundColorSpan(0xFFCF1515), 0, text.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        MuiForgeApi.postToUiThread(() -> Toast.makeText(text, Toast.LENGTH_SHORT).show());
+        if (Core.isOnUiThread()) {
+            Toast.makeText(text, Toast.LENGTH_SHORT).show();
+        } else {
+            MuiForgeApi.postToUiThread(() -> Toast.makeText(text, Toast.LENGTH_SHORT).show());
+        }
     }
 
     @OnlyIn(Dist.CLIENT)

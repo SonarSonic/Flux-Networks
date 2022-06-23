@@ -1,18 +1,19 @@
 package sonar.fluxnetworks.common.device;
 
 import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
+import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.network.NetworkHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
@@ -97,6 +98,10 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             mNetwork.enqueueConnectionRemoval(this, false);
             if (isForcedLoading()) {
                 //FluxChunkManager.removeChunkLoader(this);
+                ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
+                        SectionPos.blockToSectionCoord(worldPosition.getX()),
+                        SectionPos.blockToSectionCoord(worldPosition.getZ()),
+                        false, true); //TODO ticking or not?
             }
             getTransferHandler().clearLocalStates();
             mFlags &= ~FLAG_FIRST_LOADED;
@@ -289,6 +294,18 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             boolean sort = getTransferHandler().changeSettings(tag);
             if (sort && mNetwork.isValid()) {
                 ((ServerFluxNetwork) mNetwork).markSortConnections();
+            }
+            if (tag.contains(FluxConstants.FORCED_LOADING)) {
+                if (FluxConfig.enableChunkLoading && !getDeviceType().isStorage()) {
+                    boolean load = tag.getBoolean(FluxConstants.FORCED_LOADING);
+                    ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
+                            SectionPos.blockToSectionCoord(worldPosition.getX()),
+                            SectionPos.blockToSectionCoord(worldPosition.getZ()),
+                            load, true);
+                    setForcedLoading(load);
+                } else {
+                    setForcedLoading(false);
+                }
             }
             // notify listeners
             mFlags |= FLAG_SETTING_CHANGED;
