@@ -18,7 +18,7 @@ import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
-import sonar.fluxnetworks.common.integration.MuiIntegration;
+import sonar.fluxnetworks.common.integration.MUIIntegration;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -49,31 +49,33 @@ public abstract class GuiFluxCore extends GuiPopupHost {
         super(menu, player);
         mPlayer = player;
         mNetwork = ClientCache.getNetwork(menu.mProvider.getNetworkID());
-        // this called from main thread
-        menu.mOnResultListener = (__, key, code) -> {
-            final FluxTranslate t = switch (code) {
-                case FluxConstants.RESPONSE_REJECT -> FluxTranslate.REJECT;
-                case FluxConstants.RESPONSE_NO_OWNER -> FluxTranslate.NO_OWNER;
-                case FluxConstants.RESPONSE_NO_ADMIN -> FluxTranslate.NO_ADMIN;
-                case FluxConstants.RESPONSE_NO_SPACE -> FluxTranslate.NO_SPACE;
-                case FluxConstants.RESPONSE_HAS_CONTROLLER -> FluxTranslate.HAS_CONTROLLER;
-                case FluxConstants.RESPONSE_INVALID_USER -> FluxTranslate.INVALID_USER;
-                case FluxConstants.RESPONSE_INVALID_PASSWORD -> FluxTranslate.INVALID_PASSWORD;
-                case FluxConstants.RESPONSE_BANNED_LOADING -> FluxTranslate.BANNED_LOADING;
-                default -> null;
-            };
-            if (t != null) {
-                if (FluxNetworks.isModernUILoaded()) {
-                    MuiIntegration.showToastError(t);
-                } else {
-                    getMinecraft().getToasts().addToast(SystemToast.multiline(getMinecraft(),
-                            SystemToast.SystemToastIds.TUTORIAL_HINT,
-                            Component.nullToEmpty(FluxNetworks.NAME),
-                            t.getComponent()));
-                }
-            }
-            onResponseAction(key, code);
+        menu.mOnResultListener = this::onResponse;
+    }
+
+    // this called from main thread
+    private void onResponse(FluxMenu menu, int key, int code) {
+        final FluxTranslate t = switch (code) {
+            case FluxConstants.RESPONSE_REJECT -> FluxTranslate.REJECT;
+            case FluxConstants.RESPONSE_NO_OWNER -> FluxTranslate.NO_OWNER;
+            case FluxConstants.RESPONSE_NO_ADMIN -> FluxTranslate.NO_ADMIN;
+            case FluxConstants.RESPONSE_NO_SPACE -> FluxTranslate.NO_SPACE;
+            case FluxConstants.RESPONSE_HAS_CONTROLLER -> FluxTranslate.HAS_CONTROLLER;
+            case FluxConstants.RESPONSE_INVALID_USER -> FluxTranslate.INVALID_USER;
+            case FluxConstants.RESPONSE_INVALID_PASSWORD -> FluxTranslate.INVALID_PASSWORD;
+            case FluxConstants.RESPONSE_BANNED_LOADING -> FluxTranslate.BANNED_LOADING;
+            default -> null;
         };
+        if (t != null) {
+            if (FluxNetworks.isModernUILoaded()) {
+                MUIIntegration.showToastError(t);
+            } else {
+                getMinecraft().getToasts().addToast(SystemToast.multiline(getMinecraft(),
+                        SystemToast.SystemToastIds.TUTORIAL_HINT,
+                        Component.nullToEmpty(FluxNetworks.NAME),
+                        t.getComponent()));
+            }
+        }
+        onResponseAction(key, code);
     }
 
     public int getToken() {

@@ -43,11 +43,11 @@ public class ItemAdminConfigurator extends Item {
         }
 
         @Override
-        public void onMenuOpened(@Nonnull Player player) {
+        public void onPlayerOpened(@Nonnull Player player) {
         }
 
         @Override
-        public void onMenuClosed(@Nonnull Player player) {
+        public void onPlayerClosed(@Nonnull Player player) {
         }
 
         @Nullable

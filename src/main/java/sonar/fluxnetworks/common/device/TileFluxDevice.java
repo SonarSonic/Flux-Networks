@@ -1,7 +1,8 @@
 package sonar.fluxnetworks.common.device;
 
 import net.minecraft.Util;
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +24,7 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.*;
-import sonar.fluxnetworks.common.integration.MuiIntegration;
+import sonar.fluxnetworks.common.integration.MUIIntegration;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.Channel;
 import sonar.fluxnetworks.register.Messages;
@@ -47,8 +49,8 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     public static final int MAX_CUSTOM_NAME_LENGTH = 24;
 
     static final int CONNECTION_MASK = 0x0000003F; // server
-    static final int FLAG_FIRST_LOADED = 0x00000040; // server
-    static final int FLAG_SETTING_CHANGED = 0x00000080; // server
+    static final int FLAG_FIRST_LOADED = 0x00000040; // server, set first server tick
+    static final int FLAG_SETTINGS_CHANGED = 0x00000080; // server
     static final int FLAG_FORCED_LOADING = 0x00000100; // client and server
     static final int FLAG_ENERGY_CHANGED = 0x00000200; // server
 
@@ -98,10 +100,9 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             mNetwork.enqueueConnectionRemoval(this, false);
             if (isForcedLoading()) {
                 //FluxChunkManager.removeChunkLoader(this);
+                long chunkPos = ChunkPos.asLong(worldPosition);
                 ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
-                        SectionPos.blockToSectionCoord(worldPosition.getX()),
-                        SectionPos.blockToSectionCoord(worldPosition.getZ()),
-                        false, true); //TODO ticking or not?
+                        ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos), false, true);
             }
             getTransferHandler().clearLocalStates();
             mFlags &= ~FLAG_FIRST_LOADED;
@@ -124,9 +125,9 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             onFirstLoad();
             mFlags |= FLAG_FIRST_LOADED;
         }
-        if ((mFlags & FLAG_SETTING_CHANGED) == FLAG_SETTING_CHANGED) {
+        if ((mFlags & FLAG_SETTINGS_CHANGED) != 0) {
             sendBlockUpdate();
-            mFlags &= ~FLAG_SETTING_CHANGED;
+            mFlags &= ~FLAG_SETTINGS_CHANGED;
         } else if (mPlayerUsing != null) {
             Channel.get().sendToPlayer(Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC), mPlayerUsing);
         }
@@ -142,6 +143,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      * @param player the server player
      */
     public void onPlayerInteract(Player player) {
+        assert !level.isClientSide;
         if (mPlayerUsing != null) {
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
@@ -153,7 +155,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 buf.writeNbt(tag);
             };
             if (FluxConfig.enableGuiDebug && FluxNetworks.isModernUILoaded()) {
-                MuiIntegration.openMenu(player, this, writer);
+                MUIIntegration.openMenu(player, this, writer);
             } else {
                 NetworkHooks.openGui((ServerPlayer) player, this, writer);
             }
@@ -173,19 +175,22 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      * Check access first.
      *
      * @param network the server network to connect, can be invalid
+     * @return true if successfully connected to the network
      */
-    public void connect(FluxNetwork network) {
+    public boolean connect(FluxNetwork network) {
         assert !level.isClientSide;
         if (mNetwork == network) {
-            return;
+            return true;
         }
         if (network.enqueueConnectionAddition(this)) {
             mNetwork.enqueueConnectionRemoval(this, false);
             mNetwork = network;
             mNetworkID = network.getNetworkID();
             getTransferHandler().clearLocalStates();
-            mFlags |= FLAG_SETTING_CHANGED;
+            mFlags |= FLAG_SETTINGS_CHANGED;
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -266,7 +271,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 tag.putInt(FluxConstants.FLAGS, mFlags);
             }
             case FluxConstants.NBT_PHANTOM_UPDATE -> {
-                // note the key may conflict when writing into the root tag
+                // XXX: the key may conflict when writing into the root tag
                 FluxUtils.writeGlobalPos(tag, getGlobalPos());
                 tag.putByte(FluxConstants.DEVICE_TYPE, getDeviceType().getId());
                 tag.putUUID(FluxConstants.PLAYER_UUID, mOwnerUUID);
@@ -298,17 +303,16 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             if (tag.contains(FluxConstants.FORCED_LOADING)) {
                 if (FluxConfig.enableChunkLoading && !getDeviceType().isStorage()) {
                     boolean load = tag.getBoolean(FluxConstants.FORCED_LOADING);
+                    long chunkPos = ChunkPos.asLong(worldPosition);
                     ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
-                            SectionPos.blockToSectionCoord(worldPosition.getX()),
-                            SectionPos.blockToSectionCoord(worldPosition.getZ()),
-                            load, true);
+                            ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos), load, true);
                     setForcedLoading(load);
                 } else {
                     setForcedLoading(false);
                 }
             }
             // notify listeners
-            mFlags |= FLAG_SETTING_CHANGED;
+            mFlags |= FLAG_SETTINGS_CHANGED;
             markChunkUnsaved();
             return;
         }
@@ -345,7 +349,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             if (player.getUUID().equals(mOwnerUUID)) {
                 return true;
             }
-            return mNetwork.getPlayerAccess(player).canUse();
+            return mNetwork.canPlayerAccess(player, "");
         }
         return true;
     }
@@ -456,7 +460,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      * @param player the player
      */
     @Override
-    public void onMenuOpened(Player player) {
+    public void onPlayerOpened(Player player) {
         assert mPlayerUsing == null;
         mPlayerUsing = player;
     }
@@ -467,18 +471,15 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      * @param player the player
      */
     @Override
-    public void onMenuClosed(Player player) {
+    public void onPlayerClosed(Player player) {
         assert level.isClientSide || mPlayerUsing == player;
         mPlayerUsing = null;
     }
 
+    @Nonnull
     @Override
     public final String getCustomName() {
         return mCustomName;
-    }
-
-    public final void setCustomName(String customName) {
-        mCustomName = customName;
     }
 
     @Override

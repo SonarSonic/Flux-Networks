@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
- * This class represents a non-entity flux device (e.g. Network Connections tab).
+ * This class represents a non-entity flux device (e.g. in Network Connections tab).
  * These devices may not exist on client world, so there's no entity instance on the client.
  * They just are loaded on the server world, or used to record unloaded flux devices on server.
  * Logical operations are not allowed here.
@@ -25,16 +25,15 @@ import java.util.UUID;
  */
 public class PhantomFluxDevice implements IFluxDevice {
 
-    public static final int POWER_SURGE_MARKER = Integer.MAX_VALUE;
-    public static final long BYPASS_LIMIT_MARKER = -1;
-
     private int mNetworkID;
     private String mCustomName;
     private int mPriority;
     private long mLimit;
-    private UUID mPlayerUUID;
+    private UUID mOwnerUUID;
     private FluxDeviceType mDeviceType;
     private GlobalPos mGlobalPos;
+    private boolean mSurgeMode;
+    private boolean mDisableLimit;
     private boolean mChunkLoaded;
     private boolean mForcedLoading;
     private long mBuffer;
@@ -54,18 +53,20 @@ public class PhantomFluxDevice implements IFluxDevice {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.mNetworkID = device.getNetworkID();
         t.mCustomName = device.getCustomName();
-        t.mPriority = device.getSurgeMode() ? POWER_SURGE_MARKER : device.getRawPriority();
-        t.mLimit = device.getDisableLimit() ? BYPASS_LIMIT_MARKER : device.getRawLimit();
-        t.mPlayerUUID = device.getOwnerUUID();
+        t.mPriority = device.getRawPriority();
+        t.mLimit = device.getRawLimit();
+        t.mOwnerUUID = device.getOwnerUUID();
         t.mDeviceType = device.getDeviceType();
         t.mGlobalPos = device.getGlobalPos();
+        t.mSurgeMode = device.getSurgeMode();
+        t.mDisableLimit = device.getDisableLimit();
         t.mBuffer = device.getTransferBuffer();
         t.mDisplayStack = device.getDisplayStack();
         return t;
     }
 
     @Nonnull
-    public static PhantomFluxDevice update(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
+    public static PhantomFluxDevice makeUpdated(@Nonnull GlobalPos pos, @Nonnull CompoundTag tag) {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.mGlobalPos = pos;
         t.readCustomTag(tag, FluxConstants.NBT_PHANTOM_UPDATE);
@@ -73,7 +74,7 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Nonnull
-    public static PhantomFluxDevice load(@Nonnull CompoundTag tag) {
+    public static PhantomFluxDevice make(@Nonnull CompoundTag tag) {
         PhantomFluxDevice t = new PhantomFluxDevice();
         t.readCustomTag(tag, FluxConstants.NBT_SAVE_ALL);
         return t;
@@ -88,9 +89,9 @@ public class PhantomFluxDevice implements IFluxDevice {
             tag.putString(FluxConstants.CUSTOM_NAME, mCustomName);
             tag.putInt(FluxConstants.PRIORITY, mPriority);
             tag.putLong(FluxConstants.LIMIT, mLimit);
-            /*tag.putBoolean(FluxConstants.SURGE_MODE, surgeMode);
-            tag.putBoolean(FluxConstants.DISABLE_LIMIT, disableLimit);*/
-            tag.putUUID(FluxConstants.PLAYER_UUID, mPlayerUUID);
+            tag.putBoolean(FluxConstants.SURGE_MODE, mSurgeMode);
+            tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit);
+            tag.putUUID(FluxConstants.PLAYER_UUID, mOwnerUUID);
             tag.putLong(FluxConstants.BUFFER, mBuffer);
             mDisplayStack.save(tag);
         }
@@ -107,9 +108,9 @@ public class PhantomFluxDevice implements IFluxDevice {
             mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
             mPriority = tag.getInt(FluxConstants.PRIORITY);
             mLimit = tag.getLong(FluxConstants.LIMIT);
-            /*surgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
-            disableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);*/
-            mPlayerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
+            mSurgeMode = tag.getBoolean(FluxConstants.SURGE_MODE);
+            mDisableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
+            mOwnerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
             mBuffer = tag.getLong(FluxConstants.BUFFER);
             mDisplayStack = ItemStack.of(tag);
         }
@@ -126,12 +127,12 @@ public class PhantomFluxDevice implements IFluxDevice {
     }
 
     @Override
-    public void onMenuOpened(@Nonnull Player player) {
+    public void onPlayerOpened(@Nonnull Player player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
     @Override
-    public void onMenuClosed(@Nonnull Player player) {
+    public void onPlayerClosed(@Nonnull Player player) {
         throw new IllegalStateException("Logic method cannot be invoked on phantom device");
     }
 
@@ -143,7 +144,7 @@ public class PhantomFluxDevice implements IFluxDevice {
     @Nonnull
     @Override
     public UUID getOwnerUUID() {
-        return mPlayerUUID;
+        return mOwnerUUID;
     }
 
     @Nonnull
@@ -178,6 +179,7 @@ public class PhantomFluxDevice implements IFluxDevice {
         return mGlobalPos;
     }
 
+    @Nonnull
     @Override
     public String getCustomName() {
         return mCustomName;
@@ -185,12 +187,12 @@ public class PhantomFluxDevice implements IFluxDevice {
 
     @Override
     public boolean getDisableLimit() {
-        return mLimit == -1;
+        return mDisableLimit;
     }
 
     @Override
     public boolean getSurgeMode() {
-        return mPriority == Integer.MAX_VALUE;
+        return mSurgeMode;
     }
 
     @Nonnull

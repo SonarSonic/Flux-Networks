@@ -458,7 +458,7 @@ public class FluxNetwork {
             list = tag.getList(CONNECTIONS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
-                PhantomFluxDevice f = PhantomFluxDevice.load(c);
+                PhantomFluxDevice f = PhantomFluxDevice.make(c);
                 mConnectionMap.put(f.getGlobalPos(), f);
             }
         }
@@ -485,7 +485,7 @@ public class FluxNetwork {
                 if (f != null) {
                     f.readCustomTag(c, FluxConstants.NBT_PHANTOM_UPDATE);
                 } else {
-                    mConnectionMap.put(pos, PhantomFluxDevice.update(pos, c));
+                    mConnectionMap.put(pos, PhantomFluxDevice.makeUpdated(pos, c));
                 }
             }
         }

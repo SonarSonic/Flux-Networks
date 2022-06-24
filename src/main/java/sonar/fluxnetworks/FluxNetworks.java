@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sonar.fluxnetworks.common.integration.MuiIntegration;
+import sonar.fluxnetworks.common.integration.MUIIntegration;
 
 @Mod(FluxNetworks.MODID)
 public class FluxNetworks {
@@ -25,7 +25,7 @@ public class FluxNetworks {
 
         FluxConfig.init();
         if (sModernUILoaded) {
-            FMLJavaModLoadingContext.get().getModEventBus().register(MuiIntegration.class);
+            FMLJavaModLoadingContext.get().getModEventBus().register(MUIIntegration.class);
         }
     }
 

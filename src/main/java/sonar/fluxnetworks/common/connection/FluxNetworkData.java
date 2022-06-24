@@ -11,8 +11,9 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.network.SecurityLevel;
-import sonar.fluxnetworks.register.Messages;
+import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.register.Channel;
+import sonar.fluxnetworks.register.Messages;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -106,7 +107,7 @@ public final class FluxNetworkData extends SavedData {
     public FluxNetwork createNetwork(@Nonnull Player creator, @Nonnull String name, int color,
                                      @Nonnull SecurityLevel security, @Nonnull String password) {
         final int max = FluxConfig.maximumPerPlayer;
-        if (max != -1) {
+        if (max != -1 && !FluxPlayer.isPlayerSuperAdmin(creator)) {
             final UUID uuid = creator.getUUID();
             int i = 0;
             for (var n : mNetworks.values()) {

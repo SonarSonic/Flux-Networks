@@ -25,7 +25,7 @@ public class FluxMenu extends AbstractContainerMenu {
     public FluxMenu(int containerId, @Nonnull Inventory inventory, @Nonnull IFluxProvider provider) {
         super(RegistryBlocks.FLUX_MENU, containerId);
         mProvider = provider;
-        provider.onMenuOpened(inventory.player);
+        provider.onPlayerOpened(inventory.player);
     }
 
     // server only
@@ -43,7 +43,7 @@ public class FluxMenu extends AbstractContainerMenu {
     @Override
     public void removed(@Nonnull Player player) {
         super.removed(player);
-        mProvider.onMenuClosed(player);
+        mProvider.onPlayerClosed(player);
     }
 
     // client only

@@ -14,16 +14,25 @@ import javax.annotation.Nonnull;
 public interface IFluxProvider extends MenuProvider {
 
     /**
-     * Returns the network ID that this connector should be. However, this connector
-     * may not be currently connected to the network (waiting to connect).
+     * Returns the network ID that this provider currently connected to.
      *
      * @return the network ID
      */
     int getNetworkID();
 
-    void onMenuOpened(@Nonnull Player player);
+    /**
+     * Called when the player started to interact with this connector.
+     *
+     * @param player the player
+     */
+    void onPlayerOpened(@Nonnull Player player);
 
-    void onMenuClosed(@Nonnull Player player);
+    /**
+     * Called when the player stopped interacting with this connector.
+     *
+     * @param player the player
+     */
+    void onPlayerClosed(@Nonnull Player player);
 
     @Nonnull
     @Override

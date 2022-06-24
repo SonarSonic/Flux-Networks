@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface IFluxDevice extends IFluxProvider {
 
     /**
-     * A constant value identifying the type of this device.
+     * Identify the intrinsic type of this device.
      *
      * @return the device type
      */
@@ -59,6 +59,10 @@ public interface IFluxDevice extends IFluxProvider {
 
     /*int getFolderID();*/
 
+    /**
+     * @return Empty if this has no custom name.
+     */
+    @Nonnull
     String getCustomName();
 
     //void setCustomName(String customName);
@@ -74,7 +78,7 @@ public interface IFluxDevice extends IFluxProvider {
     //void setSurgeMode(boolean surgeMode);
 
     /**
-     * Transfer handler is unavailable on client, this method is mainly used for gui display on client
+     * Transfer handler is only available for logical device, this method is used for display on client.
      * If this device is storage, this method returns the energy stored of it
      *
      * @return internal buffer or energy stored
