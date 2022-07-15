@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
 
 public class GuiTabSettings extends GuiTabEditAbstract {
 
-    public SimpleButton mApply;
     public SimpleButton mDelete;
+    public SimpleButton mApply;
     public int mDeleteCount;
 
     public GuiTabSettings(@Nonnull FluxMenu menu, @Nonnull Player player) {
@@ -48,7 +48,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
                 }
             }
         } else {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
     }
 
@@ -58,22 +58,21 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (getNetwork().isValid()) {
             mNetworkName.setValue(getNetwork().getNetworkName());
 
-            mApply = new SimpleButton(minecraft, leftPos + (imageWidth / 2) + 12, topPos + 150, 48, 12);
-            mApply.setText(FluxTranslate.APPLY.get());
-            mApply.setClickable(false);
-            mButtons.add(mApply);
-
-            mDelete = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 12 - 48, topPos + 150, 48, 12);
-            mDelete.setText(FluxTranslate.DELETE.get());
-            mDelete.setColor(0xFFFF5555);
+            mDelete = new SimpleButton(this, leftPos + (imageWidth / 2) - 12 - 48, topPos + 150, 48, 12,
+                    FluxTranslate.DELETE.get(), 0xFFFF5555);
             mDelete.setClickable(false);
             mButtons.add(mDelete);
+
+            mApply = new SimpleButton(this, leftPos + (imageWidth / 2) + 12, topPos + 150, 48, 12,
+                    FluxTranslate.APPLY.get());
+            mApply.setClickable(false);
+            mButtons.add(mApply);
 
             boolean colorSet = false;
             // two rows
             for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
                 final EnumNetworkColor color = EnumNetworkColor.VALUES[i];
-                ColorButton button = new ColorButton(minecraft,
+                ColorButton button = new ColorButton(this,
                         leftPos + 48 + (i % 7) * 16, topPos + 87 + (i / 7) * 16, color.getRGB());
                 if (!colorSet && color.getRGB() == getNetwork().getNetworkColor()) {
                     mColorButton = button;
@@ -85,7 +84,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
 
             // it's a custom color
             if (!colorSet) {
-                ColorButton button = new ColorButton(minecraft,
+                ColorButton button = new ColorButton(this,
                         leftPos + 32, topPos + 107, getNetwork().getNetworkColor());
                 mColorButton = button;
                 button.setSelected(true);
@@ -108,7 +107,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (button == mApply) {
@@ -128,13 +127,8 @@ public class GuiTabSettings extends GuiTabEditAbstract {
         if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
             return true;
         }
-        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            if (!getNetwork().isValid()) {
-                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
-                    switchTab(EnumNavigationTab.TAB_SELECTION);
-                    return true;
-                }
-            }
+        if (!getNetwork().isValid()) {
+            return redirectNavigationPrompt(mouseX, mouseY, mouseButton, EnumNavigationTab.TAB_SELECTION);
         }
         return false;
     }
@@ -159,12 +153,12 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
         if (code == FluxConstants.RESPONSE_REJECT) {
-            switchTab(EnumNavigationTab.TAB_HOME);
+            switchTab(EnumNavigationTab.TAB_HOME, false);
             return;
         }
         if (code == FluxConstants.RESPONSE_SUCCESS) {
             if (key == FluxConstants.REQUEST_DELETE_NETWORK) {
-                switchTab(EnumNavigationTab.TAB_HOME);
+                switchTab(EnumNavigationTab.TAB_HOME, false);
             } /*else if (key == FluxConstants.REQUEST_EDIT_NETWORK) {
                 // ignored
             }*/

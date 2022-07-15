@@ -41,6 +41,11 @@ public abstract class GuiPopupCore<T extends GuiFluxCore> extends GuiFocusable {
     }
 
     @Override
+    protected void renderLabels(@Nonnull PoseStack poseStack, int mouseX, int mouseY) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     protected final void renderBg(@Nonnull PoseStack poseStack, float deltaTicks, int mouseX, int mouseY) {
         throw new UnsupportedOperationException();
     }
@@ -55,17 +60,18 @@ public abstract class GuiPopupCore<T extends GuiFluxCore> extends GuiFocusable {
         mAlpha = Math.min(1.0f, mAlpha + deltaTicks / 6); // animation duration is (1000/20*6)=300ms
 
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, mAlpha);
-        RenderSystem.setShaderTexture(0, GuiFluxCore.BACKGROUND);
-        blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);
+        RenderSystem.setShaderTexture(0, BACKGROUND);
+        blitBackground(poseStack);
 
         int color = mHost.getNetwork().getNetworkColor();
-        RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
-        RenderSystem.setShaderTexture(0, GuiFluxCore.FRAME);
-        blit(poseStack, (width - 256) / 2, (height - 256) / 2, 0, 0, 256, 256);
+        RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), mAlpha);
+        RenderSystem.setShaderTexture(0, FRAME);
+        blitFrame(poseStack);
 
         // dimmer
-        int bgColor = (int) (mAlpha * 64) << 24;
+        int bgColor = (int) (mAlpha * 128) << 24;
         fill(poseStack, 0, 0, width, height, bgColor);
 
         for (Widget widget : renderables) {

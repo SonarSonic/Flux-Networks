@@ -1,11 +1,7 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 
@@ -13,9 +9,8 @@ public abstract class GuiButtonCore extends GuiComponent {
 
     public static final ResourceLocation BUTTONS = new ResourceLocation(
             FluxNetworks.MODID, "textures/gui/gui_button.png");
-    public static final int TEXTURE_SIZE = 512;
 
-    public final Minecraft mc;
+    public final GuiFocusable screen;
 
     public int x;
     public int y;
@@ -24,8 +19,8 @@ public abstract class GuiButtonCore extends GuiComponent {
 
     protected boolean mClickable = true;
 
-    protected GuiButtonCore(Minecraft mc, int x, int y, int width, int height) {
-        this.mc = mc;
+    protected GuiButtonCore(GuiFocusable screen, int x, int y, int width, int height) {
+        this.screen = screen;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -44,26 +39,6 @@ public abstract class GuiButtonCore extends GuiComponent {
 
     public final boolean isMouseHovered(double mouseX, double mouseY) {
         return mouseX >= x && mouseX < x + width && mouseY >= y && mouseY < y + height;
-    }
-
-    public static void blitF(PoseStack poseStack, float x, float y, float width, float height,
-                             float uOffset, float vOffset, float uWidth, float vHeight) {
-        Matrix4f matrix = poseStack.last().pose();
-
-        float minU = uOffset / TEXTURE_SIZE;
-        float minV = vOffset / TEXTURE_SIZE;
-        float maxU = (uOffset + uWidth) / TEXTURE_SIZE;
-        float maxV = (vOffset + vHeight) / TEXTURE_SIZE;
-
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder builder = tesselator.getBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        builder.vertex(matrix, x, y + height, 0).uv(minU, maxV).endVertex();
-        builder.vertex(matrix, x + width, y + height, 0).uv(maxU, maxV).endVertex();
-        builder.vertex(matrix, x + width, y, 0).uv(maxU, minV).endVertex();
-        builder.vertex(matrix, x, y, 0).uv(minU, minV).endVertex();
-        tesselator.end();
     }
 
     public static void drawOuterFrame(PoseStack poseStack, int x, int y, int width, int height, int color) {

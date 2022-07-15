@@ -14,7 +14,6 @@ import icyllis.modernui.widget.*;
 import icyllis.modernui.widget.AdapterView.OnItemSelectedListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
-import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.network.SecurityLevel;
@@ -70,17 +69,7 @@ public class CreateTab extends Fragment {
         super.onCreate(savedInstanceState);
         getParentFragmentManager().setFragmentResultListener("create_network", this, (requestKey, result) -> {
             int code = result.getInt("code");
-            final FluxTranslate t = switch (code) {
-                case FluxConstants.RESPONSE_REJECT -> FluxTranslate.REJECT;
-                case FluxConstants.RESPONSE_NO_OWNER -> FluxTranslate.NO_OWNER;
-                case FluxConstants.RESPONSE_NO_ADMIN -> FluxTranslate.NO_ADMIN;
-                case FluxConstants.RESPONSE_NO_SPACE -> FluxTranslate.NO_SPACE;
-                case FluxConstants.RESPONSE_HAS_CONTROLLER -> FluxTranslate.HAS_CONTROLLER;
-                case FluxConstants.RESPONSE_INVALID_USER -> FluxTranslate.INVALID_USER;
-                case FluxConstants.RESPONSE_INVALID_PASSWORD -> FluxTranslate.INVALID_PASSWORD;
-                case FluxConstants.RESPONSE_BANNED_LOADING -> FluxTranslate.BANNED_LOADING;
-                default -> null;
-            };
+            final FluxTranslate t = FluxTranslate.fromResponseCode(code);
             if (t != null) {
                 MUIIntegration.showToastError(t);
             }

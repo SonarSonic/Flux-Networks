@@ -41,18 +41,18 @@ public class GuiFluxAdminHome extends GuiTabCore {
     public void init() {
         super.init();
 
-        boolean superAdmin = ClientCache.isSuperAdmin();
-        mSuperAdmin = new SwitchButton(minecraft, leftPos + 140, topPos + 30, superAdmin);
+        boolean superAdmin = ClientCache.sSuperAdmin;
+        mSuperAdmin = new SwitchButton(this, leftPos + 140, topPos + 30, superAdmin);
         mButtons.add(mSuperAdmin);
 
-        mDetailedNetworkView = new SwitchButton(minecraft, leftPos + 140, topPos + 42,
+        mDetailedNetworkView = new SwitchButton(this, leftPos + 140, topPos + 42,
                 ClientCache.sDetailedNetworkView);
         mDetailedNetworkView.setClickable(superAdmin);
         mButtons.add(mDetailedNetworkView);
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (button == mSuperAdmin) {
@@ -79,7 +79,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
     @Override
     protected void containerTick() {
         super.containerTick();
-        boolean superAdmin = ClientCache.isSuperAdmin();
+        boolean superAdmin = ClientCache.sSuperAdmin;
         mSuperAdmin.setChecked(superAdmin);
         mDetailedNetworkView.setClickable(superAdmin);
     }
@@ -91,7 +91,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         }
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 8 && mouseY < topPos + 20) {
-                switchTab(EnumNavigationTab.TAB_SELECTION);
+                switchTab(EnumNavigationTab.TAB_SELECTION, false);
                 return true;
             }
         }

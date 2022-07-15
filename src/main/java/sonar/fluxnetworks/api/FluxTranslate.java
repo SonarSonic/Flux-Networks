@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class FluxTranslate {
 
@@ -147,6 +148,21 @@ public class FluxTranslate {
     public FluxTranslate(String key) {
         mKey = key;
         mComponent = new TranslatableComponent(mKey);
+    }
+
+    @Nullable
+    public static FluxTranslate fromResponseCode(int code) {
+        return switch (code) {
+            case FluxConstants.RESPONSE_REJECT -> REJECT;
+            case FluxConstants.RESPONSE_NO_OWNER -> NO_OWNER;
+            case FluxConstants.RESPONSE_NO_ADMIN -> NO_ADMIN;
+            case FluxConstants.RESPONSE_NO_SPACE -> NO_SPACE;
+            case FluxConstants.RESPONSE_HAS_CONTROLLER -> HAS_CONTROLLER;
+            case FluxConstants.RESPONSE_INVALID_USER -> INVALID_USER;
+            case FluxConstants.RESPONSE_INVALID_PASSWORD -> INVALID_PASSWORD;
+            case FluxConstants.RESPONSE_BANNED_LOADING -> BANNED_LOADING;
+            default -> null;
+        };
     }
 
     private static final ChatFormatting[] ERROR_STYLE = {ChatFormatting.BOLD, ChatFormatting.DARK_RED};

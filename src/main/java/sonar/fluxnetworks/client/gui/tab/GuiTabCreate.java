@@ -38,7 +38,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         // two rows
         for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
             final EnumNetworkColor color = EnumNetworkColor.VALUES[i];
-            ColorButton button = new ColorButton(minecraft,
+            ColorButton button = new ColorButton(this,
                     leftPos + 48 + (i % 7) * 16, topPos + 87 + (i / 7) * 16, color.getRGB());
             if (i == 0) {
                 mColorButton = button;
@@ -47,8 +47,8 @@ public class GuiTabCreate extends GuiTabEditAbstract {
             mButtons.add(button);
         }
 
-        mCreate = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 24, topPos + 150, 48, 12);
-        mCreate.setText(FluxTranslate.CREATE.get());
+        mCreate = new SimpleButton(this, leftPos + (imageWidth / 2) - 24, topPos + 150, 48, 12,
+                FluxTranslate.CREATE.get());
         mCreate.setClickable(false);
         mButtons.add(mCreate);
     }
@@ -59,7 +59,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button == mCreate) {
             //PacketHandler.CHANNEL.sendToServer(new GeneralPacket(GeneralPacketEnum.CREATE_NETWORK,
@@ -87,7 +87,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.onResponseAction(key, code);
         if (key == FluxConstants.REQUEST_CREATE_NETWORK) {
             if (code == FluxConstants.RESPONSE_SUCCESS) {
-                switchTab(EnumNavigationTab.TAB_SELECTION);
+                switchTab(EnumNavigationTab.TAB_SELECTION, false);
             }
         }
     }

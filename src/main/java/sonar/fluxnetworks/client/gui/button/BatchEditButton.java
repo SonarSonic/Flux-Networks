@@ -1,44 +1,39 @@
 package sonar.fluxnetworks.client.gui.button;
 
-/*import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import sonar.fluxnetworks.client.gui.ScreenUtils;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
 public class BatchEditButton extends GuiButtonCore {
 
-    public BatchEditButton(int x, int y, int id, String text) {
-        super(x, y, 12, 12, id);
-        this.text = text;
+    private final int mU0;
+    private final String mText;
+
+    public BatchEditButton(GuiFocusable screen, int x, int y, int u0, String text) {
+        super(screen, x, y, 12, 12);
+        mU0 = u0;
+        mText = text;
     }
 
     @Override
-    public void drawButton(Minecraft mc, MatrixStack matrixStack, int mouseX, int mouseY, int guiLeft, int guiTop) {
-        GlStateManager.pushMatrix();
-        GlStateManager.enableAlphaTest();
-        GlStateManager.enableBlend();
-        if (clickable) {
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0f);
+    protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+        boolean hovered = isMouseHovered(mouseX, mouseY);
+
+        RenderSystem.enableBlend();
+        if (mClickable) {
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         } else {
-            RenderSystem.color4f(0.5F, 0.5F, 0.5F, 1.0f);
+            RenderSystem.setShaderColor(0.5F, 0.5F, 0.5F, 1.0F);
         }
+        RenderSystem.setShaderTexture(0, BUTTONS);
 
-        boolean b = isMouseHovered(mc, mouseX - guiLeft, mouseY - guiTop);
+        blit(poseStack, x, y, mU0, 48 + (hovered ? 16 : 0), width, height);
 
-        mc.getTextureManager().bindTexture(ScreenUtils.BUTTONS);
-        blit(matrixStack, x, y, 16 * id, 48 + (b ? 16 : 0), 12, 12);
-
-        if (clickable && b) {
-            mc.fontRenderer.drawString(matrixStack, text, x - mc.fontRenderer.getStringWidth(text) / 2f + 6, y - 9, 0xFFFFFF);
+        if (hovered && mClickable) {
+            Font font = screen.getMinecraft().font;
+            font.draw(poseStack, mText, x - font.width(mText) / 2f + 6, y - 9, 0xFFFFFF);
         }
-
-        GlStateManager.popMatrix();
     }
-
-    public BatchEditButton setUnclickable() {
-        clickable = false;
-        return this;
-    }
-}*/
+}

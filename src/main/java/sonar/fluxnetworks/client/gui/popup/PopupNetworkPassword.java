@@ -26,12 +26,12 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
     @Override
     public void init() {
         super.init();
-        mCancel = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 12 - 48, topPos + 86, 48, 12);
-        mCancel.setText(FluxTranslate.CANCEL.get());
+        mCancel = new SimpleButton(this, leftPos + (imageWidth / 2) - 12 - 48, topPos + 86, 48, 12,
+                FluxTranslate.CANCEL.get());
         mButtons.add(mCancel);
 
-        mConnect = new SimpleButton(minecraft, leftPos + (imageWidth / 2) + 12, topPos + 86, 48, 12);
-        mConnect.setText(FluxTranslate.CONNECT.get());
+        mConnect = new SimpleButton(this, leftPos + (imageWidth / 2) + 12, topPos + 86, 48, 12,
+                FluxTranslate.CONNECT.get());
         mConnect.setClickable(false);
         mButtons.add(mConnect);
 

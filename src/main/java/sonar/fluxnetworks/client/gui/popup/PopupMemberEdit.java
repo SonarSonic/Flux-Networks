@@ -37,9 +37,8 @@ public class PopupMemberEdit extends GuiPopupCore<GuiTabMembers> {
             int width;
             text = FluxTranslate.SET_USER.get();
             width = Math.max(64, font.width(text) + 4);
-            mSetAsUser = new SimpleButton(minecraft,
-                    leftPos + (imageWidth - width) / 2, topPos + 78, width, 12);
-            mSetAsUser.setText(text);
+            mSetAsUser = new SimpleButton(this,
+                    leftPos + (imageWidth - width) / 2, topPos + 78, width, 12, text);
             mSetAsUser.setClickable(targetAccess == AccessLevel.BLOCKED ||
                     targetAccess == AccessLevel.SUPER_ADMIN ||
                     (targetAccess == AccessLevel.ADMIN && ownerPermission));
@@ -47,29 +46,24 @@ public class PopupMemberEdit extends GuiPopupCore<GuiTabMembers> {
 
             text = FluxTranslate.SET_ADMIN.get();
             width = Math.max(64, font.width(text) + 4);
-            mSetAsAdmin = new SimpleButton(minecraft,
-                    leftPos + (imageWidth - width) / 2, topPos + 78 + 16, width, 12);
-            mSetAsAdmin.setText(text);
+            mSetAsAdmin = new SimpleButton(this,
+                    leftPos + (imageWidth - width) / 2, topPos + 78 + 16, width, 12, text);
             mSetAsAdmin.setClickable(targetAccess == AccessLevel.USER && ownerPermission);
             mButtons.add(mSetAsAdmin);
 
             text = FluxTranslate.CANCEL_MEMBERSHIP.get();
             width = Math.max(64, font.width(text) + 4);
-            mCancelMembership = new SimpleButton(minecraft,
-                    leftPos + (imageWidth - width) / 2, topPos + 78 + 32, width, 12);
-            mCancelMembership.setText(text);
-            mCancelMembership.setColor(0xFFFF5555);
+            mCancelMembership = new SimpleButton(this,
+                    leftPos + (imageWidth - width) / 2, topPos + 78 + 32, width, 12, text, 0xFFFF5555);
             mCancelMembership.setClickable(targetAccess == AccessLevel.USER ||
                     (targetAccess == AccessLevel.ADMIN && ownerPermission));
             mButtons.add(mCancelMembership);
 
             text = FluxTranslate.TRANSFER_OWNERSHIP.get();
             width = Math.max(64, font.width(text) + 4);
-            mTransferOwnership = new SimpleButton(minecraft,
-                    leftPos + (imageWidth - width) / 2, topPos + 78 + 48, width, 12);
-            mTransferOwnership.setText(text);
+            mTransferOwnership = new SimpleButton(this,
+                    leftPos + (imageWidth - width) / 2, topPos + 78 + 48, width, 12, text, 0xFFFF00FF);
             mTransferOwnership.setClickable(false);
-            mTransferOwnership.setColor(0xFFFF00FF);
             mButtons.add(mTransferOwnership);
         }
     }
@@ -102,10 +96,10 @@ public class PopupMemberEdit extends GuiPopupCore<GuiTabMembers> {
         }
     }
 
-    @Override
+    /*@Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         return super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
+    }*/
 
     @Override
     public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {

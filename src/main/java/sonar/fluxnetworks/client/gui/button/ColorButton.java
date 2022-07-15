@@ -1,16 +1,16 @@
 package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
 public class ColorButton extends GuiButtonCore {
 
     public int mColor;
     private boolean mSelected;
 
-    public ColorButton(Minecraft mc, int x, int y, int color) {
-        super(mc, x, y, 12, 12);
+    public ColorButton(GuiFocusable screen, int x, int y, int color) {
+        super(screen, x, y, 12, 12);
         mColor = color;
     }
 

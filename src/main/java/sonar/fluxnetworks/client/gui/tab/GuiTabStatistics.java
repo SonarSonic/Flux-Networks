@@ -10,7 +10,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.player.Player;
-import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
@@ -78,7 +77,7 @@ public class GuiTabStatistics extends GuiTabCore {
                     (int) ((imageWidth / 2f) * (1 / 0.75f)), (int) ((imageHeight - 2f) * (1 / 0.75f)), color);
             poseStack.popPose();
         } else {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
     }
 
@@ -105,13 +104,8 @@ public class GuiTabStatistics extends GuiTabCore {
         if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
             return true;
         }
-        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            if (!getNetwork().isValid()) {
-                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
-                    switchTab(EnumNavigationTab.TAB_SELECTION);
-                    return true;
-                }
-            }
+        if (!getNetwork().isValid()) {
+            return redirectNavigationPrompt(mouseX, mouseY, mouseButton, EnumNavigationTab.TAB_SELECTION);
         }
         return false;
     }
@@ -131,7 +125,7 @@ public class GuiTabStatistics extends GuiTabCore {
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
         if (code == FluxConstants.RESPONSE_REJECT) {
-            switchTab(EnumNavigationTab.TAB_HOME);
+            switchTab(EnumNavigationTab.TAB_HOME, false);
             return;
         }
         if (key == FluxConstants.REQUEST_UPDATE_NETWORK) {

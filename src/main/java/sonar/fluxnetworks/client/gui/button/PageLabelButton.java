@@ -1,8 +1,8 @@
 package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
 public class PageLabelButton extends GuiButtonCore {
 
@@ -11,8 +11,8 @@ public class PageLabelButton extends GuiButtonCore {
 
     private float mShowTick;
 
-    public PageLabelButton(Minecraft mc, int x, int y, int width, int height, int page, int pages, int color) {
-        super(mc, x, y, width, height);
+    public PageLabelButton(GuiFocusable screen, int x, int y, int width, int height, int page, int pages, int color) {
+        super(screen, x, y, width, height);
         mColor = color;
         refreshPages(page, pages);
     }
@@ -54,12 +54,12 @@ public class PageLabelButton extends GuiButtonCore {
         }
 
         if (mHoveredPage != -1) {
-            drawCenteredString(poseStack, mc.font, (mHoveredPage + 1) + " / " + pages,
+            drawCenteredString(poseStack, screen.getMinecraft().font, (mHoveredPage + 1) + " / " + pages,
                     x + width / 2, y + 6, mColor);
         } else if (mShowTick > 0) {
             int alpha = (int) Math.min(255, mShowTick * 24);
             if (alpha > 3) {
-                drawCenteredString(poseStack, mc.font, (mPage + 1) + " / " + pages,
+                drawCenteredString(poseStack, screen.getMinecraft().font, (mPage + 1) + " / " + pages,
                         x + width / 2, y + 6, mColor | alpha << 24);
             }
             mShowTick -= deltaTicks;

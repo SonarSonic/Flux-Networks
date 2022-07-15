@@ -96,7 +96,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (button instanceof ColorButton) {
             mColorButton.setSelected(false);

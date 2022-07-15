@@ -2,11 +2,12 @@ package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.resources.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 import sonar.fluxnetworks.client.gui.tab.GuiTabWireless;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -18,19 +19,19 @@ public class InventoryButton extends GuiButtonCore {
             "textures/gui/inventory_configuration.png");
 
     public WirelessType mType;
-    private final int mTexX;
-    private final int mTexY;
+    private final int mU0;
+    private final int mV0;
     public GuiTabWireless mHost;
     private final String mText;
 
-    public InventoryButton(Minecraft mc, int x, int y, int width, int height, @Nonnull WirelessType type,
-                           int texX, int texY, GuiTabWireless host) {
-        super(mc, x, y, width, height);
-        this.mType = type;
-        this.mTexX = texX;
-        this.mTexY = texY;
-        this.mHost = host;
-        this.mText = type.getTranslatedName();
+    public InventoryButton(GuiFocusable screen, int x, int y, int width, int height, @Nonnull WirelessType type,
+                           int u0, int v0, GuiTabWireless host) {
+        super(screen, x, y, width, height);
+        mType = type;
+        mU0 = u0;
+        mV0 = v0;
+        mHost = host;
+        mText = type.getTranslatedName();
     }
 
     @Override
@@ -42,10 +43,11 @@ public class InventoryButton extends GuiButtonCore {
         RenderSystem.setShaderTexture(0, INVENTORY);
         boolean hovered = isMouseHovered(mouseX, mouseY);
 
-        blit(poseStack, x, y, mTexX, mTexY + height * (mType.isActivated(mHost.mWirelessMode) ? 1 : 0), width, height);
+        blit(poseStack, x, y, mU0, mV0 + height * (mType.isActivated(mHost.mWirelessMode) ? 1 : 0), width, height);
 
         if (hovered) {
-            mc.font.draw(poseStack, mText, x + (width - mc.font.width(mText)) / 2f + 1, y - 9, 0xFFFFFF);
+            Font font = screen.getMinecraft().font;
+            font.draw(poseStack, mText, x + (width - font.width(mText)) / 2f + 1, y - 9, 0xFFFFFF);
         }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }

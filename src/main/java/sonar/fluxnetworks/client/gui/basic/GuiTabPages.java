@@ -96,7 +96,7 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     @Override
     public void init() {
         super.init();
-        mLabelButton = new PageLabelButton(minecraft, leftPos + 14, topPos + 157, 148, 4,
+        mLabelButton = new PageLabelButton(this, leftPos + 14, topPos + 157, 148, 4,
                 mPage, mPages, getNetwork().getNetworkColor());
     }
 

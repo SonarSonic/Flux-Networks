@@ -1,19 +1,25 @@
 package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
+import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
 /**
- * A button with text and outer stroke.
+ * A button with text and outer frame.
  */
 public class SimpleButton extends GuiButtonCore {
 
-    private int mColor = 0xFFFFFFFF;
-    private String mText;
+    private final String mText;
+    private int mColor;
 
-    public SimpleButton(Minecraft mc, int x, int y, int width, int height) {
-        super(mc, x, y, width, height);
+    public SimpleButton(GuiFocusable screen, int x, int y, int width, int height, String text) {
+        this(screen, x, y, width, height, text, 0xFFFFFFFF);
+    }
+
+    public SimpleButton(GuiFocusable screen, int x, int y, int width, int height, String text, int color) {
+        super(screen, x, y, width, height);
+        mText = text;
+        mColor = color;
     }
 
     @Override
@@ -33,18 +39,14 @@ public class SimpleButton extends GuiButtonCore {
             color = 0xFF000000 | (int) (r * 0.375) << 16 | (int) (g * 0.375) << 8 | (int) (b * 0.375);
         }
 
-        mc.gameRenderer.lightTexture().turnOnLightLayer();
+        screen.getMinecraft().gameRenderer.lightTexture().turnOnLightLayer();
         // outer stroke
         drawOuterFrame(poseStack, x, y, width, height, color);
 
-        drawCenteredString(poseStack, mc.font, mText, x + width / 2, y + (height - 8) / 2, color);
+        drawCenteredString(poseStack, screen.getMinecraft().font, mText, x + width / 2, y + (height - 8) / 2, color);
     }
 
     public void setColor(int color) {
         mColor = color;
-    }
-
-    public void setText(String text) {
-        mText = text;
     }
 }

@@ -45,7 +45,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
         if (mElements.isEmpty()) {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_NETWORK.get(), FluxTranslate.TAB_CREATE.get());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_NETWORK, EnumNavigationTab.TAB_CREATE);
         } else {
             String total = FluxTranslate.TOTAL.get() + ": " + mElements.size();
             font.draw(poseStack, total, leftPos + 158 - font.width(total), topPos + 24, 0xffffff);
@@ -70,7 +70,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, GUI_BAR);
+        RenderSystem.setShaderTexture(0, BARS);
 
         boolean selected = getNetwork() == element;
         boolean locked = element.getSecurityLevel() != SecurityLevel.PUBLIC;
@@ -108,7 +108,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         renderComponentTooltip(poseStack, getElementTooltips(element), mouseX, mouseY);
     }
 
-    protected List<Component> getElementTooltips(FluxNetwork element) {
+    protected List<Component> getElementTooltips(@Nonnull FluxNetwork element) {
         List<Component> components = new ArrayList<>();
         components.add(new TextComponent("ID: " + element.getNetworkID()));
         components.add(FluxTranslate.NETWORK_NAME.makeComponent().append(": " +
@@ -149,10 +149,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
                 return true;
             }
             if (mElements.isEmpty()) {
-                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
-                    switchTab(EnumNavigationTab.TAB_CREATE);
-                    return true;
-                }
+                return redirectNavigationPrompt(mouseX, mouseY, mouseButton, EnumNavigationTab.TAB_CREATE);
             }
         }
         return false;
@@ -162,7 +159,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
         if (code == FluxConstants.RESPONSE_REJECT) {
-            switchTab(EnumNavigationTab.TAB_HOME);
+            switchTab(EnumNavigationTab.TAB_HOME, false);
             return;
         }
         if (key == FluxConstants.REQUEST_SET_NETWORK) {

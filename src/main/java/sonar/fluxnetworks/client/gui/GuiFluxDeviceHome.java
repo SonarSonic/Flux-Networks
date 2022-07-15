@@ -24,11 +24,15 @@ import javax.annotation.Nonnull;
  */
 public class GuiFluxDeviceHome extends GuiTabCore {
 
-    public FluxEditBox mCustomName, mPriority, mLimit;
+    public FluxEditBox mCustomName;
+    public FluxEditBox mPriority;
+    public FluxEditBox mLimit;
 
-    public SwitchButton mSurgeMode, mDisableLimit, mChunkLoading;
+    public SwitchButton mSurgeMode;
+    public SwitchButton mDisableLimit;
+    public SwitchButton mChunkLoading;
 
-    private int timer;
+    //private int timer;
 
     public GuiFluxDeviceHome(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
@@ -91,14 +95,13 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         });
         addRenderableWidget(mLimit);
 
-        mSurgeMode = new SwitchButton(minecraft, leftPos + 140, topPos + 120, getDevice().getSurgeMode());
-        mDisableLimit = new SwitchButton(minecraft, leftPos + 140, topPos + 132, getDevice().getDisableLimit());
+        mSurgeMode = new SwitchButton(this, leftPos + 140, topPos + 120, getDevice().getSurgeMode());
+        mDisableLimit = new SwitchButton(this, leftPos + 140, topPos + 132, getDevice().getDisableLimit());
         mButtons.add(mSurgeMode);
         mButtons.add(mDisableLimit);
 
         if (!getDevice().getDeviceType().isStorage()) {
-            mChunkLoading = new SwitchButton(minecraft, leftPos + 140, topPos + 144, getDevice().isForcedLoading());
-            mChunkLoading.setClickable(false);
+            mChunkLoading = new SwitchButton(this, leftPos + 140, topPos + 144, getDevice().isForcedLoading());
             mButtons.add(mChunkLoading);
         }
     }
@@ -130,7 +133,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button instanceof SwitchButton switchButton) {
             switchButton.toggle();
@@ -142,12 +145,11 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                 CompoundTag tag = new CompoundTag();
                 tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit.isChecked());
                 ClientMessages.editDevice(getDevice(), tag);
-            }/* else if (switchButton == mChunkLoading) {
+            } else if (switchButton == mChunkLoading) {
                 CompoundTag tag = new CompoundTag();
-                tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit.isChecked());
-                ClientMessages.sendEditDevice(menu.mDevice, tag);
-            }*/
-            //FIXME chunk loading
+                tag.putBoolean(FluxConstants.FORCED_LOADING, mChunkLoading.isChecked());
+                ClientMessages.editDevice(getDevice(), tag);
+            }
         }
     }
 
@@ -171,7 +173,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         }
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 8 && mouseY < topPos + 20) {
-                switchTab(EnumNavigationTab.TAB_SELECTION);
+                switchTab(EnumNavigationTab.TAB_SELECTION, false);
                 return true;
             }
         }

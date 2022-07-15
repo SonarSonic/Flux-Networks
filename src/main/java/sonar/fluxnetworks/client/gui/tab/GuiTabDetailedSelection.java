@@ -42,7 +42,7 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
     }
 
     @Override
-    protected List<Component> getElementTooltips(FluxNetwork element) {
+    protected List<Component> getElementTooltips(@Nonnull FluxNetwork element) {
         final List<Component> components = super.getElementTooltips(element);
         final NetworkStatistics stats = element.getStatistics();
         components.add(FluxTranslate.PLUGS.makeComponent().append(ChatFormatting.GRAY + ": " +

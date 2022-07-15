@@ -95,10 +95,6 @@ public final class ClientCache {
         sRecentPasswords.put(id, password);
     }
 
-    public static boolean isSuperAdmin() {
-        return sSuperAdmin;
-    }
-
     /*public String getDisplayName(@Nonnull CompoundTag subTag) {
         FluxNetwork network = getNetwork(subTag.getInt(FluxConstants.NETWORK_ID));
         if (network.isValid()) {

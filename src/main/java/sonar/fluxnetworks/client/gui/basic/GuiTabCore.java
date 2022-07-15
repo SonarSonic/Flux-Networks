@@ -1,9 +1,12 @@
 package sonar.fluxnetworks.client.gui.basic;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.FluxConfig;
+import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.*;
 import sonar.fluxnetworks.client.gui.button.NavigationButton;
@@ -30,12 +33,11 @@ public abstract class GuiTabCore extends GuiFluxCore {
         for (EnumNavigationTab tab : EnumNavigationTab.VALUES) {
             NavigationButton button;
             if (tab != EnumNavigationTab.TAB_CREATE) {
-                button = new NavigationButton(getMinecraft(), 12 + (18 * tab.ordinal()) + leftPos, -16 + topPos, tab);
+                button = new NavigationButton(this, leftPos + 12 + (18 * tab.ordinal()), topPos - 16, tab);
             } else {
-                button = new NavigationButton(getMinecraft(), 148 + leftPos, -16 + topPos, tab);
+                button = new NavigationButton(this, leftPos + 148, topPos - 16, tab);
             }
             button.setSelected(tab == getNavigationTab());
-            button.setClickable(tab != EnumNavigationTab.TAB_CONNECTION);
             mButtons.add(button);
         }
     }
@@ -43,17 +45,36 @@ public abstract class GuiTabCore extends GuiFluxCore {
     public abstract EnumNavigationTab getNavigationTab();
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button instanceof NavigationButton) {
-            switchTab(((NavigationButton) button).getTab());
-            if (FluxConfig.enableButtonSound) {
-                getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));
-            }
+            switchTab(((NavigationButton) button).getTab(), true);
         }
     }
 
-    protected final void switchTab(@Nonnull EnumNavigationTab tab) {
+    protected void renderNavigationPrompt(PoseStack poseStack, @Nonnull FluxTranslate error,
+                                          @Nonnull EnumNavigationTab tab) {
+        drawCenteredString(poseStack, font, error.get(), width / 2, topPos + 16, 0xff808080);
+        poseStack.pushPose();
+        poseStack.scale(0.75f, 0.75f, 1);
+        drawCenteredString(poseStack, font,
+                FluxTranslate.CLICK_ABOVE.format(ChatFormatting.AQUA + tab.getTranslatedName() + ChatFormatting.RESET),
+                (int) ((width / 2f) / 0.75f), (int) ((topPos + 28f) / 0.75f), 0x808080);
+        poseStack.popPose();
+    }
+
+    protected boolean redirectNavigationPrompt(double mouseX, double mouseY, int mouseButton,
+                                               @Nonnull EnumNavigationTab tab) {
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
+                switchTab(tab, false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected final void switchTab(@Nonnull EnumNavigationTab tab, boolean playSound) {
         switch (tab) {
             case TAB_HOME:
                 if (menu.mProvider instanceof TileFluxDevice) {
@@ -69,7 +90,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
             case TAB_SELECTION:
                 if (menu.mProvider instanceof ItemAdminConfigurator.Provider &&
                         ClientCache.sDetailedNetworkView &&
-                        ClientCache.isSuperAdmin()) {
+                        ClientCache.sSuperAdmin) {
                     getMinecraft().setScreen(new GuiTabDetailedSelection(menu, mPlayer));
                 } else {
                     getMinecraft().setScreen(new GuiTabSelection(menu, mPlayer));
@@ -78,9 +99,9 @@ public abstract class GuiTabCore extends GuiFluxCore {
             case TAB_WIRELESS:
                 getMinecraft().setScreen(new GuiTabWireless(menu, mPlayer));
                 break;
-            /*case TAB_CONNECTION:
+            case TAB_CONNECTION:
                 getMinecraft().setScreen(new GuiTabConnections(menu, mPlayer));
-                break;*/
+                break;
             case TAB_STATISTICS:
                 getMinecraft().setScreen(new GuiTabStatistics(menu, mPlayer));
                 break;
@@ -93,6 +114,10 @@ public abstract class GuiTabCore extends GuiFluxCore {
             case TAB_CREATE:
                 getMinecraft().setScreen(new GuiTabCreate(menu, mPlayer));
                 break;
+        }
+        if (playSound && FluxConfig.enableButtonSound) {
+            getMinecraft().getSoundManager().play(
+                    SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));
         }
     }
 }

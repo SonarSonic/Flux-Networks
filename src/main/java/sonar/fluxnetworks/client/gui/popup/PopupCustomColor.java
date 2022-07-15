@@ -27,12 +27,12 @@ public class PopupCustomColor extends GuiPopupCore<GuiTabEditAbstract> {
     @Override
     public void init() {
         super.init();
-        mCancel = new SimpleButton(minecraft, leftPos + (imageWidth / 2) + 12, topPos + 86, 48, 12);
-        mCancel.setText(FluxTranslate.CANCEL.get());
+        mCancel = new SimpleButton(this, leftPos + (imageWidth / 2) + 12, topPos + 86, 48, 12,
+                FluxTranslate.CANCEL.get());
         mButtons.add(mCancel);
 
-        mApply = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 12 - 48, topPos + 86, 48, 12);
-        mApply.setText(FluxTranslate.APPLY.get());
+        mApply = new SimpleButton(this, leftPos + (imageWidth / 2) - 12 - 48, topPos + 86, 48, 12,
+                FluxTranslate.APPLY.get());
         mButtons.add(mApply);
 
         mColor = FluxEditBox.create("0x", font, leftPos + (imageWidth / 2) - 40, topPos + 64, 80, 12)

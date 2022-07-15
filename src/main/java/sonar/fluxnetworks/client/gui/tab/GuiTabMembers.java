@@ -53,7 +53,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(),
                     leftPos + 20, topPos + 8);
         } else {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
     }
 
@@ -92,7 +92,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         float b = FluxUtils.getBlue(color);
 
         RenderSystem.setShaderColor(r, g, b, 1.0f);
-        RenderSystem.setShaderTexture(0, GUI_BAR);
+        RenderSystem.setShaderTexture(0, BARS);
 
         blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
 
@@ -133,10 +133,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
                 return true;
             }
             if (!getNetwork().isValid()) {
-                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
-                    switchTab(EnumNavigationTab.TAB_SELECTION);
-                    return true;
-                }
+                return redirectNavigationPrompt(mouseX, mouseY, mouseButton, EnumNavigationTab.TAB_SELECTION);
             }
         }
         /*for(NormalButton button : buttons) {
@@ -155,7 +152,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
         if (code == FluxConstants.RESPONSE_REJECT) {
-            switchTab(EnumNavigationTab.TAB_HOME);
+            switchTab(EnumNavigationTab.TAB_HOME, false);
             return;
         }
         if (key == FluxConstants.REQUEST_UPDATE_NETWORK) {

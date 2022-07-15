@@ -50,7 +50,7 @@ public class ClientFluxNetwork extends FluxNetwork {
     @Nonnull
     @Override
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
-        if (ClientCache.isSuperAdmin()) {
+        if (ClientCache.sSuperAdmin) {
             return AccessLevel.SUPER_ADMIN;
         }
         return super.getPlayerAccess(player);

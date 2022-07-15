@@ -49,7 +49,7 @@ public class GuiTabWireless extends GuiTabCore {
                         leftPos + 88, topPos + 158, 0xb4b4b4);
             }
         } else {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED.get(), FluxTranslate.TAB_SELECTION.get());
+            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
     }
 
@@ -60,31 +60,31 @@ public class GuiTabWireless extends GuiTabCore {
 
             mWirelessMode = ClientCache.sWirelessMode;
 
-            mEnable = new SwitchButton(minecraft, leftPos + 140, topPos + 148,
+            mEnable = new SwitchButton(this, leftPos + 140, topPos + 148,
                     WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode));
             mButtons.add(mEnable);
-            mButtons.add(new InventoryButton(minecraft, leftPos + 24, topPos + 28, 52, 16,
+            mButtons.add(new InventoryButton(this, leftPos + 24, topPos + 28, 52, 16,
                     WirelessType.ARMOR, 0, 80, this));
-            mButtons.add(new InventoryButton(minecraft, leftPos + 100, topPos + 28, 52, 16,
+            mButtons.add(new InventoryButton(this, leftPos + 100, topPos + 28, 52, 16,
                     WirelessType.CURIOS, 0, 80, this));
-            mButtons.add(new InventoryButton(minecraft, leftPos + 32, topPos + 52, 112, 40,
+            mButtons.add(new InventoryButton(this, leftPos + 32, topPos + 52, 112, 40,
                     WirelessType.INVENTORY, 0, 0, this));
-            mButtons.add(new InventoryButton(minecraft, leftPos + 32, topPos + 100, 112, 16,
+            mButtons.add(new InventoryButton(this, leftPos + 32, topPos + 100, 112, 16,
                     WirelessType.HOT_BAR, 112, 0, this));
-            mButtons.add(new InventoryButton(minecraft, leftPos + 136, topPos + 124, 16, 16,
+            mButtons.add(new InventoryButton(this, leftPos + 136, topPos + 124, 16, 16,
                     WirelessType.MAIN_HAND, 52, 80, this));
-            mButtons.add(new InventoryButton(minecraft, leftPos + 24, topPos + 124, 16, 16,
+            mButtons.add(new InventoryButton(this, leftPos + 24, topPos + 124, 16, 16,
                     WirelessType.OFF_HAND, 52, 80, this));
 
-            mApply = new SimpleButton(minecraft, leftPos + (imageWidth / 2) - 24, topPos + 126, 48, 12);
-            mApply.setText(FluxTranslate.APPLY.get());
+            mApply = new SimpleButton(this, leftPos + (imageWidth / 2) - 24, topPos + 126, 48, 12,
+                    FluxTranslate.APPLY.get());
             mApply.setClickable(ClientCache.sWirelessNetwork != getNetwork().getNetworkID());
             mButtons.add(mApply);
         }
     }
 
     @Override
-    public void onButtonClicked(GuiButtonCore button, int mouseX, int mouseY, int mouseButton) {
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton != GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             return;
@@ -113,13 +113,8 @@ public class GuiTabWireless extends GuiTabCore {
         if (super.onMouseClicked(mouseX, mouseY, mouseButton)) {
             return true;
         }
-        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            if (!getNetwork().isValid()) {
-                if (mouseX >= leftPos + 20 && mouseX < leftPos + 155 && mouseY >= topPos + 16 && mouseY < topPos + 36) {
-                    switchTab(EnumNavigationTab.TAB_SELECTION);
-                    return true;
-                }
-            }
+        if (!getNetwork().isValid()) {
+            return redirectNavigationPrompt(mouseX, mouseY, mouseButton, EnumNavigationTab.TAB_SELECTION);
         }
         return false;
     }
