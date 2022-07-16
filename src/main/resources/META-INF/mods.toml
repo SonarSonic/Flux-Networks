@@ -16,19 +16,19 @@ license="MIT"
 [[dependencies.fluxnetworks]]
     modId="forge"
     mandatory=true
-    versionRange="[40.1.58,)"
+    versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18.2,1.19)"
+    versionRange="[1.18,1.19)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
     modId="modernui"
     mandatory=false
-    versionRange="[3.5.0,)"
+    versionRange="[3.4.7,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
