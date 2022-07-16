@@ -8,6 +8,7 @@ import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
+import sonar.fluxnetworks.client.gui.button.SimpleButton;
 import sonar.fluxnetworks.client.gui.button.SwitchButton;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -16,7 +17,10 @@ import javax.annotation.Nonnull;
 
 public class GuiFluxAdminHome extends GuiTabCore {
 
-    public SwitchButton mDetailedNetworkView, mSuperAdmin;
+    public SwitchButton mDetailedNetworkView;
+    public SwitchButton mSuperAdmin;
+
+    public SimpleButton mCleanupCache;
 
     public GuiFluxAdminHome(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
@@ -31,7 +35,7 @@ public class GuiFluxAdminHome extends GuiTabCore {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
         int color = getNetwork().getNetworkColor();
-        renderNetwork(poseStack, getNetwork().getNetworkName(), color, leftPos + 20, topPos + 8);
+        renderNetwork(poseStack, getNetwork().getNetworkName(), color, topPos + 8);
 
         font.draw(poseStack, AccessLevel.SUPER_ADMIN.getFormattedName(), leftPos + 20, topPos + 30, color);
         font.draw(poseStack, FluxTranslate.DETAILED_VIEW.get(), leftPos + 20, topPos + 42, color);
@@ -49,6 +53,10 @@ public class GuiFluxAdminHome extends GuiTabCore {
                 ClientCache.sDetailedNetworkView);
         mDetailedNetworkView.setClickable(superAdmin);
         mButtons.add(mDetailedNetworkView);
+
+        mCleanupCache = new SimpleButton(this, leftPos + (imageWidth / 2) - 50, topPos + 56, 100, 12,
+                "Cleanup Client Cache");
+        mButtons.add(mCleanupCache);
     }
 
     @Override
@@ -61,6 +69,8 @@ public class GuiFluxAdminHome extends GuiTabCore {
             } else if (button == mDetailedNetworkView) {
                 mDetailedNetworkView.toggle();
                 ClientCache.sDetailedNetworkView = mDetailedNetworkView.isChecked();
+            } else if (button == mCleanupCache) {
+                ClientCache.cleanup();
             }
         }
     }

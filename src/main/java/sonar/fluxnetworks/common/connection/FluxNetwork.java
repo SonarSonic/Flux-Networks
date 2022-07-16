@@ -38,7 +38,7 @@ public class FluxNetwork {
      */
     public static final FluxNetwork INVALID = new FluxNetwork(
             FluxConstants.INVALID_NETWORK_ID, "", FluxConstants.INVALID_NETWORK_COLOR,
-            SecurityLevel.PRIVATE, Util.NIL_UUID);
+            SecurityLevel.PUBLIC, Util.NIL_UUID);
 
     /**
      * Constant IDs used to identify logical devices.
@@ -58,12 +58,12 @@ public class FluxNetwork {
     public static final int MAX_NETWORK_NAME_LENGTH = 24;
     public static final int MAX_PASSWORD_LENGTH = 16;
 
-    private static final String NETWORK_NAME = "name";
-    private static final String NETWORK_COLOR = "color";
-    private static final String OWNER_UUID = "owner";
-    private static final String SECURITY_LEVEL = "security";
-    private static final String MEMBERS = "members";
-    private static final String CONNECTIONS = "connections";
+    public static final String NETWORK_NAME = "name";
+    public static final String NETWORK_COLOR = "color";
+    public static final String OWNER_UUID = "owner";
+    public static final String SECURITY_LEVEL = "security";
+    public static final String MEMBERS = "members";
+    public static final String CONNECTIONS = "connections";
 
     //public ICustomValue<Integer> network_id = new CustomValue<>();
     //public ICustomValue<String> network_name = new CustomValue<>();
@@ -230,7 +230,7 @@ public class FluxNetwork {
     /**
      * Called when this network is deleted from its manager.
      */
-    protected void onDelete() {
+    public void onDelete() {
         mMemberMap.clear();
         mConnectionMap.clear();
     }
@@ -297,7 +297,7 @@ public class FluxNetwork {
      * Remove a logical device from this network.
      *
      * @param device logical device
-     * @param unload become phantom (unloaded) or actually remove
+     * @param unload true if chunk unload, false if disconnect
      */
     public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean unload) {
     }
@@ -391,7 +391,7 @@ public class FluxNetwork {
             }
             tag.put(MEMBERS, list);
         }
-        if (type == FluxConstants.NBT_NET_CONNECTIONS) {
+        if (type == FluxConstants.NBT_NET_ALL_CONNECTIONS) {
             Collection<IFluxDevice> connections = getAllConnections();
             if (!connections.isEmpty()) {
                 ListTag list = new ListTag();
@@ -471,7 +471,7 @@ public class FluxNetwork {
                 mMemberMap.put(m.getPlayerUUID(), m);
             }
         }
-        if (type == FluxConstants.NBT_NET_CONNECTIONS) {
+        if (type == FluxConstants.NBT_NET_ALL_CONNECTIONS) {
             //TODO waiting for new GUI system, see GuiTabConnections, we request a full connections update
             // when we (re)open the gui, but if a tile removed by someone or on world unloads, this won't send
             // to player, so calling clear() here as a temporary solution, (f != null) is always false
@@ -481,12 +481,7 @@ public class FluxNetwork {
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag c = list.getCompound(i);
                 GlobalPos pos = FluxUtils.readGlobalPos(c);
-                IFluxDevice f = mConnectionMap.get(pos);
-                if (f != null) {
-                    f.readCustomTag(c, FluxConstants.NBT_PHANTOM_UPDATE);
-                } else {
-                    mConnectionMap.put(pos, PhantomFluxDevice.makeUpdated(pos, c));
-                }
+                mConnectionMap.put(pos, PhantomFluxDevice.makeUpdated(pos, c));
             }
         }
         if (type == FluxConstants.NBT_NET_STATISTICS) {

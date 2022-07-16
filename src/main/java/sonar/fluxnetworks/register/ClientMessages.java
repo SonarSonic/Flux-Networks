@@ -55,7 +55,9 @@ public class ClientMessages {
     }
 
     /**
-     * Request to create a new network
+     * Request to create a new network.
+     *
+     * @param token must be valid
      */
     public static void createNetwork(int token, String name, int color,
                                      SecurityLevel security, String password) {
@@ -71,7 +73,9 @@ public class ClientMessages {
     }
 
     /**
-     * Request to delete an existing network
+     * Request to delete an existing network.
+     *
+     * @param token must be valid
      */
     public static void deleteNetwork(int token, FluxNetwork network) {
         var buf = Channel.buffer(Messages.C2S_DELETE_NETWORK);
@@ -80,23 +84,26 @@ public class ClientMessages {
         sChannel.sendToServer(buf);
     }
 
-    public static void editDevice(TileFluxDevice device, CompoundTag tag) {
-        var buf = Channel.buffer(Messages.C2S_EDIT_DEVICE);
-        buf.writeVarInt(FluxConstants.INVALID_NETWORK_ID);
+    /**
+     * Request to edit an interacting block entity.
+     *
+     * @param token must be valid
+     */
+    public static void editTile(int token, TileFluxDevice device, CompoundTag tag) {
+        var buf = Channel.buffer(Messages.C2S_EDIT_TILE);
+        buf.writeByte(token);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeNbt(tag);
         sChannel.sendToServer(buf);
     }
 
-    public static void editDevice(int networkId, List<GlobalPos> list, CompoundTag tag) {
-        if (list.isEmpty()) return;
-        var buf = Channel.buffer(Messages.C2S_EDIT_DEVICE);
-        buf.writeVarInt(networkId);
-        buf.writeVarInt(list.size());
-        for (var pos : list) {
-            FluxUtils.writeGlobalPos(buf, pos);
-        }
-        buf.writeNbt(tag);
+    // set (connect to) network for a block entity
+    public static void tileNetwork(int token, TileFluxDevice device, FluxNetwork network, String password) {
+        var buf = Channel.buffer(Messages.C2S_TILE_NETWORK);
+        buf.writeByte(token);
+        buf.writeBlockPos(device.getBlockPos());
+        buf.writeVarInt(network.getNetworkID());
+        buf.writeUtf(password, 256);
         sChannel.sendToServer(buf);
     }
 
@@ -106,16 +113,6 @@ public class ClientMessages {
         buf.writeVarInt(network.getNetworkID());
         buf.writeUUID(uuid);
         buf.writeByte(type);
-        sChannel.sendToServer(buf);
-    }
-
-    // set (connect to) network for a block entity
-    public static void setTileNetwork(int token, TileFluxDevice device, int networkID, String password) {
-        var buf = Channel.buffer(Messages.C2S_CONNECT_DEVICE);
-        buf.writeByte(token);
-        buf.writeBlockPos(device.getBlockPos());
-        buf.writeVarInt(networkID);
-        buf.writeUtf(password, 256);
         sChannel.sendToServer(buf);
     }
 
@@ -130,6 +127,21 @@ public class ClientMessages {
         if (security == SecurityLevel.ENCRYPTED) {
             buf.writeUtf(password, 256);
         }
+        sChannel.sendToServer(buf);
+    }
+
+    public static void editConnection(int token, FluxNetwork network, List<GlobalPos> list, CompoundTag tag) {
+        if (list.isEmpty()) {
+            return;
+        }
+        var buf = Channel.buffer(Messages.C2S_EDIT_CONNECTION);
+        buf.writeByte(token);
+        buf.writeVarInt(network.getNetworkID());
+        buf.writeVarInt(list.size());
+        for (var pos : list) {
+            FluxUtils.writeGlobalPos(buf, pos);
+        }
+        buf.writeNbt(tag);
         sChannel.sendToServer(buf);
     }
 
@@ -174,6 +186,34 @@ public class ClientMessages {
         sChannel.sendToServer(buf);
     }
 
+    public static void disconnect(int token, FluxNetwork network, List<GlobalPos> list) {
+        if (list.isEmpty()) {
+            return;
+        }
+        var buf = Channel.buffer(Messages.C2S_DISCONNECT);
+        buf.writeByte(token);
+        buf.writeVarInt(network.getNetworkID());
+        buf.writeVarInt(list.size());
+        for (var pos : list) {
+            FluxUtils.writeGlobalPos(buf, pos);
+        }
+        sChannel.sendToServer(buf);
+    }
+
+    public static void updateConnections(int token, FluxNetwork network, List<GlobalPos> list) {
+        if (list.isEmpty()) {
+            return;
+        }
+        var buf = Channel.buffer(Messages.C2S_UPDATE_CONNECTIONS);
+        buf.writeByte(token);
+        buf.writeVarInt(network.getNetworkID());
+        buf.writeVarInt(list.size());
+        for (var pos : list) {
+            FluxUtils.writeGlobalPos(buf, pos);
+        }
+        sChannel.sendToServer(buf);
+    }
+
     static void msg(short index, FriendlyByteBuf payload, Supplier<LocalPlayer> player) {
         Minecraft minecraft = Minecraft.getInstance();
         switch (index) {
@@ -182,6 +222,7 @@ public class ClientMessages {
             case Messages.S2C_CAPABILITY -> onCapability(payload, player, minecraft);
             case Messages.S2C_UPDATE_NETWORK -> onUpdateNetwork(payload, player, minecraft);
             case Messages.S2C_DELETE_NETWORK -> onDeleteNetwork(payload, player, minecraft);
+            case Messages.S2C_UPDATE_CONNECTIONS -> onUpdateConnections(payload, player, minecraft);
         }
     }
 
@@ -268,6 +309,26 @@ public class ClientMessages {
             ClientCache.deleteNetwork(id);
             if (p.containerMenu instanceof FluxMenu m && m.mOnResultListener != null) {
                 m.mOnResultListener.onResult(m, FluxConstants.REQUEST_DELETE_NETWORK, 0);
+            }
+        });
+    }
+
+    private static void onUpdateConnections(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
+                                        BlockableEventLoop<?> looper) {
+        final int id = payload.readVarInt();
+        final int size = payload.readVarInt();
+        final List<CompoundTag> tags = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            tags.add(payload.readNbt());
+        }
+        looper.execute(() -> {
+            LocalPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            ClientCache.updateConnections(id, tags);
+            if (p.containerMenu instanceof FluxMenu m && m.mOnResultListener != null) {
+                m.mOnResultListener.onResult(m, FluxConstants.REQUEST_UPDATE_CONNECTION, 0);
             }
         });
     }

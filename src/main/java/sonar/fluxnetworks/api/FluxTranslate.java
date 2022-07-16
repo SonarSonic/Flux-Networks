@@ -96,9 +96,11 @@ public class FluxTranslate {
     public static final FluxTranslate
             SORTING_SMART = new FluxTranslate("gui.fluxnetworks.label.sort.smart"),
             SORTING_ID = new FluxTranslate("gui.fluxnetworks.label.sort.id"),
-            SORTING_NAME = new FluxTranslate("gui.fluxnetworks.label.sort.name"),
+            SORTING_NAME = new FluxTranslate("gui.fluxnetworks.label.sort.name");
 
-    BATCH_CLEAR_BUTTON = new FluxTranslate("gui.fluxnetworks.button.batchclear"),
+    public static final FluxTranslate
+            BATCH_SELECT_BUTTON = new FluxTranslate("gui.fluxnetworks.button.batchselect"),
+            BATCH_CLEAR_BUTTON = new FluxTranslate("gui.fluxnetworks.button.batchclear"),
             BATCH_EDIT_BUTTON = new FluxTranslate("gui.fluxnetworks.button.batchedit"),
             BATCH_DISCONNECT_BUTTON = new FluxTranslate("gui.fluxnetworks.button.batchdisconnect"),
             APPLY = new FluxTranslate("gui.fluxnetworks.button.apply"),

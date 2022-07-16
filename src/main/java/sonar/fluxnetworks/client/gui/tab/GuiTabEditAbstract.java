@@ -69,7 +69,7 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
             // .getName(), 14, 78, 0x606060);
             font.draw(poseStack, FluxTranslate.NETWORK_COLOR.get() + ":", leftPos + 16, topPos + 89, 0xFF808080);
 
-            renderNetwork(poseStack, mNetworkName.getValue(), mColorButton.mColor, leftPos + 20, topPos + 126);
+            renderNetwork(poseStack, mNetworkName.getValue(), mColorButton.mColor, topPos + 126);
         }
     }
 

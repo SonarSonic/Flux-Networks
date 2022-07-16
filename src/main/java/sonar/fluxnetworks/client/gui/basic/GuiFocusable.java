@@ -30,8 +30,8 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxMenu> {
             FluxNetworks.MODID, "textures/gui/gui_background.png");
     public static final ResourceLocation FRAME = new ResourceLocation(
             FluxNetworks.MODID, "textures/gui/gui_frame.png");
-    public static final ResourceLocation BARS = new ResourceLocation(
-            FluxNetworks.MODID, "textures/gui/gui_bar.png");
+    public static final ResourceLocation ICON = new ResourceLocation(
+            FluxNetworks.MODID, "textures/gui/gui_icon.png");
 
     public GuiFocusable(FluxMenu menu, @Nonnull Player player) {
         super(menu, player.getInventory(), TextComponent.EMPTY);

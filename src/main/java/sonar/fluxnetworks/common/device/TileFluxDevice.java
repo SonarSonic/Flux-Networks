@@ -193,6 +193,13 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         return false;
     }
 
+    /**
+     * Connect this device to an invalid network (i.e. disconnect).
+     */
+    public final void disconnect() {
+        connect(FluxNetwork.INVALID);
+    }
+
     @Override
     public final int getNetworkID() {
         return mNetworkID;
@@ -301,15 +308,12 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 ((ServerFluxNetwork) mNetwork).markSortConnections();
             }
             if (tag.contains(FluxConstants.FORCED_LOADING)) {
-                if (FluxConfig.enableChunkLoading && !getDeviceType().isStorage()) {
-                    boolean load = tag.getBoolean(FluxConstants.FORCED_LOADING);
-                    long chunkPos = ChunkPos.asLong(worldPosition);
-                    ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
-                            ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos), load, true);
-                    setForcedLoading(load);
-                } else {
-                    setForcedLoading(false);
-                }
+                boolean load = tag.getBoolean(FluxConstants.FORCED_LOADING) &&
+                        FluxConfig.enableChunkLoading && !getDeviceType().isStorage();
+                long chunkPos = ChunkPos.asLong(worldPosition);
+                ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
+                        ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos), load, true);
+                setForcedLoading(load);
             }
             // notify listeners
             mFlags |= FLAG_SETTINGS_CHANGED;

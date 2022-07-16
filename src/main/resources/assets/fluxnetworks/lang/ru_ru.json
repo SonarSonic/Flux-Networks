@@ -81,7 +81,7 @@
 	"gui.fluxnetworks.response.bannedloading": "Загрузка чанка была заблокирована с сервера",
 
 	"gui.fluxnetworks.label.sortby": "Сортировать по",
-	"gui.fluxnetworks.label.selected": "Выбрано",
+	"gui.fluxnetworks.label.selected": "%s Item(s) Выбрано",
 	"gui.fluxnetworks.label.singleedit": "Одиночный режим редактирования",
 	"gui.fluxnetworks.label.batchedit": "Пакетный режим редактирования",
 	"gui.fluxnetworks.label.editingconnections": "Editing %d Connections",
@@ -106,6 +106,7 @@
 	"gui.fluxnetworks.label.sort.id": "ID",
 	"gui.fluxnetworks.label.sort.name": "Имени",
 
+	"gui.fluxnetworks.button.batchselect": "Select Items",
 	"gui.fluxnetworks.button.batchclear": "Очистить выбранное",
 	"gui.fluxnetworks.button.batchedit": "Редактировать выбранное",
 	"gui.fluxnetworks.button.batchdisconnect": "Отсоединить выбранное",

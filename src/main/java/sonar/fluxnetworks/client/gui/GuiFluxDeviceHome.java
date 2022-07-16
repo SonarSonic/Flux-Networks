@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -60,7 +61,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         mCustomName.setResponder(string -> {
             CompoundTag tag = new CompoundTag();
             tag.putString(FluxConstants.CUSTOM_NAME, mCustomName.getValue());
-            ClientMessages.editDevice(getDevice(), tag);
+            ClientMessages.editTile(getToken(), getDevice(), tag);
         });
         addRenderableWidget(mCustomName);
 
@@ -76,7 +77,7 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                     TransferHandler.PRI_USER_MIN, TransferHandler.PRI_USER_MAX);
             CompoundTag tag = new CompoundTag();
             tag.putInt(FluxConstants.PRIORITY, priority);
-            ClientMessages.editDevice(getDevice(), tag);
+            ClientMessages.editTile(getToken(), getDevice(), tag);
         });
         addRenderableWidget(mPriority);
 
@@ -84,24 +85,28 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                         leftPos + 16, topPos + 62, 144, 12)
                 .setOutlineColor(color)
                 .setDigitsOnly()
-                .setMaxValue(getDevice().getMaxTransferLimit());
-        mLimit.setMaxLength(9);
+                .setMaxValue(Long.MAX_VALUE);
+        mLimit.setMaxLength(15);
         mLimit.setValue(String.valueOf(getDevice().getRawLimit()));
         mLimit.setResponder(string -> {
             long limit = mLimit.getValidLong();
             CompoundTag tag = new CompoundTag();
             tag.putLong(FluxConstants.LIMIT, limit);
-            ClientMessages.editDevice(getDevice(), tag);
+            ClientMessages.editTile(getToken(), getDevice(), tag);
         });
         addRenderableWidget(mLimit);
 
-        mSurgeMode = new SwitchButton(this, leftPos + 140, topPos + 120, getDevice().getSurgeMode());
-        mDisableLimit = new SwitchButton(this, leftPos + 140, topPos + 132, getDevice().getDisableLimit());
+        mSurgeMode = new SwitchButton(this, leftPos + 140, topPos + 120,
+                getDevice().getSurgeMode(), color);
+        mDisableLimit = new SwitchButton(this, leftPos + 140, topPos + 132,
+                getDevice().getDisableLimit(), color);
         mButtons.add(mSurgeMode);
         mButtons.add(mDisableLimit);
 
         if (!getDevice().getDeviceType().isStorage()) {
-            mChunkLoading = new SwitchButton(this, leftPos + 140, topPos + 144, getDevice().isForcedLoading());
+            mChunkLoading = new SwitchButton(this, leftPos + 140, topPos + 144,
+                    getDevice().isForcedLoading(), color);
+            mChunkLoading.setClickable(FluxConfig.enableChunkLoading);
             mButtons.add(mChunkLoading);
         }
     }
@@ -110,8 +115,8 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
 
-        renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), leftPos + 20,
-                topPos + 8);
+        int color = getNetwork().getNetworkColor();
+        renderNetwork(poseStack, getNetwork().getNetworkName(), color, topPos + 8);
         renderTransfer(poseStack, getDevice(), leftPos + 30, topPos + 90);
 
         if (mCustomName.getValue().isEmpty()) {
@@ -121,14 +126,11 @@ public class GuiFluxDeviceHome extends GuiTabCore {
                     mCustomName.x + 4, y, FluxConstants.INVALID_NETWORK_COLOR);
         }
 
-        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(), 20 + leftPos, 120 + topPos,
-                getNetwork().getNetworkColor());
-        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos,
-                getNetwork().getNetworkColor());
+        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(), 20 + leftPos, 120 + topPos, color);
+        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(), 20 + leftPos, 132 + topPos, color);
 
         if (mChunkLoading != null) {
-            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos,
-                    getNetwork().getNetworkColor());
+            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(), 20 + leftPos, 144 + topPos, color);
         }
     }
 
@@ -136,19 +138,21 @@ public class GuiFluxDeviceHome extends GuiTabCore {
     public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button instanceof SwitchButton switchButton) {
-            switchButton.toggle();
             if (switchButton == mSurgeMode) {
+                switchButton.toggle();
                 CompoundTag tag = new CompoundTag();
                 tag.putBoolean(FluxConstants.SURGE_MODE, mSurgeMode.isChecked());
-                ClientMessages.editDevice(getDevice(), tag);
+                ClientMessages.editTile(getToken(), getDevice(), tag);
             } else if (switchButton == mDisableLimit) {
+                switchButton.toggle();
                 CompoundTag tag = new CompoundTag();
                 tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit.isChecked());
-                ClientMessages.editDevice(getDevice(), tag);
+                ClientMessages.editTile(getToken(), getDevice(), tag);
             } else if (switchButton == mChunkLoading) {
+                // delayed toggle, wait for server response
                 CompoundTag tag = new CompoundTag();
-                tag.putBoolean(FluxConstants.FORCED_LOADING, mChunkLoading.isChecked());
-                ClientMessages.editDevice(getDevice(), tag);
+                tag.putBoolean(FluxConstants.FORCED_LOADING, !mChunkLoading.isChecked());
+                ClientMessages.editTile(getToken(), getDevice(), tag);
             }
         }
     }
@@ -165,6 +169,23 @@ public class GuiFluxDeviceHome extends GuiTabCore {
         timer++;
         timer %= 100;
     }*/
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (mCustomName != null) {
+            int color = getNetwork().getNetworkColor() | 0xFF000000;
+            mCustomName.setOutlineColor(color);
+            mPriority.setOutlineColor(color);
+            mLimit.setOutlineColor(color);
+            mSurgeMode.setColor(color);
+            mDisableLimit.setColor(color);
+            if (mChunkLoading != null) {
+                mChunkLoading.setColor(color);
+                mChunkLoading.setChecked(getDevice().isForcedLoading());
+            }
+        }
+    }
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {

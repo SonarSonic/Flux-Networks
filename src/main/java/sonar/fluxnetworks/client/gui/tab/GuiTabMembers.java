@@ -50,8 +50,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             String sortBy = FluxTranslate.SORT_BY.get() + ": " + ChatFormatting.AQUA + mSortType.getTranslatedName();
             font.draw(poseStack, sortBy, leftPos + 19, topPos + 24, 0xffffff);
 
-            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(),
-                    leftPos + 20, topPos + 8);
+            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), topPos + 8);
         } else {
             renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
@@ -92,9 +91,9 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         float b = FluxUtils.getBlue(color);
 
         RenderSystem.setShaderColor(r, g, b, 1.0f);
-        RenderSystem.setShaderTexture(0, BARS);
+        RenderSystem.setShaderTexture(0, ICON);
 
-        blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
+        blitF(poseStack, x, y, mElementWidth, mElementHeight, 0, 352, mElementWidth * 2, mElementHeight * 2);
 
         if (element.getPlayerUUID().equals(mPlayer.getUUID())) {
             fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
@@ -130,6 +129,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             if (mouseX >= leftPos + 45 && mouseX < leftPos + 75 && mouseY >= topPos + 24 && mouseY < topPos + 32) {
                 mSortType = FluxUtils.cycle(mSortType, SortType.values());
                 sortGrids(mSortType);
+                refreshCurrentPage();
                 return true;
             }
             if (!getNetwork().isValid()) {
@@ -195,14 +195,10 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     @Override
     protected void sortGrids(SortType sortType) {
         switch (sortType) {
-            case ID -> {
-                mElements.sort(Comparator.comparing(NetworkMember::getAccessLevel).thenComparing(NetworkMember::getPlayerUUID));
-                refreshCurrentPageInternal();
-            }
-            case NAME -> {
-                mElements.sort(Comparator.comparing(NetworkMember::getAccessLevel).thenComparing(NetworkMember::getCachedName));
-                refreshCurrentPageInternal();
-            }
+            case ID ->
+                    mElements.sort(Comparator.comparing(NetworkMember::getAccessLevel).thenComparing(NetworkMember::getPlayerUUID));
+            case NAME ->
+                    mElements.sort(Comparator.comparing(NetworkMember::getAccessLevel).thenComparing(NetworkMember::getCachedName));
         }
     }
 }

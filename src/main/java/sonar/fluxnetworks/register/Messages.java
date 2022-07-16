@@ -4,6 +4,7 @@ import io.netty.handler.codec.DecoderException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
@@ -61,18 +62,20 @@ public class Messages {
     static final int C2S_SUPER_ADMIN = 1;
     static final int C2S_CREATE_NETWORK = 2;
     static final int C2S_DELETE_NETWORK = 3;
-    static final int C2S_EDIT_DEVICE = 4;
-    static final int C2S_CONNECT_DEVICE = 5;
-    static final int C2S_EDIT_CONFIGURATOR = 6;
-    static final int C2S_CONNECT_CONFIGURATOR = 7;
+    static final int C2S_EDIT_TILE = 4;
+    static final int C2S_TILE_NETWORK = 5;
+    static final int C2S_EDIT_ITEM = 6;
+    static final int C2S_ITEM_NETWORK = 7;
     static final int C2S_EDIT_MEMBER = 8;
     static final int C2S_EDIT_NETWORK = 9;
-    static final int C2S_EDIT_CONNECTIONS = 10;
+    static final int C2S_EDIT_CONNECTION = 10;
     static final int C2S_UPDATE_NETWORK = 11;
-    static final int C2S_TRACK_MEMBERS = 12;
-    static final int C2S_TRACK_CONNECTIONS = 13;
-    static final int C2S_TRACK_STATISTICS = 14;
-    static final int C2S_WIRELESS_MODE = 15;
+    static final int C2S_WIRELESS_MODE = 12;
+    static final int C2S_DISCONNECT = 13;
+    static final int C2S_UPDATE_CONNECTIONS = 14;
+    static final int C2S_TRACK_MEMBERS = 15;
+    static final int C2S_TRACK_CONNECTIONS = 16;
+    static final int C2S_TRACK_STATISTICS = 17;
 
     /**
      * S->C message indices, must be sequential, 0-based indexing
@@ -82,8 +85,8 @@ public class Messages {
     static final int S2C_CAPABILITY = 2;
     static final int S2C_UPDATE_NETWORK = 3;
     static final int S2C_DELETE_NETWORK = 4;
-    static final int S2C_UPDATE_MEMBERS = 5;
-    static final int S2C_UPDATE_CONNECTIONS = 6;
+    static final int S2C_UPDATE_CONNECTIONS = 5;
+    static final int S2C_UPDATE_MEMBERS = 6;
 
     /**
      * Byte stream.
@@ -147,6 +150,17 @@ public class Messages {
     }
 
     @Nonnull
+    private static FriendlyByteBuf updateConnections(FluxNetwork network, List<CompoundTag> tags) {
+        var buf = Channel.buffer(S2C_UPDATE_CONNECTIONS);
+        buf.writeVarInt(network.getNetworkID());
+        buf.writeVarInt(tags.size());
+        for (CompoundTag tag : tags) {
+            buf.writeNbt(tag);
+        }
+        return buf;
+    }
+
+    @Nonnull
     public static FriendlyByteBuf updateNetwork(Collection<FluxNetwork> networks, byte type) {
         var buf = Channel.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
@@ -188,14 +202,17 @@ public class Messages {
         switch (index) {
             case C2S_DEVICE_BUFFER -> onDeviceBuffer(payload, player, server);
             case C2S_SUPER_ADMIN -> onSuperAdmin(payload, player, server);
-            case C2S_EDIT_DEVICE -> onEditDevice(payload, player, server);
             case C2S_CREATE_NETWORK -> onCreateNetwork(payload, player, server);
             case C2S_DELETE_NETWORK -> onDeleteNetwork(payload, player, server);
-            case C2S_EDIT_NETWORK -> onEditNetwork(payload, player, server);
-            case C2S_CONNECT_DEVICE -> onSetTileNetwork(payload, player, server);
-            case C2S_UPDATE_NETWORK -> onUpdateNetwork(payload, player, server);
+            case C2S_EDIT_TILE -> onEditTile(payload, player, server);
+            case C2S_TILE_NETWORK -> onTileNetwork(payload, player, server);
             case C2S_EDIT_MEMBER -> onEditMember(payload, player, server);
+            case C2S_EDIT_NETWORK -> onEditNetwork(payload, player, server);
+            case C2S_EDIT_CONNECTION -> onEditConnection(payload, player, server);
+            case C2S_UPDATE_NETWORK -> onUpdateNetwork(payload, player, server);
             case C2S_WIRELESS_MODE -> onWirelessMode(payload, player, server);
+            case C2S_DISCONNECT -> onDisconnect(payload, player, server);
+            case C2S_UPDATE_CONNECTIONS -> onUpdateConnections(payload, player, server);
             default -> kick(player.get(), new RuntimeException("Unidentified message index " + index));
         }
     }
@@ -267,57 +284,39 @@ public class Messages {
         });
     }
 
-    private static void onEditDevice(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
-                                     BlockableEventLoop<?> looper) {
-        int networkId = payload.readVarInt();
-        if (networkId == FluxConstants.INVALID_NETWORK_ID) {
-            BlockPos pos = payload.readBlockPos();
-            CompoundTag tag = payload.readNbt();
-            consume(payload);
-            Objects.requireNonNull(tag);
-            looper.execute(() -> {
-                ServerPlayer p = player.get();
-                if (p == null) return;
-                try {
-                    if (p.level.getBlockEntity(pos) instanceof TileFluxDevice e) {
-                        if (e.canPlayerAccess(p)) {
-                            e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
-                        }
-                    }
-                } catch (RuntimeException e) {
-                    kick(p, e);
-                }
-            });
-        } else {
-            final int size = payload.readVarInt();
-            if (size <= 0) {
-                throw new IllegalArgumentException();
+    private static void onEditTile(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                   BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final BlockPos pos = payload.readBlockPos();
+        final CompoundTag tag = payload.readNbt();
+
+        // validate
+        consume(payload);
+        Objects.requireNonNull(tag);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
             }
-            List<GlobalPos> list = new ArrayList<>(size);
-            for (int i = 0; i < size; i++) {
-                list.add(FluxUtils.readGlobalPos(payload));
+            boolean reject = p.containerMenu.containerId != token || !(p.containerMenu instanceof FluxMenu);
+            if (reject) {
+                response(token, FluxConstants.REQUEST_EDIT_TILE, FluxConstants.RESPONSE_REJECT, p);
+                return;
             }
-            CompoundTag tag = payload.readNbt();
-            consume(payload);
-            Objects.requireNonNull(tag);
-            looper.execute(() -> {
-                ServerPlayer p = player.get();
-                if (p == null) return;
-                try {
-                    FluxNetwork network = FluxNetworkData.getNetwork(networkId);
-                    if (network.getPlayerAccess(p).canEdit()) {
-                        for (GlobalPos pos : list) {
-                            IFluxDevice f = network.getConnectionByPos(pos);
-                            if (f instanceof TileFluxDevice e) {
-                                e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
-                            }
-                        }
-                    }
-                } catch (RuntimeException e) {
-                    kick(p, e);
+            try {
+                if (p.level.isLoaded(pos) &&
+                        p.level.getBlockEntity(pos) instanceof TileFluxDevice e &&
+                        e.canPlayerAccess(p)) {
+                    e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
+                } else {
+                    response(token, FluxConstants.REQUEST_EDIT_TILE, FluxConstants.RESPONSE_REJECT, p);
                 }
-            });
-        }
+            } catch (RuntimeException e) {
+                kick(p, e);
+            }
+        });
     }
 
     private static void onCreateNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
@@ -384,8 +383,8 @@ public class Messages {
         });
     }
 
-    private static void onSetTileNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
-                                         BlockableEventLoop<?> looper) {
+    private static void onTileNetwork(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                      BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
         final BlockPos pos = payload.readBlockPos();
@@ -408,12 +407,12 @@ public class Messages {
                     return;
                 }
                 if (!e.canPlayerAccess(p)) {
-                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_REJECT, p);
+                    response(token, FluxConstants.REQUEST_TILE_NETWORK, FluxConstants.RESPONSE_REJECT, p);
                     return;
                 }
                 final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
                 if (e.getDeviceType().isController() && network.getLogicalDevices(FluxNetwork.CONTROLLER).size() > 0) {
-                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_HAS_CONTROLLER, p);
+                    response(token, FluxConstants.REQUEST_TILE_NETWORK, FluxConstants.RESPONSE_HAS_CONTROLLER, p);
                     return;
                 }
                 // we can connect to an invalid network (i.e. disconnect)
@@ -423,16 +422,16 @@ public class Messages {
                         e.setOwnerUUID(p.getUUID());
                     }
                     e.connect(network);
-                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
+                    response(token, FluxConstants.REQUEST_TILE_NETWORK, FluxConstants.RESPONSE_SUCCESS, p);
                     return;
                 }
                 if (password.isEmpty()) {
-                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_REQUIRE_PASSWORD, p);
+                    response(token, FluxConstants.REQUEST_TILE_NETWORK, FluxConstants.RESPONSE_REQUIRE_PASSWORD, p);
                 } else {
-                    response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_INVALID_PASSWORD, p);
+                    response(token, FluxConstants.REQUEST_TILE_NETWORK, FluxConstants.RESPONSE_INVALID_PASSWORD, p);
                 }
             } else {
-                response(token, FluxConstants.REQUEST_SET_NETWORK, FluxConstants.RESPONSE_REJECT, p);
+                response(token, FluxConstants.REQUEST_TILE_NETWORK, FluxConstants.RESPONSE_REJECT, p);
             }
         });
     }
@@ -573,6 +572,56 @@ public class Messages {
         });
     }
 
+    private static void onEditConnection(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                         BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final int networkID = payload.readVarInt();
+        final int size = payload.readVarInt();
+        if (size <= 0) {
+            throw new IllegalArgumentException();
+        }
+        final List<GlobalPos> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(FluxUtils.readGlobalPos(payload));
+        }
+        final CompoundTag tag = payload.readNbt();
+
+        // validate
+        consume(payload);
+        Objects.requireNonNull(tag);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+            boolean reject = checkTokenFailed(token, p, network);
+            if (reject) {
+                response(token, FluxConstants.REQUEST_EDIT_CONNECTION, FluxConstants.RESPONSE_REJECT, p);
+                return;
+            }
+            assert network.isValid();
+            if (network.getPlayerAccess(p).canEdit()) {
+                try {
+                    for (GlobalPos pos : list) {
+                        IFluxDevice f = network.getConnectionByPos(pos);
+                        if (f instanceof TileFluxDevice e) {
+                            e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    kick(p, e);
+                    return;
+                }
+                response(token, FluxConstants.REQUEST_EDIT_CONNECTION, FluxConstants.RESPONSE_SUCCESS, p);
+            } else {
+                response(token, FluxConstants.REQUEST_EDIT_CONNECTION, FluxConstants.RESPONSE_NO_ADMIN, p);
+            }
+        });
+    }
+
     private static boolean checkTokenFailed(int token, Player p, FluxNetwork network) {
         if (!network.isValid()) {
             return true;
@@ -622,6 +671,96 @@ public class Messages {
                 capability(p);
             } else {
                 response(token, 0, FluxConstants.RESPONSE_INVALID_USER, p);
+            }
+        });
+    }
+
+    private static void onDisconnect(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                     BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final int networkID = payload.readVarInt();
+        final int size = payload.readVarInt();
+        if (size <= 0) {
+            throw new IllegalArgumentException();
+        }
+        final List<GlobalPos> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(FluxUtils.readGlobalPos(payload));
+        }
+
+        // validate
+        consume(payload);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+            boolean reject = checkTokenFailed(token, p, network);
+            if (reject) {
+                response(token, FluxConstants.REQUEST_DISCONNECT, FluxConstants.RESPONSE_REJECT, p);
+                return;
+            }
+            assert network.isValid();
+            if (network.getPlayerAccess(p).canEdit()) {
+                for (GlobalPos pos : list) {
+                    IFluxDevice f = network.getConnectionByPos(pos);
+                    if (f instanceof TileFluxDevice e) {
+                        e.disconnect();
+                    }
+                }
+                response(token, FluxConstants.REQUEST_DISCONNECT, FluxConstants.RESPONSE_SUCCESS, p);
+            } else {
+                response(token, FluxConstants.REQUEST_DISCONNECT, FluxConstants.RESPONSE_NO_ADMIN, p);
+            }
+        });
+    }
+
+    private static void onUpdateConnections(FriendlyByteBuf payload, Supplier<ServerPlayer> player,
+                                            BlockableEventLoop<?> looper) {
+        // decode
+        final int token = payload.readByte();
+        final int networkID = payload.readVarInt();
+        final int size = payload.readVarInt();
+        if (size <= 0 || size > 7) {
+            throw new IllegalArgumentException();
+        }
+        final List<GlobalPos> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(FluxUtils.readGlobalPos(payload));
+        }
+
+        // validate
+        consume(payload);
+
+        looper.execute(() -> {
+            final ServerPlayer p = player.get();
+            if (p == null) {
+                return;
+            }
+            final FluxNetwork network = FluxNetworkData.getNetwork(networkID);
+            boolean reject = checkTokenFailed(token, p, network);
+            if (reject) {
+                response(token, FluxConstants.REQUEST_UPDATE_CONNECTION, FluxConstants.RESPONSE_REJECT, p);
+                return;
+            }
+            assert network.isValid();
+            if (network.canPlayerAccess(p, "")) {
+                List<CompoundTag> tags = new ArrayList<>();
+                for (GlobalPos pos : list) {
+                    IFluxDevice f = network.getConnectionByPos(pos);
+                    if (f != null) {
+                        CompoundTag subTag = new CompoundTag();
+                        f.writeCustomTag(subTag, FluxConstants.NBT_PHANTOM_UPDATE);
+                        tags.add(subTag);
+                    }
+                }
+                // this packet always triggers an event, so no response
+                sChannel.sendToPlayer(updateConnections(network, tags), p);
+            } else {
+                response(token, FluxConstants.REQUEST_UPDATE_CONNECTION, FluxConstants.RESPONSE_REJECT, p);
             }
         });
     }

@@ -108,6 +108,9 @@ public final class FluxNetworkData extends SavedData {
                                      @Nonnull SecurityLevel security, @Nonnull String password) {
         final int max = FluxConfig.maximumPerPlayer;
         if (max != -1 && !FluxPlayer.isPlayerSuperAdmin(creator)) {
+            if (max <= 0) {
+                return null;
+            }
             final UUID uuid = creator.getUUID();
             int i = 0;
             for (var n : mNetworks.values()) {

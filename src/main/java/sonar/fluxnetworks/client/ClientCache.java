@@ -5,6 +5,7 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.common.connection.ClientFluxNetwork;
@@ -46,6 +47,14 @@ public final class ClientCache {
         sNetworks.trim(); // rehash
         sRecentPasswords.clear(); // preserved memory, no need to rehash
         sAdminViewingNetwork = FluxConstants.INVALID_NETWORK_ID;
+        FluxNetworks.LOGGER.info("Released client Flux Networks cache");
+    }
+
+    /**
+     * Cleanup members and connections cache.
+     */
+    public static void cleanup() {
+        sNetworks.values().forEach(FluxNetwork::onDelete);
     }
 
     public static void updateNetwork(@Nonnull Int2ObjectMap<CompoundTag> map, byte type) {

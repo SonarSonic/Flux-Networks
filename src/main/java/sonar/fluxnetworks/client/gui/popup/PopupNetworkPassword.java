@@ -60,7 +60,7 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
             if (button == mCancel) {
                 mHost.closePopup();
             } else if (button == mConnect) {
-                mHost.setConnectedNetwork(mHost.mSelectedNetwork.getNetworkID(), mPassword.getValue());
+                mHost.setConnectedNetwork(mHost.mSelectedNetwork, mPassword.getValue());
                 mPassword.setValue("");
             }
         }

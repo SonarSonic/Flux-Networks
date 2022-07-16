@@ -15,7 +15,7 @@ import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
-import sonar.fluxnetworks.client.gui.button.BatchEditButton;
+import sonar.fluxnetworks.client.gui.button.EditButton;
 import sonar.fluxnetworks.client.gui.popup.PopupConnectionEdit;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -24,19 +24,20 @@ import sonar.fluxnetworks.register.ClientMessages;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
     //public InvisibleButton redirectButton;
 
-    public final List<IFluxDevice> mBatchConnections = new ArrayList<>();
-    public IFluxDevice mSingleConnection;
+    public final LinkedHashSet<IFluxDevice> mSelected = new LinkedHashSet<>();
+    public boolean mSelectionMode;
 
-    public BatchEditButton mClear;
-    public BatchEditButton mEdit;
-    public BatchEditButton mDisconnect;
+    public EditButton mMultiselect;
+    public EditButton mEdit;
+    public EditButton mDisconnect;
 
-    private int timer = 3;
+    private int timer = 0;
 
     public GuiTabConnections(@Nonnull FluxMenu menu, @Nonnull Player player) {
         super(menu, player);
@@ -45,7 +46,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         mElementWidth = 146;
         mElementHeight = 18;
         if (getNetwork().isValid()) {
-            ClientMessages.updateNetwork(getToken(), getNetwork(), FluxConstants.NBT_NET_CONNECTIONS);
+            ClientMessages.updateNetwork(getToken(), getNetwork(), FluxConstants.NBT_NET_ALL_CONNECTIONS);
         }
     }
 
@@ -61,17 +62,16 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         mGridStartY = topPos + 22;
 
         if (getNetwork().isValid()) {
-            mClear = new BatchEditButton(this, leftPos + 118, topPos + 8, 0,
-                    FluxTranslate.BATCH_CLEAR_BUTTON.get());
-            mClear.setClickable(false);
-            mEdit = new BatchEditButton(this, leftPos + 132, topPos + 8, 16,
-                    FluxTranslate.BATCH_EDIT_BUTTON.get());
+            mMultiselect = new EditButton(this, leftPos + 146, topPos + 9, 128, 64,
+                    FluxTranslate.BATCH_CLEAR_BUTTON.get(), FluxTranslate.BATCH_SELECT_BUTTON.get());
+            mEdit = new EditButton(this, leftPos + 118, topPos + 9, 192, 192,
+                    FluxTranslate.BATCH_EDIT_BUTTON.get(), FluxTranslate.BATCH_EDIT_BUTTON.get());
             mEdit.setClickable(false);
-            mDisconnect = new BatchEditButton(this, leftPos + 146, topPos + 8, 32,
-                    FluxTranslate.BATCH_DISCONNECT_BUTTON.get());
+            mDisconnect = new EditButton(this, leftPos + 132, topPos + 9, 0, 0,
+                    FluxTranslate.BATCH_DISCONNECT_BUTTON.get(), FluxTranslate.BATCH_DISCONNECT_BUTTON.get());
             mDisconnect.setClickable(false);
 
-            mButtons.add(mClear);
+            mButtons.add(mMultiselect);
             mButtons.add(mEdit);
             mButtons.add(mDisconnect);
         }
@@ -79,35 +79,12 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     }
 
     @Override
-    protected void onElementClicked(IFluxDevice element, int mouseButton) {
-        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && mBatchConnections.isEmpty() && element.isChunkLoaded()) {
-            mSingleConnection = element;
-            openPopup(new PopupConnectionEdit(this, false));
-        } else if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT ||
-                (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && mBatchConnections.size() > 0)) {
-            if (mBatchConnections.contains(element)) {
-                mBatchConnections.remove(element);
-                if (mBatchConnections.isEmpty()) {
-                    mClear.setClickable(false);
-                    mEdit.setClickable(false);
-                    mDisconnect.setClickable(false);
-                }
-            } else if (element.isChunkLoaded()) {
-                mBatchConnections.add(element);
-                mClear.setClickable(true);
-                mEdit.setClickable(true);
-                mDisconnect.setClickable(true);
-            }
-        }
-    }
-
-    @Override
     protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
         super.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
         if (getNetwork().isValid()) {
-            if (mBatchConnections.size() > 0) {
+            if (mSelectionMode) {
                 font.draw(poseStack,
-                        FluxTranslate.SELECTED.get() + ": " + ChatFormatting.AQUA + mBatchConnections.size(),
+                        FluxTranslate.SELECTED.format(ChatFormatting.AQUA.toString() + mSelected.size() + ChatFormatting.RESET),
                         leftPos + 20, topPos + 10,
                         0xffffff);
             } else {
@@ -125,7 +102,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, BARS);
+        RenderSystem.setShaderTexture(0, ICON);
 
         int color = element.getDeviceType().mColor;
 
@@ -135,25 +112,23 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
         int textColor = 0xffffff;
 
-        if (mBatchConnections.size() > 0) {
-            if (mBatchConnections.contains(element)) {
+        if (mSelectionMode) {
+            if (mSelected.contains(element)) {
                 fill(poseStack, x - 5, y + 1, x - 3, y + mElementHeight - 1, 0xccffffff);
                 fill(poseStack, x + mElementWidth + 3, y + 1, x + mElementWidth + 5, y + mElementHeight - 1,
                         0xccffffff);
                 RenderSystem.setShaderColor(r, g, b, 1.0f);
-                blit(poseStack, x, y, 0, 32, mElementWidth, mElementHeight);
             } else {
                 fill(poseStack, x - 5, y + 1, x - 3, y + mElementHeight - 1, 0xaa606060);
                 fill(poseStack, x + mElementWidth + 3, y + 1, x + mElementWidth + 5, y + mElementHeight - 1,
                         0xaa606060);
                 RenderSystem.setShaderColor(r * 0.5f, g * 0.5f, b * 0.5f, 1.0f);
-                blit(poseStack, x, y, 0, 32, mElementWidth, mElementHeight);
                 textColor = 0xd0d0d0;
             }
         } else {
             RenderSystem.setShaderColor(r, g, b, 1.0f);
-            blit(poseStack, x, y, 0, 32, mElementWidth, mElementHeight);
         }
+        blitF(poseStack, x, y, mElementWidth, mElementHeight, 0, 384, mElementWidth * 2, mElementHeight * 2);
         int titleY;
         if (element.isChunkLoaded()) {
             poseStack.pushPose();
@@ -220,20 +195,44 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     }
 
     @Override
+    protected void onElementClicked(IFluxDevice element, int mouseButton) {
+        if (mSelectionMode &&
+                (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT || mouseButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
+            if (mSelected.remove(element)) {
+                if (mSelected.isEmpty()) {
+                    mEdit.setClickable(false);
+                    mDisconnect.setClickable(false);
+                }
+            } else if (element.isChunkLoaded()) {
+                mSelected.add(element);
+                mEdit.setClickable(true);
+                mDisconnect.setClickable(true);
+            }
+        }
+    }
+
+    @Override
     public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
         super.onButtonClicked(button, mouseX, mouseY, mouseButton);
-        if (button instanceof BatchEditButton) {
-            if (button == mClear) {
-                mBatchConnections.clear();
-                mClear.setClickable(false);
+        if (button instanceof EditButton) {
+            if (button == mMultiselect) {
+                if (mMultiselect.isChecked()) {
+                    mMultiselect.setChecked(false);
+                    mSelectionMode = false;
+                } else {
+                    mMultiselect.setChecked(true);
+                    mSelectionMode = true;
+                }
+                mSelected.clear();
                 mEdit.setClickable(false);
                 mDisconnect.setClickable(false);
             } else if (button == mEdit) {
-                openPopup(new PopupConnectionEdit(this, true));
+                assert mSelectionMode && !mSelected.isEmpty();
+                openPopup(new PopupConnectionEdit(this));
             } else if (button == mDisconnect) {
-                /*List<GlobalPos> list =
-                        mBatchConnections.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList());
-                C2SNetMsg.disconnect(network.getNetworkID(), list);*/
+                assert mSelectionMode && !mSelected.isEmpty();
+                ClientMessages.disconnect(getToken(), getNetwork(),
+                        mSelected.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList()));
             }
         }
     }
@@ -303,6 +302,27 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         }
         if (key == FluxConstants.REQUEST_UPDATE_NETWORK) {
             refreshPages(getNetwork().getAllConnections());
+        } else if (code == FluxConstants.RESPONSE_SUCCESS) {
+            closePopup();
+            if (key == FluxConstants.REQUEST_DISCONNECT) {
+                mElements.removeAll(mSelected);
+                refreshCurrentPage();
+            }
+            mSelected.clear();
+            mSelectionMode = false;
+            mMultiselect.setChecked(false);
+            mEdit.setClickable(false);
+            mDisconnect.setClickable(false);
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        timer = (timer + 1) % 20;
+        if (timer % 5 == 0) {
+            ClientMessages.updateConnections(getToken(), getNetwork(),
+                    mCurrent.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList()));
         }
     }
 
@@ -315,6 +335,5 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
                         .thenComparing(f -> f.getDeviceType().isPoint())
                         .thenComparingInt(p -> -p.getRawPriority());
         mElements.sort(comparator);
-        refreshCurrentPageInternal();
     }
 }

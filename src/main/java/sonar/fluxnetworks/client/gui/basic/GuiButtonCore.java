@@ -7,9 +7,6 @@ import sonar.fluxnetworks.FluxNetworks;
 
 public abstract class GuiButtonCore extends GuiComponent {
 
-    public static final ResourceLocation BUTTONS = new ResourceLocation(
-            FluxNetworks.MODID, "textures/gui/gui_button.png");
-
     public final GuiFocusable screen;
 
     public int x;

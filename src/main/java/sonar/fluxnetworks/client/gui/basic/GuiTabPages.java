@@ -19,7 +19,6 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     protected final List<T> mCurrent = new ArrayList<>(); // elements of current page
     protected SortType mSortType = SortType.ID; // current sort type
     protected PageLabelButton mLabelButton; // bottom button
-    private boolean init;
 
     public int mPage = 0; // current page, 0-based indexing
     public int mPages = 1;
@@ -121,22 +120,20 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     protected void refreshPages(Collection<T> elements) {
         mElements.clear();
         mElements.addAll(elements);
-        mPages = (int) Math.ceil(elements.size() / (double) mGridPerPage);
-        sortGrids(mSortType);
-        if (!init) {
-            refreshCurrentPage();
-            init = true;
+        if (elements.isEmpty()) {
+            mPages = 1;
         } else {
-            refreshCurrentPageInternal();
+            mPages = (int) Math.ceil(elements.size() / (double) mGridPerPage);
         }
+        mPage = Math.min(mPage, mPages - 1);
+        sortGrids(mSortType);
+        refreshCurrentPage();
     }
 
     protected void refreshCurrentPage() {
-        refreshCurrentPageInternal();
+        mPage = Math.min(mPage, mPages - 1);
         mLabelButton.refreshPages(mPage, mPages);
-    }
 
-    protected void refreshCurrentPageInternal() {
         if (mElements.isEmpty()) {
             return;
         }
@@ -151,6 +148,14 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     }
 
     protected void sortGrids(SortType sortType) {
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (mLabelButton != null) {
+            mLabelButton.mColor = getNetwork().getNetworkColor();
+        }
     }
 
     public enum SortType {

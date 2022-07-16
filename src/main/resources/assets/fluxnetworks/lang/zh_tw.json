@@ -81,7 +81,7 @@
 	"gui.fluxnetworks.response.bannedloading": "伺服器停用了區塊載入",
 
 	"gui.fluxnetworks.label.sortby": "排序方式",
-	"gui.fluxnetworks.label.selected": "已選擇",
+	"gui.fluxnetworks.label.selected": "已選擇%s個",
 	"gui.fluxnetworks.label.singleedit": "單個編輯模式",
 	"gui.fluxnetworks.label.batchedit": "批量編輯模式",
 	"gui.fluxnetworks.label.editingconnections": "正在編輯 %d 個連接點",
@@ -106,6 +106,7 @@
 	"gui.fluxnetworks.label.sort.id": "ID",
 	"gui.fluxnetworks.label.sort.name": "名稱",
 
+	"gui.fluxnetworks.button.batchselect": "選擇項目",
 	"gui.fluxnetworks.button.batchclear": "清空所選",
 	"gui.fluxnetworks.button.batchedit": "編輯所選",
 	"gui.fluxnetworks.button.batchdisconnect": "斷開所選",

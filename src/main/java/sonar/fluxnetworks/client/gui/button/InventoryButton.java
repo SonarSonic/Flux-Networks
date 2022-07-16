@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 import sonar.fluxnetworks.client.gui.tab.GuiTabWireless;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
@@ -24,14 +23,14 @@ public class InventoryButton extends GuiButtonCore {
     public GuiTabWireless mHost;
     private final String mText;
 
-    public InventoryButton(GuiFocusable screen, int x, int y, int width, int height, @Nonnull WirelessType type,
-                           int u0, int v0, GuiTabWireless host) {
+    public InventoryButton(GuiTabWireless screen, int x, int y, int width, int height, @Nonnull WirelessType type,
+                           int u0, int v0) {
         super(screen, x, y, width, height);
+        mHost = screen;
         mType = type;
+        mText = type.getTranslatedName();
         mU0 = u0;
         mV0 = v0;
-        mHost = host;
-        mText = type.getTranslatedName();
     }
 
     @Override

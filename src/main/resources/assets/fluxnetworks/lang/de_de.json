@@ -80,7 +80,7 @@
     "gui.fluxnetworks.response.bannedloading": "Chunk laden ist auf diesen Server verboten",
 
     "gui.fluxnetworks.label.sortby": "Sortiere nach",
-    "gui.fluxnetworks.label.selected": "Ausgewählt",
+    "gui.fluxnetworks.label.selected": "%s Item(s) Ausgewählt",
     "gui.fluxnetworks.label.singleedit": "Einzelbearbeitungsmodus",
     "gui.fluxnetworks.label.batchedit": "Multibearbeitungsmodus",
     "gui.fluxnetworks.label.editingconnections": "Bearbeiten von %d Verbindungen",
@@ -104,6 +104,7 @@
     "gui.fluxnetworks.label.sort.id": "ID",
     "gui.fluxnetworks.label.sort.name": "Name",
 
+    "gui.fluxnetworks.button.batchselect": "Select Items",
     "gui.fluxnetworks.button.batchclear": "Auswahl entfernen",
     "gui.fluxnetworks.button.batchedit": "Auswahl bearbeiten",
     "gui.fluxnetworks.button.batchdisconnect": "Auswahl trennen",

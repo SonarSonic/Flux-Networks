@@ -27,17 +27,17 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
 
     @Override
     protected void renderBarAndName(PoseStack poseStack, FluxNetwork element, int x, int y, boolean selected) {
-        blit(poseStack, x, y, 0, 32, mElementWidth, 6);
-        // stretch the middle part
-        blit(poseStack, x, y + 6, mElementWidth, mElementHeight - 12, 0, 32 + 6, mElementWidth, 6, 256, 256);
-        blit(poseStack, x, y + mElementHeight - 6, 0, 32 + 12, mElementWidth, 6);
+        blitF(poseStack, x, y, mElementWidth, mElementHeight, 0, 448, mElementWidth * 2, mElementHeight * 2);
         font.draw(poseStack, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
 
         poseStack.pushPose();
         poseStack.scale(0.75f, 0.75f, 1);
-        font.draw(poseStack, "C: " + element.getStatistics().getConnectionCount() + ", T: " +
-                        element.getStatistics().averageTickMicro + " \u00b5s/t",
-                (int) ((x + 4) / 0.75), (int) ((y + 11) / 0.75), getNetwork() == element ? 0xffffff : 0x808080);
+        String text = "C: " + element.getStatistics().getConnectionCount();
+        text += ", I: " + EnergyType.FE.getUsageCompact(element.getStatistics().energyInput);
+        text += ", O: " + EnergyType.FE.getUsageCompact(element.getStatistics().energyOutput);
+        text += ", T: " + element.getStatistics().averageTickMicro + " \u00b5s/t";
+        font.draw(poseStack, text,
+                (int) ((x + 4) / 0.75), (int) ((y + 11) / 0.75), selected ? 0xffffff : 0x808080);
         poseStack.popPose();
     }
 

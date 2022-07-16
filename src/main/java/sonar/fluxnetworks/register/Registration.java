@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -24,6 +25,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
@@ -55,6 +57,33 @@ public class Registration {
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
         Channel.sChannel = FluxNetworks.isModernUILoaded() ? new MUIChannel() : new FMLChannel();
+        event.enqueueWork(() -> ForgeChunkManager.setForcedChunkLoadingCallback(FluxNetworks.MODID, (level, helper) -> {
+            if (!FluxConfig.enableChunkLoading) {
+                helper.getBlockTickets().keySet().forEach(helper::removeAllTickets);
+                FluxNetworks.LOGGER.info("Removed all chunk loaders because chunk loading is disabled");
+            } else {
+                int chunks = 0;
+                for (var entry : helper.getBlockTickets().entrySet()) {
+                    // this also loads the chunk
+                    if (level.getBlockEntity(entry.getKey()) instanceof TileFluxDevice e) {
+                        e.setForcedLoading(true);
+                        var pair = entry.getValue();
+                        int count = 0;
+                        count += pair.getFirst().size();
+                        count += pair.getSecond().size();
+                        if (count != 1) {
+                            FluxNetworks.LOGGER.warn("{} in {} didn't load just one chunk {}",
+                                    entry.getValue(), level.dimension().location(), pair);
+                        }
+                        chunks += count;
+                    } else {
+                        helper.removeAllTickets(entry.getKey());
+                    }
+                }
+                FluxNetworks.LOGGER.info("Load {} chunks by {} flux devices in {}",
+                        chunks, helper.getBlockTickets().size(), level.dimension().location());
+            }
+        }));
     }
 
     @SubscribeEvent
@@ -97,10 +126,11 @@ public class Registration {
     public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
 
-        Item.Properties props = new Item.Properties().tab(CREATIVE_MODE_TAB);
+        Item.Properties props = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant();
 
         registry.register(new BlockItem(RegistryBlocks.FLUX_BLOCK, props)
                 .setRegistryName("flux_block"));
+
         registry.register(new FluxDeviceItem(RegistryBlocks.FLUX_PLUG, props)
                 .setRegistryName("flux_plug"));
         registry.register(new FluxDeviceItem(RegistryBlocks.FLUX_POINT, props)
@@ -119,9 +149,12 @@ public class Registration {
                 .setRegistryName("flux_dust"));
         registry.register(new Item(props)
                 .setRegistryName("flux_core"));
-        registry.register(new ItemFluxConfigurator(props)
+
+        Item.Properties toolProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant().stacksTo(1);
+
+        registry.register(new ItemFluxConfigurator(toolProps)
                 .setRegistryName("flux_configurator"));
-        registry.register(new ItemAdminConfigurator(props)
+        registry.register(new ItemAdminConfigurator(toolProps)
                 .setRegistryName("admin_configurator"));
     }
 

@@ -14,7 +14,9 @@ import sonar.fluxnetworks.api.network.AccessLevel;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
+import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiTabPages;
+import sonar.fluxnetworks.client.gui.button.EditButton;
 import sonar.fluxnetworks.client.gui.popup.PopupNetworkPassword;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
@@ -26,6 +28,7 @@ import java.util.*;
 
 public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
+    private EditButton mDisconnect;
     public FluxNetwork mSelectedNetwork;
 
     public GuiTabSelection(@Nonnull FluxMenu menu, @Nonnull Player player) {
@@ -52,8 +55,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             String sortBy = FluxTranslate.SORT_BY.get() + ": " + ChatFormatting.AQUA + mSortType.getTranslatedName();
             font.draw(poseStack, sortBy, leftPos + 19, topPos + 24, 0xffffff);
 
-            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(),
-                    leftPos + 20, topPos + 8);
+            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), topPos + 8);
         }
     }
 
@@ -62,6 +64,12 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         super.init();
         mGridStartX = leftPos + 15;
         mGridStartY = topPos + 36;
+
+        mDisconnect = new EditButton(this, leftPos + 142, topPos + 10, 8, 8, 0, 0,
+                FluxTranslate.BATCH_DISCONNECT_BUTTON.get(), FluxTranslate.BATCH_DISCONNECT_BUTTON.get());
+        mDisconnect.setClickable(getNetwork().isValid());
+        mButtons.add(mDisconnect);
+
         refreshPages(ClientCache.getAllNetworks());
     }
 
@@ -69,18 +77,18 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     public void renderElement(PoseStack poseStack, FluxNetwork element, int x, int y) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, BARS);
+        RenderSystem.setShaderTexture(0, ICON);
 
         boolean selected = getNetwork() == element;
         boolean locked = element.getSecurityLevel() != SecurityLevel.PUBLIC;
 
         if (locked) {
             if (selected) {
-                blit(poseStack, x + 131, y, 159, 16, 16, 12);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
             } else {
-                blit(poseStack, x + 131, y, 175, 16, 16, 12);
+                RenderSystem.setShaderColor(0.7f, 0.7f, 0.7f, 1.0f);
             }
+            blitF(poseStack, x + 133, y + 1, 10, 10, 384, 256, 64, 64);
         }
 
         int color = element.getNetworkColor();
@@ -99,7 +107,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     }
 
     protected void renderBarAndName(PoseStack poseStack, FluxNetwork element, int x, int y, boolean selected) {
-        blit(poseStack, x, y, 0, 16, mElementWidth, mElementHeight);
+        blitF(poseStack, x, y, mElementWidth, mElementHeight, 0, 352, mElementWidth * 2, mElementHeight * 2);
         font.draw(poseStack, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
     }
 
@@ -133,7 +141,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     protected void onElementClicked(FluxNetwork element, int mouseButton) {
         if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             mSelectedNetwork = element;
-            setConnectedNetwork(element.getNetworkID(), ClientCache.getRecentPassword(element.getNetworkID()));
+            setConnectedNetwork(element, ClientCache.getRecentPassword(element.getNetworkID()));
         }
     }
 
@@ -146,6 +154,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             if (mouseX >= leftPos + 45 && mouseX < leftPos + 75 && mouseY >= topPos + 24 && mouseY < topPos + 32) {
                 mSortType = FluxUtils.cycle(mSortType, SortType.values());
                 sortGrids(mSortType);
+                refreshCurrentPage();
                 return true;
             }
             if (mElements.isEmpty()) {
@@ -156,13 +165,21 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     }
 
     @Override
+    public void onButtonClicked(GuiButtonCore button, float mouseX, float mouseY, int mouseButton) {
+        super.onButtonClicked(button, mouseX, mouseY, mouseButton);
+        if (mouseButton == GLFW.GLFW_MOUSE_BUTTON_LEFT && button == mDisconnect) {
+            setConnectedNetwork(FluxNetwork.INVALID, "");
+        }
+    }
+
+    @Override
     protected void onResponseAction(int key, int code) {
         super.onResponseAction(key, code);
         if (code == FluxConstants.RESPONSE_REJECT) {
             switchTab(EnumNavigationTab.TAB_HOME, false);
             return;
         }
-        if (key == FluxConstants.REQUEST_SET_NETWORK) {
+        if (key == FluxConstants.REQUEST_TILE_NETWORK) {
             if (code == FluxConstants.RESPONSE_REQUIRE_PASSWORD) {
                 openPopup(new PopupNetworkPassword(this));
             } else if (code == FluxConstants.RESPONSE_SUCCESS) {
@@ -186,22 +203,16 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     @Override
     protected void containerTick() {
         super.containerTick();
-        if (mLabelButton != null) {
-            mLabelButton.mColor = getNetwork().getNetworkColor();
+        if (mDisconnect != null) {
+            mDisconnect.setClickable(getNetwork().isValid());
         }
     }
 
     @Override
     protected void sortGrids(SortType sortType) {
         switch (sortType) {
-            case ID -> {
-                mElements.sort(Comparator.comparing(FluxNetwork::getNetworkID));
-                refreshCurrentPageInternal();
-            }
-            case NAME -> {
-                mElements.sort(Comparator.comparing(FluxNetwork::getNetworkName));
-                refreshCurrentPageInternal();
-            }
+            case ID -> mElements.sort(Comparator.comparing(FluxNetwork::getNetworkID));
+            case NAME -> mElements.sort(Comparator.comparing(FluxNetwork::getNetworkName));
         }
     }
 }

@@ -5,18 +5,18 @@ import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
 /**
- * Simple toggle button with a filled rectangle or hollow rectangle.
+ * Simple checkbox with a filled rectangle or hollow rectangle.
  */
-public class ToggleButton extends GuiButtonCore {
+public class Checkbox extends GuiButtonCore {
 
     // switch on/off
     private boolean mChecked = false;
 
-    public ToggleButton(GuiFocusable screen, int x, int y) {
+    public Checkbox(GuiFocusable screen, int x, int y) {
         this(screen, x, y, 6, 6);
     }
 
-    public ToggleButton(GuiFocusable screen, int x, int y, int width, int height) {
+    public Checkbox(GuiFocusable screen, int x, int y, int width, int height) {
         super(screen, x, y, width, height);
     }
 

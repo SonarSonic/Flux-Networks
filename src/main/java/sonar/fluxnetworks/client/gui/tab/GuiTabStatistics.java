@@ -44,12 +44,11 @@ public class GuiTabStatistics extends GuiTabCore {
         super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
         final FluxNetwork network = getNetwork();
         if (network.isValid()) {
+            int color = network.getNetworkColor();
+            renderNetwork(poseStack, network.getNetworkName(), color, topPos + 8);
+
             poseStack.pushPose();
             poseStack.translate(leftPos, topPos, 0);
-
-            int color = network.getNetworkColor();
-            renderNetwork(poseStack, network.getNetworkName(), color, 20, 8);
-
             final NetworkStatistics stats = network.getStatistics();
             font.draw(poseStack, ChatFormatting.GRAY + FluxTranslate.PLUGS.get() + ChatFormatting.GRAY + ": " +
                     ChatFormatting.RESET + stats.fluxPlugCount, 12, 24, color);

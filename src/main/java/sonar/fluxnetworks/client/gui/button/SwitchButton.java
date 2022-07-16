@@ -3,8 +3,10 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.util.Mth;
+import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 /**
  * A simple switch button with sliding thumb and track.
@@ -20,13 +22,21 @@ public class SwitchButton extends GuiButtonCore {
     // thumb offset, fraction (0..1)
     private float mOffset;
 
+    private int mColor;
+
     // default check state skips the animation
+
     public SwitchButton(GuiFocusable screen, int x, int y, boolean checked) {
+        this(screen, x, y, checked, EnumNetworkColor.BLUE.getRGB());
+    }
+
+    public SwitchButton(GuiFocusable screen, int x, int y, boolean checked, int color) {
         super(screen, x, y, WIDTH, HEIGHT);
         if (checked) {
             mChecked = true;
             mOffset = 1;
         }
+        mColor = color;
     }
 
     @Override
@@ -36,26 +46,49 @@ public class SwitchButton extends GuiButtonCore {
         float delta = deltaTicks / 4f;
         mOffset = Mth.clamp(mChecked ? mOffset + delta : mOffset - delta, 0, 1);
 
-        // Whether to use selected or unselected texture
-        final int state = mClickable ? mChecked || isMouseHovered(mouseX, mouseY) ? 0 : 1 : 1;
-
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderTexture(0, GuiFocusable.ICON);
+
+        float r = FluxUtils.getRed(mColor);
+        float g = FluxUtils.getGreen(mColor);
+        float b = FluxUtils.getBlue(mColor);
+
+        final float thumbOffset = mOffset * height;
+
         if (mClickable) {
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderColor(r, g, b, 0.9F);
+        } else {
+            RenderSystem.setShaderColor(r * 0.5F, g * 0.5F, b * 0.5F, 0.9F);
+        }
+        // Background
+        screen.blitF(poseStack, x, y, thumbOffset * 2, height, 320, 256, thumbOffset * 8, 32);
+
+        if (mClickable) {
+            if (isMouseHovered(mouseX, mouseY)) {
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            } else if (mChecked) {
+                RenderSystem.setShaderColor(0.85F, 0.85F, 0.85F, 1.0F);
+            } else {
+                RenderSystem.setShaderColor(0.7F, 0.7F, 0.7F, 1.0F);
+            }
         } else {
             RenderSystem.setShaderColor(0.5F, 0.5F, 0.5F, 1.0F);
         }
-        RenderSystem.setShaderTexture(0, BUTTONS);
-
-        final float thumbOffset = mOffset * HEIGHT;
-        // Background
-        screen.blitF(poseStack, x, y, thumbOffset * 2, 8, 64, 64, thumbOffset * 4, 16);
-
-        // Thumb
-        screen.blitF(poseStack, x + thumbOffset, y, 8, 8, 32 * state, 80, 16, 16);
-
         // Track
-        screen.blitF(poseStack, x, y, width, height, 32 * state, 64, 32, 16);
+        screen.blitF(poseStack, x, y, width, height, 256, 256, 64, 32);
+
+        if (mClickable) {
+            if (mChecked || isMouseHovered(mouseX, mouseY)) {
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            } else {
+                RenderSystem.setShaderColor(0.7F, 0.7F, 0.7F, 1.0F);
+            }
+        } else {
+            RenderSystem.setShaderColor(0.5F, 0.5F, 0.5F, 1.0F);
+        }
+        // Thumb
+        screen.blitF(poseStack, x + thumbOffset, y, width / 2f, height, 256, 288, 32, 32);
     }
 
     public void toggle() {
@@ -68,5 +101,9 @@ public class SwitchButton extends GuiButtonCore {
 
     public void setChecked(boolean checked) {
         mChecked = checked;
+    }
+
+    public void setColor(int color) {
+        mColor = color;
     }
 }

@@ -39,7 +39,8 @@ public class GuiTabWireless extends GuiTabCore {
             drawCenteredString(poseStack, font, FluxTranslate.TAB_WIRELESS.get(), leftPos + 88, topPos + 10, 0xb4b4b4);
             font.draw(poseStack, FluxTranslate.ENABLE_WIRELESS.get(), leftPos + 20, topPos + 148, color);
 
-            if (ClientCache.sWirelessNetwork == getNetwork().getNetworkID()) {
+            if (WirelessType.ENABLE_WIRELESS.isActivated(ClientCache.sWirelessMode) &&
+                    ClientCache.sWirelessNetwork == getNetwork().getNetworkID()) {
                 drawCenteredString(poseStack, font,
                         '(' + FluxTranslate.EFFECTIVE_WIRELESS_NETWORK.get() + ')',
                         leftPos + 88, topPos + 158, color);
@@ -61,20 +62,20 @@ public class GuiTabWireless extends GuiTabCore {
             mWirelessMode = ClientCache.sWirelessMode;
 
             mEnable = new SwitchButton(this, leftPos + 140, topPos + 148,
-                    WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode));
+                    WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode), getNetwork().getNetworkColor());
             mButtons.add(mEnable);
             mButtons.add(new InventoryButton(this, leftPos + 24, topPos + 28, 52, 16,
-                    WirelessType.ARMOR, 0, 80, this));
+                    WirelessType.ARMOR, 0, 80));
             mButtons.add(new InventoryButton(this, leftPos + 100, topPos + 28, 52, 16,
-                    WirelessType.CURIOS, 0, 80, this));
+                    WirelessType.CURIOS, 0, 80));
             mButtons.add(new InventoryButton(this, leftPos + 32, topPos + 52, 112, 40,
-                    WirelessType.INVENTORY, 0, 0, this));
+                    WirelessType.INVENTORY, 0, 0));
             mButtons.add(new InventoryButton(this, leftPos + 32, topPos + 100, 112, 16,
-                    WirelessType.HOT_BAR, 112, 0, this));
+                    WirelessType.HOT_BAR, 112, 0));
             mButtons.add(new InventoryButton(this, leftPos + 136, topPos + 124, 16, 16,
-                    WirelessType.MAIN_HAND, 52, 80, this));
+                    WirelessType.MAIN_HAND, 52, 80));
             mButtons.add(new InventoryButton(this, leftPos + 24, topPos + 124, 16, 16,
-                    WirelessType.OFF_HAND, 52, 80, this));
+                    WirelessType.OFF_HAND, 52, 80));
 
             mApply = new SimpleButton(this, leftPos + (imageWidth / 2) - 24, topPos + 126, 48, 12,
                     FluxTranslate.APPLY.get());
@@ -127,6 +128,14 @@ public class GuiTabWireless extends GuiTabCore {
             if (mEnable != null) {
                 mEnable.setChecked(WirelessType.ENABLE_WIRELESS.isActivated(mWirelessMode));
             }
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (mEnable != null) {
+            mEnable.setColor(getNetwork().getNetworkColor());
         }
     }
 

@@ -3,7 +3,7 @@ package sonar.fluxnetworks.api;
 import sonar.fluxnetworks.FluxNetworks;
 
 /**
- * Revision: 7.0.0
+ * Revision: 7.0.3
  */
 public final class FluxConstants {
 
@@ -47,19 +47,18 @@ public final class FluxConstants {
     public static final byte
             NBT_NET_BASIC = 21,
             NBT_NET_MEMBERS = 22,
-            NBT_NET_CONNECTIONS = 23,
+            NBT_NET_ALL_CONNECTIONS = 23,
             NBT_NET_STATISTICS = 24;
 
     // Network connections editing flags
-    //TODO remove, using NBT instead
-    public static final int
+    /*public static final int
             FLAG_EDIT_NAME = 1,
             FLAG_EDIT_PRIORITY = 1 << 1,
             FLAG_EDIT_LIMIT = 1 << 2,
             FLAG_EDIT_SURGE_MODE = 1 << 3,
             FLAG_EDIT_DISABLE_LIMIT = 1 << 4,
             FLAG_EDIT_CHUNK_LOADING = 1 << 5,
-            FLAG_EDIT_DISCONNECT = 1 << 6;
+            FLAG_EDIT_DISCONNECT = 1 << 6;*/
 
     /**
      * Response codes. Positive - Have Toast, Negative - Action Only.
@@ -82,11 +81,15 @@ public final class FluxConstants {
      */
     public static final int
             REQUEST_CREATE_NETWORK = 1,
-            REQUEST_SET_NETWORK = 2,
-            REQUEST_UPDATE_NETWORK = 3,
-            REQUEST_DELETE_NETWORK = 4,
-            REQUEST_EDIT_NETWORK = 5,
-            REQUEST_EDIT_MEMBER = 6;
+            REQUEST_DELETE_NETWORK = 2,
+            REQUEST_EDIT_TILE = 3,
+            REQUEST_TILE_NETWORK = 4,
+            REQUEST_EDIT_MEMBER = 5,
+            REQUEST_EDIT_NETWORK = 6,
+            REQUEST_EDIT_CONNECTION = 7,
+            REQUEST_UPDATE_NETWORK = 8,
+            REQUEST_UPDATE_CONNECTION = 9,
+            REQUEST_DISCONNECT = 10;
 
     // Network members editing type
     public static final byte MEMBERSHIP_SET_USER = 1;
@@ -94,15 +97,15 @@ public final class FluxConstants {
     public static final byte MEMBERSHIP_CANCEL_MEMBERSHIP = 3;
     public static final byte MEMBERSHIP_TRANSFER_OWNERSHIP = 4;
 
-    /**
+    /*
      * Device buffer message type, C2S positive
      */
-    public static final byte DEVICE_C2S_CUSTOM_NAME = 1;
+    /*public static final byte DEVICE_C2S_CUSTOM_NAME = 1;
     public static final byte DEVICE_C2S_PRIORITY = 2;
     public static final byte DEVICE_C2S_LIMIT = 3;
     public static final byte DEVICE_C2S_SURGE_MODE = 4;
     public static final byte DEVICE_C2S_DISABLE_LIMIT = 5;
-    public static final byte DEVICE_C2S_CHUNK_LOADING = 6;
+    public static final byte DEVICE_C2S_CHUNK_LOADING = 6;*/
 
     /**
      * Device buffer message type, S2C negative

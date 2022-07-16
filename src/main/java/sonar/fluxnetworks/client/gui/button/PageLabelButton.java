@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
@@ -23,6 +24,10 @@ public class PageLabelButton extends GuiButtonCore {
         if (pages <= 0) {
             return;
         }
+
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         int dotSize = height;
         int dotsWidth = (pages * dotSize) + (pages - 1); // with padding
@@ -71,9 +76,11 @@ public class PageLabelButton extends GuiButtonCore {
      * @param pages max number of pages
      */
     public void refreshPages(int page, int pages) {
-        mPage = page;
-        mPages = pages;
-        mHoveredPage = -1;
-        mShowTick = 20;
+        if (mPage != page || mPages != pages) {
+            mPage = page;
+            mPages = pages;
+            mHoveredPage = -1;
+            mShowTick = 20;
+        }
     }
 }

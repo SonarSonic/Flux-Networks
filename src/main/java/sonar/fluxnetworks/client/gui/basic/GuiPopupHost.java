@@ -218,9 +218,9 @@ public abstract class GuiPopupHost extends GuiFocusable {
 
         if (mCurrentPopup != null) {
             poseStack.pushPose();
-            poseStack.translate(0, 0, 450);
+            poseStack.translate(0, 0, 300);
             mCurrentPopup.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-            poseStack.translate(0, 0, 100);
+            poseStack.translate(0, 0, 10);
             mCurrentPopup.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
             poseStack.popPose();
         }

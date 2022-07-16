@@ -12,7 +12,6 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Consumer;
 
 /**
  * The class represents a flux Network on the logical server side.
@@ -22,8 +21,6 @@ public class ServerFluxNetwork extends FluxNetwork {
     private static final Comparator<TileFluxDevice> sDescendingOrder =
             (lhs, rhs) -> Integer.compare(rhs.getTransferHandler().getPriority(),
                     lhs.getTransferHandler().getPriority());
-
-    private static final Consumer<TileFluxDevice> sDisconnect = d -> d.connect(INVALID);
 
     /**
      * See {@link #ANY}
@@ -198,9 +195,9 @@ public class ServerFluxNetwork extends FluxNetwork {
     }
 
     @Override
-    protected void onDelete() {
+    public void onDelete() {
         super.onDelete();
-        getLogicalDevices(ANY).forEach(sDisconnect);
+        getLogicalDevices(ANY).forEach(TileFluxDevice::disconnect);
         Arrays.fill(mDevices, null);
         mToAdd.clear();
         mToRemove.clear();

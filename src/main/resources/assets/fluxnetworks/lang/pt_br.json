@@ -81,7 +81,7 @@
 	"gui.fluxnetworks.response.bannedloading": "Carregamento de Chunks foi banido desse servidor",
 
 	"gui.fluxnetworks.label.sortby": "Ordenar por",
-	"gui.fluxnetworks.label.selected": "Selecionado",
+	"gui.fluxnetworks.label.selected": "%s Item(s) Selecionado",
 	"gui.fluxnetworks.label.singleedit": "Modo de Edição Único",
 	"gui.fluxnetworks.label.batchedit": "Modo de Edição em Grupo",
 	"gui.fluxnetworks.label.editingconnections": "Editing %d Connections",
@@ -106,6 +106,7 @@
 	"gui.fluxnetworks.label.sort.id": "ID",
 	"gui.fluxnetworks.label.sort.name": "Nome",
 
+	"gui.fluxnetworks.button.batchselect": "Select Items",
 	"gui.fluxnetworks.button.batchclear": "Limpar Selecionado",
 	"gui.fluxnetworks.button.batchedit": "Editar Selecionado",
 	"gui.fluxnetworks.button.batchdisconnect": "Desconectar Selecionado",

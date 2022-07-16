@@ -139,11 +139,12 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     /**
      * Render the network bar on the top.
      */
-    protected void renderNetwork(PoseStack poseStack, String name, int color, int x, int y) {
+    protected void renderNetwork(PoseStack poseStack, String name, int color, int y) {
         RenderSystem.enableBlend();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
-        RenderSystem.setShaderTexture(0, BARS);
-        blit(poseStack, x, y, 0, 0, 135, 12, 256, 256);
+        RenderSystem.setShaderTexture(0, ICON);
+        int x = leftPos + 20;
+        blitF(poseStack, x, y, 135, 12, 0, 320, 270, 24);
         font.draw(poseStack, name, x + 4, y + 2, 0xffffff);
     }
 
@@ -162,20 +163,20 @@ public abstract class GuiFluxCore extends GuiPopupHost {
     }
 
     protected void renderItemStack(ItemStack stack, int x, int y) {
-        setBlitOffset(200);
-        itemRenderer.blitOffset = 200.0F;
+        setBlitOffset(50);
+        itemRenderer.blitOffset = 50.0F;
         itemRenderer.renderAndDecorateItem(stack, x, y);
         setBlitOffset(0);
         itemRenderer.blitOffset = 0.0F;
     }
 
-    public void setConnectedNetwork(int networkID, String password) {
+    public void setConnectedNetwork(FluxNetwork network, String password) {
         if (menu.mProvider instanceof TileFluxDevice) {
-            ClientMessages.setTileNetwork(getToken(), (TileFluxDevice) menu.mProvider, networkID, password);
+            ClientMessages.tileNetwork(getToken(), (TileFluxDevice) menu.mProvider, network, password);
         } /*else if (menu.mProvider instanceof ItemFluxConfigurator.Provider) {
             C2SNetMsg.configuratorNet(networkID, password);
         }*/ else if (menu.mProvider instanceof ItemAdminConfigurator.Provider) {
-            ClientCache.sAdminViewingNetwork = networkID;
+            ClientCache.sAdminViewingNetwork = network.getNetworkID();
         }
     }
 

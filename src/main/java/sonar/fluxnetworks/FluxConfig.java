@@ -126,46 +126,68 @@ public class FluxConfig {
 
     private static class Common {
 
+        private Common(@Nonnull ForgeConfigSpec.Builder builder) {
+            builder.comment("All configs are moved to [gameDir]/saves/[save]/serverconfig/fluxnetworks-server.toml",
+                            "or [gameDir]/world/serverconfig/fluxnetworks-server.toml",
+                            "Copy to [gameDir]/defaultconfig/fluxnetworks-server.toml for modpacks")
+                    .define("placeholder", true);
+        }
+
+        private void load() {
+        }
+    }
+
+    private static class Server {
+
         // networks
-        private final ForgeConfigSpec.IntValue mMaximumPerPlayer, mSuperAdminRequiredPermission;
+        private final ForgeConfigSpec.IntValue mMaximumPerPlayer;
+        private final ForgeConfigSpec.IntValue mSuperAdminRequiredPermission;
         private final ForgeConfigSpec.BooleanValue mEnableSuperAdmin;
 
         // general
-        private final ForgeConfigSpec.BooleanValue mEnableFluxRecipe, mEnableChunkLoading;
+        private final ForgeConfigSpec.BooleanValue mEnableFluxRecipe;
+        private final ForgeConfigSpec.BooleanValue mEnableChunkLoading;
+        //private final ForgeConfigSpec.BooleanValue mChunkLoadingRequiresSuperAdmin;
 
         // blacklist
         private final ForgeConfigSpec.ConfigValue<List<String>> mBlockBlacklistStrings, mItemBlackListStrings;
 
-        private Common(@Nonnull ForgeConfigSpec.Builder builder) {
+        // energy
+        private final ForgeConfigSpec.LongValue mDefaultLimit, mBasicCapacity, mBasicTransfer, mHerculeanCapacity,
+                mHerculeanTransfer, mGargantuanCapacity, mGargantuanTransfer;
+
+        private Server(@Nonnull ForgeConfigSpec.Builder builder) {
             builder.push("networks");
             mMaximumPerPlayer = builder
-                    .comment("Maximum networks each player can have. -1 = no limit")
+                    .comment("Maximum networks each player can have. Super admin can bypass this limit. -1 = no limit")
                     .translation(FluxNetworks.MODID + ".config." + "maximumPerPlayer")
                     .defineInRange("maximumPerPlayer", 5, -1, Integer.MAX_VALUE);
             mEnableSuperAdmin = builder
-                    .comment("Allows someone to be a network super admin, otherwise, no one can access or dismantle " +
-                            "your flux devices or delete your networks without permission")
+                    .comment("Allows someone to be a network super admin. Otherwise, no one can access a flux device " +
+                                    "or delete a network without permission.",
+                            "Single player can bypass this limit.")
                     .translation(FluxNetworks.MODID + ".config." + "enableSuperAdmin")
                     .define("enableSuperAdmin", true);
             mSuperAdminRequiredPermission = builder
                     .comment("See ops.json. If the player has permission level equal or greater to the value set here" +
-                            " they will be able to Activate Super Admin. Setting this to 0 will allow anyone to " +
-                            "active Super Admin.")
+                                    " they will be able to Activate Super Admin.",
+                            "Setting this to 0 will allow anyone to active Super Admin. Single player can bypass this" +
+                                    " limit.")
                     .translation(FluxNetworks.MODID + ".config." + "superAdminRequiredPermission")
                     .defineInRange("superAdminRequiredPermission", 1, 0, Integer.MAX_VALUE);
             builder.pop();
 
             builder.push("general");
             mEnableFluxRecipe = builder
-                    .comment("Enables redstone being compressed with the bedrock and obsidian to get flux")
+                    .comment("Enables redstone being compressed with the bedrock and obsidian to get flux dusts.")
                     .translation(FluxNetworks.MODID + ".config." + "enableFluxRecipe")
                     .define("enableFluxRecipe", true);
             mEnableChunkLoading = builder
-                    .comment("Allows flux tiles to work as chunk loaders")
+                    .comment("Allows flux devices to enable chunk loading.")
                     .translation(FluxNetworks.MODID + ".config." + "enableChunkLoading")
                     .define("enableChunkLoading", true);
-
             builder.pop();
+
             builder.push("blacklist");
             mBlockBlacklistStrings = builder
                     .comment("A blacklist for blocks which flux devices shouldn't connect to, use format " +
@@ -179,27 +201,8 @@ public class FluxConfig {
                     .translation(FluxNetworks.MODID + ".config." + "itemBlackListStrings")
                     .define("itemBlackListStrings", Lists.newArrayList(""));
             builder.pop();
-        }
 
-        private void load() {
-            maximumPerPlayer = mMaximumPerPlayer.get();
-            superAdminRequiredPermission = mSuperAdminRequiredPermission.get();
-            enableSuperAdmin = mEnableSuperAdmin.get();
 
-            enableFluxRecipe = mEnableFluxRecipe.get();
-            enableChunkLoading = mEnableChunkLoading.get();
-
-            EnergyUtils.reloadBlacklist(mBlockBlacklistStrings.get(), mItemBlackListStrings.get());
-        }
-    }
-
-    private static class Server {
-
-        // energy
-        private final ForgeConfigSpec.LongValue mDefaultLimit, mBasicCapacity, mBasicTransfer, mHerculeanCapacity,
-                mHerculeanTransfer, mGargantuanCapacity, mGargantuanTransfer;
-
-        private Server(@Nonnull ForgeConfigSpec.Builder builder) {
             builder.push("energy");
             mDefaultLimit = builder
                     .comment("The default transfer limit of a flux connector")
@@ -227,6 +230,15 @@ public class FluxConfig {
         }
 
         private void load() {
+            maximumPerPlayer = mMaximumPerPlayer.get();
+            superAdminRequiredPermission = mSuperAdminRequiredPermission.get();
+            enableSuperAdmin = mEnableSuperAdmin.get();
+
+            enableFluxRecipe = mEnableFluxRecipe.get();
+            enableChunkLoading = mEnableChunkLoading.get();
+
+            EnergyUtils.reloadBlacklist(mBlockBlacklistStrings.get(), mItemBlackListStrings.get());
+
             defaultLimit = mDefaultLimit.get();
             basicCapacity = mBasicCapacity.get();
             basicTransfer = mBasicTransfer.get();

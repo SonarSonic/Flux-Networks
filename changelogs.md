@@ -1,6 +1,15 @@
-### Changelog 1.18.2-7.0.2.3 (2022-06-21)
+### Changelog 1.18.2-7.0.3.4 (2022-07-16)
 (Install Modern UI for new GUI system and better server performance)
   
+* Update localizations
+* Update GUI artworks
+* Add disconnect button to Network Selection tab
+* Add new Network Connections tab
+* Add back chunk loading
+* Give super admins more privileges
+* Fix priority not work immediately
+
+### Changelog 1.18.2-7.0.2.3 (2022-06-21)
 * Fix wireless charging bugs
 * Update JEI API
 * Change wireless settings to individual player

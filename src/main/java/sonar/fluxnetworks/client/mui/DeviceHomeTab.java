@@ -72,7 +72,7 @@ public class DeviceHomeTab extends Fragment {
                             // in case of a packet is being sent to the client
                             CompoundTag tag = new CompoundTag();
                             tag.putString(FluxConstants.CUSTOM_NAME, mCustomName.getText().toString());
-                            ClientMessages.editDevice(mDevice, tag);
+                            ClientMessages.editTile(requireArguments().getInt("token"), mDevice, tag);
                         }
                     });
                     mCustomName = v;
@@ -91,7 +91,7 @@ public class DeviceHomeTab extends Fragment {
 
                             CompoundTag tag = new CompoundTag();
                             tag.putInt(FluxConstants.PRIORITY, priority);
-                            ClientMessages.editDevice(mDevice, tag);
+                            ClientMessages.editTile(requireArguments().getInt("token"), mDevice, tag);
                         }
                     });
                     mPriority = v;
@@ -100,7 +100,7 @@ public class DeviceHomeTab extends Fragment {
                     v.setText(Long.toString(mDevice.getRawLimit()));
                     v.setHint("Transfer Limit");
                     v.setHintTextColor(0xFF808080);
-                    v.setFilters(new InputFilter.LengthFilter(10),
+                    v.setFilters(new InputFilter.LengthFilter(15),
                             DigitsInputFilter.getInstance(v.getTextLocale()));
                     v.setOnFocusChangeListener((__, hasFocus) -> {
                         if (!hasFocus) {
@@ -109,7 +109,7 @@ public class DeviceHomeTab extends Fragment {
 
                             CompoundTag tag = new CompoundTag();
                             tag.putLong(FluxConstants.LIMIT, limit);
-                            ClientMessages.editDevice(mDevice, tag);
+                            ClientMessages.editTile(requireArguments().getInt("token"), mDevice, tag);
                         }
                     });
                     mLimit = v;
