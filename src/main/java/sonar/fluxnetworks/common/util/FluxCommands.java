@@ -10,6 +10,7 @@ import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.register.Messages;
@@ -22,6 +23,7 @@ public class FluxCommands {
     public static void register(@Nonnull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal(FluxNetworks.MODID)
                 .then(Commands.literal("superadmin")
+                        .requires(s -> s.hasPermission(1))
                         .then(Commands.argument("targets", GameProfileArgument.gameProfile())
                                 .then(Commands.argument("enable", BoolArgumentType.bool())
                                         .executes(s -> superAdmin(s.getSource(),
@@ -44,7 +46,8 @@ public class FluxCommands {
             if (player != null) {
                 final FluxPlayer fp = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
                 if (fp != null &&
-                        (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(player) || source.hasPermission(3)) &&
+                        (((fp.isSuperAdmin() || FluxConfig.enableSuperAdmin) && source.hasPermission(3)) ||
+                                (player == source.getEntity() && (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(player)))) &&
                         fp.setSuperAdmin(enable)) {
                     Messages.capability(player);
                     player.sendMessage(new TranslatableComponent(enable ?
