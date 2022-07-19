@@ -31,19 +31,18 @@ public class FluxPlugHandler extends FluxConnectorHandler {
         return op;
     }
 
-    public long receive(long maxReceive, @Nonnull Direction side, boolean simulate, long limiter) {
-        SideTransfer transfer = mTransfers[side.get3DDataValue()];
-        if (transfer != null) {
-            long op = Math.min(Math.min(getLimit(),
-                    limiter - mBuffer) - mBuffer, maxReceive);
-            if (op > 0) {
-                if (!simulate) {
-                    mBuffer += op;
-                    mReceived += op;
+    public long receive(long maxReceive, @Nonnull Direction side, boolean simulate, long bufferLimiter) {
+        long op = Math.min(Math.min(getLimit(), bufferLimiter - mBuffer) - mBuffer, maxReceive);
+        if (op > 0) {
+            if (!simulate) {
+                mBuffer += op;
+                mReceived += op;
+                SideTransfer transfer = mTransfers[side.get3DDataValue()];
+                if (transfer != null) {
                     transfer.receive(op);
                 }
-                return op;
             }
+            return op;
         }
         return 0;
     }
