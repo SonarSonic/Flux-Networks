@@ -70,20 +70,17 @@ public class FluxConfig {
         }
     }
 
-    public static boolean enableButtonSound, enableOneProbeBasicInfo, enableOneProbeAdvancedInfo,
-            enableOneProbeSneaking;
+    public static boolean enableButtonSound, enableGuiDebug;
+    public static boolean enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
     public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
     public static long defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer,
             gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
-    public static boolean enableGuiDebug;
 
     @OnlyIn(Dist.CLIENT)
     private static class Client {
 
-        private final ForgeConfigSpec.BooleanValue mEnableButtonSound, mEnableOneProbeBasicInfo,
-                mEnableOneProbeAdvancedInfo,
-                mEnableOneProbeSneaking;
+        private final ForgeConfigSpec.BooleanValue mEnableButtonSound;
         private final ForgeConfigSpec.BooleanValue mEnableGuiDebug;
 
         private Client(@Nonnull ForgeConfigSpec.Builder builder) {
@@ -97,8 +94,28 @@ public class FluxConfig {
                     .define("enableGuiDebug", false);
 
             builder.pop();
+        }
 
-            builder.push("OneProbe");
+        private void load() {
+            enableButtonSound = mEnableButtonSound.get();
+            enableGuiDebug = mEnableGuiDebug.get();
+        }
+    }
+
+    private static class Common {
+
+        private final ForgeConfigSpec.BooleanValue
+                mEnableOneProbeBasicInfo,
+                mEnableOneProbeAdvancedInfo,
+                mEnableOneProbeSneaking;
+
+        private Common(@Nonnull ForgeConfigSpec.Builder builder) {
+            builder.comment("Most configs are moved to /serverconfig/fluxnetworks-server.toml",
+                            "Copy to /defaultconfig/fluxnetworks-server.toml for modpacks")
+                    .define("placeholder", true);
+
+            builder.comment("The One Probe")
+                    .push("OneProbe");
             mEnableOneProbeBasicInfo = builder
                     .comment("Displays: Network Name, Live Transfer Rate & Internal Buffer")
                     .translation(FluxNetworks.MODID + ".config." + "enableOneProbeBasicInfo")
@@ -116,24 +133,9 @@ public class FluxConfig {
         }
 
         private void load() {
-            enableButtonSound = mEnableButtonSound.get();
             enableOneProbeBasicInfo = mEnableOneProbeBasicInfo.get();
             enableOneProbeAdvancedInfo = mEnableOneProbeAdvancedInfo.get();
             enableOneProbeSneaking = mEnableOneProbeSneaking.get();
-            enableGuiDebug = mEnableGuiDebug.get();
-        }
-    }
-
-    private static class Common {
-
-        private Common(@Nonnull ForgeConfigSpec.Builder builder) {
-            builder.comment("All configs are moved to [gameDir]/saves/[save]/serverconfig/fluxnetworks-server.toml",
-                            "or [gameDir]/world/serverconfig/fluxnetworks-server.toml",
-                            "Copy to [gameDir]/defaultconfig/fluxnetworks-server.toml for modpacks")
-                    .define("placeholder", true);
-        }
-
-        private void load() {
         }
     }
 
@@ -232,10 +234,10 @@ public class FluxConfig {
         private void load() {
             maximumPerPlayer = mMaximumPerPlayer.get();
             superAdminRequiredPermission = mSuperAdminRequiredPermission.get();
-            enableSuperAdmin = mEnableSuperAdmin.get();
 
             enableFluxRecipe = mEnableFluxRecipe.get();
             enableChunkLoading = mEnableChunkLoading.get();
+            enableSuperAdmin = mEnableSuperAdmin.get();
 
             EnergyUtils.reloadBlacklist(mBlockBlacklistStrings.get(), mItemBlackListStrings.get());
 
