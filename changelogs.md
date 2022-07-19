@@ -1,6 +1,16 @@
-### Changelog 1.18.2-7.0.3.4 (2022-07-16)
+### Changelog 1.18.2-7.0.4.5 (2022-07-19)
 (Install Modern UI for new GUI system and better server performance)
   
+* Add command to set super admin
+* Adjust flux storage default configs
+* Allow flux plug to receive energy in any case
+* Allow super admin to fill up a flux storage
+* Fix energy duplication glitch
+* Fix TOP info not shown in dedicated server
+* Fix storage energy not synced to client via connections tab
+* Fix disconnect button still visible when no networks
+
+### Changelog 1.18.2-7.0.3.4 (2022-07-16)
 * Update localizations
 * Update GUI artworks
 * Add disconnect button to Network Selection tab

@@ -172,11 +172,13 @@ public class FluxConfig {
                     .define("enableSuperAdmin", true);
             mSuperAdminRequiredPermission = builder
                     .comment("See ops.json. If the player has permission level equal or greater to the value set here" +
-                                    " they will be able to Activate Super Admin.",
+                                    " they will be able to activate Super Admin.",
                             "Setting this to 0 will allow anyone to active Super Admin. Single player can bypass this" +
-                                    " limit.")
+                                    " limit.",
+                            "Players have permission level 3 or 4 can use commands to set others as Super Admin " +
+                                    "whether others have this permission level or not.")
                     .translation(FluxNetworks.MODID + ".config." + "superAdminRequiredPermission")
-                    .defineInRange("superAdminRequiredPermission", 1, 0, 4);
+                    .defineInRange("superAdminRequiredPermission", 1, 0, 3);
             builder.pop();
 
             builder.push("general");

@@ -271,8 +271,9 @@ public class Messages {
             final FluxPlayer fp = FluxUtils.get(p, FluxPlayer.FLUX_PLAYER);
             if (fp != null) {
                 if (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(p)) {
-                    fp.setSuperAdmin(enable);
-                    capability(p);
+                    if (fp.setSuperAdmin(enable)) {
+                        capability(p);
+                    }
                 } else {
                     response(token, 0, FluxConstants.RESPONSE_REJECT, p);
                 }

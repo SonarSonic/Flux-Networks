@@ -27,8 +27,12 @@ public class FluxPlayer {
         return mSuperAdmin;
     }
 
-    public void setSuperAdmin(boolean superAdmin) {
-        mSuperAdmin = superAdmin;
+    public boolean setSuperAdmin(boolean superAdmin) {
+        if (mSuperAdmin != superAdmin) {
+            mSuperAdmin = superAdmin;
+            return true;
+        }
+        return false;
     }
 
     public int getWirelessMode() {

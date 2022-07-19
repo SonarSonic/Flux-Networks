@@ -15,8 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
@@ -29,6 +28,7 @@ import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.capability.FluxPlayerProvider;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.connection.FluxNetworkData;
+import sonar.fluxnetworks.common.util.FluxCommands;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -173,6 +173,11 @@ public class EventHandler {
             }
         }
         event.getOriginal().invalidateCaps();
+    }
+
+    @SubscribeEvent
+    public static void onRegisterCommands(@Nonnull RegisterCommandsEvent event) {
+        FluxCommands.register(event.getDispatcher());
     }
 
     //// TILE EVENTS \\\\
