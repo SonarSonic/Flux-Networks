@@ -63,7 +63,11 @@ public abstract class FluxStorageHandler extends TransferHandler {
     @Override
     public void writeCustomTag(@Nonnull CompoundTag tag, byte type) {
         super.writeCustomTag(tag, type);
-        tag.putLong(FluxConstants.ENERGY, mBuffer);
+        if (type == FluxConstants.NBT_PHANTOM_UPDATE) {
+            tag.putLong(FluxConstants.BUFFER, mBuffer);
+        } else {
+            tag.putLong(FluxConstants.ENERGY, mBuffer);
+        }
     }
 
     @Override
