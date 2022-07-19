@@ -91,12 +91,12 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
 
         @Override
         public int getEnergyStored() {
-            return (int) Math.min(mHandler.getBuffer(), Integer.MAX_VALUE);
+            return (int) Math.min(getEnergyStoredL(), Integer.MAX_VALUE);
         }
 
         @Override
         public int getMaxEnergyStored() {
-            return (int) Math.min(Math.max(mHandler.getBuffer(), mHandler.getLimit()), Integer.MAX_VALUE);
+            return (int) Math.min(getMaxEnergyStoredL(), Integer.MAX_VALUE);
         }
 
         @Override
@@ -128,7 +128,7 @@ public class TileFluxPoint extends TileFluxConnector implements IFluxPoint {
 
         @Override
         public long getMaxEnergyStoredL() {
-            return mHandler.getLimit();
+            return Math.max(mHandler.getBuffer(), mHandler.getLimit());
         }
     }
 }

@@ -20,13 +20,13 @@ public enum SecurityLevel {
         mTranslate = translate;
     }
 
-    public byte toKey() {
-        return (byte) ordinal();
+    @Nonnull
+    public static SecurityLevel fromId(byte id) {
+        return VALUES[id];
     }
 
-    @Nonnull
-    public static SecurityLevel fromKey(byte id) {
-        return VALUES[id];
+    public byte getId() {
+        return (byte) ordinal();
     }
 
     @Nonnull

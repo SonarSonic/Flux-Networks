@@ -77,7 +77,8 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             //noinspection ConstantConditions
             if ((level.getGameTime() & 0b111) == 0) {
                 // update model data to players who can see it
-                Channel.get().sendToTrackingChunk(Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_STORAGE_ENERGY),
+                Channel.get().sendToTrackingChunk(Messages.makeDeviceBuffer(this,
+                                FluxConstants.DEVICE_S2C_STORAGE_ENERGY),
                         level.getChunkAt(worldPosition));
                 mFlags &= ~FLAG_ENERGY_CHANGED;
             }
@@ -97,6 +98,15 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
     }
 
     /**
+     * Make this storage full of energy (debug or admin function).
+     */
+    public void fillUp() {
+        mHandler.fillUp();
+        // this may happen without a valid network, so force to sync
+        mFlags |= FLAG_ENERGY_CHANGED;
+    }
+
+    /**
      * Write data for client
      *
      * @return item stack with NBT
@@ -110,7 +120,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
             stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, true);
         else {
             stack.getOrCreateTag().putBoolean(FluxConstants.FLUX_COLOR, false);
-            subTag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
+            subTag.putInt(FluxConstants.CLIENT_COLOR, getNetwork().getNetworkColor());
         }
         subTag.putLong(FluxConstants.ENERGY, getTransferBuffer());
         return stack;

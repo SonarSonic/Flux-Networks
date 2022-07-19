@@ -75,8 +75,8 @@ public class FluxControllerHandler extends TransferHandler {
     }
 
     @Override
-    public void clearLocalStates() {
-        super.clearLocalStates();
+    public void onNetworkChanged() {
+        super.onNetworkChanged();
         mPlayers.clear();
     }
 

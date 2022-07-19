@@ -8,6 +8,7 @@ import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
 import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.common.util.EnergyUtils;
+import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,7 +16,7 @@ import javax.annotation.Nullable;
 public abstract class FluxConnectorHandler extends TransferHandler {
 
     // lazy-loading elements
-    protected final SideTransfer[] mTransfers = new SideTransfer[6];
+    protected final SideTransfer[] mTransfers = new SideTransfer[FluxUtils.DIRECTIONS.length];
 
     protected FluxConnectorHandler() {
         super(FluxConfig.defaultLimit);
@@ -37,27 +38,27 @@ public abstract class FluxConnectorHandler extends TransferHandler {
     }
 
     // server only
-    public int updateSideTransfer(@Nonnull Direction direction, @Nullable BlockEntity target,
+    public int updateSideTransfer(@Nonnull Direction side, @Nullable BlockEntity target,
                                   boolean needCombinedState) {
-        int index = direction.get3DDataValue();
+        int index = side.get3DDataValue();
         SideTransfer transfer = mTransfers[index];
         int connection;
         final IBlockEnergyBridge handler;
-        if (target == null || (handler = EnergyUtils.getBridge(target, direction.getOpposite())) == null) {
+        if (target == null || (handler = EnergyUtils.getBridge(target, side.getOpposite())) == null) {
             if (transfer != null) {
                 transfer.set(null, null);
             }
             connection = 0;
         } else {
             if (transfer == null) {
-                transfer = new SideTransfer(direction);
+                transfer = new SideTransfer(side);
                 mTransfers[index] = transfer;
             }
             transfer.set(target, handler);
             connection = 1 << index;
         }
         if (needCombinedState) {
-            for (int i = 0; i < mTransfers.length; i++) {
+            for (int i = 0, e = mTransfers.length; i < e; i++) {
                 if (i == index) {
                     continue;
                 }

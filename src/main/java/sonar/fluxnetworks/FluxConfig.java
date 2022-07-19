@@ -90,7 +90,7 @@ public class FluxConfig {
                     .translation(FluxNetworks.MODID + ".config." + "enableButtonSound")
                     .define("enableButtonSound", true);
             mEnableGuiDebug = builder
-                    .comment("Internal use only! Keep this to false!")
+                    .comment("Enable Modern UI")
                     .define("enableGuiDebug", false);
 
             builder.pop();
@@ -161,13 +161,13 @@ public class FluxConfig {
         private Server(@Nonnull ForgeConfigSpec.Builder builder) {
             builder.push("networks");
             mMaximumPerPlayer = builder
-                    .comment("Maximum networks each player can have. Super admin can bypass this limit. -1 = no limit")
+                    .comment("Maximum networks each player can have. Super admin can bypass this limit. -1 = no limit",
+                            "Setting this to 0 will only allow super admins to create networks.")
                     .translation(FluxNetworks.MODID + ".config." + "maximumPerPlayer")
                     .defineInRange("maximumPerPlayer", 5, -1, Integer.MAX_VALUE);
             mEnableSuperAdmin = builder
                     .comment("Allows someone to be a network super admin. Otherwise, no one can access a flux device " +
-                                    "or delete a network without permission.",
-                            "Single player can bypass this limit.")
+                            "or delete a network without permission.")
                     .translation(FluxNetworks.MODID + ".config." + "enableSuperAdmin")
                     .define("enableSuperAdmin", true);
             mSuperAdminRequiredPermission = builder
@@ -176,7 +176,7 @@ public class FluxConfig {
                             "Setting this to 0 will allow anyone to active Super Admin. Single player can bypass this" +
                                     " limit.")
                     .translation(FluxNetworks.MODID + ".config." + "superAdminRequiredPermission")
-                    .defineInRange("superAdminRequiredPermission", 1, 0, Integer.MAX_VALUE);
+                    .defineInRange("superAdminRequiredPermission", 1, 0, 4);
             builder.pop();
 
             builder.push("general");
@@ -196,7 +196,6 @@ public class FluxConfig {
                             "'modid:registry_name'")
                     .translation(FluxNetworks.MODID + ".config." + "blockBlacklistStrings")
                     .define("blockBlacklistStrings", Lists.newArrayList("actuallyadditions:block_phantom_energyface"));
-
             mItemBlackListStrings = builder
                     .comment("A blacklist for items which wireless charging shouldn't charge to, use format " +
                             "'modid:registry_name'")
@@ -204,30 +203,35 @@ public class FluxConfig {
                     .define("itemBlackListStrings", Lists.newArrayList(""));
             builder.pop();
 
-
             builder.push("energy");
             mDefaultLimit = builder
-                    .comment("The default transfer limit of a flux connector")
+                    .comment("The default transfer limit of a Flux Plug, Point and Controller")
                     .translation(FluxNetworks.MODID + ".config." + "defaultLimit")
                     .defineInRange("defaultLimit", 800000, 0, Long.MAX_VALUE);
             mBasicCapacity = builder
+                    .comment("The maximum energy storage of a Basic Flux Storage")
                     .translation(FluxNetworks.MODID + ".config." + "basicCapacity")
-                    .defineInRange("basicCapacity", 1000000, 0, Long.MAX_VALUE);
+                    .defineInRange("basicCapacity", 2000000, 0, Long.MAX_VALUE);
             mBasicTransfer = builder
+                    .comment("The default transfer limit of a Basic Flux Storage")
                     .translation(FluxNetworks.MODID + ".config." + "basicTransfer")
                     .defineInRange("basicTransfer", 20000, 0, Long.MAX_VALUE);
             mHerculeanCapacity = builder
+                    .comment("The maximum energy storage of a Herculean Flux Storage")
                     .translation(FluxNetworks.MODID + ".config." + "herculeanCapacity")
-                    .defineInRange("herculeanCapacity", 8000000, 0, Long.MAX_VALUE);
+                    .defineInRange("herculeanCapacity", 16000000, 0, Long.MAX_VALUE);
             mHerculeanTransfer = builder
+                    .comment("The default transfer limit of a Herculean Flux Storage")
                     .translation(FluxNetworks.MODID + ".config." + "herculeanTransfer")
                     .defineInRange("herculeanTransfer", 120000, 0, Long.MAX_VALUE);
             mGargantuanCapacity = builder
+                    .comment("The maximum energy storage of a Gargantuan Flux Storage")
                     .translation(FluxNetworks.MODID + ".config." + "gargantuanCapacity")
                     .defineInRange("gargantuanCapacity", 128000000, 0, Long.MAX_VALUE);
             mGargantuanTransfer = builder
+                    .comment("The default transfer limit of a Gargantuan Flux Storage")
                     .translation(FluxNetworks.MODID + ".config." + "gargantuanTransfer")
-                    .defineInRange("gargantuanTransfer", 1440000, 0, Long.MAX_VALUE);
+                    .defineInRange("gargantuanTransfer", 720000, 0, Long.MAX_VALUE);
             builder.pop();
         }
 

@@ -4,7 +4,6 @@ import io.netty.handler.codec.DecoderException;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
@@ -93,15 +92,14 @@ public class Messages {
      *
      * @param device the block entity created by server
      * @param type   for example, {@link FluxConstants#DEVICE_S2C_GUI_SYNC}
-     * @return dispatcher
      */
     @Nonnull
-    public static FriendlyByteBuf deviceBuffer(TileFluxDevice device, byte type) {
+    public static FriendlyByteBuf makeDeviceBuffer(TileFluxDevice device, byte type) {
         assert type < 0; // S2C negative
         var buf = Channel.buffer(S2C_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeByte(type);
-        device.writePacket(buf, type);
+        device.writePacketBuffer(buf, type);
         return buf;
     }
 
@@ -242,7 +240,7 @@ public class Messages {
                     if (e.canPlayerAccess(p)) {
                         byte id = payload.readByte();
                         if (id > 0) {
-                            e.readPacket(payload, id);
+                            e.readPacketBuffer(payload, id);
                         } else {
                             throw new IllegalArgumentException();
                         }
@@ -325,7 +323,7 @@ public class Messages {
         final int token = payload.readByte();
         final String name = payload.readUtf(256);
         final int color = payload.readInt();
-        final SecurityLevel security = SecurityLevel.fromKey(payload.readByte());
+        final SecurityLevel security = SecurityLevel.fromId(payload.readByte());
         final String password = security == SecurityLevel.ENCRYPTED ? payload.readUtf(256) : "";
 
         // validate
@@ -443,7 +441,7 @@ public class Messages {
         final int networkID = payload.readVarInt();
         final String name = payload.readUtf(256);
         final int color = payload.readInt();
-        final SecurityLevel security = SecurityLevel.fromKey(payload.readByte());
+        final SecurityLevel security = SecurityLevel.fromId(payload.readByte());
         final String password = security == SecurityLevel.ENCRYPTED ? payload.readUtf(256) : "";
 
         // validate
@@ -526,7 +524,7 @@ public class Messages {
                             reject = false;
                         }
                     } else {
-                        if (network.isValid() && network.canPlayerAccess(p, "")) {
+                        if (network.isValid() && network.canPlayerAccess(p)) {
                             reject = false;
                         }
                     }
@@ -632,9 +630,9 @@ public class Messages {
             } else {
                 if (!(menu.mProvider instanceof ItemAdminConfigurator.Provider)) {
                     return menu.mProvider.getNetworkID() != network.getNetworkID() &&
-                            !network.canPlayerAccess(p, "");
+                            !network.canPlayerAccess(p);
                 } else {
-                    return !network.canPlayerAccess(p, "");
+                    return !network.canPlayerAccess(p);
                 }
             }
         }
@@ -747,7 +745,7 @@ public class Messages {
                 return;
             }
             assert network.isValid();
-            if (network.canPlayerAccess(p, "")) {
+            if (network.canPlayerAccess(p)) {
                 List<CompoundTag> tags = new ArrayList<>();
                 for (GlobalPos pos : list) {
                     IFluxDevice f = network.getConnectionByPos(pos);

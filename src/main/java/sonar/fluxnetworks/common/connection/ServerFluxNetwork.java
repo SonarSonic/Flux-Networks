@@ -163,8 +163,12 @@ public class ServerFluxNetwork extends FluxNetwork {
 
         long limiter = 0;
         for (var d : devices) {
-            d.getTransferHandler().onCycleEnd();
-            limiter += d.getTransferHandler().getRequest();
+            TransferHandler h = d.getTransferHandler();
+            h.onCycleEnd();
+            limiter += h.getRequest();
+            if (h.getChange() != 0) {
+                d.markChunkUnsaved();
+            }
         }
         mBufferLimiter = limiter;
 

@@ -23,8 +23,8 @@ public abstract class TransferHandler {
     public static final int PRI_GAIN_MAX = 100000;
 
     // to get the lowest priority across the network
-    // contrast: STORAGE_PRI_DECR > PRI_USER_MAX + PRI_GAIN_MAX
-    public static final int STORAGE_PRI_DECR = 1000000;
+    // contrast: STORAGE_PRI_DIFF > PRI_USER_MAX + PRI_GAIN_MAX
+    public static final int STORAGE_PRI_DIFF = 1000000;
 
     /**
      * The internal buffer for this transfer handler.
@@ -116,9 +116,9 @@ public abstract class TransferHandler {
     }
 
     /**
-     * Clear states.
+     * Clear the local states caused by network ticking.
      */
-    public void clearLocalStates() {
+    public void onNetworkChanged() {
         mChange = 0;
     }
 
@@ -239,10 +239,7 @@ public abstract class TransferHandler {
     }
 
     public void readCustomTag(@Nonnull CompoundTag tag, byte type) {
-        if (type == FluxConstants.NBT_TILE_SETTINGS) {
-            // use changeSettings()
-            throw new IllegalArgumentException();
-        }
+        assert type != FluxConstants.NBT_TILE_SETTINGS;
         if (tag.contains(FluxConstants.BUFFER)) {
             mBuffer = tag.getLong(FluxConstants.BUFFER);
         } else {
@@ -285,14 +282,28 @@ public abstract class TransferHandler {
         return sort;
     }
 
-    public void writePacket(@Nonnull FriendlyByteBuf buf, byte type) {
+    /**
+     * Write hot data to a byte buffer. Hot data is what's updated almost every tick,
+     * such as energy changes.
+     *
+     * @param buf  the byte buf
+     * @param type the type id
+     */
+    public void writePacketBuffer(@Nonnull FriendlyByteBuf buf, byte type) {
         if (type == FluxConstants.DEVICE_S2C_GUI_SYNC) {
             buf.writeLong(mChange);
             buf.writeLong(mBuffer);
         }
     }
 
-    public void readPacket(@Nonnull FriendlyByteBuf buf, byte type) {
+    /**
+     * Read hot data from a byte buffer. Hot data is what's updated almost every tick,
+     * such as energy changes.
+     *
+     * @param buf  the byte buf
+     * @param type the type id
+     */
+    public void readPacketBuffer(@Nonnull FriendlyByteBuf buf, byte type) {
         if (type == FluxConstants.DEVICE_S2C_GUI_SYNC) {
             mChange = buf.readLong();
             mBuffer = buf.readLong();

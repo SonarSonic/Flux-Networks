@@ -252,6 +252,16 @@ public class FluxNetwork {
     }
 
     /**
+     * Can player access this network logically, without password?
+     *
+     * @param player the player
+     * @return has permission or not
+     */
+    public final boolean canPlayerAccess(@Nonnull Player player) {
+        return canPlayerAccess(player, "");
+    }
+
+    /**
      * Can player access this network logically, with or without password?
      *
      * @param player   the player
@@ -284,9 +294,9 @@ public class FluxNetwork {
     }
 
     /**
-     * Add a logical device to this network.
+     * Add a logical device to this network. Called by {@link TileFluxDevice}.
      *
-     * @param device logical device
+     * @param device the logical device
      * @return success or not
      */
     public boolean enqueueConnectionAddition(@Nonnull TileFluxDevice device) {
@@ -294,10 +304,10 @@ public class FluxNetwork {
     }
 
     /**
-     * Remove a logical device from this network.
+     * Remove a logical device from this network. Called by {@link TileFluxDevice}.
      *
-     * @param device logical device
-     * @param unload true if chunk unload, false if disconnect
+     * @param device the logical device
+     * @param unload true if just chunk unload, false if it no longer belongs to this network
      */
     public void enqueueConnectionRemoval(@Nonnull TileFluxDevice device, boolean unload) {
     }
@@ -341,7 +351,7 @@ public class FluxNetwork {
             tag.putString(NETWORK_NAME, mName);
             tag.putInt(NETWORK_COLOR, mColor);
             tag.putUUID(OWNER_UUID, mOwnerUUID);
-            tag.putByte(SECURITY_LEVEL, mSecurityLevel.toKey());
+            tag.putByte(SECURITY_LEVEL, mSecurityLevel.getId());
         }
         if (type == FluxConstants.NBT_SAVE_ALL) {
             Collection<NetworkMember> members = getAllMembers();
@@ -446,7 +456,7 @@ public class FluxNetwork {
             mName = tag.getString(NETWORK_NAME);
             mColor = tag.getInt(NETWORK_COLOR);
             mOwnerUUID = tag.getUUID(OWNER_UUID);
-            mSecurityLevel = SecurityLevel.fromKey(tag.getByte(SECURITY_LEVEL));
+            mSecurityLevel = SecurityLevel.fromId(tag.getByte(SECURITY_LEVEL));
         }
         if (type == FluxConstants.NBT_SAVE_ALL) {
             ListTag list = tag.getList(MEMBERS, Tag.TAG_COMPOUND);

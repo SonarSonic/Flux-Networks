@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.world.ForgeChunkManager;
@@ -41,47 +42,61 @@ import java.util.function.Consumer;
 public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice {
 
     private static final BlockEntityTicker<? extends TileFluxDevice> sTickerServer =
-            (level, pos, state, entity) -> entity.onServerTick();
+            (level, pos, state, tile) -> tile.onServerTick();
 
     public static final int INVALID_CLIENT_COLOR =
             FluxUtils.getModifiedColor(FluxConstants.INVALID_NETWORK_COLOR, 1.1f);
 
     public static final int MAX_CUSTOM_NAME_LENGTH = 24;
 
-    static final int CONNECTION_MASK = 0x0000003F; // server
-    static final int FLAG_FIRST_LOADED = 0x00000040; // server, set first server tick
-    static final int FLAG_SETTINGS_CHANGED = 0x00000080; // server
-    static final int FLAG_FORCED_LOADING = 0x00000100; // client and server
-    static final int FLAG_ENERGY_CHANGED = 0x00000200; // server
-
-    // the server player who is using this device
+    /**
+     * The player who is using this device (GUI). Non-persisted value.
+     */
     @Nullable
     private Player mPlayerUsing;
 
-    // leave empty to show a localized name
+    /**
+     * Leave empty to show a localized name. Persisted value.
+     */
+    @Nonnull
     private String mCustomName = "";
+    /**
+     * Player UUID of device's owner. Persisted value.
+     */
+    @Nonnull
     private UUID mOwnerUUID = Util.NIL_UUID;
 
+    /**
+     * The network ID that this device connects to. Persisted value.
+     */
     private int mNetworkID = FluxConstants.INVALID_NETWORK_ID;
 
     /**
      * Tint color in 0xRRGGBB, this value is only valid on client for rendering, updated from server.
-     * This color is brighter than actual network color.
+     * This color is brighter than actual network color. Non-persisted value.
      */
     public int mClientColor = INVALID_CLIENT_COLOR;
 
-    // lower 6 bits represent sides connected
+    protected static final int SIDES_CONNECTED_MASK = 0x3F; // server
+    protected static final int FLAG_FORCED_LOADING = 0x40; // client and server
+    protected static final int FLAG_FIRST_TICKED = 0x80; // server
+    protected static final int FLAG_SETTING_CHANGED = 0x100; // server
+    protected static final int FLAG_ENERGY_CHANGED = 0x200; // server
+
+    /**
+     * Lower 6 bits represent sides connected. Non-persisted value.
+     */
     protected int mFlags;
 
     /**
-     * Lazy-loading since {@link #setLevel(Level)} is called later.
+     * Lazy-loading since {@link #setLevel(Level)} is called later. Non-persisted value.
      */
     @Nullable
     private GlobalPos mGlobalPos;
 
-    // server only
+    // server only, read only by subclasses
     @Nonnull
-    protected FluxNetwork mNetwork = FluxNetwork.INVALID;
+    private FluxNetwork mNetwork = FluxNetwork.INVALID;
 
     protected TileFluxDevice(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -96,7 +111,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (!level.isClientSide && (mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
+        if (!level.isClientSide && (mFlags & FLAG_FIRST_TICKED) != 0) {
             mNetwork.enqueueConnectionRemoval(this, false);
             if (isForcedLoading()) {
                 //FluxChunkManager.removeChunkLoader(this);
@@ -104,36 +119,37 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
                         ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos), false, true);
             }
-            getTransferHandler().clearLocalStates();
-            mFlags &= ~FLAG_FIRST_LOADED;
+            getTransferHandler().onNetworkChanged();
+            mFlags &= ~FLAG_FIRST_TICKED;
         }
     }
 
     @Override
     public void onChunkUnloaded() {
         super.onChunkUnloaded();
-        if (!level.isClientSide && (mFlags & FLAG_FIRST_LOADED) == FLAG_FIRST_LOADED) {
+        if (!level.isClientSide && (mFlags & FLAG_FIRST_TICKED) != 0) {
             mNetwork.enqueueConnectionRemoval(this, true);
-            getTransferHandler().clearLocalStates();
-            mFlags &= ~FLAG_FIRST_LOADED;
+            getTransferHandler().onNetworkChanged();
+            mFlags &= ~FLAG_FIRST_TICKED;
         }
     }
 
-    // server tick
+    // server tick, before network tick
     protected void onServerTick() {
-        if ((mFlags & FLAG_FIRST_LOADED) == 0) {
-            onFirstLoad();
-            mFlags |= FLAG_FIRST_LOADED;
+        if ((mFlags & FLAG_FIRST_TICKED) == 0) {
+            onFirstTick();
+            mFlags |= FLAG_FIRST_TICKED;
         }
-        if ((mFlags & FLAG_SETTINGS_CHANGED) != 0) {
+        if ((mFlags & FLAG_SETTING_CHANGED) != 0) {
             sendBlockUpdate();
-            mFlags &= ~FLAG_SETTINGS_CHANGED;
+            mFlags &= ~FLAG_SETTING_CHANGED;
         } else if (mPlayerUsing != null) {
-            Channel.get().sendToPlayer(Messages.deviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC), mPlayerUsing);
+            Channel.get().sendToPlayer(
+                    Messages.makeDeviceBuffer(this, FluxConstants.DEVICE_S2C_GUI_SYNC), mPlayerUsing);
         }
     }
 
-    protected void onFirstLoad() {
+    protected void onFirstTick() {
         connect(FluxNetworkData.getNetwork(mNetworkID));
     }
 
@@ -147,13 +163,14 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         if (mPlayerUsing != null) {
             player.displayClientMessage(FluxTranslate.ACCESS_OCCUPY, true);
         } else if (canPlayerAccess(player)) {
-            Consumer<FriendlyByteBuf> writer = buf -> {
+            final Consumer<FriendlyByteBuf> writer = buf -> {
                 buf.writeBoolean(true); // tell it's BlockEntity rather than Configurator
                 buf.writeBlockPos(worldPosition);
                 CompoundTag tag = new CompoundTag();
                 writeCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
                 buf.writeNbt(tag);
             };
+            //TODO check if client player wants to use Modern UI or not
             if (FluxConfig.enableGuiDebug && FluxNetworks.isModernUILoaded()) {
                 MUIIntegration.openMenu(player, this, writer);
             } else {
@@ -172,7 +189,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     /**
      * Connect this device to a flux network. Server only.
-     * Check access first.
+     * Check access first. Called outside network ticking cycle.
      *
      * @param network the server network to connect, can be invalid
      * @return true if successfully connected to the network
@@ -185,9 +202,11 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         if (network.enqueueConnectionAddition(this)) {
             mNetwork.enqueueConnectionRemoval(this, false);
             mNetwork = network;
-            mNetworkID = network.getNetworkID();
-            getTransferHandler().clearLocalStates();
-            mFlags |= FLAG_SETTINGS_CHANGED;
+            mNetworkID = mNetwork.getNetworkID();
+            getTransferHandler().onNetworkChanged();
+            // notify listeners
+            mFlags |= FLAG_SETTING_CHANGED;
+            markChunkUnsaved();
             return true;
         }
         return false;
@@ -225,7 +244,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         // Client side, read block update data
         readCustomTag(packet.getTag(), FluxConstants.NBT_TILE_UPDATE);
         // update chunk render whether state changed or not
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
     }
 
     @Nonnull
@@ -272,7 +291,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             case FluxConstants.NBT_SAVE_ALL -> tag.putUUID(FluxConstants.PLAYER_UUID, mOwnerUUID);
             case FluxConstants.NBT_TILE_UPDATE -> {
                 tag.putUUID(FluxConstants.PLAYER_UUID, mOwnerUUID);
-                if ((mFlags & FLAG_FIRST_LOADED) != 0) {
+                if ((mFlags & FLAG_FIRST_TICKED) != 0) {
                     tag.putInt(FluxConstants.CLIENT_COLOR, mNetwork.getNetworkColor());
                 }
                 tag.putInt(FluxConstants.FLAGS, mFlags);
@@ -297,10 +316,9 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 return;
             }
             if (tag.contains(FluxConstants.CUSTOM_NAME)) {
-                mCustomName = tag.getString(FluxConstants.CUSTOM_NAME);
-                if (mCustomName.length() > MAX_CUSTOM_NAME_LENGTH) {
-                    throw new RuntimeException("Expected custom name length " + MAX_CUSTOM_NAME_LENGTH +
-                            " is exceeded by " + mCustomName.length());
+                String name = tag.getString(FluxConstants.CUSTOM_NAME);
+                if (name.length() <= MAX_CUSTOM_NAME_LENGTH) {
+                    mCustomName = name;
                 }
             }
             boolean sort = getTransferHandler().changeSettings(tag);
@@ -316,7 +334,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 setForcedLoading(load);
             }
             // notify listeners
-            mFlags |= FLAG_SETTINGS_CHANGED;
+            mFlags |= FLAG_SETTING_CHANGED;
             markChunkUnsaved();
             return;
         }
@@ -348,12 +366,13 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
      * @return should access
      */
     public boolean canPlayerAccess(@Nonnull Player player) {
+        assert level != null && !level.isClientSide;
         // devices without a network connection are not protected (e.g. abandoned).
         if (mNetwork.isValid()) {
             if (player.getUUID().equals(mOwnerUUID)) {
                 return true;
             }
-            return mNetwork.canPlayerAccess(player, "");
+            return mNetwork.canPlayerAccess(player);
         }
         return true;
     }
@@ -367,7 +386,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
     public void sendBlockUpdate() {
         assert level != null && !level.isClientSide;
         // last arg has no usage on server side
-        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), -1);
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL_IMMEDIATE);
     }
 
     /*@Deprecated
@@ -393,12 +412,26 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         PacketHandler.CHANNEL.sendToServer(new TilePacketBufferPacket(this, pos, packetID));
     }*/
 
-    public void writePacket(FriendlyByteBuf buf, byte type) {
-        getTransferHandler().writePacket(buf, type);
+    /**
+     * Write hot data to a byte buffer. Hot data is what's updated almost every tick,
+     * such as energy changes.
+     *
+     * @param buf  the byte buf
+     * @param type the type id
+     */
+    public void writePacketBuffer(FriendlyByteBuf buf, byte type) {
+        getTransferHandler().writePacketBuffer(buf, type);
     }
 
-    public void readPacket(FriendlyByteBuf buf, byte type) {
-        getTransferHandler().readPacket(buf, type);
+    /**
+     * Read hot data from a byte buffer. Hot data is what's updated almost every tick,
+     * such as energy changes.
+     *
+     * @param buf  the byte buf
+     * @param type the type id
+     */
+    public void readPacketBuffer(FriendlyByteBuf buf, byte type) {
+        getTransferHandler().readPacketBuffer(buf, type);
         /*switch (id) {
             case FluxConstants.C2S_CUSTOM_NAME:
                 mCustomName = buf.readUtf(96);
@@ -434,7 +467,14 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         //}
     }
 
+    /**
+     * Mark this chunk dirty, so it will be saved to disk later.
+     * This should be called at the end of the tick if any NBT data changed (buffer, settings).
+     * This should be called only if this block entity is loaded, not removed, and ticking on the server side.
+     * This will not trigger redstone comparator updates, because we have no item containers.
+     */
     public void markChunkUnsaved() {
+        assert level != null;
         level.getChunkAt(worldPosition).setUnsaved(true);
     }
 
@@ -454,8 +494,13 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
         return mOwnerUUID;
     }
 
-    public final void setOwnerUUID(UUID uuid) {
-        mOwnerUUID = uuid;
+    public final void setOwnerUUID(@Nonnull UUID uuid) {
+        if (!mOwnerUUID.equals(uuid)) {
+            mOwnerUUID = uuid;
+            // notify listeners
+            mFlags |= FLAG_SETTING_CHANGED;
+            markChunkUnsaved();
+        }
     }
 
     /**
@@ -493,9 +538,10 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     @Override
     public boolean isForcedLoading() {
-        return (mFlags & FLAG_FORCED_LOADING) == FLAG_FORCED_LOADING;
+        return (mFlags & FLAG_FORCED_LOADING) != 0;
     }
 
+    // just a marker
     public void setForcedLoading(boolean forcedLoading) {
         if (forcedLoading) {
             mFlags |= FLAG_FORCED_LOADING;
@@ -564,10 +610,10 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
 
     @Override
     public String toString() {
-        return "TileFluxDevice{" +
-                "customName='" + mCustomName + '\'' +
-                ", networkID=" + mNetworkID +
-                ", globalPos=" + mGlobalPos +
+        return getClass().getSimpleName() +
+                '{' +
+                "mNetworkID=" + mNetworkID +
+                ", mGlobalPos=" + mGlobalPos +
                 '}';
     }
 

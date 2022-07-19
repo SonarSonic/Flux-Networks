@@ -48,11 +48,22 @@ public abstract class FluxStorageHandler extends TransferHandler {
         return Math.max(0, Math.min(getMaxEnergyStorage() - mBuffer, getLimit() - mAdded));
     }
 
+    /**
+     * Make this storage full of energy (debug or admin function).
+     */
+    void fillUp() {
+        long energy = Math.max(0, Math.min(getMaxEnergyStorage() - mBuffer, Long.MAX_VALUE - mAdded));
+        if (energy > 0) {
+            mBuffer += energy;
+            mAdded += energy;
+        }
+    }
+
     public abstract long getMaxEnergyStorage();
 
     @Override
     public int getPriority() {
-        return super.getPriority() - STORAGE_PRI_DECR;
+        return super.getPriority() - STORAGE_PRI_DIFF;
     }
 
     @Override
@@ -71,20 +82,20 @@ public abstract class FluxStorageHandler extends TransferHandler {
     }
 
     @Override
-    public void writePacket(@Nonnull FriendlyByteBuf buffer, byte type) {
+    public void writePacketBuffer(@Nonnull FriendlyByteBuf buffer, byte type) {
         if (type == FluxConstants.DEVICE_S2C_STORAGE_ENERGY) {
             buffer.writeLong(mBuffer);
         } else {
-            super.writePacket(buffer, type);
+            super.writePacketBuffer(buffer, type);
         }
     }
 
     @Override
-    public void readPacket(@Nonnull FriendlyByteBuf buffer, byte type) {
+    public void readPacketBuffer(@Nonnull FriendlyByteBuf buffer, byte type) {
         if (type == FluxConstants.DEVICE_S2C_STORAGE_ENERGY) {
             mBuffer = buffer.readLong();
         } else {
-            super.readPacket(buffer, type);
+            super.readPacketBuffer(buffer, type);
         }
     }
 

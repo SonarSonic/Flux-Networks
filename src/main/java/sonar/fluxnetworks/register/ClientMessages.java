@@ -38,7 +38,7 @@ public class ClientMessages {
         var buf = Channel.buffer(Messages.C2S_DEVICE_BUFFER);
         buf.writeBlockPos(device.getBlockPos());
         buf.writeByte(type);
-        device.writePacket(buf, type);
+        device.writePacketBuffer(buf, type);
         sChannel.sendToServer(buf);
     }
 
@@ -65,7 +65,7 @@ public class ClientMessages {
         buf.writeByte(token);
         buf.writeUtf(name, 256);
         buf.writeInt(color);
-        buf.writeByte(security.toKey());
+        buf.writeByte(security.getId());
         if (security == SecurityLevel.ENCRYPTED) {
             buf.writeUtf(password, 256);
         }
@@ -123,7 +123,7 @@ public class ClientMessages {
         buf.writeVarInt(network.getNetworkID());
         buf.writeUtf(name, 256);
         buf.writeInt(color);
-        buf.writeByte(security.toKey());
+        buf.writeByte(security.getId());
         if (security == SecurityLevel.ENCRYPTED) {
             buf.writeUtf(password, 256);
         }
@@ -234,7 +234,7 @@ public class ClientMessages {
             if (p != null && p.clientLevel.getBlockEntity(payload.readBlockPos()) instanceof TileFluxDevice e) {
                 byte id = payload.readByte();
                 if (id < 0) {
-                    e.readPacket(payload, id);
+                    e.readPacketBuffer(payload, id);
                 }
             }
             payload.release();

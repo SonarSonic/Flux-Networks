@@ -23,28 +23,28 @@ public abstract class TileFluxConnector extends TileFluxDevice {
     public abstract FluxConnectorHandler getTransferHandler();
 
     @Override
-    protected void onFirstLoad() {
-        super.onFirstLoad();
+    protected void onFirstTick() {
+        super.onFirstTick();
         //noinspection ConstantConditions
         if (!level.isClientSide) {
             int newState = 0;
             for (Direction direction : FluxUtils.DIRECTIONS) {
                 BlockEntity target = level.getBlockEntity(worldPosition.relative(direction));
-                newState = getTransferHandler().updateSideTransfer(direction, target, direction.get3DDataValue() == 5);
+                newState |= getTransferHandler().updateSideTransfer(direction, target, false);
             }
             sendBlockUpdateIfNeeded(newState);
         }
     }
 
-    public void updateSideTransfer(@Nonnull Direction direction, @Nullable BlockEntity target) {
-        int newState = getTransferHandler().updateSideTransfer(direction, target, true);
+    public void updateSideTransfer(@Nonnull Direction side, @Nullable BlockEntity target) {
+        int newState = getTransferHandler().updateSideTransfer(side, target, true);
         sendBlockUpdateIfNeeded(newState);
     }
 
     private void sendBlockUpdateIfNeeded(int newState) {
         assert level != null && !level.isClientSide;
-        if ((mFlags & CONNECTION_MASK) != newState) {
-            mFlags = (mFlags & ~CONNECTION_MASK) | newState;
+        if ((mFlags & SIDES_CONNECTED_MASK) != newState) {
+            mFlags = (mFlags & ~SIDES_CONNECTED_MASK) | newState;
             sendBlockUpdate();
         }
     }
@@ -55,8 +55,8 @@ public abstract class TileFluxConnector extends TileFluxDevice {
         assert level != null && !level.isClientSide;
         BlockState state = getBlockState();
         for (Direction dir : FluxUtils.DIRECTIONS) {
-            state = state.setValue(FluxConnectorBlock.SIDES_CONNECTED[dir.get3DDataValue()],
-                    (mFlags & (1 << dir.get3DDataValue())) != 0);
+            int index = dir.get3DDataValue();
+            state = state.setValue(FluxConnectorBlock.SIDES_CONNECTED[index], (mFlags & (1 << index)) != 0);
         }
         level.setBlock(worldPosition, state, Block.UPDATE_IMMEDIATE);
     }

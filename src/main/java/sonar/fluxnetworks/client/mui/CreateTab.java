@@ -156,7 +156,7 @@ public class CreateTab extends Fragment {
                 spinner.setGravity(Gravity.END);
                 spinner.setPadding(dp(8), dp2, dp(8), dp2);
                 spinner.setAdapter(new SecurityLevelAdapter());
-                spinner.setSelection(mSecurityLevel.toKey());
+                spinner.setSelection(mSecurityLevel.getId());
                 spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

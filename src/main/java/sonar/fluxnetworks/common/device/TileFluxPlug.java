@@ -13,6 +13,7 @@ import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.api.device.IFluxPlug;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
 import sonar.fluxnetworks.common.util.FluxGuiStack;
+import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;
@@ -22,7 +23,7 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
 
     private final FluxPlugHandler mHandler = new FluxPlugHandler();
 
-    private final LazyOptional<?>[] mEnergyCaps = new LazyOptional[6];
+    private final LazyOptional<?>[] mEnergyCaps = new LazyOptional[FluxUtils.DIRECTIONS.length];
 
     public TileFluxPlug(@Nonnull BlockPos pos, @Nonnull BlockState state) {
         super(RegistryBlocks.FLUX_PLUG_ENTITY, pos, state);
@@ -49,7 +50,7 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        for (int i = 0; i < mEnergyCaps.length; i++) {
+        for (int i = 0, e = mEnergyCaps.length; i < e; i++) {
             if (mEnergyCaps[i] != null) {
                 mEnergyCaps[i].invalidate();
                 mEnergyCaps[i] = null;
@@ -67,7 +68,6 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
                 if (handler == null) {
                     final EnergyStorage storage = new EnergyStorage(
                             side == null ? Direction.from3DDataValue(0) : side);
-                    // save an immutable pointer to an immutable object
                     handler = LazyOptional.of(() -> storage);
                     mEnergyCaps[index] = handler;
                 }
@@ -103,12 +103,12 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
 
         @Override
         public int getEnergyStored() {
-            return (int) Math.min(mHandler.getBuffer(), Integer.MAX_VALUE);
+            return (int) Math.min(getEnergyStoredL(), Integer.MAX_VALUE);
         }
 
         @Override
         public int getMaxEnergyStored() {
-            return (int) Math.min(Math.max(mHandler.getBuffer(), mHandler.getLimit()), Integer.MAX_VALUE);
+            return (int) Math.min(getMaxEnergyStoredL(), Integer.MAX_VALUE);
         }
 
         @Override
@@ -118,7 +118,7 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
 
         @Override
         public boolean canReceive() {
-            return true;
+            return getNetwork().isValid();
         }
 
         ///// FLUX EXTENDED \\\\\
@@ -143,7 +143,7 @@ public class TileFluxPlug extends TileFluxConnector implements IFluxPlug {
 
         @Override
         public long getMaxEnergyStoredL() {
-            return mHandler.getLimit();
+            return Math.max(mHandler.getBuffer(), mHandler.getLimit());
         }
     }
 }
