@@ -126,9 +126,6 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         components.add(FluxTranslate.NETWORK_SECURITY.makeComponent().append(": " +
                 ChatFormatting.GOLD + element.getSecurityLevel().getName()));
         AccessLevel access = element.getPlayerAccess(mPlayer);
-        if (access == AccessLevel.BLOCKED && element.getOwnerUUID().equals(mPlayer.getUUID())) {
-            access = AccessLevel.OWNER;
-        }
         if (access != AccessLevel.BLOCKED) {
             components.add(FluxTranslate.ACCESS.makeComponent().append(": " + access.getFormattedName()));
         }

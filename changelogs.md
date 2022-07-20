@@ -1,6 +1,10 @@
-### Changelog 1.18.2-7.0.4.5 (2022-07-19)
+### Changelog 1.18.2-7.0.5.6 (2022-07-20)
 (Install Modern UI for new GUI system and better server performance)
   
+* Fix owner access display in selection tab
+* Fix command permission check
+
+### Changelog 1.18.2-7.0.4.5 (2022-07-19)
 * Add command to set super admin
 * Adjust flux storage default configs
 * Allow flux plug to receive energy in any case

@@ -135,7 +135,7 @@
 	"gui.fluxnetworks.access.owner": "Owner",
 	"gui.fluxnetworks.access.admin": "Admin",
 	"gui.fluxnetworks.access.user": "User",
-	"gui.fluxnetworks.access.blocked": "Blocked",
+	"gui.fluxnetworks.access.blocked": "Stranger",
 	"gui.fluxnetworks.access.superadmin": "Super Admin",
 
 	"gui.fluxnetworks.jei.creatingfluxrecipe": "Creating Flux",

@@ -244,7 +244,11 @@ public class FluxNetwork {
      */
     @Nonnull
     public AccessLevel getPlayerAccess(@Nonnull Player player) {
-        final NetworkMember member = getMemberByUUID(player.getUUID());
+        final UUID uuid = player.getUUID();
+        if (mOwnerUUID.equals(uuid)) {
+            return AccessLevel.OWNER;
+        }
+        final NetworkMember member = getMemberByUUID(uuid);
         if (member != null) {
             return member.getAccessLevel();
         }
