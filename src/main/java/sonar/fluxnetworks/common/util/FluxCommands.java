@@ -49,7 +49,7 @@ public class FluxCommands {
                         (((fp.isSuperAdmin() || FluxConfig.enableSuperAdmin) && source.hasPermission(3)) ||
                                 (player == source.getEntity() && (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(player)))) &&
                         fp.setSuperAdmin(enable)) {
-                    Messages.capability(player);
+                    Messages.syncCapability(player);
                     player.sendMessage(new TranslatableComponent(enable ?
                             "gui.fluxnetworks.superadmin.on" : "gui.fluxnetworks.superadmin.off"), Util.NIL_UUID);
                     success++;

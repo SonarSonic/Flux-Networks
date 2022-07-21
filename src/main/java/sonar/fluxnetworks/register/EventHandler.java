@@ -147,7 +147,7 @@ public class EventHandler {
         // this event only fired on server
         Channel.get().sendToPlayer(Messages.updateNetwork(
                 FluxNetworkData.getAllNetworks(), FluxConstants.NBT_NET_BASIC), event.getPlayer());
-        Messages.capability(event.getPlayer());
+        Messages.syncCapability(event.getPlayer());
     }
 
     @SubscribeEvent

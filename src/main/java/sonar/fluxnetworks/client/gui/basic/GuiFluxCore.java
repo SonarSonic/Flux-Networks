@@ -103,12 +103,12 @@ public abstract class GuiFluxCore extends GuiPopupHost {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, BACKGROUND);
-        blitBackground(poseStack);
+        blitBackgroundOrFrame(poseStack);
 
         int color = mNetwork.getNetworkColor();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
         RenderSystem.setShaderTexture(0, FRAME);
-        blitFrame(poseStack);
+        blitBackgroundOrFrame(poseStack);
     }
 
     @Override

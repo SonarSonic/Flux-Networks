@@ -58,10 +58,14 @@ public class PopupConnectionEdit extends GuiPopupCore<GuiTabConnections> {
         mButtons.add(mApply);
 
         int color = mHost.getNetwork().getNetworkColor() | 0xFF000000;
+        IFluxDevice singleConnection = mHost.mSelected.size() == 1 ? mHost.mSelected.iterator().next() : null;
         //if (mHost.mBatchMode) {
         mCustomName = FluxEditBox.create(FluxTranslate.NAME.get() + ": ", font, leftPos + 20, topPos + 30, 136, 12)
                 .setOutlineColor(color);
         mCustomName.setMaxLength(TileFluxDevice.MAX_CUSTOM_NAME_LENGTH);
+        if (singleConnection != null) {
+            mCustomName.setValue(singleConnection.getCustomName());
+        }
         addRenderableWidget(mCustomName);
 
         mPriority = FluxEditBox.create(FluxTranslate.PRIORITY.get() + ": ", font, leftPos + 20, topPos + 47, 136,
@@ -70,7 +74,11 @@ public class PopupConnectionEdit extends GuiPopupCore<GuiTabConnections> {
                 .setDigitsOnly()
                 .setAllowNegatives(true);
         mPriority.setMaxLength(5);
-        mPriority.setValue(Integer.toString(0));
+        if (singleConnection != null) {
+            mPriority.setValue(Integer.toString(singleConnection.getRawPriority()));
+        } else {
+            mPriority.setValue(Integer.toString(0));
+        }
         addRenderableWidget(mPriority);
 
         mLimit = FluxEditBox.create(FluxTranslate.TRANSFER_LIMIT.get() + ": ", font, leftPos + 20, topPos + 64,
@@ -79,7 +87,11 @@ public class PopupConnectionEdit extends GuiPopupCore<GuiTabConnections> {
                 .setDigitsOnly()
                 .setMaxValue(Long.MAX_VALUE);
         mLimit.setMaxLength(15);
-        mLimit.setValue(Integer.toString(0));
+        if (singleConnection != null) {
+            mLimit.setValue(Long.toString(singleConnection.getRawLimit()));
+        } else {
+            mLimit.setValue(Integer.toString(0));
+        }
         addRenderableWidget(mLimit);
 
         mEditCustomName = new Checkbox(this, leftPos + 10, topPos + 33);
@@ -98,10 +110,14 @@ public class PopupConnectionEdit extends GuiPopupCore<GuiTabConnections> {
         mButtons.add(mEditDisableLimit);
         mButtons.add(mEditChunkLoading);
 
-        mSurgeMode = new SwitchButton(this, leftPos + 140, topPos + 82, false, color);
-        mDisableLimit = new SwitchButton(this, leftPos + 140, topPos + 94, false, color);
-        mChunkLoading = new SwitchButton(this, leftPos + 140, topPos + 106, false, color);
-        mChunkLoading.setClickable(FluxConfig.enableChunkLoading);
+        mSurgeMode = new SwitchButton(this, leftPos + 140, topPos + 82,
+                singleConnection != null && singleConnection.getSurgeMode(), color);
+        mDisableLimit = new SwitchButton(this, leftPos + 140, topPos + 94,
+                singleConnection != null && singleConnection.getDisableLimit(), color);
+        mChunkLoading = new SwitchButton(this, leftPos + 140, topPos + 106,
+                singleConnection != null && singleConnection.isForcedLoading(), color);
+        mChunkLoading.setClickable(FluxConfig.enableChunkLoading &&
+                (singleConnection == null || !singleConnection.getDeviceType().isStorage()));
 
         mButtons.add(mSurgeMode);
         mButtons.add(mDisableLimit);

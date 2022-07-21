@@ -1,6 +1,14 @@
-### Changelog 1.18.2-7.0.5.6 (2022-07-20)
+### Changelog 1.18.2-7.0.6.7 (2022-07-21)
 (Install Modern UI for new GUI system and better server performance)
   
+* Fix GUI background image not connected
+* Fix disconnect button in selection tab always invisible
+* Fix double shift check working even when typing chars
+* Improve security check with wireless charging
+* Allow to load values when editing a single device in connections tab
+* Optimize disconnecting this device in connections tab
+
+### Changelog 1.18.2-7.0.5.6 (2022-07-20)
 * Fix owner access display in selection tab
 * Fix command permission check
 

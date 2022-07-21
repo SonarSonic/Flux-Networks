@@ -14,6 +14,7 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.SecurityLevel;
+import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.connection.*;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
@@ -121,7 +122,7 @@ public class Messages {
     /**
      * Update player's capability.
      */
-    public static void capability(Player player) {
+    public static void syncCapability(Player player) {
         var buf = Channel.buffer(S2C_CAPABILITY);
         FluxPlayer fluxPlayer = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
         if (fluxPlayer != null) {
@@ -272,7 +273,7 @@ public class Messages {
             if (fp != null) {
                 if (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(p)) {
                     if (fp.setSuperAdmin(enable)) {
-                        capability(p);
+                        syncCapability(p);
                     }
                 } else {
                     response(token, 0, FluxConstants.RESPONSE_REJECT, p);
@@ -660,14 +661,20 @@ public class Messages {
             if (fp != null) {
                 final FluxNetwork network = FluxNetworkData.getNetwork(wirelessNetwork);
                 // allow set to invalid
-                boolean reject = network.isValid() && checkTokenFailed(token, p, network);
+                boolean reject = network.isValid() &&
+                        (checkTokenFailed(token, p, network) || network.getMemberByUUID(p.getUUID()) == null);
                 if (reject) {
-                    response(token, 0, FluxConstants.RESPONSE_REJECT, p);
-                    return;
+                    if (WirelessType.ENABLE_WIRELESS.isActivated(wirelessMode)) {
+                        response(token, 0, FluxConstants.RESPONSE_REJECT, p);
+                    } else {
+                        fp.setWirelessMode(wirelessMode);
+                        syncCapability(p);
+                    }
+                } else {
+                    fp.setWirelessMode(wirelessMode);
+                    fp.setWirelessNetwork(wirelessNetwork);
+                    syncCapability(p);
                 }
-                fp.setWirelessMode(wirelessMode);
-                fp.setWirelessNetwork(wirelessNetwork);
-                capability(p);
             } else {
                 response(token, 0, FluxConstants.RESPONSE_INVALID_USER, p);
             }

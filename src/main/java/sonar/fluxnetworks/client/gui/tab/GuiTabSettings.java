@@ -135,7 +135,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
 
     @Override
     public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
-        if (mDelete != null) {
+        if (mDelete != null && getFocused() == null) {
             if ((modifiers & GLFW.GLFW_MOD_SHIFT) != 0) {
                 mDeleteCount++;
                 if (mDeleteCount > 1) {

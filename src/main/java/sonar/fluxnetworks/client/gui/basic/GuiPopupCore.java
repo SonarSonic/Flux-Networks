@@ -63,12 +63,12 @@ public abstract class GuiPopupCore<T extends GuiFluxCore> extends GuiFocusable {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, mAlpha);
         RenderSystem.setShaderTexture(0, BACKGROUND);
-        blitBackground(poseStack);
+        blitBackgroundOrFrame(poseStack);
 
         int color = mHost.getNetwork().getNetworkColor();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), mAlpha);
         RenderSystem.setShaderTexture(0, FRAME);
-        blitFrame(poseStack);
+        blitBackgroundOrFrame(poseStack);
 
         // dimmer
         int bgColor = (int) (mAlpha * 128) << 24;

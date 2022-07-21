@@ -24,7 +24,6 @@ import sonar.fluxnetworks.register.ClientMessages;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
 
@@ -231,8 +230,8 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
                 openPopup(new PopupConnectionEdit(this));
             } else if (button == mDisconnect) {
                 assert mSelectionMode && !mSelected.isEmpty();
-                ClientMessages.disconnect(getToken(), getNetwork(),
-                        mSelected.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList()));
+                ClientMessages.disconnect(getToken(), getNetwork(), mSelected);
+                mDisconnect.setClickable(false);
             }
         }
     }
@@ -305,6 +304,11 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
         } else if (code == FluxConstants.RESPONSE_SUCCESS) {
             closePopup();
             if (key == FluxConstants.REQUEST_DISCONNECT) {
+                if (mSelected.stream().anyMatch(
+                        f -> f.getGlobalPos().equals(((IFluxDevice) menu.mProvider).getGlobalPos()))) {
+                    switchTab(EnumNavigationTab.TAB_HOME, false);
+                    return;
+                }
                 mElements.removeAll(mSelected);
                 refreshCurrentPage();
             }
@@ -320,9 +324,8 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     protected void containerTick() {
         super.containerTick();
         timer = (timer + 1) % 20;
-        if (timer % 5 == 0) {
-            ClientMessages.updateConnections(getToken(), getNetwork(),
-                    mCurrent.stream().map(IFluxDevice::getGlobalPos).collect(Collectors.toList()));
+        if (getCurrentPopup() == null && timer % 5 == 0) {
+            ClientMessages.updateConnections(getToken(), getNetwork(), mCurrent);
         }
     }
 

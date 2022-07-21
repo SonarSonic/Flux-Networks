@@ -65,14 +65,14 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
         mGridStartX = leftPos + 15;
         mGridStartY = topPos + 36;
 
+        refreshPages(ClientCache.getAllNetworks());
+
         if (!mElements.isEmpty()) {
             mDisconnect = new EditButton(this, leftPos + 142, topPos + 10, 8, 8, 0, 0,
                     FluxTranslate.BATCH_DISCONNECT_BUTTON.get(), FluxTranslate.BATCH_DISCONNECT_BUTTON.get());
             mDisconnect.setClickable(getNetwork().isValid());
             mButtons.add(mDisconnect);
         }
-
-        refreshPages(ClientCache.getAllNetworks());
     }
 
     @Override

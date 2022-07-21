@@ -90,26 +90,11 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxMenu> {
         }
     }
 
-    protected void blitBackground(PoseStack poseStack) {
-        blitF(poseStack, width / 2f - 85, height / 2f - 80, 85, 85,
-                4, 4, 340, 340, false, false);
-        blitF(poseStack, width / 2f - 85, height / 2f + 5, 85, 85,
-                4, 4, 340, 340, false, true);
-        blitF(poseStack, width / 2f, height / 2f + 5, 85, 85,
-                4, 4, 340, 340, true, true);
-        blitF(poseStack, width / 2f, height / 2f - 80, 85, 85,
-                4, 4, 340, 340, true, false);
-    }
-
-    protected void blitFrame(PoseStack poseStack) {
-        blitF(poseStack, width / 2f - 86, height / 2f - 81, 86, 86,
-                0, 0, 344, 344, false, false);
-        blitF(poseStack, width / 2f - 86, height / 2f + 5, 86, 86,
-                0, 0, 344, 344, false, true);
-        blitF(poseStack, width / 2f, height / 2f + 5, 86, 86,
-                0, 0, 344, 344, true, true);
-        blitF(poseStack, width / 2f, height / 2f - 81, 86, 86,
-                0, 0, 344, 344, true, false);
+    protected void blitBackgroundOrFrame(@Nonnull PoseStack poseStack) {
+        float cx = width / 2f;
+        float cy = height / 2f + 5;
+        blitF(poseStack.last().pose(), cx - 86, cy - 86, getBlitOffset(), 172, 172,
+                0, 0, 1, 1);
     }
 
     public void blitF(@Nonnull PoseStack poseStack, float x, float y, float width, float height,
@@ -121,29 +106,8 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxMenu> {
         blitF(poseStack.last().pose(), x, y, getBlitOffset(), width, height, minU, minV, maxU, maxV);
     }
 
-    public void blitF(@Nonnull PoseStack poseStack, float x, float y, float width, float height,
-                      float uOffset, float vOffset, float uWidth, float vHeight,
-                      boolean flipX, boolean flipY) {
-        float minU = uOffset / TEXTURE_SIZE;
-        float minV = vOffset / TEXTURE_SIZE;
-        float maxU = (uOffset + uWidth) / TEXTURE_SIZE;
-        float maxV = (vOffset + vHeight) / TEXTURE_SIZE;
-        float t;
-        if (flipX) {
-            t = minU;
-            minU = maxU;
-            maxU = t;
-        }
-        if (flipY) {
-            t = minV;
-            minV = maxV;
-            maxV = t;
-        }
-        blitF(poseStack.last().pose(), x, y, getBlitOffset(), width, height, minU, minV, maxU, maxV);
-    }
-
     public static void blitF(Matrix4f matrix, float x, float y, float z, float width, float height,
-                              float minU, float minV, float maxU, float maxV) {
+                             float minU, float minV, float maxU, float maxV) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         BufferBuilder builder = Tesselator.getInstance().getBuilder();
         builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);

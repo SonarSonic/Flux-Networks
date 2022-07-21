@@ -11,6 +11,7 @@ import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import sonar.fluxnetworks.api.FluxConstants;
+import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxMenu;
@@ -186,7 +187,7 @@ public class ClientMessages {
         sChannel.sendToServer(buf);
     }
 
-    public static void disconnect(int token, FluxNetwork network, List<GlobalPos> list) {
+    public static void disconnect(int token, FluxNetwork network, Collection<IFluxDevice> list) {
         if (list.isEmpty()) {
             return;
         }
@@ -194,13 +195,13 @@ public class ClientMessages {
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
         buf.writeVarInt(list.size());
-        for (var pos : list) {
-            FluxUtils.writeGlobalPos(buf, pos);
+        for (var device : list) {
+            FluxUtils.writeGlobalPos(buf, device.getGlobalPos());
         }
         sChannel.sendToServer(buf);
     }
 
-    public static void updateConnections(int token, FluxNetwork network, List<GlobalPos> list) {
+    public static void updateConnections(int token, FluxNetwork network, Collection<IFluxDevice> list) {
         if (list.isEmpty()) {
             return;
         }
@@ -208,8 +209,8 @@ public class ClientMessages {
         buf.writeByte(token);
         buf.writeVarInt(network.getNetworkID());
         buf.writeVarInt(list.size());
-        for (var pos : list) {
-            FluxUtils.writeGlobalPos(buf, pos);
+        for (var device : list) {
+            FluxUtils.writeGlobalPos(buf, device.getGlobalPos());
         }
         sChannel.sendToServer(buf);
     }
@@ -314,7 +315,7 @@ public class ClientMessages {
     }
 
     private static void onUpdateConnections(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
-                                        BlockableEventLoop<?> looper) {
+                                            BlockableEventLoop<?> looper) {
         final int id = payload.readVarInt();
         final int size = payload.readVarInt();
         final List<CompoundTag> tags = new ArrayList<>();
