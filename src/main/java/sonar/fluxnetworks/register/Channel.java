@@ -15,7 +15,7 @@ public abstract class Channel {
     /**
      * Note: Increment this if any packet is changed.
      */
-    static final String PROTOCOL = "704";
+    static final String PROTOCOL = "707";
     static Channel sChannel;
 
     @Nonnull

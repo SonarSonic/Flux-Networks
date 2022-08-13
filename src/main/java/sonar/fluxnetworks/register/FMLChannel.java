@@ -21,7 +21,8 @@ import javax.annotation.Nonnull;
 
 public class FMLChannel extends Channel {
 
-    private static final ResourceLocation LOCATION = new ResourceLocation(FluxNetworks.MODID, "network");
+    // XXX: this is a bit hacky
+    private static final ResourceLocation LOCATION = new ResourceLocation("modernui", FluxNetworks.MODID);
 
     static {
         FluxNetworks.LOGGER.warn("Use FML network channel (low performance)");
