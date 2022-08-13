@@ -17,7 +17,7 @@ public class MUIChannel extends Channel {
     }
 
     MUIChannel() {
-        mNetwork = new NetworkHandler(FluxNetworks.MODID, () -> Holder::msg, Messages::msg, PROTOCOL, false);
+        mNetwork = new NetworkHandler(FluxNetworks.MODID, () -> Holder::msg, Messages::msg, PROTOCOL, true);
     }
 
     @Override

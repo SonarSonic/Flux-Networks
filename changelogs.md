@@ -1,6 +1,7 @@
+### Changelog 1.18.2-7.0.7.8 (2022-08-13)
+* Remove protocol check on Modern UI if absent
+
 ### Changelog 1.18.2-7.0.6.7 (2022-07-21)
-(Install Modern UI for new GUI system and better server performance)
-  
 * Fix GUI background image not connected
 * Fix disconnect button in selection tab always invisible
 * Fix double shift check working even when typing chars
