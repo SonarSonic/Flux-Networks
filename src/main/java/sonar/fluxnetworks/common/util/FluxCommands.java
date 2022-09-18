@@ -3,11 +3,10 @@ package sonar.fluxnetworks.common.util;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import sonar.fluxnetworks.FluxConfig;
@@ -50,8 +49,8 @@ public class FluxCommands {
                                 (player == source.getEntity() && (fp.isSuperAdmin() || FluxPlayer.canActivateSuperAdmin(player)))) &&
                         fp.setSuperAdmin(enable)) {
                     Messages.syncCapability(player);
-                    player.sendMessage(new TranslatableComponent(enable ?
-                            "gui.fluxnetworks.superadmin.on" : "gui.fluxnetworks.superadmin.off"), Util.NIL_UUID);
+                    player.sendSystemMessage(Component.translatable(enable ?
+                            "gui.fluxnetworks.superadmin.on" : "gui.fluxnetworks.superadmin.off"));
                     success++;
                 }
             }

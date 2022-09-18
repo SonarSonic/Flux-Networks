@@ -174,7 +174,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             if (FluxConfig.enableGuiDebug && FluxNetworks.isModernUILoaded()) {
                 MUIIntegration.openMenu(player, this, writer);
             } else {
-                NetworkHooks.openGui((ServerPlayer) player, this, writer);
+                NetworkHooks.openScreen((ServerPlayer) player, this, writer);
             }
         } else {
             player.displayClientMessage(FluxTranslate.ACCESS_DENIED, true);

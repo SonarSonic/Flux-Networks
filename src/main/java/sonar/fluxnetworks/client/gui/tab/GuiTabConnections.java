@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -22,7 +21,10 @@ import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.function.Function;
 
 public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
@@ -158,37 +160,37 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     protected List<Component> getElementTooltips(@Nonnull IFluxDevice element) {
         List<Component> components = new ArrayList<>();
         if (element.getCustomName().isEmpty()) {
-            components.add(new TextComponent("").withStyle(ChatFormatting.BOLD)
+            components.add(Component.literal("").withStyle(ChatFormatting.BOLD)
                     .append(element.getDisplayStack().getHoverName()));
         } else {
-            components.add(new TextComponent(element.getCustomName()).withStyle(ChatFormatting.BOLD));
+            components.add(Component.literal(element.getCustomName()).withStyle(ChatFormatting.BOLD));
         }
 
         if (element.isChunkLoaded()) {
             if (element.isForcedLoading()) {
                 components.add(FluxTranslate.FORCED_LOADING.makeComponent().withStyle(ChatFormatting.AQUA));
             }
-            components.add(new TextComponent(FluxUtils.getTransferInfo(element, EnergyType.FE)));
+            components.add(Component.literal(FluxUtils.getTransferInfo(element, EnergyType.FE)));
         } else {
             components.add(FluxTranslate.CHUNK_UNLOADED.makeComponent().withStyle(ChatFormatting.RED));
         }
 
         if (element.getDeviceType().isStorage()) {
-            components.add(new TextComponent(FluxTranslate.ENERGY_STORED.get() + ": " + ChatFormatting.BLUE +
+            components.add(Component.literal(FluxTranslate.ENERGY_STORED.get() + ": " + ChatFormatting.BLUE +
                     EnergyType.FE.getStorage(element.getTransferBuffer())));
         } else {
-            components.add(new TextComponent(FluxTranslate.INTERNAL_BUFFER.get() + ": " + ChatFormatting.BLUE +
+            components.add(Component.literal(FluxTranslate.INTERNAL_BUFFER.get() + ": " + ChatFormatting.BLUE +
                     EnergyType.FE.getStorage(element.getTransferBuffer())));
         }
 
-        components.add(new TextComponent(FluxTranslate.TRANSFER_LIMIT.get() + ": " + ChatFormatting.GREEN +
+        components.add(Component.literal(FluxTranslate.TRANSFER_LIMIT.get() + ": " + ChatFormatting.GREEN +
                 (element.getDisableLimit() ? FluxTranslate.UNLIMITED.get() :
                         EnergyType.FE.getStorage(element.getRawLimit()))));
-        components.add(new TextComponent(FluxTranslate.PRIORITY.get() + ": " + ChatFormatting.GREEN +
+        components.add(Component.literal(FluxTranslate.PRIORITY.get() + ": " + ChatFormatting.GREEN +
                 (element.getSurgeMode() ? FluxTranslate.SURGE.get() : element.getRawPriority())));
-        components.add(new TextComponent(FluxUtils.getDisplayPos(element.getGlobalPos()))
+        components.add(Component.literal(FluxUtils.getDisplayPos(element.getGlobalPos()))
                 .withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
-        components.add(new TextComponent(FluxUtils.getDisplayDim(element.getGlobalPos()))
+        components.add(Component.literal(FluxUtils.getDisplayDim(element.getGlobalPos()))
                 .withStyle(ChatFormatting.GRAY).withStyle(ChatFormatting.ITALIC));
         return components;
     }

@@ -1,5 +1,6 @@
 {
     "parent": "block/cube_all",
+    "render_type": "cutout",
     "textures": {
         "gray": "fluxnetworks:model/gray",
         "top": "fluxnetworks:model/tier1",

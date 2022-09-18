@@ -117,7 +117,7 @@ public abstract class GuiTabCore extends GuiFluxCore {
         }
         if (playSound && FluxConfig.enableButtonSound) {
             getMinecraft().getSoundManager().play(
-                    SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK, 1.0F));
+                    SimpleSoundInstance.forUI(RegistrySounds.BUTTON_CLICK.get(), 1.0F));
         }
     }
 }

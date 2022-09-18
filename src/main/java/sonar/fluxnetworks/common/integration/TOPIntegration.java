@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.integration;
 import mcjty.theoneprobe.api.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -49,12 +49,12 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
             }
             if (FluxConfig.enableOneProbeBasicInfo) {
                 if (device.getNetwork().isValid()) {
-                    probeInfo.text(new TextComponent(device.getNetwork().getNetworkName()).withStyle(ChatFormatting.AQUA));
+                    probeInfo.text(Component.literal(device.getNetwork().getNetworkName()).withStyle(ChatFormatting.AQUA));
                 } else {
                     probeInfo.text(FluxTranslate.ERROR_NO_SELECTED.makeComponent().withStyle(ChatFormatting.AQUA));
                 }
 
-                probeInfo.text(new TextComponent(FluxUtils.getTransferInfo(device, EnergyType.FE)));
+                probeInfo.text(Component.literal(FluxUtils.getTransferInfo(device, EnergyType.FE)));
 
                 if (player.isShiftKeyDown()) {
                     if (device.getDeviceType().isStorage()) {
@@ -126,7 +126,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
                 tag.putString(FluxConstants.CUSTOM_NAME, device.getCustomName());
                 probeInfo.horizontal().item(itemStack)
                         .vertical().itemLabel(itemStack)
-                        .text(new TextComponent(TextStyleClass.MODNAME + FluxNetworks.NAME));
+                        .text(Component.literal(TextStyleClass.MODNAME + FluxNetworks.NAME));
                 return true;
             }
             return false;

@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -24,7 +23,9 @@ import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
@@ -120,7 +121,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
     protected List<Component> getElementTooltips(@Nonnull FluxNetwork element) {
         List<Component> components = new ArrayList<>();
-        components.add(new TextComponent("ID: " + element.getNetworkID()));
+        components.add(Component.literal("ID: " + element.getNetworkID()));
         components.add(FluxTranslate.NETWORK_NAME.makeComponent().append(": " +
                 ChatFormatting.AQUA + element.getNetworkName()));
         components.add(FluxTranslate.NETWORK_SECURITY.makeComponent().append(": " +

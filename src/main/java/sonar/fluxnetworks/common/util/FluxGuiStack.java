@@ -16,12 +16,12 @@ public class FluxGuiStack {
     public static final ItemStack GARGANTUAN_STORAGE;
 
     static {
-        ItemStack stack1 = new ItemStack(RegistryBlocks.FLUX_PLUG);
-        ItemStack stack2 = new ItemStack(RegistryBlocks.FLUX_POINT);
-        ItemStack stack3 = new ItemStack(RegistryBlocks.FLUX_CONTROLLER);
-        ItemStack stack4 = new ItemStack(RegistryBlocks.BASIC_FLUX_STORAGE);
-        ItemStack stack5 = new ItemStack(RegistryBlocks.HERCULEAN_FLUX_STORAGE);
-        ItemStack stack6 = new ItemStack(RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
+        ItemStack stack1 = new ItemStack(RegistryBlocks.FLUX_PLUG.get());
+        ItemStack stack2 = new ItemStack(RegistryBlocks.FLUX_POINT.get());
+        ItemStack stack3 = new ItemStack(RegistryBlocks.FLUX_CONTROLLER.get());
+        ItemStack stack4 = new ItemStack(RegistryBlocks.BASIC_FLUX_STORAGE.get());
+        ItemStack stack5 = new ItemStack(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get());
+        ItemStack stack6 = new ItemStack(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get());
         CompoundTag tag = stack1.getOrCreateTag();
         tag.putBoolean(FluxConstants.FLUX_COLOR, true);
         tag = stack2.getOrCreateTag();

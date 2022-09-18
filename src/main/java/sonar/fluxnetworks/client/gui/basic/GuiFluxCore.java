@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import sonar.fluxnetworks.FluxNetworks;
@@ -52,7 +52,7 @@ public abstract class GuiFluxCore extends GuiPopupHost {
             } else {
                 getMinecraft().getToasts().addToast(SystemToast.multiline(getMinecraft(),
                         SystemToast.SystemToastIds.TUTORIAL_HINT,
-                        new TextComponent(FluxNetworks.NAME),
+                        Component.literal(FluxNetworks.NAME),
                         t.getComponent()));
             }
         }

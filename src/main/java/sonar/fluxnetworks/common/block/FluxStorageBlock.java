@@ -15,7 +15,7 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.device.TileFluxStorage;
-import sonar.fluxnetworks.register.RegistryBlocks;
+import sonar.fluxnetworks.register.RegistryBlockEntityTypes;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -59,7 +59,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Override
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
-            if (type == RegistryBlocks.BASIC_FLUX_STORAGE_ENTITY) {
+            if (type == RegistryBlockEntityTypes.BASIC_FLUX_STORAGE.get()) {
                 return TileFluxDevice.getTicker(level);
             }
             return null;
@@ -87,7 +87,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Override
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
-            if (type == RegistryBlocks.HERCULEAN_FLUX_STORAGE_ENTITY) {
+            if (type == RegistryBlockEntityTypes.HERCULEAN_FLUX_STORAGE.get()) {
                 return TileFluxDevice.getTicker(level);
             }
             return null;
@@ -115,7 +115,7 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         @Override
         public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                       BlockEntityType<T> type) {
-            if (type == RegistryBlocks.GARGANTUAN_FLUX_STORAGE_ENTITY) {
+            if (type == RegistryBlockEntityTypes.GARGANTUAN_FLUX_STORAGE.get()) {
                 return TileFluxDevice.getTicker(level);
             }
             return null;

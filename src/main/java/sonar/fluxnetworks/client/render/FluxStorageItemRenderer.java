@@ -3,7 +3,9 @@ package sonar.fluxnetworks.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.resources.model.BakedModel;
@@ -13,7 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.client.gui.basic.GuiFluxCore;
@@ -81,7 +83,7 @@ public class FluxStorageItemRenderer extends BlockEntityWithoutLevelRenderer {
         float r = FluxUtils.getRed(color), g = FluxUtils.getGreen(color), b = FluxUtils.getBlue(color);
         dispatcher.getModelRenderer()
                 .renderModel(poseStack.last(), bufferSource.getBuffer(Sheets.cutoutBlockSheet()),
-                        renderState, model, r, g, b, packedLight, packedOverlay, EmptyModelData.INSTANCE);
+                        renderState, model, r, g, b, packedLight, packedOverlay, ModelData.EMPTY, null);
         FluxStorageEntityRenderer.render(poseStack, bufferSource.getBuffer(FluxStorageRenderType.getType()),
                 color, packedOverlay, energy, block.getEnergyCapacity());
     }

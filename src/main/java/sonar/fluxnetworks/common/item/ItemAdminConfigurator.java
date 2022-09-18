@@ -49,7 +49,7 @@ public class ItemAdminConfigurator extends Item {
     public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player,
                                                   @Nonnull InteractionHand hand) {
         if (!level.isClientSide) {
-            NetworkHooks.openGui((ServerPlayer) player,
+            NetworkHooks.openScreen((ServerPlayer) player,
                     new Provider(), buf -> buf.writeBoolean(false));
         }
         return InteractionResultHolder.success(player.getItemInHand(hand));

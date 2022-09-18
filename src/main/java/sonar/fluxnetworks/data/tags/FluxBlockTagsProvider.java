@@ -18,12 +18,12 @@ public class FluxBlockTagsProvider extends BlockTagsProvider {
     @Override
     protected void addTags() {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(RegistryBlocks.FLUX_BLOCK)
-                .add(RegistryBlocks.FLUX_PLUG)
-                .add(RegistryBlocks.FLUX_POINT)
-                .add(RegistryBlocks.FLUX_CONTROLLER)
-                .add(RegistryBlocks.BASIC_FLUX_STORAGE)
-                .add(RegistryBlocks.HERCULEAN_FLUX_STORAGE)
-                .add(RegistryBlocks.GARGANTUAN_FLUX_STORAGE);
+                .add(RegistryBlocks.FLUX_BLOCK.get())
+                .add(RegistryBlocks.FLUX_PLUG.get())
+                .add(RegistryBlocks.FLUX_POINT.get())
+                .add(RegistryBlocks.FLUX_CONTROLLER.get())
+                .add(RegistryBlocks.BASIC_FLUX_STORAGE.get())
+                .add(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get())
+                .add(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get());
     }
 }

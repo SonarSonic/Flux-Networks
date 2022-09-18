@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.api.device;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 
@@ -37,6 +36,6 @@ public interface IFluxProvider extends MenuProvider {
     @Nonnull
     @Override
     default Component getDisplayName() {
-        return TextComponent.EMPTY;
+        return Component.empty();
     }
 }

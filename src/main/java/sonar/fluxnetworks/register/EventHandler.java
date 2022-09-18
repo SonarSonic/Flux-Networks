@@ -74,16 +74,16 @@ public class EventHandler {
 
     @SubscribeEvent(receiveCanceled = true)
     public static void onPlayerInteract(PlayerInteractEvent.LeftClickBlock event) {
-        if (!FluxConfig.enableFluxRecipe || event.getWorld().isClientSide) {
+        if (!FluxConfig.enableFluxRecipe || event.getLevel().isClientSide) {
             return;
         }
-        ServerLevel level = (ServerLevel) event.getWorld();
+        ServerLevel level = (ServerLevel) event.getLevel();
         BlockPos pos = event.getPos();
         BlockState crusher = level.getBlockState(pos);
         BlockState base;
         if (crusher.getBlock() == Blocks.OBSIDIAN &&
                 ((base = level.getBlockState(pos.below(2))).getBlock() == Blocks.BEDROCK ||
-                        base.getBlock() == RegistryBlocks.FLUX_BLOCK)) {
+                        base.getBlock() == RegistryBlocks.FLUX_BLOCK.get())) {
             List<ItemEntity> entities = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos.below()));
             if (entities.isEmpty()) {
                 return;
@@ -101,7 +101,7 @@ public class EventHandler {
             if (itemCount == 0) {
                 return;
             }
-            ItemStack stack = new ItemStack(RegistryItems.FLUX_DUST, itemCount);
+            ItemStack stack = new ItemStack(RegistryItems.FLUX_DUST.get(), itemCount);
             level.removeBlock(pos, false);
             ItemEntity entity = new ItemEntity(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, stack);
             entity.setNoPickUpDelay();
@@ -146,8 +146,8 @@ public class EventHandler {
     public static void onPlayerJoined(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         // this event only fired on server
         Channel.get().sendToPlayer(Messages.updateNetwork(
-                FluxNetworkData.getAllNetworks(), FluxConstants.NBT_NET_BASIC), event.getPlayer());
-        Messages.syncCapability(event.getPlayer());
+                FluxNetworkData.getAllNetworks(), FluxConstants.NBT_NET_BASIC), event.getEntity());
+        Messages.syncCapability(event.getEntity());
     }
 
     @SubscribeEvent
@@ -167,7 +167,7 @@ public class EventHandler {
         event.getOriginal().reviveCaps();
         FluxPlayer oFluxPlayer = FluxUtils.get(event.getOriginal(), FluxPlayer.FLUX_PLAYER);
         if (oFluxPlayer != null) {
-            FluxPlayer nFluxPlayer = FluxUtils.get(event.getPlayer(), FluxPlayer.FLUX_PLAYER);
+            FluxPlayer nFluxPlayer = FluxUtils.get(event.getEntity(), FluxPlayer.FLUX_PLAYER);
             if (nFluxPlayer != null) {
                 nFluxPlayer.set(oFluxPlayer);
             }

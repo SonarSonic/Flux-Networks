@@ -46,13 +46,13 @@ public class FluxBlockLoot extends BlockLoot {
 
     @Override
     protected void addTables() {
-        dropSelf(RegistryBlocks.FLUX_BLOCK);
-        add(RegistryBlocks.FLUX_PLUG, FluxBlockLoot::createDevice);
-        add(RegistryBlocks.FLUX_POINT, FluxBlockLoot::createDevice);
-        add(RegistryBlocks.FLUX_CONTROLLER, FluxBlockLoot::createDevice);
-        add(RegistryBlocks.BASIC_FLUX_STORAGE, FluxBlockLoot::createDevice);
-        add(RegistryBlocks.HERCULEAN_FLUX_STORAGE, FluxBlockLoot::createDevice);
-        add(RegistryBlocks.GARGANTUAN_FLUX_STORAGE, FluxBlockLoot::createDevice);
+        dropSelf(RegistryBlocks.FLUX_BLOCK.get());
+        add(RegistryBlocks.FLUX_PLUG.get(), FluxBlockLoot::createDevice);
+        add(RegistryBlocks.FLUX_POINT.get(), FluxBlockLoot::createDevice);
+        add(RegistryBlocks.FLUX_CONTROLLER.get(), FluxBlockLoot::createDevice);
+        add(RegistryBlocks.BASIC_FLUX_STORAGE.get(), FluxBlockLoot::createDevice);
+        add(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get(), FluxBlockLoot::createDevice);
+        add(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get(), FluxBlockLoot::createDevice);
     }
 
     /**

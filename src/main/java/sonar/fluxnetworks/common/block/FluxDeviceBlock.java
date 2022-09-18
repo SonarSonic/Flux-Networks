@@ -38,7 +38,7 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        if (player.getItemInHand(hand).is(RegistryItems.FLUX_CONFIGURATOR)) {
+        if (player.getItemInHand(hand).is(RegistryItems.FLUX_CONFIGURATOR.get())) {
             return InteractionResult.PASS;
         }
 
