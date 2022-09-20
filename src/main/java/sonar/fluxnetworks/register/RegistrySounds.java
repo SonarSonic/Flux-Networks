@@ -1,24 +1,20 @@
 package sonar.fluxnetworks.register;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import sonar.fluxnetworks.FluxNetworks;
 
 public class RegistrySounds {
-    private static final DeferredRegister<SoundEvent> REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, FluxNetworks.MODID);
+    public static final ResourceLocation BUTTON_CLICK_KEY = FluxNetworks.rl("button");
 
-    public static final RegistryObject<SoundEvent> BUTTON_CLICK = registerSoundEvent("button");
+    public static final RegistryObject<SoundEvent> BUTTON_CLICK = RegistryObject.create(BUTTON_CLICK_KEY, ForgeRegistries.SOUND_EVENTS);
 
-    private static RegistryObject<SoundEvent> registerSoundEvent(String name) {
-        var resourceLocation = FluxNetworks.rl(name);
-        return REGISTRY.register(name, () -> new SoundEvent(resourceLocation));
+    static void register(RegisterEvent.RegisterHelper<SoundEvent> helper) {
+        helper.register(BUTTON_CLICK_KEY, new SoundEvent(BUTTON_CLICK_KEY));
     }
 
-    public static void register(IEventBus bus) {
-        REGISTRY.register(bus);
-    }
     private RegistrySounds() {}
 }

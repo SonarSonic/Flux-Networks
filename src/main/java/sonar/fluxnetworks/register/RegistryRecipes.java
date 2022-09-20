@@ -1,10 +1,9 @@
 package sonar.fluxnetworks.register;
 
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.crafting.FluxStorageRecipe;
@@ -13,17 +12,15 @@ import sonar.fluxnetworks.common.crafting.NBTWipeRecipe;
 import sonar.fluxnetworks.common.crafting.NBTWipeRecipeSerializer;
 
 public class RegistryRecipes {
-    private static final DeferredRegister<RecipeSerializer<?>> REGISTRY = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, FluxNetworks.MODID);
+    public static final ResourceLocation FLUX_STORAGE_RECIPE_KEY = FluxNetworks.rl("flux_storage_recipe");
+    public static final ResourceLocation NBT_WIPE_RECIPE_KEY = FluxNetworks.rl("nbt_wipe_recipe");
 
-    public static final RegistryObject<RecipeSerializer<FluxStorageRecipe>> FLUX_STORAGE_RECIPE = registerRecipeSerializer("flux_storage_recipe", FluxStorageRecipeSerializer.INSTANCE);
-    public static final RegistryObject<RecipeSerializer<NBTWipeRecipe>> NBT_WIPE_RECIPE = registerRecipeSerializer("nbt_wipe_recipe", NBTWipeRecipeSerializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<FluxStorageRecipe>> FLUX_STORAGE_RECIPE = RegistryObject.create(FLUX_STORAGE_RECIPE_KEY, ForgeRegistries.RECIPE_SERIALIZERS);
+    public static final RegistryObject<RecipeSerializer<NBTWipeRecipe>> NBT_WIPE_RECIPE = RegistryObject.create(NBT_WIPE_RECIPE_KEY, ForgeRegistries.RECIPE_SERIALIZERS);
 
-    private static <R extends Recipe<?>> RegistryObject<RecipeSerializer<R>> registerRecipeSerializer(String name, RecipeSerializer<R> recipeSerializer) {
-        return REGISTRY.register(name, () -> recipeSerializer);
-    }
-
-    public static void register(IEventBus bus) {
-        REGISTRY.register(bus);
+    static void register(RegisterEvent.RegisterHelper<RecipeSerializer<?>> helper) {
+        helper.register(FLUX_STORAGE_RECIPE_KEY, FluxStorageRecipeSerializer.INSTANCE);
+        helper.register(NBT_WIPE_RECIPE_KEY, NBTWipeRecipeSerializer.INSTANCE);
     }
 
     private RegistryRecipes() {}

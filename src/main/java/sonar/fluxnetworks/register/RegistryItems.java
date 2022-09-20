@@ -1,24 +1,35 @@
 package sonar.fluxnetworks.register;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.item.*;
 
 import javax.annotation.Nonnull;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class RegistryItems {
-    private static final DeferredRegister<Item> REGISTRY = DeferredRegister.create(ForgeRegistries.ITEMS, FluxNetworks.MODID);
+    private static final ResourceLocation FLUX_DUST_KEY = FluxNetworks.rl("flux_dust");
+    private static final ResourceLocation FLUX_CORE_KEY = FluxNetworks.rl("flux_core");
+    private static final ResourceLocation FLUX_CONFIGURATOR_KEY = FluxNetworks.rl("flux_configurator");
+    private static final ResourceLocation ADMIN_CONFIGURATOR_KEY = FluxNetworks.rl("admin_configurator");
+
+    public static final RegistryObject<BlockItem> FLUX_BLOCK = RegistryObject.create(RegistryBlocks.FLUX_BLOCK_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<FluxDeviceItem> FLUX_PLUG = RegistryObject.create(RegistryBlocks.FLUX_PLUG_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<FluxDeviceItem> FLUX_POINT = RegistryObject.create(RegistryBlocks.FLUX_POINT_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<FluxDeviceItem> FLUX_CONTROLLER = RegistryObject.create(RegistryBlocks.FLUX_CONTROLLER_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<FluxStorageItem> BASIC_FLUX_STORAGE = RegistryObject.create(RegistryBlocks.BASIC_FLUX_STORAGE_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<FluxStorageItem> HERCULEAN_FLUX_STORAGE = RegistryObject.create(RegistryBlocks.HERCULEAN_FLUX_STORAGE_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<FluxStorageItem> GARGANTUAN_FLUX_STORAGE = RegistryObject.create(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<FluxDustItem> FLUX_DUST = RegistryObject.create(FLUX_DUST_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<Item> FLUX_CORE = RegistryObject.create(FLUX_CORE_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<ItemFluxConfigurator> FLUX_CONFIGURATOR = RegistryObject.create(FLUX_CONFIGURATOR_KEY, ForgeRegistries.ITEMS);
+    public static final RegistryObject<ItemAdminConfigurator> ADMIN_CONFIGURATOR = RegistryObject.create(ADMIN_CONFIGURATOR_KEY, ForgeRegistries.ITEMS);
 
     private static final CreativeModeTab CREATIVE_MODE_TAB = new CreativeModeTab(FluxNetworks.MODID) {
         @Nonnull
@@ -28,34 +39,22 @@ public class RegistryItems {
         }
     };
 
-    private static final Properties NORMAL_PROPS = new Properties().tab(CREATIVE_MODE_TAB).fireResistant();
-    private static final Properties DEVICE_PROPS = new Properties().tab(CREATIVE_MODE_TAB).fireResistant().stacksTo(1);
+    static void register(RegisterEvent.RegisterHelper<Item> helper) {
+        Item.Properties normalProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant();
+        Item.Properties deviceProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant().stacksTo(1);
 
+        helper.register(RegistryBlocks.FLUX_BLOCK_KEY, new BlockItem(RegistryBlocks.FLUX_BLOCK.get(), normalProps));
+        helper.register(RegistryBlocks.FLUX_PLUG_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_PLUG.get(), deviceProps));
+        helper.register(RegistryBlocks.FLUX_POINT_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_POINT.get(), deviceProps));
+        helper.register(RegistryBlocks.FLUX_CONTROLLER_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_CONTROLLER.get(), deviceProps));
+        helper.register(RegistryBlocks.BASIC_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.BASIC_FLUX_STORAGE.get(), deviceProps));
+        helper.register(RegistryBlocks.HERCULEAN_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get(), deviceProps));
+        helper.register(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get(), deviceProps));
 
-    public static final RegistryObject<BlockItem> FLUX_BLOCK = registerBlockItem("flux_block", NORMAL_PROPS, RegistryBlocks.FLUX_BLOCK, BlockItem::new);
-    public static final RegistryObject<FluxDeviceItem> FLUX_PLUG = registerBlockItem("flux_plug", NORMAL_PROPS, RegistryBlocks.FLUX_PLUG, FluxDeviceItem::new);
-    public static final RegistryObject<FluxDeviceItem> FLUX_POINT = registerBlockItem("flux_point", NORMAL_PROPS, RegistryBlocks.FLUX_POINT, FluxDeviceItem::new);
-    public static final RegistryObject<FluxDeviceItem> FLUX_CONTROLLER = registerBlockItem("flux_controller", NORMAL_PROPS, RegistryBlocks.FLUX_CONTROLLER, FluxDeviceItem::new);
-    public static final RegistryObject<FluxStorageItem> BASIC_FLUX_STORAGE = registerBlockItem("basic_flux_storage", NORMAL_PROPS, RegistryBlocks.BASIC_FLUX_STORAGE, FluxStorageItem::new);
-    public static final RegistryObject<FluxStorageItem> HERCULEAN_FLUX_STORAGE = registerBlockItem("herculean_flux_storage", NORMAL_PROPS, RegistryBlocks.HERCULEAN_FLUX_STORAGE, FluxStorageItem::new);
-    public static final RegistryObject<FluxStorageItem> GARGANTUAN_FLUX_STORAGE = registerBlockItem("gargantuan_flux_storage", NORMAL_PROPS, RegistryBlocks.GARGANTUAN_FLUX_STORAGE, FluxStorageItem::new);
-
-    public static final RegistryObject<FluxDustItem> FLUX_DUST = registerItem("flux_dust", NORMAL_PROPS, FluxDustItem::new);
-    public static final RegistryObject<Item> FLUX_CORE = registerItem("flux_core", NORMAL_PROPS, Item::new);
-
-    public static final RegistryObject<ItemFluxConfigurator> FLUX_CONFIGURATOR = registerItem("flux_configurator", DEVICE_PROPS, ItemFluxConfigurator::new);
-    public static final RegistryObject<ItemAdminConfigurator> ADMIN_CONFIGURATOR = registerItem("admin_configurator", DEVICE_PROPS, ItemAdminConfigurator::new);
-
-    private static <I extends Item, B extends Block> RegistryObject<I> registerBlockItem(String name, Properties itemProperties, RegistryObject<B> blockRegistryObject, BiFunction<? super B, ? super Properties, ? extends I> factory) {
-        return registerItem(name, itemProperties, (props) -> factory.apply(blockRegistryObject.get(), props));
-    }
-
-    private static <I extends Item> RegistryObject<I> registerItem(String name, Properties itemProperties, Function<? super Properties, ? extends I> factory) {
-        return REGISTRY.register(name, () -> factory.apply(itemProperties));
-    }
-
-    public static void register(IEventBus bus) {
-        REGISTRY.register(bus);
+        helper.register(FLUX_DUST_KEY, new FluxDustItem(normalProps));
+        helper.register(FLUX_CORE_KEY, new Item(normalProps));
+        helper.register(FLUX_CONFIGURATOR_KEY, new ItemFluxConfigurator(normalProps));
+        helper.register(ADMIN_CONFIGURATOR_KEY, new ItemAdminConfigurator(normalProps));
     }
 
     private RegistryItems() {}

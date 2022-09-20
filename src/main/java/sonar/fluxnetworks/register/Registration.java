@@ -4,13 +4,14 @@ import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
@@ -82,12 +83,13 @@ public class Registration {
         }
     }
 
-    public static void register(IEventBus bus) {
-        RegistryBlocks.register(bus);
-        RegistryItems.register(bus);
-        RegistryBlockEntityTypes.register(bus);
-        RegistryRecipes.register(bus);
-        RegistryMenuTypes.register(bus);
-        RegistrySounds.register(bus);
+    @SubscribeEvent
+    public static void register(@Nonnull RegisterEvent event) {
+        event.register(ForgeRegistries.BLOCKS.getRegistryKey(), RegistryBlocks::register);
+        event.register(ForgeRegistries.ITEMS.getRegistryKey(), RegistryItems::register);
+        event.register(ForgeRegistries.BLOCK_ENTITY_TYPES.getRegistryKey(), RegistryBlockEntityTypes::register);
+        event.register(ForgeRegistries.MENU_TYPES.getRegistryKey(), RegistryMenuTypes::register);
+        event.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), RegistryRecipes::register);
+        event.register(ForgeRegistries.SOUND_EVENTS.getRegistryKey(), RegistrySounds::register);
     }
 }

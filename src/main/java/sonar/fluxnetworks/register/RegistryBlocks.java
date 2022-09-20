@@ -1,12 +1,12 @@
 package sonar.fluxnetworks.register;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.block.FluxControllerBlock;
@@ -14,31 +14,36 @@ import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 
-import java.util.function.Function;
-
 public class RegistryBlocks {
-    private static final DeferredRegister<Block> REGISTRY = DeferredRegister.create(ForgeRegistries.BLOCKS, FluxNetworks.MODID);
+    public static final ResourceLocation FLUX_BLOCK_KEY = FluxNetworks.rl("flux_block");
+    public static final ResourceLocation FLUX_PLUG_KEY = FluxNetworks.rl("flux_plug");
+    public static final ResourceLocation FLUX_POINT_KEY = FluxNetworks.rl("flux_point");
+    public static final ResourceLocation FLUX_CONTROLLER_KEY = FluxNetworks.rl("flux_controller");
+    public static final ResourceLocation BASIC_FLUX_STORAGE_KEY = FluxNetworks.rl("basic_flux_storage");
+    public static final ResourceLocation HERCULEAN_FLUX_STORAGE_KEY = FluxNetworks.rl("herculean_flux_storage");
+    public static final ResourceLocation GARGANTUAN_FLUX_STORAGE_KEY = FluxNetworks.rl("gargantuan_flux_storage");
 
-    private static final Properties NORMAL_PROPS = Properties.of(Material.METAL).sound(SoundType.METAL)
-            .strength(1.0F, 1000F);
-    private static final Properties DEVICE_PROPS = Properties.of(Material.METAL).sound(SoundType.METAL)
-            .strength(1.0F, 1000F).noOcclusion();
+    public static final RegistryObject<Block> FLUX_BLOCK = RegistryObject.create(FLUX_BLOCK_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxPlugBlock> FLUX_PLUG = RegistryObject.create(FLUX_PLUG_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxPointBlock> FLUX_POINT = RegistryObject.create(FLUX_POINT_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxControllerBlock> FLUX_CONTROLLER = RegistryObject.create(FLUX_CONTROLLER_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxStorageBlock.Basic> BASIC_FLUX_STORAGE = RegistryObject.create(BASIC_FLUX_STORAGE_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxStorageBlock.Herculean> HERCULEAN_FLUX_STORAGE = RegistryObject.create(HERCULEAN_FLUX_STORAGE_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxStorageBlock.Gargantuan> GARGANTUAN_FLUX_STORAGE = RegistryObject.create(GARGANTUAN_FLUX_STORAGE_KEY, ForgeRegistries.BLOCKS);
 
+    static void register(RegisterEvent.RegisterHelper<Block> helper) {
+        BlockBehaviour.Properties normalProps = BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL)
+                .strength(1.0F, 1000F);
+        BlockBehaviour.Properties deviceProps = BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL)
+                .strength(1.0F, 1000F).noOcclusion();
 
-    public static final RegistryObject<Block> FLUX_BLOCK = registerBlock("flux_block", NORMAL_PROPS, Block::new);
-    public static final RegistryObject<FluxPlugBlock> FLUX_PLUG = registerBlock("flux_plug", DEVICE_PROPS, FluxPlugBlock::new);
-    public static final RegistryObject<FluxPointBlock> FLUX_POINT = registerBlock("flux_point", DEVICE_PROPS, FluxPointBlock::new);
-    public static final RegistryObject<FluxControllerBlock> FLUX_CONTROLLER = registerBlock("flux_controller", DEVICE_PROPS, FluxControllerBlock::new);
-    public static final RegistryObject<FluxStorageBlock.Basic> BASIC_FLUX_STORAGE = registerBlock("basic_flux_storage", DEVICE_PROPS, FluxStorageBlock.Basic::new);
-    public static final RegistryObject<FluxStorageBlock.Herculean> HERCULEAN_FLUX_STORAGE = registerBlock("herculean_flux_storage", DEVICE_PROPS, FluxStorageBlock.Herculean::new);
-    public static final RegistryObject<FluxStorageBlock.Gargantuan> GARGANTUAN_FLUX_STORAGE = registerBlock("gargantuan_flux_storage", DEVICE_PROPS, FluxStorageBlock.Gargantuan::new);
-
-    private static <B extends Block> RegistryObject<B> registerBlock(String name, Properties blockProperties, Function<? super Properties, B> factory) {
-        return REGISTRY.register(name, () -> factory.apply(blockProperties));
-    }
-
-    public static void register(IEventBus bus) {
-        REGISTRY.register(bus);
+        helper.register(FLUX_BLOCK_KEY, new Block(normalProps));
+        helper.register(FLUX_PLUG_KEY, new FluxPlugBlock(deviceProps));
+        helper.register(FLUX_POINT_KEY, new FluxPointBlock(deviceProps));
+        helper.register(FLUX_CONTROLLER_KEY, new FluxControllerBlock(deviceProps));
+        helper.register(BASIC_FLUX_STORAGE_KEY, new FluxStorageBlock.Basic(deviceProps));
+        helper.register(HERCULEAN_FLUX_STORAGE_KEY, new FluxStorageBlock.Herculean(deviceProps));
+        helper.register(GARGANTUAN_FLUX_STORAGE_KEY, new FluxStorageBlock.Gargantuan(deviceProps));
     }
 
     private RegistryBlocks() {}

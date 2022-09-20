@@ -1,14 +1,12 @@
 package sonar.fluxnetworks;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sonar.fluxnetworks.common.integration.MUIIntegration;
-import sonar.fluxnetworks.register.Registration;
 
 @Mod(FluxNetworks.MODID)
 public class FluxNetworks {
@@ -28,11 +26,9 @@ public class FluxNetworks {
 
         FluxConfig.init();
 
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         if (sModernUILoaded) {
-            bus.register(MUIIntegration.class);
+            FMLJavaModLoadingContext.get().getModEventBus().register(MUIIntegration.class);
         }
-        Registration.register(bus);
     }
 
     public static boolean isCuriosLoaded() {
