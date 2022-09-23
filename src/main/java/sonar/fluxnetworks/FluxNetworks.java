@@ -35,10 +35,8 @@ public class FluxNetworks {
         return sCuriosLoaded;
     }
 
-    // TODO: re-enable the MUI integration
     public static boolean isModernUILoaded() {
-//        return sModernUILoaded;
-        return false;
+        return sModernUILoaded;
     }
 
     public static ResourceLocation rl(String path) {

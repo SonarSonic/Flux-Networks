@@ -28,7 +28,7 @@ public class Registration {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        Channel.sChannel = FluxNetworks.isModernUILoaded() ? new MUIChannel() : new FMLChannel();
+        Channel.sChannel = new FMLChannel();
         event.enqueueWork(() -> ForgeChunkManager.setForcedChunkLoadingCallback(FluxNetworks.MODID, (level, helper) -> {
             if (!FluxConfig.enableChunkLoading) {
                 helper.getBlockTickets().keySet().forEach(helper::removeAllTickets);
