@@ -3,8 +3,9 @@ package sonar.fluxnetworks.common.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -31,7 +32,7 @@ public class FluxDeviceItem extends BlockItem {
         if (tag != null) {
             String value = tag.getString(FluxConstants.CUSTOM_NAME);
             if (!value.isEmpty()) {
-                return new TextComponent(value);
+                return Component.literal(value);
             }
         }
         return super.getName(stack);
@@ -44,22 +45,22 @@ public class FluxDeviceItem extends BlockItem {
         if (tag != null) {
             final FluxNetwork network = ClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID));
             if (network.isValid()) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
                         ChatFormatting.RESET + network.getNetworkName()));
             }
 
             if (tag.contains(FluxConstants.LIMIT)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.get() + ": " +
                         ChatFormatting.RESET + EnergyType.FE.getStorage(tag.getLong(FluxConstants.LIMIT))));
             }
 
             if (tag.contains(FluxConstants.PRIORITY)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.PRIORITY.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.PRIORITY.get() + ": " +
                         ChatFormatting.RESET + tag.getInt(FluxConstants.PRIORITY)));
             }
 
             if (tag.contains(FluxConstants.BUFFER)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.INTERNAL_BUFFER.get() + ": " +
                         ChatFormatting.RESET + EnergyType.FE.getStorage(tag.getLong(FluxConstants.BUFFER))));
             } else if (tag.contains(FluxConstants.ENERGY)) {
                 long energy = tag.getLong(FluxConstants.ENERGY);
@@ -69,7 +70,7 @@ public class FluxDeviceItem extends BlockItem {
                     percentage = Math.min((double) energy / ((FluxStorageBlock) block).getEnergyCapacity(), 1.0);
                 else
                     percentage = 0;
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.ENERGY_STORED.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.ENERGY_STORED.get() + ": " +
                         ChatFormatting.RESET + EnergyType.FE.getStorage(energy) + String.format(" (%.1f%%)",
                         percentage * 100)));
             }

@@ -1,5 +1,6 @@
 {
     "parent": "block/cube_all",
+    "render_type": "cutout",
     "textures": {
         "0": "fluxnetworks:model/fluxcontroller_bottom",
         "1": "fluxnetworks:model/flux_controller",

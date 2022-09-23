@@ -13,7 +13,7 @@ import sonar.fluxnetworks.client.ClientCache;
 public class ClientEventHandler {
 
     @SubscribeEvent
-    public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event) {
+    public static void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientCache.release();
         //FluxColorHandler.INSTANCE.reset();
     }

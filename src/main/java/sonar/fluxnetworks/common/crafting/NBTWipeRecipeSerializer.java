@@ -5,13 +5,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class NBTWipeRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<NBTWipeRecipe> {
+public class NBTWipeRecipeSerializer implements RecipeSerializer<NBTWipeRecipe> {
 
     public static final NBTWipeRecipeSerializer INSTANCE = new NBTWipeRecipeSerializer();
 

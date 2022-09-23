@@ -24,10 +24,6 @@ public class FMLChannel extends Channel {
     // XXX: this is a bit hacky
     private static final ResourceLocation LOCATION = new ResourceLocation("modernui", FluxNetworks.MODID);
 
-    static {
-        FluxNetworks.LOGGER.warn("Use FML network channel (low performance)");
-    }
-
     FMLChannel() {
         NetworkRegistry.newEventChannel(LOCATION, () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals)
                 .registerObject(this);

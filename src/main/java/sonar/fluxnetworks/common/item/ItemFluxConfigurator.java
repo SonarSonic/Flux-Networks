@@ -3,12 +3,15 @@ package sonar.fluxnetworks.common.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.*;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
@@ -63,7 +66,7 @@ public class ItemFluxConfigurator extends Item {
             }
             return InteractionResult.SUCCESS;
         }
-        NetworkHooks.openGui((ServerPlayer) player,
+        NetworkHooks.openScreen((ServerPlayer) player,
                 new Provider(stack), buf -> buf.writeBoolean(false));
         return InteractionResult.SUCCESS;
     }
@@ -82,17 +85,17 @@ public class ItemFluxConfigurator extends Item {
         if (tag != null) {
             final FluxNetwork network = ClientCache.getNetwork(tag.getInt(FluxConstants.NETWORK_ID));
             if (network.isValid()) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.NETWORK_FULL_NAME.get() + ": " +
                         ChatFormatting.RESET + network.getNetworkName()));
             }
 
             if (tag.contains(FluxConstants.LIMIT)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.TRANSFER_LIMIT.get() + ": " +
                         ChatFormatting.RESET + EnergyType.FE.getStorage(tag.getLong(FluxConstants.LIMIT))));
             }
 
             if (tag.contains(FluxConstants.PRIORITY)) {
-                tooltip.add(new TextComponent(ChatFormatting.BLUE + FluxTranslate.PRIORITY.get() + ": " +
+                tooltip.add(Component.literal(ChatFormatting.BLUE + FluxTranslate.PRIORITY.get() + ": " +
                         ChatFormatting.RESET + tag.getInt(FluxConstants.PRIORITY)));
             }
         }

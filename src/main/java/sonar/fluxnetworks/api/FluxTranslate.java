@@ -145,11 +145,11 @@ public class FluxTranslate {
             JEI_LEFT_CLICK = new FluxTranslate("gui.fluxnetworks.jei.leftclickhelp");
 
     private final String mKey;
-    private final TranslatableComponent mComponent;
+    private final Component mComponent;
 
     public FluxTranslate(String key) {
         mKey = key;
-        mComponent = new TranslatableComponent(mKey);
+        mComponent = Component.translatable(mKey);
     }
 
     @Nullable
@@ -170,11 +170,11 @@ public class FluxTranslate {
     private static final ChatFormatting[] ERROR_STYLE = {ChatFormatting.BOLD, ChatFormatting.DARK_RED};
 
     public static final Component
-            ACCESS_DENIED = new TranslatableComponent("gui.fluxnetworks.denied_access").withStyle(ERROR_STYLE),
-            ACCESS_OCCUPY = new TranslatableComponent("gui.fluxnetworks.denied_occupy").withStyle(ERROR_STYLE);
+            ACCESS_DENIED = Component.translatable("gui.fluxnetworks.denied_access").withStyle(ERROR_STYLE),
+            ACCESS_OCCUPY = Component.translatable("gui.fluxnetworks.denied_occupy").withStyle(ERROR_STYLE);
     public static final Component
-            CONFIG_COPIED = new TranslatableComponent("gui.fluxnetworks.config_copied"),
-            CONFIG_PASTED = new TranslatableComponent("gui.fluxnetworks.config_pasted");
+            CONFIG_COPIED = Component.translatable("gui.fluxnetworks.config_copied"),
+            CONFIG_PASTED = Component.translatable("gui.fluxnetworks.config_pasted");
 
     @Nonnull
     public String get() {
@@ -200,12 +200,12 @@ public class FluxTranslate {
 
     @Nonnull
     public MutableComponent makeComponent() {
-        return new TranslatableComponent(mKey);
+        return Component.translatable(mKey);
     }
 
     @Nonnull
-    public TranslatableComponent makeComponent(Object... args) {
-        return new TranslatableComponent(mKey, args);
+    public Component makeComponent(Object... args) {
+        return Component.translatable(mKey, args);
     }
 
     @Nonnull

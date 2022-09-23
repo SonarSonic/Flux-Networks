@@ -1,5 +1,6 @@
 package sonar.fluxnetworks;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -24,6 +25,7 @@ public class FluxNetworks {
         sModernUILoaded = ModList.get().isLoaded("modernui");
 
         FluxConfig.init();
+
         if (sModernUILoaded) {
             FMLJavaModLoadingContext.get().getModEventBus().register(MUIIntegration.class);
         }
@@ -35,5 +37,9 @@ public class FluxNetworks {
 
     public static boolean isModernUILoaded() {
         return sModernUILoaded;
+    }
+
+    public static ResourceLocation rl(String path) {
+        return new ResourceLocation(MODID, path);
     }
 }

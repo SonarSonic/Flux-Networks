@@ -26,7 +26,7 @@ archivesBaseName = 'FluxNetworks'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: "2022.06.05-1.18.2"
+    mappings channel: 'parchment', version: "2022.09.04-1.19.2"
 
     runs {
         client {
@@ -144,18 +144,25 @@ dependencies {
     compileOnly "mekanism:Mekanism:${mekanism_version}:api"
     runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:3671753") // 1.18-5.1.0
+    implementation fg.deobf("curse.maven:the-one-probe-245211:3965693") // 1.19-6.2.2
     //runtimeOnly fg.deobf("curse.maven:powah-rearchitected-633483:3855683") // [FORGE 1.18.2] v3.0.1-beta
 
     //runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3554445")
 
-    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+    implementation fg.deobf("mezz.jei:jei-${minecraft_version}-core:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
 
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}")
 
-    library "icyllis.modernui:ModernUI-Core:${modernui_version}"
+    library("icyllis.modernui:ModernUI-Core:${modernui_version}") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+        exclude group: "com.google.code.findbugs", module: "jsr305"
+        exclude group: "org.jetbrains", module: "annotations"
+        exclude group: "com.ibm.icu", module: "icu4j"
+    }
     implementation fg.deobf("icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_version}")
 }
 

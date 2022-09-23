@@ -14,7 +14,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.network.NetworkHooks;
@@ -25,12 +27,13 @@ import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.*;
-import sonar.fluxnetworks.common.integration.MUIIntegration;
 import sonar.fluxnetworks.common.util.FluxUtils;
 import sonar.fluxnetworks.register.Channel;
 import sonar.fluxnetworks.register.Messages;
 
-import javax.annotation.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -170,12 +173,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
                 writeCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);
                 buf.writeNbt(tag);
             };
-            //TODO check if client player wants to use Modern UI or not
-            if (FluxConfig.enableGuiDebug && FluxNetworks.isModernUILoaded()) {
-                MUIIntegration.openMenu(player, this, writer);
-            } else {
-                NetworkHooks.openGui((ServerPlayer) player, this, writer);
-            }
+            NetworkHooks.openScreen((ServerPlayer) player, this, writer);
         } else {
             player.displayClientMessage(FluxTranslate.ACCESS_DENIED, true);
         }

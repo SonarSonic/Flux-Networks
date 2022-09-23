@@ -5,13 +5,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class FluxStorageRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<FluxStorageRecipe> {
+public class FluxStorageRecipeSerializer implements RecipeSerializer<FluxStorageRecipe> {
 
     public static final FluxStorageRecipeSerializer INSTANCE = new FluxStorageRecipeSerializer();
 

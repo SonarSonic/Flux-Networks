@@ -1,66 +1,50 @@
 package sonar.fluxnetworks.register;
 
-import net.minecraft.world.inventory.MenuType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.block.FluxControllerBlock;
 import sonar.fluxnetworks.common.block.FluxPlugBlock;
 import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
-import sonar.fluxnetworks.common.connection.FluxMenu;
-import sonar.fluxnetworks.common.device.*;
 
-@ObjectHolder(FluxNetworks.MODID)
 public class RegistryBlocks {
+    public static final ResourceLocation FLUX_BLOCK_KEY = FluxNetworks.rl("flux_block");
+    public static final ResourceLocation FLUX_PLUG_KEY = FluxNetworks.rl("flux_plug");
+    public static final ResourceLocation FLUX_POINT_KEY = FluxNetworks.rl("flux_point");
+    public static final ResourceLocation FLUX_CONTROLLER_KEY = FluxNetworks.rl("flux_controller");
+    public static final ResourceLocation BASIC_FLUX_STORAGE_KEY = FluxNetworks.rl("basic_flux_storage");
+    public static final ResourceLocation HERCULEAN_FLUX_STORAGE_KEY = FluxNetworks.rl("herculean_flux_storage");
+    public static final ResourceLocation GARGANTUAN_FLUX_STORAGE_KEY = FluxNetworks.rl("gargantuan_flux_storage");
 
-    @ObjectHolder("flux_block")
-    public static Block FLUX_BLOCK;
+    public static final RegistryObject<Block> FLUX_BLOCK = RegistryObject.create(FLUX_BLOCK_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxPlugBlock> FLUX_PLUG = RegistryObject.create(FLUX_PLUG_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxPointBlock> FLUX_POINT = RegistryObject.create(FLUX_POINT_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxControllerBlock> FLUX_CONTROLLER = RegistryObject.create(FLUX_CONTROLLER_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxStorageBlock.Basic> BASIC_FLUX_STORAGE = RegistryObject.create(BASIC_FLUX_STORAGE_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxStorageBlock.Herculean> HERCULEAN_FLUX_STORAGE = RegistryObject.create(HERCULEAN_FLUX_STORAGE_KEY, ForgeRegistries.BLOCKS);
+    public static final RegistryObject<FluxStorageBlock.Gargantuan> GARGANTUAN_FLUX_STORAGE = RegistryObject.create(GARGANTUAN_FLUX_STORAGE_KEY, ForgeRegistries.BLOCKS);
 
+    static void register(RegisterEvent.RegisterHelper<Block> helper) {
+        BlockBehaviour.Properties normalProps = BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL)
+                .strength(1.0F, 1000F);
+        BlockBehaviour.Properties deviceProps = BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL)
+                .strength(1.0F, 1000F).noOcclusion();
 
-    @ObjectHolder("flux_menu")
-    public static MenuType<FluxMenu> FLUX_MENU;
+        helper.register(FLUX_BLOCK_KEY, new Block(normalProps));
+        helper.register(FLUX_PLUG_KEY, new FluxPlugBlock(deviceProps));
+        helper.register(FLUX_POINT_KEY, new FluxPointBlock(deviceProps));
+        helper.register(FLUX_CONTROLLER_KEY, new FluxControllerBlock(deviceProps));
+        helper.register(BASIC_FLUX_STORAGE_KEY, new FluxStorageBlock.Basic(deviceProps));
+        helper.register(HERCULEAN_FLUX_STORAGE_KEY, new FluxStorageBlock.Herculean(deviceProps));
+        helper.register(GARGANTUAN_FLUX_STORAGE_KEY, new FluxStorageBlock.Gargantuan(deviceProps));
+    }
 
-
-    @ObjectHolder("flux_plug")
-    public static FluxPlugBlock FLUX_PLUG;
-
-    @ObjectHolder("flux_plug")
-    public static BlockEntityType<TileFluxPlug> FLUX_PLUG_ENTITY;
-
-
-    @ObjectHolder("flux_point")
-    public static FluxPointBlock FLUX_POINT;
-
-    @ObjectHolder("flux_point")
-    public static BlockEntityType<TileFluxPoint> FLUX_POINT_ENTITY;
-
-
-    @ObjectHolder("flux_controller")
-    public static FluxControllerBlock FLUX_CONTROLLER;
-
-    @ObjectHolder("flux_controller")
-    public static BlockEntityType<TileFluxController> FLUX_CONTROLLER_ENTITY;
-
-
-    @ObjectHolder("basic_flux_storage")
-    public static FluxStorageBlock BASIC_FLUX_STORAGE;
-
-    @ObjectHolder("basic_flux_storage")
-    public static BlockEntityType<TileFluxStorage.Basic> BASIC_FLUX_STORAGE_ENTITY;
-
-
-    @ObjectHolder("herculean_flux_storage")
-    public static FluxStorageBlock.Herculean HERCULEAN_FLUX_STORAGE;
-
-    @ObjectHolder("herculean_flux_storage")
-    public static BlockEntityType<TileFluxStorage.Herculean> HERCULEAN_FLUX_STORAGE_ENTITY;
-
-
-    @ObjectHolder("gargantuan_flux_storage")
-    public static FluxStorageBlock.Gargantuan GARGANTUAN_FLUX_STORAGE;
-
-    @ObjectHolder("gargantuan_flux_storage")
-    public static BlockEntityType<TileFluxStorage.Gargantuan> GARGANTUAN_FLUX_STORAGE_ENTITY;
+    private RegistryBlocks() {}
 }

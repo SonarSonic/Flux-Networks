@@ -15,11 +15,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.common.util.FluxShapes;
-import sonar.fluxnetworks.common.util.FluxUtils;
-import sonar.fluxnetworks.register.RegistryBlocks;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.device.TileFluxPlug;
+import sonar.fluxnetworks.common.util.FluxShapes;
+import sonar.fluxnetworks.common.util.FluxUtils;
+import sonar.fluxnetworks.register.RegistryBlockEntityTypes;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,7 +62,7 @@ public class FluxPlugBlock extends FluxConnectorBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
                                                                   BlockEntityType<T> type) {
-        if (type == RegistryBlocks.FLUX_PLUG_ENTITY) {
+        if (type == RegistryBlockEntityTypes.FLUX_PLUG.get()) {
             return TileFluxDevice.getTicker(level);
         }
         return null;

@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.integration.energy;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
 import sonar.fluxnetworks.api.energy.IItemEnergyBridge;
@@ -20,13 +20,13 @@ public class ForgeEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge 
 
     @Override
     public boolean hasCapability(@Nonnull BlockEntity target, @Nonnull Direction side) {
-        return !target.isRemoved() && target.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
+        return !target.isRemoved() && target.getCapability(ForgeCapabilities.ENERGY, side).isPresent();
     }
 
     @Override
     public boolean canAddEnergy(@Nonnull BlockEntity target, @Nonnull Direction side) {
         if (!target.isRemoved()) {
-            IEnergyStorage storage = FluxUtils.get(target, CapabilityEnergy.ENERGY, side);
+            IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
             if (storage != null) {
                 return storage.canReceive();
             }
@@ -37,7 +37,7 @@ public class ForgeEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge 
     @Override
     public boolean canRemoveEnergy(@Nonnull BlockEntity target, @Nonnull Direction side) {
         if (!target.isRemoved()) {
-            IEnergyStorage storage = FluxUtils.get(target, CapabilityEnergy.ENERGY, side);
+            IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
             if (storage != null) {
                 return storage.canExtract();
             }
@@ -47,42 +47,42 @@ public class ForgeEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge 
 
     @Override
     public long addEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
-        IEnergyStorage storage = FluxUtils.get(target, CapabilityEnergy.ENERGY, side);
+        IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
         return storage == null ? 0 : storage.receiveEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 
     @Override
     public long removeEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
-        IEnergyStorage storage = FluxUtils.get(target, CapabilityEnergy.ENERGY, side);
+        IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
         return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 
     @Override
     public boolean hasCapability(@Nonnull ItemStack stack) {
-        return stack.getCapability(CapabilityEnergy.ENERGY).isPresent();
+        return stack.getCapability(ForgeCapabilities.ENERGY).isPresent();
     }
 
     @Override
     public boolean canAddEnergy(@Nonnull ItemStack stack) {
-        IEnergyStorage storage = FluxUtils.get(stack, CapabilityEnergy.ENERGY);
+        IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
         return storage != null && storage.canReceive();
     }
 
     @Override
     public boolean canRemoveEnergy(@Nonnull ItemStack stack) {
-        IEnergyStorage storage = FluxUtils.get(stack, CapabilityEnergy.ENERGY);
+        IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
         return storage != null && storage.canExtract();
     }
 
     @Override
     public long addEnergy(long amount, @Nonnull ItemStack stack, boolean simulate) {
-        IEnergyStorage storage = FluxUtils.get(stack, CapabilityEnergy.ENERGY);
+        IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
         return storage == null ? 0 : storage.receiveEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 
     @Override
     public long removeEnergy(long amount, @Nonnull ItemStack stack, boolean simulate) {
-        IEnergyStorage storage = FluxUtils.get(stack, CapabilityEnergy.ENERGY);
+        IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
         return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 }

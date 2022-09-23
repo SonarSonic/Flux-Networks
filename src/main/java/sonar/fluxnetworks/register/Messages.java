@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.thread.BlockableEventLoop;
@@ -16,7 +16,10 @@ import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
-import sonar.fluxnetworks.common.connection.*;
+import sonar.fluxnetworks.common.connection.FluxMenu;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetworkData;
+import sonar.fluxnetworks.common.connection.ServerFluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.item.ItemAdminConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -218,7 +221,7 @@ public class Messages {
 
     private static void kick(ServerPlayer p, RuntimeException e) {
         if (p.server.isDedicatedServer()) {
-            p.connection.disconnect(new TranslatableComponent("multiplayer.disconnect.invalid_packet"));
+            p.connection.disconnect(Component.translatable("multiplayer.disconnect.invalid_packet"));
             FluxNetworks.LOGGER.info("Received invalid packet from player {}", p.getGameProfile().getName(), e);
         } else {
             FluxNetworks.LOGGER.info("Received invalid packet", e);
