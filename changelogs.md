@@ -1,3 +1,6 @@
+### Changelog 1.19.2-7.1.0.9 (2022-09-23)
+* Port to 1.19.2 (Quinteger, BloCamLimb)
+
 ### Changelog 1.18.2-7.0.7.8 (2022-08-13)
 * Remove protocol check on Modern UI if absent
 

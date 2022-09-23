@@ -160,7 +160,7 @@ public class GuiTabConnections extends GuiTabPages<IFluxDevice> {
     protected List<Component> getElementTooltips(@Nonnull IFluxDevice element) {
         List<Component> components = new ArrayList<>();
         if (element.getCustomName().isEmpty()) {
-            components.add(Component.literal("").withStyle(ChatFormatting.BOLD)
+            components.add(Component.empty().withStyle(ChatFormatting.BOLD)
                     .append(element.getDisplayStack().getHoverName()));
         } else {
             components.add(Component.literal(element.getCustomName()).withStyle(ChatFormatting.BOLD));

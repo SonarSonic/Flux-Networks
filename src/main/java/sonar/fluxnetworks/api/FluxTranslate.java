@@ -204,7 +204,7 @@ public class FluxTranslate {
     }
 
     @Nonnull
-    public Component makeComponent(Object... args) {
+    public MutableComponent makeComponent(Object... args) {
         return Component.translatable(mKey, args);
     }
 

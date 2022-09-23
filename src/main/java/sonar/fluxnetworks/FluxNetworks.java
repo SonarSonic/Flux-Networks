@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import sonar.fluxnetworks.common.integration.MUIIntegration;
@@ -26,7 +27,7 @@ public class FluxNetworks {
 
         FluxConfig.init();
 
-        if (sModernUILoaded) {
+        if (sModernUILoaded && FMLEnvironment.dist.isClient()) {
             FMLJavaModLoadingContext.get().getModEventBus().register(MUIIntegration.class);
         }
     }

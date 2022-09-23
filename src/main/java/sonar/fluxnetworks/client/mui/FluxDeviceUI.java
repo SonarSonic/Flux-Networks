@@ -1,21 +1,12 @@
 package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.animation.LayoutTransition;
-import icyllis.modernui.fragment.Fragment;
-import icyllis.modernui.fragment.FragmentContainerView;
-import icyllis.modernui.fragment.FragmentManager;
-import icyllis.modernui.fragment.FragmentTransaction;
+import icyllis.modernui.fragment.*;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.drawable.ImageDrawable;
-import icyllis.modernui.util.ColorStateList;
-import icyllis.modernui.util.DataSet;
-import icyllis.modernui.util.StateSet;
-import icyllis.modernui.view.Gravity;
-import icyllis.modernui.view.View;
-import icyllis.modernui.view.ViewGroup;
-import icyllis.modernui.widget.FrameLayout;
-import icyllis.modernui.widget.ImageButton;
-import icyllis.modernui.widget.LinearLayout;
+import icyllis.modernui.util.*;
+import icyllis.modernui.view.*;
+import icyllis.modernui.widget.*;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.design.FluxDesign;
 import sonar.fluxnetworks.client.design.TabBackground;
@@ -26,8 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static icyllis.modernui.view.View.dp;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static icyllis.modernui.view.ViewGroup.LayoutParams.*;
 
 public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener {
 
@@ -78,6 +68,7 @@ public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener 
         sButtonIcon = Image.create("modernui", "gui/gui_icon.png");
 
         var fragment = new DeviceHomeTab(mDevice);
+        fragment.setArguments(getArguments());
         getChildFragmentManager().beginTransaction()
                 .replace(id_tab_container, fragment, "home")
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)

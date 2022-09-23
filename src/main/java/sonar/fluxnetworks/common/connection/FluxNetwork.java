@@ -36,9 +36,7 @@ public class FluxNetwork {
      * <p>
      * A disconnected device is considered connected to this network.
      */
-    public static final FluxNetwork INVALID = new FluxNetwork(
-            FluxConstants.INVALID_NETWORK_ID, "", FluxConstants.INVALID_NETWORK_COLOR,
-            SecurityLevel.PUBLIC, Util.NIL_UUID);
+    public static final FluxNetwork INVALID = new FluxNetwork();
 
     /**
      * Constant IDs used to identify logical devices.
@@ -91,6 +89,13 @@ public class FluxNetwork {
     final HashMap<GlobalPos, IFluxDevice> mConnectionMap = new HashMap<>();
 
     FluxNetwork() {
+        this(FluxConstants.INVALID_NETWORK_ID, "", FluxConstants.INVALID_NETWORK_COLOR,
+                SecurityLevel.PUBLIC, Util.NIL_UUID);
+    }
+
+    FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull Player owner) {
+        this(id, name, color, security, owner.getUUID());
+        mMemberMap.put(mOwnerUUID, NetworkMember.create(owner, AccessLevel.OWNER));
     }
 
     private FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull UUID owner) {
@@ -99,11 +104,6 @@ public class FluxNetwork {
         mColor = color;
         mSecurityLevel = security;
         mOwnerUUID = owner;
-    }
-
-    FluxNetwork(int id, String name, int color, @Nonnull SecurityLevel security, @Nonnull Player owner) {
-        this(id, name, color, security, owner.getUUID());
-        mMemberMap.put(mOwnerUUID, NetworkMember.create(owner, AccessLevel.OWNER));
     }
 
     /**

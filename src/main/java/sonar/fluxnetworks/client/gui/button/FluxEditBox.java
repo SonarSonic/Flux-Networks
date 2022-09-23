@@ -4,8 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
 
 import javax.annotation.Nonnull;
@@ -27,7 +26,7 @@ public class FluxEditBox extends EditBox {
     private int mOutlineColor = 0xffb4b4b4;
 
     private FluxEditBox(String header, Font font, int x, int y, int totalWidth, int height, int headerWidth) {
-        super(font, x + headerWidth, y, totalWidth - headerWidth, height, Component.empty());
+        super(font, x + headerWidth, y, totalWidth - headerWidth, height, CommonComponents.EMPTY);
         mHeader = header;
         mHeaderWidth = headerWidth;
         mFont = font;

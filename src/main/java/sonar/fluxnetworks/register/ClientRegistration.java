@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.register;
 
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -12,10 +13,10 @@ import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
 import sonar.fluxnetworks.client.gui.GuiFluxDeviceHome;
-import sonar.fluxnetworks.client.gui.basic.GuiTabCore;
 import sonar.fluxnetworks.client.render.FluxStorageEntityRenderer;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.integration.MUIIntegration;
 
 import javax.annotation.Nonnull;
 
@@ -25,11 +26,17 @@ public class ClientRegistration {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
-        event.enqueueWork(() -> MenuScreens.register(RegistryMenuTypes.FLUX_MENU.get(), getScreenFactory()));
+        if (FluxNetworks.isModernUILoaded()) {
+            event.enqueueWork(() -> MenuScreens.register(RegistryMenuTypes.FLUX_MENU.get(),
+                    MUIIntegration.getScreenFactory(getScreenFactory())));
+        } else {
+            event.enqueueWork(() -> MenuScreens.register(RegistryMenuTypes.FLUX_MENU.get(),
+                    getScreenFactory()));
+        }
     }
 
     @Nonnull
-    private static MenuScreens.ScreenConstructor<FluxMenu, GuiTabCore> getScreenFactory() {
+    private static MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> getScreenFactory() {
         return (menu, inventory, title) -> {
             if (menu.mProvider instanceof TileFluxDevice) {
                 return new GuiFluxDeviceHome(menu, inventory.player);
@@ -43,9 +50,12 @@ public class ClientRegistration {
 
     @SubscribeEvent
     public static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(RegistryBlockEntityTypes.BASIC_FLUX_STORAGE.get(), FluxStorageEntityRenderer.PROVIDER);
-        event.registerBlockEntityRenderer(RegistryBlockEntityTypes.HERCULEAN_FLUX_STORAGE.get(), FluxStorageEntityRenderer.PROVIDER);
-        event.registerBlockEntityRenderer(RegistryBlockEntityTypes.GARGANTUAN_FLUX_STORAGE.get(), FluxStorageEntityRenderer.PROVIDER);
+        event.registerBlockEntityRenderer(RegistryBlockEntityTypes.BASIC_FLUX_STORAGE.get(),
+                FluxStorageEntityRenderer.PROVIDER);
+        event.registerBlockEntityRenderer(RegistryBlockEntityTypes.HERCULEAN_FLUX_STORAGE.get(),
+                FluxStorageEntityRenderer.PROVIDER);
+        event.registerBlockEntityRenderer(RegistryBlockEntityTypes.GARGANTUAN_FLUX_STORAGE.get(),
+                FluxStorageEntityRenderer.PROVIDER);
     }
 
     @SubscribeEvent

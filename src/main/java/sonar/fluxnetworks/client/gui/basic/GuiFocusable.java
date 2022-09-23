@@ -7,6 +7,7 @@ import com.mojang.math.Matrix4f;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -34,7 +35,7 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxMenu> {
             FluxNetworks.MODID, "textures/gui/gui_icon.png");
 
     public GuiFocusable(FluxMenu menu, @Nonnull Player player) {
-        super(menu, player.getInventory(), Component.empty());
+        super(menu, player.getInventory(), CommonComponents.EMPTY);
     }
 
     /**

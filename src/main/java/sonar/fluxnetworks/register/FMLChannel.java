@@ -21,11 +21,10 @@ import javax.annotation.Nonnull;
 
 public class FMLChannel extends Channel {
 
-    // XXX: this is a bit hacky
-    private static final ResourceLocation LOCATION = new ResourceLocation("modernui", FluxNetworks.MODID);
+    private static final ResourceLocation CHANNEL_NAME = FluxNetworks.rl("network");
 
     FMLChannel() {
-        NetworkRegistry.newEventChannel(LOCATION, () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals)
+        NetworkRegistry.newEventChannel(CHANNEL_NAME, () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals)
                 .registerObject(this);
     }
 
@@ -50,7 +49,7 @@ public class FMLChannel extends Channel {
     public void sendToServer(@Nonnull FriendlyByteBuf payload) {
         ClientPacketListener connection = Minecraft.getInstance().getConnection();
         if (connection != null) {
-            connection.send(new ServerboundCustomPayloadPacket(LOCATION, payload));
+            connection.send(new ServerboundCustomPayloadPacket(CHANNEL_NAME, payload));
         } else {
             payload.release();
         }
@@ -58,18 +57,18 @@ public class FMLChannel extends Channel {
 
     @Override
     public void sendToPlayer(@Nonnull FriendlyByteBuf payload, @Nonnull ServerPlayer player) {
-        player.connection.send(new ClientboundCustomPayloadPacket(LOCATION, payload));
+        player.connection.send(new ClientboundCustomPayloadPacket(CHANNEL_NAME, payload));
     }
 
     @Override
     public void sendToAll(@Nonnull FriendlyByteBuf payload) {
         ServerLifecycleHooks.getCurrentServer().getPlayerList()
-                .broadcastAll(new ClientboundCustomPayloadPacket(LOCATION, payload));
+                .broadcastAll(new ClientboundCustomPayloadPacket(CHANNEL_NAME, payload));
     }
 
     @Override
     public void sendToTrackingChunk(@Nonnull FriendlyByteBuf payload, @Nonnull LevelChunk chunk) {
-        final ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(LOCATION, payload);
+        final ClientboundCustomPayloadPacket packet = new ClientboundCustomPayloadPacket(CHANNEL_NAME, payload);
         ((ServerLevel) chunk.getLevel()).getChunkSource().chunkMap.getPlayers(
                 chunk.getPos(), /* boundaryOnly */ false).forEach(p -> p.connection.send(packet));
     }
