@@ -41,20 +41,21 @@ public class RegistryItems {
 
     static void register(RegisterEvent.RegisterHelper<Item> helper) {
         Item.Properties normalProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant();
-        Item.Properties deviceProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant().stacksTo(1);
+        Item.Properties toolProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant().stacksTo(1);
 
         helper.register(RegistryBlocks.FLUX_BLOCK_KEY, new BlockItem(RegistryBlocks.FLUX_BLOCK.get(), normalProps));
-        helper.register(RegistryBlocks.FLUX_PLUG_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_PLUG.get(), deviceProps));
-        helper.register(RegistryBlocks.FLUX_POINT_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_POINT.get(), deviceProps));
-        helper.register(RegistryBlocks.FLUX_CONTROLLER_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_CONTROLLER.get(), deviceProps));
-        helper.register(RegistryBlocks.BASIC_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.BASIC_FLUX_STORAGE.get(), deviceProps));
-        helper.register(RegistryBlocks.HERCULEAN_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get(), deviceProps));
-        helper.register(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get(), deviceProps));
+        helper.register(RegistryBlocks.FLUX_PLUG_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_PLUG.get(), normalProps));
+        helper.register(RegistryBlocks.FLUX_POINT_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_POINT.get(), normalProps));
+        helper.register(RegistryBlocks.FLUX_CONTROLLER_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_CONTROLLER.get(), normalProps));
+        helper.register(RegistryBlocks.BASIC_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.BASIC_FLUX_STORAGE.get(), normalProps));
+        helper.register(RegistryBlocks.HERCULEAN_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get(), normalProps));
+        helper.register(RegistryBlocks.GARGANTUAN_FLUX_STORAGE_KEY, new FluxStorageItem(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get(), normalProps));
 
         helper.register(FLUX_DUST_KEY, new FluxDustItem(normalProps));
         helper.register(FLUX_CORE_KEY, new Item(normalProps));
-        helper.register(FLUX_CONFIGURATOR_KEY, new ItemFluxConfigurator(normalProps));
-        helper.register(ADMIN_CONFIGURATOR_KEY, new ItemAdminConfigurator(normalProps));
+
+        helper.register(FLUX_CONFIGURATOR_KEY, new ItemFluxConfigurator(toolProps));
+        helper.register(ADMIN_CONFIGURATOR_KEY, new ItemAdminConfigurator(toolProps));
     }
 
     private RegistryItems() {}
