@@ -1,3 +1,6 @@
+### Changelog 1.19.2-7.1.1.10 (2022-09-25)
+* Fix item stack size
+
 ### Changelog 1.19.2-7.1.0.9 (2022-09-23)
 * Port to 1.19.2 (Quinteger, BloCamLimb)
 
