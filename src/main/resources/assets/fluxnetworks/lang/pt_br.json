@@ -19,7 +19,7 @@
 	"tooltip.fluxnetworks.flux_plug": "Extrai energia de blocos adjacentes, adicionando energia para sua Rede de Flux",
 	"tooltip.fluxnetworks.flux_point": "Insere energia em blocos adjacentes, removendo energia de sua Rede de Flux",
 	"tooltip.fluxnetworks.flux_storage": "Guarda energia para sua Rede de Flux.",
-	"tooltip.fluxnetworks.flux_storage_2": "Energy Capacity: %s",
+	"tooltip.fluxnetworks.flux_storage_2": "Capacidade de energia: %s",
 
 	"gui.fluxnetworks.tab.home": "Início",
 	"gui.fluxnetworks.tab.selection": "Seleção de Rede",
@@ -43,8 +43,8 @@
 	"gui.fluxnetworks.denied_access": "Acesso negado: Sem permissão",
 	"gui.fluxnetworks.denied_occupy": "Acesso negado: Outro jogador já está usando",
 	"gui.fluxnetworks.denied_removal": "Remoção negada: Sem permissão",
-	"gui.fluxnetworks.config_copied": "Copied Configuration",
-	"gui.fluxnetworks.config_pasted": "Pasted Configuration",
+	"gui.fluxnetworks.config_copied": "Configuração copiada",
+	"gui.fluxnetworks.config_pasted": "Configuração colada",
 
 	"gui.fluxnetworks.error.noselected": "Nenhuma rede selecionada",
 	"gui.fluxnetworks.error.nonetwork": "Nenhuma rede disponível",
@@ -56,11 +56,11 @@
 	"gui.fluxnetworks.flux.name": "Nome",
 	"gui.fluxnetworks.flux.transferlimit": "Limite de Transferência",
 	"gui.fluxnetworks.flux.wireless": "Ativar Sem Fio",
-	"gui.fluxnetworks.flux.wirelessnetwork": "Effective Wireless Network",
-	"gui.fluxnetworks.flux.nonwirelessnetwork": "Ineffective Wireless Network",
+	"gui.fluxnetworks.flux.wirelessnetwork": "Rede sem fio eficaz",
+	"gui.fluxnetworks.flux.nonwirelessnetwork": "Rede sem fio ineficaz",
 	"gui.fluxnetworks.flux.energy": "Energia",
 	"gui.fluxnetworks.flux.energystored": "Energia Armazenada",
-	"gui.fluxnetworks.flux.buffer": "Buffer",
+	"gui.fluxnetworks.flux.buffer": "Amortecedor",
 	"gui.fluxnetworks.flux.internalbuffer": "Buffer Interno",
 	"gui.fluxnetworks.flux.unlimited": "Ilimitado",
 	"gui.fluxnetworks.flux.forcedloading": "Carregamento Forçado",
@@ -84,7 +84,7 @@
 	"gui.fluxnetworks.label.selected": "%s Item(s) Selecionado",
 	"gui.fluxnetworks.label.singleedit": "Modo de Edição Único",
 	"gui.fluxnetworks.label.batchedit": "Modo de Edição em Grupo",
-	"gui.fluxnetworks.label.editingconnections": "Editing %d Connections",
+	"gui.fluxnetworks.label.editingconnections": "Editando %d conexões",
 	"gui.fluxnetworks.label.connections": "Conexões",
 	"gui.fluxnetworks.label.customcolor": "Cor Customizada",
 	"gui.fluxnetworks.label.connectingto": "Conectando à %s",
@@ -98,9 +98,9 @@
 	"gui.fluxnetworks.label.playeraccess": "Acesso",
 	"gui.fluxnetworks.label.cancelmembership": "Cancelar Filiação",
 	"gui.fluxnetworks.label.you": "Você",
-	"gui.fluxnetworks.label.detailedview": "Detailed Network View",
-	"gui.fluxnetworks.label.clickabove": "Click %s Above",
-	"gui.fluxnetworks.label.playersnetwork": "%s's Network",
+	"gui.fluxnetworks.label.detailedview": "Visualização detalhada da rede",
+	"gui.fluxnetworks.label.clickabove": "Clique Acima de %s",
+	"gui.fluxnetworks.label.playersnetwork": "%s Rede",
 
 	"gui.fluxnetworks.label.sort.smart": "Smart",
 	"gui.fluxnetworks.label.sort.id": "ID",
@@ -118,8 +118,8 @@
 
 	"gui.fluxnetworks.slot.main": "Inventário Principal (Desabilitado)",
 	"gui.fluxnetworks.slot.hotbar": "Espaços da Hotbar",
-	"gui.fluxnetworks.slot.mainhand": "Main Hand",
-	"gui.fluxnetworks.slot.offhand": "Off Hand",
+	"gui.fluxnetworks.slot.mainhand": "Mão principal",
+	"gui.fluxnetworks.slot.offhand": "Fora da mão",
 	"gui.fluxnetworks.slot.armor": "Espaços de Armadura",
 	"gui.fluxnetworks.slot.curios": "Curios Slots",
 
@@ -138,6 +138,6 @@
 	"gui.fluxnetworks.access.blocked": "Bloqueado",
 	"gui.fluxnetworks.access.superadmin": "Super Administrador",
 
-	"gui.fluxnetworks.jei.creatingfluxrecipe": "Creating Flux",
-	"gui.fluxnetworks.jei.leftclickhelp": "Left click the %s"
+	"gui.fluxnetworks.jei.creatingfluxrecipe": "Criando fluxo",
+	"gui.fluxnetworks.jei.leftclickhelp": "Clique à esquerda %s"
 }
