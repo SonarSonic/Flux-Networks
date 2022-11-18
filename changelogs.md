@@ -1,3 +1,6 @@
+### Changelog 1.19.2-7.0.8.12 (2022-11-18)
+* Fix crash when charging curios slots
+
 ### Changelog 1.18.2-7.0.7.8 (2022-08-13)
 * Remove protocol check on Modern UI if absent
 
