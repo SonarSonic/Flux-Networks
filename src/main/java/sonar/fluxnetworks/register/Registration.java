@@ -1,7 +1,6 @@
 package sonar.fluxnetworks.register;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -14,8 +13,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
-import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
-import sonar.fluxnetworks.common.capability.FluxPlayer;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
 import sonar.fluxnetworks.data.loot.FluxLootTableProvider;
@@ -66,12 +63,6 @@ public class Registration {
         if (ModList.get().isLoaded("theoneprobe")) {
             InterModComms.sendTo("theoneprobe", "getTheOneProbe", TOPIntegration::new);
         }
-    }
-
-    @SubscribeEvent
-    public static void registerCapabilities(@Nonnull RegisterCapabilitiesEvent event) {
-        event.register(FluxPlayer.class);
-        event.register(IFNEnergyStorage.class);
     }
 
     @SubscribeEvent

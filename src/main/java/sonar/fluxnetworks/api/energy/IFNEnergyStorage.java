@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.api.energy;
 
+import net.minecraftforge.common.capabilities.AutoRegisterCapability;
 import net.minecraftforge.energy.IEnergyStorage;
 import sonar.fluxnetworks.api.FluxCapabilities;
 
@@ -7,6 +8,7 @@ import sonar.fluxnetworks.api.FluxCapabilities;
  * Functions the same as {@link IEnergyStorage}, but allows Long.MAX_VALUE.
  * use the cap in {@link FluxCapabilities} to add support to your mod
  */
+@AutoRegisterCapability
 public interface IFNEnergyStorage {
 
     /**

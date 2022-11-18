@@ -5,14 +5,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.energy.IItemEnergyBridge;
+import sonar.fluxnetworks.api.energy.IItemEnergyAdapter;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
@@ -24,7 +21,6 @@ import sonar.fluxnetworks.common.util.FluxUtils;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public class FluxControllerHandler extends TransferHandler {
 
@@ -87,27 +83,27 @@ public class FluxControllerHandler extends TransferHandler {
     }
 
     private long sendToConsumers(long energy) {
-        /*if (!mDevice.isActive()) return 0;*/
-        if ((mTimer & 0x3) > 0) return 0;
+        //if (!mDevice.isActive()) return 0;
+        if ((mTimer & 0x3) != 0) return 0;
         //if (!WirelessType.ENABLE_WIRELESS.isActivated(mDevice.getNetwork())) return 0;
         return chargeAllItems(energy, false);
     }
 
     private long chargeAllItems(long energy, boolean simulate) {
-        long leftover = energy;
-        for (Map.Entry<ServerPlayer, Iterable<WirelessHandler>> player : mPlayers.entrySet()) {
+        long remaining = energy;
+        for (var player : mPlayers.entrySet()) {
             // dead, or quit game
             if (!player.getKey().isAlive()) {
                 continue;
             }
             for (WirelessHandler handler : player.getValue()) {
-                leftover = handler.chargeItems(leftover, simulate);
-                if (leftover <= 0) {
+                remaining = handler.chargeItems(remaining, simulate);
+                if (remaining <= 0) {
                     return energy;
                 }
             }
         }
-        return energy - leftover;
+        return energy - remaining;
     }
 
     private void updatePlayers() {
@@ -116,7 +112,7 @@ public class FluxControllerHandler extends TransferHandler {
         PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
         for (NetworkMember p : mDevice.getNetwork().getAllMembers()) {
             ServerPlayer player = playerList.getPlayer(p.getPlayerUUID());
-            if (player == null) {
+            if (player == null || !player.isAlive()) {
                 continue;
             }
             FluxPlayer fluxPlayer = FluxUtils.get(player, FluxPlayer.FLUX_PLAYER);
@@ -126,70 +122,50 @@ public class FluxControllerHandler extends TransferHandler {
             if (fluxPlayer.getWirelessNetwork() != mDevice.getNetworkID()) {
                 continue;
             }
-            int wireless = fluxPlayer.getWirelessMode();
-            if (!WirelessType.ENABLE_WIRELESS.isActivated(wireless)) {
+            int wirelessMode = fluxPlayer.getWirelessMode();
+            if (!WirelessType.ENABLE_WIRELESS.isActivated(wirelessMode)) {
                 continue;
             }
-            if ((wireless & ~(1 << WirelessType.ENABLE_WIRELESS.ordinal())) == 0) {
-                // In this case, handlers will be empty
+            if ((wirelessMode & ~(1 << WirelessType.ENABLE_WIRELESS.ordinal())) == 0) {
                 continue;
             }
             final Inventory inventory = player.getInventory();
             final List<WirelessHandler> handlers = new ArrayList<>();
-            if (WirelessType.MAIN_HAND.isActivated(wireless)) {
+            if (WirelessType.MAIN_HAND.isActivated(wirelessMode)) {
                 handlers.add(new WirelessHandler(() -> new Iterator<>() {
-                    private int mCount;
+                    private boolean mHasNext = true;
 
                     @Override
                     public boolean hasNext() {
-                        return mCount < 1;
+                        return mHasNext;
                     }
 
                     @Override
                     public ItemStack next() {
-                        mCount++;
-                        return inventory.getSelected();
+                        if (mHasNext) {
+                            mHasNext = false;
+                            return inventory.getSelected();
+                        }
+                        throw new NoSuchElementException();
                     }
                 }, NOT_EMPTY));
             }
-            if (WirelessType.OFF_HAND.isActivated(wireless)) {
-                handlers.add(new WirelessHandler(inventory.offhand::iterator, NOT_EMPTY));
+            if (WirelessType.OFF_HAND.isActivated(wirelessMode)) {
+                handlers.add(new WirelessHandler(inventory.offhand, NOT_EMPTY));
             }
-            if (WirelessType.HOT_BAR.isActivated(wireless)) {
-                final List<ItemStack> bar = inventory.items.subList(0, Inventory.getSelectionSize());
-                handlers.add(new WirelessHandler(bar::iterator,
+            if (WirelessType.HOT_BAR.isActivated(wirelessMode)) {
+                handlers.add(new WirelessHandler(inventory.items.subList(0, Inventory.getSelectionSize()),
                         stack -> {
-                            ItemStack heldItem = inventory.getSelected();
-                            return !stack.isEmpty() && (heldItem.isEmpty() || heldItem != stack);
+                            ItemStack heldItem;
+                            return !stack.isEmpty() &&
+                                    ((heldItem = inventory.getSelected()).isEmpty() || heldItem != stack);
                         }));
             }
-            if (WirelessType.ARMOR.isActivated(wireless)) {
-                handlers.add(new WirelessHandler(inventory.armor::iterator, NOT_EMPTY));
+            if (WirelessType.ARMOR.isActivated(wirelessMode)) {
+                handlers.add(new WirelessHandler(inventory.armor, NOT_EMPTY));
             }
-            if (WirelessType.CURIOS.isActivated(wireless) && FluxNetworks.isCuriosLoaded()) {
-                final LazyOptional<IItemHandlerModifiable> curios = CuriosIntegration.getEquippedCurios(player);
-                handlers.add(new WirelessHandler(() -> {
-                    // the lazy optional is not cached by Curios
-                    if (curios.isPresent()) {
-                        return new Iterator<>() {
-                            private final IItemHandler mItemHandler = curios.orElseThrow(IllegalStateException::new);
-                            private int mCount;
-
-                            @Override
-                            public boolean hasNext() {
-                                return mCount < mItemHandler.getSlots();
-                            }
-
-                            @Override
-                            public ItemStack next() {
-                                ItemStack next = mItemHandler.getStackInSlot(mCount);
-                                mCount++;
-                                return next;
-                            }
-                        };
-                    }
-                    return null;
-                }, NOT_EMPTY));
+            if (WirelessType.CURIOS.isActivated(wirelessMode) && FluxNetworks.isCuriosLoaded()) {
+                handlers.add(new WirelessHandler(CuriosIntegration.getFlatStacks(player), NOT_EMPTY));
             }
             if (!handlers.isEmpty()) {
                 mPlayers.put(player, handlers);
@@ -198,24 +174,23 @@ public class FluxControllerHandler extends TransferHandler {
     }
 
     private record WirelessHandler(
-            Supplier<Iterator<ItemStack>> stacks,
+            Iterable<ItemStack> stacks,
             Predicate<ItemStack> validator) {
 
-        private long chargeItems(long leftover, boolean simulate) {
-            for (Iterator<ItemStack> it = stacks.get(); it != null && it.hasNext(); ) {
-                ItemStack stack = it.next();
-                IItemEnergyBridge handler;
-                if (!validator.test(stack) || (handler = EnergyUtils.getBridge(stack)) == null) {
+        private long chargeItems(long remaining, boolean simulate) {
+            for (ItemStack stack : stacks) {
+                IItemEnergyAdapter adapter;
+                if (!validator.test(stack) || (adapter = EnergyUtils.getAdapter(stack)) == null) {
                     continue;
                 }
-                if (handler.canAddEnergy(stack)) {
-                    leftover -= handler.addEnergy(leftover, stack, simulate);
-                    if (leftover <= 0) {
+                if (adapter.canSendTo(stack)) {
+                    remaining -= adapter.sendTo(remaining, stack, simulate);
+                    if (remaining <= 0) {
                         return 0;
                     }
                 }
             }
-            return leftover;
+            return remaining;
         }
     }
 }

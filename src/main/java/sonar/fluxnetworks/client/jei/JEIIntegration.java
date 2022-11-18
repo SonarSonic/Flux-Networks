@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 @JeiPlugin
 public class JEIIntegration implements IModPlugin {
 
-    public static final ResourceLocation UID = new ResourceLocation(FluxNetworks.MODID, "jei");
+    public static final ResourceLocation UID = FluxNetworks.location("jei");
 
     @Nonnull
     @Override

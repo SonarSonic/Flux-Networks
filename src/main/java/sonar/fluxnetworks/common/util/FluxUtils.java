@@ -335,8 +335,8 @@ public class FluxUtils {
 
     @Nullable
     @SuppressWarnings("ConstantConditions")
-    public static <T> T get(@Nonnull ICapabilityProvider provider, @Nonnull Capability<T> cap, Direction dir) {
-        return provider.getCapability(cap, dir).orElse(null);
+    public static <T> T get(@Nonnull ICapabilityProvider provider, @Nonnull Capability<T> cap, Direction side) {
+        return provider.getCapability(cap, side).orElse(null);
     }
 
     public static float getRed(int color) {

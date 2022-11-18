@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 
 public class InventoryButton extends GuiButtonCore {
 
-    public static final ResourceLocation INVENTORY = new ResourceLocation(FluxNetworks.MODID,
+    public static final ResourceLocation INVENTORY = FluxNetworks.location(
             "textures/gui/inventory_configuration.png");
 
     public WirelessType mType;

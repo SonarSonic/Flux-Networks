@@ -5,17 +5,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
-import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
-import sonar.fluxnetworks.api.energy.IItemEnergyBridge;
+import sonar.fluxnetworks.api.energy.IBlockEnergyAdapter;
+import sonar.fluxnetworks.api.energy.IItemEnergyAdapter;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 
-public class ForgeEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge {
+public class ForgeEnergyAdapter implements IBlockEnergyAdapter, IItemEnergyAdapter {
 
-    public static final ForgeEnergyBridge INSTANCE = new ForgeEnergyBridge();
+    public static final ForgeEnergyAdapter INSTANCE = new ForgeEnergyAdapter();
 
-    private ForgeEnergyBridge() {
+    private ForgeEnergyAdapter() {
     }
 
     @Override
@@ -24,64 +24,66 @@ public class ForgeEnergyBridge implements IBlockEnergyBridge, IItemEnergyBridge 
     }
 
     @Override
-    public boolean canAddEnergy(@Nonnull BlockEntity target, @Nonnull Direction side) {
+    public boolean canSendTo(@Nonnull BlockEntity target, @Nonnull Direction side) {
         if (!target.isRemoved()) {
             IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
-            if (storage != null) {
-                return storage.canReceive();
-            }
+            return storage != null && storage.canReceive();
         }
         return false;
     }
 
     @Override
-    public boolean canRemoveEnergy(@Nonnull BlockEntity target, @Nonnull Direction side) {
+    public boolean canReceiveFrom(@Nonnull BlockEntity target, @Nonnull Direction side) {
         if (!target.isRemoved()) {
             IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
-            if (storage != null) {
-                return storage.canExtract();
-            }
+            return storage != null && storage.canExtract();
         }
         return false;
     }
 
     @Override
-    public long addEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
+    public long sendTo(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
         IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
         return storage == null ? 0 : storage.receiveEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 
     @Override
-    public long removeEnergy(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
+    public long receiveFrom(long amount, @Nonnull BlockEntity target, @Nonnull Direction side, boolean simulate) {
         IEnergyStorage storage = FluxUtils.get(target, ForgeCapabilities.ENERGY, side);
         return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 
     @Override
     public boolean hasCapability(@Nonnull ItemStack stack) {
-        return stack.getCapability(ForgeCapabilities.ENERGY).isPresent();
+        return !stack.isEmpty() && stack.getCapability(ForgeCapabilities.ENERGY).isPresent();
     }
 
     @Override
-    public boolean canAddEnergy(@Nonnull ItemStack stack) {
-        IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
-        return storage != null && storage.canReceive();
+    public boolean canSendTo(@Nonnull ItemStack stack) {
+        if (!stack.isEmpty()) {
+            IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
+            return storage != null && storage.canReceive();
+        }
+        return false;
     }
 
     @Override
-    public boolean canRemoveEnergy(@Nonnull ItemStack stack) {
-        IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
-        return storage != null && storage.canExtract();
+    public boolean canReceiveFrom(@Nonnull ItemStack stack) {
+        if (!stack.isEmpty()) {
+            IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
+            return storage != null && storage.canExtract();
+        }
+        return false;
     }
 
     @Override
-    public long addEnergy(long amount, @Nonnull ItemStack stack, boolean simulate) {
+    public long sendTo(long amount, @Nonnull ItemStack stack, boolean simulate) {
         IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
         return storage == null ? 0 : storage.receiveEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }
 
     @Override
-    public long removeEnergy(long amount, @Nonnull ItemStack stack, boolean simulate) {
+    public long receiveFrom(long amount, @Nonnull ItemStack stack, boolean simulate) {
         IEnergyStorage storage = FluxUtils.get(stack, ForgeCapabilities.ENERGY);
         return storage == null ? 0 : storage.extractEnergy((int) Math.min(amount, Integer.MAX_VALUE), simulate);
     }

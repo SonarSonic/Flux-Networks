@@ -14,10 +14,10 @@ import sonar.fluxnetworks.common.item.*;
 import javax.annotation.Nonnull;
 
 public class RegistryItems {
-    private static final ResourceLocation FLUX_DUST_KEY = FluxNetworks.rl("flux_dust");
-    private static final ResourceLocation FLUX_CORE_KEY = FluxNetworks.rl("flux_core");
-    private static final ResourceLocation FLUX_CONFIGURATOR_KEY = FluxNetworks.rl("flux_configurator");
-    private static final ResourceLocation ADMIN_CONFIGURATOR_KEY = FluxNetworks.rl("admin_configurator");
+    private static final ResourceLocation FLUX_DUST_KEY = FluxNetworks.location("flux_dust");
+    private static final ResourceLocation FLUX_CORE_KEY = FluxNetworks.location("flux_core");
+    private static final ResourceLocation FLUX_CONFIGURATOR_KEY = FluxNetworks.location("flux_configurator");
+    private static final ResourceLocation ADMIN_CONFIGURATOR_KEY = FluxNetworks.location("admin_configurator");
 
     public static final RegistryObject<BlockItem> FLUX_BLOCK = RegistryObject.create(RegistryBlocks.FLUX_BLOCK_KEY, ForgeRegistries.ITEMS);
     public static final RegistryObject<FluxDeviceItem> FLUX_PLUG = RegistryObject.create(RegistryBlocks.FLUX_PLUG_KEY, ForgeRegistries.ITEMS);

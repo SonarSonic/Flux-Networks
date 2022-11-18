@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.device;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
+import sonar.fluxnetworks.api.energy.IBlockEnergyAdapter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,7 +14,7 @@ public class SideTransfer {
 
     @Nullable
     private BlockEntity mTarget;
-    private IBlockEnergyBridge mBridge;
+    private IBlockEnergyAdapter mAdapter;
     private ItemStack mDisplayStack = ItemStack.EMPTY;
 
     public long mChange;
@@ -23,9 +23,9 @@ public class SideTransfer {
         mSide = direction.getOpposite(); // the tile is on our north side, we charge it from its south side
     }
 
-    public void set(@Nullable BlockEntity target, IBlockEnergyBridge bridge) {
+    public void set(@Nullable BlockEntity target, IBlockEnergyAdapter adapter) {
         mTarget = target;
-        mBridge = bridge;
+        mAdapter = adapter;
         if (target != null) {
             mDisplayStack = new ItemStack(target.getBlockState().getBlock());
         } else {
@@ -37,8 +37,8 @@ public class SideTransfer {
         if (mTarget == null || mTarget.isRemoved()) {
             return 0;
         }
-        if (mBridge.canAddEnergy(mTarget, mSide)) {
-            long op = mBridge.addEnergy(amount, mTarget, mSide, simulate);
+        if (mAdapter.canSendTo(mTarget, mSide)) {
+            long op = mAdapter.sendTo(amount, mTarget, mSide, simulate);
             if (!simulate) {
                 mChange -= op;
             }

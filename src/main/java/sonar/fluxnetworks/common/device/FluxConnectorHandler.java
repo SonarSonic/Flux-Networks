@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.energy.IBlockEnergyBridge;
+import sonar.fluxnetworks.api.energy.IBlockEnergyAdapter;
 import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -38,13 +38,12 @@ public abstract class FluxConnectorHandler extends TransferHandler {
     }
 
     // server only
-    public int updateSideTransfer(@Nonnull Direction side, @Nullable BlockEntity target,
-                                  boolean needCombinedState) {
+    public int updateSideTransfer(@Nonnull Direction side, @Nullable BlockEntity target, boolean fullState) {
         int index = side.get3DDataValue();
         SideTransfer transfer = mTransfers[index];
         int connection;
-        final IBlockEnergyBridge handler;
-        if (target == null || (handler = EnergyUtils.getBridge(target, side.getOpposite())) == null) {
+        final IBlockEnergyAdapter adapter;
+        if (target == null || (adapter = EnergyUtils.getAdapter(target, side.getOpposite())) == null) {
             if (transfer != null) {
                 transfer.set(null, null);
             }
@@ -54,10 +53,10 @@ public abstract class FluxConnectorHandler extends TransferHandler {
                 transfer = new SideTransfer(side);
                 mTransfers[index] = transfer;
             }
-            transfer.set(target, handler);
+            transfer.set(target, adapter);
             connection = 1 << index;
         }
-        if (needCombinedState) {
+        if (fullState) {
             for (int i = 0, e = mTransfers.length; i < e; i++) {
                 if (i == index) {
                     continue;

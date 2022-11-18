@@ -12,8 +12,8 @@ import sonar.fluxnetworks.common.crafting.NBTWipeRecipe;
 import sonar.fluxnetworks.common.crafting.NBTWipeRecipeSerializer;
 
 public class RegistryRecipes {
-    public static final ResourceLocation FLUX_STORAGE_RECIPE_KEY = FluxNetworks.rl("flux_storage_recipe");
-    public static final ResourceLocation NBT_WIPE_RECIPE_KEY = FluxNetworks.rl("nbt_wipe_recipe");
+    public static final ResourceLocation FLUX_STORAGE_RECIPE_KEY = FluxNetworks.location("flux_storage_recipe");
+    public static final ResourceLocation NBT_WIPE_RECIPE_KEY = FluxNetworks.location("nbt_wipe_recipe");
 
     public static final RegistryObject<RecipeSerializer<FluxStorageRecipe>> FLUX_STORAGE_RECIPE = RegistryObject.create(FLUX_STORAGE_RECIPE_KEY, ForgeRegistries.RECIPE_SERIALIZERS);
     public static final RegistryObject<RecipeSerializer<NBTWipeRecipe>> NBT_WIPE_RECIPE = RegistryObject.create(NBT_WIPE_RECIPE_KEY, ForgeRegistries.RECIPE_SERIALIZERS);

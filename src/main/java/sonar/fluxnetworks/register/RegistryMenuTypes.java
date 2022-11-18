@@ -21,7 +21,7 @@ import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
  * Register the create container function that will be opened on client side from the packet that from the server
  */
 public class RegistryMenuTypes {
-    public static final ResourceLocation FLUX_MENU_KEY = FluxNetworks.rl("flux_menu");
+    public static final ResourceLocation FLUX_MENU_KEY = FluxNetworks.location("flux_menu");
     public static final RegistryObject<MenuType<FluxMenu>> FLUX_MENU = RegistryObject.create(FLUX_MENU_KEY, ForgeRegistries.MENU_TYPES);
 
     static void register(RegisterEvent.RegisterHelper<MenuType<?>> helper) {

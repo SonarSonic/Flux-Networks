@@ -8,7 +8,7 @@ import net.minecraftforge.registries.RegistryObject;
 import sonar.fluxnetworks.FluxNetworks;
 
 public class RegistrySounds {
-    public static final ResourceLocation BUTTON_CLICK_KEY = FluxNetworks.rl("button");
+    public static final ResourceLocation BUTTON_CLICK_KEY = FluxNetworks.location("button");
 
     public static final RegistryObject<SoundEvent> BUTTON_CLICK = RegistryObject.create(BUTTON_CLICK_KEY, ForgeRegistries.SOUND_EVENTS);
 

@@ -15,13 +15,13 @@ import sonar.fluxnetworks.common.block.FluxPointBlock;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
 
 public class RegistryBlocks {
-    public static final ResourceLocation FLUX_BLOCK_KEY = FluxNetworks.rl("flux_block");
-    public static final ResourceLocation FLUX_PLUG_KEY = FluxNetworks.rl("flux_plug");
-    public static final ResourceLocation FLUX_POINT_KEY = FluxNetworks.rl("flux_point");
-    public static final ResourceLocation FLUX_CONTROLLER_KEY = FluxNetworks.rl("flux_controller");
-    public static final ResourceLocation BASIC_FLUX_STORAGE_KEY = FluxNetworks.rl("basic_flux_storage");
-    public static final ResourceLocation HERCULEAN_FLUX_STORAGE_KEY = FluxNetworks.rl("herculean_flux_storage");
-    public static final ResourceLocation GARGANTUAN_FLUX_STORAGE_KEY = FluxNetworks.rl("gargantuan_flux_storage");
+    public static final ResourceLocation FLUX_BLOCK_KEY = FluxNetworks.location("flux_block");
+    public static final ResourceLocation FLUX_PLUG_KEY = FluxNetworks.location("flux_plug");
+    public static final ResourceLocation FLUX_POINT_KEY = FluxNetworks.location("flux_point");
+    public static final ResourceLocation FLUX_CONTROLLER_KEY = FluxNetworks.location("flux_controller");
+    public static final ResourceLocation BASIC_FLUX_STORAGE_KEY = FluxNetworks.location("basic_flux_storage");
+    public static final ResourceLocation HERCULEAN_FLUX_STORAGE_KEY = FluxNetworks.location("herculean_flux_storage");
+    public static final ResourceLocation GARGANTUAN_FLUX_STORAGE_KEY = FluxNetworks.location("gargantuan_flux_storage");
 
     public static final RegistryObject<Block> FLUX_BLOCK = RegistryObject.create(FLUX_BLOCK_KEY, ForgeRegistries.BLOCKS);
     public static final RegistryObject<FluxPlugBlock> FLUX_PLUG = RegistryObject.create(FLUX_PLUG_KEY, ForgeRegistries.BLOCKS);

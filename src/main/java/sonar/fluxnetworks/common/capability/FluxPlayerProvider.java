@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
  */
 public class FluxPlayerProvider implements ICapabilitySerializable<CompoundTag>/*, Runnable*/ {
 
-    public static final ResourceLocation CAP_KEY = new ResourceLocation(FluxNetworks.MODID, "flux_player");
+    public static final ResourceLocation CAP_KEY = FluxNetworks.location("flux_player");
 
     @Nonnull
     private final FluxPlayer mCap;

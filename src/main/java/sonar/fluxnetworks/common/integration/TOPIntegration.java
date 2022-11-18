@@ -31,7 +31,7 @@ public class TOPIntegration implements Function<ITheOneProbe, Void> {
 
     public static class FluxDeviceInfoProvider implements IProbeInfoProvider {
 
-        private static final ResourceLocation ID = new ResourceLocation(FluxNetworks.MODID, "device_provider");
+        private static final ResourceLocation ID = FluxNetworks.location("device_provider");
 
         @Override
         public ResourceLocation getID() {

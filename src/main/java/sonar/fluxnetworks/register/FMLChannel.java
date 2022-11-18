@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 public class FMLChannel extends Channel {
 
-    private static final ResourceLocation CHANNEL_NAME = FluxNetworks.rl("network");
+    private static final ResourceLocation CHANNEL_NAME = FluxNetworks.location("network");
 
     FMLChannel() {
         NetworkRegistry.newEventChannel(CHANNEL_NAME, () -> PROTOCOL, PROTOCOL::equals, PROTOCOL::equals)

@@ -39,7 +39,7 @@ import java.util.List;
 
 public class CreatingFluxRecipeCategory implements IRecipeCategory<CreatingFluxRecipe> {
 
-    public static final ResourceLocation TEXTURES = new ResourceLocation(FluxNetworks.MODID,
+    public static final ResourceLocation TEXTURES = FluxNetworks.location(
             "textures/gui/gui_creating_flux_recipe.png");
 
     public static final RecipeType<CreatingFluxRecipe> RECIPE_TYPE =

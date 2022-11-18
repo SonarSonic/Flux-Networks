@@ -28,7 +28,7 @@ public class ClientRegistration {
     public static void setup(FMLClientSetupEvent event) {
         if (FluxNetworks.isModernUILoaded()) {
             event.enqueueWork(() -> MenuScreens.register(RegistryMenuTypes.FLUX_MENU.get(),
-                    MUIIntegration.getScreenFactory(getScreenFactory())));
+                    MUIIntegration.upgradeScreenFactory(getScreenFactory())));
         } else {
             event.enqueueWork(() -> MenuScreens.register(RegistryMenuTypes.FLUX_MENU.get(),
                     getScreenFactory()));

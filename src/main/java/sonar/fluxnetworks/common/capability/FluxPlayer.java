@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 /**
  * Flux Networks capability to {@link net.minecraft.world.entity.player.Player}.
  */
+@AutoRegisterCapability
 public class FluxPlayer {
 
     // server only

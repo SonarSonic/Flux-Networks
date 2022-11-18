@@ -33,11 +33,12 @@ public class MUIIntegration {
 
     // screen the screen
     @Nonnull
-    public static MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> getScreenFactory(
-            MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> fallback) {
-        MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> dedicated = getScreenFactory();
-        return (menu, inventory, title) -> FluxConfig.enableGuiDebug ? dedicated.create(menu, inventory, title) :
-                fallback.create(menu, inventory, title);
+    public static MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> upgradeScreenFactory(
+            MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> predecessor) {
+        MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> successor = getScreenFactory();
+        return (menu, inventory, title) -> FluxConfig.enableGuiDebug
+                ? successor.create(menu, inventory, title)
+                : predecessor.create(menu, inventory, title);
     }
 
     private static MenuScreens.ScreenConstructor<FluxMenu, AbstractContainerScreen<FluxMenu>> getScreenFactory() {
