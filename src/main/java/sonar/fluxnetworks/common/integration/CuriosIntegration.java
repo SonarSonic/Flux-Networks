@@ -46,7 +46,7 @@ public class CuriosIntegration {
         @Override
         public boolean hasNext() {
             forward();
-            return mIndex < mHandler.getSlots();
+            return mHandler != null && mIndex < mHandler.getSlots();
         }
 
         @Override
