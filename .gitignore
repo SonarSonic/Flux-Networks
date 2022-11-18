@@ -12,6 +12,7 @@ out
 *.iws
 *.iml
 .idea
+.vscode
 
 # gradle
 build
@@ -19,7 +20,9 @@ build
 
 # other
 eclipse
+resource
 run
 classes
 *.psd
-resource
+*.log
+logs
