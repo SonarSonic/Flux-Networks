@@ -1,3 +1,7 @@
+### Changelog 1.19.2-7.1.3.12 (2023-01-19)
+* Fix item model transformation on the latest Forge
+* Update zh_tw.json
+
 ### Changelog 1.19.2-7.1.2.11 (2022-11-18)
 * Fix crash when charging curios slots
 
