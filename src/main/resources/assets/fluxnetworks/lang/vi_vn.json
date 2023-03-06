@@ -136,7 +136,7 @@
 	"gui.fluxnetworks.access.admin": "Quản Trị Viên",
 	"gui.fluxnetworks.access.user": "Người Dùng",
 	"gui.fluxnetworks.access.blocked": "Người Lạ",
-	"gui.fluxnetworks.access.superadmin": "Quản Trị Viên Cấp Cao",
+	"gui.fluxnetworks.access.superadmin": "Quản Trị Viên Cao Cấp",
 
 	"gui.fluxnetworks.jei.creatingfluxrecipe": "Tạo Thông Lượng",
 	"gui.fluxnetworks.jei.leftclickhelp": "Chuột trái vào %s"
