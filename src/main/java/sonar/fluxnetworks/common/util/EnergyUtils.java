@@ -11,10 +11,9 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
-import sonar.fluxnetworks.api.energy.IBlockEnergyAdapter;
-import sonar.fluxnetworks.api.energy.IItemEnergyAdapter;
-import sonar.fluxnetworks.common.integration.energy.FNEnergyAdapter;
-import sonar.fluxnetworks.common.integration.energy.ForgeEnergyAdapter;
+import sonar.fluxnetworks.api.energy.IBlockEnergyConnector;
+import sonar.fluxnetworks.api.energy.IItemEnergyConnector;
+import sonar.fluxnetworks.common.integration.energy.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,31 +23,35 @@ public final class EnergyUtils {
 
     private static final Marker MARKER = MarkerManager.getMarker("Energy");
 
-    private static final List<IBlockEnergyAdapter> BLOCK_ENERGY_ADAPTERS = new ArrayList<>();
+    private static final List<IBlockEnergyConnector> BLOCK_ENERGY_CONNECTORS = new ArrayList<>();
     private static final Set<Block> BLOCK_BLACKLIST = new HashSet<>();
 
-    private static final List<IItemEnergyAdapter> ITEM_ENERGY_ADAPTERS = new ArrayList<>();
+    private static final List<IItemEnergyConnector> ITEM_ENERGY_CONNECTORS = new ArrayList<>();
     private static final Set<Item> ITEM_BLACKLIST = new HashSet<>();
 
     static {
-        BLOCK_ENERGY_ADAPTERS.add(FNEnergyAdapter.INSTANCE);
-        ITEM_ENERGY_ADAPTERS.add(FNEnergyAdapter.INSTANCE);
+        BLOCK_ENERGY_CONNECTORS.add(FNEnergyConnector.INSTANCE);
+        ITEM_ENERGY_CONNECTORS.add(FNEnergyConnector.INSTANCE);
 
-        BLOCK_ENERGY_ADAPTERS.add(ForgeEnergyAdapter.INSTANCE);
-        ITEM_ENERGY_ADAPTERS.add(ForgeEnergyAdapter.INSTANCE);
+        BLOCK_ENERGY_CONNECTORS.add(ForgeEnergyConnector.INSTANCE);
+        ITEM_ENERGY_CONNECTORS.add(ForgeEnergyConnector.INSTANCE);
+    }
 
+    private EnergyUtils() {
+    }
+
+    public static void register() {
         /* TODO PORT OTHER MOD ENERGY HANDLERS.
         if(Loader.isModLoaded("gregtech")) {
             tileEnergyHandlers.add(GTEnergyHandler.INSTANCE);
             ItemEnergyHandler.itemEnergyHandlers.add(GTEnergyHandler.INSTANCE);
-        }
-        if(Loader.isModLoaded("ic2")) {
-            tileEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
-            ItemEnergyHandler.itemEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
         }*/
-    }
 
-    private EnergyUtils() {
+        // disable because of imbalance
+        /*if (ModList.get().isLoaded("ic2")) {
+            BLOCK_ENERGY_CONNECTORS.add(IC2EnergyHandler.INSTANCE);
+            ITEM_ENERGY_CONNECTORS.add(IC2EnergyHandler.INSTANCE);
+        }*/
     }
 
     public static void reloadBlacklist(@Nonnull List<String> blockBlacklist, @Nonnull List<String> itemBlacklist) {
@@ -85,7 +88,7 @@ public final class EnergyUtils {
     }
 
     @Nullable
-    public static IBlockEnergyAdapter getAdapter(@Nullable BlockEntity target, @Nonnull Direction side) {
+    public static IBlockEnergyConnector getConnector(@Nullable BlockEntity target, @Nonnull Direction side) {
         if (target == null) {
             return null;
         }
@@ -98,16 +101,16 @@ public final class EnergyUtils {
         if (BLOCK_BLACKLIST.contains(target.getBlockState().getBlock())) {
             return null;
         }
-        for (IBlockEnergyAdapter adapter : BLOCK_ENERGY_ADAPTERS) {
-            if (adapter.hasCapability(target, side)) {
-                return adapter;
+        for (IBlockEnergyConnector connector : BLOCK_ENERGY_CONNECTORS) {
+            if (connector.hasCapability(target, side)) {
+                return connector;
             }
         }
         return null;
     }
 
     @Nullable
-    public static IItemEnergyAdapter getAdapter(@Nullable ItemStack stack) {
+    public static IItemEnergyConnector getConnector(@Nullable ItemStack stack) {
         if (stack == null) {
             return null;
         }
@@ -117,9 +120,9 @@ public final class EnergyUtils {
         if (ITEM_BLACKLIST.contains(stack.getItem())) {
             return null;
         }
-        for (IItemEnergyAdapter adapter : ITEM_ENERGY_ADAPTERS) {
-            if (adapter.hasCapability(stack)) {
-                return adapter;
+        for (IItemEnergyConnector connector : ITEM_ENERGY_CONNECTORS) {
+            if (connector.hasCapability(stack)) {
+                return connector;
             }
         }
         return null;

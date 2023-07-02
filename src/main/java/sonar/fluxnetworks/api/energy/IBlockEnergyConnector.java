@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
 
-public interface IBlockEnergyAdapter {
+public interface IBlockEnergyConnector {
 
     boolean hasCapability(@Nonnull BlockEntity target, @Nonnull Direction side);
 

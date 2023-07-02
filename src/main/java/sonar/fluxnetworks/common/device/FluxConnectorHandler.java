@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.energy.IBlockEnergyAdapter;
+import sonar.fluxnetworks.api.energy.IBlockEnergyConnector;
 import sonar.fluxnetworks.common.connection.TransferHandler;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 import sonar.fluxnetworks.common.util.FluxUtils;
@@ -42,8 +42,8 @@ public abstract class FluxConnectorHandler extends TransferHandler {
         int index = side.get3DDataValue();
         SideTransfer transfer = mTransfers[index];
         int connection;
-        final IBlockEnergyAdapter adapter;
-        if (target == null || (adapter = EnergyUtils.getAdapter(target, side.getOpposite())) == null) {
+        final IBlockEnergyConnector connector;
+        if (target == null || (connector = EnergyUtils.getConnector(target, side.getOpposite())) == null) {
             if (transfer != null) {
                 transfer.set(null, null);
             }
@@ -53,7 +53,7 @@ public abstract class FluxConnectorHandler extends TransferHandler {
                 transfer = new SideTransfer(side);
                 mTransfers[index] = transfer;
             }
-            transfer.set(target, adapter);
+            transfer.set(target, connector);
             connection = 1 << index;
         }
         if (fullState) {

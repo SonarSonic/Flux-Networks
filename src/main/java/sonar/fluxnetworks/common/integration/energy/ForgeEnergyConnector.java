@@ -5,17 +5,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.energy.IEnergyStorage;
-import sonar.fluxnetworks.api.energy.IBlockEnergyAdapter;
-import sonar.fluxnetworks.api.energy.IItemEnergyAdapter;
+import sonar.fluxnetworks.api.energy.IBlockEnergyConnector;
+import sonar.fluxnetworks.api.energy.IItemEnergyConnector;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 
-public class ForgeEnergyAdapter implements IBlockEnergyAdapter, IItemEnergyAdapter {
+public class ForgeEnergyConnector implements IBlockEnergyConnector, IItemEnergyConnector {
 
-    public static final ForgeEnergyAdapter INSTANCE = new ForgeEnergyAdapter();
+    public static final ForgeEnergyConnector INSTANCE = new ForgeEnergyConnector();
 
-    private ForgeEnergyAdapter() {
+    private ForgeEnergyConnector() {
     }
 
     @Override

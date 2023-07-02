@@ -9,7 +9,7 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
-import sonar.fluxnetworks.api.energy.IItemEnergyAdapter;
+import sonar.fluxnetworks.api.energy.IItemEnergyConnector;
 import sonar.fluxnetworks.api.network.NetworkMember;
 import sonar.fluxnetworks.api.network.WirelessType;
 import sonar.fluxnetworks.common.capability.FluxPlayer;
@@ -179,12 +179,12 @@ public class FluxControllerHandler extends TransferHandler {
 
         private long chargeItems(long remaining, boolean simulate) {
             for (ItemStack stack : stacks) {
-                IItemEnergyAdapter adapter;
-                if (!validator.test(stack) || (adapter = EnergyUtils.getAdapter(stack)) == null) {
+                IItemEnergyConnector connector;
+                if (!validator.test(stack) || (connector = EnergyUtils.getConnector(stack)) == null) {
                     continue;
                 }
-                if (adapter.canSendTo(stack)) {
-                    remaining -= adapter.sendTo(remaining, stack, simulate);
+                if (connector.canSendTo(stack)) {
+                    remaining -= connector.sendTo(remaining, stack, simulate);
                     if (remaining <= 0) {
                         return 0;
                     }

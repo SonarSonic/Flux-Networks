@@ -1,25 +1,22 @@
 package sonar.fluxnetworks.client.design;
 
-import icyllis.modernui.graphics.Canvas;
-import icyllis.modernui.graphics.Paint;
+import icyllis.modernui.graphics.*;
 import icyllis.modernui.graphics.drawable.Drawable;
-import icyllis.modernui.math.Rect;
+import icyllis.modernui.view.View;
 
 import javax.annotation.Nonnull;
-
-import static icyllis.modernui.view.View.dp;
 
 public class RoundRectDrawable extends Drawable {
 
     private final float mRadius;
     private int mColor;
 
-    public RoundRectDrawable() {
-        this(FluxDesign.LIGHT_GRAY);
+    public RoundRectDrawable(View v) {
+        this(v, FluxDesign.LIGHT_GRAY);
     }
 
-    public RoundRectDrawable(int color) {
-        mRadius = dp(3);
+    public RoundRectDrawable(View v, int color) {
+        mRadius = v.dp(3);
         setColor(color);
     }
 
@@ -32,11 +29,12 @@ public class RoundRectDrawable extends Drawable {
         Rect b = getBounds();
         float inner = mRadius * 0.5f;
 
-        Paint paint = Paint.take();
+        Paint paint = Paint.obtain();
         paint.setStyle(Paint.STROKE);
         paint.setStrokeWidth(mRadius);
         paint.setColor(mColor);
         canvas.drawRoundRect(b.left + inner, b.top + inner, b.right - inner, b.bottom - inner, mRadius, paint);
+        paint.recycle();
     }
 
     @Override

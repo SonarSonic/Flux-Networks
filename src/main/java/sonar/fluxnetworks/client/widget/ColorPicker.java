@@ -1,5 +1,6 @@
 package sonar.fluxnetworks.client.widget;
 
+import icyllis.modernui.core.Context;
 import icyllis.modernui.text.Editable;
 import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.TextWatcher;
@@ -29,8 +30,9 @@ public class ColorPicker extends LinearLayout {
     // last valid color
     private int mColor;
 
-    public ColorPicker() {
-        mRedField = FluxDesign.createTextField();
+    public ColorPicker(Context context) {
+        super(context);
+        mRedField = FluxDesign.createTextField(context);
         mRedField.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         mRedField.setHint("R");
         mRedField.setHintTextColor(FluxDesign.GRAY);
@@ -82,7 +84,7 @@ public class ColorPicker extends LinearLayout {
 
         addView(mRedField, params);
 
-        mGreenField = FluxDesign.createTextField();
+        mGreenField = FluxDesign.createTextField(context);
         mGreenField.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         mGreenField.setHint("G");
         mGreenField.setHintTextColor(FluxDesign.GRAY);
@@ -96,7 +98,7 @@ public class ColorPicker extends LinearLayout {
 
         addView(mGreenField, new LayoutParams(params));
 
-        mBlueField = FluxDesign.createTextField();
+        mBlueField = FluxDesign.createTextField(context);
         mBlueField.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         mBlueField.setHint("B");
         mBlueField.setHintTextColor(FluxDesign.GRAY);

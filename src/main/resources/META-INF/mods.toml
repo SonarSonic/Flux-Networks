@@ -16,7 +16,7 @@ license="MIT"
 [[dependencies.fluxnetworks]]
     modId="forge"
     mandatory=true
-    versionRange="[43.1.3,)"
+    versionRange="[43.2.8,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
@@ -28,7 +28,7 @@ license="MIT"
 [[dependencies.fluxnetworks]]
     modId="modernui"
     mandatory=false
-    versionRange="[3.6.0,)"
+    versionRange="[3.7.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]

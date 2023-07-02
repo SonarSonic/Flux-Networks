@@ -4,7 +4,7 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public interface IItemEnergyAdapter {
+public interface IItemEnergyConnector {
 
     boolean hasCapability(@Nonnull ItemStack stack);
 

@@ -15,6 +15,7 @@ import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.integration.TOPIntegration;
+import sonar.fluxnetworks.common.util.EnergyUtils;
 import sonar.fluxnetworks.data.loot.FluxLootTableProvider;
 import sonar.fluxnetworks.data.tags.FluxBlockTagsProvider;
 
@@ -53,6 +54,7 @@ public class Registration {
                         chunks, helper.getBlockTickets().size(), level.dimension().location());
             }
         }));
+        EnergyUtils.register();
     }
 
     @SubscribeEvent

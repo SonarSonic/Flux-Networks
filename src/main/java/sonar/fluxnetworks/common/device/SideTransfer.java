@@ -3,7 +3,7 @@ package sonar.fluxnetworks.common.device;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import sonar.fluxnetworks.api.energy.IBlockEnergyAdapter;
+import sonar.fluxnetworks.api.energy.IBlockEnergyConnector;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,7 +14,7 @@ public class SideTransfer {
 
     @Nullable
     private BlockEntity mTarget;
-    private IBlockEnergyAdapter mAdapter;
+    private IBlockEnergyConnector mAdapter;
     private ItemStack mDisplayStack = ItemStack.EMPTY;
 
     public long mChange;
@@ -23,7 +23,7 @@ public class SideTransfer {
         mSide = direction.getOpposite(); // the tile is on our north side, we charge it from its south side
     }
 
-    public void set(@Nullable BlockEntity target, IBlockEnergyAdapter adapter) {
+    public void set(@Nullable BlockEntity target, IBlockEnergyConnector adapter) {
         mTarget = target;
         mAdapter = adapter;
         if (target != null) {

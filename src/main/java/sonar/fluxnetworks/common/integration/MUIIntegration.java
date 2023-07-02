@@ -1,8 +1,8 @@
 package sonar.fluxnetworks.common.integration;
 
 import icyllis.modernui.core.Core;
-import icyllis.modernui.forge.MenuScreenFactory;
-import icyllis.modernui.forge.MuiForgeApi;
+import icyllis.modernui.mc.forge.MenuScreenFactory;
+import icyllis.modernui.mc.forge.MuiForgeApi;
 import icyllis.modernui.text.SpannableString;
 import icyllis.modernui.text.Spanned;
 import icyllis.modernui.text.style.ForegroundColorSpan;

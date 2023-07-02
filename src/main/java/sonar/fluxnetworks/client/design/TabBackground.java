@@ -1,22 +1,19 @@
 package sonar.fluxnetworks.client.design;
 
-import icyllis.modernui.graphics.Canvas;
-import icyllis.modernui.graphics.Paint;
+import icyllis.modernui.graphics.*;
 import icyllis.modernui.graphics.drawable.Drawable;
-import icyllis.modernui.math.Rect;
+import icyllis.modernui.view.View;
 import sonar.fluxnetworks.client.mui.FluxDeviceUI;
 
 import javax.annotation.Nonnull;
-
-import static icyllis.modernui.view.View.dp;
 
 public class TabBackground extends Drawable {
 
     private final float mRadius;
     private int mColor;
 
-    public TabBackground() {
-        mRadius = dp(16);
+    public TabBackground(View v) {
+        mRadius = v.dp(16);
         setColor(FluxDeviceUI.NETWORK_COLOR);
     }
 
@@ -30,12 +27,13 @@ public class TabBackground extends Drawable {
         float stroke = mRadius * 0.25f;
         float start = stroke * 0.5f;
 
-        Paint paint = Paint.take();
+        Paint paint = Paint.obtain();
         paint.setRGBA(0, 0, 0, 180);
         canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
         paint.setStyle(Paint.STROKE);
         paint.setStrokeWidth(stroke);
         paint.setColor(mColor);
         canvas.drawRoundRect(b.left + start, b.top + start, b.right - start, b.bottom - start, mRadius, paint);
+        paint.recycle();
     }
 }

@@ -9,11 +9,11 @@ import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
 
-public class FNEnergyAdapter implements IBlockEnergyAdapter, IItemEnergyAdapter {
+public class FNEnergyConnector implements IBlockEnergyConnector, IItemEnergyConnector {
 
-    public static final FNEnergyAdapter INSTANCE = new FNEnergyAdapter();
+    public static final FNEnergyConnector INSTANCE = new FNEnergyConnector();
 
-    private FNEnergyAdapter() {
+    private FNEnergyConnector() {
     }
 
     @Override
