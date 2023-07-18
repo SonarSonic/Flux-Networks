@@ -26,7 +26,7 @@ archivesBaseName = 'FluxNetworks'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: "2022.09.04-1.19.2"
+    mappings channel: 'parchment', version: "2023.07.16-1.20.1"
 
     runs {
         client {
@@ -141,11 +141,11 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly "mekanism:Mekanism:${mekanism_version}:api"
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    /*compileOnly "mekanism:Mekanism:${mekanism_version}:api"
+    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")*/
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:3965693") // 1.19-6.2.2
-    implementation fg.deobf("curse.maven:ic2-classic-242942:4441313") // 1.19.2-2.0.5
+    implementation fg.deobf("curse.maven:the-one-probe-245211:4629624") // 1.20.1-10.0.1
+    //implementation fg.deobf("curse.maven:ic2-classic-242942:4441313") // 1.19.2-2.0.5
     //runtimeOnly fg.deobf("curse.maven:powah-rearchitected-633483:3855683") // [FORGE 1.18.2] v3.0.1-beta
 
     //runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3554445")
@@ -154,10 +154,17 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
     compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
 
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}:api")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0-beta.3+1.20.1:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0-beta.3+1.20.1")
 
     library("icyllis.modernui:ModernUI-Core:${modernui_core_version}") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+        exclude group: "com.google.code.findbugs", module: "jsr305"
+        exclude group: "org.jetbrains", module: "annotations"
+        exclude group: "com.ibm.icu", module: "icu4j"
+    }
+    library("icyllis.modernui:ModernUI-ViewPager:${modernui_core_version}") {
         exclude group: "org.apache.logging.log4j", module: "log4j-core"
         exclude group: "org.apache.logging.log4j", module: "log4j-api"
         exclude group: "com.google.code.findbugs", module: "jsr305"

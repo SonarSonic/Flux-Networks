@@ -2,9 +2,9 @@
   "parent": "fluxnetworks:block/basic_flux_storage",
   "render_type": "cutout",
   "textures": {
-    "gray": "fluxnetworks:model/gray",
-    "top": "fluxnetworks:model/tier2",
-    "colour": "fluxnetworks:model/tier2_colour",
-    "particle": "fluxnetworks:model/tier2"
+    "gray": "fluxnetworks:block/gray",
+    "top": "fluxnetworks:block/tier2",
+    "colour": "fluxnetworks:block/tier2_colour",
+    "particle": "fluxnetworks:block/tier2"
   }
 }

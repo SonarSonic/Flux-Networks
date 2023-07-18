@@ -2,16 +2,12 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.common.item.*;
-
-import javax.annotation.Nonnull;
 
 public class RegistryItems {
     private static final ResourceLocation FLUX_DUST_KEY = FluxNetworks.location("flux_dust");
@@ -31,17 +27,9 @@ public class RegistryItems {
     public static final RegistryObject<ItemFluxConfigurator> FLUX_CONFIGURATOR = RegistryObject.create(FLUX_CONFIGURATOR_KEY, ForgeRegistries.ITEMS);
     public static final RegistryObject<ItemAdminConfigurator> ADMIN_CONFIGURATOR = RegistryObject.create(ADMIN_CONFIGURATOR_KEY, ForgeRegistries.ITEMS);
 
-    private static final CreativeModeTab CREATIVE_MODE_TAB = new CreativeModeTab(FluxNetworks.MODID) {
-        @Nonnull
-        @Override
-        public ItemStack makeIcon() {
-            return new ItemStack(FLUX_CORE.get());
-        }
-    };
-
     static void register(RegisterEvent.RegisterHelper<Item> helper) {
-        Item.Properties normalProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant();
-        Item.Properties toolProps = new Item.Properties().tab(CREATIVE_MODE_TAB).fireResistant().stacksTo(1);
+        Item.Properties normalProps = new Item.Properties().fireResistant();
+        Item.Properties toolProps = new Item.Properties().fireResistant().stacksTo(1);
 
         helper.register(RegistryBlocks.FLUX_BLOCK_KEY, new BlockItem(RegistryBlocks.FLUX_BLOCK.get(), normalProps));
         helper.register(RegistryBlocks.FLUX_PLUG_KEY, new FluxDeviceItem(RegistryBlocks.FLUX_PLUG.get(), normalProps));

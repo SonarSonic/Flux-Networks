@@ -2,9 +2,10 @@ package sonar.fluxnetworks.data.loot;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.core.BlockPos;
-import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -22,14 +23,16 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.Set;
 
-public class FluxBlockLoot extends BlockLoot {
+public class FluxBlockLoot extends BlockLootSubProvider {
 
     // there are not many registry entries, so use an array
     private final Set<Block> knownBlocks = new ObjectArraySet<>();
 
     public FluxBlockLoot() {
+        super(Collections.emptySet(), FeatureFlags.REGISTRY.allFlags());
     }
 
     @Nonnull
@@ -45,14 +48,14 @@ public class FluxBlockLoot extends BlockLoot {
     }
 
     @Override
-    protected void addTables() {
+    protected void generate() {
         dropSelf(RegistryBlocks.FLUX_BLOCK.get());
-        add(RegistryBlocks.FLUX_PLUG.get(), FluxBlockLoot::createDevice);
-        add(RegistryBlocks.FLUX_POINT.get(), FluxBlockLoot::createDevice);
-        add(RegistryBlocks.FLUX_CONTROLLER.get(), FluxBlockLoot::createDevice);
-        add(RegistryBlocks.BASIC_FLUX_STORAGE.get(), FluxBlockLoot::createDevice);
-        add(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get(), FluxBlockLoot::createDevice);
-        add(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get(), FluxBlockLoot::createDevice);
+        add(RegistryBlocks.FLUX_PLUG.get(), this::createDevice);
+        add(RegistryBlocks.FLUX_POINT.get(), this::createDevice);
+        add(RegistryBlocks.FLUX_CONTROLLER.get(), this::createDevice);
+        add(RegistryBlocks.BASIC_FLUX_STORAGE.get(), this::createDevice);
+        add(RegistryBlocks.HERCULEAN_FLUX_STORAGE.get(), this::createDevice);
+        add(RegistryBlocks.GARGANTUAN_FLUX_STORAGE.get(), this::createDevice);
     }
 
     /**
@@ -64,7 +67,7 @@ public class FluxBlockLoot extends BlockLoot {
      * @return loot table builder
      */
     @Nonnull
-    protected static LootTable.Builder createDevice(Block block) {
+    protected LootTable.Builder createDevice(Block block) {
         if (!(block instanceof FluxDeviceBlock)) {
             throw new IllegalArgumentException();
         }

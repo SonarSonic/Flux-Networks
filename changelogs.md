@@ -1,3 +1,6 @@
+### Changelog 1.20.1-7.2.0.14 (2023-07-02)
+* Port to 1.20.1
+
 ### Changelog 1.19.2-7.1.4.13 (2023-07-02)
 * Add vi_vn.json
 * Fix the model transform

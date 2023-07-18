@@ -3,6 +3,7 @@ package sonar.fluxnetworks.client.gui.button;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.FormattedCharSequence;
@@ -58,25 +59,25 @@ public class FluxEditBox extends EditBox {
     }
 
     @Override
-    public void renderButton(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    public void renderWidget(@Nonnull GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
         Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
         if (isVisible()) {
-            fill(poseStack, x - mHeaderWidth, y, x + width, y + height, 0x30000000);
-            fill(poseStack, x - mHeaderWidth - 1, y - 1, x + width + 1, y, mOutlineColor);
-            fill(poseStack, x - mHeaderWidth - 1, y + height, x + width + 1, y + height + 1, mOutlineColor);
-            fill(poseStack, x - mHeaderWidth - 1, y, x - mHeaderWidth, y + height, mOutlineColor);
-            fill(poseStack, x + width, y, x + width + 1, y + height, mOutlineColor);
+            gr.fill(getX() - mHeaderWidth, getY(), getX() + width, getY() + height, 0x30000000);
+            gr.fill(getX() - mHeaderWidth - 1, getY() - 1, getX() + width + 1, getY(), mOutlineColor);
+            gr.fill(getX() - mHeaderWidth - 1, getY() + height, getX() + width + 1, getY() + height + 1, mOutlineColor);
+            gr.fill(getX() - mHeaderWidth - 1, getY(), getX() - mHeaderWidth, getY() + height, mOutlineColor);
+            gr.fill(getX() + width, getY(), getX() + width + 1, getY() + height, mOutlineColor);
         }
 
-        x += 4;
-        y += (height - 8) / 2;
+        gr.pose().pushPose();
+        int dy = (height - 8) / 2;
+        gr.pose().translate(4, dy, 0);
 
         setBordered(false);
-        super.renderButton(poseStack, mouseX, mouseY, deltaTicks);
+        super.renderWidget(gr, mouseX, mouseY, deltaTicks);
 
-        mFont.draw(poseStack, mHeader, x - mHeaderWidth, y, mOutlineColor);
-        x -= 4;
-        y -= (height - 8) / 2;
+        gr.drawString(mFont, mHeader, getX() - mHeaderWidth, getY(), mOutlineColor);
+        gr.pose().popPose();
     }
 
     @Override

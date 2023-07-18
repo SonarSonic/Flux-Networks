@@ -2,10 +2,10 @@
     "parent": "block/cube_all",
     "render_type": "cutout",
     "textures": {
-        "gray": "fluxnetworks:model/gray",
-        "top": "fluxnetworks:model/tier1",
-        "colour": "fluxnetworks:model/tier1_colour",
-        "particle": "fluxnetworks:model/tier1"
+        "gray": "fluxnetworks:block/gray",
+        "top": "fluxnetworks:block/tier1",
+        "colour": "fluxnetworks:block/tier1_colour",
+        "particle": "fluxnetworks:block/tier1"
     },
     "elements": [
         {

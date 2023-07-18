@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
@@ -32,9 +32,9 @@ public class RegistryBlocks {
     public static final RegistryObject<FluxStorageBlock.Gargantuan> GARGANTUAN_FLUX_STORAGE = RegistryObject.create(GARGANTUAN_FLUX_STORAGE_KEY, ForgeRegistries.BLOCKS);
 
     static void register(RegisterEvent.RegisterHelper<Block> helper) {
-        BlockBehaviour.Properties normalProps = BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL)
+        BlockBehaviour.Properties normalProps = BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
                 .strength(1.0F, 1000F);
-        BlockBehaviour.Properties deviceProps = BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL)
+        BlockBehaviour.Properties deviceProps = BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL)
                 .strength(1.0F, 1000F).noOcclusion();
 
         helper.register(FLUX_BLOCK_KEY, new Block(normalProps));

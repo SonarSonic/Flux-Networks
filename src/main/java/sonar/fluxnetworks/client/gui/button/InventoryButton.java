@@ -1,8 +1,8 @@
 package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.network.WirelessType;
@@ -34,19 +34,18 @@ public class InventoryButton extends GuiButtonCore {
     }
 
     @Override
-    protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    protected void drawButton(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         int color = mHost.getNetwork().getNetworkColor();
         RenderSystem.setShaderColor(FluxUtils.getRed(color), FluxUtils.getGreen(color), FluxUtils.getBlue(color), 1.0f);
-        RenderSystem.setShaderTexture(0, INVENTORY);
         boolean hovered = isMouseHovered(mouseX, mouseY);
 
-        blit(poseStack, x, y, mU0, mV0 + height * (mType.isActivated(mHost.mWirelessMode) ? 1 : 0), width, height);
+        gr.blit(INVENTORY, x, y, mU0, mV0 + height * (mType.isActivated(mHost.mWirelessMode) ? 1 : 0), width, height);
 
         if (hovered) {
             Font font = screen.getMinecraft().font;
-            font.draw(poseStack, mText, x + (width - font.width(mText)) / 2f + 1, y - 9, 0xFFFFFF);
+            gr.drawString(font, mText, x + (width - font.width(mText)) / 2 + 1, y - 9, 0xFFFFFF);
         }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }

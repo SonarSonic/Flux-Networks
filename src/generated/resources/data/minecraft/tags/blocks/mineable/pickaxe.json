@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "fluxnetworks:flux_block",
     "fluxnetworks:flux_plug",

@@ -1,8 +1,8 @@
 package sonar.fluxnetworks.client.gui.tab;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -46,17 +46,17 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     }
 
     @Override
-    protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawBackgroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawBackgroundLayer(gr, mouseX, mouseY, deltaTicks);
         if (mElements.isEmpty()) {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_NETWORK, EnumNavigationTab.TAB_CREATE);
+            renderNavigationPrompt(gr, FluxTranslate.ERROR_NO_NETWORK, EnumNavigationTab.TAB_CREATE);
         } else {
             String total = FluxTranslate.TOTAL.get() + ": " + mElements.size();
-            font.draw(poseStack, total, leftPos + 158 - font.width(total), topPos + 24, 0xffffff);
+            gr.drawString(font, total, leftPos + 158 - font.width(total), topPos + 24, 0xffffff);
             String sortBy = FluxTranslate.SORT_BY.get() + ": " + ChatFormatting.AQUA + mSortType.getTranslatedName();
-            font.draw(poseStack, sortBy, leftPos + 19, topPos + 24, 0xffffff);
+            gr.drawString(font, sortBy, leftPos + 19, topPos + 24, 0xffffff);
 
-            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), topPos + 8);
+            renderNetwork(gr, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), topPos + 8);
         }
     }
 
@@ -77,7 +77,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
     }
 
     @Override
-    public void renderElement(PoseStack poseStack, FluxNetwork element, int x, int y) {
+    public void renderElement(GuiGraphics gr, FluxNetwork element, int x, int y) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShaderTexture(0, ICON);
@@ -91,7 +91,7 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
             } else {
                 RenderSystem.setShaderColor(0.7f, 0.7f, 0.7f, 1.0f);
             }
-            blitF(poseStack, x + 133, y + 1, 10, 10, 384, 256, 64, 64);
+            blitF(gr, x + 133, y + 1, 10, 10, 384, 256, 64, 64);
         }
 
         int color = element.getNetworkColor();
@@ -102,21 +102,22 @@ public class GuiTabSelection extends GuiTabPages<FluxNetwork> {
 
         RenderSystem.setShaderColor(r, g, b, 1.0f);
         if (selected) {
-            fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
-            fill(poseStack, x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
+            gr.fill(x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
+            gr.fill(x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
         }
 
-        renderBarAndName(poseStack, element, x, y, selected);
+        renderBarAndName(gr, element, x, y, selected);
     }
 
-    protected void renderBarAndName(PoseStack poseStack, FluxNetwork element, int x, int y, boolean selected) {
-        blitF(poseStack, x, y, mElementWidth, mElementHeight, 0, 352, mElementWidth * 2, mElementHeight * 2);
-        font.draw(poseStack, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
+    protected void renderBarAndName(GuiGraphics gr, FluxNetwork element, int x, int y, boolean selected) {
+        blitF(gr, x, y, mElementWidth, mElementHeight, 0, 352, mElementWidth * 2, mElementHeight * 2);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gr.drawString(font, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
     }
 
     @Override
-    public void renderElementTooltip(PoseStack poseStack, FluxNetwork element, int mouseX, int mouseY) {
-        renderComponentTooltip(poseStack, getElementTooltips(element), mouseX, mouseY);
+    public void renderElementTooltip(GuiGraphics gr, FluxNetwork element, int mouseX, int mouseY) {
+        gr.renderComponentTooltip(font, getElementTooltips(element), mouseX, mouseY);
     }
 
     protected List<Component> getElementTooltips(@Nonnull FluxNetwork element) {

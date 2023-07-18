@@ -1,6 +1,8 @@
 package sonar.fluxnetworks.register;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -70,9 +72,10 @@ public class Registration {
     @SubscribeEvent
     public static void gatherData(@Nonnull GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
         if (event.includeServer()) {
-            generator.addProvider(true, new FluxLootTableProvider(generator));
-            generator.addProvider(true, new FluxBlockTagsProvider(generator, event.getExistingFileHelper()));
+            generator.addProvider(true, new FluxLootTableProvider(packOutput));
+            generator.addProvider(true, new FluxBlockTagsProvider(packOutput, event.getLookupProvider(), event.getExistingFileHelper()));
         }
     }
 
@@ -84,5 +87,6 @@ public class Registration {
         event.register(ForgeRegistries.MENU_TYPES.getRegistryKey(), RegistryMenuTypes::register);
         event.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), RegistryRecipes::register);
         event.register(ForgeRegistries.SOUND_EVENTS.getRegistryKey(), RegistrySounds::register);
+        event.register(Registries.CREATIVE_MODE_TAB, RegistryCreativeModeTabs::register);
     }
 }

@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
@@ -52,15 +52,15 @@ public abstract class GuiTabCore extends GuiFluxCore {
         }
     }
 
-    protected void renderNavigationPrompt(PoseStack poseStack, @Nonnull FluxTranslate error,
+    protected void renderNavigationPrompt(GuiGraphics gr, @Nonnull FluxTranslate error,
                                           @Nonnull EnumNavigationTab tab) {
-        drawCenteredString(poseStack, font, error.get(), width / 2, topPos + 16, 0xff808080);
-        poseStack.pushPose();
-        poseStack.scale(0.75f, 0.75f, 1);
-        drawCenteredString(poseStack, font,
+        gr.drawCenteredString(font, error.get(), width / 2, topPos + 16, 0xff808080);
+        gr.pose().pushPose();
+        gr.pose().scale(0.75f, 0.75f, 1);
+        gr.drawCenteredString(font,
                 FluxTranslate.CLICK_ABOVE.format(ChatFormatting.AQUA + tab.getTranslatedName() + ChatFormatting.RESET),
                 (int) ((width / 2f) / 0.75f), (int) ((topPos + 28f) / 0.75f), 0x808080);
-        poseStack.popPose();
+        gr.pose().popPose();
     }
 
     protected boolean redirectNavigationPrompt(double mouseX, double mouseY, int mouseButton,

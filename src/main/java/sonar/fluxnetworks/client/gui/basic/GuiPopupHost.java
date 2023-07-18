@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.world.entity.player.Player;
@@ -205,35 +205,35 @@ public abstract class GuiPopupHost extends GuiFocusable {
         }
     }
 
-    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    protected void drawForegroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
     }
 
-    protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    protected void drawBackgroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
     }
 
     @Override
-    public final void render(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.render(poseStack, mouseX, mouseY, deltaTicks);
-        drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    public final void render(@Nonnull GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.render(gr, mouseX, mouseY, deltaTicks);
+        drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
 
         if (mCurrentPopup != null) {
-            poseStack.pushPose();
-            poseStack.translate(0, 0, 300);
-            mCurrentPopup.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-            poseStack.translate(0, 0, 10);
-            mCurrentPopup.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-            poseStack.popPose();
+            gr.pose().pushPose();
+            gr.pose().translate(0, 0, 300);
+            mCurrentPopup.drawBackgroundLayer(gr, mouseX, mouseY, deltaTicks);
+            gr.pose().translate(0, 0, 10);
+            mCurrentPopup.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
+            gr.pose().popPose();
         }
     }
 
     @Override
-    protected final void renderLabels(@Nonnull PoseStack poseStack, int mouseX, int mouseY) {
+    protected final void renderLabels(@Nonnull GuiGraphics gr, int mouseX, int mouseY) {
     }
 
     @Override
-    protected final void renderBg(@Nonnull PoseStack poseStack, float deltaTicks, int mouseX, int mouseY) {
-        renderBackground(poseStack);
-        drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected final void renderBg(@Nonnull GuiGraphics gr, float deltaTicks, int mouseX, int mouseY) {
+        renderBackground(gr);
+        drawBackgroundLayer(gr, mouseX, mouseY, deltaTicks);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
@@ -23,7 +23,7 @@ public class SimpleButton extends GuiButtonCore {
     }
 
     @Override
-    protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    protected void drawButton(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
         int color;
         int r = mColor >> 16 & 0xFF;
         int g = mColor >> 8 & 0xFF;
@@ -41,9 +41,9 @@ public class SimpleButton extends GuiButtonCore {
 
         screen.getMinecraft().gameRenderer.lightTexture().turnOnLightLayer();
         // outer stroke
-        drawOuterFrame(poseStack, x, y, width, height, color);
+        drawOuterFrame(gr, x, y, width, height, color);
 
-        drawCenteredString(poseStack, screen.getMinecraft().font, mText, x + width / 2, y + (height - 8) / 2, color);
+        gr.drawCenteredString(screen.getMinecraft().font, mText, x + width / 2, y + (height - 8) / 2, color);
     }
 
     public void setColor(int color) {

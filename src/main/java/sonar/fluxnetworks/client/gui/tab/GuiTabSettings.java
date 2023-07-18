@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -33,22 +33,22 @@ public class GuiTabSettings extends GuiTabEditAbstract {
     }
 
     @Override
-    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawForegroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
         if (getNetwork().isValid()) {
             if (mDelete.isMouseHovered(mouseX, mouseY)) {
                 if (mDelete.isClickable()) {
-                    drawCenteredString(poseStack, font,
+                    gr.drawCenteredString(font,
                             ChatFormatting.BOLD + FluxTranslate.DELETE_NETWORK.get(),
                             mDelete.x + mDelete.width / 2, mDelete.y - 12, 0xff0000);
                 } else {
-                    drawCenteredString(poseStack, font,
+                    gr.drawCenteredString(font,
                             FluxTranslate.DOUBLE_SHIFT.get(),
                             mDelete.x + mDelete.width / 2, mDelete.y - 12, 0xffffff);
                 }
             }
         } else {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
+            renderNavigationPrompt(gr, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
     }
 

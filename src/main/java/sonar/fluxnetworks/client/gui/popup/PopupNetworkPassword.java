@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.client.gui.popup;
 
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -44,10 +44,10 @@ public class PopupNetworkPassword extends GuiPopupCore<GuiTabSelection> {
     }
 
     @Override
-    public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    public void drawForegroundLayer(@Nonnull GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
         if (mHost.mSelectedNetwork != null) {
-            drawCenteredString(poseStack, font,
+            gr.drawCenteredString(font,
                     FluxTranslate.CONNECTING_TO.format(mHost.mSelectedNetwork.getNetworkName()),
                     leftPos + 88, topPos + 48, 0xffffff);
         }

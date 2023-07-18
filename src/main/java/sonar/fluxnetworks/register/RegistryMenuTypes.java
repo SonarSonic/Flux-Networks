@@ -29,7 +29,7 @@ public class RegistryMenuTypes {
             // check if it's tile entity
             if (buffer.readBoolean()) {
                 BlockPos pos = buffer.readBlockPos();
-                if (inventory.player.getLevel().getBlockEntity(pos) instanceof TileFluxDevice device) {
+                if (inventory.player.level().getBlockEntity(pos) instanceof TileFluxDevice device) {
                     CompoundTag tag = buffer.readNbt();
                     if (tag != null) {
                         device.readCustomTag(tag, FluxConstants.NBT_TILE_UPDATE);

@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxTranslate;
@@ -32,25 +32,25 @@ public class GuiTabWireless extends GuiTabCore {
     }
 
     @Override
-    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawForegroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
         if (getNetwork().isValid()) {
             int color = getNetwork().getNetworkColor();
-            drawCenteredString(poseStack, font, FluxTranslate.TAB_WIRELESS.get(), leftPos + 88, topPos + 10, 0xb4b4b4);
-            font.draw(poseStack, FluxTranslate.ENABLE_WIRELESS.get(), leftPos + 20, topPos + 148, color);
+            gr.drawCenteredString(font, FluxTranslate.TAB_WIRELESS.get(), leftPos + 88, topPos + 10, 0xb4b4b4);
+            gr.drawString(font, FluxTranslate.ENABLE_WIRELESS.get(), leftPos + 20, topPos + 148, color);
 
             if (WirelessType.ENABLE_WIRELESS.isActivated(ClientCache.sWirelessMode) &&
                     ClientCache.sWirelessNetwork == getNetwork().getNetworkID()) {
-                drawCenteredString(poseStack, font,
+                gr.drawCenteredString(font,
                         '(' + FluxTranslate.EFFECTIVE_WIRELESS_NETWORK.get() + ')',
                         leftPos + 88, topPos + 158, color);
             } else {
-                drawCenteredString(poseStack, font,
+                gr.drawCenteredString(font,
                         '(' + FluxTranslate.INEFFECTIVE_WIRELESS_NETWORK.get() + ')',
                         leftPos + 88, topPos + 158, 0xb4b4b4);
             }
         } else {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
+            renderNavigationPrompt(gr, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
     }
 

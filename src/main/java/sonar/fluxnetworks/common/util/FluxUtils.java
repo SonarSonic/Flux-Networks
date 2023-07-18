@@ -2,6 +2,7 @@ package sonar.fluxnetworks.common.util;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -154,7 +155,7 @@ public class FluxUtils {
 
     @Nonnull
     public static GlobalPos readGlobalPos(@Nonnull CompoundTag tag) {
-        return GlobalPos.of(ResourceKey.create(Registry.DIMENSION_REGISTRY,
+        return GlobalPos.of(ResourceKey.create(Registries.DIMENSION,
                         new ResourceLocation(tag.getString("dim"))),
                 new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z")));
     }
@@ -166,7 +167,7 @@ public class FluxUtils {
 
     @Nonnull
     public static GlobalPos readGlobalPos(@Nonnull FriendlyByteBuf buffer) {
-        return GlobalPos.of(ResourceKey.create(Registry.DIMENSION_REGISTRY,
+        return GlobalPos.of(ResourceKey.create(Registries.DIMENSION,
                 buffer.readResourceLocation()), buffer.readBlockPos());
     }
 

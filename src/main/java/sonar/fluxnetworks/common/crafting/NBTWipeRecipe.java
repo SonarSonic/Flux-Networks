@@ -1,13 +1,12 @@
 package sonar.fluxnetworks.common.crafting;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.block.Block;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxStorageBlock;
@@ -19,18 +18,18 @@ import javax.annotation.Nonnull;
  */
 public class NBTWipeRecipe extends ShapelessRecipe {
 
-    public NBTWipeRecipe(ResourceLocation idIn, String groupIn, ItemStack recipeOutputIn,
+    public NBTWipeRecipe(ResourceLocation idIn, String groupIn, CraftingBookCategory category, ItemStack recipeOutputIn,
                          NonNullList<Ingredient> recipeItemsIn) {
-        super(idIn, groupIn, recipeOutputIn, recipeItemsIn);
+        super(idIn, groupIn, category, recipeOutputIn, recipeItemsIn);
     }
 
     public NBTWipeRecipe(@Nonnull ShapelessRecipe recipe) {
-        super(recipe.getId(), recipe.getGroup(), recipe.getResultItem(), recipe.getIngredients());
+        super(recipe.getId(), recipe.getGroup(), recipe.category(), recipe.getResultItem(RegistryAccess.EMPTY), recipe.getIngredients());
     }
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull CraftingContainer container) {
+    public ItemStack assemble(@Nonnull CraftingContainer container, @Nonnull RegistryAccess registryAccess) {
         ItemStack originalStack = null;
 
         for (int i = 0; i < container.getContainerSize(); i++) {
@@ -41,7 +40,7 @@ public class NBTWipeRecipe extends ShapelessRecipe {
             }
         }
         if (originalStack != null) {
-            ItemStack output = getResultItem().copy();
+            ItemStack output = getResultItem(registryAccess).copy();
             if (Block.byItem(output.getItem()) instanceof FluxStorageBlock) {
                 CompoundTag subTag = originalStack.getTagElement(FluxConstants.TAG_FLUX_DATA);
                 long energy = 0;
@@ -55,7 +54,7 @@ public class NBTWipeRecipe extends ShapelessRecipe {
             }
             return output;
         }
-        return super.assemble(container);
+        return super.assemble(container, registryAccess);
     }
 
     @Nonnull

@@ -1,38 +1,20 @@
 package sonar.fluxnetworks.data.loot;
 
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.*;
 
 public class FluxLootTableProvider extends LootTableProvider {
 
-    public FluxLootTableProvider(DataGenerator dataGeneratorIn) {
-        super(dataGeneratorIn);
-    }
-
-    @Nonnull
-    @Override
-    protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
-        return List.of(Pair.of(FluxBlockLoot::new, LootContextParamSets.BLOCK));
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return super.getName() + ":" + FluxNetworks.NAME_CPT;
+    public FluxLootTableProvider(PackOutput packOutput) {
+        super(packOutput, Collections.emptySet(), List.of(
+                new SubProviderEntry(FluxBlockLoot::new, LootContextParamSets.BLOCK)));
     }
 
     @Override

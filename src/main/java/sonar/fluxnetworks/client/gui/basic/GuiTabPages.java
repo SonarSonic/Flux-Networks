@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.basic;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.button.PageLabelButton;
@@ -34,26 +34,26 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
     }
 
     @Override
-    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawForegroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
         if (mPages > 1) {
-            mLabelButton.drawButton(poseStack, mouseX, mouseY, deltaTicks);
+            mLabelButton.drawButton(gr, mouseX, mouseY, deltaTicks);
         }
 
         for (int i = 0; i < mCurrent.size(); i++) {
             int y = (mGridStartY + mGridHeight * i);
-            renderElement(poseStack, mCurrent.get(i), mGridStartX, y);
+            renderElement(gr, mCurrent.get(i), mGridStartX, y);
         }
 
         T hovered = getHoveredElement(mouseX, mouseY);
         if (hovered != null && getCurrentPopup() == null) {
-            renderElementTooltip(poseStack, hovered, mouseX, mouseY);
+            renderElementTooltip(gr, hovered, mouseX, mouseY);
         }
     }
 
     @Override
-    protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawBackgroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawBackgroundLayer(gr, mouseX, mouseY, deltaTicks);
     }
 
     @Nullable
@@ -113,9 +113,9 @@ public abstract class GuiTabPages<T> extends GuiTabCore {
         return super.onMouseScrolled(mouseX, mouseY, vScroll);
     }
 
-    public abstract void renderElement(PoseStack poseStack, T element, int x, int y);
+    public abstract void renderElement(GuiGraphics gr, T element, int x, int y);
 
-    public abstract void renderElementTooltip(PoseStack poseStack, T element, int mouseX, int mouseY);
+    public abstract void renderElementTooltip(GuiGraphics gr, T element, int mouseX, int mouseY);
 
     protected void refreshPages(Collection<T> elements) {
         mElements.clear();

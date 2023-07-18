@@ -33,7 +33,7 @@ public class FluxMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(@Nonnull Player player) {
         if (mProvider instanceof TileFluxDevice device) {
-            return device.isChunkLoaded() && device.getLevel() == player.level;
+            return device.isChunkLoaded() && device.getLevel() == player.level();
         } else if (mProvider instanceof ItemFluxConfigurator.Provider) {
             return player.getMainHandItem().is(RegistryItems.FLUX_CONFIGURATOR.get());
         }

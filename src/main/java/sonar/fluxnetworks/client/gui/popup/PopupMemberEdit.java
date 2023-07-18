@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.client.gui.popup;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
@@ -69,29 +69,29 @@ public class PopupMemberEdit extends GuiPopupCore<GuiTabMembers> {
     }
 
     @Override
-    public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-        drawCenteredString(poseStack, font,
+    public void drawForegroundLayer(@Nonnull GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
+        gr.drawCenteredString(font,
                 ChatFormatting.AQUA + mHost.mSelectedMember.getCachedName(),
                 leftPos + (imageWidth / 2), topPos + 38, 0xffffff);
-        drawCenteredString(poseStack, font, mHost.mSelectedMember.getAccessLevel().getFormattedName(),
+        gr.drawCenteredString(font, mHost.mSelectedMember.getAccessLevel().getFormattedName(),
                 leftPos + (imageWidth / 2), topPos + 48, 0xffffff);
 
         final String uuid = mHost.mSelectedMember.getPlayerUUID().toString();
-        poseStack.pushPose();
-        poseStack.scale(0.75f, 0.75f, 1);
-        drawCenteredString(poseStack, font, "UUID: " + uuid.substring(0, 16),
+        gr.pose().pushPose();
+        gr.pose().scale(0.75f, 0.75f, 1);
+        gr.drawCenteredString(font, "UUID: " + uuid.substring(0, 16),
                 (int) ((leftPos + (imageWidth / 2)) / 0.75f), (int) ((topPos + 60) / 0.75f), 0xffffff);
-        drawCenteredString(poseStack, font, uuid.substring(16),
+        gr.drawCenteredString(font, uuid.substring(16),
                 (int) ((leftPos + (imageWidth / 2)) / 0.75f), (int) ((topPos + 68) / 0.75f), 0xffffff);
-        poseStack.popPose();
+        gr.pose().popPose();
 
         if (mTransferOwnership != null &&
                 mTransferOwnership.isMouseHovered(mouseX, mouseY) &&
                 !mTransferOwnership.isClickable() &&
                 mHost.mSelectedMember.getAccessLevel() != AccessLevel.BLOCKED &&
                 mHost.getAccessLevel().canDelete()) {
-            drawCenteredString(poseStack, font, FluxTranslate.DOUBLE_SHIFT.get(),
+            gr.drawCenteredString(font, FluxTranslate.DOUBLE_SHIFT.get(),
                     mTransferOwnership.x + mTransferOwnership.width / 2, mTransferOwnership.y + 14, 0xffffff);
         }
     }

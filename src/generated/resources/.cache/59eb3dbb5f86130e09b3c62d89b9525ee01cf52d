@@ -1,0 +1,8 @@
+// 1.20.1	2023-07-18T20:32:51.8948444	Loot Tables
+faa36cf12074938baedb45cf4b362636378f0c0b data/fluxnetworks/loot_tables/blocks/basic_flux_storage.json
+e1a2f1b88de33b91ad819a1a3c93004456ad5d60 data/fluxnetworks/loot_tables/blocks/flux_block.json
+f2dd1083bac7d816848b0c44c1d7d5df25eb7e8d data/fluxnetworks/loot_tables/blocks/flux_controller.json
+2226a152adf9977e961148efae2ea747e27c9b69 data/fluxnetworks/loot_tables/blocks/flux_plug.json
+563352e296fa0911cc261d3ff392830fd5096b42 data/fluxnetworks/loot_tables/blocks/flux_point.json
+e83b8c75db860cefdbe45a158da22f2a7411c94c data/fluxnetworks/loot_tables/blocks/gargantuan_flux_storage.json
+ccd7af41e9f1f622149ca4e84f682151c9051c1d data/fluxnetworks/loot_tables/blocks/herculean_flux_storage.json

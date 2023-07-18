@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxTranslate;
@@ -57,19 +57,19 @@ public abstract class GuiTabEditAbstract extends GuiTabCore {
     }
 
     @Override
-    protected void drawForegroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawForegroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
         if (getNetwork().isValid() || getNavigationTab() == EnumNavigationTab.TAB_CREATE) {
-            drawCenteredString(poseStack, font, getNavigationTab().getTranslatedName(),
+            gr.drawCenteredString(font, getNavigationTab().getTranslatedName(),
                     leftPos + 88, topPos + 10, 0xFFB4B4B4);
-            font.draw(poseStack,
+            gr.drawString(font,
                     FluxTranslate.NETWORK_SECURITY.get() + ": " + ChatFormatting.AQUA + mSecurityLevel.getName(),
                     leftPos + 16, topPos + 47, 0xFF808080);
             //font.drawString(matrixStack, FluxTranslate.NETWORK_ENERGY.t() + ": " + TextFormatting.AQUA + energyType
             // .getName(), 14, 78, 0x606060);
-            font.draw(poseStack, FluxTranslate.NETWORK_COLOR.get() + ":", leftPos + 16, topPos + 89, 0xFF808080);
+            gr.drawString(font, FluxTranslate.NETWORK_COLOR.get() + ":", leftPos + 16, topPos + 89, 0xFF808080);
 
-            renderNetwork(poseStack, mNetworkName.getValue(), mColorButton.mColor, topPos + 126);
+            renderNetwork(gr, mNetworkName.getValue(), mColorButton.mColor, topPos + 126);
         }
     }
 

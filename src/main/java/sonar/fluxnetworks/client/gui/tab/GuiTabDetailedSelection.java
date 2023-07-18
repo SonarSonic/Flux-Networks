@@ -1,7 +1,8 @@
 package sonar.fluxnetworks.client.gui.tab;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -26,19 +27,20 @@ public class GuiTabDetailedSelection extends GuiTabSelection {
     }
 
     @Override
-    protected void renderBarAndName(PoseStack poseStack, FluxNetwork element, int x, int y, boolean selected) {
-        blitF(poseStack, x, y, mElementWidth, mElementHeight, 0, 448, mElementWidth * 2, mElementHeight * 2);
-        font.draw(poseStack, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
+    protected void renderBarAndName(GuiGraphics gr, FluxNetwork element, int x, int y, boolean selected) {
+        blitF(gr, x, y, mElementWidth, mElementHeight, 0, 448, mElementWidth * 2, mElementHeight * 2);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gr.drawString(font, element.getNetworkName(), x + 4, y + 2, selected ? 0xffffff : 0x606060);
 
-        poseStack.pushPose();
-        poseStack.scale(0.75f, 0.75f, 1);
+        gr.pose().pushPose();
+        gr.pose().scale(0.75f, 0.75f, 1);
         String text = "C: " + element.getStatistics().getConnectionCount();
         text += ", I: " + EnergyType.FE.getUsageCompact(element.getStatistics().energyInput);
         text += ", O: " + EnergyType.FE.getUsageCompact(element.getStatistics().energyOutput);
         text += ", T: " + element.getStatistics().averageTickMicro + " \u00b5s/t";
-        font.draw(poseStack, text,
+        gr.drawString(font, text,
                 (int) ((x + 4) / 0.75), (int) ((y + 11) / 0.75), selected ? 0xffffff : 0x808080);
-        poseStack.popPose();
+        gr.pose().popPose();
     }
 
     @Override

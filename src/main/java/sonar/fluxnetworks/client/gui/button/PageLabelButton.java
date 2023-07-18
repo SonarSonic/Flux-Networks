@@ -1,7 +1,7 @@
 package sonar.fluxnetworks.client.gui.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
@@ -19,7 +19,7 @@ public class PageLabelButton extends GuiButtonCore {
     }
 
     @Override
-    public void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    public void drawButton(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
         int pages = mPages;
         if (pages <= 0) {
             return;
@@ -48,23 +48,23 @@ public class PageLabelButton extends GuiButtonCore {
 
         for (int i = 0; i < pages; i++) {
             if (i == mPage) {
-                fill(poseStack, startX, y, startX + dotSize, y + dotSize, mColor | 0xF0000000);
+                gr.fill(startX, y, startX + dotSize, y + dotSize, mColor | 0xF0000000);
             } else if (i == mHoveredPage) {
-                fill(poseStack, startX, y, startX + dotSize, y + dotSize, 0xC0808080);
+                gr.fill(startX, y, startX + dotSize, y + dotSize, 0xC0808080);
             } else {
                 int inset = dotSize / 4;
-                fill(poseStack, startX + inset, y + inset, startX + dotSize - inset, y + dotSize - inset, 0xC0808080);
+                gr.fill(startX + inset, y + inset, startX + dotSize - inset, y + dotSize - inset, 0xC0808080);
             }
             startX += dotSize + 1;
         }
 
         if (mHoveredPage != -1) {
-            drawCenteredString(poseStack, screen.getMinecraft().font, (mHoveredPage + 1) + " / " + pages,
+            gr.drawCenteredString(screen.getMinecraft().font, (mHoveredPage + 1) + " / " + pages,
                     x + width / 2, y + 6, mColor);
         } else if (mShowTick > 0) {
             int alpha = (int) Math.min(255, mShowTick * 24);
             if (alpha > 3) {
-                drawCenteredString(poseStack, screen.getMinecraft().font, (mPage + 1) + " / " + pages,
+                gr.drawCenteredString(screen.getMinecraft().font, (mPage + 1) + " / " + pages,
                         x + width / 2, y + 6, mColor | alpha << 24);
             }
             mShowTick -= deltaTicks;

@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.popup;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxTranslate;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
@@ -44,9 +44,9 @@ public class PopupCustomColor extends GuiPopupCore<GuiTabEditAbstract> {
     }
 
     @Override
-    public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
-        drawCenteredString(poseStack, font, FluxTranslate.CUSTOM_COLOR.get(), leftPos + 88, topPos + 48, 0xffffff);
+    public void drawForegroundLayer(@Nonnull GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
+        gr.drawCenteredString(font, FluxTranslate.CUSTOM_COLOR.get(), leftPos + 88, topPos + 48, 0xffffff);
     }
 
     @Override

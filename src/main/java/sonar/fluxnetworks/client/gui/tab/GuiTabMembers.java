@@ -1,8 +1,8 @@
 package sonar.fluxnetworks.client.gui.tab;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
@@ -42,17 +42,17 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    protected void drawBackgroundLayer(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawBackgroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    protected void drawBackgroundLayer(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawBackgroundLayer(gr, mouseX, mouseY, deltaTicks);
         if (getNetwork().isValid()) {
             String access = getAccessLevel().getFormattedName();
-            font.draw(poseStack, access, leftPos + 158 - font.width(access), topPos + 24, 0xffffff);
+            gr.drawString(font, access, leftPos + 158 - font.width(access), topPos + 24, 0xffffff);
             String sortBy = FluxTranslate.SORT_BY.get() + ": " + ChatFormatting.AQUA + mSortType.getTranslatedName();
-            font.draw(poseStack, sortBy, leftPos + 19, topPos + 24, 0xffffff);
+            gr.drawString(font, sortBy, leftPos + 19, topPos + 24, 0xffffff);
 
-            renderNetwork(poseStack, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), topPos + 8);
+            renderNetwork(gr, getNetwork().getNetworkName(), getNetwork().getNetworkColor(), topPos + 8);
         } else {
-            renderNavigationPrompt(poseStack, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
+            renderNavigationPrompt(gr, FluxTranslate.ERROR_NO_SELECTED, EnumNavigationTab.TAB_SELECTION);
         }
     }
 
@@ -80,7 +80,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
     }
 
     @Override
-    public void renderElement(PoseStack poseStack, NetworkMember element, int x, int y) {
+    public void renderElement(GuiGraphics gr, NetworkMember element, int x, int y) {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
@@ -93,21 +93,22 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
         RenderSystem.setShaderColor(r, g, b, 1.0f);
         RenderSystem.setShaderTexture(0, ICON);
 
-        blitF(poseStack, x, y, mElementWidth, mElementHeight, 0, 352, mElementWidth * 2, mElementHeight * 2);
+        blitF(gr, x, y, mElementWidth, mElementHeight, 0, 352, mElementWidth * 2, mElementHeight * 2);
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         if (element.getPlayerUUID().equals(mPlayer.getUUID())) {
-            fill(poseStack, x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
-            fill(poseStack, x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
+            gr.fill(x - 2, y, x - 1, y + mElementHeight, 0xFFFFFFFF);
+            gr.fill(x + mElementWidth + 1, y, x + mElementWidth + 2, y + mElementHeight, 0xFFFFFFFF);
         }
 
-        font.draw(poseStack, ChatFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
+        gr.drawString(font, ChatFormatting.WHITE + element.getCachedName(), x + 4, y + 2, 0xffffff);
 
         String access = element.getAccessLevel().getFormattedName();
-        font.draw(poseStack, access, x + mElementWidth - 4 - font.width(access), y + 2, 0xffffff);
+        gr.drawString(font, access, x + mElementWidth - 4 - font.width(access), y + 2, 0xffffff);
     }
 
     @Override
-    public void renderElementTooltip(PoseStack poseStack, NetworkMember element, int mouseX, int mouseY) {
+    public void renderElementTooltip(GuiGraphics gr, NetworkMember element, int mouseX, int mouseY) {
         List<Component> components = new ArrayList<>();
         components.add(FluxTranslate.USERNAME.makeComponent().append(": " + ChatFormatting.AQUA + element.getCachedName()));
         components.add(FluxTranslate.ACCESS.makeComponent().append(": " + element.getAccessLevel().getFormattedName()));
@@ -117,7 +118,7 @@ public class GuiTabMembers extends GuiTabPages<NetworkMember> {
             components.add(TextFormatting.WHITE + "You");
         }*/
 
-        renderComponentTooltip(poseStack, components, mouseX, mouseY);
+        gr.renderComponentTooltip(font, components, mouseX, mouseY);
     }
 
     @Override

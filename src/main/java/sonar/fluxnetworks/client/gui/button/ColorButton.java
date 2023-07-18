@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
@@ -15,11 +15,11 @@ public class ColorButton extends GuiButtonCore {
     }
 
     @Override
-    protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    protected void drawButton(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
         if (mSelected) {
-            drawOuterFrame(poseStack, x, y, width, height, 0xFFFFFFFF);
+            drawOuterFrame(gr, x, y, width, height, 0xFFFFFFFF);
         }
-        fill(poseStack, x, y, x + width, y + height, mColor | 0xAA000000);
+        gr.fill(x, y, x + width, y + height, mColor | 0xAA000000);
     }
 
     public boolean isSelected() {

@@ -13,7 +13,7 @@ public class RegistrySounds {
     public static final RegistryObject<SoundEvent> BUTTON_CLICK = RegistryObject.create(BUTTON_CLICK_KEY, ForgeRegistries.SOUND_EVENTS);
 
     static void register(RegisterEvent.RegisterHelper<SoundEvent> helper) {
-        helper.register(BUTTON_CLICK_KEY, new SoundEvent(BUTTON_CLICK_KEY));
+        helper.register(BUTTON_CLICK_KEY, SoundEvent.createVariableRangeEvent(BUTTON_CLICK_KEY));
     }
 
     private RegistrySounds() {}

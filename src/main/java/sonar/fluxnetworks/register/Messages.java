@@ -10,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
@@ -200,7 +201,7 @@ public class Messages {
     }
 
     static void msg(short index, FriendlyByteBuf payload, Supplier<ServerPlayer> player) {
-        MinecraftServer server = player.get().getLevel().getServer();
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         switch (index) {
             case C2S_DEVICE_BUFFER -> onDeviceBuffer(payload, player, server);
             case C2S_SUPER_ADMIN -> onSuperAdmin(payload, player, server);
@@ -240,7 +241,7 @@ public class Messages {
         looper.execute(() -> {
             ServerPlayer p = player.get();
             try {
-                if (p != null && p.level.getBlockEntity(payload.readBlockPos()) instanceof TileFluxDevice e) {
+                if (p != null && p.level().getBlockEntity(payload.readBlockPos()) instanceof TileFluxDevice e) {
                     if (e.canPlayerAccess(p)) {
                         byte id = payload.readByte();
                         if (id > 0) {
@@ -309,8 +310,8 @@ public class Messages {
                 return;
             }
             try {
-                if (p.level.isLoaded(pos) &&
-                        p.level.getBlockEntity(pos) instanceof TileFluxDevice e &&
+                if (p.level().isLoaded(pos) &&
+                        p.level().getBlockEntity(pos) instanceof TileFluxDevice e &&
                         e.canPlayerAccess(p)) {
                     e.readCustomTag(tag, FluxConstants.NBT_TILE_SETTINGS);
                 } else {
@@ -405,7 +406,7 @@ public class Messages {
             if (p == null) {
                 return;
             }
-            if (p.level.getBlockEntity(pos) instanceof TileFluxDevice e) {
+            if (p.level().getBlockEntity(pos) instanceof TileFluxDevice e) {
                 if (e.getNetworkID() == networkID) {
                     return;
                 }

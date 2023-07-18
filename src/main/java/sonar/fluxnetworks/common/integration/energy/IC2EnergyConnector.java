@@ -1,10 +1,6 @@
 package sonar.fluxnetworks.common.integration.energy;
 
-import ic2.api.energy.EnergyNet;
-import ic2.api.energy.tile.IEnergySink;
-import ic2.api.energy.tile.IEnergyTile;
-import ic2.api.items.electric.*;
-import ic2.api.tiles.IEnergyStorage;
+
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -13,7 +9,7 @@ import sonar.fluxnetworks.api.energy.IItemEnergyConnector;
 
 import javax.annotation.Nonnull;
 
-public class IC2EnergyConnector implements IBlockEnergyConnector, IItemEnergyConnector {
+public class IC2EnergyConnector{/* implements IBlockEnergyConnector, IItemEnergyConnector {
 
     public static final IC2EnergyConnector INSTANCE = new IC2EnergyConnector();
 
@@ -94,5 +90,5 @@ public class IC2EnergyConnector implements IBlockEnergyConnector, IItemEnergyCon
             return manager;
         }
         return ElectricItem.MANAGER;
-    }
+    }*/
 }

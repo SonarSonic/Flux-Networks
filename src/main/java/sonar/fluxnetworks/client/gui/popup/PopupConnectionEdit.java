@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.popup;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -164,8 +164,8 @@ public class PopupConnectionEdit extends GuiPopupCore<GuiTabConnections> {
     }
 
     @Override
-    public void drawForegroundLayer(@Nonnull PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
-        super.drawForegroundLayer(poseStack, mouseX, mouseY, deltaTicks);
+    public void drawForegroundLayer(@Nonnull GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
+        super.drawForegroundLayer(gr, mouseX, mouseY, deltaTicks);
         /*if (!mHost.mBatchMode) {
             drawCenteredString(poseStack, font, FluxTranslate.SINGLE_EDIT.get(),
                     leftPos + 88, topPos + 14, 0xffffff);
@@ -174,18 +174,18 @@ public class PopupConnectionEdit extends GuiPopupCore<GuiTabConnections> {
             drawCenteredString(poseStack, font, FluxUtils.getDisplayDim(mHost.mSingleConnection.getGlobalPos()),
                     leftPos + 88, topPos + 130, 0xffffff);
         } else {*/
-        drawCenteredString(poseStack, font, FluxTranslate.BATCH_EDIT.get(),
+        gr.drawCenteredString(font, FluxTranslate.BATCH_EDIT.get(),
                 leftPos + 88, topPos + 14, 0xffffff);
-        drawCenteredString(poseStack, font,
+        gr.drawCenteredString(font,
                 FluxTranslate.EDITING_CONNECTIONS.format(mHost.mSelected.size()),
                 leftPos + 88, topPos + 122, 0xffffff);
         //}
-        font.draw(poseStack, FluxTranslate.SURGE_MODE.get(),
+        gr.drawString(font, FluxTranslate.SURGE_MODE.get(),
                 leftPos + 20, topPos + 82, mHost.getNetwork().getNetworkColor());
-        font.draw(poseStack, FluxTranslate.DISABLE_LIMIT.get(),
+        gr.drawString(font, FluxTranslate.DISABLE_LIMIT.get(),
                 leftPos + 20, topPos + 94, mHost.getNetwork().getNetworkColor());
         if (mChunkLoading != null) {
-            font.draw(poseStack, FluxTranslate.CHUNK_LOADING.get(),
+            gr.drawString(font, FluxTranslate.CHUNK_LOADING.get(),
                     leftPos + 20, topPos + 106, mHost.getNetwork().getNetworkColor());
         }
     }

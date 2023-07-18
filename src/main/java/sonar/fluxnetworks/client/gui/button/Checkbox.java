@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.client.gui.button;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
 import sonar.fluxnetworks.client.gui.basic.GuiFocusable;
 
@@ -21,12 +21,12 @@ public class Checkbox extends GuiButtonCore {
     }
 
     @Override
-    protected void drawButton(PoseStack poseStack, int mouseX, int mouseY, float deltaTicks) {
+    protected void drawButton(GuiGraphics gr, int mouseX, int mouseY, float deltaTicks) {
         int color = isMouseHovered(mouseX, mouseY) ? 0xccffffff : 0xccb4b4b4;
 
-        drawOuterFrame(poseStack, x, y, width, height, color);
+        drawOuterFrame(gr, x, y, width, height, color);
         if (mChecked) {
-            fill(poseStack, x + 1, y + 1, x + width - 1, y + height - 1, 0xddffffff);
+            gr.fill(x + 1, y + 1, x + width - 1, y + height - 1, 0xddffffff);
         }
     }
 
