@@ -76,6 +76,7 @@ public class FluxConfig {
     public static long defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer,
             gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
+    public static boolean enableGTCEU;
 
     @OnlyIn(Dist.CLIENT)
     private static class Client {
@@ -109,6 +110,8 @@ public class FluxConfig {
                 mEnableOneProbeAdvancedInfo,
                 mEnableOneProbeSneaking;
 
+        private final ForgeConfigSpec.BooleanValue mEnableGTCEU;
+
         private Common(@Nonnull ForgeConfigSpec.Builder builder) {
             builder.comment("Most configs are moved to /serverconfig/fluxnetworks-server.toml",
                             "Copy to /defaultconfig/fluxnetworks-server.toml for modpacks")
@@ -130,12 +133,25 @@ public class FluxConfig {
                     .define("enableOneProbeSneaking", true);
 
             builder.pop();
+
+            builder.comment("Integration")
+                    .push("integration");
+
+            mEnableGTCEU = builder
+                    .comment("Whether to enable GTCEU integration if GregTech CE Unofficial Modern is installed.",
+                            "1 GTEU = 4 FE, and vice versa.",
+                            "A game/server restart is required to reload this setting.")
+                    .define("enableGTCEU", true);
+
+            builder.pop();
         }
 
         private void load() {
             enableOneProbeBasicInfo = mEnableOneProbeBasicInfo.get();
             enableOneProbeAdvancedInfo = mEnableOneProbeAdvancedInfo.get();
             enableOneProbeSneaking = mEnableOneProbeSneaking.get();
+
+            enableGTCEU = mEnableGTCEU.get();
         }
     }
 

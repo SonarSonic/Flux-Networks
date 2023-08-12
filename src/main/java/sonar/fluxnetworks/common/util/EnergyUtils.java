@@ -6,9 +6,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.device.IFluxDevice;
 import sonar.fluxnetworks.api.energy.IBlockEnergyConnector;
@@ -52,6 +54,11 @@ public final class EnergyUtils {
             BLOCK_ENERGY_CONNECTORS.add(IC2EnergyHandler.INSTANCE);
             ITEM_ENERGY_CONNECTORS.add(IC2EnergyHandler.INSTANCE);
         }*/
+
+        if (FluxConfig.enableGTCEU && ModList.get().isLoaded("gtceu")) {
+            BLOCK_ENERGY_CONNECTORS.add(GTCEUEnergyConnector.INSTANCE);
+            ITEM_ENERGY_CONNECTORS.add(GTCEUEnergyConnector.INSTANCE);
+        }
     }
 
     public static void reloadBlacklist(@Nonnull List<String> blockBlacklist, @Nonnull List<String> itemBlacklist) {

@@ -149,6 +149,7 @@ dependencies {
     //runtimeOnly fg.deobf("curse.maven:powah-rearchitected-633483:3855683") // [FORGE 1.18.2] v3.0.1-beta
 
     //runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3554445")
+    compileOnly fg.deobf("curse.maven:gregtechceu-modern-890405:4676506") // GregTechCEu 1.20.1-1.0.10-forge
 
     implementation fg.deobf("mezz.jei:jei-${minecraft_version}-core:${jei_version}")
     runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
@@ -163,6 +164,7 @@ dependencies {
         exclude group: "com.google.code.findbugs", module: "jsr305"
         exclude group: "org.jetbrains", module: "annotations"
         exclude group: "com.ibm.icu", module: "icu4j"
+        exclude group: "it.unimi.dsi", module: "fastutil"
     }
     library("icyllis.modernui:ModernUI-ViewPager:${modernui_core_version}") {
         exclude group: "org.apache.logging.log4j", module: "log4j-core"
@@ -170,6 +172,15 @@ dependencies {
         exclude group: "com.google.code.findbugs", module: "jsr305"
         exclude group: "org.jetbrains", module: "annotations"
         exclude group: "com.ibm.icu", module: "icu4j"
+        exclude group: "it.unimi.dsi", module: "fastutil"
+    }
+    library("icyllis.modernui:ModernUI-Markdown:${modernui_core_version}") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+        exclude group: "com.google.code.findbugs", module: "jsr305"
+        exclude group: "org.jetbrains", module: "annotations"
+        exclude group: "com.ibm.icu", module: "icu4j"
+        exclude group: "it.unimi.dsi", module: "fastutil"
     }
     implementation fg.deobf("icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_forge_version}")
 }
