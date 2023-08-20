@@ -25,7 +25,11 @@ public class FluxNetworks {
 
         FluxConfig.init();
         if (sModernUILoaded) {
-            FMLJavaModLoadingContext.get().getModEventBus().register(MUIIntegration.class);
+            try {
+                FMLJavaModLoadingContext.get().getModEventBus().register(MUIIntegration.class);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
     }
 

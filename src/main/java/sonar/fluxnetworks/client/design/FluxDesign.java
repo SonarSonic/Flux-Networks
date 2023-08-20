@@ -1,12 +1,11 @@
 package sonar.fluxnetworks.client.design;
 
+import icyllis.modernui.core.Context;
 import icyllis.modernui.util.ColorStateList;
 import icyllis.modernui.util.StateSet;
 import icyllis.modernui.widget.EditText;
 
 import javax.annotation.Nonnull;
-
-import static icyllis.modernui.view.View.dp;
 
 public final class FluxDesign {
 
@@ -25,13 +24,13 @@ public final class FluxDesign {
     });
 
     @Nonnull
-    public static EditText createTextField() {
-        var v = new EditText();
+    public static EditText createTextField(@Nonnull Context context) {
+        var v = new EditText(context);
         v.setSingleLine();
         v.setTextSize(16);
         v.setTextColor(TEXT_COLOR);
-        v.setBackground(new RoundRectDrawable());
-        v.setPadding(dp(8), dp(4), dp(8), dp(4));
+        v.setBackground(new RoundRectDrawable(v));
+        v.setPadding(v.dp(8), v.dp(4), v.dp(8), v.dp(4));
         return v;
     }
 }

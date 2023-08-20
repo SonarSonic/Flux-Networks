@@ -1,9 +1,7 @@
 package sonar.fluxnetworks.client.widget;
 
-import icyllis.modernui.animation.Animator;
-import icyllis.modernui.animation.ObjectAnimator;
-import icyllis.modernui.animation.PropertyValuesHolder;
-import icyllis.modernui.animation.TimeInterpolator;
+import icyllis.modernui.animation.*;
+import icyllis.modernui.core.Context;
 import icyllis.modernui.graphics.Canvas;
 import icyllis.modernui.graphics.Paint;
 import icyllis.modernui.widget.RadioButton;
@@ -14,7 +12,7 @@ import javax.annotation.Nonnull;
 public class ColorButton extends RadioButton {
 
     private static final float START_SCALE = 0.8f;
-    private static final TimeInterpolator sMagInterpolator = TimeInterpolator.anticipateOvershoot(4);
+    private static final TimeInterpolator sMagInterpolator = new AnticipateOvershootInterpolator(4);
 
     private final int mRadius;
     private int mColor = ~0;
@@ -22,7 +20,8 @@ public class ColorButton extends RadioButton {
     private final Animator mMagAnim;
     private final Animator mMinAnim;
 
-    public ColorButton() {
+    public ColorButton(Context context) {
+        super(context);
         mRadius = dp(4);
         mMagAnim = ObjectAnimator.ofPropertyValuesHolder(this,
                 PropertyValuesHolder.ofFloat(SCALE_X, START_SCALE, 1.0f),
@@ -52,7 +51,7 @@ public class ColorButton extends RadioButton {
     protected void onDraw(@Nonnull Canvas canvas) {
         super.onDraw(canvas);
 
-        Paint paint = Paint.take();
+        Paint paint = Paint.obtain();
         paint.setColor(mColor);
         float inner = mRadius * 0.5f;
         canvas.drawRect(inner, inner, getWidth() - inner, getHeight() - inner, paint);
@@ -63,6 +62,7 @@ public class ColorButton extends RadioButton {
             paint.setColor(0xFFFFFFFF);
             canvas.drawRoundRect(inner, inner, getWidth() - inner, getHeight() - inner, inner, paint);
         }
+        paint.recycle();
     }
 
     @Override

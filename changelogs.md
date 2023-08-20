@@ -1,4 +1,9 @@
-### Changelog 1.19.2-7.0.8.12 (2022-11-18)
+### Changelog 1.18.2-7.0.9.15 (2023-08-20)
+* Add/fix compatibility with Modern UI 3.7.+
+* Improve Traditional Chinese translations (@StarskyXIII)
+* Update vi_vn.json (@ZzThanhBaozZ)
+
+### Changelog 1.18.2-7.0.8.12 (2022-11-18)
 * Fix crash when charging curios slots
 
 ### Changelog 1.18.2-7.0.7.8 (2022-08-13)

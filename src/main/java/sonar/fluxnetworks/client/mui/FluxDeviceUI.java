@@ -1,21 +1,13 @@
 package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.animation.LayoutTransition;
-import icyllis.modernui.fragment.Fragment;
-import icyllis.modernui.fragment.FragmentContainerView;
-import icyllis.modernui.fragment.FragmentManager;
-import icyllis.modernui.fragment.FragmentTransaction;
+import icyllis.modernui.core.Context;
+import icyllis.modernui.fragment.*;
 import icyllis.modernui.graphics.Image;
 import icyllis.modernui.graphics.drawable.ImageDrawable;
-import icyllis.modernui.util.ColorStateList;
-import icyllis.modernui.util.DataSet;
-import icyllis.modernui.util.StateSet;
-import icyllis.modernui.view.Gravity;
-import icyllis.modernui.view.View;
-import icyllis.modernui.view.ViewGroup;
-import icyllis.modernui.widget.FrameLayout;
-import icyllis.modernui.widget.ImageButton;
-import icyllis.modernui.widget.LinearLayout;
+import icyllis.modernui.util.*;
+import icyllis.modernui.view.*;
+import icyllis.modernui.widget.*;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.design.FluxDesign;
 import sonar.fluxnetworks.client.design.TabBackground;
@@ -25,9 +17,7 @@ import sonar.fluxnetworks.common.device.TileFluxDevice;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static icyllis.modernui.view.View.dp;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static icyllis.modernui.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import static icyllis.modernui.view.ViewGroup.LayoutParams.*;
 
 public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener {
 
@@ -65,8 +55,8 @@ public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener 
     }
 
     @Override
-    public void onAttach() {
-        super.onAttach();
+    public void onAttach(Context context) {
+        super.onAttach(context);
         getParentFragmentManager().beginTransaction()
                 .setPrimaryNavigationFragment(this)
                 .commit();
@@ -93,18 +83,19 @@ public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener 
 
     @Nullable
     @Override
-    public View onCreateView(@Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
-        var content = new LinearLayout();
+    public View onCreateView(@Nonnull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
+        var content = new LinearLayout(requireContext());
         content.setOrientation(LinearLayout.VERTICAL);
 
-        var buttonGroup = new LinearLayout();
+        var buttonGroup = new LinearLayout(requireContext());
         buttonGroup.setOrientation(LinearLayout.HORIZONTAL);
         buttonGroup.setHorizontalGravity(Gravity.CENTER_HORIZONTAL);
         buttonGroup.setLayoutTransition(new LayoutTransition());
 
-        int buttonSize = dp(32);
+        int buttonSize = content.dp(32);
         for (int i = 0; i < 8; i++) {
-            var button = new ImageButton();
+            var button = new ImageButton(requireContext());
             var drawable = new ImageDrawable(sButtonIcon);
             if (i == 0) {
                 drawable.setSrcRect(2, 258, 66, 322);
@@ -115,7 +106,7 @@ public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener 
             button.setImageDrawable(drawable);
 
             var params = new LinearLayout.LayoutParams(buttonSize, buttonSize);
-            params.setMarginsRelative(dp(i == 7 ? 26 : 2), dp(2), dp(2), dp(6));
+            params.setMarginsRelative(content.dp(i == 7 ? 26 : 2), content.dp(2), content.dp(2), content.dp(6));
             if (i == 0 || i == 7) {
                 buttonGroup.addView(button, params);
             } else {
@@ -150,11 +141,11 @@ public class FluxDeviceUI extends Fragment implements FluxMenu.OnResultListener 
 
         content.addView(buttonGroup, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
 
-        var tabContainer = new FragmentContainerView();
-        tabContainer.setBackground(new TabBackground());
+        var tabContainer = new FragmentContainerView(requireContext());
+        tabContainer.setBackground(new TabBackground(content));
         tabContainer.setId(id_tab_container);
 
-        int tabSize = dp(340);
+        int tabSize = content.dp(340);
         content.addView(tabContainer, new LinearLayout.LayoutParams(tabSize, tabSize));
 
         content.setLayoutParams(new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, Gravity.CENTER));

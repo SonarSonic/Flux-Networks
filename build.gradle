@@ -102,12 +102,11 @@ minecraft.runs.all {
 }
 
 repositories {
-    mavenLocal()
-    maven {
+    /*maven {
         // JEI
         name 'Progwml6 maven'
         url 'https://dvs1.progwml6.com/files/maven/'
-    }
+    }*/
     maven {
         // The One Probe
         name 'tterrag maven'
@@ -136,6 +135,7 @@ repositories {
         }
     }
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -155,8 +155,31 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${minecraft_version}-${curios_version}")
 
-    library "icyllis.modernui:ModernUI-Core:${modernui_version}"
-    implementation fg.deobf("icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_version}")
+    library("icyllis.modernui:ModernUI-Core:${modernui_core_version}") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+        exclude group: "com.google.code.findbugs", module: "jsr305"
+        exclude group: "org.jetbrains", module: "annotations"
+        exclude group: "com.ibm.icu", module: "icu4j"
+        exclude group: "it.unimi.dsi", module: "fastutil"
+    }
+    library("icyllis.modernui:ModernUI-ViewPager:${modernui_core_version}") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+        exclude group: "com.google.code.findbugs", module: "jsr305"
+        exclude group: "org.jetbrains", module: "annotations"
+        exclude group: "com.ibm.icu", module: "icu4j"
+        exclude group: "it.unimi.dsi", module: "fastutil"
+    }
+    library("icyllis.modernui:ModernUI-Markdown:${modernui_core_version}") {
+        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+        exclude group: "com.google.code.findbugs", module: "jsr305"
+        exclude group: "org.jetbrains", module: "annotations"
+        exclude group: "com.ibm.icu", module: "icu4j"
+        exclude group: "it.unimi.dsi", module: "fastutil"
+    }
+    implementation fg.deobf("icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_forge_version}")
 }
 
 processResources {

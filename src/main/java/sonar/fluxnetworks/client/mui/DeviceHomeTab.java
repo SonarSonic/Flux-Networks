@@ -1,24 +1,16 @@
 package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.animation.*;
-import icyllis.modernui.forge.CanvasForge;
+import icyllis.modernui.core.Context;
 import icyllis.modernui.fragment.Fragment;
-import icyllis.modernui.graphics.Canvas;
-import icyllis.modernui.graphics.Image;
-import icyllis.modernui.graphics.Paint;
+import icyllis.modernui.graphics.*;
 import icyllis.modernui.graphics.drawable.Drawable;
-import icyllis.modernui.math.Rect;
+import icyllis.modernui.mc.forge.ContainerDrawHelper;
 import icyllis.modernui.text.InputFilter;
 import icyllis.modernui.text.method.DigitsInputFilter;
-import icyllis.modernui.util.DataSet;
-import icyllis.modernui.util.FloatProperty;
-import icyllis.modernui.util.IntProperty;
-import icyllis.modernui.view.View;
-import icyllis.modernui.view.ViewGroup;
-import icyllis.modernui.widget.EditText;
-import icyllis.modernui.widget.FrameLayout;
-import icyllis.modernui.widget.LinearLayout;
-import icyllis.modernui.widget.TextView;
+import icyllis.modernui.util.*;
+import icyllis.modernui.view.*;
+import icyllis.modernui.widget.*;
 import net.minecraft.locale.Language;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -26,14 +18,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.client.design.RoundRectDrawable;
-import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.common.connection.TransferHandler;
+import sonar.fluxnetworks.common.device.TileFluxDevice;
 import sonar.fluxnetworks.register.ClientMessages;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static icyllis.modernui.view.View.dp;
 
 /**
  * The home page for Flux Point and Flux Plug.
@@ -52,15 +42,16 @@ public class DeviceHomeTab extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
+    public View onCreateView(@Nonnull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
         final Language lang = Language.getInstance();
 
-        var content = new LinearLayout();
+        var content = new LinearLayout(requireContext());
         content.setOrientation(LinearLayout.VERTICAL);
         content.setLayoutTransition(new LayoutTransition());
 
         for (int i = 0; i < 3; i++) {
-            var v = new EditText();
+            var v = new EditText(requireContext());
             switch (i) {
                 case 0 -> {
                     v.setText(mDevice.getCustomName());
@@ -116,24 +107,24 @@ public class DeviceHomeTab extends Fragment {
                 }
             }
             v.setSingleLine();
-            v.setBackground(new RoundRectDrawable());
+            v.setBackground(new RoundRectDrawable(v));
             v.setTextSize(16);
             v.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    new TextFieldStart(FluxDeviceUI.sButtonIcon, (((i + 1) % 3) + 1) * 64), null, null, null);
+                    new TextFieldStart(v, FluxDeviceUI.sButtonIcon, (((i + 1) % 3) + 1) * 64), null, null, null);
             v.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
 
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.setMargins(dp(20), dp(i == 0 ? 50 : 2), dp(20), dp(2));
+            params.setMargins(content.dp(20), content.dp(i == 0 ? 50 : 2), content.dp(20), content.dp(2));
 
             content.postDelayed(() -> content.addView(v, params), (i + 1) * 100);
         }
 
         {
-            var v = new ConnectorView(FluxDeviceUI.sButtonIcon);
+            var v = new ConnectorView(requireContext(), FluxDeviceUI.sButtonIcon);
             var params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT);
-            params.setMargins(dp(8), dp(2), dp(8), dp(8));
+            params.setMargins(content.dp(8), content.dp(2), content.dp(8), content.dp(8));
             content.postDelayed(() -> content.addView(v, params), 400);
         }
 
@@ -154,10 +145,11 @@ public class DeviceHomeTab extends Fragment {
 
         private final ItemStack mItem = Items.DIAMOND_BLOCK.getDefaultInstance();
 
-        public ConnectorView(Image image) {
+        public ConnectorView(Context context, Image image) {
+            super(context);
             mImage = image;
             mSize = dp(32);
-            mRodAnimator = ObjectAnimator.ofFloat(this, new FloatProperty<>() {
+            mRodAnimator = ObjectAnimator.ofFloat(this, new FloatProperty<>("rod") {
                 @Override
                 public void setValue(@Nonnull ConnectorView object, float value) {
                     object.mRodLength = value;
@@ -177,7 +169,7 @@ public class DeviceHomeTab extends Fragment {
                     mBoxAnimator.start();
                 }
             });
-            mBoxAnimator = ObjectAnimator.ofInt(mBoxPaint, new IntProperty<>() {
+            mBoxAnimator = ObjectAnimator.ofInt(mBoxPaint, new IntProperty<>("box") {
                 @Override
                 public void setValue(@Nonnull Paint object, int value) {
                     object.setAlpha(value);
@@ -202,7 +194,7 @@ public class DeviceHomeTab extends Fragment {
 
         @Override
         protected void onDraw(@Nonnull Canvas canvas) {
-            Paint paint = Paint.take();
+            Paint paint = Paint.obtain();
             paint.setColor(FluxDeviceUI.NETWORK_COLOR);
             paint.setAlpha(192);
             paint.setStrokeWidth(mSize / 8f);
@@ -216,7 +208,7 @@ public class DeviceHomeTab extends Fragment {
             float py1 = centerY + (8 / 64f) * mSize;
             canvas.save();
             canvas.rotate(22.5f, px1l, py1);
-            canvas.drawRoundLine(px1l, py1, px1l - mRodLength * 2, py1, paint);
+            canvas.drawLine(px1l, py1, px1l - mRodLength * 2, py1, paint);
             canvas.restore();
 
             if (boxAlpha > 0) {
@@ -227,7 +219,7 @@ public class DeviceHomeTab extends Fragment {
             float px1r = centerX + (15 / 64f) * mSize;
             canvas.save();
             canvas.rotate(-22.5f, px1r, py1);
-            canvas.drawRoundLine(px1r, py1, px1r + mRodLength * 2, py1, paint);
+            canvas.drawLine(px1r, py1, px1r + mRodLength * 2, py1, paint);
             canvas.restore();
 
             if (boxAlpha > 0) {
@@ -236,7 +228,7 @@ public class DeviceHomeTab extends Fragment {
             }
 
             float py2 = centerY + (19 / 64f) * mSize;
-            canvas.drawRoundLine(centerX, py2, centerX, py2 + mRodLength, paint);
+            canvas.drawLine(centerX, py2, centerX, py2 + mRodLength, paint);
 
             if (boxAlpha > 0) {
                 canvas.drawRect(centerX - mSize * .5f, py2 + mSize * 1.1f,
@@ -250,7 +242,7 @@ public class DeviceHomeTab extends Fragment {
 
             canvas.save();
             canvas.rotate(-22.5f, px1l, py1);
-            canvas.drawRoundLine(px1l, py1, px1l - mRodLength * 2, py1, paint);
+            canvas.drawLine(px1l, py1, px1l - mRodLength * 2, py1, paint);
             canvas.restore();
 
             if (boxAlpha > 0) {
@@ -260,7 +252,7 @@ public class DeviceHomeTab extends Fragment {
 
             canvas.save();
             canvas.rotate(22.5f, px1r, py1);
-            canvas.drawRoundLine(px1r, py1, px1r + mRodLength * 2, py1, paint);
+            canvas.drawLine(px1r, py1, px1r + mRodLength * 2, py1, paint);
             canvas.restore();
 
             if (boxAlpha > 0) {
@@ -269,15 +261,14 @@ public class DeviceHomeTab extends Fragment {
             }
 
             py2 = centerY - (19 / 64f) * mSize;
-            canvas.drawRoundLine(centerX, py2, centerX, py2 - mRodLength, paint);
+            canvas.drawLine(centerX, py2, centerX, py2 - mRodLength, paint);
 
             if (boxAlpha > 0) {
                 canvas.drawRect(centerX - mSize * .5f, py2 - mSize * 2.1f,
                         centerX + mSize * .5f, py2 - mSize * 1.1f, mBoxPaint);
-                paint.reset();
-                paint.setAlpha(Math.min(255, boxAlpha << 1));
-                CanvasForge.get(canvas).drawItemStack(mItem, centerX, py2 - mSize * 1.6f, mSize, paint);
+                ContainerDrawHelper.drawItem(canvas, mItem, centerX, py2 - mSize * 1.6f, 0, mSize, 0);
             }
+            paint.recycle();
         }
     }
 
@@ -287,10 +278,10 @@ public class DeviceHomeTab extends Fragment {
         private final int mSrcLeft;
         private final int mSize;
 
-        public TextFieldStart(Image image, int srcLeft) {
+        public TextFieldStart(View v, Image image, int srcLeft) {
             mImage = image;
             mSrcLeft = srcLeft;
-            mSize = dp(24);
+            mSize = v.dp(24);
         }
 
         @Override

@@ -1,6 +1,6 @@
 package sonar.fluxnetworks.register;
 
-import icyllis.modernui.forge.NetworkHandler;
+import icyllis.modernui.mc.forge.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.chunk.LevelChunk;

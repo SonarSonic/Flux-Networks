@@ -2,10 +2,8 @@ package sonar.fluxnetworks.client.mui;
 
 import icyllis.modernui.animation.LayoutTransition;
 import icyllis.modernui.fragment.Fragment;
-import icyllis.modernui.graphics.Canvas;
-import icyllis.modernui.graphics.Paint;
+import icyllis.modernui.graphics.*;
 import icyllis.modernui.graphics.drawable.Drawable;
-import icyllis.modernui.math.Rect;
 import icyllis.modernui.text.*;
 import icyllis.modernui.text.method.PasswordTransformationMethod;
 import icyllis.modernui.util.DataSet;
@@ -28,7 +26,6 @@ import sonar.fluxnetworks.register.ClientMessages;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static icyllis.modernui.view.View.dp;
 import static icyllis.modernui.view.ViewGroup.LayoutParams.*;
 
 public class CreateTab extends Fragment {
@@ -78,26 +75,27 @@ public class CreateTab extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
-        final int dp2 = dp(2);
+    public View onCreateView(@Nonnull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable DataSet savedInstanceState) {
 
-        var content = new LinearLayout();
+        var content = new LinearLayout(requireContext());
         content.setOrientation(LinearLayout.VERTICAL);
         content.setLayoutTransition(new LayoutTransition());
+        final int dp2 = content.dp(2);
 
         {
-            var v = new TextView();
+            var v = new TextView(requireContext());
             v.setText(FluxTranslate.TAB_CREATE.get());
             v.setTextSize(16);
             v.setTextColor(FluxDesign.LIGHT_GRAY);
             var params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
-            params.setMargins(0, dp(20), 0, dp(12));
+            params.setMargins(0, content.dp(20), 0, content.dp(12));
             content.addView(v, params);
         }
 
         {
-            mName = FluxDesign.createTextField();
+            mName = FluxDesign.createTextField(requireContext());
             mNameBg = (RoundRectDrawable) mName.getBackground();
             // make sure it will be filtered
             mName.setFilters(new InputFilter.LengthFilter(FluxNetwork.MAX_NETWORK_NAME_LENGTH));
@@ -113,37 +111,38 @@ public class CreateTab extends Fragment {
             mName.addTextChangedListener(mTextWatcher);
 
             var params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-            params.setMargins(dp(20), dp2, dp(20), dp(2));
+            params.setMargins(content.dp(20), dp2, content.dp(20), content.dp(2));
             content.addView(mName, params);
         }
 
         {
-            var group = new LinearLayout();
+            var group = new LinearLayout(requireContext());
             group.setOrientation(LinearLayout.HORIZONTAL);
 
             {
-                var title = new TextView();
+                var title = new TextView(requireContext());
                 title.setText(FluxTranslate.NETWORK_SECURITY.get());
                 title.setTextSize(16);
                 title.setTextColor(0xFF808080);
                 var params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1);
-                params.setMargins(dp(26), 0, dp(20), 0);
+                params.setMargins(content.dp(26), 0, content.dp(20), 0);
                 group.addView(title, params);
             }
 
             {
-                var spinner = new Spinner();
+                var spinner = new Spinner(requireContext());
                 spinner.setPopupBackgroundDrawable(new Drawable() {
-                    private final int mRadius = dp(8);
+                    private final int mRadius = content.dp(8);
 
                     @Override
                     public void draw(@Nonnull Canvas canvas) {
                         Rect b = getBounds();
                         float inner = mRadius * 0.5f;
-                        Paint paint = Paint.take();
+                        Paint paint = Paint.obtain();
                         paint.setColor(0xCF202020);
                         canvas.drawRoundRect(b.left + inner, b.top + inner, b.right - inner, b.bottom - inner,
                                 mRadius, paint);
+                        paint.recycle();
                     }
 
                     @Override
@@ -154,7 +153,7 @@ public class CreateTab extends Fragment {
                     }
                 });
                 spinner.setGravity(Gravity.END);
-                spinner.setPadding(dp(8), dp2, dp(8), dp2);
+                spinner.setPadding(content.dp(8), dp2, content.dp(8), dp2);
                 spinner.setAdapter(new SecurityLevelAdapter());
                 spinner.setSelection(mSecurityLevel.getId());
                 spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -169,7 +168,7 @@ public class CreateTab extends Fragment {
                     }
                 });
                 var params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-                params.setMargins(dp(20), 0, dp(20), 0);
+                params.setMargins(content.dp(20), 0, content.dp(20), 0);
                 group.addView(spinner, params);
             }
 
@@ -180,7 +179,7 @@ public class CreateTab extends Fragment {
         }
 
         {
-            mPassword = FluxDesign.createTextField();
+            mPassword = FluxDesign.createTextField(requireContext());
             mPasswordBg = (RoundRectDrawable) mPassword.getBackground();
             mPassword.setHint("Password");
             mPassword.setHintTextColor(FluxDesign.GRAY);
@@ -190,7 +189,7 @@ public class CreateTab extends Fragment {
             mPassword.addTextChangedListener(mTextWatcher);
 
             var params = new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-            params.setMargins(dp(20), dp2, dp(20), dp2);
+            params.setMargins(content.dp(20), dp2, content.dp(20), dp2);
             content.addView(mPassword, params);
         }
 
@@ -199,11 +198,11 @@ public class CreateTab extends Fragment {
 
             var params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
-            params.setMargins(dp(20), dp(8), dp(20), dp(2));
+            params.setMargins(content.dp(20), content.dp(8), content.dp(20), content.dp(2));
 
             content.addView(mColorGroup, params);
 
-            mColorPicker = new ColorPicker();
+            mColorPicker = new ColorPicker(requireContext());
 
             mColorPicker.setOnColorChangeListener(new OnColorChangeListener() {
                 @Override
@@ -227,19 +226,19 @@ public class CreateTab extends Fragment {
 
             params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 1);
             params.gravity = Gravity.CENTER;
-            params.setMargins(dp(20), dp(2), dp(20), dp(4));
+            params.setMargins(content.dp(20), content.dp(2), content.dp(20), content.dp(4));
 
             content.addView(mColorPicker, params);
         }
 
         {
-            var v = new Button();
+            var v = new Button(requireContext());
             v.setText("Create");
             v.setSingleLine();
             v.setTextSize(16);
             v.setTextColor(FluxDesign.TEXT_COLOR);
-            v.setBackground(mCreateButtonBg = new RoundRectDrawable());
-            v.setPadding(dp(8), dp(4), dp(8), dp(4));
+            v.setBackground(mCreateButtonBg = new RoundRectDrawable(v));
+            v.setPadding(content.dp(8), content.dp(4), content.dp(8), content.dp(4));
             v.setOnClickListener(__ -> ClientMessages.createNetwork(
                     requireArguments().getInt("token"),
                     mName.getText().toString(),
@@ -248,7 +247,7 @@ public class CreateTab extends Fragment {
                     mPassword.getText().toString()));
             var params = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
             params.gravity = Gravity.CENTER;
-            params.setMargins(dp(20), dp(4), dp(20), dp(20));
+            params.setMargins(content.dp(20), content.dp(4), content.dp(20), content.dp(20));
             content.addView(v, params);
             mCreateButton = v;
         }
@@ -282,13 +281,13 @@ public class CreateTab extends Fragment {
 
     @Nonnull
     private RelativeRadioGroup inflateColorGroup() {
-        var group = new RelativeRadioGroup();
+        var group = new RelativeRadioGroup(requireContext());
 
-        int buttonSize = dp(32);
-        int margin = dp(1);
+        int buttonSize = group.dp(32);
+        int margin = group.dp(1);
         for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
             EnumNetworkColor color = EnumNetworkColor.VALUES[i];
-            var v = new ColorButton();
+            var v = new ColorButton(requireContext());
             v.setColor(color.getRGB() | 0xC0000000);
             v.setId(i + 1);
             var params = new RelativeLayout.LayoutParams(buttonSize, buttonSize);
