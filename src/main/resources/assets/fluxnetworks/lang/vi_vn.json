@@ -7,7 +7,7 @@
 	"block.fluxnetworks.flux_plug": "Phích Thông Lượng",
 	"block.fluxnetworks.basic_flux_storage": "Kho Dự Trữ Thông Lương Đơn Giản",
 	"block.fluxnetworks.herculean_flux_storage": "Kho Dự Trữ Thông Lượng Phi Thường",
-	"block.fluxnetworks.gargantuan_flux_storage": "Kho Dự Trữ Thông Lượng Phi Thường",
+	"block.fluxnetworks.gargantuan_flux_storage": "Kho Dự Trữ Thông Lượng Khổng Lồ",
 
 	"item.fluxnetworks.flux_dust": "Bụi Thông Lượng",
 	"item.fluxnetworks.flux_core": "Lõi Thông Lượng",
@@ -16,9 +16,9 @@
 
 	"tooltip.fluxnetworks.flux_dust": "Thu được bằng cách nén Bụi Đá Đỏ với Đá Nền và Hắc Diệm Thạch",
 	"tooltip.fluxnetworks.flux_controller": "Cho phép Sạc Không Dây trên Mạng Lưới Thông Lượng",
-	"tooltip.fluxnetworks.flux_plug": "Tiếp nhận năng lượng từ các khối liền kệ một cách thụ động, tiếp thêm năng lượng từ Hệ Thống Thông Lượng",
-	"tooltip.fluxnetworks.flux_point": "Cung cấp năng lượng cho các khối liền kề một cách chủ động, rút bớt năng lượng từ Hệ Thống Thông Lượng",
-	"tooltip.fluxnetworks.flux_storage": "Dự trữ năng lượng cho Hệ Thống Thông Lượng",
+	"tooltip.fluxnetworks.flux_plug": "Tiếp nhận năng lượng từ các khối liền kề một cách thụ động, tiếp thêm năng lượng cho Mạng Lưới Thông Lượng",
+	"tooltip.fluxnetworks.flux_point": "Cung cấp năng lượng cho các khối liền kề một cách chủ động, rút bớt năng lượng từ Mạng Lưới Thông Lượng",
+	"tooltip.fluxnetworks.flux_storage": "Dự trữ năng lượng cho Mạng Lưới Thông Lượng",
 	"tooltip.fluxnetworks.flux_storage_2": "Dung Tích Dự Trữ Năng Lượng: %s",
 
 	"gui.fluxnetworks.tab.home": "Chính",
@@ -52,7 +52,7 @@
 	"gui.fluxnetworks.flux.priority": "Ưu Tiên",
 	"gui.fluxnetworks.flux.surgemode": "Xung Lượng",
 	"gui.fluxnetworks.flux.disablelimit": "Bỏ Qua Giới Hạn",
-	"gui.fluxnetworks.flux.chunkloading": "Tự Động Chunk",
+	"gui.fluxnetworks.flux.chunkloading": "Tự Tải Chunk",
 	"gui.fluxnetworks.flux.name": "Tên",
 	"gui.fluxnetworks.flux.transferlimit": "Giới Hạn Chuyển",
 	"gui.fluxnetworks.flux.wireless": "Cho Phép Không Dây",
@@ -78,7 +78,7 @@
 	"gui.fluxnetworks.response.hascontroller": "Hệ thống này đã có sẵn một Bộ Điều Khiển Thông Lượng",
 	"gui.fluxnetworks.response.invaliduser": "Người dùng không hợp lệ",
 	"gui.fluxnetworks.response.invalidpassword": "Mật khẩu không hợp lệ",
-	"gui.fluxnetworks.response.bannedloading": "Chunk loading is banned on this server",
+	"gui.fluxnetworks.response.bannedloading": "Tự tải Chunk đã bị cấm trong máy chủ này",
 
 	"gui.fluxnetworks.label.sortby": "Sắp xếp theo",
 	"gui.fluxnetworks.label.selected": "%s Đồ Vật Được Chọn",
@@ -121,7 +121,7 @@
 	"gui.fluxnetworks.slot.mainhand": "Tay Chính",
 	"gui.fluxnetworks.slot.offhand": "Tay Phụ",
 	"gui.fluxnetworks.slot.armor": "Vị Trí Giáp",
-	"gui.fluxnetworks.slot.curios": "Ví Trí Vật Kèm",
+	"gui.fluxnetworks.slot.curios": "Vị Trí Phụ Kiện",
 
 	"gui.fluxnetworks.stat.plug": "Phích",
 	"gui.fluxnetworks.stat.point": "Nút",
