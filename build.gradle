@@ -1,21 +1,8 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            name "forge"
-            url "https://maven.minecraftforge.net/"
-        }
-        maven {
-            url "https://maven.parchmentmc.org/"
-        }
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+', changing: true
-    }
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
+
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
@@ -69,11 +56,6 @@ minecraft {
     }
 }
 
-configurations {
-    library
-    implementation.extendsFrom library
-}
-
 sourceSets {
     api {
         java {
@@ -92,12 +74,6 @@ sourceSets {
         }
         compileClasspath += sourceSets.api.output
         runtimeClasspath += sourceSets.api.output
-    }
-}
-
-minecraft.runs.all {
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
     }
 }
 
@@ -158,7 +134,7 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0-beta.3+1.20.1:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.2.0-beta.3+1.20.1")
 
-    library("icyllis.modernui:ModernUI-Core:${modernui_core_version}") {
+    minecraftLibrary("icyllis.modernui:ModernUI-Core:${modernui_core_version}") {
         exclude group: "org.apache.logging.log4j", module: "log4j-core"
         exclude group: "org.apache.logging.log4j", module: "log4j-api"
         exclude group: "com.google.code.findbugs", module: "jsr305"
@@ -166,15 +142,7 @@ dependencies {
         exclude group: "com.ibm.icu", module: "icu4j"
         exclude group: "it.unimi.dsi", module: "fastutil"
     }
-    library("icyllis.modernui:ModernUI-ViewPager:${modernui_core_version}") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-        exclude group: "org.apache.logging.log4j", module: "log4j-api"
-        exclude group: "com.google.code.findbugs", module: "jsr305"
-        exclude group: "org.jetbrains", module: "annotations"
-        exclude group: "com.ibm.icu", module: "icu4j"
-        exclude group: "it.unimi.dsi", module: "fastutil"
-    }
-    library("icyllis.modernui:ModernUI-Markdown:${modernui_core_version}") {
+    minecraftLibrary("icyllis.modernui:ModernUI-Markdown:${modernui_core_version}") {
         exclude group: "org.apache.logging.log4j", module: "log4j-core"
         exclude group: "org.apache.logging.log4j", module: "log4j-api"
         exclude group: "com.google.code.findbugs", module: "jsr305"
