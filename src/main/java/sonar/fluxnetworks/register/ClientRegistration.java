@@ -2,13 +2,13 @@ package sonar.fluxnetworks.register;
 
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.client.FluxColorHandler;
 import sonar.fluxnetworks.client.gui.GuiFluxAdminHome;
@@ -21,18 +21,26 @@ import sonar.fluxnetworks.common.integration.MUIIntegration;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = FluxNetworks.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = FluxNetworks.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ClientRegistration {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
-        if (FluxNetworks.isModernUILoaded()) {
-            event.enqueueWork(() -> MenuScreens.register(RegistryMenuTypes.FLUX_MENU.get(),
-                    MUIIntegration.upgradeScreenFactory(getScreenFactory())));
-        } else {
-            event.enqueueWork(() -> MenuScreens.register(RegistryMenuTypes.FLUX_MENU.get(),
-                    getScreenFactory()));
-        }
+//        if (FluxNetworks.isModernUILoaded()) {
+//            event.enqueueWork(
+//                    () -> MenuScreens.create(
+//                            RegistryMenuTypes.FLUX_MENU.get(),
+//                            MUIIntegration.upgradeScreenFactory(getScreenFactory())
+//                    )
+//            );
+//        } else {
+//            event.enqueueWork(
+//                    () -> MenuScreens.create(
+//                            RegistryMenuTypes.FLUX_MENU.get(),
+//                            getScreenFactory()
+//                    )
+//            );
+//        }
     }
 
     @Nonnull

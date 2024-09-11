@@ -1,57 +1,76 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '1.0.17'
 }
 
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+tasks.named('wrapper', Wrapper).configure {
+    distributionType = Wrapper.DistributionType.BIN
+}
 
-version = "${minecraft_version}-${mod_version}" as String
-group = 'sonar.fluxnetworks'
-archivesBaseName = 'FluxNetworks'
+version = mod_version
+group = mod_group_id
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+repositories {
+    mavenLocal()
+}
 
-minecraft {
-    mappings channel: 'parchment', version: "2023.07.16-1.20.1"
+base {
+    archivesName = mod_id
+}
 
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
+
+    // This line is optional. Access Transformers are automatically detected
+    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
     runs {
+        configureEach {
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            systemProperty 'mixin.env.remapRefMap', 'true'
+            systemProperty 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            logLevel = org.slf4j.event.Level.DEBUG
+
+        }
+
         client {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                fluxnetworks {
-                    source sourceSets.main
-                }
-            }
+            client()
+
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            mods {
-                fluxnetworks {
-                    source sourceSets.main
-                }
-            }
+            server()
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-            args '--mod', 'fluxnetworks', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods {
-                fluxnetworks {
-                    source sourceSets.main
-                }
-            }
+            data()
+
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
         }
     }
 }
@@ -80,9 +99,9 @@ sourceSets {
 repositories {
     mavenLocal()
     maven {
-        // JEI
-        name 'Progwml6 maven'
-        url 'https://dvs1.progwml6.com/files/maven/'
+        // location of the maven that hosts JEI files since January 2023
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
     }
     maven {
         // The One Probe
@@ -114,63 +133,102 @@ repositories {
     mavenCentral()
 }
 
+// Sets up a dependency configuration called 'localRuntime'.
+// This configuration should be used instead of 'runtimeOnly' to declare
+// a dependency that will be present for runtime testing but that is
+// "optional", meaning it will not be pulled by dependents of this mod.
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    // compile against the JEI API but do not include it at runtime
+    compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
+    // at runtime, use the full JEI jar for NeoForge
+    localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
     compileOnly "mekanism:Mekanism:${mekanism_version}:api"
-    runtimeOnly fg.deobf("mekanism:Mekanism:${mekanism_version}")
+    localRuntime "mekanism:Mekanism:${mekanism_version}"
 
-    implementation fg.deobf("curse.maven:the-one-probe-245211:4629624") // 1.20.1-10.0.1
-    //implementation fg.deobf("curse.maven:ic2-classic-242942:4441313") // 1.19.2-2.0.5
-    //runtimeOnly fg.deobf("curse.maven:powah-rearchitected-633483:3855683") // [FORGE 1.18.2] v3.0.1-beta
+    implementation "curse.maven:the-one-probe-245211:4629624"
 
-    //runtimeOnly fg.deobf("curse.maven:applied-energistics-2-223794:3554445")
-    compileOnly fg.deobf("curse.maven:gregtechceu-modern-890405:5100760") // GregTechCEu 1.20.1-1.1.3.b
+    compileOnly "curse.maven:gregtechceu-modern-890405:5100760"
 
-    implementation fg.deobf("mezz.jei:jei-${minecraft_version}-core:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
-    compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
 
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.7.2+1.20.1:api")
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:5.7.2+1.20.1")
+    compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
-    minecraftLibrary("icyllis.modernui:ModernUI-Core:${modernui_core_version}") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-        exclude group: "org.apache.logging.log4j", module: "log4j-api"
-        exclude group: "com.google.code.findbugs", module: "jsr305"
-        exclude group: "org.jetbrains", module: "annotations"
-        exclude group: "com.ibm.icu", module: "icu4j"
-        exclude group: "it.unimi.dsi", module: "fastutil"
-    }
-    minecraftLibrary("icyllis.modernui:ModernUI-Markdown:${modernui_core_version}") {
-        exclude group: "org.apache.logging.log4j", module: "log4j-core"
-        exclude group: "org.apache.logging.log4j", module: "log4j-api"
-        exclude group: "com.google.code.findbugs", module: "jsr305"
-        exclude group: "org.jetbrains", module: "annotations"
-        exclude group: "com.ibm.icu", module: "icu4j"
-        exclude group: "it.unimi.dsi", module: "fastutil"
-    }
-    implementation fg.deobf("icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_forge_version}")
+    compileOnly "top.theillusivec4.curios:curios-forge:5.7.2+1.20.1:api"
+    localRuntime "top.theillusivec4.curios:curios-forge:5.7.2+1.20.1"
+
+//    minecraftLibrary("icyllis.modernui:ModernUI-Core:${modernui_core_version}") {
+//        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+//        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+//        exclude group: "com.google.code.findbugs", module: "jsr305"
+//        exclude group: "org.jetbrains", module: "annotations"
+//        exclude group: "com.ibm.icu", module: "icu4j"
+//        exclude group: "it.unimi.dsi", module: "fastutil"
+//    }
+//    minecraftLibrary("icyllis.modernui:ModernUI-Markdown:${modernui_core_version}") {
+//        exclude group: "org.apache.logging.log4j", module: "log4j-core"
+//        exclude group: "org.apache.logging.log4j", module: "log4j-api"
+//        exclude group: "com.google.code.findbugs", module: "jsr305"
+//        exclude group: "org.jetbrains", module: "annotations"
+//        exclude group: "com.ibm.icu", module: "icu4j"
+//        exclude group: "it.unimi.dsi", module: "fastutil"
+//    }
+//    implementation "icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_forge_version}"
 }
 
-processResources {
-    inputs.property 'version', mod_version
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version      : mc_version,
+//            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+//            neo_version_range      : neo_version_range,
+//            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+//            mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
 
-    filesMatching("META-INF/mods.toml") {
-        expand 'version': mod_version
+sourceSets.main.resources.srcDir generateModMetadata
+
+neoForge.ideSyncTask generateModMetadata
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url "file://${project.projectDir}/repo"
+        }
     }
 }
 
-jar {
-    manifest {
-        attributes([
-                "Specification-Title"     : "Flux-Networks",
-                "Specification-Vendor"    : "SonarSonic",
-                "Specification-Version"   : "1",
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.version,
-                "Implementation-Vendor"   : "SonarSonic, BloCamLimb",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }

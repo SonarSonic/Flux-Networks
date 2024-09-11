@@ -1,15 +1,14 @@
 package sonar.fluxnetworks;
 
 import com.google.common.collect.Lists;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.IConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.config.IConfigSpec;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import sonar.fluxnetworks.common.util.EnergyUtils;
 
 import javax.annotation.Nonnull;
@@ -18,19 +17,19 @@ import java.util.List;
 public class FluxConfig {
 
     private static final Client CLIENT_CONFIG;
-    private static final ForgeConfigSpec CLIENT_SPEC;
+    private static final ModConfigSpec CLIENT_SPEC;
 
     private static final Common COMMON_CONFIG;
-    private static final ForgeConfigSpec COMMON_SPEC;
+    private static final ModConfigSpec COMMON_SPEC;
 
     private static final Server SERVER_CONFIG;
-    private static final ForgeConfigSpec SERVER_SPEC;
+    private static final ModConfigSpec SERVER_SPEC;
 
     static {
-        ForgeConfigSpec.Builder builder;
+        ModConfigSpec.Builder builder;
 
         if (FMLEnvironment.dist.isClient()) {
-            builder = new ForgeConfigSpec.Builder();
+            builder = new ModConfigSpec.Builder();
             CLIENT_CONFIG = new Client(builder);
             CLIENT_SPEC = builder.build();
         } else {
@@ -38,26 +37,26 @@ public class FluxConfig {
             CLIENT_SPEC = null;
         }
 
-        builder = new ForgeConfigSpec.Builder();
+        builder = new ModConfigSpec.Builder();
         COMMON_CONFIG = new Common(builder);
         COMMON_SPEC = builder.build();
 
-        builder = new ForgeConfigSpec.Builder();
+        builder = new ModConfigSpec.Builder();
         SERVER_CONFIG = new Server(builder);
         SERVER_SPEC = builder.build();
     }
 
     static void init() {
         if (FMLEnvironment.dist.isClient()) {
-            ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CLIENT_SPEC);
+            ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, CLIENT_SPEC);
         }
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SERVER_SPEC);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(FluxConfig::reload);
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, SERVER_SPEC);
+        ModLoadingContext.get().getActiveContainer().getEventBus().addListener(FluxConfig::reload);
     }
 
     static void reload(@Nonnull ModConfigEvent event) {
-        final IConfigSpec<?> spec = event.getConfig().getSpec();
+        final IConfigSpec spec = event.getConfig().getSpec();
         if (spec == CLIENT_SPEC) {
             CLIENT_CONFIG.load();
             FluxNetworks.LOGGER.debug("Client config loaded");
@@ -81,10 +80,10 @@ public class FluxConfig {
     @OnlyIn(Dist.CLIENT)
     private static class Client {
 
-        private final ForgeConfigSpec.BooleanValue mEnableButtonSound;
-        private final ForgeConfigSpec.BooleanValue mEnableGuiDebug;
+        private final ModConfigSpec.BooleanValue mEnableButtonSound;
+        private final ModConfigSpec.BooleanValue mEnableGuiDebug;
 
-        private Client(@Nonnull ForgeConfigSpec.Builder builder) {
+        private Client(@Nonnull ModConfigSpec.Builder builder) {
             builder.push("gui");
             mEnableButtonSound = builder
                     .comment("Enable navigation buttons sound when pressing it")
@@ -105,14 +104,14 @@ public class FluxConfig {
 
     private static class Common {
 
-        private final ForgeConfigSpec.BooleanValue
+        private final ModConfigSpec.BooleanValue
                 mEnableOneProbeBasicInfo,
                 mEnableOneProbeAdvancedInfo,
                 mEnableOneProbeSneaking;
 
-        private final ForgeConfigSpec.BooleanValue mEnableGTCEU;
+        private final ModConfigSpec.BooleanValue mEnableGTCEU;
 
-        private Common(@Nonnull ForgeConfigSpec.Builder builder) {
+        private Common(@Nonnull ModConfigSpec.Builder builder) {
             builder.comment("Most configs are moved to /serverconfig/fluxnetworks-server.toml",
                             "Copy to /defaultconfig/fluxnetworks-server.toml for modpacks")
                     .define("placeholder", true);
@@ -160,23 +159,23 @@ public class FluxConfig {
     private static class Server {
 
         // networks
-        private final ForgeConfigSpec.IntValue mMaximumPerPlayer;
-        private final ForgeConfigSpec.IntValue mSuperAdminRequiredPermission;
-        private final ForgeConfigSpec.BooleanValue mEnableSuperAdmin;
+        private final ModConfigSpec.IntValue mMaximumPerPlayer;
+        private final ModConfigSpec.IntValue mSuperAdminRequiredPermission;
+        private final ModConfigSpec.BooleanValue mEnableSuperAdmin;
 
         // general
-        private final ForgeConfigSpec.BooleanValue mEnableFluxRecipe;
-        private final ForgeConfigSpec.BooleanValue mEnableChunkLoading;
-        //private final ForgeConfigSpec.BooleanValue mChunkLoadingRequiresSuperAdmin;
+        private final ModConfigSpec.BooleanValue mEnableFluxRecipe;
+        private final ModConfigSpec.BooleanValue mEnableChunkLoading;
+        //private final ModConfigSpec.BooleanValue mChunkLoadingRequiresSuperAdmin;
 
         // blacklist
-        private final ForgeConfigSpec.ConfigValue<List<String>> mBlockBlacklistStrings, mItemBlackListStrings;
+        private final ModConfigSpec.ConfigValue<List<String>> mBlockBlacklistStrings, mItemBlackListStrings;
 
         // energy
-        private final ForgeConfigSpec.LongValue mDefaultLimit, mBasicCapacity, mBasicTransfer, mHerculeanCapacity,
+        private final ModConfigSpec.LongValue mDefaultLimit, mBasicCapacity, mBasicTransfer, mHerculeanCapacity,
                 mHerculeanTransfer, mGargantuanCapacity, mGargantuanTransfer;
 
-        private Server(@Nonnull ForgeConfigSpec.Builder builder) {
+        private Server(@Nonnull ModConfigSpec.Builder builder) {
             builder.push("networks");
             mMaximumPerPlayer = builder
                     .comment("Maximum networks each player can have. Super admin can bypass this limit. -1 = no limit",

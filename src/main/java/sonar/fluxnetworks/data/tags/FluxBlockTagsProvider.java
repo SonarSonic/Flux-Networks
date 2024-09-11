@@ -23,7 +23,7 @@ public class FluxBlockTagsProvider extends BlockTagsProvider {
     @Override
     protected void addTags(@Nonnull HolderLookup.Provider provider) {
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(RegistryBlocks.FLUX_BLOCK.get())
+                .add(RegistryBlocks.FLUX_BLOCK)
                 .add(RegistryBlocks.FLUX_PLUG.get())
                 .add(RegistryBlocks.FLUX_POINT.get())
                 .add(RegistryBlocks.FLUX_CONTROLLER.get())

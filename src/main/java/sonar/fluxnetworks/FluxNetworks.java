@@ -1,10 +1,16 @@
 package sonar.fluxnetworks;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.item.CreativeModeTab;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sonar.fluxnetworks.register.RegistryBlockEntityTypes;
+import sonar.fluxnetworks.register.RegistryBlocks;
 
 import javax.annotation.Nonnull;
 
@@ -19,6 +25,9 @@ public class FluxNetworks {
 
     private static boolean sCuriosLoaded;
     private static boolean sModernUILoaded;
+
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public FluxNetworks() {
         sCuriosLoaded = ModList.get().isLoaded("curios");
@@ -37,6 +46,6 @@ public class FluxNetworks {
 
     @Nonnull
     public static ResourceLocation location(String path) {
-        return new ResourceLocation(MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

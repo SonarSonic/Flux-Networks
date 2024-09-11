@@ -2,19 +2,25 @@ package sonar.fluxnetworks.data.loot;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.functions.CopyNameFunction;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
+import net.minecraft.world.level.storage.loot.providers.nbt.LootNbtProviderType;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.common.block.FluxDeviceBlock;
@@ -31,8 +37,9 @@ public class FluxBlockLoot extends BlockLootSubProvider {
     // there are not many registry entries, so use an array
     private final Set<Block> knownBlocks = new ObjectArraySet<>();
 
-    public FluxBlockLoot() {
-        super(Collections.emptySet(), FeatureFlags.REGISTRY.allFlags());
+    public FluxBlockLoot(HolderLookup.Provider provider) {
+//        super(Collections.emptySet(), FeatureFlags.REGISTRY.allFlags());
+        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     @Nonnull
@@ -71,6 +78,8 @@ public class FluxBlockLoot extends BlockLootSubProvider {
         if (!(block instanceof FluxDeviceBlock)) {
             throw new IllegalArgumentException();
         }
+
+        //new ContextNbtProvider(BLOCK_ENTITY_PROVIDER)
         CopyNbtFunction.Builder copyNbt = CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY);
         // replace to a sub NBT compound tag to avoid conflicts with vanilla or other mods
         copyNbt.copy(FluxConstants.NETWORK_ID, FluxConstants.TAG_FLUX_DATA + '.' + FluxConstants.NETWORK_ID);

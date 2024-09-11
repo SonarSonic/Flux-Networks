@@ -15,12 +15,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.event.*;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -34,7 +35,7 @@ import sonar.fluxnetworks.common.util.FluxUtils;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = FluxNetworks.MODID)
+@EventBusSubscriber(modid = FluxNetworks.MODID)
 public class EventHandler {
 
     //// SERVER EVENTS \\\\
@@ -46,10 +47,8 @@ public class EventHandler {
     }
 
     @SubscribeEvent
-    public static void onServerTick(@Nonnull TickEvent.ServerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
+    public static void onServerEndTick(@Nonnull ServerTickEvent.Post event) {
             FluxNetworkData.getAllNetworks().forEach(FluxNetwork::onEndServerTick);
-        }
     }
 
     //// WORLD EVENTS \\\\
@@ -113,7 +112,7 @@ public class EventHandler {
                 level.playSound(null, pos, SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
             } else {
                 level.setBlock(pos.below(), crusher, Block.UPDATE_ALL);
-                level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, 1.0f, 1.0f);
+                level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
             }
             int particleCount = Mth.clamp(itemCount >> 2, 4, 64);
             level.sendParticles(ParticleTypes.LAVA, pos.getX() + 0.5, pos.getY(),

@@ -13,8 +13,11 @@ import java.util.*;
 public class FluxLootTableProvider extends LootTableProvider {
 
     public FluxLootTableProvider(PackOutput packOutput) {
-        super(packOutput, Collections.emptySet(), List.of(
-                new SubProviderEntry(FluxBlockLoot::new, LootContextParamSets.BLOCK)));
+        super(
+                packOutput,
+                Set.of(),
+                List.of(new SubProviderEntry(FluxBlockLoot::new, LootContextParamSets.BLOCK))
+        );
     }
 
     @Override
