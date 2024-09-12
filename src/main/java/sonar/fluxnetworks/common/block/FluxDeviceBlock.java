@@ -57,7 +57,8 @@ public abstract class FluxDeviceBlock extends Block implements EntityBlock {
                             ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.getBlockEntity(pos) instanceof TileFluxDevice device) {
-            if (stack.hasTag()) {
+            if (stack.getTags().count() > 0) {
+                //stack.getTags()
                 CompoundTag tag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
                 if (tag != null) {
                     // doing this client side to prevent network flickering when placing, we send a block update next

@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.common.world.chunk.ForcedChunkManager;
 import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
@@ -115,7 +116,7 @@ public abstract class TileFluxDevice extends BlockEntity implements IFluxDevice 
             if (isForcedLoading()) {
                 //FluxChunkManager.removeChunkLoader(this);
                 long chunkPos = ChunkPos.asLong(worldPosition);
-                ForgeChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
+                ForcedChunkManager.forceChunk((ServerLevel) level, FluxNetworks.MODID, worldPosition,
                         ChunkPos.getX(chunkPos), ChunkPos.getZ(chunkPos), false, true);
             }
             getTransferHandler().onNetworkChanged();

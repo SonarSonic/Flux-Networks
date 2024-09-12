@@ -41,7 +41,6 @@ neoForge {
             systemProperty 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             logLevel = org.slf4j.event.Level.DEBUG
-
         }
 
         client {
@@ -138,6 +137,7 @@ repositories {
 // a dependency that will be present for runtime testing but that is
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
+    library
     runtimeClasspath.extendsFrom localRuntime
 }
 
@@ -162,6 +162,14 @@ dependencies {
 
     compileOnly "top.theillusivec4.curios:curios-forge:5.7.2+1.20.1:api"
     localRuntime "top.theillusivec4.curios:curios-forge:5.7.2+1.20.1"
+
+
+    // Modern UI core framework
+    localRuntime "icyllis.modernui:ModernUI-Core:${modernui_version}"
+    // Modern UI core extensions
+    localRuntime "icyllis.modernui:ModernUI-Markdown:${modernui_version}"
+    // Modern UI for Minecraft Forge
+    implementation "icyllis.modernui:ModernUI-NeoForge:${mc_version}-${modernui_version}.+"
 
 //    minecraftLibrary("icyllis.modernui:ModernUI-Core:${modernui_core_version}") {
 //        exclude group: "org.apache.logging.log4j", module: "log4j-core"

@@ -1,6 +1,7 @@
 package sonar.fluxnetworks.common.connection;
 
 import net.minecraft.core.GlobalPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -8,7 +9,9 @@ import net.minecraft.world.item.ItemStack;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.device.IFluxProvider;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.item.ItemFluxConfigurator;
 import sonar.fluxnetworks.common.util.FluxUtils;
 
 import javax.annotation.Nonnull;
@@ -93,7 +96,8 @@ public class PhantomFluxDevice implements IFluxDevice {
             tag.putBoolean(FluxConstants.DISABLE_LIMIT, mDisableLimit);
             tag.putUUID(FluxConstants.PLAYER_UUID, mOwnerUUID);
             tag.putLong(FluxConstants.BUFFER, mBuffer);
-            mDisplayStack.save(tag);
+            // provider, tag
+            mDisplayStack.save(RegistryAccess.EMPTY, tag);
         }
     }
 
@@ -112,7 +116,9 @@ public class PhantomFluxDevice implements IFluxDevice {
             mDisableLimit = tag.getBoolean(FluxConstants.DISABLE_LIMIT);
             mOwnerUUID = tag.getUUID(FluxConstants.PLAYER_UUID);
             mBuffer = tag.getLong(FluxConstants.BUFFER);
-            mDisplayStack = ItemStack.of(tag);
+            //ItemStack.parse(provider, tag);
+            mDisplayStack = ItemStack.parse(RegistryAccess.EMPTY, tag).get();
+//                    of(tag);
         }
         if (type == FluxConstants.NBT_PHANTOM_UPDATE) {
             mForcedLoading = tag.getBoolean(FluxConstants.FORCED_LOADING);

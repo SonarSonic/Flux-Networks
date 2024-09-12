@@ -15,12 +15,11 @@ public class FluxStorageRecipe extends ShapedRecipe {
 
     public FluxStorageRecipe(ResourceLocation idIn, String groupIn, CraftingBookCategory category, int recipeWidthIn, int recipeHeightIn,
                              NonNullList<Ingredient> recipeItemsIn, ItemStack recipeOutputIn) {
-        super(idIn, groupIn, category,recipeWidthIn, recipeHeightIn, recipeItemsIn, recipeOutputIn);
+        super(groupIn, category, new ShapedRecipePattern(recipeWidthIn, recipeHeightIn, recipeItemsIn, null), recipeOutputIn);
     }
 
     public FluxStorageRecipe(@Nonnull ShapedRecipe recipe) {
-        super(recipe.getId(), recipe.getGroup(), recipe.category(), recipe.getRecipeWidth(), recipe.getRecipeHeight(),
-                recipe.getIngredients(), recipe.getResultItem(RegistryAccess.EMPTY));
+        super(recipe.getGroup(), recipe.category(), recipe.pattern, recipe.getResultItem(RegistryAccess.EMPTY));
     }
 
     @Nonnull
@@ -30,6 +29,7 @@ public class FluxStorageRecipe extends ShapedRecipe {
         int networkID = -1;
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
+            //get
             CompoundTag subTag = stack.getTagElement(FluxConstants.TAG_FLUX_DATA);
             if (subTag != null) {
                 if (networkID == -1) {

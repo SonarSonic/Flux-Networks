@@ -3,9 +3,6 @@ package sonar.fluxnetworks.common.capability;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
 import sonar.fluxnetworks.FluxNetworks;
 
 import javax.annotation.Nonnull;
