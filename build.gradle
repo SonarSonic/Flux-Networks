@@ -102,6 +102,7 @@ dependencies {
     compileOnly fg.deobf("curse.maven:industrial-craft-242638:2746894")
     compileOnly fg.deobf("curse.maven:mekanism-268560:2835176")
     compileOnly fg.deobf("curse.maven:redstone-flux-270789:2920436")
+    compileOnly fg.deobf("curse.maven:hbm-nuclear-tech-extended-edition-708939:5254559")
 }
 
 processResources {

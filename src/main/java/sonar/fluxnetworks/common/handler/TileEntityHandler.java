@@ -3,10 +3,7 @@ package sonar.fluxnetworks.common.handler;
 import com.google.common.collect.Lists;
 import sonar.fluxnetworks.api.energy.ITileEnergyHandler;
 import sonar.fluxnetworks.api.tiles.IFluxConnector;
-import sonar.fluxnetworks.common.integration.energy.ForgeEnergyHandler;
-import sonar.fluxnetworks.common.integration.energy.GTEnergyHandler;
-import sonar.fluxnetworks.common.integration.energy.IC2EnergyHandler;
-import sonar.fluxnetworks.common.integration.energy.RedstoneFluxHandler;
+import sonar.fluxnetworks.common.integration.energy.*;
 import sonar.fluxnetworks.common.tileentity.TileFluxController;
 import sonar.fluxnetworks.common.tileentity.TileFluxPlug;
 import sonar.fluxnetworks.common.tileentity.TileFluxPoint;
@@ -57,6 +54,9 @@ public class TileEntityHandler {
         if(Loader.isModLoaded("ic2")) {
             tileEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
             ItemEnergyHandler.itemEnergyHandlers.add(IC2EnergyHandler.INSTANCE);
+        }
+        if(Loader.isModLoaded("hbm")) {
+            ItemEnergyHandler.itemEnergyHandlers.add(HBMEnergyHandler.INSTANCE);
         }
     }
 
