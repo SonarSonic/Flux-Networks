@@ -173,9 +173,7 @@ dependencies {
     }
 
     // Modern UI
-//    maven repo didnt worked here
-    implementation ("curse.maven:modern-ui-352491:5725568") {
-//    implementation("icyllis.modernui:ModernUI-NeoForge:${"deps.modernui"()}") {
+    implementation("icyllis.modernui:ModernUI-NeoForge:${"deps.modernui"()}") {
         exclude("org.apache.logging.log4j", "log4j-core")
         exclude("org.apache.logging.log4j", "log4j-api")
         exclude("com.google.code.findbugs", "jsr305")
@@ -183,8 +181,7 @@ dependencies {
         exclude("com.ibm.icu", "icu4j")
         exclude("it.unimi.dsi", "fastutil")
     }
-    implementation ("curse.maven:modern-ui-352491:5725568") {
-//    implementation("icyllis.modernui:ModernUI-Core:${"deps.modernui_core"()}") {
+    implementation("icyllis.modernui:ModernUI-Core:${"deps.modernui_core"()}") {
         exclude("org.apache.logging.log4j", "log4j-core")
         exclude("org.apache.logging.log4j", "log4j-api")
         exclude("com.google.code.findbugs", "jsr305")
