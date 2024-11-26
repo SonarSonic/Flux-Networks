@@ -142,8 +142,8 @@ sourceSets.main.configure {
 // This configuration should be used instead of 'runtimeOnly' to declare
 // a dependency that will be present for runtime testing but that is
 // "optional", meaning it will not be pulled by dependents of this mod.
-val localRuntime = configurations.register("localRuntime") {
-    extendsFrom(configurations.runtimeOnly.get())
+val localRuntime = configurations.create("localRuntime") {
+    configurations.getByName("runtimeClasspath").extendsFrom(this)
 }
 
 dependencies {
@@ -181,14 +181,14 @@ dependencies {
         exclude("com.ibm.icu", "icu4j")
         exclude("it.unimi.dsi", "fastutil")
     }
-    implementation("icyllis.modernui:ModernUI-Core:${"deps.modernui_core"()}") {
+    additionalRuntimeClasspath(compileOnly("icyllis.modernui:ModernUI-Core:${"deps.modernui_core"()}") {
         exclude("org.apache.logging.log4j", "log4j-core")
         exclude("org.apache.logging.log4j", "log4j-api")
         exclude("com.google.code.findbugs", "jsr305")
         exclude("org.jetbrains", "annotations")
         exclude("com.ibm.icu", "icu4j")
         exclude("it.unimi.dsi", "fastutil")
-    }
+    })
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
