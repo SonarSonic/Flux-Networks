@@ -1,6 +1,7 @@
 {
   "type": "fluxnetworks:config_wipe_recipe",
-  "category": "fluxnetworks",
+    "category": "misc",
+  "group": "fluxnetworks",
   "ingredients": [
     {
       "item": "fluxnetworks:flux_plug"

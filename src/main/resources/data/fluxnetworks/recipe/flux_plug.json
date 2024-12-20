@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "fluxnetworks",
+    "category": "misc",
+  "group": "fluxnetworks",
   "pattern": [
     " c ",
     "cbc",

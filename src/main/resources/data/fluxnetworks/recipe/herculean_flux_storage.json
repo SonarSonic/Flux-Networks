@@ -1,6 +1,7 @@
 {
   "type": "fluxnetworks:flux_storage_recipe",
-  "category": "fluxnetworks",
+    "category": "misc",
+  "group": "fluxnetworks",
   "pattern": [
     "bbb",
     "g g",
