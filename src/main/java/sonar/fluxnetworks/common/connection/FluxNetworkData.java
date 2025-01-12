@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.common.connection;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.*;
@@ -19,6 +18,7 @@ import sonar.fluxnetworks.register.Messages;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -51,12 +51,14 @@ public final class FluxNetworkData extends SavedData {
     public static String OLD_NETWORK_COLOR = "colour";
     public static String OLD_NETWORK_ACCESS = "access";*/
 
-    private final Int2ObjectMap<FluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectOpenHashMap<FluxNetwork> mNetworks = new Int2ObjectOpenHashMap<>();
     //private final Map<ResourceLocation, LongSet> tickets = new HashMap<>();
 
     private int mUniqueID = 0;
 
     private FluxNetworkData() {
+        // randomly choose an origin
+        mUniqueID = new SecureRandom().nextInt(50000) * 10000;
     }
 
     private FluxNetworkData(@Nonnull CompoundTag tag, HolderLookup.Provider registries) {
@@ -120,8 +122,12 @@ public final class FluxNetworkData extends SavedData {
                 }
             }
         }
+        // valid network ID is positive
         do {
             mUniqueID++;
+            if (mUniqueID < 0) {
+                mUniqueID = 1;
+            }
         } while (mNetworks.containsKey(mUniqueID));
 
         final ServerFluxNetwork network = new ServerFluxNetwork(mUniqueID, name, color, security, creator, password);
