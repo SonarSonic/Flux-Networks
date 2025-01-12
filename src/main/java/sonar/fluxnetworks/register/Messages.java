@@ -129,7 +129,7 @@ public class Messages {
         FluxPlayerData fluxPlayer = FluxUtils.getPlayerData(player);
         buf.writeBoolean(FluxPlayerData.isPlayerSuperAdmin(player));
         buf.writeInt(fluxPlayer.getWirelessMode());
-        buf.writeVarInt(fluxPlayer.getWirelessNetwork());
+        buf.writeInt(fluxPlayer.getWirelessNetwork());
         sChannel.sendToPlayer(buf, player);
     }
 
@@ -141,7 +141,7 @@ public class Messages {
         var buf = Channel.buffer(S2C_UPDATE_NETWORK);
         buf.writeByte(type);
         buf.writeVarInt(1); // size
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         final var tag = new CompoundTag();
         network.writeCustomTag(tag, type);
         buf.writeNbt(tag);
@@ -151,7 +151,7 @@ public class Messages {
     @Nonnull
     private static FriendlyByteBuf updateConnections(FluxNetwork network, List<CompoundTag> tags) {
         var buf = Channel.buffer(S2C_UPDATE_CONNECTIONS);
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeVarInt(tags.size());
         for (CompoundTag tag : tags) {
             buf.writeNbt(tag);
@@ -165,7 +165,7 @@ public class Messages {
         buf.writeByte(type);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
-            buf.writeVarInt(network.getNetworkID());
+            buf.writeInt(network.getNetworkID());
             final var tag = new CompoundTag();
             network.writeCustomTag(tag, type);
             buf.writeNbt(tag);
@@ -179,7 +179,7 @@ public class Messages {
         buf.writeByte(type);
         buf.writeVarInt(networkIDs.length);
         for (var networkID : networkIDs) {
-            buf.writeVarInt(networkID);
+            buf.writeInt(networkID);
             final var tag = new CompoundTag();
             FluxNetworkData.getNetwork(networkID).writeCustomTag(tag, type);
             buf.writeNbt(tag);
@@ -192,7 +192,7 @@ public class Messages {
      */
     public static void deleteNetwork(int id) {
         var buf = Channel.buffer(S2C_DELETE_NETWORK);
-        buf.writeVarInt(id);
+        buf.writeInt(id);
         sChannel.sendToAll(buf);
     }
 
@@ -356,7 +356,7 @@ public class Messages {
                                         BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
-        final int networkID = payload.readVarInt();
+        final int networkID = payload.readInt();
 
         // validate
         consume(payload);
@@ -385,7 +385,7 @@ public class Messages {
         // decode
         final int token = payload.readByte();
         final BlockPos pos = payload.readBlockPos();
-        final int networkID = payload.readVarInt();
+        final int networkID = payload.readInt();
         final String password = payload.readUtf(256);
 
         // validate
@@ -437,7 +437,7 @@ public class Messages {
                                       BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
-        final int networkID = payload.readVarInt();
+        final int networkID = payload.readInt();
         final String name = payload.readUtf(256);
         final int color = payload.readInt();
         final SecurityLevel security = SecurityLevel.fromId(payload.readByte());
@@ -496,7 +496,7 @@ public class Messages {
         }
         final int[] networkIDs = new int[size];
         for (int i = 0; i < size; i++) {
-            networkIDs[i] = payload.readVarInt();
+            networkIDs[i] = payload.readInt();
         }
         final byte type = payload.readByte();
 
@@ -542,7 +542,7 @@ public class Messages {
                                      BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
-        final int networkID = payload.readVarInt();
+        final int networkID = payload.readInt();
         final UUID targetUUID = payload.readUUID();
         final byte type = payload.readByte();
 
@@ -573,7 +573,7 @@ public class Messages {
                                          BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
-        final int networkID = payload.readVarInt();
+        final int networkID = payload.readInt();
         final int size = payload.readVarInt();
         if (size <= 0) {
             throw new IllegalArgumentException();
@@ -644,7 +644,7 @@ public class Messages {
         // decode
         final int token = payload.readByte();
         final int wirelessMode = payload.readInt();
-        final int wirelessNetwork = payload.readVarInt();
+        final int wirelessNetwork = payload.readInt();
 
         // validate
         consume(payload);
@@ -678,7 +678,7 @@ public class Messages {
                                      BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
-        final int networkID = payload.readVarInt();
+        final int networkID = payload.readInt();
         final int size = payload.readVarInt();
         if (size <= 0) {
             throw new IllegalArgumentException();
@@ -721,7 +721,7 @@ public class Messages {
                                             BlockableEventLoop<?> looper) {
         // decode
         final int token = payload.readByte();
-        final int networkID = payload.readVarInt();
+        final int networkID = payload.readInt();
         final int size = payload.readVarInt();
         if (size <= 0 || size > 7) {
             throw new IllegalArgumentException();

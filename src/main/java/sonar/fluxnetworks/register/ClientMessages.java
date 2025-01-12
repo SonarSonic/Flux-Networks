@@ -80,7 +80,7 @@ public class ClientMessages {
     public static void deleteNetwork(int token, FluxNetwork network) {
         var buf = Channel.buffer(Messages.C2S_DELETE_NETWORK);
         buf.writeByte(token);
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         sChannel.sendToServer(buf);
     }
 
@@ -102,7 +102,7 @@ public class ClientMessages {
         var buf = Channel.buffer(Messages.C2S_TILE_NETWORK);
         buf.writeByte(token);
         buf.writeBlockPos(device.getBlockPos());
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeUtf(password, 256);
         sChannel.sendToServer(buf);
     }
@@ -110,7 +110,7 @@ public class ClientMessages {
     public static void editMember(int token, FluxNetwork network, UUID uuid, byte type) {
         var buf = Channel.buffer(Messages.C2S_EDIT_MEMBER);
         buf.writeByte(token);
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeUUID(uuid);
         buf.writeByte(type);
         sChannel.sendToServer(buf);
@@ -120,7 +120,7 @@ public class ClientMessages {
                                    SecurityLevel security, String password) {
         var buf = Channel.buffer(Messages.C2S_EDIT_NETWORK);
         buf.writeByte(token);
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeUtf(name, 256);
         buf.writeInt(color);
         buf.writeByte(security.getId());
@@ -136,7 +136,7 @@ public class ClientMessages {
         }
         var buf = Channel.buffer(Messages.C2S_EDIT_CONNECTION);
         buf.writeByte(token);
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeVarInt(list.size());
         for (var pos : list) {
             FluxUtils.writeGlobalPos(buf, pos);
@@ -154,7 +154,7 @@ public class ClientMessages {
         var buf = Channel.buffer(Messages.C2S_UPDATE_NETWORK);
         buf.writeByte(token);
         buf.writeVarInt(1); // size
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeByte(type);
         sChannel.sendToServer(buf);
     }
@@ -172,7 +172,7 @@ public class ClientMessages {
         buf.writeByte(token);
         buf.writeVarInt(networks.size());
         for (var network : networks) {
-            buf.writeVarInt(network.getNetworkID());
+            buf.writeInt(network.getNetworkID());
         }
         buf.writeByte(type);
         sChannel.sendToServer(buf);
@@ -182,7 +182,7 @@ public class ClientMessages {
         var buf = Channel.buffer(Messages.C2S_WIRELESS_MODE);
         buf.writeByte(token);
         buf.writeInt(wirelessMode);
-        buf.writeVarInt(wirelessNetwork);
+        buf.writeInt(wirelessNetwork);
         sChannel.sendToServer(buf);
     }
 
@@ -192,7 +192,7 @@ public class ClientMessages {
         }
         var buf = Channel.buffer(Messages.C2S_DISCONNECT);
         buf.writeByte(token);
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeVarInt(list.size());
         for (var device : list) {
             FluxUtils.writeGlobalPos(buf, device.getGlobalPos());
@@ -206,7 +206,7 @@ public class ClientMessages {
         }
         var buf = Channel.buffer(Messages.C2S_UPDATE_CONNECTIONS);
         buf.writeByte(token);
-        buf.writeVarInt(network.getNetworkID());
+        buf.writeInt(network.getNetworkID());
         buf.writeVarInt(list.size());
         for (var device : list) {
             FluxUtils.writeGlobalPos(buf, device.getGlobalPos());
@@ -264,7 +264,7 @@ public class ClientMessages {
                                      BlockableEventLoop<?> looper) {
         final boolean superAdmin = payload.readBoolean();
         final int wirelessMode = payload.readInt();
-        final int wirelessNetwork = payload.readVarInt();
+        final int wirelessNetwork = payload.readInt();
         looper.execute(() -> {
             LocalPlayer p = player.get();
             if (p == null) {
@@ -282,7 +282,7 @@ public class ClientMessages {
         final int size = payload.readVarInt();
         final Int2ObjectMap<CompoundTag> map = new Int2ObjectArrayMap<>(size);
         for (int i = 0; i < size; i++) {
-            final int id = payload.readVarInt();
+            final int id = payload.readInt();
             final CompoundTag tag = payload.readNbt();
             assert tag != null;
             map.put(id, tag);
@@ -301,7 +301,7 @@ public class ClientMessages {
 
     private static void onDeleteNetwork(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
                                         BlockableEventLoop<?> looper) {
-        final int id = payload.readVarInt();
+        final int id = payload.readInt();
         looper.execute(() -> {
             LocalPlayer p = player.get();
             if (p == null) {
@@ -316,7 +316,7 @@ public class ClientMessages {
 
     private static void onUpdateConnections(FriendlyByteBuf payload, Supplier<LocalPlayer> player,
                                             BlockableEventLoop<?> looper) {
-        final int id = payload.readVarInt();
+        final int id = payload.readInt();
         final int size = payload.readVarInt();
         final List<CompoundTag> tags = new ArrayList<>();
         for (int i = 0; i < size; i++) {
