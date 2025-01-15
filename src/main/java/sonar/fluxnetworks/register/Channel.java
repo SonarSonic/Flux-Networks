@@ -26,7 +26,7 @@ public class Channel {
     /**
      * Note: Increment this if any packet is changed.
      */
-    static final String PROTOCOL = "707";
+    static final String PROTOCOL = "800";
     static final Channel sChannel = new Channel();
 
     @Nonnull

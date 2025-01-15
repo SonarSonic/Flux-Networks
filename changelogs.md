@@ -1,3 +1,11 @@
+### Changelog 1.21.1-8.0.0 (2025-01-14)
+* Change network protocol to 800
+* Make the initial network ID sparse to avoid ID conflicts in multi-world server
+* Add modern GUI design (requires ModernUI 3.11.1)
+* Port to NeoForge 1.21.1 (shurik204 & BloCamLimb)
+* Add ja_jp.json (Twister)
+* Add tr_tr.json Turkish Localization (RuyaSavascisi)
+
 ### Changelog 1.20.1-7.2.1.15 (2024-04-04)
 * Add GTCEU Modern support (configurable in common.toml)
 * Improve GTEU transfer, allowing multiple amps
