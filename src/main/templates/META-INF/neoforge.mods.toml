@@ -34,7 +34,7 @@ license="${mod_license}"
     type="optional"
     versionRange="[3.11,)"
     ordering="NONE"
-    side="BOTH"
+    side="CLIENT"
 [[dependencies.${mod_id}]]
     modId="jei"
     type="optional"

@@ -124,7 +124,22 @@ public abstract class GuiFocusable extends AbstractContainerScreen<FluxMenu> {
         BufferUploader.drawWithShader(builder.buildOrThrow());
     }
 
+    private static final boolean sHasExtendedGuiGraphics;
+
+    static {
+        boolean found = false;
+        try {
+            // this is added in 3.11.1
+            Class.forName("icyllis.modernui.mc.ExtendedGuiGraphics", false, GuiFocusable.class.getClassLoader());
+            found = true;
+        } catch (ClassNotFoundException ignored) {
+        } catch (Exception e) {
+            FluxNetworks.LOGGER.error(e);
+        }
+        sHasExtendedGuiGraphics = found;
+    }
+
     public static boolean useModernDesign() {
-        return FluxNetworks.isModernUILoaded() && FluxConfig.enableModernDesign;
+        return sHasExtendedGuiGraphics && FluxConfig.enableModernDesign;
     }
 }
