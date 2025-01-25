@@ -111,6 +111,12 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        url "https://squiddev.cc/maven/"
+        content {
+            includeGroup("cc.tweaked")
+        }
+    }
     mavenCentral()
 }
 
@@ -151,6 +157,10 @@ dependencies {
         exclude group: "it.unimi.dsi", module: "fastutil"
     }
     implementation fg.deobf("icyllis.modernui:ModernUI-Forge:${minecraft_version}-${modernui_forge_version}")
+
+    compileOnly("cc.tweaked:cc-tweaked-${minecraft_version}-core-api:1.110.3")
+    compileOnly(fg.deobf("cc.tweaked:cc-tweaked-${minecraft_version}-forge-api:1.110.3"))
+    runtimeOnly(fg.deobf("cc.tweaked:cc-tweaked-${minecraft_version}-forge:1.110.3"))
 }
 
 processResources {
