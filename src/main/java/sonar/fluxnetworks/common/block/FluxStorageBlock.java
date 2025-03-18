@@ -35,6 +35,20 @@ public abstract class FluxStorageBlock extends FluxDeviceBlock {
         tooltip.add(FluxTranslate.FLUX_STORAGE_TOOLTIP_2.makeComponent(EnergyType.FE.getStorage(getEnergyCapacity())));
     }
 
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        if (level.getBlockEntity(pos) instanceof TileFluxStorage storage) {
+            double fillRatio = (double) storage.getTransferBuffer() / storage.getMaxTransferLimit();
+            return Math.max(0, Math.min(15, (int) (fillRatio * 15.0)));
+        }
+        return 0;
+    }
+
     public abstract long getEnergyCapacity();
 
     public static class Basic extends FluxStorageBlock {
