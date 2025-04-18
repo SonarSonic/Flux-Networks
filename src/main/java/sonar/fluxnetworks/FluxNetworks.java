@@ -5,6 +5,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sonar.fluxnetworks.common.integration.cctweaked.PeripheralHandlerWrapper;
 
 import javax.annotation.Nonnull;
 
@@ -19,12 +20,17 @@ public class FluxNetworks {
 
     private static boolean sCuriosLoaded;
     private static boolean sModernUILoaded;
+    private static boolean sComputercraftLoaded;
 
     public FluxNetworks() {
         sCuriosLoaded = ModList.get().isLoaded("curios");
         sModernUILoaded = ModList.get().isLoaded("modernui");
+        sComputercraftLoaded = ModList.get().isLoaded("computercraft");
 
         FluxConfig.init();
+
+        if (sComputercraftLoaded)
+            PeripheralHandlerWrapper.init();
     }
 
     public static boolean isCuriosLoaded() {
@@ -33,6 +39,9 @@ public class FluxNetworks {
 
     public static boolean isModernUILoaded() {
         return sModernUILoaded;
+    }
+    public static boolean issComputercraftLoaded() {
+        return sComputercraftLoaded;
     }
 
     @Nonnull

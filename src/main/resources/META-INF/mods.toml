@@ -32,6 +32,12 @@ license="MIT"
     ordering="NONE"
     side="BOTH"
 [[dependencies.fluxnetworks]]
+    modId="computercraft"
+    mandatory=false
+    versionRange="[1.110.3,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.fluxnetworks]]
     modId="jei"
     mandatory=false
     versionRange="[14,)"
