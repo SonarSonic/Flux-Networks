@@ -4,11 +4,17 @@ import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.lua.ObjectLuaTable;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import org.jetbrains.annotations.Nullable;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.device.IFluxDevice;
+import sonar.fluxnetworks.api.network.NetworkMember;
+import sonar.fluxnetworks.common.connection.FluxNetwork;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
+import sonar.fluxnetworks.common.device.TileFluxStorage;
+import sonar.fluxnetworks.register.RegistryBlockEntityTypes;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -91,6 +97,22 @@ public class CCTPeripheral implements IPeripheral {
     @LuaFunction(mainThread = true)
     public long getEnergy() {
         return device.getNetwork().getStatistics().totalEnergy;
+    }
+
+    @LuaFunction(mainThread = true)
+    public long getEnergyCapacity() {
+        long maxCapacity = 0;
+        List<TileFluxDevice> storages = device.getNetwork().getLogicalDevices(FluxNetwork.STORAGE);
+        for (TileFluxDevice storage: storages) {
+            if(storage instanceof TileFluxStorage.Basic) {
+                maxCapacity += FluxConfig.basicCapacity;
+            } else if(storage instanceof TileFluxStorage.Herculean) {
+                maxCapacity += FluxConfig.herculeanCapacity;
+            } else if(storage instanceof TileFluxStorage.Gargantuan) {
+                maxCapacity += FluxConfig.gargantuanCapacity;
+            }
+        }
+        return maxCapacity;
     }
 
     @LuaFunction(mainThread = true)
