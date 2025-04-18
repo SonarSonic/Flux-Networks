@@ -46,7 +46,7 @@ public class CCTPeripheral implements IPeripheral {
 
     @Override
     public String getType() {
-        return "flux-device";
+        return "flux_device";
     }
 
     @Override
