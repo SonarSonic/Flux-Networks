@@ -207,7 +207,7 @@ public class FluxConfig {
             mEnableChunkLoading = builder
                     .comment("Allows flux devices to enable chunk loading.")
                     .translation(FluxNetworks.MODID + ".config." + "enableChunkLoading")
-                    .define("enableChunkLoading", true);
+                    .define("enableChunkLoading", false);
             builder.pop();
 
             builder.push("blacklist");
