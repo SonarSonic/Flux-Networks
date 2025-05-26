@@ -3,7 +3,7 @@
 
 	"block.fluxnetworks.flux_block": "通量方块",
 	"block.fluxnetworks.flux_controller": "通量网络控制器",
-	"block.fluxnetworks.flux_point": "通量网络接入点",
+	"block.fluxnetworks.flux_point": "通量网络输出点",
 	"block.fluxnetworks.flux_plug": "通量网络输入点",
 	"block.fluxnetworks.basic_flux_storage": "基础能量存储器",
 	"block.fluxnetworks.herculean_flux_storage": "大型能量存储器",
@@ -74,7 +74,7 @@
 	"gui.fluxnetworks.response.reject": "服务器拒绝了你的请求",
 	"gui.fluxnetworks.response.noowner": "你需要所有者权限才能执行该操作",
 	"gui.fluxnetworks.response.noadmin": "你需要管理员权限才能执行该操作",
-	"gui.fluxnetworks.response.nospace": "你已达到你可以创建的最大网络数",
+	"gui.fluxnetworks.response.nospace": "当前网络创建数量已达到上限",
 	"gui.fluxnetworks.response.hascontroller": "该网络已经连接了控制器",
 	"gui.fluxnetworks.response.invaliduser": "无效的用户",
 	"gui.fluxnetworks.response.invalidpassword": "无效的密码",
@@ -124,7 +124,7 @@
 	"gui.fluxnetworks.slot.curios": "饰品槽",
 
 	"gui.fluxnetworks.stat.plug": "输入点",
-	"gui.fluxnetworks.stat.point": "接入点",
+	"gui.fluxnetworks.stat.point": "输出点",
 	"gui.fluxnetworks.stat.controller": "控制器",
 	"gui.fluxnetworks.stat.storage": "存储器",
 
