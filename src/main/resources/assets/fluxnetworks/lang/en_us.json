@@ -116,7 +116,7 @@
 	"gui.fluxnetworks.button.connect": "Connect",
 	"gui.fluxnetworks.button.delete": "Delete",
 
-	"gui.fluxnetworks.slot.main": "Main Inventory (Disabled)",
+	"gui.fluxnetworks.slot.main": "Main Inventory",
 	"gui.fluxnetworks.slot.hotbar": "Hotbar Slots",
 	"gui.fluxnetworks.slot.mainhand": "Main Hand",
 	"gui.fluxnetworks.slot.offhand": "Off Hand",

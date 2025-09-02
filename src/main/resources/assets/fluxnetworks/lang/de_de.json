@@ -114,7 +114,7 @@
     "gui.fluxnetworks.button.connect": "Verbinden",
     "gui.fluxnetworks.button.delete": "Löschen",
 
-    "gui.fluxnetworks.slot.main": "Hauptinventar (Deaktiviert)",
+    "gui.fluxnetworks.slot.main": "Hauptinventar",
     "gui.fluxnetworks.slot.hotbar": "Schnellauswahlslots",
     "gui.fluxnetworks.slot.mainhand": "Haupt Hand",
     "gui.fluxnetworks.slot.offhand": "Neben Hand",

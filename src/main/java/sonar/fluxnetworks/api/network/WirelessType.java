@@ -20,9 +20,6 @@ public enum WirelessType {
     }
 
     public boolean isActivated(int setting) {
-        if (this == INVENTORY) {
-            return false;
-        }
         return (setting >> ordinal() & 1) == 1;
     }
 

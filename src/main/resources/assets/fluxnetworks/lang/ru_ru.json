@@ -116,7 +116,7 @@
 	"gui.fluxnetworks.button.connect": "Соединить",
 	"gui.fluxnetworks.button.delete": "Удалить",
 
-	"gui.fluxnetworks.slot.main": "Основной инвентарь (отключено)",
+	"gui.fluxnetworks.slot.main": "Основной инвентарь",
 	"gui.fluxnetworks.slot.hotbar": "Слоты горячей панели",
 	"gui.fluxnetworks.slot.mainhand": "Main Hand",
 	"gui.fluxnetworks.slot.offhand": "Off Hand",

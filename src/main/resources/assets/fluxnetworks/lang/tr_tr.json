@@ -116,7 +116,7 @@
 	"gui.fluxnetworks.button.connect": "Bağlan",
 	"gui.fluxnetworks.button.delete": "Sil",
 
-	"gui.fluxnetworks.slot.main": "Ana Envanter (Devre Dışı)",
+	"gui.fluxnetworks.slot.main": "Ana Envanter",
 	"gui.fluxnetworks.slot.hotbar": "Araç Çubuğu Yuvaları",
 	"gui.fluxnetworks.slot.mainhand": "Ana El",
 	"gui.fluxnetworks.slot.offhand": "Diğer El",

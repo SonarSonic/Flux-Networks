@@ -116,7 +116,7 @@
 	"gui.fluxnetworks.button.connect": "接続",
 	"gui.fluxnetworks.button.delete": "削除",
 
-	"gui.fluxnetworks.slot.main": "メインインベントリ（無効）",
+	"gui.fluxnetworks.slot.main": "メインインベントリ",
 	"gui.fluxnetworks.slot.hotbar": "ホットバースロット",
 	"gui.fluxnetworks.slot.mainhand": "メインハンド",
 	"gui.fluxnetworks.slot.offhand": "オフハンド",

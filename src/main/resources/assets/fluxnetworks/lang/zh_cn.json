@@ -116,7 +116,7 @@
 	"gui.fluxnetworks.button.connect": "连接",
 	"gui.fluxnetworks.button.delete": "删除",
 
-	"gui.fluxnetworks.slot.main": "主物品栏(已禁用)",
+	"gui.fluxnetworks.slot.main": "主物品栏",
 	"gui.fluxnetworks.slot.hotbar": "快捷栏",
 	"gui.fluxnetworks.slot.mainhand": "主手",
 	"gui.fluxnetworks.slot.offhand": "副手",
