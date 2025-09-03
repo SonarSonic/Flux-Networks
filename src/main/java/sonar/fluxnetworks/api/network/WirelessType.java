@@ -1,6 +1,5 @@
 package sonar.fluxnetworks.api.network;
 
-import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.api.FluxTranslate;
 
 import javax.annotation.Nonnull;
@@ -21,9 +20,6 @@ public enum WirelessType {
     }
 
     public boolean isActivated(int setting) {
-        if ((this == INVENTORY) && !FluxConfig.enableWirelessMainInventory) {
-            return false;
-        }
         return (setting >> ordinal() & 1) == 1;
     }
 
