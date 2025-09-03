@@ -74,7 +74,7 @@ public class FluxConfig {
 
     public static boolean enableButtonSound, enableGuiDebug, enableModernDesign;
     public static boolean enableOneProbeBasicInfo, enableOneProbeAdvancedInfo, enableOneProbeSneaking;
-    public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin;
+    public static boolean enableFluxRecipe, enableChunkLoading, enableSuperAdmin, enableWirelessMainInventory;
     public static long defaultLimit, basicCapacity, basicTransfer, herculeanCapacity, herculeanTransfer,
             gargantuanCapacity, gargantuanTransfer;
     public static int maximumPerPlayer, superAdminRequiredPermission;
@@ -174,6 +174,7 @@ public class FluxConfig {
         // general
         private final ModConfigSpec.BooleanValue mEnableFluxRecipe;
         private final ModConfigSpec.BooleanValue mEnableChunkLoading;
+        private final ModConfigSpec.BooleanValue mEnableWirelessMainInventory;
         //private final ModConfigSpec.BooleanValue mChunkLoadingRequiresSuperAdmin;
 
         // blacklist
@@ -215,6 +216,10 @@ public class FluxConfig {
                     .comment("Allows flux devices to enable chunk loading.")
                     .translation(FluxNetworks.MODID + ".config." + "enableChunkLoading")
                     .define("enableChunkLoading", true);
+            mEnableWirelessMainInventory = builder
+                    .comment("Allows to enable wireless charging for the main inventory.")
+                    .translation(FluxNetworks.MODID + ".config." + "enableWirelessMainInventory")
+                    .define("enableWirelessMainInventory", false);
             builder.pop();
 
             builder.push("blacklist");
@@ -269,6 +274,7 @@ public class FluxConfig {
             enableFluxRecipe = mEnableFluxRecipe.get();
             enableChunkLoading = mEnableChunkLoading.get();
             enableSuperAdmin = mEnableSuperAdmin.get();
+            enableWirelessMainInventory = mEnableWirelessMainInventory.get();
 
             EnergyUtils.reloadBlacklist(mBlockBlacklistStrings.get(), mItemBlackListStrings.get());
 

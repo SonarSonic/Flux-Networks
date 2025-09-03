@@ -15,6 +15,7 @@ public enum FeedbackInfo {
     INVALID_USER(FluxTranslate.INVALID_USER),
     ILLEGAL_PASSWORD(FluxTranslate.INVALID_PASSWORD),
     BANNED_LOADING(FluxTranslate.BANNED_LOADING),
+    BANNED_WIRELESS_MAIN(FluxTranslate.BANNED_WIRELESS_MAIN),
     SA_ON(FluxTranslate.SA_ON),
     SA_OFF(FluxTranslate.SA_OFF),
     PASSWORD_REQUIRE(null),

@@ -78,6 +78,7 @@
     "gui.fluxnetworks.response.invaliduser": "Der Nutzer ist ungültig",
     "gui.fluxnetworks.response.invalidpassword": "Das Passwort ist ungültig",
     "gui.fluxnetworks.response.bannedloading": "Chunk laden ist auf diesen Server verboten",
+    "gui.fluxnetworks.response.bannedwirelessmain": "Das drahtlose Laden von Gegenständen im Hauptinventar ist auf diesem Server deaktiviert",
 
     "gui.fluxnetworks.label.sortby": "Sortiere nach",
     "gui.fluxnetworks.label.selected": "%s Item(s) Ausgewählt",

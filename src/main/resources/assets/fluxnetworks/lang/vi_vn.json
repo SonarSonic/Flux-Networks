@@ -78,7 +78,8 @@
 	"gui.fluxnetworks.response.hascontroller": "Hệ thống này đã có sẵn một Bộ Điều Khiển Thông Lượng",
 	"gui.fluxnetworks.response.invaliduser": "Người dùng không hợp lệ",
 	"gui.fluxnetworks.response.invalidpassword": "Mật khẩu không hợp lệ",
-	"gui.fluxnetworks.response.bannedloading": "Chunk loading is banned on this server",
+	"gui.fluxnetworks.response.bannedloading": "Việc tải từng phần bị cấm trên máy chủ này",
+	"gui.fluxnetworks.response.bannedwirelessmain": "Chức năng sạc không dây cho các vật phẩm trong kho chính đã bị vô hiệu hóa trên máy chủ này",
 
 	"gui.fluxnetworks.label.sortby": "Sắp xếp theo",
 	"gui.fluxnetworks.label.selected": "%s Đồ Vật Được Chọn",

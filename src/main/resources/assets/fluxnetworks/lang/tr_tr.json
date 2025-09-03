@@ -79,6 +79,7 @@
 	"gui.fluxnetworks.response.invaliduser": "Geçersiz kullanıcı",
 	"gui.fluxnetworks.response.invalidpassword": "Geçersiz şifre",
 	"gui.fluxnetworks.response.bannedloading": "Yığın yükleme bu sunucuda yasaklanmıştır",
+	"gui.fluxnetworks.response.bannedwirelessmain": "Bu sunucuda ana envanterdeki öğelerin kablosuz şarjı devre dışıdır",
 
 	"gui.fluxnetworks.label.sortby": "Sıralama Ölçütü",
 	"gui.fluxnetworks.label.selected": "%s Eşya Seçildi",

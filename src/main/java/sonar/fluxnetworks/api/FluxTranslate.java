@@ -134,6 +134,7 @@ public class FluxTranslate {
             INVALID_USER = new FluxTranslate("gui.fluxnetworks.response.invaliduser"),
             INVALID_PASSWORD = new FluxTranslate("gui.fluxnetworks.response.invalidpassword"),
             BANNED_LOADING = new FluxTranslate("gui.fluxnetworks.response.bannedloading"),
+            BANNED_WIRELESS_MAIN = new FluxTranslate("gui.fluxnetworks.response.bannedwirelessmain"),
 
     OWNER = new FluxTranslate("gui.fluxnetworks.access.owner"),
             ADMIN = new FluxTranslate("gui.fluxnetworks.access.admin"),
@@ -163,6 +164,7 @@ public class FluxTranslate {
             case FluxConstants.RESPONSE_INVALID_USER -> INVALID_USER;
             case FluxConstants.RESPONSE_INVALID_PASSWORD -> INVALID_PASSWORD;
             case FluxConstants.RESPONSE_BANNED_LOADING -> BANNED_LOADING;
+            case FluxConstants.RESPONSE_BANNED_WIRELESS_MAIN -> BANNED_WIRELESS_MAIN;
             default -> null;
         };
     }

@@ -79,6 +79,7 @@
 	"gui.fluxnetworks.response.invaliduser": "無效的使用者",
 	"gui.fluxnetworks.response.invalidpassword": "無效的密碼",
 	"gui.fluxnetworks.response.bannedloading": "伺服器已停用區塊載入功能",
+	"gui.fluxnetworks.response.bannedwirelessmain": "本伺服器已停用主物品欄內物品的無線充電功能",
 
 	"gui.fluxnetworks.label.sortby": "排序方式",
 	"gui.fluxnetworks.label.selected": "已選擇 %s 個物品",

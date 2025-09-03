@@ -79,6 +79,7 @@
 	"gui.fluxnetworks.response.invaliduser": "Выбран неверный пользователь",
 	"gui.fluxnetworks.response.invalidpassword": "Неверный формат пароля, должен быть цифрой или буквой",
 	"gui.fluxnetworks.response.bannedloading": "Загрузка чанка была заблокирована с сервера",
+	"gui.fluxnetworks.response.bannedwirelessmain": "Беспроводная зарядка предметов в основном инвентаре отключена на этом сервере",
 
 	"gui.fluxnetworks.label.sortby": "Сортировать по",
 	"gui.fluxnetworks.label.selected": "%s Item(s) Выбрано",
