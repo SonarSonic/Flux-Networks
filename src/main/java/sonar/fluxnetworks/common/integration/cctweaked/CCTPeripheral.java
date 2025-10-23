@@ -55,7 +55,7 @@ public class CCTPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public String getNetworkName() {
+    public final String getNetworkName() {
         if (!isValid()) return null;
 
         String name = device.getNetwork().getNetworkName();
@@ -80,27 +80,27 @@ public class CCTPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public int getNetworkID() {
+    public final int getNetworkID() {
         return device.getNetwork().getNetworkID();
     }
 
     @LuaFunction(mainThread = true)
-    public long getEnergyInput() {
+    public final long getEnergyInput() {
         return device.getNetwork().getStatistics().energyInput;
     }
 
     @LuaFunction(mainThread = true)
-    public long getEnergyOutput() {
+    public final long getEnergyOutput() {
         return device.getNetwork().getStatistics().energyOutput;
     }
 
     @LuaFunction(mainThread = true)
-    public long getEnergy() {
+    public final long getEnergy() {
         return device.getNetwork().getStatistics().totalEnergy;
     }
 
     @LuaFunction(mainThread = true)
-    public long getEnergyCapacity() {
+    public final long getEnergyCapacity() {
         long maxCapacity = 0;
         List<TileFluxDevice> storages = device.getNetwork().getLogicalDevices(FluxNetwork.STORAGE);
         for (TileFluxDevice storage: storages) {
@@ -116,49 +116,49 @@ public class CCTPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public long getEnergyBuffer() {
+    public final long getEnergyBuffer() {
         return device.getNetwork().getStatistics().totalBuffer;
     }
 
     @LuaFunction(mainThread = true)
-    public long getPlugsCount() {
+    public final long getPlugsCount() {
         return device.getNetwork().getStatistics().fluxPlugCount;
     }
 
     @LuaFunction(mainThread = true)
-    public long getPointCount() {
+    public final long getPointCount() {
         return device.getNetwork().getStatistics().fluxPointCount;
     }
 
     @LuaFunction(mainThread = true)
-    public long getStorageCount() {
+    public final long getStorageCount() {
         return device.getNetwork().getStatistics().fluxStorageCount;
     }
 
     @LuaFunction(mainThread = true)
-    public long getControllerCount() {
+    public final long getControllerCount() {
         return device.getNetwork().getStatistics().fluxControllerCount;
     }
 
     @LuaFunction(mainThread = true)
-    public long getAVGTickUs() {
+    public final long getAVGTickUs() {
         return device.getNetwork().getStatistics().averageTickMicro;
     }
 
     @LuaFunction(mainThread = true)
-    public String getSecurityLevel() {
+    public final String getSecurityLevel() {
         return device.getNetwork().getSecurityLevel().toString();
     }
 
     @LuaFunction(mainThread = true)
-    public String getOwner() {
+    public final String getOwner() {
         if (!isValid()) return null;
 
         return device.getNetwork().getOwnerUUID().toString();
     }
 
     @LuaFunction(mainThread = true)
-    public ObjectLuaTable getMembers() {
+    public final ObjectLuaTable getMembers() {
         if (!isValid()) return null;
 
         return new ObjectLuaTable(
@@ -171,7 +171,7 @@ public class CCTPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public ObjectLuaTable getConnections() {
+    public final ObjectLuaTable getConnections() {
         if (!isValid()) return null;
 
         Map<Integer, Object> map = new HashMap<>();
@@ -200,7 +200,7 @@ public class CCTPeripheral implements IPeripheral {
     }
 
     @LuaFunction(mainThread = true)
-    public boolean isValid() {
+    public final boolean isValid() {
         return device.getNetwork().isValid();
     }
 }
