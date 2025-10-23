@@ -32,6 +32,9 @@ repositories {
         content { includeGroup("curse.maven") }
     }
     maven("https://modmaven.dev/") // JEI, Mekanism
+    maven("https://maven.squiddev.cc"){ // CC:Tweaked (ComputerCraft)
+        content { includeGroup("cc.tweaked") }
+    }
     mavenCentral()
     mavenLocal()
 }
@@ -170,6 +173,10 @@ dependencies {
     implementation("com.gregtechceu.gtceu:gtceu-${"mod.minecraft"()}:${"deps.gregtech_ceum"()}") {
         exclude("maven.modrinth", "embeddium") // No
     }
+
+    // CC:Tweaked (ComputerCraft)
+    compileOnly("cc.tweaked:cc-tweaked-${"mod.minecraft"()}-forge-api:${"deps.cc_tweaked"()}")
+    runtimeOnly("cc.tweaked:cc-tweaked-${"mod.minecraft"()}-forge:${"deps.cc_tweaked"()}")
 
     // Modern UI
     implementation("icyllis.modernui:ModernUI-NeoForge:${"deps.modernui"()}") {
