@@ -3,8 +3,8 @@
 
 	"block.fluxnetworks.flux_block": "Bloc de flux",
 	"block.fluxnetworks.flux_controller": "Contrôleur de flux",
-	"block.fluxnetworks.flux_point": "Point de flux",
-	"block.fluxnetworks.flux_plug": "Prise de flux",
+	"block.fluxnetworks.flux_point": "Extracteur de flux",
+	"block.fluxnetworks.flux_plug": "Injecteur de flux",
 	"block.fluxnetworks.basic_flux_storage": "Stockage de flux basique",
 	"block.fluxnetworks.herculean_flux_storage": "Stockage de flux herculéen",
 	"block.fluxnetworks.gargantuan_flux_storage": "Stockage de flux gargantuesque",
