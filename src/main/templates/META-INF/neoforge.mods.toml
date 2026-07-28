@@ -1,16 +1,18 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 issueTrackerURL="https://github.com/SonarSonic/Flux-Networks/issues"
-license="${mod_license}"
+license="MIT"
 
 [[mods]]
     modId="${mod_id}"
     version="${mod_version}"
-    displayName="${mod_name}"
+    displayName="Flux Networks"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/flux-networks"
     logoFile="assets/${mod_id}/icon.png"
-    authors="${mod_authors}"
-    description='''${mod_description}'''
+    authors="Sonar Sonic, BloCamLimb"
+    description='''
+    Wireless Energy Networks
+    '''
 
 #[[accessTransformers]]
 #    file="META-INF/accesstransformer.cfg"
