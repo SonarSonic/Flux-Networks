@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.thread.BlockableEventLoop;
 import net.minecraft.world.entity.player.Player;
+import sonar.fluxnetworks.FluxConfig;
 import sonar.fluxnetworks.FluxNetworks;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.device.IFluxDevice;
@@ -656,18 +657,23 @@ public class Messages {
             }
             final FluxPlayerData fp = FluxUtils.getPlayerData(p);
             final FluxNetwork network = FluxNetworkData.getNetwork(wirelessNetwork);
+            int newWirelessMode = wirelessMode;
+            if (((newWirelessMode >> WirelessType.INVENTORY.ordinal() & 1) == 1) && !FluxConfig.enableWirelessMainInventory) {
+                newWirelessMode ^= 1 << WirelessType.INVENTORY.ordinal();
+                response(token, 0, FluxConstants.RESPONSE_BANNED_WIRELESS_MAIN, p);
+            }
             // allow set to invalid
             boolean reject = network.isValid() &&
                     (checkTokenFailed(token, p, network) || network.getMemberByUUID(p.getUUID()) == null);
             if (reject) {
-                if (WirelessType.ENABLE_WIRELESS.isActivated(wirelessMode)) {
+                if (WirelessType.ENABLE_WIRELESS.isActivated(newWirelessMode)) {
                     response(token, 0, FluxConstants.RESPONSE_REJECT, p);
                 } else {
-                    fp.setWirelessMode(wirelessMode);
+                    fp.setWirelessMode(newWirelessMode);
                     syncCapability(p);
                 }
             } else {
-                fp.setWirelessMode(wirelessMode);
+                fp.setWirelessMode(newWirelessMode);
                 fp.setWirelessNetwork(wirelessNetwork);
                 syncCapability(p);
             }

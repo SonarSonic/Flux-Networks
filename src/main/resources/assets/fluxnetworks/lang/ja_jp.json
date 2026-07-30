@@ -79,6 +79,7 @@
 	"gui.fluxnetworks.response.invaliduser": "ユーザーが無効です。",
 	"gui.fluxnetworks.response.invalidpassword": "パスワードが無効です",
 	"gui.fluxnetworks.response.bannedloading": "このサーバーではチャンクのロードが禁止されています。",
+	"gui.fluxnetworks.response.bannedwirelessmain": "このサーバーでは、メインインベントリ内のアイテムのワイヤレス充電は無効化されています",
 
 	"gui.fluxnetworks.label.sortby": "並べ替え",
 	"gui.fluxnetworks.label.selected": "%sアイテムが選択されました",
@@ -116,7 +117,7 @@
 	"gui.fluxnetworks.button.connect": "接続",
 	"gui.fluxnetworks.button.delete": "削除",
 
-	"gui.fluxnetworks.slot.main": "メインインベントリ（無効）",
+	"gui.fluxnetworks.slot.main": "メインインベントリ",
 	"gui.fluxnetworks.slot.hotbar": "ホットバースロット",
 	"gui.fluxnetworks.slot.mainhand": "メインハンド",
 	"gui.fluxnetworks.slot.offhand": "オフハンド",

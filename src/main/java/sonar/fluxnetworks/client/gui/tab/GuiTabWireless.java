@@ -91,10 +91,8 @@ public class GuiTabWireless extends GuiTabCore {
             return;
         }
         if (button instanceof InventoryButton btn) {
-            if (btn.mType != WirelessType.INVENTORY) {
-                mWirelessMode ^= 1 << btn.mType.ordinal();
-                mApply.setClickable(true);
-            }
+            mWirelessMode ^= 1 << btn.mType.ordinal();
+            mApply.setClickable(true);
         } else if (button instanceof SwitchButton btn) {
             btn.toggle();
             if (btn.isChecked()) {

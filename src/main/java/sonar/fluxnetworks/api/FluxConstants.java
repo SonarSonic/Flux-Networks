@@ -74,7 +74,8 @@ public final class FluxConstants {
             RESPONSE_HAS_CONTROLLER = 5,
             RESPONSE_INVALID_USER = 6,
             RESPONSE_INVALID_PASSWORD = 7,
-            RESPONSE_BANNED_LOADING = 8;
+            RESPONSE_BANNED_LOADING = 8,
+            RESPONSE_BANNED_WIRELESS_MAIN = 9;
 
     /**
      * Request keys.

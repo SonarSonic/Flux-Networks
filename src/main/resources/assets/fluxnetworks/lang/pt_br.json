@@ -79,6 +79,7 @@
 	"gui.fluxnetworks.response.invaliduser": "Usuário inválido selecionado",
 	"gui.fluxnetworks.response.invalidpassword": "Formato de senha errado, tem de ser um dígito ou letra",
 	"gui.fluxnetworks.response.bannedloading": "Carregamento de Chunks foi banido desse servidor",
+	"gui.fluxnetworks.response.bannedwirelessmain": "O carregamento sem fio de itens no inventário principal está desativado neste servidor",
 
 	"gui.fluxnetworks.label.sortby": "Ordenar por",
 	"gui.fluxnetworks.label.selected": "%s Item(s) Selecionado",
@@ -116,7 +117,7 @@
 	"gui.fluxnetworks.button.connect": "Conectar",
 	"gui.fluxnetworks.button.delete": "Deletar",
 
-	"gui.fluxnetworks.slot.main": "Inventário Principal (Desabilitado)",
+	"gui.fluxnetworks.slot.main": "Inventário Principal",
 	"gui.fluxnetworks.slot.hotbar": "Espaços da Hotbar",
 	"gui.fluxnetworks.slot.mainhand": "Mão principal",
 	"gui.fluxnetworks.slot.offhand": "Fora da mão",

@@ -79,6 +79,7 @@
 	"gui.fluxnetworks.response.invaliduser": "The user is invalid",
 	"gui.fluxnetworks.response.invalidpassword": "The password is invalid",
 	"gui.fluxnetworks.response.bannedloading": "Chunk loading is banned on this server",
+	"gui.fluxnetworks.response.bannedwirelessmain": "Wireless charging of items in the main inventory is disabled on this server",
 
 	"gui.fluxnetworks.label.sortby": "Sort by",
 	"gui.fluxnetworks.label.selected": "%s Item(s) Selected",
@@ -116,7 +117,7 @@
 	"gui.fluxnetworks.button.connect": "Connect",
 	"gui.fluxnetworks.button.delete": "Delete",
 
-	"gui.fluxnetworks.slot.main": "Main Inventory (Disabled)",
+	"gui.fluxnetworks.slot.main": "Main Inventory",
 	"gui.fluxnetworks.slot.hotbar": "Hotbar Slots",
 	"gui.fluxnetworks.slot.mainhand": "Main Hand",
 	"gui.fluxnetworks.slot.offhand": "Off Hand",

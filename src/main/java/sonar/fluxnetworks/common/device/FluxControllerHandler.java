@@ -164,6 +164,9 @@ public class FluxControllerHandler extends TransferHandler {
             if (WirelessType.CURIOS.isActivated(wirelessMode) && FluxNetworks.isCuriosLoaded()) {
                 handlers.add(new WirelessHandler(CuriosIntegration.getFlatStacks(player), NOT_EMPTY));
             }
+            if (WirelessType.INVENTORY.isActivated(wirelessMode) && FluxConfig.enableWirelessMainInventory) {
+                handlers.add(new WirelessHandler(inventory.items.subList(Inventory.getSelectionSize(), Inventory.INVENTORY_SIZE), NOT_EMPTY));
+            }
             if (!handlers.isEmpty()) {
                 mPlayers.put(player, handlers);
             }
