@@ -84,6 +84,7 @@ public abstract class TileFluxStorage extends TileFluxDevice implements IFluxSto
                 Channel.get().sendToTrackingChunk(
                         Messages.makeDeviceBuffer(this, FluxConstants.DEVICE_S2C_STORAGE_ENERGY),
                         level.getChunkAt(worldPosition));
+                level.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
                 mFlags &= ~FLAG_ENERGY_CHANGED;
             }
         }
