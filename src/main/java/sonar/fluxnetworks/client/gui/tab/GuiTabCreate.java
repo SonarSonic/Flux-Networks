@@ -5,11 +5,9 @@ import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.SimpleButton;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -35,17 +33,7 @@ public class GuiTabCreate extends GuiTabEditAbstract {
         super.init();
         mNetworkName.setValue(FluxTranslate.PLAYERS_NETWORK.format(mPlayer.getGameProfile().getName()));
 
-        // two rows
-        for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
-            final EnumNetworkColor color = EnumNetworkColor.VALUES[i];
-            ColorButton button = new ColorButton(this,
-                    leftPos + 48 + (i % 7) * 16, topPos + 87 + (i / 7) * 16, color.getRGB());
-            if (i == 0) {
-                mColorButton = button;
-                button.setSelected(true);
-            }
-            mButtons.add(button);
-        }
+        initColorSelector(leftPos + 48, topPos + 87, true);
 
         mCreate = new SimpleButton(this, leftPos + (imageWidth / 2) - 24, topPos + 150, 48, 12,
                 FluxTranslate.CREATE.get());

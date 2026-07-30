@@ -73,6 +73,7 @@ public class FluxTranslate {
             EDITING_CONNECTIONS = new FluxTranslate("gui.fluxnetworks.label.editingconnections"),
             CONNECTIONS = new FluxTranslate("gui.fluxnetworks.label.connections"),
             CUSTOM_COLOR = new FluxTranslate("gui.fluxnetworks.label.customcolor"),
+            CUSTOM_COLOR_EDIT = new FluxTranslate("gui.fluxnetworks.label.customcolor.edit"),
             CONNECTING_TO = new FluxTranslate("gui.fluxnetworks.label.connectingto"),
             TOTAL = new FluxTranslate("gui.fluxnetworks.label.total"),
             DELETE_NETWORK = new FluxTranslate("gui.fluxnetworks.label.deletenetwork"),

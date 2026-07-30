@@ -6,11 +6,9 @@ import net.minecraft.world.entity.player.Player;
 import org.lwjgl.glfw.GLFW;
 import sonar.fluxnetworks.api.FluxConstants;
 import sonar.fluxnetworks.api.FluxTranslate;
-import sonar.fluxnetworks.api.gui.EnumNetworkColor;
 import sonar.fluxnetworks.api.network.SecurityLevel;
 import sonar.fluxnetworks.client.gui.EnumNavigationTab;
 import sonar.fluxnetworks.client.gui.basic.GuiButtonCore;
-import sonar.fluxnetworks.client.gui.button.ColorButton;
 import sonar.fluxnetworks.client.gui.button.SimpleButton;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.register.ClientMessages;
@@ -68,28 +66,7 @@ public class GuiTabSettings extends GuiTabEditAbstract {
             mApply.setClickable(false);
             mButtons.add(mApply);
 
-            boolean colorSet = false;
-            // two rows
-            for (int i = 0; i < EnumNetworkColor.VALUES.length; i++) {
-                final EnumNetworkColor color = EnumNetworkColor.VALUES[i];
-                ColorButton button = new ColorButton(this,
-                        leftPos + 48 + (i % 7) * 16, topPos + 87 + (i / 7) * 16, color.getRGB());
-                if (!colorSet && color.getRGB() == getNetwork().getNetworkColor()) {
-                    mColorButton = button;
-                    button.setSelected(true);
-                    colorSet = true;
-                }
-                mButtons.add(button);
-            }
-
-            // it's a custom color
-            if (!colorSet) {
-                ColorButton button = new ColorButton(this,
-                        leftPos + 32, topPos + 107, getNetwork().getNetworkColor());
-                mColorButton = button;
-                button.setSelected(true);
-                mButtons.add(button);
-            }
+            initColorSelector(leftPos + 48, topPos + 87, false);
         }
     }
 

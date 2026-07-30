@@ -27,4 +27,13 @@ public enum EnumNetworkColor {
     public int getRGB() {
         return color;
     }
+
+    public static int getColorIndex(int color) {
+        for (int i = 0; i < VALUES.length; i++) {
+            if (VALUES[i].color == color) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

@@ -87,6 +87,7 @@
 	"gui.fluxnetworks.label.editingconnections": "Editing %d Connections",
 	"gui.fluxnetworks.label.connections": "Connections",
 	"gui.fluxnetworks.label.customcolor": "Custom Color",
+	"gui.fluxnetworks.label.customcolor.edit": "Right-Click to Edit",
 	"gui.fluxnetworks.label.connectingto": "Connecting to %s",
 	"gui.fluxnetworks.label.total": "Total",
 	"gui.fluxnetworks.label.deletenetwork": "Delete Network",
