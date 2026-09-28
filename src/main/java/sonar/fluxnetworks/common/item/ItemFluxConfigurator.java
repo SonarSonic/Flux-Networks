@@ -15,11 +15,13 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import sonar.fluxnetworks.api.FluxDataComponents;
 import sonar.fluxnetworks.api.FluxTranslate;
+import sonar.fluxnetworks.api.device.FluxDeviceType;
 import sonar.fluxnetworks.api.device.IFluxProvider;
 import sonar.fluxnetworks.api.energy.EnergyType;
 import sonar.fluxnetworks.client.ClientCache;
 import sonar.fluxnetworks.common.connection.FluxMenu;
 import sonar.fluxnetworks.common.connection.FluxNetwork;
+import sonar.fluxnetworks.common.connection.FluxNetworkData;
 import sonar.fluxnetworks.common.data.FluxDeviceConfigComponent;
 import sonar.fluxnetworks.common.device.TileFluxDevice;
 
@@ -59,7 +61,26 @@ public class ItemFluxConfigurator extends Item {
             } else {
                 FluxDeviceConfigComponent config = stack.get(FluxDataComponents.FLUX_CONFIG);
                 if (config != null) {
-                    device.applyComponentsFromItemStack(stack);
+                    // Apply settings without directly changing the network ID.
+                    ItemStack settingsStack = stack.copy();
+                    settingsStack.set(
+                            FluxDataComponents.FLUX_CONFIG,
+                            config.withNetwork(device.getNetworkID())
+                    );
+                    device.applyComponentsFromItemStack(settingsStack);
+
+                    // Change networks through the normal connection bookkeeping.
+                    if (device.getDeviceType() != FluxDeviceType.CONTROLLER) {
+                        FluxNetwork network = FluxNetworkData.getNetwork(config.networkId());
+                        // we can connect to an invalid network (i.e. disconnect)
+                        if (!network.isValid() || network.canPlayerAccess(player)) {
+                            if (network.isValid()) {
+                                device.setOwnerUUID(player.getUUID());
+                            }
+                            device.connect(network);
+                        }
+                    }
+
                     player.displayClientMessage(FluxTranslate.CONFIG_PASTED, false);
                 }
             }
